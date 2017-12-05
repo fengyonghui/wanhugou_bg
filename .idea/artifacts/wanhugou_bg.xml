@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="wanhugou_bg">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="wanhugou_bg.war" />
+  </artifact>
+</component>
