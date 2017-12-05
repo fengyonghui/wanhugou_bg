@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.biz.dao.farm.BizFarmDao">
+    
+	<sql id="bizFarmColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.location_id AS "locationId",
+		a.established_date AS "establishedDate",
+		a.biz_type AS "bizType",
+		a.remark AS "remark",
+		a.status AS "status",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createTime",
+		a.u_version AS "uVersion"
+	</sql>
+	
+	<sql id="bizFarmJoins">
+	</sql>
+    
+	<select id="get" resultType="BizFarm">
+		SELECT 
+			<include refid="bizFarmColumns"/>
+		FROM biz_farm a
+		<include refid="bizFarmJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizFarm">
+		SELECT 
+			<include refid="bizFarmColumns"/>
+		FROM biz_farm a
+		<include refid="bizFarmJoins"/>
+		<where>
+			
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="beginEstablishedDate != null and endEstablishedDate != null and beginEstablishedDate != '' and endEstablishedDate != ''">
+				AND a.established_date BETWEEN #{beginEstablishedDate} AND #{endEstablishedDate}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizFarm">
+		SELECT 
+			<include refid="bizFarmColumns"/>
+		FROM biz_farm a
+		<include refid="bizFarmJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_farm(
+			id,
+			name,
+			location_id,
+			established_date,
+			biz_type,
+			remark,
+			status,
+			create_id,
+			create_time,
+			u_version
+		) VALUES (
+			#{id},
+			#{name},
+			#{locationId},
+			#{establishedDate},
+			#{bizType},
+			#{remark},
+			#{status},
+			#{createBy.id},
+			#{createTime},
+			#{uVersion}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_farm SET 	
+			name = #{name},
+			location_id = #{locationId},
+			established_date = #{establishedDate},
+			biz_type = #{bizType},
+			remark = #{remark},
+			status = #{status},
+			create_id = #{createBy.id},
+			create_time = #{createTime},
+			u_version = #{uVersion}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_farm
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,33 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+#common/src/test/
+#config/src/main/java/
+#config/src/test/
+#controller/src/test/
+#dao/src/main/resources/sqlmap/custom/
+#dao/src/test/
+#service/src/test/
+#utils/src/
+#web/src/test/
