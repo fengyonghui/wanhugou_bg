@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.web;
+package com.wanhutong.backend.modules.sys.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.sys.entity.Log;
-import com.thinkgem.jeesite.modules.sys.service.LogService;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.sys.entity.Log;
+import com.wanhutong.backend.modules.sys.service.LogService;
 
 /**
  * 日志Controller

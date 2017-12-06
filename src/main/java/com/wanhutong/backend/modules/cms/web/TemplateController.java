@@ -1,9 +1,9 @@
-package com.thinkgem.jeesite.modules.cms.web;
+package com.wanhutong.backend.modules.cms.web;
 
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.cms.entity.Site;
-import com.thinkgem.jeesite.modules.cms.service.FileTplService;
-import com.thinkgem.jeesite.modules.cms.service.SiteService;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.cms.entity.Site;
+import com.wanhutong.backend.modules.cms.service.FileTplService;
+import com.wanhutong.backend.modules.cms.service.SiteService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

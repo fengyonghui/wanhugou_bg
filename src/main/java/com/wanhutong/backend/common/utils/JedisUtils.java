@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.utils;
+package com.wanhutong.backend.common.utils;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.thinkgem.jeesite.common.config.Global;
+import com.wanhutong.backend.common.config.Global;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

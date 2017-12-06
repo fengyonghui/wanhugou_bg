@@ -1,15 +1,15 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.persistence;
+package com.wanhutong.backend.common.persistence;
 
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.thinkgem.jeesite.common.utils.Reflections;
-import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.Reflections;
+import com.wanhutong.backend.common.utils.StringUtils;
 
 /**
  * 数据Entity类

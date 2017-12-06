@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.mapper.adapters;
+package com.wanhutong.backend.common.mapper.adapters;
 
 import java.util.HashMap;
 import java.util.Map;

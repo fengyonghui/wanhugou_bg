@@ -1,18 +1,18 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.service;
+package com.wanhutong.backend.modules.sys.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.service.CrudService;
-import com.thinkgem.jeesite.common.utils.CacheUtils;
-import com.thinkgem.jeesite.modules.sys.dao.DictDao;
-import com.thinkgem.jeesite.modules.sys.entity.Dict;
-import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.utils.CacheUtils;
+import com.wanhutong.backend.modules.sys.dao.DictDao;
+import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 
 /**
  * 字典Service

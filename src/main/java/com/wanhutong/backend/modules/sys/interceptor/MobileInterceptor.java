@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.interceptor;
+package com.wanhutong.backend.modules.sys.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.thinkgem.jeesite.common.service.BaseService;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.common.utils.UserAgentUtils;
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.UserAgentUtils;
 
 /**
  * 手机端视图拦截器

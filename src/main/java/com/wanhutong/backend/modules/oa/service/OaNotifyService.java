@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.oa.service;
+package com.wanhutong.backend.modules.oa.service;
 
 import java.util.Date;
 
@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.service.CrudService;
-import com.thinkgem.jeesite.modules.oa.entity.OaNotify;
-import com.thinkgem.jeesite.modules.oa.entity.OaNotifyRecord;
-import com.thinkgem.jeesite.modules.oa.dao.OaNotifyDao;
-import com.thinkgem.jeesite.modules.oa.dao.OaNotifyRecordDao;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.oa.entity.OaNotify;
+import com.wanhutong.backend.modules.oa.entity.OaNotifyRecord;
+import com.wanhutong.backend.modules.oa.dao.OaNotifyDao;
+import com.wanhutong.backend.modules.oa.dao.OaNotifyRecordDao;
 
 /**
  * 通知通告Service

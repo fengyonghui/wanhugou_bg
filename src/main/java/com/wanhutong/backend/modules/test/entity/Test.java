@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.test.entity;
+package com.wanhutong.backend.modules.test.entity;
 
 import java.util.Date;
 
@@ -10,11 +10,11 @@ import org.hibernate.validator.constraints.Length;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.thinkgem.jeesite.common.persistence.DataEntity;
-import com.thinkgem.jeesite.common.supcan.annotation.treelist.SupTreeList;
-import com.thinkgem.jeesite.common.supcan.annotation.treelist.cols.SupCol;
-import com.thinkgem.jeesite.common.supcan.annotation.treelist.cols.SupGroup;
-import com.thinkgem.jeesite.modules.sys.entity.Office;
+import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.common.supcan.annotation.treelist.SupTreeList;
+import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
+import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupGroup;
+import com.wanhutong.backend.modules.sys.entity.Office;
 
 /**
  * 测试Entity

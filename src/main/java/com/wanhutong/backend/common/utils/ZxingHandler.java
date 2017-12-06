@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.utils;
+package com.wanhutong.backend.common.utils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

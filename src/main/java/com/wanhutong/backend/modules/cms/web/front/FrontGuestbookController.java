@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.web.front;
+package com.wanhutong.backend.modules.cms.web.front;
 
 import java.util.Date;
 
@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.cms.entity.Guestbook;
-import com.thinkgem.jeesite.modules.cms.entity.Site;
-import com.thinkgem.jeesite.modules.cms.service.GuestbookService;
-import com.thinkgem.jeesite.modules.cms.utils.CmsUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.cms.entity.Guestbook;
+import com.wanhutong.backend.modules.cms.entity.Site;
+import com.wanhutong.backend.modules.cms.service.GuestbookService;
+import com.wanhutong.backend.modules.cms.utils.CmsUtils;
 
 /**
  * 留言板Controller

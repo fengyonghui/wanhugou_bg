@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2005-2012 springside.org.cn
  */
-package com.thinkgem.jeesite.common.security;
+package com.wanhutong.backend.common.security;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
@@ -15,8 +15,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.thinkgem.jeesite.common.utils.Encodes;
-import com.thinkgem.jeesite.common.utils.Exceptions;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.Exceptions;
 
 /**
  * 支持HMAC-SHA1消息签名 及 DES/AES对称加密的工具类.

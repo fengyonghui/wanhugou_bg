@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.web.front;
+package com.wanhutong.backend.modules.cms.web.front;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.cms.utils.WiexinSignUtil;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.cms.utils.WiexinSignUtil;
 
 /**
  * 测试Controller

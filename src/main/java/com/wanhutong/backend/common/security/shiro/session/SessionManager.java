@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.security.shiro.session;
+package com.wanhutong.backend.common.security.shiro.session;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -24,7 +24,7 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
 
-import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.StringUtils;
 
 /**
  * 自定义WEB会话管理类

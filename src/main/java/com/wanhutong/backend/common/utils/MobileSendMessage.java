@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.utils;
+package com.wanhutong.backend.common.utils;
 
 //import java.util.List;
 //
@@ -10,8 +10,8 @@ package com.thinkgem.jeesite.common.utils;
 //import com.baidu.yun.channel.model.PushUnicastMessageRequest;
 //import com.baidu.yun.core.log.YunLogEvent;
 //import com.baidu.yun.core.log.YunLogHandler;
-//import com.thinkgem.jeesite.modules.sys.entity.User;
-//import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+//import com.wanhutong.backend.modules.sys.entity.User;
+//import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 public class MobileSendMessage {
 	

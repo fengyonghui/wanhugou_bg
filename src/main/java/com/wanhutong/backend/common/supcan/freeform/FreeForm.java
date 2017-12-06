@@ -1,10 +1,10 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.supcan.freeform;
+package com.wanhutong.backend.common.supcan.freeform;
 
-import com.thinkgem.jeesite.common.supcan.common.Common;
-import com.thinkgem.jeesite.common.supcan.common.properties.Properties;
+import com.wanhutong.backend.common.supcan.common.Common;
+import com.wanhutong.backend.common.supcan.common.properties.Properties;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**

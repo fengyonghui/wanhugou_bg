@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.persistence;
+package com.wanhutong.backend.common.persistence;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

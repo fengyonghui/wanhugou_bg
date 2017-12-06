@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.annotation;
+package com.wanhutong.backend.common.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

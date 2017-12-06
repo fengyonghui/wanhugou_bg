@@ -1,7 +1,7 @@
 /**
  * There are <a href="https://github.com/thinkgem/jeesite">JeeSite</a> code generation
  */
-package com.thinkgem.jeesite.modules.oa.entity;
+package com.wanhutong.backend.modules.oa.entity;
 
 import java.util.Date;
 import java.util.List;
@@ -15,10 +15,10 @@ import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.collect.Lists;
-import com.thinkgem.jeesite.common.persistence.DataEntity;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.modules.sys.entity.User;
-import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 
 /**
  * 请假Entity

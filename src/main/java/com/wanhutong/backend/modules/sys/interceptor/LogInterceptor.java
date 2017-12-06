@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.interceptor;
+package com.wanhutong.backend.modules.sys.interceptor;
 
 import java.text.SimpleDateFormat;
 
@@ -12,9 +12,9 @@ import org.springframework.core.NamedThreadLocal;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.thinkgem.jeesite.common.service.BaseService;
-import com.thinkgem.jeesite.common.utils.DateUtils;
-import com.thinkgem.jeesite.modules.sys.utils.LogUtils;
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.modules.sys.utils.LogUtils;
 
 /**
  * 日志拦截器

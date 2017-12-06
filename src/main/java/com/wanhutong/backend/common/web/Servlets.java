@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
-package com.thinkgem.jeesite.common.web;
+package com.wanhutong.backend.common.web;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
@@ -22,11 +22,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.common.net.HttpHeaders;
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.utils.Encodes;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.modules.sys.security.SystemAuthorizingRealm.Principal;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm.Principal;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 /**
  * Http与Servlet工具类.

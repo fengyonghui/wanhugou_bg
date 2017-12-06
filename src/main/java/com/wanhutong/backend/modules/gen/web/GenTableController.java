@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.gen.web;
+package com.wanhutong.backend.modules.gen.web;
 
 import java.util.List;
 
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.sys.entity.User;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
-import com.thinkgem.jeesite.modules.gen.entity.GenTable;
-import com.thinkgem.jeesite.modules.gen.service.GenTableService;
-import com.thinkgem.jeesite.modules.gen.util.GenUtils;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.modules.gen.entity.GenTable;
+import com.wanhutong.backend.modules.gen.service.GenTableService;
+import com.wanhutong.backend.modules.gen.util.GenUtils;
 
 /**
  * 业务表Controller

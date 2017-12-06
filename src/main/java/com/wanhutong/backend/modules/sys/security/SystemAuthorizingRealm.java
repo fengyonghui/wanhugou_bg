@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.security;
+package com.wanhutong.backend.modules.sys.security;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -26,18 +26,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.servlet.ValidateCodeServlet;
-import com.thinkgem.jeesite.common.utils.Encodes;
-import com.thinkgem.jeesite.common.utils.SpringContextHolder;
-import com.thinkgem.jeesite.common.web.Servlets;
-import com.thinkgem.jeesite.modules.sys.entity.Menu;
-import com.thinkgem.jeesite.modules.sys.entity.Role;
-import com.thinkgem.jeesite.modules.sys.entity.User;
-import com.thinkgem.jeesite.modules.sys.service.SystemService;
-import com.thinkgem.jeesite.modules.sys.utils.LogUtils;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
-import com.thinkgem.jeesite.modules.sys.web.LoginController;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.servlet.ValidateCodeServlet;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.SpringContextHolder;
+import com.wanhutong.backend.common.web.Servlets;
+import com.wanhutong.backend.modules.sys.entity.Menu;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.LogUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.modules.sys.web.LoginController;
 
 /**
  * 系统安全认证实现类

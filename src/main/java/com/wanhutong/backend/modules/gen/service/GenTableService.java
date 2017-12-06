@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.gen.service;
+package com.wanhutong.backend.modules.gen.service;
 
 import java.util.List;
 
@@ -9,15 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.service.BaseService;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.modules.gen.entity.GenTable;
-import com.thinkgem.jeesite.modules.gen.entity.GenTableColumn;
-import com.thinkgem.jeesite.modules.gen.util.GenUtils;
-import com.thinkgem.jeesite.modules.gen.dao.GenDataBaseDictDao;
-import com.thinkgem.jeesite.modules.gen.dao.GenTableColumnDao;
-import com.thinkgem.jeesite.modules.gen.dao.GenTableDao;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.gen.entity.GenTable;
+import com.wanhutong.backend.modules.gen.entity.GenTableColumn;
+import com.wanhutong.backend.modules.gen.util.GenUtils;
+import com.wanhutong.backend.modules.gen.dao.GenDataBaseDictDao;
+import com.wanhutong.backend.modules.gen.dao.GenTableColumnDao;
+import com.wanhutong.backend.modules.gen.dao.GenTableDao;
 
 /**
  * 业务表Service

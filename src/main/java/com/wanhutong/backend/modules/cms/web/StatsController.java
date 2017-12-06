@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.web;
+package com.wanhutong.backend.modules.cms.web;
 
 import java.util.List;
 import java.util.Map;
@@ -13,9 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.cms.entity.Category;
-import com.thinkgem.jeesite.modules.cms.service.StatsService;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.cms.entity.Category;
+import com.wanhutong.backend.modules.cms.service.StatsService;
 
 /**
  * 统计Controller

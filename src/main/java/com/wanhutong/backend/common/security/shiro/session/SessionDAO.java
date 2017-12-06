@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.security.shiro.session;
+package com.wanhutong.backend.common.security.shiro.session;
 
 import java.util.Collection;
 

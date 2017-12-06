@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.supcan.annotation.treelist;
+package com.wanhutong.backend.common.supcan.annotation.treelist;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -9,9 +9,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.thinkgem.jeesite.common.supcan.annotation.common.fonts.SupFont;
-import com.thinkgem.jeesite.common.supcan.annotation.common.properties.SupProperties;
-import com.thinkgem.jeesite.common.supcan.annotation.treelist.cols.SupGroup;
+import com.wanhutong.backend.common.supcan.annotation.common.fonts.SupFont;
+import com.wanhutong.backend.common.supcan.annotation.common.properties.SupProperties;
+import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupGroup;
 
 /**
  * 硕正TreeList注解

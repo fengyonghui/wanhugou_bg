@@ -1,15 +1,15 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.gen.entity;
+package com.wanhutong.backend.modules.gen.entity;
 
 import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 
 import com.google.common.collect.Lists;
-import com.thinkgem.jeesite.common.persistence.DataEntity;
-import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.common.utils.StringUtils;
 
 /**
  * 业务表字段Entity

@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.persistence;
+package com.wanhutong.backend.common.persistence;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -12,12 +12,12 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.supcan.annotation.treelist.SupTreeList;
-import com.thinkgem.jeesite.common.supcan.annotation.treelist.cols.SupCol;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.modules.sys.entity.User;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.supcan.annotation.treelist.SupTreeList;
+import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 /**
  * Entity支持类

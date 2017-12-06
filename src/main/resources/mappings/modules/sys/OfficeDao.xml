@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.thinkgem.jeesite.modules.sys.dao.OfficeDao">
+<mapper namespace="com.wanhutong.backend.modules.sys.dao.OfficeDao">
 
 	<sql id="officeColumns">
 		a.id,
@@ -37,8 +37,8 @@
 	<sql id="officeJoins">
 		LEFT JOIN sys_office p ON p.id = a.parent_id
 		LEFT JOIN sys_area ar ON ar.id = a.area_id
-		LEFT JOIN SYS_USER pp ON pp.id = a.primary_person
-		LEFT JOIN SYS_USER dp ON dp.id = a.deputy_person
+		LEFT JOIN sys_user pp ON pp.id = a.primary_person
+		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
     </sql>
 	
 	<select id="get" resultType="Office">

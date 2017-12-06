@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.persistence.interceptor;
+package com.wanhutong.backend.common.persistence.interceptor;
 
 import org.apache.ibatis.executor.statement.BaseStatementHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
@@ -13,8 +13,8 @@ import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.utils.Reflections;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.Reflections;
 
 import java.sql.Connection;
 import java.util.Properties;

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2005-2012 springside.org.cn
  */
-package com.thinkgem.jeesite.common.utils;
+package com.wanhutong.backend.common.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

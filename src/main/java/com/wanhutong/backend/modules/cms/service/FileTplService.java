@@ -1,6 +1,6 @@
-package com.thinkgem.jeesite.modules.cms.service;
+package com.wanhutong.backend.modules.cms.service;
 
-import com.thinkgem.jeesite.modules.cms.entity.FileTpl;
+import com.wanhutong.backend.modules.cms.entity.FileTpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.common.beanvalidator;
+package com.wanhutong.backend.common.beanvalidator;
 
 /**
  * 编辑Bena验证组

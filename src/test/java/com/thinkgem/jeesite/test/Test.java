@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.test;
+package com.wanhutong.backend.test;
 
 public class Test {
 

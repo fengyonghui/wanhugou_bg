@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.mapper;
+package com.wanhutong.backend.common.mapper;
 
 import java.io.IOException;
 import java.util.List;

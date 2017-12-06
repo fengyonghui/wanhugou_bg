@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.web;
+package com.wanhutong.backend.modules.cms.web;
 
 import java.util.List;
 
@@ -18,21 +18,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.thinkgem.jeesite.common.mapper.JsonMapper;
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.cms.entity.Article;
-import com.thinkgem.jeesite.modules.cms.entity.Category;
-import com.thinkgem.jeesite.modules.cms.entity.Site;
-import com.thinkgem.jeesite.modules.cms.service.ArticleDataService;
-import com.thinkgem.jeesite.modules.cms.service.ArticleService;
-import com.thinkgem.jeesite.modules.cms.service.CategoryService;
-import com.thinkgem.jeesite.modules.cms.service.FileTplService;
-import com.thinkgem.jeesite.modules.cms.service.SiteService;
-import com.thinkgem.jeesite.modules.cms.utils.CmsUtils;
-import com.thinkgem.jeesite.modules.cms.utils.TplUtils;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.common.mapper.JsonMapper;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.cms.entity.Article;
+import com.wanhutong.backend.modules.cms.entity.Category;
+import com.wanhutong.backend.modules.cms.entity.Site;
+import com.wanhutong.backend.modules.cms.service.ArticleDataService;
+import com.wanhutong.backend.modules.cms.service.ArticleService;
+import com.wanhutong.backend.modules.cms.service.CategoryService;
+import com.wanhutong.backend.modules.cms.service.FileTplService;
+import com.wanhutong.backend.modules.cms.service.SiteService;
+import com.wanhutong.backend.modules.cms.utils.CmsUtils;
+import com.wanhutong.backend.modules.cms.utils.TplUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 /**
  * 文章Controller

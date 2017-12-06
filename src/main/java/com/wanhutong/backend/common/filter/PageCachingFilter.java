@@ -1,9 +1,9 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.filter;
+package com.wanhutong.backend.common.filter;
 
-import com.thinkgem.jeesite.common.utils.CacheUtils;
+import com.wanhutong.backend.common.utils.CacheUtils;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.constructs.web.filter.SimplePageCachingFilter;

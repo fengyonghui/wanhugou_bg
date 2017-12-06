@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.utils.excel;
+package com.wanhutong.backend.common.utils.excel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.collect.Lists;
-import com.thinkgem.jeesite.common.utils.Reflections;
-import com.thinkgem.jeesite.common.utils.excel.annotation.ExcelField;
-import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.common.utils.Reflections;
+import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 
 /**
  * 导入Excel文件（支持“XLS”和“XLSX”格式）

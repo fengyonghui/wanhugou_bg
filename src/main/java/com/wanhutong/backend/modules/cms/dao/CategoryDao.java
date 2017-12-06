@@ -1,14 +1,14 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.dao;
+package com.wanhutong.backend.modules.cms.dao;
 
 import java.util.List;
 import java.util.Map;
 
-import com.thinkgem.jeesite.common.persistence.TreeDao;
-import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
-import com.thinkgem.jeesite.modules.cms.entity.Category;
+import com.wanhutong.backend.common.persistence.TreeDao;
+import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.cms.entity.Category;
 
 /**
  * 栏目DAO接口

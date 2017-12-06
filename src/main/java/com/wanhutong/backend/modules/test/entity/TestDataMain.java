@@ -1,18 +1,18 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.test.entity;
+package com.wanhutong.backend.modules.test.entity;
 
-import com.thinkgem.jeesite.modules.sys.entity.User;
-import com.thinkgem.jeesite.modules.sys.entity.Office;
-import com.thinkgem.jeesite.modules.sys.entity.Area;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Area;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.List;
 import com.google.common.collect.Lists;
 
-import com.thinkgem.jeesite.common.persistence.DataEntity;
+import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 主子表生成Entity

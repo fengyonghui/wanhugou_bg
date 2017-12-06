@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.supcan.annotation.common.properties;
+package com.wanhutong.backend.common.supcan.annotation.common.properties;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

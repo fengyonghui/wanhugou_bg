@@ -1,16 +1,16 @@
 /**
  * Copyright &copy; 2012-2013 <a href="httparamMap://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.service;
+package com.wanhutong.backend.modules.sys.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.service.CrudService;
-import com.thinkgem.jeesite.common.utils.DateUtils;
-import com.thinkgem.jeesite.modules.sys.dao.LogDao;
-import com.thinkgem.jeesite.modules.sys.entity.Log;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.modules.sys.dao.LogDao;
+import com.wanhutong.backend.modules.sys.entity.Log;
 
 /**
  * 日志Service

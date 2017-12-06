@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.entity;
+package com.wanhutong.backend.modules.cms.entity;
 
 import java.util.Date;
 import java.util.List;
@@ -9,10 +9,10 @@ import java.util.List;
 import org.hibernate.validator.constraints.Length;
 
 import com.google.common.collect.Lists;
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.persistence.TreeEntity;
-import com.thinkgem.jeesite.modules.cms.utils.CmsUtils;
-import com.thinkgem.jeesite.modules.sys.entity.Office;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.TreeEntity;
+import com.wanhutong.backend.modules.cms.utils.CmsUtils;
+import com.wanhutong.backend.modules.sys.entity.Office;
 
 /**
  * 栏目Entity

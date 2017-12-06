@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.modules.oa.service;
+package com.wanhutong.backend.modules.oa.service;
 
 import java.util.Date;
 
@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.modules.oa.dao.LeaveDao;
-import com.thinkgem.jeesite.modules.oa.entity.Leave;
+import com.wanhutong.backend.modules.oa.dao.LeaveDao;
+import com.wanhutong.backend.modules.oa.entity.Leave;
 
 /**
  * 调整请假内容处理器

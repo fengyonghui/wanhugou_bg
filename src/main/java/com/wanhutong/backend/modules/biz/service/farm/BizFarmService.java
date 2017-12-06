@@ -1,17 +1,17 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.biz.service.farm;
+package com.wanhutong.backend.modules.biz.service.farm;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.service.CrudService;
-import com.thinkgem.jeesite.modules.biz.entity.farm.BizFarm;
-import com.thinkgem.jeesite.modules.biz.dao.farm.BizFarmDao;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.biz.entity.farm.BizFarm;
+import com.wanhutong.backend.modules.biz.dao.farm.BizFarmDao;
 
 /**
  * 单表生成Service

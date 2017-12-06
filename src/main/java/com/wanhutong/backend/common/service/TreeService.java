@@ -1,16 +1,16 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.service;
+package com.wanhutong.backend.common.service;
 
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.persistence.TreeDao;
-import com.thinkgem.jeesite.common.persistence.TreeEntity;
-import com.thinkgem.jeesite.common.utils.Reflections;
-import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.wanhutong.backend.common.persistence.TreeDao;
+import com.wanhutong.backend.common.persistence.TreeEntity;
+import com.wanhutong.backend.common.utils.Reflections;
+import com.wanhutong.backend.common.utils.StringUtils;
 
 /**
  * Service基类

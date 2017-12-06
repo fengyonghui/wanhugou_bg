@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.service;
+package com.wanhutong.backend.modules.sys.service;
 
 import java.util.Collection;
 import java.util.Date;
@@ -16,26 +16,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.security.Digests;
-import com.thinkgem.jeesite.common.security.shiro.session.SessionDAO;
-import com.thinkgem.jeesite.common.service.BaseService;
-import com.thinkgem.jeesite.common.service.ServiceException;
-import com.thinkgem.jeesite.common.utils.CacheUtils;
-import com.thinkgem.jeesite.common.utils.Encodes;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.common.web.Servlets;
-import com.thinkgem.jeesite.modules.sys.dao.MenuDao;
-import com.thinkgem.jeesite.modules.sys.dao.RoleDao;
-import com.thinkgem.jeesite.modules.sys.dao.UserDao;
-import com.thinkgem.jeesite.modules.sys.entity.Menu;
-import com.thinkgem.jeesite.modules.sys.entity.Office;
-import com.thinkgem.jeesite.modules.sys.entity.Role;
-import com.thinkgem.jeesite.modules.sys.entity.User;
-import com.thinkgem.jeesite.modules.sys.security.SystemAuthorizingRealm;
-import com.thinkgem.jeesite.modules.sys.utils.LogUtils;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.security.Digests;
+import com.wanhutong.backend.common.security.shiro.session.SessionDAO;
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.service.ServiceException;
+import com.wanhutong.backend.common.utils.CacheUtils;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.web.Servlets;
+import com.wanhutong.backend.modules.sys.dao.MenuDao;
+import com.wanhutong.backend.modules.sys.dao.RoleDao;
+import com.wanhutong.backend.modules.sys.dao.UserDao;
+import com.wanhutong.backend.modules.sys.entity.Menu;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm;
+import com.wanhutong.backend.modules.sys.utils.LogUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 /**
  * 系统管理，安全相关实体的管理类,包括用户、角色、菜单.

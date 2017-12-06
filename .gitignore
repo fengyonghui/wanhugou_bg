@@ -12,14 +12,14 @@ target/
 ### IntelliJ IDEA ###
 .idea
 *.iws
-*.iml
+#*.iml
 *.ipr
 
 ### NetBeans ###
 nbproject/private/
 build/
 nbbuild/
-dist/
+###dist/
 nbdist/
 .nb-gradle/
 #common/src/test/

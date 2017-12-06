@@ -1,25 +1,25 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.persistence.interceptor;
+package com.wanhutong.backend.common.persistence.interceptor;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.plugin.Interceptor;
 
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.persistence.dialect.Dialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.DB2Dialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.DerbyDialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.H2Dialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.HSQLDialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.MySQLDialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.OracleDialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.PostgreSQLDialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.SQLServer2005Dialect;
-import com.thinkgem.jeesite.common.persistence.dialect.db.SybaseDialect;
-import com.thinkgem.jeesite.common.utils.Reflections;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.persistence.dialect.Dialect;
+import com.wanhutong.backend.common.persistence.dialect.db.DB2Dialect;
+import com.wanhutong.backend.common.persistence.dialect.db.DerbyDialect;
+import com.wanhutong.backend.common.persistence.dialect.db.H2Dialect;
+import com.wanhutong.backend.common.persistence.dialect.db.HSQLDialect;
+import com.wanhutong.backend.common.persistence.dialect.db.MySQLDialect;
+import com.wanhutong.backend.common.persistence.dialect.db.OracleDialect;
+import com.wanhutong.backend.common.persistence.dialect.db.PostgreSQLDialect;
+import com.wanhutong.backend.common.persistence.dialect.db.SQLServer2005Dialect;
+import com.wanhutong.backend.common.persistence.dialect.db.SybaseDialect;
+import com.wanhutong.backend.common.utils.Reflections;
 
 import java.io.Serializable;
 import java.util.Properties;

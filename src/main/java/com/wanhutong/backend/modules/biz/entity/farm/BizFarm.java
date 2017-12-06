@@ -1,14 +1,14 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.biz.entity.farm;
+package com.wanhutong.backend.modules.biz.entity.farm;
 
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.NotNull;
 
-import com.thinkgem.jeesite.common.persistence.DataEntity;
+import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 单表生成Entity

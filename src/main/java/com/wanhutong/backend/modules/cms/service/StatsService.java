@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.service;
+package com.wanhutong.backend.modules.cms.service;
 
 import java.util.Date;
 import java.util.List;
@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.service.BaseService;
-import com.thinkgem.jeesite.common.utils.DateUtils;
-import com.thinkgem.jeesite.modules.cms.dao.ArticleDao;
-import com.thinkgem.jeesite.modules.cms.entity.Category;
-import com.thinkgem.jeesite.modules.cms.entity.Site;
-import com.thinkgem.jeesite.modules.sys.entity.Office;
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.modules.cms.dao.ArticleDao;
+import com.wanhutong.backend.modules.cms.entity.Category;
+import com.wanhutong.backend.modules.cms.entity.Site;
+import com.wanhutong.backend.modules.sys.entity.Office;
 
 /**
  * 统计Service

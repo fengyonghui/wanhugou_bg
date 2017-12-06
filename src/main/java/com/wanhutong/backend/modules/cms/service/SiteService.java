@@ -1,17 +1,17 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.service;
+package com.wanhutong.backend.modules.cms.service;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.service.CrudService;
-import com.thinkgem.jeesite.modules.cms.dao.SiteDao;
-import com.thinkgem.jeesite.modules.cms.entity.Site;
-import com.thinkgem.jeesite.modules.cms.utils.CmsUtils;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.cms.dao.SiteDao;
+import com.wanhutong.backend.modules.cms.entity.Site;
+import com.wanhutong.backend.modules.cms.utils.CmsUtils;
 
 /**
  * 站点Service

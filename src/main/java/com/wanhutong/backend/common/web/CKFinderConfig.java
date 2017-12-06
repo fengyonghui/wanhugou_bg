@@ -1,15 +1,15 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.web;
+package com.wanhutong.backend.common.web;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.utils.FileUtils;
-import com.thinkgem.jeesite.modules.sys.security.SystemAuthorizingRealm.Principal;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.utils.FileUtils;
+import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm.Principal;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 import com.ckfinder.connector.configuration.Configuration;
 import com.ckfinder.connector.data.AccessControlLevel;

@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.modules.cms.entity;
+package com.wanhutong.backend.modules.cms.entity;
 
 import org.apache.commons.io.FileUtils;
 

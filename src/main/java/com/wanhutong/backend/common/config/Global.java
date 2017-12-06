@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.config;
+package com.wanhutong.backend.common.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import org.springframework.core.io.DefaultResourceLoader;
 
 import com.ckfinder.connector.ServletContextFactory;
 import com.google.common.collect.Maps;
-import com.thinkgem.jeesite.common.utils.PropertiesLoader;
-import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.PropertiesLoader;
+import com.wanhutong.backend.common.utils.StringUtils;
 
 /**
  * 全局配置类

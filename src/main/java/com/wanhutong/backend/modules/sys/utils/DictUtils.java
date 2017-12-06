@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.utils;
+package com.wanhutong.backend.modules.sys.utils;
 
 import java.util.List;
 import java.util.Map;
@@ -10,11 +10,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.thinkgem.jeesite.common.mapper.JsonMapper;
-import com.thinkgem.jeesite.common.utils.CacheUtils;
-import com.thinkgem.jeesite.common.utils.SpringContextHolder;
-import com.thinkgem.jeesite.modules.sys.dao.DictDao;
-import com.thinkgem.jeesite.modules.sys.entity.Dict;
+import com.wanhutong.backend.common.mapper.JsonMapper;
+import com.wanhutong.backend.common.utils.CacheUtils;
+import com.wanhutong.backend.common.utils.SpringContextHolder;
+import com.wanhutong.backend.modules.sys.dao.DictDao;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 
 /**
  * 字典工具类

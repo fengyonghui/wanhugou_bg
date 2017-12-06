@@ -1,11 +1,11 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.gen.entity;
+package com.wanhutong.backend.modules.gen.entity;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.thinkgem.jeesite.common.persistence.DataEntity;
+import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 生成方案Entity

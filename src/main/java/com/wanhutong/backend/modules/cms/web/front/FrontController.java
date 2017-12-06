@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.web.front;
+package com.wanhutong.backend.modules.cms.web.front;
 
 import java.util.Date;
 import java.util.List;
@@ -19,23 +19,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Lists;
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.servlet.ValidateCodeServlet;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.cms.entity.Article;
-import com.thinkgem.jeesite.modules.cms.entity.Category;
-import com.thinkgem.jeesite.modules.cms.entity.Comment;
-import com.thinkgem.jeesite.modules.cms.entity.Link;
-import com.thinkgem.jeesite.modules.cms.entity.Site;
-import com.thinkgem.jeesite.modules.cms.service.ArticleDataService;
-import com.thinkgem.jeesite.modules.cms.service.ArticleService;
-import com.thinkgem.jeesite.modules.cms.service.CategoryService;
-import com.thinkgem.jeesite.modules.cms.service.CommentService;
-import com.thinkgem.jeesite.modules.cms.service.LinkService;
-import com.thinkgem.jeesite.modules.cms.service.SiteService;
-import com.thinkgem.jeesite.modules.cms.utils.CmsUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.servlet.ValidateCodeServlet;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.cms.entity.Article;
+import com.wanhutong.backend.modules.cms.entity.Category;
+import com.wanhutong.backend.modules.cms.entity.Comment;
+import com.wanhutong.backend.modules.cms.entity.Link;
+import com.wanhutong.backend.modules.cms.entity.Site;
+import com.wanhutong.backend.modules.cms.service.ArticleDataService;
+import com.wanhutong.backend.modules.cms.service.ArticleService;
+import com.wanhutong.backend.modules.cms.service.CategoryService;
+import com.wanhutong.backend.modules.cms.service.CommentService;
+import com.wanhutong.backend.modules.cms.service.LinkService;
+import com.wanhutong.backend.modules.cms.service.SiteService;
+import com.wanhutong.backend.modules.cms.utils.CmsUtils;
 
 /**
  * 网站Controller

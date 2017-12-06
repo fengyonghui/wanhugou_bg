@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.servlet;
+package com.wanhutong.backend.common.servlet;
 
 import java.awt.Color;
 import java.awt.Font;

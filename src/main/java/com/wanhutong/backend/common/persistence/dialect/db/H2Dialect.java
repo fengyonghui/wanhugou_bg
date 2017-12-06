@@ -1,9 +1,9 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.persistence.dialect.db;
+package com.wanhutong.backend.common.persistence.dialect.db;
 
-import com.thinkgem.jeesite.common.persistence.dialect.Dialect;
+import com.wanhutong.backend.common.persistence.dialect.Dialect;
 
 /**
  * A dialect compatible with the H2 database.

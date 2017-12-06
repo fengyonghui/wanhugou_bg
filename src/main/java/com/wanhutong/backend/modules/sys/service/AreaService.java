@@ -1,17 +1,17 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.service;
+package com.wanhutong.backend.modules.sys.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.service.TreeService;
-import com.thinkgem.jeesite.modules.sys.dao.AreaDao;
-import com.thinkgem.jeesite.modules.sys.entity.Area;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.common.service.TreeService;
+import com.wanhutong.backend.modules.sys.dao.AreaDao;
+import com.wanhutong.backend.modules.sys.entity.Area;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 /**
  * 区域Service

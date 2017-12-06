@@ -1,28 +1,28 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.utils;
+package com.wanhutong.backend.modules.cms.utils;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.utils.StringUtils;
 
-import com.thinkgem.jeesite.common.mapper.JsonMapper;
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.utils.CacheUtils;
-import com.thinkgem.jeesite.common.utils.SpringContextHolder;
-import com.thinkgem.jeesite.modules.cms.entity.Article;
-import com.thinkgem.jeesite.modules.cms.entity.Category;
-import com.thinkgem.jeesite.modules.cms.entity.Link;
-import com.thinkgem.jeesite.modules.cms.entity.Site;
-import com.thinkgem.jeesite.modules.cms.service.ArticleService;
-import com.thinkgem.jeesite.modules.cms.service.CategoryService;
-import com.thinkgem.jeesite.modules.cms.service.LinkService;
-import com.thinkgem.jeesite.modules.cms.service.SiteService;
+import com.wanhutong.backend.common.mapper.JsonMapper;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.CacheUtils;
+import com.wanhutong.backend.common.utils.SpringContextHolder;
+import com.wanhutong.backend.modules.cms.entity.Article;
+import com.wanhutong.backend.modules.cms.entity.Category;
+import com.wanhutong.backend.modules.cms.entity.Link;
+import com.wanhutong.backend.modules.cms.entity.Site;
+import com.wanhutong.backend.modules.cms.service.ArticleService;
+import com.wanhutong.backend.modules.cms.service.CategoryService;
+import com.wanhutong.backend.modules.cms.service.LinkService;
+import com.wanhutong.backend.modules.cms.service.SiteService;
 
 import javax.servlet.ServletContext;
 

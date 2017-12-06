@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.cms.service;
+package com.wanhutong.backend.modules.cms.service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,18 +14,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.service.CrudService;
-import com.thinkgem.jeesite.common.utils.CacheUtils;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.modules.cms.dao.ArticleDao;
-import com.thinkgem.jeesite.modules.cms.dao.ArticleDataDao;
-import com.thinkgem.jeesite.modules.cms.dao.CategoryDao;
-import com.thinkgem.jeesite.modules.cms.entity.Article;
-import com.thinkgem.jeesite.modules.cms.entity.ArticleData;
-import com.thinkgem.jeesite.modules.cms.entity.Category;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.utils.CacheUtils;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.cms.dao.ArticleDao;
+import com.wanhutong.backend.modules.cms.dao.ArticleDataDao;
+import com.wanhutong.backend.modules.cms.dao.CategoryDao;
+import com.wanhutong.backend.modules.cms.entity.Article;
+import com.wanhutong.backend.modules.cms.entity.ArticleData;
+import com.wanhutong.backend.modules.cms.entity.Category;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 /**
  * 文章Service

@@ -1,18 +1,18 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.gen.service;
+package com.wanhutong.backend.modules.gen.service;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.service.BaseService;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.modules.gen.entity.GenTemplate;
-import com.thinkgem.jeesite.modules.gen.dao.GenTemplateDao;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.gen.entity.GenTemplate;
+import com.wanhutong.backend.modules.gen.dao.GenTemplateDao;
 
 /**
  * 代码模板Service

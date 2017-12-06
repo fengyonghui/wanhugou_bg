@@ -1,14 +1,14 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.supcan.common.properties;
+package com.wanhutong.backend.common.supcan.common.properties;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.thinkgem.jeesite.common.supcan.annotation.common.properties.SupExpress;
-import com.thinkgem.jeesite.common.supcan.annotation.common.properties.SupProperties;
-import com.thinkgem.jeesite.common.utils.ObjectUtils;
+import com.wanhutong.backend.common.supcan.annotation.common.properties.SupExpress;
+import com.wanhutong.backend.common.supcan.annotation.common.properties.SupProperties;
+import com.wanhutong.backend.common.utils.ObjectUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

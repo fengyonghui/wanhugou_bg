@@ -1,14 +1,14 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.common.persistence.proxy;
+package com.wanhutong.backend.common.persistence.proxy;
 
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.utils.Reflections;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.Reflections;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

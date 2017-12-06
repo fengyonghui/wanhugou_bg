@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.modules.cms.utils;
+package com.wanhutong.backend.modules.cms.utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

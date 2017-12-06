@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2005-2012 springside.org.cn
  */
-package com.thinkgem.jeesite.common.beanvalidator;
+package com.wanhutong.backend.common.beanvalidator;
 
 import java.util.List;
 import java.util.Map;

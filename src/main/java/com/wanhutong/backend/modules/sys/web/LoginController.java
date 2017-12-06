@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
  */
-package com.thinkgem.jeesite.modules.sys.web;
+package com.wanhutong.backend.modules.sys.web;
 
 import java.util.Map;
 
@@ -19,17 +19,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.collect.Maps;
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.security.shiro.session.SessionDAO;
-import com.thinkgem.jeesite.common.servlet.ValidateCodeServlet;
-import com.thinkgem.jeesite.common.utils.CacheUtils;
-import com.thinkgem.jeesite.common.utils.CookieUtils;
-import com.thinkgem.jeesite.common.utils.IdGen;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.modules.sys.security.FormAuthenticationFilter;
-import com.thinkgem.jeesite.modules.sys.security.SystemAuthorizingRealm.Principal;
-import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.security.shiro.session.SessionDAO;
+import com.wanhutong.backend.common.servlet.ValidateCodeServlet;
+import com.wanhutong.backend.common.utils.CacheUtils;
+import com.wanhutong.backend.common.utils.CookieUtils;
+import com.wanhutong.backend.common.utils.IdGen;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.sys.security.FormAuthenticationFilter;
+import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm.Principal;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 /**
  * 登录Controller
@@ -168,8 +168,8 @@ public class LoginController extends BaseController{
 
 //		System.out.println("==========================a");
 //		try {
-//			byte[] bytes = com.thinkgem.jeesite.common.utils.FileUtils.readFileToByteArray(
-//					com.thinkgem.jeesite.common.utils.FileUtils.getFile("c:\\sxt.dmp"));
+//			byte[] bytes = com.wanhutong.backend.common.utils.FileUtils.readFileToByteArray(
+//					com.wanhutong.backend.common.utils.FileUtils.getFile("c:\\sxt.dmp"));
 //			UserUtils.getSession().setAttribute("kkk", bytes);
 //			UserUtils.getSession().setAttribute("kkk2", bytes);
 //		} catch (Exception e) {
