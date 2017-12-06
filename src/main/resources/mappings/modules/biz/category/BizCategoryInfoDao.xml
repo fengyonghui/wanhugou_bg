@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao">
+    
+	<sql id="bizCategoryInfoColumns">
+		a.id AS "id",
+		a.catelog_id AS "catelogId",
+		a.p_id AS "pId",
+		a.p_ids AS "pIds",
+		a.name AS "name",
+		a.description AS "description",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.status AS "status",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateId.id",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="bizCategoryInfoJoins">
+	</sql>
+    
+	<select id="get" resultType="BizCategoryInfo">
+		SELECT 
+			<include refid="bizCategoryInfoColumns"/>
+		FROM biz_category_info a
+		<include refid="bizCategoryInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizCategoryInfo">
+		SELECT 
+			<include refid="bizCategoryInfoColumns"/>
+		FROM biz_category_info a
+		<include refid="bizCategoryInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="catelogId != null and catelogId != ''">
+				AND a.catelog_id = #{catelogId}
+			</if>
+			<if test="pId != null and pId != ''">
+				AND a.p_id = #{pId}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizCategoryInfo">
+		SELECT 
+			<include refid="bizCategoryInfoColumns"/>
+		FROM biz_category_info a
+		<include refid="bizCategoryInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_category_info(
+			id,
+			catelog_id,
+			p_id,
+			p_ids,
+			name,
+			description,
+			create_id,
+			create_time,
+			status,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{catelogId},
+			#{pId},
+			#{pIds},
+			#{name},
+			#{description},
+			#{createId.id},
+			#{createTime},
+			#{status},
+			#{uVersion},
+			#{updateId.id},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_category_info SET 	
+			catelog_id = #{catelogId},
+			p_id = #{pId},
+			p_ids = #{pIds},
+			name = #{name},
+			description = #{description},
+			create_time = #{createTime},
+			u_version = #{uVersion},
+			update_id = #{updateId.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_category_info SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
