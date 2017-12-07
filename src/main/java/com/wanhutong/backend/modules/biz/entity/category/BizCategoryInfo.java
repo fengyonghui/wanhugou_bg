@@ -46,4 +46,11 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo> {
 		this.parent = parent;
 	}
 
+	public BizCatelogInfo getCatelogInfo() {
+		return catelogInfo;
+	}
+
+	public void setCatelogInfo(BizCatelogInfo catelogInfo) {
+		this.catelogInfo = catelogInfo;
+	}
 }
