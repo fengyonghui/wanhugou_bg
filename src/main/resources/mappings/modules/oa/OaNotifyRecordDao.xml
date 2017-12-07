@@ -46,7 +46,7 @@
 		ORDER BY a.read_flag ASC
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO oa_notify_record(
 			ID,
 			OA_NOTIFY_ID,

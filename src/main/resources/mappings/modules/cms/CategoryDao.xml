@@ -136,7 +136,7 @@
 			ORDER BY a.site_id,a.sort ASC
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO cms_category(
 			id,
 			parent_id,

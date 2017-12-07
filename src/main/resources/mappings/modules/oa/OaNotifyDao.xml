@@ -93,7 +93,7 @@
 		</if>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO oa_notify(
 			ID,
 			TYPE,
