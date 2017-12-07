@@ -47,7 +47,7 @@
         <mssql.driver.version>1.3.1</mssql.driver.version>
 
         <!-- environment setting -->
-        <jdk.version>1.6</jdk.version>
+        <jdk.version>1.8</jdk.version>
         <tomcat.version>2.2</tomcat.version>
         <jetty.version>7.6.14.v20131031</jetty.version>
         <webserver.port>8181</webserver.port>
@@ -62,7 +62,7 @@
         <repository>
             <id>jeesite-repos</id>
             <name>Jeesite Repository</name>
-            <url>http://maven.jeesite.com/nexus/content/groups/public</url>
+            <url>http://123.206.60.71:8081/nexus/content/groups/public</url>
         </repository>
 
     </repositories>
@@ -73,7 +73,7 @@
         <pluginRepository>
             <id>jeesite-repos</id>
             <name>Jeesite Repository</name>
-            <url>http://maven.jeesite.com/nexus/content/groups/public</url>
+            <url>http://123.206.60.71:8081/nexus/content/groups/public</url>
         </pluginRepository>
 
     </pluginRepositories>
@@ -581,6 +581,11 @@
             <groupId>bitwalker</groupId>
             <artifactId>useragentutils</artifactId>
             <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.2.3</version>
         </dependency>
 
         <!-- 自定义jar依赖包

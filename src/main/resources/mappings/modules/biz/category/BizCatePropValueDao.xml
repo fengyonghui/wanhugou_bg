@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.category.BizCatePropValueDao">
+    
+	<sql id="bizCatePropValueColumns">
+		a.id AS "id",
+		a.prop_id AS "propId",
+		a.value AS "value",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.status AS "status"
+	</sql>
+	
+	<sql id="bizCatePropValueJoins">
+	</sql>
+    
+	<select id="get" resultType="BizCatePropValue">
+		SELECT 
+			<include refid="bizCatePropValueColumns"/>
+		FROM biz_cate_prop_value a
+		<include refid="bizCatePropValueJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizCatePropValue">
+		SELECT 
+			<include refid="bizCatePropValueColumns"/>
+		FROM biz_cate_prop_value a
+		<include refid="bizCatePropValueJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="propId != null and propId != ''">
+				AND a.prop_id = #{propId}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizCatePropValue">
+		SELECT 
+			<include refid="bizCatePropValueColumns"/>
+		FROM biz_cate_prop_value a
+		<include refid="bizCatePropValueJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_cate_prop_value(
+			id,
+			prop_id,
+			value,
+			create_id,
+			create_time,
+			status
+		) VALUES (
+			#{id},
+			#{propId},
+			#{value},
+			#{createId.id},
+			#{createTime},
+			#{status}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_cate_prop_value SET 	
+			prop_id = #{propId},
+			value = #{value},
+			create_time = #{createTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_cate_prop_value SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

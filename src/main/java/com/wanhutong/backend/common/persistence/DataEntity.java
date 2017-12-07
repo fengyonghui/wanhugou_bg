@@ -3,16 +3,13 @@
  */
 package com.wanhutong.backend.common.persistence;
 
-import java.util.Date;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.Length;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wanhutong.backend.common.utils.IdGen;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.hibernate.validator.constraints.Length;
+
+import java.util.Date;
 
 /**
  * 数据Entity类
@@ -29,7 +26,7 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 	protected User updateBy;	// 更新者
 	protected Date updateDate;	// 更新日期
 	protected String delFlag; 	// 删除标记（1：正常；0：删除；2：审核）
-	
+	protected Integer uVersion;  //版本控制
 	public DataEntity() {
 		super();
 		this.delFlag = DEL_FLAG_NORMAL;
@@ -67,8 +64,17 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 			this.updateBy = user;
 		}
 		this.updateDate = new Date();
+		this.uVersion = uVersion==null?1: (uVersion+1)%255;
 	}
-	
+
+	public Integer getuVersion() {
+		return uVersion;
+	}
+
+	public void setuVersion(Integer uVersion) {
+		this.uVersion = uVersion;
+	}
+
 	@Length(min=0, max=255)
 	public String getRemarks() {
 		return remarks;
