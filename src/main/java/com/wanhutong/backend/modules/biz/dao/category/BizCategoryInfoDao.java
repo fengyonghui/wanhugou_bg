@@ -3,7 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.dao.category;
 
-import com.wanhutong.backend.common.persistence.CrudDao;
+import com.wanhutong.backend.common.persistence.TreeDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 
@@ -13,6 +13,6 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
  * @version 2017-12-06
  */
 @MyBatisDao
-public interface BizCategoryInfoDao extends CrudDao<BizCategoryInfo> {
-	
+public interface BizCategoryInfoDao extends TreeDao<BizCategoryInfo> {
+
 }
