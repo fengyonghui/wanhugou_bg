@@ -3,15 +3,17 @@
  */
 package com.wanhutong.backend.modules.biz.service.category;
 
-import java.util.List;
-
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
-import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 垂直商品类目表Service
@@ -26,10 +28,18 @@ public class BizCategoryInfoService extends CrudService<BizCategoryInfoDao, BizC
 		return super.get(id);
 	}
 	
-	public List<BizCategoryInfo> findList(BizCategoryInfo bizCategoryInfo) {
-		return super.findList(bizCategoryInfo);
+
+	@Transactional(readOnly = true)
+	public List<BizCategoryInfo> findList(BizCategoryInfo bizCategoryInfo){
+		if(bizCategoryInfo != null){
+			bizCategoryInfo.setParentIds(bizCategoryInfo.getParentIds()+"%");
+			return dao.findByParentIdsLike(bizCategoryInfo);
+		}
+		return  new ArrayList<BizCategoryInfo>();
 	}
-	
+	public List<BizCategoryInfo> findListInfo(BizCatelogInfo catelogInfo){
+		return UserUtils.getCategoryInfoList(catelogInfo);
+	}
 	public Page<BizCategoryInfo> findPage(Page<BizCategoryInfo> page, BizCategoryInfo bizCategoryInfo) {
 		return super.findPage(page, bizCategoryInfo);
 	}

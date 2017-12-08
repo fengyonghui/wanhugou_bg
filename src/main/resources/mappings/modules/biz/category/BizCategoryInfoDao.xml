@@ -4,20 +4,25 @@
     
 	<sql id="bizCategoryInfoColumns">
 		a.id AS "id",
-		a.catelog_id AS "catelogId",
-		a.p_id AS "pId",
-		a.p_ids AS "pIds",
+		a.catelog_id AS "catelogInfo.id",
+		ci.name AS "catelogInfo.name",
+		a.p_id AS "parent.id",
+		a.p_ids AS "parentIds",
 		a.name AS "name",
 		a.description AS "description",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.create_id AS "createBy.id",
+		su.name AS "createBy.name",
+		a.create_time AS "createDate",
 		a.status AS "status",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizCategoryInfoJoins">
+		JOIN biz_catelog_info ci ON ci.id=a.catelog_id
+		LEFT JOIN biz_category_info p ON p.id = a.p_id
+		LEFT JOIN sys_user su ON su.id=a.create_id
 	</sql>
     
 	<select id="get" resultType="BizCategoryInfo">
@@ -35,11 +40,11 @@
 		<include refid="bizCategoryInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="catelogId != null and catelogId != ''">
-				AND a.catelog_id = #{catelogId}
+			<if test="catelogInfo != null and catelogInfo.id!=null and  catelogInfo.id!='' ">
+				AND a.catelog_id = #{catelogInfo.id}
 			</if>
-			<if test="pId != null and pId != ''">
-				AND a.p_id = #{pId}
+			<if test="parent != null and parent.id !=null  and parent.id != ''">
+				AND a.p_id = #{parent.id}
 			</if>
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
@@ -47,9 +52,7 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
-			<if test="status != null and status != ''">
-				AND a.status = #{status}
-			</if>
+
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -59,7 +62,15 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
+	<select id="findByParentIdsLike" resultType="BizCategoryInfo">
+		SELECT
+		<include refid="bizCategoryInfoColumns"/>
+		FROM biz_category_info a
+		<include refid="bizCategoryInfoJoins"/>
+		WHERE a.status = #{DEL_FLAG_NORMAL} AND a.p_ids LIKE #{parentIds}
+	</select>
+
 	<select id="findAllList" resultType="BizCategoryInfo">
 		SELECT 
 			<include refid="bizCategoryInfoColumns"/>
@@ -80,7 +91,10 @@
 	<insert id="insert">
 		INSERT INTO biz_category_info(
 			id,
-			catelog_id,
+			<if test="catelogInfo!=null and catelogInfo.id!=null  and catelogInfo.id!=''">
+				catelog_id,
+			</if>
+
 			p_id,
 			p_ids,
 			name,
@@ -93,31 +107,32 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{catelogId},
-			#{pId},
-			#{pIds},
+		<if test="catelogInfo!=null and catelogInfo.id!=null  and catelogInfo.id!=''">
+			#{catelogInfo.id},
+		</if>
+			#{parent.id},
+			#{parentIds},
 			#{name},
 			#{description},
-			#{createId.id},
-			#{createTime},
-			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{delFlag},
 			#{uVersion},
-			#{updateId.id},
-			#{updateTime}
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_category_info SET 	
-			catelog_id = #{catelogId},
-			p_id = #{pId},
-			p_ids = #{pIds},
-			name = #{name},
+			catelog_id = #{catelogInfo.id},
+			p_id = #{parent.id},
+			p_ids = #{parentIds},
+			`name` = #{name},
 			description = #{description},
-			create_time = #{createTime},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

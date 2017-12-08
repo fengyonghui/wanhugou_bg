@@ -3,28 +3,22 @@
  */
 package com.wanhutong.backend.modules.sys.utils;
 
-import java.util.List;
-
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.CacheUtils;
+import com.wanhutong.backend.common.utils.SpringContextHolder;
+import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
+import com.wanhutong.backend.modules.sys.dao.*;
+import com.wanhutong.backend.modules.sys.entity.*;
+import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm.Principal;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
-import com.wanhutong.backend.common.service.BaseService;
-import com.wanhutong.backend.common.utils.CacheUtils;
-import com.wanhutong.backend.common.utils.SpringContextHolder;
-import com.wanhutong.backend.modules.sys.dao.AreaDao;
-import com.wanhutong.backend.modules.sys.dao.MenuDao;
-import com.wanhutong.backend.modules.sys.dao.OfficeDao;
-import com.wanhutong.backend.modules.sys.dao.RoleDao;
-import com.wanhutong.backend.modules.sys.dao.UserDao;
-import com.wanhutong.backend.modules.sys.entity.Area;
-import com.wanhutong.backend.modules.sys.entity.Menu;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.Role;
-import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm.Principal;
+import java.util.List;
 
 /**
  * 用户工具类
@@ -38,6 +32,8 @@ public class UserUtils {
 	private static MenuDao menuDao = SpringContextHolder.getBean(MenuDao.class);
 	private static AreaDao areaDao = SpringContextHolder.getBean(AreaDao.class);
 	private static OfficeDao officeDao = SpringContextHolder.getBean(OfficeDao.class);
+	private static BizCategoryInfoDao bizCategoryInfoDao = SpringContextHolder.getBean(BizCategoryInfoDao.class);
+
 
 	public static final String USER_CACHE = "userCache";
 	public static final String USER_CACHE_ID_ = "id_";
@@ -49,6 +45,7 @@ public class UserUtils {
 	public static final String CACHE_AREA_LIST = "areaList";
 	public static final String CACHE_OFFICE_LIST = "officeList";
 	public static final String CACHE_OFFICE_ALL_LIST = "officeAllList";
+	public static final String CACHE_CATEGORYINFO_LIST="categoryInfoList";
 	
 	/**
 	 * 根据ID获取用户
@@ -219,7 +216,16 @@ public class UserUtils {
 		}
 		return officeList;
 	}
-	
+	public static List<BizCategoryInfo> getCategoryInfoList(BizCatelogInfo catelogInfo){
+		@SuppressWarnings("unchecked")
+		List<BizCategoryInfo> categoryInfoList = (List<BizCategoryInfo>)getCache(CACHE_CATEGORYINFO_LIST);
+		if (categoryInfoList == null){
+			BizCategoryInfo categoryInfo=new BizCategoryInfo();
+			categoryInfo.setCatelogInfo(catelogInfo);
+			categoryInfoList = bizCategoryInfoDao.findList(categoryInfo);
+		}
+		return categoryInfoList;
+	}
 	/**
 	 * 获取授权主要对象
 	 */
