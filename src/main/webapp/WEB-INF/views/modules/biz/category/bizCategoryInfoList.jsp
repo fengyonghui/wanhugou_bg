@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/category/bizCategoryInfo/">商品类别列表</a></li>
-		<shiro:hasPermission name="biz:category:bizCategoryInfo:edit"><li><a href="${ctx}/biz/category/bizCategoryInfo/form">商品类别添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="biz:category:bizCategoryInfo:edit"><li><a href="${ctx}/biz/category/bizCategoryInfo/form?parent.id=${bizCategoryInfo.cid}">商品类别添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCategoryInfo" action="${ctx}/biz/category/bizCategoryInfo/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -51,7 +51,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizCategoryInfo">
+		<c:forEach items="${list}" var="bizCategoryInfo">
 			<tr>
 
 				<td><a href="${ctx}/biz/category/bizCategoryInfo/form?id=${bizCategoryInfo.id}">
@@ -64,7 +64,7 @@
 					${bizCategoryInfo.createBy.name}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizCategoryInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${bizCategoryInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 					${fns:getDictLabel(bizCategoryInfo.status, 'status', '')}

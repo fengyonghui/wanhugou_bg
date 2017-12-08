@@ -11,12 +11,13 @@ import org.hibernate.validator.constraints.Length;
  * @author liuying
  * @version 2017-12-06
  */
-public class BizCategoryInfo extends TreeEntity<BizCategoryInfo> {
+public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	
 	private static final long serialVersionUID = 1L;
 	private BizCatelogInfo catelogInfo;		// 目录分类 --大的一级分类
 	private String description;		// 分类描述
 	private Byte status;//是否可用
+	private Integer cid;//用于参数传递
 
 	public BizCategoryInfo() {
 		super();
@@ -60,5 +61,13 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo> {
 
 	public void setStatus(Byte status) {
 		this.status = status;
+	}
+
+	public Integer getCid() {
+		return cid;
+	}
+
+	public void setCid(Integer cid) {
+		this.cid = cid;
 	}
 }
