@@ -52,6 +52,7 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 		}
 		this.updateDate = new Date();
 		this.createDate = this.updateDate;
+		this.uVersion=1;
 	}
 	
 	/**
