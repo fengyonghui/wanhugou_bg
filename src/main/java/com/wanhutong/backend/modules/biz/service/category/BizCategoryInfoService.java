@@ -4,7 +4,7 @@
 package com.wanhutong.backend.modules.biz.service.category;
 
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.service.TreeService;
 import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizCategoryInfoService extends CrudService<BizCategoryInfoDao, BizCategoryInfo> {
+public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizCategoryInfo> {
 
 	public BizCategoryInfo get(Integer id) {
 		return super.get(id);
@@ -47,11 +47,13 @@ public class BizCategoryInfoService extends CrudService<BizCategoryInfoDao, BizC
 	@Transactional(readOnly = false)
 	public void save(BizCategoryInfo bizCategoryInfo) {
 		super.save(bizCategoryInfo);
+		UserUtils.removeCache(UserUtils.CACHE_CATEGORYINFO_LIST);
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(BizCategoryInfo bizCategoryInfo) {
 		super.delete(bizCategoryInfo);
+		UserUtils.removeCache(UserUtils.CACHE_CATEGORYINFO_LIST);
 	}
 	
 }

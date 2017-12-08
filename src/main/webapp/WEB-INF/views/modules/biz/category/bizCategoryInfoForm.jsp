@@ -35,13 +35,13 @@
 		<form:hidden path="parent.id"/>
 		<sys:message content="${message}"/>		
 
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">上级分类:</label>--%>
-			<%--<div class="controls">--%>
-				<%--<sys:treeselect id="category" name="parent.id" value="${bizCategoryInfo.parent.id}" labelName="parent.name" labelValue="${bizCategoryInfo.parent.name}"--%>
-								<%--title="分类" url="/biz/category/bizCategoryInfo/treeData" extId="${bizCategoryInfo.id}" cssClass="" allowClear="${bizCategoryInfo.currentUser.admin}"/>--%>
-			<%--</div>--%>
-		<%--</div>--%>
+	<%--	<div class="control-group">
+			<label class="control-label">上级分类:</label>
+			<div class="controls">
+				<sys:treeselect id="category" name="parent.id" value="${bizCategoryInfo.parent.id}" labelName="parent.name" labelValue="${bizCategoryInfo.parent.name}"
+								title="分类" url="/biz/category/bizCategoryInfo/treeData" extId="${bizCategoryInfo.id}" cssClass="" allowClear="${bizCategoryInfo.currentUser.admin}"/>
+			</div>
+		</div>--%>
 
 		<div class="control-group">
 			<label class="control-label">分类名称：</label>

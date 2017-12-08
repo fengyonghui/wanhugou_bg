@@ -7,6 +7,7 @@
 		a.catelog_id AS "catelogInfo.id",
 		ci.name AS "catelogInfo.name",
 		a.p_id AS "parent.id",
+		p.name AS "parent.name",
 		a.p_ids AS "parentIds",
 		a.name AS "name",
 		a.description AS "description",
@@ -88,7 +89,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_category_info(
 			id,
 			<if test="catelogInfo!=null and catelogInfo.id!=null  and catelogInfo.id!=''">
@@ -139,7 +140,11 @@
 	<update id="delete">
 		UPDATE biz_category_info SET 
 			status = #{DEL_FLAG_DELETE}
-		WHERE id = #{id}
+		WHERE id = #{id} OR p_ids LIKE
+		<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+		<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
+		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+
 	</update>
 	
 </mapper>
