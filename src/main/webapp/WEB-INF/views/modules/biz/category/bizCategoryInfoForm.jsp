@@ -22,6 +22,19 @@
 					}
 				}
 			});
+			i=0;
+			$("#addPropValue").click(function () {
+			    i++;
+				$("#propValues").append("<input  name=\"catePropertyInfoList[0].catePropValues["+i+"]\" type='text' maxlength=\"512\" class=\"input-small \"/>")
+            });
+			$("#fillin").focus(function () {
+                $("#propValues").show();
+
+            });
+            $("#fillout").focus(function () {
+                $("#propValues").hide();
+
+            });
 		});
 	</script>
 </head>
@@ -60,11 +73,20 @@
 		<div class="control-group">
 			<label class="control-label">分类属性：</label>
 			<div class="controls">
-				<form:input path="catePropertyInfoList[0].name" htmlEscape="false" maxlength="512" class="input-xlarge "/>
-			</div>
-			<div class="controls">
-				<form:input path="catePropValueList[0].name" htmlEscape="false" maxlength="512" class="input-xlarge "/>
-			</div>
+				<form:input path="catePropertyInfoList[0].name" htmlEscape="false" maxlength="512" class="input-small"/>
+				<button type="button" class="btn btn-default">
+					<span class="icon-plus"></span>
+				</button>
+
+					<label>属性值:</label><input type="radio" id="fillin" name="fillValue" value="1" checked="checked"> 填写属性值 <input type="radio" id="fillout" name="fillValue" value="0"> 不填写属性值
+				<span id="propValues">
+					<form:input  path="catePropertyInfoList[0].catePropValues[0]" htmlEscape="false" maxlength="512" class="input-small "/>
+				</span>
+						<button id="addPropValue" type="button" class="btn btn-default">
+						<span class="icon-plus"></span>
+					</button>
+
+
 		</div>
 
 		<div class="form-actions">

@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.entity.category;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
 /**
  * 记录当前分类下的所有属性Entity
  * @author liuying
@@ -17,6 +19,8 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 	private BizCategoryInfo categoryInfo;		// biz_category_info.id
 	private String name;		// 分类名称
 	private String discription;		// 分类描述
+
+	private String[]catePropValues;
 
 	
 	public BizCatePropertyInfo() {
@@ -52,5 +56,13 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 
 	public void setCategoryInfo(BizCategoryInfo categoryInfo) {
 		this.categoryInfo = categoryInfo;
+	}
+
+	public String[] getCatePropValues() {
+		return catePropValues;
+	}
+
+	public void setCatePropValues(String[] catePropValues) {
+		this.catePropValues = catePropValues;
 	}
 }

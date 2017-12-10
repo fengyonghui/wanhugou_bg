@@ -23,7 +23,8 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 
 	private List<BizCatePropertyInfo> catePropertyInfoList;
 
-	private List<BizCatePropValue> catePropValueList;
+
+
 
 	public BizCategoryInfo() {
 		super();
@@ -83,13 +84,5 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 
 	public void setCatePropertyInfoList(List<BizCatePropertyInfo> catePropertyInfoList) {
 		this.catePropertyInfoList = catePropertyInfoList;
-	}
-
-	public List<BizCatePropValue> getCatePropValueList() {
-		return catePropValueList;
-	}
-
-	public void setCatePropValueList(List<BizCatePropValue> catePropValueList) {
-		this.catePropValueList = catePropValueList;
 	}
 }
