@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.entity.category;
 import com.wanhutong.backend.common.persistence.TreeEntity;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
 /**
  * 垂直商品类目表Entity
  * @author liuying
@@ -18,6 +20,10 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	private String description;		// 分类描述
 	private Byte status;//是否可用
 	private Integer cid;//用于参数传递
+
+	private List<BizCatePropertyInfo> catePropertyInfoList;
+
+	private List<BizCatePropValue> catePropValueList;
 
 	public BizCategoryInfo() {
 		super();
@@ -69,5 +75,21 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 
 	public void setCid(Integer cid) {
 		this.cid = cid;
+	}
+
+	public List<BizCatePropertyInfo> getCatePropertyInfoList() {
+		return catePropertyInfoList;
+	}
+
+	public void setCatePropertyInfoList(List<BizCatePropertyInfo> catePropertyInfoList) {
+		this.catePropertyInfoList = catePropertyInfoList;
+	}
+
+	public List<BizCatePropValue> getCatePropValueList() {
+		return catePropValueList;
+	}
+
+	public void setCatePropValueList(List<BizCatePropValue> catePropValueList) {
+		this.catePropValueList = catePropValueList;
 	}
 }

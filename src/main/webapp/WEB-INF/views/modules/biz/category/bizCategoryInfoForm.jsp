@@ -57,6 +57,16 @@
 			</div>
 		</div>
 
+		<div class="control-group">
+			<label class="control-label">分类属性：</label>
+			<div class="controls">
+				<form:input path="catePropertyInfoList[0].name" htmlEscape="false" maxlength="512" class="input-xlarge "/>
+			</div>
+			<div class="controls">
+				<form:input path="catePropValueList[0].name" htmlEscape="false" maxlength="512" class="input-xlarge "/>
+			</div>
+		</div>
+
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:category:bizCategoryInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
