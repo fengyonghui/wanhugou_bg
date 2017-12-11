@@ -1,5 +1,5 @@
 /**
- * There are <a href="https://github.com/thinkgem/jeesite">JeeSite</a> code generation
+ * There are <a href="www.wanhutong.com">wanhutong</a> code generation
  */
 package com.wanhutong.backend.modules.oa.entity;
 

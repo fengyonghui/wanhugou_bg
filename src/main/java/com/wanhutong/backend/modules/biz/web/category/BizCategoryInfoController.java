@@ -1,5 +1,5 @@
 /**
- * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
+ * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
 package com.wanhutong.backend.modules.biz.web.category;
 
@@ -65,6 +65,7 @@ public class BizCategoryInfoController extends BaseController {
 		return "modules/biz/category/bizCategoryInfoList";
 	}
 
+
 	@RequiresPermissions("biz:category:bizCategoryInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizCategoryInfo bizCategoryInfo, Model model) {
@@ -80,7 +81,9 @@ public class BizCategoryInfoController extends BaseController {
 		}
 		bizCategoryInfoService.save(bizCategoryInfo);
 		addMessage(redirectAttributes, "保存商品类别成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/category/bizCategoryInfo/?repage";
+		Integer id = bizCategoryInfo.getParentId()==0 ? null : bizCategoryInfo.getParentId();
+		return "redirect:" + adminPath + "/biz/category/bizCategoryInfo/list?id="+id+"&parentIds="+bizCategoryInfo.getParentIds()+"&cid="+bizCategoryInfo.getId();
+
 	}
 	
 	@RequiresPermissions("biz:category:bizCategoryInfo:edit")
@@ -88,7 +91,8 @@ public class BizCategoryInfoController extends BaseController {
 	public String delete(BizCategoryInfo bizCategoryInfo, RedirectAttributes redirectAttributes) {
 		bizCategoryInfoService.delete(bizCategoryInfo);
 		addMessage(redirectAttributes, "删除商品类别成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/category/bizCategoryInfo/?repage";
+		Integer id = bizCategoryInfo.getParentId()==0 ? null : bizCategoryInfo.getParentId();
+		return "redirect:" + adminPath + "/biz/category/bizCategoryInfo/list?id="+id+"&parentIds="+bizCategoryInfo.getParentIds()+"&cid="+bizCategoryInfo.getId();
 	}
 
 	@ResponseBody
