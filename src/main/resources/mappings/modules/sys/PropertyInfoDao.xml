@@ -5,16 +5,18 @@
 	<sql id="propertyInfoColumns">
 		a.id AS "id",
 		a.name AS "name",
-		a.discription AS "discription",
-		a.status AS "status",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.description AS "description",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		su.name AS "updateBy.name"
 	</sql>
 	
 	<sql id="propertyInfoJoins">
+	left join sys_user su on a.update_id = su.id
 	</sql>
     
 	<select id="get" resultType="PropertyInfo">
@@ -69,7 +71,7 @@
 		INSERT INTO sys_property_info(
 			id,
 			name,
-			discription,
+			description,
 			status,
 			create_id,
 			create_time,
@@ -79,24 +81,24 @@
 		) VALUES (
 			#{id},
 			#{name},
-			#{discription},
-			#{status},
-			#{createId.id},
-			#{createTime},
+			#{description},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
 			#{uVersion},
-			#{updateId.id},
-			#{updateTime}
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE sys_property_info SET 	
 			name = #{name},
-			discription = #{discription},
-			create_time = #{createTime},
+			description = #{description},
+			create_time = #{createDate},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

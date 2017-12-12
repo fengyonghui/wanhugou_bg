@@ -20,9 +20,8 @@ public class PropertyInfo extends DataEntity<PropertyInfo> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// 分类名称
-	private String discription;		// 分类描述
+	private String description;		// 分类描述
 
-	
 	public PropertyInfo() {
 		super();
 	}
@@ -41,14 +40,12 @@ public class PropertyInfo extends DataEntity<PropertyInfo> {
 	}
 	
 	@Length(min=1, max=200, message="分类描述长度必须介于 1 和 200 之间")
-	public String getDiscription() {
-		return discription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDiscription(String discription) {
-		this.discription = discription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
-	
-
 	
 }

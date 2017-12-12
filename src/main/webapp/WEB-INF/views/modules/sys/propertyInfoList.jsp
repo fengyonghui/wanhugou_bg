@@ -38,8 +38,10 @@
 			<tr>
 				<th>分类名称</th>
 				<th>分类描述</th>
-				<th>update_id</th>
-				<th>update_time</th>
+				<th>状态</th>
+				<th>创建时间</th>
+				<th>更新者</th>
+				<th>更新时间</th>
 				<shiro:hasPermission name="sys:propertyInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -50,13 +52,19 @@
 					${propertyInfo.name}
 				</a></td>
 				<td>
-					${propertyInfo.discription}
+					${propertyInfo.description}
 				</td>
 				<td>
-					${propertyInfo.updateId.id}
+					${fns:getDictLabel(propertyInfo.delFlag, 'status', '')}
 				</td>
 				<td>
-					<fmt:formatDate value="${propertyInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${propertyInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+					${propertyInfo.updateBy.name}
+				</td>
+				<td>
+					<fmt:formatDate value="${propertyInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="sys:propertyInfo:edit"><td>
     				<a href="${ctx}/sys/propertyInfo/form?id=${propertyInfo.id}">修改</a>

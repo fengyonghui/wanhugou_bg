@@ -43,38 +43,45 @@
 		<div class="control-group">
 			<label class="control-label">分类描述：</label>
 			<div class="controls">
-				<form:input path="discription" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
+				<form:input path="description" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">create_time：</label>
+			<label class="control-label">状态：</label>
+			<div class="controls">
+				<form:input path="delFlag" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">创建时间：</label>
 			<div class="controls">
 				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${propertyInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					value="<fmt:formatDate value="${propertyInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">u_version：</label>
+		<%-- <div class="control-group">
+			<label class="control-label">版本：</label>
 			<div class="controls">
 				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>
+		</div> --%>
 		<div class="control-group">
-			<label class="control-label">update_id：</label>
+			<label class="control-label">更新者：</label>
 			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="updateBy.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">update_time：</label>
+			<label class="control-label">更新时间：</label>
 			<div class="controls">
 				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${propertyInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					value="<fmt:formatDate value="${propertyInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>

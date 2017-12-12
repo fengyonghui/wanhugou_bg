@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.sys.dao.SysRegionDao">
+    
+	<sql id="sysRegionColumns">
+		a.id AS "id",
+		a.code AS "code",
+		a.pcode AS "pcode",
+		a.name AS "name",
+		a.level AS "level",
+		a.open_status AS "openStatus"
+	</sql>
+	
+	<sql id="sysRegionJoins">
+	</sql>
+    
+	<select id="get" resultType="SysRegion">
+		SELECT 
+			<include refid="sysRegionColumns"/>
+		FROM sys_region a
+		<include refid="sysRegionJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysRegion">
+		SELECT 
+			<include refid="sysRegionColumns"/>
+		FROM sys_region a
+		<include refid="sysRegionJoins"/>
+		<where>
+			
+			<if test="code != null and code != ''">
+				AND a.code = #{code}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysRegion">
+		SELECT 
+			<include refid="sysRegionColumns"/>
+		FROM sys_region a
+		<include refid="sysRegionJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_region(
+			id,
+			code,
+			pcode,
+			name,
+			level,
+			open_status
+		) VALUES (
+			#{id},
+			#{code},
+			#{pcode},
+			#{name},
+			#{level},
+			#{openStatus}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_region SET 	
+			code = #{code},
+			pcode = #{pcode},
+			name = #{name},
+			level = #{level},
+			open_status = #{openStatus}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_region
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
