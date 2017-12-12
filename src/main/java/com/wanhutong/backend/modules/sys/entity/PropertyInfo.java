@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -21,6 +23,9 @@ public class PropertyInfo extends DataEntity<PropertyInfo> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 分类名称
 	private String description;		// 分类描述
+
+	private List<PropValue> propValueList;
+
 
 	public PropertyInfo() {
 		super();
@@ -47,5 +52,12 @@ public class PropertyInfo extends DataEntity<PropertyInfo> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	public List<PropValue> getPropValueList() {
+		return propValueList;
+	}
+
+	public void setPropValueList(List<PropValue> propValueList) {
+		this.propValueList = propValueList;
+	}
 }

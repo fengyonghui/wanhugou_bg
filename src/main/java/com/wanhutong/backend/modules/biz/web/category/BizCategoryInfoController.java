@@ -12,6 +12,8 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatelogInfoService;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,6 +41,8 @@ public class BizCategoryInfoController extends BaseController {
 	private BizCategoryInfoService bizCategoryInfoService;
 	@Autowired
 	private BizCatelogInfoService bizCatelogInfoService;
+	@Autowired
+	private PropertyInfoService propertyInfoService;
 	
 	@ModelAttribute
 	public BizCategoryInfo get(@RequestParam(required=false) Integer id) {
@@ -69,7 +73,9 @@ public class BizCategoryInfoController extends BaseController {
 	@RequiresPermissions("biz:category:bizCategoryInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizCategoryInfo bizCategoryInfo, Model model) {
+		List<PropertyInfo> propertyInfoList=propertyInfoService.findList(new PropertyInfo());
 		model.addAttribute("bizCategoryInfo", bizCategoryInfo);
+		model.addAttribute("propertyInfoList", propertyInfoList);
 		return "modules/biz/category/bizCategoryInfoForm";
 	}
 

@@ -20,7 +20,7 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 	private String name;		// 分类名称
 	private String discription;		// 分类描述
 
-	private String[]catePropValues;
+	private List<BizCatePropValue>catePropValueList;
 
 	
 	public BizCatePropertyInfo() {
@@ -58,11 +58,11 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 		this.categoryInfo = categoryInfo;
 	}
 
-	public String[] getCatePropValues() {
-		return catePropValues;
+	public List<BizCatePropValue> getCatePropValueList() {
+		return catePropValueList;
 	}
 
-	public void setCatePropValues(String[] catePropValues) {
-		this.catePropValues = catePropValues;
+	public void setCatePropValueList(List<BizCatePropValue> catePropValueList) {
+		this.catePropValueList = catePropValueList;
 	}
 }
