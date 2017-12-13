@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.category;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -21,6 +24,8 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
+
+import java.util.List;
 
 /**
  * 记录当前分类下的所有属性Controller
@@ -33,7 +38,9 @@ public class BizCatePropertyInfoController extends BaseController {
 
 	@Autowired
 	private BizCatePropertyInfoService bizCatePropertyInfoService;
-	
+	@Autowired
+	private BizCategoryInfoService bizCategoryInfoService;
+
 	@ModelAttribute
 	public BizCatePropertyInfo get(@RequestParam(required=false) Integer id) {
 		BizCatePropertyInfo entity = null;
@@ -52,6 +59,16 @@ public class BizCatePropertyInfoController extends BaseController {
 		Page<BizCatePropertyInfo> page = bizCatePropertyInfoService.findPage(new Page<BizCatePropertyInfo>(request, response), bizCatePropertyInfo); 
 		model.addAttribute("page", page);
 		return "modules/biz/category/bizCatePropertyInfoList";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = {"listByCate", ""})
+	public List<BizCatePropertyInfo> listByCate(BizCatePropertyInfo bizCatePropertyInfo,Integer catId, Model model) {
+		BizCategoryInfo bizCategoryInfo=bizCategoryInfoService.get(catId);
+		bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
+		List<BizCatePropertyInfo> list=bizCatePropertyInfoService.findList(bizCatePropertyInfo);
+		return  list;
+
 	}
 
 	@RequiresPermissions("biz:category:bizCatePropertyInfo:view")

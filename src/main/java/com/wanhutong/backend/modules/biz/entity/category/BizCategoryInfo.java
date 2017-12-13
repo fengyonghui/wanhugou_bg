@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.TreeEntity;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 垂直商品类目表Entity
@@ -22,6 +23,10 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	private Integer cid;//用于参数传递
 
 	private List<BizCatePropertyInfo> catePropertyInfoList;
+
+	private Map<String,BizCatePropertyInfo> propertyMap;
+	private String catePropertyInfos;
+
 
 
 
@@ -84,5 +89,23 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 
 	public void setCatePropertyInfoList(List<BizCatePropertyInfo> catePropertyInfoList) {
 		this.catePropertyInfoList = catePropertyInfoList;
+	}
+
+
+
+	public String getCatePropertyInfos() {
+		return catePropertyInfos;
+	}
+
+	public void setCatePropertyInfos(String catePropertyInfos) {
+		this.catePropertyInfos = catePropertyInfos;
+	}
+
+	public Map<String, BizCatePropertyInfo> getPropertyMap() {
+		return propertyMap;
+	}
+
+	public void setPropertyMap(Map<String, BizCatePropertyInfo> propertyMap) {
+		this.propertyMap = propertyMap;
 	}
 }

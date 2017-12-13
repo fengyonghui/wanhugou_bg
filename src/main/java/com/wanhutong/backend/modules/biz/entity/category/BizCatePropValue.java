@@ -4,6 +4,8 @@
 package com.wanhutong.backend.modules.biz.entity.category;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -16,6 +18,10 @@ public class BizCatePropValue extends DataEntity<BizCatePropValue> {
 	private static final long serialVersionUID = 1L;
 	private BizCatePropertyInfo catePropertyInfo;		// biz_cate_property_info.id
 	private String value;		// 记录该属性值
+
+	private PropValue propValue;
+
+	private Integer propertyValueId;
 
 	
 	public BizCatePropValue() {
@@ -36,11 +42,27 @@ public class BizCatePropValue extends DataEntity<BizCatePropValue> {
 		this.value = value;
 	}
 
+	public PropValue getPropValue() {
+		return propValue;
+	}
+
+	public void setPropValue(PropValue propValue) {
+		this.propValue = propValue;
+	}
+
 	public BizCatePropertyInfo getCatePropertyInfo() {
 		return catePropertyInfo;
 	}
 
 	public void setCatePropertyInfo(BizCatePropertyInfo catePropertyInfo) {
 		this.catePropertyInfo = catePropertyInfo;
+	}
+
+	public Integer getPropertyValueId() {
+		return propertyValueId;
+	}
+
+	public void setPropertyValueId(Integer propertyValueId) {
+		this.propertyValueId = propertyValueId;
 	}
 }

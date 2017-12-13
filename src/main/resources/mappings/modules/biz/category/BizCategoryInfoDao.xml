@@ -142,6 +142,13 @@
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
+
+	<update id="updateParentIds">
+		UPDATE biz_category_info SET
+		p_id = #{parent.id},
+		p_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
 	
 	<update id="delete">
 		UPDATE biz_category_info SET 
@@ -152,5 +159,15 @@
 		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 
 	</update>
+
+	<delete id="deleteCatePropInfoReal">
+		DELETE biz_cate_property_info,
+		biz_cate_prop_value
+		FROM
+		biz_cate_property_info
+		LEFT JOIN biz_cate_prop_value ON biz_cate_property_info.id = biz_cate_prop_value.prop_id
+		WHERE
+		biz_cate_property_info.cat_id = #{id}
+	</delete>
 	
 </mapper>

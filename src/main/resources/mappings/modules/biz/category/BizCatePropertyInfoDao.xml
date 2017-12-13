@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.category.BizCatePropertyInfoDao">
-    
+    <resultMap id="bizCatePropertyInfoResult" type="BizCatePropertyInfo">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="createDate" column="createDate" />
+		<result property="delFlag" column="status" />
+		<result property="uVersion" column="uVersion" />
+		<result property="updateDate" column="updateDate" />
+		<result property="propertyInfoId" column="propertyInfoId"/>
+		<association property="categoryInfo" javaType="BizCategoryInfo" column="categoryInfo.id">
+			<id property="id" column="categoryInfo.id"/>
+		</association>
+		<association property="propertyInfo" javaType="PropertyInfo" column="propertyInfo.id">
+			<id property="id" column="propertyInfo.id"/>
+		</association>
+		<collection property="catePropValueList" ofType="BizCatePropValue">
+			<id property="id" column="catePropValueList.id" />
+			<result  property="propertyValueId" column="propertyValueId"/>
+		</collection>
+	</resultMap>
+
 	<sql id="bizCatePropertyInfoColumns">
 		a.id AS "id",
-		a.cat_id AS "catId",
+		a.cat_id AS "categoryInfo.id",
 		a.name AS "name",
-		a.discription AS "discription",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime"
+		a.description AS "description",
+		a.sys_prop_id AS "propertyInfo.id",
+		a.sys_prop_id AS "propertyInfoId",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.status AS "status",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizCatePropertyInfoJoins">
@@ -22,15 +48,18 @@
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="BizCatePropertyInfo">
+	<select id="findList" resultMap="bizCatePropertyInfoResult">
 		SELECT 
-			<include refid="bizCatePropertyInfoColumns"/>
+			<include refid="bizCatePropertyInfoColumns"/>,
+			cpv.id AS "catePropValueList.id",
+			cpv.sys_prop_value_id AS "propertyValueId"
 		FROM biz_cate_property_info a
 		<include refid="bizCatePropertyInfoJoins"/>
+		LEFT  JOIN biz_cate_prop_value cpv ON cpv.prop_id=a.id
 		<where>
 			
-			<if test="catId != null and catId != ''">
-				AND a.cat_id = #{catId}
+			<if test="categoryInfo != null and categoryInfo.id !=null and categoryInfo.id != ''">
+				AND a.cat_id = #{categoryInfo.id}
 			</if>
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
@@ -65,36 +94,52 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_cate_property_info(
 			id,
 			cat_id,
-			name,
-			discription,
+			`name`,
+			description,
+			sys_prop_id,
 			create_id,
-			create_time
+			create_time,
+			status,
+			u_version,
+			update_id,
+			update_time
 		) VALUES (
 			#{id},
-			#{catId},
+			#{categoryInfo.id},
 			#{name},
-			#{discription},
-			#{createId.id},
-			#{createTime}
+			#{description},
+			#{propertyInfo.id},
+			#{createBy.id},
+			#{createDate},
+			#{delFlag},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_cate_property_info SET 	
-			cat_id = #{catId},
-			name = #{name},
-			discription = #{discription},
-			create_time = #{createTime}
+			cat_id = #{categoryInfo.id},
+			`name` = #{name},
+			description = #{description},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
-		DELETE FROM biz_cate_property_info
+		UPDATE biz_cate_property_info SET
+			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
+
 	</update>
+
+
 	
 </mapper>

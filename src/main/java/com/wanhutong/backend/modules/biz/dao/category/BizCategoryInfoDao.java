@@ -15,4 +15,6 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 @MyBatisDao
 public interface BizCategoryInfoDao extends TreeDao<BizCategoryInfo> {
 
+    public int deleteCatePropInfoReal(BizCategoryInfo bizCategoryInfo);
+
 }

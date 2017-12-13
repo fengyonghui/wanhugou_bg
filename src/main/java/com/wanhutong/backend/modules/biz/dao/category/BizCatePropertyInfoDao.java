@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.category;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 
 /**
  * 记录当前分类下的所有属性DAO接口
@@ -14,5 +15,6 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
  */
 @MyBatisDao
 public interface BizCatePropertyInfoDao extends CrudDao<BizCatePropertyInfo> {
+
 	
 }
