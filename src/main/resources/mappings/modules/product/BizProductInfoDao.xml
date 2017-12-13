@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.product.dao.BizProductInfoDao">
+    
+	<sql id="bizProductInfoColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.prod_code AS "prodCode",
+		a.brand_id AS "brandId",
+		a.brand_name AS "brandName",
+		a.description AS "description",
+		a.vendor_id AS "vendorId",
+		a.min_price AS "minPrice",
+		a.max_price AS "maxPrice",
+		a.status AS "status",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.u_version AS "uVersion",
+		a.update_time AS "updateTime",
+		a.update_id AS "updateId.id"
+	</sql>
+	
+	<sql id="bizProductInfoJoins">
+	</sql>
+    
+	<select id="get" resultType="BizProductInfo">
+		SELECT 
+			<include refid="bizProductInfoColumns"/>
+		FROM biz_product_info a
+		<include refid="bizProductInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizProductInfo">
+		SELECT 
+			<include refid="bizProductInfoColumns"/>
+		FROM biz_product_info a
+		<include refid="bizProductInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="prodCode != null and prodCode != ''">
+				AND a.prod_code LIKE 
+					<if test="dbName == 'oracle'">'%'||#{prodCode}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{prodCode}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{prodCode},'%')</if>
+			</if>
+			<if test="brandName != null and brandName != ''">
+				AND a.brand_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{brandName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{brandName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{brandName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizProductInfo">
+		SELECT 
+			<include refid="bizProductInfoColumns"/>
+		FROM biz_product_info a
+		<include refid="bizProductInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_product_info(
+			id,
+			name,
+			prod_code,
+			brand_id,
+			brand_name,
+			description,
+			vendor_id,
+			min_price,
+			max_price,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_time,
+			update_id
+		) VALUES (
+			#{id},
+			#{name},
+			#{prodCode},
+			#{brandId},
+			#{brandName},
+			#{description},
+			#{vendorId},
+			#{minPrice},
+			#{maxPrice},
+			#{status},
+			#{createId.id},
+			#{createTime},
+			#{uVersion},
+			#{updateTime},
+			#{updateId.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_product_info SET 	
+			name = #{name},
+			prod_code = #{prodCode},
+			brand_id = #{brandId},
+			brand_name = #{brandName},
+			description = #{description},
+			vendor_id = #{vendorId},
+			min_price = #{minPrice},
+			max_price = #{maxPrice},
+			create_time = #{createTime},
+			u_version = #{uVersion},
+			update_time = #{updateTime},
+			update_id = #{updateId.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_product_info SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
