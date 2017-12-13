@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
@@ -79,6 +80,7 @@ public class BizCategoryInfoController extends BaseController {
 		List<PropertyInfo> propertyInfoList=propertyInfoService.findList(propertyInfo);
 		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
 		model.addAttribute("bizCategoryInfo", bizCategoryInfo);
+		model.addAttribute("propertyInfo",propertyInfo);
 		model.addAttribute("propertyInfoList", propertyInfoList);
 		model.addAttribute("map", map);
 		return "modules/biz/category/bizCategoryInfoForm";

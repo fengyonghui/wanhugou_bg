@@ -68,17 +68,17 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	@Transactional(readOnly = false)
 	public void save(BizCategoryInfo bizCategoryInfo) {
 		super.save(bizCategoryInfo);
-		BizCatePropValue catePropValue=new BizCatePropValue();
-		BizCatePropertyInfo catePropertyInfo=new BizCatePropertyInfo();
-		String catePropertyInfoStr=bizCategoryInfo.getCatePropertyInfos();
+		BizCatePropValue catePropValue = new BizCatePropValue();
+		BizCatePropertyInfo catePropertyInfo = new BizCatePropertyInfo();
+		String catePropertyInfoStr = bizCategoryInfo.getCatePropertyInfos();
 		bizCategoryInfoDao.deleteCatePropInfoReal(bizCategoryInfo);
-		if(catePropertyInfoStr!=null && !catePropertyInfoStr.isEmpty()){
-			String[] catePropertyInfos= catePropertyInfoStr.split(",");
-			for(int i=0;i<catePropertyInfos.length;i++){
-				Set<String> keySet=bizCategoryInfo.getPropertyMap().keySet();
-				if(!keySet.contains(catePropertyInfos[i])){
-					Integer propId=Integer.parseInt(catePropertyInfos[i]);
-					PropertyInfo propertyInfo=propertyInfoService.get(propId);
+		if (catePropertyInfoStr != null && !catePropertyInfoStr.isEmpty()) {
+			String[] catePropertyInfos = catePropertyInfoStr.split(",");
+			for (int i = 0; i < catePropertyInfos.length; i++) {
+				Set<String> keySet = bizCategoryInfo.getPropertyMap().keySet();
+				if (!keySet.contains(catePropertyInfos[i])) {
+					Integer propId = Integer.parseInt(catePropertyInfos[i]);
+					PropertyInfo propertyInfo = propertyInfoService.get(propId);
 					catePropertyInfo.setName(propertyInfo.getName());
 					catePropertyInfo.setDescription(propertyInfo.getDescription());
 					catePropertyInfo.setCategoryInfo(bizCategoryInfo);
@@ -86,34 +86,34 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 					bizCatePropertyInfoService.save(catePropertyInfo);
 
 				}
-
 			}
 		}
-
-		for (Map.Entry<String, BizCatePropertyInfo> entry : bizCategoryInfo.getPropertyMap().entrySet()) {
-			Integer propId=Integer.parseInt(entry.getKey());
-			BizCatePropertyInfo bizCatePropertyInfo=entry.getValue();
-			PropertyInfo propertyInfo=propertyInfoService.get(propId);
-			bizCatePropertyInfo.setName(propertyInfo.getName());
-			bizCatePropertyInfo.setDescription(propertyInfo.getDescription());
-			bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
-			bizCatePropertyInfo.setPropertyInfo(propertyInfo);
-			bizCatePropertyInfoService.save(bizCatePropertyInfo);
-			String catePropertyValueStr=bizCatePropertyInfo.getCatePropertyValues();
-			if(catePropertyValueStr!=null && !"".equals(catePropertyValueStr)){
-				String[] catePropertyValues=catePropertyValueStr.split(",");
-				for(int j=0;j<catePropertyValues.length;j++){
-					catePropValue.setId(null);
-					Integer propValueId=Integer.parseInt(catePropertyValues[j].trim());
-					PropValue propValue=propValueService.get(propValueId);
+		if (bizCategoryInfo.getPropertyMap() != null) {
+			for (Map.Entry<String, BizCatePropertyInfo> entry : bizCategoryInfo.getPropertyMap().entrySet()) {
+				Integer propId = Integer.parseInt(entry.getKey());
+				BizCatePropertyInfo bizCatePropertyInfo = entry.getValue();
+				PropertyInfo propertyInfo = propertyInfoService.get(propId);
+				bizCatePropertyInfo.setName(propertyInfo.getName());
+				bizCatePropertyInfo.setDescription(propertyInfo.getDescription());
+				bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
+				bizCatePropertyInfo.setPropertyInfo(propertyInfo);
+				bizCatePropertyInfoService.save(bizCatePropertyInfo);
+				String catePropertyValueStr = bizCatePropertyInfo.getCatePropertyValues();
+				if (catePropertyValueStr != null && !"".equals(catePropertyValueStr)) {
+					String[] catePropertyValues = catePropertyValueStr.split(",");
+					for (int j = 0; j < catePropertyValues.length; j++) {
+						catePropValue.setId(null);
+						Integer propValueId = Integer.parseInt(catePropertyValues[j].trim());
+						PropValue propValue = propValueService.get(propValueId);
 						catePropValue.setCatePropertyInfo(bizCatePropertyInfo);
 						catePropValue.setValue(propValue.getValue());
 						catePropValue.setPropValue(propValue);
 						bizCatePropValueService.save(catePropValue);
 
+					}
 				}
-			}
 
+			}
 		}
 
 		UserUtils.removeCache(UserUtils.CACHE_CATEGORYINFO_LIST);

@@ -49,14 +49,14 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">分类名称：</label>
+			<label class="control-label">属性名称：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">分类描述：</label>
+			<label class="control-label">属性描述：</label>
 			<div class="controls">
 				<form:input path="description" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

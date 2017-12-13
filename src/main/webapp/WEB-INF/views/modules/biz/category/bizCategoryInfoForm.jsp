@@ -53,6 +53,11 @@
                 });
 
             });
+            var i=0;
+            $("#addPropValue").click(function () {
+                i++;
+                $("#propValues").append("<input type='text' name=\"catePropValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
+            });
 	});
 
 
@@ -104,10 +109,75 @@
 					</c:forEach>
 				</div>
 			</div>
+			<div class="control-group">
+			<label class="control-label">增加分类属性：</label>
+			<div class="controls">
+				<button  data-toggle="modal" data-target="#myModal" type="button" class="btn btn-default">
+					<span class="icon-plus"></span>
+				</button>
+			</div>
+		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:category:bizCategoryInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">×
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						分类属性与属性值
+					</h4>
+				</div>
+				<%--@elvariable id="propertyInfo" type="com.wanhutong.backend.modules.sys.entity.PropertyInfo"--%>
+				<form:form id="inputForm2" modelAttribute="propertyInfo" action="${ctx}/sys/propertyInfo/save" method="post" class="form-horizontal">
+
+				<div class="modal-body">
+					<div class="control-group">
+							<label class="control-label">属性名称：</label>
+							<div class="controls">
+								<form:input path="name" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
+								<span class="help-inline"><font color="red">*</font> </span>
+							</div>
+						</div>
+					<div class="control-group">
+							<label class="control-label">属性描述：</label>
+							<div class="controls">
+								<form:input path="description" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
+								<span class="help-inline"><font color="red">*</font> </span>
+							</div>
+						</div>
+					<div class="control-group">
+							<label class="control-label">属性值：</label>
+							<div class="controls">
+						<span id="propValues">
+							<form:input path="propValueList[0].value" htmlEscape="false" maxlength="512" class="input-small"/>
+						</span>
+								<button id="addPropValue" type="button" class="btn btn-default">
+									<span class="icon-plus"></span>
+								</button>
+							</div>
+						</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">关闭
+					</button>
+					<shiro:hasPermission name="biz:category:bizCatePropertyInfo:edit">
+					<button type="submit" class="btn btn-primary">
+						保存提交
+					</button>
+					</shiro:hasPermission>
+				</div>
+				</form:form>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 </body>
 </html>
