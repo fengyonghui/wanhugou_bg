@@ -4,13 +4,16 @@
     
 	<sql id="bizCatePropValueColumns">
 		a.id AS "id",
-		a.prop_id AS "propId",
+		a.prop_id AS "catePropertyInfo.id",
 		a.value AS "value",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
-		a.status AS "status"
+		a.sys_prop_value_id AS "propValue.id",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.status AS "status",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
-	
 	<sql id="bizCatePropValueJoins">
 	</sql>
     
@@ -29,12 +32,10 @@
 		<include refid="bizCatePropValueJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="propId != null and propId != ''">
-				AND a.prop_id = #{propId}
+			<if test="catePropertyInfo != null and catePropertyInfo.id!=null and catePropertyInfo.id != ''">
+				AND a.prop_id = #{catePropertyInfo.id}
 			</if>
-			<if test="status != null and status != ''">
-				AND a.status = #{status}
-			</if>
+
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -66,25 +67,35 @@
 		INSERT INTO biz_cate_prop_value(
 			id,
 			prop_id,
-			value,
+			`value`,
+			sys_prop_value_id,
 			create_id,
 			create_time,
-			status
+			status,
+			u_version,
+			update_id,
+			update_time
 		) VALUES (
 			#{id},
-			#{propId},
+			#{catePropertyInfo.id},
 			#{value},
-			#{createId.id},
-			#{createTime},
-			#{status}
+			#{propValue.id},
+			#{createBy.id},
+			#{createDate},
+			#{delFlag},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_cate_prop_value SET 	
-			prop_id = #{propId},
-			value = #{value},
-			create_time = #{createTime}
+			prop_id = #{catePropertyInfo.id},
+			`value` = #{value},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

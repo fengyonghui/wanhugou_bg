@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.category;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
@@ -18,9 +19,13 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 	private static final long serialVersionUID = 1L;
 	private BizCategoryInfo categoryInfo;		// biz_category_info.id
 	private String name;		// 分类名称
-	private String discription;		// 分类描述
+	private String description;		// 分类描述
+
+	private PropertyInfo propertyInfo;
 
 	private List<BizCatePropValue>catePropValueList;
+
+	private String catePropertyValues;
 
 	
 	public BizCatePropertyInfo() {
@@ -40,14 +45,21 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
 	@Length(min=1, max=200, message="分类描述长度必须介于 1 和 200 之间")
-	public String getDiscription() {
-		return discription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDiscription(String discription) {
-		this.discription = discription;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public PropertyInfo getPropertyInfo() {
+		return propertyInfo;
+	}
+
+	public void setPropertyInfo(PropertyInfo propertyInfo) {
+		this.propertyInfo = propertyInfo;
 	}
 
 	public BizCategoryInfo getCategoryInfo() {
@@ -64,5 +76,13 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 
 	public void setCatePropValueList(List<BizCatePropValue> catePropValueList) {
 		this.catePropValueList = catePropValueList;
+	}
+
+	public String getCatePropertyValues() {
+		return catePropertyValues;
+	}
+
+	public void setCatePropertyValues(String catePropertyValues) {
+		this.catePropertyValues = catePropertyValues;
 	}
 }

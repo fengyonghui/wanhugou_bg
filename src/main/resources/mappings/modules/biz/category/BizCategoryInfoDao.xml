@@ -142,6 +142,13 @@
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
+
+	<update id="updateParentIds">
+		UPDATE biz_category_info SET
+		p_id = #{parent.id},
+		p_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
 	
 	<update id="delete">
 		UPDATE biz_category_info SET 
