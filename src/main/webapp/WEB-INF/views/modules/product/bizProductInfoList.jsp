@@ -28,11 +28,14 @@
 			<li><label>商品名称：</label>
 				<form:input path="name" htmlEscape="false" class="input-medium"/>
 			</li>
-			<li><label>商品代码--厂家定的-或自己定的：</label>
+			<li><label>商品代码：</label>
 				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-medium"/>
 			</li>
-			<li><label>品牌名称，冗余字段，提升查询效率：</label>
+			<li><label>品牌名称：</label>
 				<form:input path="brandName" htmlEscape="false" maxlength="50" class="input-medium"/>
+			</li>
+			<li><label>工厂id：</label>
+				<form:input path="vendorId" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -43,8 +46,13 @@
 		<thead>
 			<tr>
 				<th>商品名称</th>
-				<th>商品代码--厂家定的-或自己定的</th>
-				<th>品牌名称，冗余字段，提升查询效率</th>
+				<th>商品代码</th>
+				<th>品牌名称</th>
+				<th>商品描述</th>
+				<th>工厂id</th>
+				<th>最低售价</th>
+				<th>最高售价</th>
+				
 				<shiro:hasPermission name="product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -59,6 +67,18 @@
 				</td>
 				<td>
 					${bizProductInfo.brandName}
+				</td>
+				<td>
+					${bizProductInfo.description}
+				</td>
+				<td>
+					${bizProductInfo.vendorId}
+				</td>
+				<td>
+					${bizProductInfo.minPrice}
+				</td>
+				<td>
+					${bizProductInfo.maxPrice}
 				</td>
 				<shiro:hasPermission name="product:bizProductInfo:edit"><td>
     				<a href="${ctx}/product/bizProductInfo/form?id=${bizProductInfo.id}">修改</a>

@@ -41,21 +41,21 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品代码--厂家定的-或自己定的：</label>
+			<label class="control-label">商品代码：</label>
 			<div class="controls">
 				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">biz_cate_prop_value.id, 对应品牌分类的属性值ID：</label>
+			<label class="control-label">品牌分类的属性值ID:</label>
 			<div class="controls">
 				<form:input path="brandId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">品牌名称，冗余字段，提升查询效率：</label>
+			<label class="control-label">品牌名称：</label>
 			<div class="controls">
 				<form:input path="brandName" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -68,7 +68,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">sys_office.id &amp; type= vendor：</label>
+			<label class="control-label">工厂id：</label>
 			<div class="controls">
 				<form:input path="vendorId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -87,7 +87,7 @@
 				<form:input path="maxPrice" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
+		<%-- <div class="control-group">
 			<label class="control-label">创建时间：</label>
 			<div class="controls">
 				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
@@ -118,7 +118,7 @@
 				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>
+		</div> --%>
 		<div class="form-actions">
 			<shiro:hasPermission name="product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

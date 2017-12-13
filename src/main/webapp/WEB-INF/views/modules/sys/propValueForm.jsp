@@ -36,18 +36,18 @@
 		<div class="control-group">
 			<label class="control-label">biz_cate_property_info.id：</label>
 			<div class="controls">
-				<form:input path="propId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="propertyInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">记录该属性值：</label>
+			<label class="control-label">属性值：</label>
 			<div class="controls">
 				<form:input path="value" htmlEscape="false" maxlength="100" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
+		<%-- <div class="control-group">
 			<label class="control-label">create_time：</label>
 			<div class="controls">
 				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
@@ -78,7 +78,7 @@
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>
+		</div> --%>
 		<div class="form-actions">
 			<shiro:hasPermission name="sys:propValue:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

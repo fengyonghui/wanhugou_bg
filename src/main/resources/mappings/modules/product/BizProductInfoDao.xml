@@ -12,12 +12,12 @@
 		a.vendor_id AS "vendorId",
 		a.min_price AS "minPrice",
 		a.max_price AS "maxPrice",
-		a.status AS "status",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_time AS "updateTime",
-		a.update_id AS "updateId.id"
+		a.update_time AS "updateDate",
+		a.update_id AS "updateBy.id"
 	</sql>
 	
 	<sql id="bizProductInfoJoins">
@@ -55,6 +55,12 @@
 					<if test="dbName == 'oracle'">'%'||#{brandName}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{brandName}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{brandName},'%')</if>
+			</if>
+			<if test="vendorId != null and vendorId != ''">
+				AND a.brand_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{vendorId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{vendorId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{vendorId},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -110,12 +116,12 @@
 			#{vendorId},
 			#{minPrice},
 			#{maxPrice},
-			#{status},
-			#{createId.id},
-			#{createTime},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
 			#{uVersion},
-			#{updateTime},
-			#{updateId.id}
+			#{updateDate},
+			#{updateBy.id}
 		)
 	</insert>
 	
@@ -129,10 +135,10 @@
 			vendor_id = #{vendorId},
 			min_price = #{minPrice},
 			max_price = #{maxPrice},
-			create_time = #{createTime},
+			create_time = #{createDate},
 			u_version = #{uVersion},
-			update_time = #{updateTime},
-			update_id = #{updateId.id}
+			update_time = #{updateDate},
+			update_id = #{updateBy.id}
 		WHERE id = #{id}
 	</update>
 	
