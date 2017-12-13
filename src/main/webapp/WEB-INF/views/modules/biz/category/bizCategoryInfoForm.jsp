@@ -60,7 +60,7 @@
                     return false;
                 }
                 i++;
-                $("#propValues").append("<input type='text' id='propValueList\"+i+\"' name=\"propValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
+                $("#propValues").append("<input type='text' id='propValueList"+i+"' name=\"propValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
             });
 	$("#but_sub").click(function () {
         $.ajax({
