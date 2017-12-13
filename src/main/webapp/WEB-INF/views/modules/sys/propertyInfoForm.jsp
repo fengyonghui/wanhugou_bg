@@ -23,10 +23,20 @@
 				}
 			});
 			var i=0;
-			$("#addPropValue").click(function () {
+			//var propValue = $("#propValues");
+			$("#addPropValue").click(function () {		
+				
+				if($("#propValueList"+i).val()==''){
+					
+					alert('属性不能为空');
+					return false;
+				}
+					
 		    	i++;
-			$("#propValues").append("<input type='text' name=\"propValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
-           });
+			$("#propValues").append("<input type='text' id='propValueList'"+i+" name=\"propValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
+           
+			return true;
+			});
 		});
 	</script>
 </head>
@@ -57,9 +67,9 @@
 			<div class="controls">
 				<span id="propValues">
 					<%--<input name="propValueList[0].name" h maxlength="512" class="input-small"/>--%>
-					<form:input path="propValueList[0].value" htmlEscape="false" maxlength="512" class="input-small"/>
+					<form:input  path="propValueList[0].value" id="propValueList0" htmlEscape="false" maxlength="512" class="input-small" />
 				</span>
-				<button id="addPropValue" type="button" class="btn btn-default">
+				<button id="addPropValue" type="button" class="btn btn-default" >
 					<span class="icon-plus"></span>
 				</button>
 			</div>
