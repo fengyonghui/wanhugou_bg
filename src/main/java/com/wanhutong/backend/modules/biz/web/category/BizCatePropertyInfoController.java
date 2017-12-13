@@ -63,7 +63,10 @@ public class BizCatePropertyInfoController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = {"listByCate", ""})
-	public List<BizCatePropertyInfo> listByCate(BizCatePropertyInfo bizCatePropertyInfo,Integer catId, Model model) {
+	public List<BizCatePropertyInfo> listByCate(BizCatePropertyInfo bizCatePropertyInfo, Integer catId, Model model) {
+		if(catId==null ){
+			return null;
+		}
 		BizCategoryInfo bizCategoryInfo=bizCategoryInfoService.get(catId);
 		bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
 		List<BizCatePropertyInfo> list=bizCatePropertyInfoService.findList(bizCatePropertyInfo);

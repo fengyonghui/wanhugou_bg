@@ -71,22 +71,25 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 		BizCatePropValue catePropValue=new BizCatePropValue();
 		BizCatePropertyInfo catePropertyInfo=new BizCatePropertyInfo();
 		String catePropertyInfoStr=bizCategoryInfo.getCatePropertyInfos();
-		String[] catePropertyInfos= catePropertyInfoStr.split(",");
 		bizCategoryInfoDao.deleteCatePropInfoReal(bizCategoryInfo);
-		for(int i=0;i<catePropertyInfos.length;i++){
-			Set<String> keySet=bizCategoryInfo.getPropertyMap().keySet();
-			if(!keySet.contains(catePropertyInfos[i])){
-				Integer propId=Integer.parseInt(catePropertyInfos[i]);
-				PropertyInfo propertyInfo=propertyInfoService.get(propId);
-				catePropertyInfo.setName(propertyInfo.getName());
-				catePropertyInfo.setDescription(propertyInfo.getDescription());
-				catePropertyInfo.setCategoryInfo(bizCategoryInfo);
-				catePropertyInfo.setPropertyInfo(propertyInfo);
-				bizCatePropertyInfoService.save(catePropertyInfo);
+		if(catePropertyInfoStr!=null && !catePropertyInfoStr.isEmpty()){
+			String[] catePropertyInfos= catePropertyInfoStr.split(",");
+			for(int i=0;i<catePropertyInfos.length;i++){
+				Set<String> keySet=bizCategoryInfo.getPropertyMap().keySet();
+				if(!keySet.contains(catePropertyInfos[i])){
+					Integer propId=Integer.parseInt(catePropertyInfos[i]);
+					PropertyInfo propertyInfo=propertyInfoService.get(propId);
+					catePropertyInfo.setName(propertyInfo.getName());
+					catePropertyInfo.setDescription(propertyInfo.getDescription());
+					catePropertyInfo.setCategoryInfo(bizCategoryInfo);
+					catePropertyInfo.setPropertyInfo(propertyInfo);
+					bizCatePropertyInfoService.save(catePropertyInfo);
+
+				}
 
 			}
-
 		}
+
 		for (Map.Entry<String, BizCatePropertyInfo> entry : bizCategoryInfo.getPropertyMap().entrySet()) {
 			Integer propId=Integer.parseInt(entry.getKey());
 			BizCatePropertyInfo bizCatePropertyInfo=entry.getValue();
@@ -105,9 +108,8 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 					PropValue propValue=propValueService.get(propValueId);
 						catePropValue.setCatePropertyInfo(bizCatePropertyInfo);
 						catePropValue.setValue(propValue.getValue());
-					catePropValue.setPropValue(propValue);
+						catePropValue.setPropValue(propValue);
 						bizCatePropValueService.save(catePropValue);
-
 
 				}
 			}
