@@ -42,6 +42,7 @@ public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyIn
 			List<PropValue> valueList=propValueService.findList(propValue);
 			info.setPropValueList(valueList);
 		}
+		
 		return list;
 	}
 	
