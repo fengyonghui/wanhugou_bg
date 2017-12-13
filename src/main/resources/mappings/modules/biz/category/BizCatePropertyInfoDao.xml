@@ -9,6 +9,7 @@
 		<result property="delFlag" column="status" />
 		<result property="uVersion" column="uVersion" />
 		<result property="updateDate" column="updateDate" />
+		<result property="propertyInfoId" column="propertyInfoId"/>
 		<association property="categoryInfo" javaType="BizCategoryInfo" column="categoryInfo.id">
 			<id property="id" column="categoryInfo.id"/>
 		</association>
@@ -17,6 +18,7 @@
 		</association>
 		<collection property="catePropValueList" ofType="BizCatePropValue">
 			<id property="id" column="catePropValueList.id" />
+			<result  property="propertyValueId" column="propertyValueId"/>
 		</collection>
 	</resultMap>
 
@@ -26,6 +28,7 @@
 		a.name AS "name",
 		a.description AS "description",
 		a.sys_prop_id AS "propertyInfo.id",
+		a.sys_prop_id AS "propertyInfoId",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.status AS "status",
@@ -48,7 +51,8 @@
 	<select id="findList" resultMap="bizCatePropertyInfoResult">
 		SELECT 
 			<include refid="bizCatePropertyInfoColumns"/>,
-			cpv.id AS "catePropValueList.id"
+			cpv.id AS "catePropValueList.id",
+			cpv.sys_prop_value_id AS "propertyValueId"
 		FROM biz_cate_property_info a
 		<include refid="bizCatePropertyInfoJoins"/>
 		LEFT  JOIN biz_cate_prop_value cpv ON cpv.prop_id=a.id
@@ -135,5 +139,7 @@
 		WHERE id = #{id}
 
 	</update>
+
+
 	
 </mapper>

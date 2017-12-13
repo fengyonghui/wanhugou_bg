@@ -33,16 +33,25 @@
                 }
             });
             var id=$("#id").val();
-            var props=$(".select_all").val();
+            var propsEle=$(".select_all");
+            var props="";
+            propsEle.each(function(){
+                props+=$(this).val()+",";
+            });
+            props=props.substring(0,props.length-1);
             $.post("${ctx}/biz/category/bizCatePropertyInfo/listByCate",
                 {catId:id},
                 function(data,status){
-                    alert("数据: \n" + data + "\n状态: " + status);
                     $.each(data, function (index, catePropertyInfo) {
-                       if(props.contains(data.propertyInfo.id)){
-
+                       if(props.indexOf(catePropertyInfo.propertyInfoId)!=-1){
+						$("#"+catePropertyInfo.propertyInfoId).attr('checked',true)
 					   }
+                        $.each(catePropertyInfo.catePropValueList, function (index, catePropValue) {
+                                $("#value_"+catePropValue.propertyValueId).attr('checked',true)
+
+                        });
                 });
+
             });
 	});
 
@@ -89,7 +98,7 @@
 					<c:forEach items="${propertyInfoList}" var="propertyInfo">
 						<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="catePropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.name}：
 						<c:forEach items="${map[propertyInfo.id]}" var="propValue">
-							<input class="value_${propertyInfo.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}
+							<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}
 						</c:forEach>
 						<br/>
 					</c:forEach>

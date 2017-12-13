@@ -21,6 +21,8 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 	private String name;		// 分类名称
 	private String description;		// 分类描述
 
+	private Integer propertyInfoId;
+
 	private PropertyInfo propertyInfo;
 
 	private List<BizCatePropValue>catePropValueList;
@@ -76,6 +78,14 @@ public class BizCatePropertyInfo extends DataEntity<BizCatePropertyInfo> {
 
 	public void setCatePropValueList(List<BizCatePropValue> catePropValueList) {
 		this.catePropValueList = catePropValueList;
+	}
+
+	public Integer getPropertyInfoId() {
+		return propertyInfoId;
+	}
+
+	public void setPropertyInfoId(Integer propertyInfoId) {
+		this.propertyInfoId = propertyInfoId;
 	}
 
 	public String getCatePropertyValues() {

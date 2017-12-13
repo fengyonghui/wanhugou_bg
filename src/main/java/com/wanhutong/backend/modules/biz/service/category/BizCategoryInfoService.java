@@ -16,6 +16,7 @@ import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.omg.PortableInterceptor.INACTIVE;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +42,8 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	private BizCatePropertyInfoService bizCatePropertyInfoService;
 	@Resource
 	private BizCatePropValueService bizCatePropValueService;
+	@Autowired
+	private BizCategoryInfoDao bizCategoryInfoDao;
 
 	public BizCategoryInfo get(Integer id) {
 		return super.get(id);
@@ -69,6 +72,7 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 		BizCatePropertyInfo catePropertyInfo=new BizCatePropertyInfo();
 		String catePropertyInfoStr=bizCategoryInfo.getCatePropertyInfos();
 		String[] catePropertyInfos= catePropertyInfoStr.split(",");
+		bizCategoryInfoDao.deleteCatePropInfoReal(bizCategoryInfo);
 		for(int i=0;i<catePropertyInfos.length;i++){
 			Set<String> keySet=bizCategoryInfo.getPropertyMap().keySet();
 			if(!keySet.contains(catePropertyInfos[i])){

@@ -21,6 +21,8 @@ public class BizCatePropValue extends DataEntity<BizCatePropValue> {
 
 	private PropValue propValue;
 
+	private Integer propertyValueId;
+
 	
 	public BizCatePropValue() {
 		super();
@@ -54,5 +56,13 @@ public class BizCatePropValue extends DataEntity<BizCatePropValue> {
 
 	public void setCatePropertyInfo(BizCatePropertyInfo catePropertyInfo) {
 		this.catePropertyInfo = catePropertyInfo;
+	}
+
+	public Integer getPropertyValueId() {
+		return propertyValueId;
+	}
+
+	public void setPropertyValueId(Integer propertyValueId) {
+		this.propertyValueId = propertyValueId;
 	}
 }
