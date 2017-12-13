@@ -55,10 +55,32 @@
             });
             var i=0;
             $("#addPropValue").click(function () {
+                if($("#propValueList"+i).val()==''){
+                    alert('属性不能为空');
+                    return false;
+                }
                 i++;
-                $("#propValues").append("<input type='text' name=\"catePropValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
+                $("#propValues").append("<input type='text' id='propValueList\"+i+\"' name=\"propValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
             });
+	$("#but_sub").click(function () {
+        $.ajax({
+            type:"post",
+            url:"${ctx}/sys/propertyInfo/savePropInfo",
+            data:$('#inputForm2').serialize(),
+            success:function (data) {
+                if(data=='ok'){
+                    $('#myModal').modal('hide');
+                    $("#myModal").on("hidden.bs.modal", function (e) {
+                        alert("保存成功！");
+                        window.location.href="${ctx}/biz/category/bizCategoryInfo/form?id="+id;
+                    })
+                }
+            }
+        })
+    })
+
 	});
+
 
 
 	</script>
@@ -110,7 +132,7 @@
 				</div>
 			</div>
 			<div class="control-group">
-			<label class="control-label">增加分类属性：</label>
+			<label class="control-label">增加属性：</label>
 			<div class="controls">
 				<button  data-toggle="modal" data-target="#myModal" type="button" class="btn btn-default">
 					<span class="icon-plus"></span>
@@ -131,11 +153,11 @@
 							aria-hidden="true">×
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						分类属性与属性值
+						属性与属性值
 					</h4>
 				</div>
 				<%--@elvariable id="propertyInfo" type="com.wanhutong.backend.modules.sys.entity.PropertyInfo"--%>
-				<form:form id="inputForm2" modelAttribute="propertyInfo" action="${ctx}/sys/propertyInfo/save" method="post" class="form-horizontal">
+				<form:form id="inputForm2" modelAttribute="propertyInfo" action="${ctx}/sys/propertyInfo/savePropInfo" method="post" class="form-horizontal">
 
 				<div class="modal-body">
 					<div class="control-group">
@@ -149,14 +171,13 @@
 							<label class="control-label">属性描述：</label>
 							<div class="controls">
 								<form:input path="description" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
-								<span class="help-inline"><font color="red">*</font> </span>
 							</div>
 						</div>
 					<div class="control-group">
 							<label class="control-label">属性值：</label>
 							<div class="controls">
 						<span id="propValues">
-							<form:input path="propValueList[0].value" htmlEscape="false" maxlength="512" class="input-small"/>
+							<form:input id="propValueList0" path="propValueList[0].value" htmlEscape="false" maxlength="512" class="input-small"/>
 						</span>
 								<button id="addPropValue" type="button" class="btn btn-default">
 									<span class="icon-plus"></span>
@@ -170,7 +191,7 @@
 							data-dismiss="modal">关闭
 					</button>
 					<shiro:hasPermission name="biz:category:bizCatePropertyInfo:edit">
-					<button type="submit" class="btn btn-primary">
+					<button id="but_sub"type="button" class="btn btn-primary">
 						保存提交
 					</button>
 					</shiro:hasPermission>

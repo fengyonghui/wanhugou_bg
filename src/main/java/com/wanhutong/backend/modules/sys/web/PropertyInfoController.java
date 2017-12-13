@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -21,6 +22,8 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
+
+import java.util.List;
 
 /**
  * 系统属性Controller
@@ -70,6 +73,23 @@ public class PropertyInfoController extends BaseController {
 		propertyInfoService.save(propertyInfo);
 		addMessage(redirectAttributes, "保存系统属性成功");
 		return "redirect:"+Global.getAdminPath()+"/sys/propertyInfo/?repage";
+	}
+	@RequiresPermissions("sys:propertyInfo:edit")
+	@ResponseBody
+	@RequestMapping(value = "savePropInfo")
+	public String save(PropertyInfo propertyInfo, Model model){
+		String str="";
+		try{
+			if (!beanValidator(model, propertyInfo)){
+				return form(propertyInfo, model);
+			}
+			propertyInfoService.save(propertyInfo);
+			str="ok";
+		}catch (Exception e){
+			str="error";
+		}
+
+		return  str;
 	}
 	
 	@RequiresPermissions("sys:propertyInfo:edit")

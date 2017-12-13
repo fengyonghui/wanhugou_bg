@@ -63,7 +63,6 @@ public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyIn
 	List<PropValue> propValueList=propertyInfo.getPropValueList();
 	super.save(propertyInfo);
 	for(PropValue propValue:propValueList) {
-		
 		propValue.setPropertyInfo(propertyInfo);
 		propValueService.save(propValue);
 

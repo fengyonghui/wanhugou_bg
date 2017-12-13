@@ -28,10 +28,13 @@
 	<select id="findList" resultType="PropValue">
 		SELECT 
 			<include refid="propValueColumns"/>
-		FROM sys_prop_value a 
+		FROM sys_prop_value a
 		<include refid="propValueJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="propertyInfo!=null and propertyInfo.id!=null and propertyInfo.id!=''">
+				and a.prop_id=#{propertyInfo.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -60,7 +63,7 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO sys_prop_value (
+		INSERT INTO sys_prop_value(
 			id,
 			prop_id,
 			value,
