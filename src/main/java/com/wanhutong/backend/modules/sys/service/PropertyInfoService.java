@@ -68,13 +68,6 @@ public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyIn
 	@Transactional(readOnly = false)
 	public void delete(PropertyInfo propertyInfo) {
 		List<PropValue> propValueList = propertyInfo.getPropValueList();
-		for(PropValue propValue:propValueList) {
-						
-			propValue.setPropertyInfo(propertyInfo);
-			propValueService.delete(propValue);
-						
-		}
-		
 		super.delete(propertyInfo);
 	}
 	
