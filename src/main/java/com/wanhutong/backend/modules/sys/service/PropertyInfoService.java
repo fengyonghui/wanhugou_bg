@@ -3,13 +3,10 @@
  */
 package com.wanhutong.backend.modules.sys.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 import com.wanhutong.backend.modules.sys.entity.PropValue;
-import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,32 +35,46 @@ public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyIn
 	
 	public List<PropertyInfo> findList(PropertyInfo propertyInfo) {
 		List<PropertyInfo> list= super.findList(propertyInfo);
-		return list;
-	}
-	public Map<Integer,List<PropValue>> findMapList(PropertyInfo propertyInfo){
 		PropValue propValue=new PropValue();
-		List<PropertyInfo> list=findList(propertyInfo);
-		Map<Integer,List<PropValue>> map=new HashMap<Integer,List<PropValue>>();
 		for(PropertyInfo info:list){
 			propValue.setId(null);
 			propValue.setPropertyInfo(info);
 			List<PropValue> valueList=propValueService.findList(propValue);
-			map.put(info.getId(),valueList);
+			info.setPropValueList(valueList);
 		}
-		return map;
+		return list;
 	}
 	
 	public Page<PropertyInfo> findPage(Page<PropertyInfo> page, PropertyInfo propertyInfo) {
 		return super.findPage(page, propertyInfo);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.wanhutong.backend.common.service.CrudService#save(com.wanhutong.backend.common.persistence.DataEntity)
+	 */
 	@Transactional(readOnly = false)
 	public void save(PropertyInfo propertyInfo) {
-		super.save(propertyInfo);
+	List<PropValue> propValueList=propertyInfo.getPropValueList();
+	super.save(propertyInfo);
+	for(PropValue propValue:propValueList) {
+		
+		propValue.setPropertyInfo(propertyInfo);
+		propValueService.save(propValue);
+
+	}
+		
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(PropertyInfo propertyInfo) {
+		List<PropValue> propValueList = propertyInfo.getPropValueList();
+		for(PropValue propValue:propValueList) {
+						
+			propValue.setPropertyInfo(propertyInfo);
+			propValueService.delete(propValue);
+						
+		}
+		
 		super.delete(propertyInfo);
 	}
 	
