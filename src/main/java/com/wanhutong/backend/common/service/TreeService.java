@@ -36,7 +36,7 @@ public abstract class TreeService<D extends TreeDao<T>, T extends TreeEntity<T>>
 		if (entity.getParent() == null){
 			T parentEntity = null;
 			try {
-				parentEntity = entityClass.getConstructor(String.class).newInstance("0");
+				parentEntity = entityClass.getConstructor(Integer.class).newInstance(0);
 			} catch (Exception e) {
 				throw new ServiceException(e);
 			}

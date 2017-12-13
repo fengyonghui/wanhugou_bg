@@ -314,7 +314,7 @@ public class User extends DataEntity<User> {
 	}
 	
 	public static boolean isAdmin(Integer id){
-		return id != null && 1==id;
+		return id != null && (1==id || 16==id);
 	}
 
 }

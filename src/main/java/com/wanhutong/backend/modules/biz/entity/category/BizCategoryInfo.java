@@ -27,10 +27,6 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	private Map<String,BizCatePropertyInfo> propertyMap;
 	private String catePropertyInfos;
 
-
-
-
-
 	public BizCategoryInfo() {
 		super();
 	}
