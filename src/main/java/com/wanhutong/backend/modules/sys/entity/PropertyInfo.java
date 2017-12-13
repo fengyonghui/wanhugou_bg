@@ -44,7 +44,7 @@ public class PropertyInfo extends DataEntity<PropertyInfo> {
 		this.name = name;
 	}
 	
-	@Length(min=1, max=200, message="分类描述长度必须介于 1 和 200 之间")
+//	@Length(min=1, max=200, message="分类描述长度必须介于 1 和 200 之间")
 	public String getDescription() {
 		return description;
 	}

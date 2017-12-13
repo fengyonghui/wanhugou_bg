@@ -57,7 +57,7 @@
 					<if test="dbName == 'mysql'">concat('%',#{brandName},'%')</if>
 			</if>
 			<if test="vendorId != null and vendorId != ''">
-				AND a.brand_name LIKE 
+				AND a.vendor_id LIKE 
 					<if test="dbName == 'oracle'">'%'||#{vendorId}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{vendorId}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{vendorId},'%')</if>
