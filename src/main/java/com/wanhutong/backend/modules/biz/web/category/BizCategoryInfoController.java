@@ -76,6 +76,18 @@ public class BizCategoryInfoController extends BaseController {
 	@RequiresPermissions("biz:category:bizCategoryInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizCategoryInfo bizCategoryInfo, Model model) {
+		if (bizCategoryInfo.getParent()==null || bizCategoryInfo.getParent().getId()==null || bizCategoryInfo.getParent().getId()==0){
+			BizCatelogInfo bizCatelogInfo=bizCatelogInfoService.get(1);
+			BizCategoryInfo categoryInfo=new BizCategoryInfo();
+			categoryInfo.setName(bizCatelogInfo.getName());
+			categoryInfo.setId(0);
+			categoryInfo.setDescription(bizCatelogInfo.getDescription());
+			bizCategoryInfo.setParent(categoryInfo);
+		}else {
+			bizCategoryInfo.setParent(bizCategoryInfoService.get(bizCategoryInfo.getParent().getId()));
+
+		}
+
 		PropertyInfo propertyInfo=new PropertyInfo();
 		List<PropertyInfo> propertyInfoList=propertyInfoService.findList(propertyInfo);
 		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
