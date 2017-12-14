@@ -7,12 +7,16 @@
 		a.prod_id AS "bizSkuInfo.id",
 		a.sku_type AS "skuType",
 		a.name AS "name",
-		a.status AS "status",
+		a.part_no AS "partNo",
+		a.base_price AS "basePrice",
+		a.buy_price AS "buyPrice",
+		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
+
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
@@ -39,6 +43,12 @@
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="partNo != null and partNo != ''">
+				AND a.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -73,6 +83,9 @@
 			prod_id,
 			sku_type,
 			name,
+			part_no,
+			base_price,
+			buy_price,
 			status,
 			create_id,
 			create_time,
@@ -84,7 +97,10 @@
 			#{bizSkuInfo.id},
 			#{skuType},
 			#{name},
-			#{status},
+			#{partNo},
+			#{basePrice},
+			#{buyPrice},
+			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -98,6 +114,9 @@
 			prod_id = #{bizSkuInfo.id},
 			sku_type = #{skuType},
 			name = #{name},
+			part_no = #{partNo},
+			base_price = #{basePrice},
+			buy_price = #{buyPrice},
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},

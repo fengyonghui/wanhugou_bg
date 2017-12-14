@@ -25,7 +25,10 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String prodId;		// 所属产品id
 	private String skuType;		// 试销品、主销品、热销品、尾销品
 	private String name;		// 商品名称
-	private String status;		// status
+	private String partNo;    //商品编码
+	private double basePrice; //基础售价
+	private double buyPrice;   //采购价格
+//	private String status;		// status
 //	private User createId;		// create_id
 //	private Date createTime;		// create_time
 //	private String uVersion;		// u_version
@@ -74,15 +77,39 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	@Length(min=1, max=1, message="status长度必须介于 1 和 1 之间")
-	public String getStatus() {
-		return status;
+
+	public String getPartNo() {
+		return partNo;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setPartNo(String partNo) {
+		this.partNo = partNo;
 	}
+
+	public double getBasePrice() {
+		return basePrice;
+	}
+
+	public void setBasePrice(double basePrice) {
+		this.basePrice = basePrice;
+	}
+
+	public double getBuyPrice() {
+		return buyPrice;
+	}
+
+	public void setBuyPrice(double buyPrice) {
+		this.buyPrice = buyPrice;
+	}
+	
+//	@Length(min=1, max=1, message="status长度必须介于 1 和 1 之间")
+//	public String getStatus() {
+//		return status;
+//	}
+//
+//	public void setStatus(String status) {
+//		this.status = status;
+//	}
 	
 //	@NotNull(message="create_id不能为空")
 //	public User getCreateId() {

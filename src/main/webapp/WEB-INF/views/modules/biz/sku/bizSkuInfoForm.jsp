@@ -54,7 +54,27 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-
+		<div class="control-group">
+			<label class="control-label">商品编码：</label>
+			<div class="controls">
+				<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">基础售价：</label>
+			<div class="controls">
+				<form:input path="basePrice" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">采购价格：</label>
+			<div class="controls">
+				<form:input path="buyPrice" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
 		<%--<div class="control-group">
 			<label class="control-label">商品状态：</label>
 			<div class="controls">
