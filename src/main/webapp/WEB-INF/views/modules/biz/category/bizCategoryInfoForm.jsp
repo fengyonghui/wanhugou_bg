@@ -43,10 +43,12 @@
                 {catId:id},
                 function(data,status){
                     $.each(data, function (index, catePropertyInfo) {
-                       if(props.indexOf(catePropertyInfo.propertyInfoId)!=-1){
-						$("#"+catePropertyInfo.propertyInfoId).attr('checked',true)
-					   }
+
                         $.each(catePropertyInfo.catePropValueList, function (index, catePropValue) {
+
+                            if(props.indexOf(catePropValue.propertyInfoId)!=-1){
+                                $("#"+catePropValue.propertyInfoId).attr('checked',true)
+                            }
                                 $("#value_"+catePropValue.propertyValueId).attr('checked',true)
 
                         });
@@ -97,13 +99,13 @@
 		<form:hidden path="parent.id"/>
 		<sys:message content="${message}"/>		
 
-	<%--	<div class="control-group">
+		<div class="control-group">
 			<label class="control-label">上级分类:</label>
 			<div class="controls">
 				<sys:treeselect id="category" name="parent.id" value="${bizCategoryInfo.parent.id}" labelName="parent.name" labelValue="${bizCategoryInfo.parent.name}"
 								title="分类" url="/biz/category/bizCategoryInfo/treeData" extId="${bizCategoryInfo.id}" cssClass="" allowClear="${bizCategoryInfo.currentUser.admin}"/>
 			</div>
-		</div>--%>
+		</div>
 
 		<div class="control-group">
 			<label class="control-label">分类名称：</label>
@@ -145,7 +147,7 @@
 		</div>
 	</form:form>
 	<!-- 模态框（Modal） -->
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">

@@ -9,16 +9,17 @@
 		<result property="delFlag" column="status" />
 		<result property="uVersion" column="uVersion" />
 		<result property="updateDate" column="updateDate" />
-		<result property="propertyInfoId" column="propertyInfoId"/>
+		<!--<result property="propertyInfoId" column="propertyInfoId"/>-->
 		<association property="categoryInfo" javaType="BizCategoryInfo" column="categoryInfo.id">
 			<id property="id" column="categoryInfo.id"/>
 		</association>
-		<association property="propertyInfo" javaType="PropertyInfo" column="propertyInfo.id">
-			<id property="id" column="propertyInfo.id"/>
-		</association>
+		<!--<association property="propertyInfo" javaType="PropertyInfo" column="propertyInfo.id">-->
+			<!--<id property="id" column="propertyInfo.id"/>-->
+		<!--</association>-->
 		<collection property="catePropValueList" ofType="BizCatePropValue">
 			<id property="id" column="catePropValueList.id" />
 			<result  property="propertyValueId" column="propertyValueId"/>
+			<result  property="propertyInfoId" column="propertyInfoId"/>
 		</collection>
 	</resultMap>
 
@@ -27,8 +28,8 @@
 		a.cat_id AS "categoryInfo.id",
 		a.name AS "name",
 		a.description AS "description",
-		a.sys_prop_id AS "propertyInfo.id",
-		a.sys_prop_id AS "propertyInfoId",
+-- 		a.sys_prop_id AS "propertyInfo.id",
+-- 		a.sys_prop_id AS "propertyInfoId",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.status AS "status",
@@ -52,6 +53,7 @@
 		SELECT 
 			<include refid="bizCatePropertyInfoColumns"/>,
 			cpv.id AS "catePropValueList.id",
+			cpv.sys_prop_id AS "propertyInfoId",
 			cpv.sys_prop_value_id AS "propertyValueId"
 		FROM biz_cate_property_info a
 		<include refid="bizCatePropertyInfoJoins"/>
@@ -100,7 +102,6 @@
 			cat_id,
 			`name`,
 			description,
-			sys_prop_id,
 			create_id,
 			create_time,
 			status,
@@ -112,7 +113,6 @@
 			#{categoryInfo.id},
 			#{name},
 			#{description},
-			#{propertyInfo.id},
 			#{createBy.id},
 			#{createDate},
 			#{delFlag},

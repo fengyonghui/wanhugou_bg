@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.sys.dao.DefaultPropDao">
+    
+	<sql id="defaultPropColumns">
+		a.id AS "id",
+		a.prop_key AS "propKey",
+		a.prop_value AS "propValue",
+		a.prop_desc AS "propDesc",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag"
+	</sql>
+	
+	<sql id="defaultPropJoins">
+	</sql>
+    
+	<select id="get" resultType="DefaultProp">
+		SELECT 
+			<include refid="defaultPropColumns"/>
+		FROM sys_default_prop a
+		<include refid="defaultPropJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DefaultProp">
+		SELECT 
+			<include refid="defaultPropColumns"/>
+		FROM sys_default_prop a
+		<include refid="defaultPropJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="propKey != null and propKey != ''">
+				AND a.prop_key = #{propKey}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DefaultProp">
+		SELECT 
+			<include refid="defaultPropColumns"/>
+		FROM sys_default_prop a
+		<include refid="defaultPropJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_default_prop(
+			id,
+			prop_key,
+			prop_value,
+			prop_desc,
+			create_id,
+			create_time,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{propKey},
+			#{propValue},
+			#{propDesc},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_default_prop SET 	
+			prop_key = #{propKey},
+			prop_value = #{propValue},
+			prop_desc = #{propDesc},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_default_prop SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
