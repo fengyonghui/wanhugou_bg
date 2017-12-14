@@ -16,7 +16,7 @@
 	</sql>
 	
 	<sql id="propertyInfoJoins">
-	left join sys_user su on a.update_id = su.id
+		left join sys_user su on a.update_id = su.id
 	</sql>
     
 	<select id="get" resultType="PropertyInfo">

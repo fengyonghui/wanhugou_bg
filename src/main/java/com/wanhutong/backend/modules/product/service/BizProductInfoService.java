@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.product.service;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ import com.wanhutong.backend.modules.product.dao.BizProductInfoDao;
 @Service
 @Transactional(readOnly = true)
 public class BizProductInfoService extends CrudService<BizProductInfoDao, BizProductInfo> {
-
+	private BizCatePropValueService bizCatePropValueService;
 	public BizProductInfo get(Integer id) {
 		return super.get(id);
 	}

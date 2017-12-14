@@ -16,6 +16,7 @@
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
+		left join sys_user su on a.update_id = su.id
 	</sql>
     
 	<select id="get" resultType="BizSkuInfo">

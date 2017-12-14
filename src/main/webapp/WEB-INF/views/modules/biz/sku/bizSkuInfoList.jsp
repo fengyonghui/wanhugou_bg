@@ -39,12 +39,11 @@
 				<th>商品产品Id</th>
 				<th>sku类型</th>
 				<th>商品名称</th>
-				<th>商品状态</th>
-				<th>创建人</th>
+				<%--<th>创建人</th>--%>
 				<th>创建时间</th>
-				<th>版本号</th>
+				<%--<th>版本号</th>--%>
 				<th>更新人</th>
-				<th>更新时间</th>
+				<%--<th>更新时间</th>--%>
 				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -60,24 +59,24 @@
 					<td>
 						${bizSkuInfo.name}
 					</td>
-					<td>
+					<%--<td>
 						${bizSkuInfo.status}
-					</td>
-					<td>
-						${bizSkuInfo.createBy.id}
-					</td>
+					</td>--%>
+					<%--<td>--%>
+						<%--${bizSkuInfo.createBy.id}--%>
+					<%--</td>--%>
 					<td>
 						<fmt:formatDate value="${bizSkuInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-					<td>
-						${bizSkuInfo.uVersion}
-					</td>
+					<%--<td>--%>
+						<%--${bizSkuInfo.uVersion}--%>
+					<%--</td>--%>
 					<td>
 						${bizSkuInfo.updateBy.id}
 					</td>
-					<td>
-						<fmt:formatDate value="${bizSkuInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-					</td>
+					<%--<td>--%>
+						<%--<fmt:formatDate value="${bizSkuInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+					<%--</td>--%>
 				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><td>
     				<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>
 					<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
