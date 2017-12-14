@@ -10,11 +10,11 @@
 		a.cat_value_id AS "catValueId",
 		a.prop_value AS "propValue",
 		a.source AS "source",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
-		a.status AS "status",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.status AS "delFlag",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
 		a.u_version AS "uVersion"
 	</sql>
 	
@@ -92,11 +92,11 @@
 			#{catValueId},
 			#{propValue},
 			#{source},
-			#{createId.id},
-			#{createTime},
-			#{status},
-			#{updateId.id},
-			#{updateTime},
+			#{createBy.id},
+			#{createDate},
+			#{delFlag},
+			#{updateBy.id},
+			#{updateDate},
 			#{uVersion}
 		)
 	</insert>
@@ -109,9 +109,9 @@
 			cat_value_id = #{catValueId},
 			prop_value = #{propValue},
 			source = #{source},
-			create_time = #{createTime},
-			update_id = #{updateId.id},
-			update_time = #{updateTime},
+			create_time = #{createDate},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate},
 			u_version = #{uVersion}
 		WHERE id = #{id}
 	</update>

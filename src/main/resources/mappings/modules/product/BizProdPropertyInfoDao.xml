@@ -7,12 +7,12 @@
 		a.prod_id AS "prodId",
 		a.prop_name AS "propName",
 		a.prop_description AS "propDescription",
-		a.status AS "status",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizProdPropertyInfoJoins">
@@ -83,12 +83,12 @@
 			#{prodId},
 			#{propName},
 			#{propDescription},
-			#{status},
-			#{createId.id},
-			#{createTime},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
 			#{uVersion},
-			#{updateId.id},
-			#{updateTime}
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
@@ -97,10 +97,10 @@
 			prod_id = #{prodId},
 			prop_name = #{propName},
 			prop_description = #{propDescription},
-			create_time = #{createTime},
+			create_time = #{createDate},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

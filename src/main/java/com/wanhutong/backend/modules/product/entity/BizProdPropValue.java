@@ -25,12 +25,12 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 	private String catValueId;		// biz_cate_prop_value.id
 	private String propValue;		// 属性值
 	private String source;		// sys系统，cate分类
-	private User createId;		// sys_user.id
-	private Date createTime;		// create_time
-	private String status;		// status
-	private User updateId;		// update_id
-	private Date updateTime;		// update_time
-	private String uVersion;		// u_version
+//	private User createId;		// sys_user.id
+//	private Date createTime;		// create_time
+//	private String status;		// status
+//	private User updateId;		// update_id
+//	private Date updateTime;		// update_time
+//	private String uVersion;		// u_version
 	
 	public BizProdPropValue() {
 		super();
@@ -40,7 +40,7 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 		super(id);
 	}
 
-	@id长度必须介于 1 和 11 之间")
+//	@id长度必须介于 1 和 11 之间")
 	public String getPropId() {
 		return propId;
 	}
@@ -49,7 +49,7 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 		this.propId = propId;
 	}
 	
-	@id长度必须介于 0 和 11 之间")
+//	@id长度必须介于 0 和 11 之间")
 	public String getCatePropId() {
 		return catePropId;
 	}
@@ -67,7 +67,7 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 		this.propName = propName;
 	}
 	
-	@id长度必须介于 1 和 11 之间")
+//	@id长度必须介于 1 和 11 之间")
 	public String getCatValueId() {
 		return catValueId;
 	}
@@ -94,60 +94,60 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 		this.source = source;
 	}
 	
-	@id不能为空")
-	public User getCreateId() {
-		return createId;
-	}
-
-	public void setCreateId(User createId) {
-		this.createId = createId;
-	}
-	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@NotNull(message="create_time不能为空")
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	
-	@Length(min=1, max=4, message="status长度必须介于 1 和 4 之间")
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	
-	@NotNull(message="update_id不能为空")
-	public User getUpdateId() {
-		return updateId;
-	}
-
-	public void setUpdateId(User updateId) {
-		this.updateId = updateId;
-	}
-	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@NotNull(message="update_time不能为空")
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
-	
-	@Length(min=1, max=4, message="u_version长度必须介于 1 和 4 之间")
-	public String getUVersion() {
-		return uVersion;
-	}
-
-	public void setUVersion(String uVersion) {
-		this.uVersion = uVersion;
-	}
+//	@id不能为空")
+//	public User getCreateId() {
+//		return createId;
+//	}
+//
+//	public void setCreateId(User createId) {
+//		this.createId = createId;
+//	}
+//
+//	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//	@NotNull(message="create_time不能为空")
+//	public Date getCreateTime() {
+//		return createTime;
+//	}
+//
+//	public void setCreateTime(Date createTime) {
+//		this.createTime = createTime;
+//	}
+//
+//	@Length(min=1, max=4, message="status长度必须介于 1 和 4 之间")
+//	public String getStatus() {
+//		return status;
+//	}
+//
+//	public void setStatus(String status) {
+//		this.status = status;
+//	}
+//
+//	@NotNull(message="update_id不能为空")
+//	public User getUpdateId() {
+//		return updateId;
+//	}
+//
+//	public void setUpdateId(User updateId) {
+//		this.updateId = updateId;
+//	}
+//
+//	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//	@NotNull(message="update_time不能为空")
+//	public Date getUpdateTime() {
+//		return updateTime;
+//	}
+//
+//	public void setUpdateTime(Date updateTime) {
+//		this.updateTime = updateTime;
+//	}
+//
+//	@Length(min=1, max=4, message="u_version长度必须介于 1 和 4 之间")
+//	public String getUVersion() {
+//		return uVersion;
+//	}
+//
+//	public void setUVersion(String uVersion) {
+//		this.uVersion = uVersion;
+//	}
 	
 }

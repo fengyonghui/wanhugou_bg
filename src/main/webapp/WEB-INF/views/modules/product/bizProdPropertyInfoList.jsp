@@ -36,12 +36,24 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>biz_product_info.id</th>
+				<th>属性名称</th>
+				<th>属性描述</th>
 				<shiro:hasPermission name="product:bizProdPropertyInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizProdPropertyInfo">
 			<tr>
+				<td><a href="${ctx}/product/bizProdPropertyInfo/form?id=${bizProdPropertyInfo.id}">
+					${bizProdPropertyInfo.prodId}
+				</a></td>
+				<td>
+					${bizProdPropertyInfo.propName}
+				</td>
+				<td>
+					${bizProdPropertyInfo.propDescription}
+				</td>
 				<shiro:hasPermission name="product:bizProdPropertyInfo:edit"><td>
     				<a href="${ctx}/product/bizProdPropertyInfo/form?id=${bizProdPropertyInfo.id}">修改</a>
 					<a href="${ctx}/product/bizProdPropertyInfo/delete?id=${bizProdPropertyInfo.id}" onclick="return confirmx('确认要删除该属性表吗？', this.href)">删除</a>

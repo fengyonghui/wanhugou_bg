@@ -36,12 +36,40 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>biz_prod_property_info.id</th>
+				<th>biz_cate_property_info.id</th>
+				<th>属性名称</th>
+				<th>biz_cate_prop_value.id</th>
+				<th>属性值</th>
+				<th>sys系统，cate分类</th>
+				<th>sys_user.id</th>
 				<shiro:hasPermission name="product:bizProdPropValue:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizProdPropValue">
 			<tr>
+				<td><a href="${ctx}/product/bizProdPropValue/form?id=${bizProdPropValue.id}">
+					${bizProdPropValue.propId}
+				</a></td>
+				<td>
+					${bizProdPropValue.catePropId}
+				</td>
+				<td>
+					${bizProdPropValue.propName}
+				</td>
+				<td>
+					${bizProdPropValue.catValueId}
+				</td>
+				<td>
+					${bizProdPropValue.propValue}
+				</td>
+				<td>
+					${bizProdPropValue.source}
+				</td>
+				<td>
+					${bizProdPropValue.createId.id}
+				</td>
 				<shiro:hasPermission name="product:bizProdPropValue:edit"><td>
     				<a href="${ctx}/product/bizProdPropValue/form?id=${bizProdPropValue.id}">修改</a>
 					<a href="${ctx}/product/bizProdPropValue/delete?id=${bizProdPropValue.id}" onclick="return confirmx('确认要删除该记录产品所有属性值吗？', this.href)">删除</a>
