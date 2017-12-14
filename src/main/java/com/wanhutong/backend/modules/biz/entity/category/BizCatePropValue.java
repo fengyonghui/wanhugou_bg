@@ -17,7 +17,13 @@ public class BizCatePropValue extends DataEntity<BizCatePropValue> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizCatePropertyInfo catePropertyInfo;		// biz_cate_property_info.id
+	private String propName;
 	private String value;		// 记录该属性值
+	private String source;
+
+	private PropertyInfo propertyInfo;
+
+	private Integer propertyInfoId;
 
 	private PropValue propValue;
 
@@ -64,5 +70,37 @@ public class BizCatePropValue extends DataEntity<BizCatePropValue> {
 
 	public void setPropertyValueId(Integer propertyValueId) {
 		this.propertyValueId = propertyValueId;
+	}
+
+	public PropertyInfo getPropertyInfo() {
+		return propertyInfo;
+	}
+
+	public void setPropertyInfo(PropertyInfo propertyInfo) {
+		this.propertyInfo = propertyInfo;
+	}
+
+	public Integer getPropertyInfoId() {
+		return propertyInfoId;
+	}
+
+	public void setPropertyInfoId(Integer propertyInfoId) {
+		this.propertyInfoId = propertyInfoId;
+	}
+
+	public String getPropName() {
+		return propName;
+	}
+
+	public void setPropName(String propName) {
+		this.propName = propName;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 }

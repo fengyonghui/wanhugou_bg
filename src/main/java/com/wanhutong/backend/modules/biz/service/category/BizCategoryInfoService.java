@@ -82,8 +82,15 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 					catePropertyInfo.setName(propertyInfo.getName());
 					catePropertyInfo.setDescription(propertyInfo.getDescription());
 					catePropertyInfo.setCategoryInfo(bizCategoryInfo);
-					catePropertyInfo.setPropertyInfo(propertyInfo);
 					bizCatePropertyInfoService.save(catePropertyInfo);
+
+					catePropValue.setId(null);
+					catePropValue.setPropertyInfo(propertyInfo);
+					catePropValue.setSource("sys");
+					catePropValue.setPropName(catePropertyInfo.getName());
+					catePropValue.setCatePropertyInfo(catePropertyInfo);
+					bizCatePropValueService.save(catePropValue);
+
 
 				}
 			}
@@ -96,7 +103,7 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 				bizCatePropertyInfo.setName(propertyInfo.getName());
 				bizCatePropertyInfo.setDescription(propertyInfo.getDescription());
 				bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
-				bizCatePropertyInfo.setPropertyInfo(propertyInfo);
+			//	bizCatePropertyInfo.setPropertyInfo(propertyInfo);
 				bizCatePropertyInfoService.save(bizCatePropertyInfo);
 				String catePropertyValueStr = bizCatePropertyInfo.getCatePropertyValues();
 				if (catePropertyValueStr != null && !"".equals(catePropertyValueStr)) {
@@ -105,6 +112,9 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 						catePropValue.setId(null);
 						Integer propValueId = Integer.parseInt(catePropertyValues[j].trim());
 						PropValue propValue = propValueService.get(propValueId);
+						catePropValue.setPropertyInfo(propertyInfo);
+						catePropValue.setSource("sys");
+						catePropValue.setPropName(bizCatePropertyInfo.getName());
 						catePropValue.setCatePropertyInfo(bizCatePropertyInfo);
 						catePropValue.setValue(propValue.getValue());
 						catePropValue.setPropValue(propValue);

@@ -43,10 +43,12 @@
                 {catId:id},
                 function(data,status){
                     $.each(data, function (index, catePropertyInfo) {
-                       if(props.indexOf(catePropertyInfo.propertyInfoId)!=-1){
-						$("#"+catePropertyInfo.propertyInfoId).attr('checked',true)
-					   }
+
                         $.each(catePropertyInfo.catePropValueList, function (index, catePropValue) {
+
+                            if(props.indexOf(catePropValue.propertyInfoId)!=-1){
+                                $("#"+catePropValue.propertyInfoId).attr('checked',true)
+                            }
                                 $("#value_"+catePropValue.propertyValueId).attr('checked',true)
 
                         });
