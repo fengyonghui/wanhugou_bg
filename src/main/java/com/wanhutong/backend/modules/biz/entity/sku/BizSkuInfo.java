@@ -28,7 +28,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String partNo;    //商品编码
 	private double basePrice; //基础售价
 	private double buyPrice;   //采购价格
-	
+
+
 	public BizSkuInfo() {
 		super();
 	}
