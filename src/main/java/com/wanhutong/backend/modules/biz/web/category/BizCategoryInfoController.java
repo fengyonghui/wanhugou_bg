@@ -13,8 +13,10 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatelogInfoService;
+import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.omg.PortableInterceptor.INACTIVE;
@@ -46,6 +48,8 @@ public class BizCategoryInfoController extends BaseController {
 	private BizCatelogInfoService bizCatelogInfoService;
 	@Autowired
 	private PropertyInfoService propertyInfoService;
+	@Autowired
+	private DefaultPropService defaultPropService;
 	
 	@ModelAttribute
 	public BizCategoryInfo get(@RequestParam(required=false) Integer id) {
@@ -77,12 +81,17 @@ public class BizCategoryInfoController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizCategoryInfo bizCategoryInfo, Model model) {
 		if (bizCategoryInfo.getParent()==null || bizCategoryInfo.getParent().getId()==null || bizCategoryInfo.getParent().getId()==0){
-			BizCatelogInfo bizCatelogInfo=bizCatelogInfoService.get(1);
-			BizCategoryInfo categoryInfo=new BizCategoryInfo();
-			categoryInfo.setName(bizCatelogInfo.getName());
-			categoryInfo.setId(0);
-			categoryInfo.setDescription(bizCatelogInfo.getDescription());
-			bizCategoryInfo.setParent(categoryInfo);
+          DefaultProp defaultProp=new DefaultProp("catalog");
+           List<DefaultProp> list= defaultPropService.findList(defaultProp);
+           if(list!=null && list.size()>0){
+               BizCatelogInfo bizCatelogInfo=bizCatelogInfoService.get(Integer.parseInt(list.get(0).getPropValue()));
+               BizCategoryInfo categoryInfo=new BizCategoryInfo();
+               categoryInfo.setName(bizCatelogInfo.getName());
+               categoryInfo.setId(0);
+               categoryInfo.setDescription(bizCatelogInfo.getDescription());
+               bizCategoryInfo.setParent(categoryInfo);
+           }
+
 		}else {
 			bizCategoryInfo.setParent(bizCategoryInfoService.get(bizCategoryInfo.getParent().getId()));
 
