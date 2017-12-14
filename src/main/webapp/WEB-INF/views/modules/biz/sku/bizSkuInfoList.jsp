@@ -88,7 +88,7 @@
 						<%--${bizSkuInfo.uVersion}--%>
 					<%--</td>--%>
 					<td>
-						${bizSkuInfo.updateBy.id}
+						${bizSkuInfo.updateBy.name}
 					</td>
 					<%--<td>--%>
 						<%--<fmt:formatDate value="${bizSkuInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>

@@ -15,8 +15,8 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
-
+		a.update_time AS "updateDate",
+		su.name AS "updateBy.name"
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
