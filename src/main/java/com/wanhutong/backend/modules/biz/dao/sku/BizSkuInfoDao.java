@@ -16,29 +16,5 @@ import java.util.List;
  */
 @MyBatisDao
 public interface BizSkuInfoDao extends CrudDao<BizSkuInfo> {
-	
-	/*
-	 * 获取sku商品的id
-	 */
-	BizSkuInfo get(Integer id);
-	
-	/*
-	 * 进行sku商品的查找
-	 */
-	List<BizSkuInfo> findList(BizSkuInfo bizSkuInfo);
-	
-	/*
-	 * 进行sku商品的增加
-	 */
-	int insert(BizSkuInfo bizSkuInfo);
-	
-	/*
-	 * 进行sku商品的更新
-	 */
-	int update(BizSkuInfo bizSkuInfo);
-	
-	/*
-	 * 进行sku商品的删除
-	 */
-	int delete(BizSkuInfo bizSkuInfo);
+
 }

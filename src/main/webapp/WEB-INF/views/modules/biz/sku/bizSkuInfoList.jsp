@@ -47,7 +47,6 @@
 				<th>基础售价</th>
 				<th>采购价格</th>
 				<th>创建时间</th>
-				<%--<th>版本号</th>--%>
 				<th>更新人</th>
 				<%--<th>更新时间</th>--%>
 				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><th>操作</th></shiro:hasPermission>
@@ -74,19 +73,12 @@
 					<td>
 						${bizSkuInfo.buyPrice}
 					</td>
-
-					<%--<td>
-						${bizSkuInfo.status}
-					</td>--%>
 					<%--<td>--%>
 						<%--${bizSkuInfo.createBy.id}--%>
 					<%--</td>--%>
 					<td>
 						<fmt:formatDate value="${bizSkuInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-					<%--<td>--%>
-						<%--${bizSkuInfo.uVersion}--%>
-					<%--</td>--%>
 					<td>
 						${bizSkuInfo.updateBy.name}
 					</td>
