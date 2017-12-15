@@ -32,6 +32,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<form:hidden path="productInfo.id"/>
 		<sys:message content="${message}"/>		
 		<%--<div class="control-group">
 			<label class="control-label">所属产品id：</label>

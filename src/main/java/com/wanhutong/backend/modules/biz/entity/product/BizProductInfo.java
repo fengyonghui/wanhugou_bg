@@ -55,11 +55,14 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 			categoryInfoList.add(categoryInfo);
 		}
 	}
+//	private Map<String,BizSkuInfo> skuInfoMap;
+	private List<BizSkuInfo> skuInfosList;
 
 	public String getCateIds() {
 		cateIds=StringUtils.join(getCateIdList(), ",");
 		return cateIds;
 	}
+
 
 	public void setCateIds(String cateIds) {
 
@@ -138,13 +141,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.skuInfos = skuInfos;
 	}
 
-	public Map<String, BizSkuInfo> getSkuInfoMap() {
-		return skuInfoMap;
-	}
-
-	public void setSkuInfoMap(Map<String, BizSkuInfo> skuInfoMap) {
-		this.skuInfoMap = skuInfoMap;
-	}
+//	public Map<String, BizSkuInfo> getSkuInfoMap() {
+//		return skuInfoMap;
+//	}
+//
+//	public void setSkuInfoMap(Map<String, BizSkuInfo> skuInfoMap) {
+//		this.skuInfoMap = skuInfoMap;
+//	}
 
 	public BizCatePropValue getCatePropValue() {
 		return catePropValue;
@@ -170,5 +173,14 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.categoryInfoList = categoryInfoList;
 	}
 
+
+
+	public List<BizSkuInfo> getSkuInfosList() {
+		return skuInfosList;
+	}
+
+	public void setSkuInfosList(List<BizSkuInfo> skuInfosList) {
+		this.skuInfosList = skuInfosList;
+	}
 
 }

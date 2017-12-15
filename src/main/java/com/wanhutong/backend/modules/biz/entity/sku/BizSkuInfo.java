@@ -3,10 +3,13 @@
  */
 package com.wanhutong.backend.modules.biz.entity.sku;
 
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -21,14 +24,14 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private BizSkuInfo bizSkuInfo;
-	private String prodId;		// 所属产品id
+//	private BizSkuInfo bizSkuInfo;
+	private BizProductInfo productInfo;		// 所属产品id
 	private String skuType;		// 试销品、主销品、热销品、尾销品
 	private String name;		// 商品名称
 	private String partNo;    //商品编码
 	private double basePrice; //基础售价
 	private double buyPrice;   //采购价格
-
+	private List bizSkuInfo;
 
 	public BizSkuInfo() {
 		super();
@@ -38,23 +41,23 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 		super(id);
 	}
 
-	public BizSkuInfo getBizSkuInfo() {
-		return bizSkuInfo;
+//	public BizSkuInfo getBizSkuInfo() {
+//		return bizSkuInfo;
+//	}
+//
+//	public void setBizSkuInfo(BizSkuInfo bizSkuInfo) {
+//		this.bizSkuInfo = bizSkuInfo;
+//	}
+
+
+	public BizProductInfo getProductInfo() {
+		return productInfo;
 	}
-	
-	public void setBizSkuInfo(BizSkuInfo bizSkuInfo) {
-		this.bizSkuInfo = bizSkuInfo;
+
+	public void setProductInfo(BizProductInfo productInfo) {
+		this.productInfo = productInfo;
 	}
-	
-	@Length(min=1, max=11, message="所属产品id长度必须介于 1 和 11 之间")
-	public String getProdId() {
-		return prodId;
-	}
-	
-	public void setProdId(String prodId) {
-		this.prodId = prodId;
-	}
-	
+
 	@Length(min=1, max=4, message="试销品、主销品、热销品、尾销品长度必须介于 1 和 4 之间")
 	public String getSkuType() {
 		return skuType;
@@ -97,4 +100,11 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 		this.buyPrice = buyPrice;
 	}
 
+	public List getBizSkuInfo() {
+		return bizSkuInfo;
+	}
+
+	public void setBizSkuInfo(List bizSkuInfo) {
+		this.bizSkuInfo = bizSkuInfo;
+	}
 }

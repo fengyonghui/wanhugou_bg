@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.sku.BizSkuPropValueDao">
+    
+	<sql id="bizSkuPropValueColumns">
+		a.id AS "id",
+		a.sku_id AS "skuId",
+		a.prod_prop_id AS "prodPropId",
+		a.prop_name AS "propName",
+		a.prod_value_id AS "prodValueId",
+		a.prop_value AS "propValue",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizSkuPropValueJoins">
+	</sql>
+    
+	<select id="get" resultType="BizSkuPropValue">
+		SELECT 
+			<include refid="bizSkuPropValueColumns"/>
+		FROM biz_sku_prop_value a
+		<include refid="bizSkuPropValueJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizSkuPropValue">
+		SELECT 
+			<include refid="bizSkuPropValueColumns"/>
+		FROM biz_sku_prop_value a
+		<include refid="bizSkuPropValueJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="skuId != null and skuId != ''">
+				AND a.sku_id = #{skuId}
+			</if>
+			<if test="propName != null and propName != ''">
+				AND a.prop_name = #{propName}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizSkuPropValue">
+		SELECT 
+			<include refid="bizSkuPropValueColumns"/>
+		FROM biz_sku_prop_value a
+		<include refid="bizSkuPropValueJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_sku_prop_value(
+			id,
+			sku_id,
+			prod_prop_id,
+			prop_name,
+			prod_value_id,
+			prop_value,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{skuId},
+			#{prodPropId},
+			#{propName},
+			#{prodValueId},
+			#{propValue},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_sku_prop_value SET 	
+			sku_id = #{skuId},
+			prod_prop_id = #{prodPropId},
+			prop_name = #{propName},
+			prod_value_id = #{prodValueId},
+			prop_value = #{propValue},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_sku_prop_value SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

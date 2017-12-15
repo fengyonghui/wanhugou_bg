@@ -4,7 +4,7 @@
     
 	<sql id="bizSkuInfoColumns">
 		a.id AS "id",
-		a.prod_id AS "bizSkuInfo.id",
+		a.prod_id AS "productInfo.id",
 		a.sku_type AS "skuType",
 		a.name AS "name",
 		a.part_no AS "partNo",
@@ -50,6 +50,9 @@
 				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
 			</if>
+			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
+				AND a.prod_id =#{productInfo.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -82,7 +85,7 @@
 			id,
 			prod_id,
 			sku_type,
-			name,
+			`name`,
 			part_no,
 			base_price,
 			buy_price,
@@ -94,7 +97,7 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{bizSkuInfo.id},
+			#{productInfo.id},
 			#{skuType},
 			#{name},
 			#{partNo},
@@ -111,7 +114,7 @@
 	
 	<update id="update">
 		UPDATE biz_sku_info SET 	
-			prod_id = #{bizSkuInfo.id},
+			prod_id = #{productInfo.id},
 			sku_type = #{skuType},
 			name = #{name},
 			part_no = #{partNo},

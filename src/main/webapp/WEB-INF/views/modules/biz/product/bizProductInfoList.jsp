@@ -84,7 +84,8 @@
 					<td>
     				<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">修改</a>
 					<a href="${ctx}/biz/product/bizProductInfo/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+						<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">sku商品管理</a>
+ 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
 		</tbody>

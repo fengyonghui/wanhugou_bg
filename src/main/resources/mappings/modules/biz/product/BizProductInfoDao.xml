@@ -123,6 +123,7 @@
 			</otherwise>
 		</choose>
 	</select>
+
 	
 	<insert id="insert">
 		INSERT INTO biz_product_info(

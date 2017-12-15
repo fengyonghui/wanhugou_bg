@@ -3,12 +3,16 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	private BizCatePropValueService bizCatePropValueService;
 	@Autowired
 	private BizProductInfoDao bizProductInfoDao;
+	private BizSkuInfoService bizSkuInfoService;
+
 
 	public BizProductInfo get(Integer id) {
 		return super.get(id);
@@ -54,7 +60,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		}
 		super.save(bizProductInfo);
 	}
-	
+
+
 	@Transactional(readOnly = false)
 	public void delete(BizProductInfo bizProductInfo) {
 		super.delete(bizProductInfo);

@@ -10,10 +10,12 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -28,6 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 产品信息表Controller
@@ -47,13 +50,20 @@ public class BizProductInfoController extends BaseController {
 	@Autowired
 	private DefaultPropService defaultPropService;
 	@Autowired
+	private BizSkuInfoService bizSkuInfoService;
+
+	@Autowired
 	private BizCategoryInfoService bizCategoryInfoService;
-	
+
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
 		BizProductInfo entity = null;
 		if (id!=null){
 			entity = bizProductInfoService.get(id);
+			BizSkuInfo bizSkuInfo=new BizSkuInfo();
+			bizSkuInfo.setProductInfo(entity);
+			List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
+			entity.setSkuInfosList(skuInfosList);
 		}
 		if (entity == null){
 			entity = new BizProductInfo();
@@ -81,6 +91,7 @@ public class BizProductInfoController extends BaseController {
 			bizCatePropValue.setCatePropertyInfo(bizCatePropertyInfo);
 			catePropValueList=bizCatePropValueService.findList(bizCatePropValue);
 		}
+
 			model.addAttribute("catePropValueList",catePropValueList);
 			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("entity", bizProductInfo);

@@ -122,5 +122,51 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+	<sys:message content="${message}"/>
+	<table id="contentTable" class="table table-striped table-bordered table-condensed">
+		<thead>
+		<tr>
+			<%--<th>商品产品Id</th>--%>
+			<th>sku类型</th>
+			<th>商品名称</th>
+			<th>商品编码</th>
+			<th>基础售价</th>
+			<th>采购价格</th>
+			<th>更新人</th>
+		</tr>
+		</thead>
+		<tbody>
+		<c:forEach items="${entity.skuInfosList}" var="bizSkuInfo">
+		<tr>
+			<%--<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizSkuInfo.id}">
+					${bizSkuInfo.id}</a>
+			</td>--%>
+			<td>
+					${bizSkuInfo.skuType}
+			</td>
+			<td>
+					${bizSkuInfo.name}
+			</td>
+			<td>
+					${bizSkuInfo.partNo}
+			</td>
+			<td>
+					${bizSkuInfo.basePrice}
+			</td>
+			<td>
+					${bizSkuInfo.buyPrice}
+			</td>
+			<td>
+					${bizSkuInfo.updateBy.name}
+			</td>
+			<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><td>
+				<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>
+				<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
+			</td></shiro:hasPermission>
+		</tr>
+		</c:forEach>
+		<div>
+		<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}">增加</a>
+		</div>
 </body>
 </html>
