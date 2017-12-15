@@ -8,6 +8,8 @@
 		a.prod_code AS "prodCode",
 		a.brand_id AS "catePropValue.id",
 		a.brand_name AS "brandName",
+		so.name AS "office.name",
+		so.type AS "office.type",
 		a.description AS "description",
 		a.vendor_id AS "office.id",
 		a.min_price AS "minPrice",
@@ -21,6 +23,8 @@
 	</sql>
 	
 	<sql id="bizProductInfoJoins">
+		 LEFT JOIN sys_office so ON so.id = a.vendor_id
+
 	</sql>
     
 	<select id="get" resultType="BizProductInfo">
@@ -89,14 +93,18 @@
 	<insert id="insert">
 		INSERT INTO biz_product_info(
 			id,
-			name,
+			`name`,
 			prod_code,
 			brand_id,
 			brand_name,
 			description,
 			vendor_id,
-			min_price,
-			max_price,
+			<if test="minPrice!=null">
+				min_price,
+			</if>
+			<if test="maxPrice!=null">
+				max_price,
+			</if>
 			status,
 			create_id,
 			create_time,
@@ -107,12 +115,16 @@
 			#{id},
 			#{name},
 			#{prodCode},
-			#{brandId},
+			#{catePropValue.id},
 			#{brandName},
 			#{description},
-			#{vendorId},
+			#{office.id},
+		<if test="minPrice!=null">
 			#{minPrice},
+		</if>
+		<if test="maxPrice!=null">
 			#{maxPrice},
+		</if>
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -124,15 +136,14 @@
 	
 	<update id="update">
 		UPDATE biz_product_info SET 	
-			name = #{name},
+			`name` = #{name},
 			prod_code = #{prodCode},
-			brand_id = #{brandId},
+			brand_id = #{catePropValue.id},
 			brand_name = #{brandName},
 			description = #{description},
-			vendor_id = #{vendorId},
+			vendor_id = #{office.id},
 			min_price = #{minPrice},
 			max_price = #{maxPrice},
-			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_time = #{updateDate},
 			update_id = #{updateBy.id}

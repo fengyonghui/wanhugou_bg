@@ -49,11 +49,11 @@
 				<th>商品代码</th>
 				<th>品牌名称</th>
 				<th>商品描述</th>
-				<th>工厂id</th>
+				<th>采购商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
 				
-				<shiro:hasPermission name="product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
+				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
@@ -72,7 +72,7 @@
 					${bizProductInfo.description}
 				</td>
 				<td>
-					${bizProductInfo.office.id}
+					${bizProductInfo.office.name}
 				</td>
 				<td>
 					${bizProductInfo.minPrice}
@@ -80,7 +80,8 @@
 				<td>
 					${bizProductInfo.maxPrice}
 				</td>
-				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><td>
+				<shiro:hasPermission name="biz:product:bizProductInfo:edit">
+					<td>
     				<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">修改</a>
 					<a href="${ctx}/biz/product/bizProductInfo/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>

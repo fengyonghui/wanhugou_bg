@@ -76,9 +76,8 @@ public class BizProductInfoController extends BaseController {
 			BizCatePropValue bizCatePropValue=new BizCatePropValue();
 			bizCatePropValue.setCatePropertyInfo(bizCatePropertyInfo);
 			catePropValueList=bizCatePropValueService.findList(bizCatePropValue);
-
 		}
-		model.addAttribute("catePropValueList",catePropValueList);
+			model.addAttribute("catePropValueList",catePropValueList);
 			model.addAttribute("entity", bizProductInfo);
 		return "modules/biz/product/bizProductInfoForm";
 	}
