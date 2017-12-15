@@ -15,7 +15,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  * @version 2017-12-13
  */
 public class BizProductInfo extends DataEntity<BizProductInfo> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String name;		// 商品名称
 	private String prodCode;		// 商品代码--厂家定的-或自己定的
@@ -25,6 +25,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private Office office;		// sys_office.id &amp; type= vendor
 	private String minPrice;		// 最低售价
 	private String maxPrice;		// 最高售价
+
 
 	
 	public BizProductInfo() {

@@ -49,6 +49,17 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">请选择商品分类：</label>
+			<div class="controls">
+				<sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
+								labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="商品分类"  url="/sys/office/queryTreeList?type=7" extId="${office.id}"
+								cssClass="input-xlarge required"
+								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">请选择品牌:</label>
 			<div class="controls">
 				<from:select path="catePropValue.id" items="${catePropValueList}" itemLabel="value" itemValue="id" htmlEscape="false" class="input-xlarge required"/>
