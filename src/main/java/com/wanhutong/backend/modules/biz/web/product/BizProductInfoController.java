@@ -8,9 +8,11 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
+import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
@@ -44,6 +46,8 @@ public class BizProductInfoController extends BaseController {
 	private BizCatePropertyInfoService bizCatePropertyInfoService;
 	@Autowired
 	private DefaultPropService defaultPropService;
+	@Autowired
+	private BizCategoryInfoService bizCategoryInfoService;
 	
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
@@ -78,6 +82,7 @@ public class BizProductInfoController extends BaseController {
 			catePropValueList=bizCatePropValueService.findList(bizCatePropValue);
 		}
 			model.addAttribute("catePropValueList",catePropValueList);
+			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("entity", bizProductInfo);
 		return "modules/biz/product/bizProductInfoForm";
 	}

@@ -61,6 +61,10 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	public List<BizCategoryInfo> findListInfo(BizCatelogInfo catelogInfo){
 		return UserUtils.getCategoryInfoList(catelogInfo);
 	}
+	public List<BizCategoryInfo> findAllCategory(){
+		return UserUtils.getCategoryInfoList(new BizCatelogInfo());
+
+	}
 	public Page<BizCategoryInfo> findPage(Page<BizCategoryInfo> page, BizCategoryInfo bizCategoryInfo) {
 		return super.findPage(page, bizCategoryInfo);
 	}

@@ -136,10 +136,8 @@ public class BizCategoryInfoController extends BaseController {
 		List<BizCatelogInfo> list=bizCatelogInfoService.findList(new BizCatelogInfo());
 		for (BizCatelogInfo catelogInfo:list) {
 			Map<String, Object> map = Maps.newHashMap();
-
 			map.put("id", 0);
 			map.put("name", catelogInfo.getName());
-
 			 mapList=treeDataInfo(extId,catelogInfo);
 //
 			mapList.add(map);

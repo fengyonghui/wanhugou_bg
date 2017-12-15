@@ -3,13 +3,17 @@
  */
 package com.wanhutong.backend.modules.biz.entity.product;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,9 +35,41 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String skuInfos; //多种商品信息
 	private Map<String,BizSkuInfo> skuInfoMap;
 
+	private String cateIds; //多种分类
 
+	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 
-	
+	public List<Integer> getCateIdList() {
+		List<Integer> cateIdList = Lists.newArrayList();
+		for (BizCategoryInfo categoryInfo : categoryInfoList) {
+			cateIdList.add(categoryInfo.getId());
+		}
+		return cateIdList;
+	}
+
+	public void setCateIdList(List<String> cateIdList) {
+		categoryInfoList = Lists.newArrayList();
+		for (String cateId : cateIdList) {
+			BizCategoryInfo categoryInfo = new BizCategoryInfo();
+			categoryInfo.setId(Integer.valueOf(cateId));
+			categoryInfoList.add(categoryInfo);
+		}
+	}
+
+	public String getCateIds() {
+		cateIds=StringUtils.join(getCateIdList(), ",");
+		return cateIds;
+	}
+
+	public void setCateIds(String cateIds) {
+
+		categoryInfoList = Lists.newArrayList();
+		if (cateIds != null){
+			String[] ids = StringUtils.split(cateIds, ",");
+			setCateIdList(Lists.newArrayList(ids));
+		}
+
+	}
 	public BizProductInfo() {
 		super();
 	}
@@ -125,4 +161,14 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setOffice(Office office) {
 		this.office = office;
 	}
+
+	public List<BizCategoryInfo> getCategoryInfoList() {
+		return categoryInfoList;
+	}
+
+	public void setCategoryInfoList(List<BizCategoryInfo> categoryInfoList) {
+		this.categoryInfoList = categoryInfoList;
+	}
+
+
 }

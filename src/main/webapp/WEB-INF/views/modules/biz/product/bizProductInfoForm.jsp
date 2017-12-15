@@ -5,11 +5,20 @@
 <head>
 	<title>商品信息表管理</title>
 	<meta name="decorator" content="default"/>
+	<%@include file="/WEB-INF/views/include/treeview.jsp" %>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    var ids = [], nodes = tree.getCheckedNodes(true);
+                    for(var i=0; i<nodes.length; i++) {
+                      if(!nodes[i].isParent){
+                          ids.push(nodes[i].id);
+					  }
+                    }
+                    $("#cateIds").val(ids);
+
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -23,6 +32,31 @@
 					}
 				}
 			});
+            var setting = {check:{enable:true,nocheckInherit:true},view:{selectedMulti:false},
+                data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){
+                    tree.checkNode(node, !node.checked, true, true);
+                    return false;
+                }}}
+
+            // 分类--菜单
+            var zNodes=[
+                    <c:forEach items="${cateList}" var="cate">{id:"${cate.id}", pId:"${not empty cate.parent.id?cate.parent.id:0}", name:"${not empty cate.parent.id?cate.name:'分类列表'}"},
+                </c:forEach>];
+            // 初始化树结构
+            var tree = $.fn.zTree.init($("#cateTree"), setting, zNodes);
+            // 不选择父节点
+            tree.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
+            // 默认选择节点
+            var ids = "${entity.cateIds}".split(",");
+            alert(ids);
+            for(var i=0; i<ids.length; i++) {
+                var node = tree.getNodeByParam("id", ids[i]);
+                try{tree.checkNode(node, true, false);
+                    tree.checkNode(node.getParentNode(), true, false);
+                }catch(e){}
+            }
+            // 默认展开全部节点
+            tree.expandAll(true);
 		});
 	</script>
 </head>
@@ -48,17 +82,7 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">请选择商品分类：</label>
-			<div class="controls">
-				<sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
-								labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="商品分类"  url="/sys/office/queryTreeList?type=7" extId="${office.id}"
-								cssClass="input-xlarge required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+
 		<div class="control-group">
 			<label class="control-label">请选择品牌:</label>
 			<div class="controls">
@@ -81,6 +105,15 @@
 								title="供应商"  url="/sys/office/queryTreeList?type=7" extId="${office.id}"
 								cssClass="input-xlarge required"
 								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">请选择商品分类：</label>
+			<div class="controls">
+				<div id="cateTree" class="ztree" style="margin-top:3px;float:left;"></div>
+				<form:hidden path="cateIds"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

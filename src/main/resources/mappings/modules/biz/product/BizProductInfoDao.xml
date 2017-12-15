@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao">
-    
+
+	<resultMap id="productInfoResult" type="BizProductInfo">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="prodCode" column="prodCode"/>
+		<result property="brandName" column="brandName"/>
+		<result property="description" column="description"/>
+		<result property="minPrice" column="minPrice"/>
+		<result property="maxPrice" column="maxPrice"/>
+		<result property="delFlag" column="status"/>
+		<result property="createDate" column="createDate"/>
+		<result property="updateDate" column="updateDate"/>
+		<association property="office" javaType="Office" column="office.id">
+			<id property="id" column="office.id"/>
+			<result property="name" column="office.name"/>
+			<result property="type" column="office.type"/>
+		</association>
+		<association property="catePropValue" javaType="BizCatePropValue" column="catePropValue.id">
+			<id property="id" column="catePropValue.id"/>
+		</association>
+		<association property="createBy" javaType="User" column="createBy.id">
+			<id property="id" column="createBy.id"/>
+		</association>
+		<association property="updateBy" javaType="User" column="updateBy.id">
+			<id property="id" column="updateBy.id"/>
+		</association>
+		<collection property="categoryInfoList" ofType="BizCategoryInfo">
+			<id property="id" column="categoryInfoList.id" />
+
+		</collection>
+
+	</resultMap>
+
 	<sql id="bizProductInfoColumns">
 		a.id AS "id",
 		a.name AS "name",
@@ -27,10 +59,12 @@
 
 	</sql>
     
-	<select id="get" resultType="BizProductInfo">
+	<select id="get" resultMap="productInfoResult">
 		SELECT 
-			<include refid="bizProductInfoColumns"/>
+			<include refid="bizProductInfoColumns"/>,
+			pc.cat_id AS "categoryInfoList.id"
 		FROM biz_product_info a
+		LEFT JOIN biz_prod_cate pc ON pc.prod_id = a.id
 		<include refid="bizProductInfoJoins"/>
 		WHERE a.id = #{id}
 	</select>
@@ -155,5 +189,17 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<delete id="deleteProdCate">
+		DELETE FROM biz_prod_cate WHERE prod_id = #{id}
+	</delete>
+	<insert id="insertProdCate">
+		INSERT INTO biz_prod_cate(prod_id, cat_id,create_id,create_time,update_id,update_time)
+		<foreach collection="categoryInfoList" item="cate" separator=" union all ">
+			SELECT #{id}, #{cate.id},#{createBy.id},#{createDate},#{updateBy.id},#{updateDate}
+			<if test="dbName != 'mssql'">
+				FROM dual
+			</if>
+		</foreach>
+	</insert>
 </mapper>

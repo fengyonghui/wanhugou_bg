@@ -8,6 +8,7 @@ import java.util.List;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,8 @@ import javax.annotation.Resource;
 public class BizProductInfoService extends CrudService<BizProductInfoDao, BizProductInfo> {
 	@Resource
 	private BizCatePropValueService bizCatePropValueService;
+	@Autowired
+	private BizProductInfoDao bizProductInfoDao;
 
 	public BizProductInfo get(Integer id) {
 		return super.get(id);
@@ -45,6 +48,10 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	public void save(BizProductInfo bizProductInfo) {
 		BizCatePropValue bizCatePropValue=bizCatePropValueService.get(bizProductInfo.getCatePropValue().getId());
 		bizProductInfo.setBrandName(bizCatePropValue.getValue());
+		bizProductInfoDao.deleteProdCate(bizProductInfo);
+		if (bizProductInfo.getCategoryInfoList().size() > 0){
+			bizProductInfoDao.insertProdCate(bizProductInfo);
+		}
 		super.save(bizProductInfo);
 	}
 	
