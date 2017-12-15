@@ -4,10 +4,13 @@
 package com.wanhutong.backend.modules.biz.entity.product;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+
+import java.util.Map;
 
 /**
  * 产品信息表Entity
@@ -25,6 +28,9 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private Office office;		// sys_office.id &amp; type= vendor
 	private String minPrice;		// 最低售价
 	private String maxPrice;		// 最高售价
+	private String skuInfos; //多种商品信息
+	private Map<String,BizSkuInfo> skuInfoMap;
+
 
 
 	
@@ -86,6 +92,22 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setMaxPrice(String maxPrice) {
 		this.maxPrice = maxPrice;
+	}
+
+	public String getSkuInfos() {
+		return skuInfos;
+	}
+
+	public void setSkuInfos(String skuInfos) {
+		this.skuInfos = skuInfos;
+	}
+
+	public Map<String, BizSkuInfo> getSkuInfoMap() {
+		return skuInfoMap;
+	}
+
+	public void setSkuInfoMap(Map<String, BizSkuInfo> skuInfoMap) {
+		this.skuInfoMap = skuInfoMap;
 	}
 
 	public BizCatePropValue getCatePropValue() {
