@@ -48,7 +48,6 @@
             tree.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
             // 默认选择节点
             var ids = "${entity.cateIds}".split(",");
-            alert(ids);
             for(var i=0; i<ids.length; i++) {
                 var node = tree.getNodeByParam("id", ids[i]);
                 try{tree.checkNode(node, true, false);
