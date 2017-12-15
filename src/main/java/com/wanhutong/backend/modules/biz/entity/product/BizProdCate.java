@@ -30,6 +30,7 @@ public class BizProdCate extends DataEntity<BizProdCate> {
 		return productInfo;
 	}
 
+
 	public void setProductInfo(BizProductInfo productInfo) {
 		this.productInfo = productInfo;
 	}

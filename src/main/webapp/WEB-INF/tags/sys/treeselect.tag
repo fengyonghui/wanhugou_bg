@@ -53,8 +53,8 @@
 							return false;
 						}//</c:if><c:if test="${notAllowSelectParent}">
 						if (nodes[i].isParent){
-//							top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
-//							return false;
+							top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+							return false;
 						}//</c:if><c:if test="${not empty module && selectScopeModule}">
 						if (nodes[i].module == ""){
 							top.$.jBox.tip("不能选择公共模型（"+nodes[i].name+"）请重新选择。");

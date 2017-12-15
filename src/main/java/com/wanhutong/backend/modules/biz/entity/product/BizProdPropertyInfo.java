@@ -19,6 +19,7 @@ public class BizProdPropertyInfo extends DataEntity<BizProdPropertyInfo> {
 	private String propName;		// 属性名称
 	private String propDescription;		// 属性描述
 
+
 	
 	public BizProdPropertyInfo() {
 		super();

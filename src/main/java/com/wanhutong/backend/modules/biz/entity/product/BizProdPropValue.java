@@ -61,6 +61,7 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 		this.source = source;
 	}
 
+
 	public BizProdPropertyInfo getProdPropertyInfo() {
 		return prodPropertyInfo;
 	}

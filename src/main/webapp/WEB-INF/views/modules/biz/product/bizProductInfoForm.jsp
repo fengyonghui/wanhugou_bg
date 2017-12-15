@@ -70,7 +70,6 @@
 								title="供应商"  url="/sys/office/queryTreeList?type=7" extId="${office.parent.id}"
 								cssClass="input-xlarge required"
 								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
-				<%--<form:input path="vendorId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>--%>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
