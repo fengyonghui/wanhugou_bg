@@ -19,9 +19,9 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/product/bizProductInfo/">产品信息表列表</a></li>
-		<shiro:hasPermission name="product:bizProductInfo:edit"><li><a href="${ctx}/product/bizProductInfo/form">产品信息表添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="biz:product:bizProductInfo:edit"><li><a href="${ctx}/biz/product/bizProductInfo/form">产品信息表添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizProductInfo" action="${ctx}/product/bizProductInfo/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
@@ -34,9 +34,9 @@
 			<li><label>品牌名称：</label>
 				<form:input path="brandName" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
-			<li><label>工厂id：</label>
-				<form:input path="vendorId" htmlEscape="false" maxlength="50" class="input-medium"/>
-			</li>
+			<%--<li><label>工厂id：</label>--%>
+				<%--<form:input path="vendorId" htmlEscape="false" maxlength="50" class="input-medium"/>--%>
+			<%--</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -59,7 +59,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizProductInfo">
 			<tr>
-				<td><a href="${ctx}/product/bizProductInfo/form?id=${bizProductInfo.id}">
+				<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">
 					${bizProductInfo.name}
 				</a></td>
 				<td>
@@ -72,7 +72,7 @@
 					${bizProductInfo.description}
 				</td>
 				<td>
-					${bizProductInfo.vendorId}
+					${bizProductInfo.office.id}
 				</td>
 				<td>
 					${bizProductInfo.minPrice}
@@ -80,9 +80,9 @@
 				<td>
 					${bizProductInfo.maxPrice}
 				</td>
-				<shiro:hasPermission name="product:bizProductInfo:edit"><td>
-    				<a href="${ctx}/product/bizProductInfo/form?id=${bizProductInfo.id}">修改</a>
-					<a href="${ctx}/product/bizProductInfo/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>
+				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><td>
+    				<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">修改</a>
+					<a href="${ctx}/biz/product/bizProductInfo/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -165,9 +167,39 @@ public class OfficeController extends BaseController {
 				map.put("pId", e.getParentId());
 				map.put("pIds", e.getParentIds());
 				map.put("name", e.getName());
-				if (type != null && "3".equals(type)){
-					map.put("isParent", true);
-				}
+//				if (type != null && "3".equals(type)){
+//					map.put("isParent", true);
+//				}
+				mapList.add(map);
+			}
+		}
+		return mapList;
+	}
+	@RequiresPermissions("user")
+	@ResponseBody
+	@RequestMapping(value = "queryTreeList")
+	public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type,RedirectAttributes redirectAttributes) {
+		List<Office> list = null;
+		if(StringUtils.isNotBlank(type)){
+			list = officeService.filerOffice(null, OfficeTypeEnum.VENDOR);
+		}
+		if(list == null || list.size() == 0){
+			addMessage(redirectAttributes, "列表不存在");
+		}
+		return convertList(list);
+	}
+
+	private List<Map<String, Object>> convertList(List<Office> list){
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		if(list != null && list.size() > 0 ){
+			for (int i = 0; i < list.size(); i++) {
+				Office e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("type", e.getType());
+				map.put("pIds", e.getParentIds());
+				map.put("name", e.getName());
 				mapList.add(map);
 			}
 		}

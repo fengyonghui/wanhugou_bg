@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.TreeDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 
+import java.util.List;
+
 /**
  * 机构DAO接口
  * @author ThinkGem
@@ -14,5 +16,9 @@ import com.wanhutong.backend.modules.sys.entity.Office;
  */
 @MyBatisDao
 public interface OfficeDao extends TreeDao<Office> {
+
+    List<Office> selectInfo(Office office);
+
+    List<Office> queryList(Office office);
 	
 }

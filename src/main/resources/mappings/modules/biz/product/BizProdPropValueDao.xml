@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wanhutong.backend.modules.product.dao.BizProdPropertyInfoDao">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.product.BizProdPropValueDao">
     
-	<sql id="bizProdPropertyInfoColumns">
+	<sql id="bizProdPropValueColumns">
 		a.id AS "id",
-		a.prod_id AS "prodId",
+		a.prop_id AS "propId",
+		a.cate_prop_id AS "catePropId",
 		a.prop_name AS "propName",
-		a.prop_description AS "propDescription",
-		a.status AS "delFlag",
+		a.cat_value_id AS "catValueId",
+		a.prop_value AS "propValue",
+		a.source AS "source",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
-		a.u_version AS "uVersion",
+		a.status AS "delFlag",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		a.u_version AS "uVersion"
 	</sql>
 	
-	<sql id="bizProdPropertyInfoJoins">
+	<sql id="bizProdPropValueJoins">
 	</sql>
     
-	<select id="get" resultType="BizProdPropertyInfo">
+	<select id="get" resultType="BizProdPropValue">
 		SELECT 
-			<include refid="bizProdPropertyInfoColumns"/>
-		FROM biz_prod_property_info a
-		<include refid="bizProdPropertyInfoJoins"/>
+			<include refid="bizProdPropValueColumns"/>
+		FROM biz_prod_prop_value a
+		<include refid="bizProdPropValueJoins"/>
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="BizProdPropertyInfo">
+	<select id="findList" resultType="BizProdPropValue">
 		SELECT 
-			<include refid="bizProdPropertyInfoColumns"/>
-		FROM biz_prod_property_info a
-		<include refid="bizProdPropertyInfoJoins"/>
+			<include refid="bizProdPropValueColumns"/>
+		FROM biz_prod_prop_value a
+		<include refid="bizProdPropValueJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="propName != null and propName != ''">
@@ -49,11 +52,11 @@
 		</choose>
 	</select>
 	
-	<select id="findAllList" resultType="BizProdPropertyInfo">
+	<select id="findAllList" resultType="BizProdPropValue">
 		SELECT 
-			<include refid="bizProdPropertyInfoColumns"/>
-		FROM biz_prod_property_info a
-		<include refid="bizProdPropertyInfoJoins"/>
+			<include refid="bizProdPropValueColumns"/>
+		FROM biz_prod_prop_value a
+		<include refid="bizProdPropValueJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 		</where>		
@@ -67,45 +70,54 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO biz_prod_property_info(
+		INSERT INTO biz_prod_prop_value(
 			id,
-			prod_id,
+			prop_id,
+			cate_prop_id,
 			prop_name,
-			prop_description,
-			status,
+			cat_value_id,
+			prop_value,
+			source,
 			create_id,
 			create_time,
-			u_version,
+			status,
 			update_id,
-			update_time
+			update_time,
+			u_version
 		) VALUES (
 			#{id},
-			#{prodId},
+			#{propId},
+			#{catePropId},
 			#{propName},
-			#{propDescription},
-			#{delFlag},
+			#{catValueId},
+			#{propValue},
+			#{source},
 			#{createBy.id},
 			#{createDate},
-			#{uVersion},
+			#{delFlag},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{uVersion}
 		)
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_prod_property_info SET 	
-			prod_id = #{prodId},
+		UPDATE biz_prod_prop_value SET 	
+			prop_id = #{propId},
+			cate_prop_id = #{catePropId},
 			prop_name = #{propName},
-			prop_description = #{propDescription},
+			cat_value_id = #{catValueId},
+			prop_value = #{propValue},
+			source = #{source},
 			create_time = #{createDate},
-			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+			u_version = #{uVersion}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
-		UPDATE biz_prod_property_info SET 
+		UPDATE biz_prod_prop_value SET 
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

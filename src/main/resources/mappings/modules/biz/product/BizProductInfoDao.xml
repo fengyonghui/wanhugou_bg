@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wanhutong.backend.modules.product.dao.BizProductInfoDao">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao">
     
 	<sql id="bizProductInfoColumns">
 		a.id AS "id",
 		a.name AS "name",
 		a.prod_code AS "prodCode",
-		a.brand_id AS "brandId",
+		a.brand_id AS "catePropValue.id",
 		a.brand_name AS "brandName",
 		a.description AS "description",
-		a.vendor_id AS "vendorId",
+		a.vendor_id AS "office.id",
 		a.min_price AS "minPrice",
 		a.max_price AS "maxPrice",
 		a.status AS "delFlag",
@@ -56,11 +56,8 @@
 					<if test="dbName == 'mssql'">'%'+#{brandName}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{brandName},'%')</if>
 			</if>
-			<if test="vendorId != null and vendorId != ''">
-				AND a.vendor_id LIKE 
-					<if test="dbName == 'oracle'">'%'||#{vendorId}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{vendorId}+'%'</if>
-					<if test="dbName == 'mysql'">concat('%',#{vendorId},'%')</if>
+			<if test="office != null and office.id !=null and office.id != ''">
+				AND a.vendor_id = #{office.id}
 			</if>
 		</where>
 		<choose>

@@ -1,18 +1,19 @@
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-package com.wanhutong.backend.modules.product.service;
+package com.wanhutong.backend.modules.biz.service.product;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.product.entity.BizProductInfo;
-import com.wanhutong.backend.modules.product.dao.BizProductInfoDao;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+
 
 /**
  * 产品信息表Service

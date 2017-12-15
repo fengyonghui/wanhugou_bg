@@ -1,3 +1,4 @@
+<%@ taglib prefix="from" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
@@ -27,10 +28,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/product/bizProductInfo/">产品信息表列表</a></li>
-		<li class="active"><a href="${ctx}/product/bizProductInfo/form?id=${bizProductInfo.id}">产品信息表<shiro:hasPermission name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz/product/bizProductInfo/">产品信息表列表</a></li>
+		<li class="active"><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">产品信息表<shiro:hasPermission name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/product/bizProductInfo/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
@@ -48,19 +49,13 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">品牌分类的属性值ID:</label>
+			<label class="control-label">请选择品牌:</label>
 			<div class="controls">
-				<form:input path="brandId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<from:select path="catePropValue.id" items="${catePropValueList}" itemLabel="value" itemValue="id" htmlEscape="false" class="input-xlarge required"/>
+								<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">品牌名称：</label>
-			<div class="controls">
-				<form:input path="brandName" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+
 		<div class="control-group">
 			<label class="control-label">商品描述：</label>
 			<div class="controls">
@@ -70,13 +65,18 @@
 		<div class="control-group">
 			<label class="control-label">请选择供应商：</label>
 			<div class="controls">
-				<form:input path="vendorId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<sys:treeselect id="office" name="office.parent.id" value="${entity.office.parent.id}"  labelName="office.parent.name"
+								labelValue="${entity.office.parent.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="供应商"  url="/sys/office/queryTreeList?type=7" extId="${office.parent.id}"
+								cssClass="input-xlarge required"
+								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+				<%--<form:input path="vendorId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>--%>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 
 		<div class="form-actions">
-			<shiro:hasPermission name="product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

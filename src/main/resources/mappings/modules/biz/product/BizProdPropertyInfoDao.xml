@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wanhutong.backend.modules.product.dao.BizProdCateDao">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.product.BizProdPropertyInfoDao">
     
-	<sql id="bizProdCateColumns">
+	<sql id="bizProdPropertyInfoColumns">
 		a.id AS "id",
 		a.prod_id AS "prodId",
-		a.cat_id AS "catId",
+		a.prop_name AS "propName",
+		a.prop_description AS "propDescription",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -14,24 +15,30 @@
 		a.update_time AS "updateDate"
 	</sql>
 	
-	<sql id="bizProdCateJoins">
+	<sql id="bizProdPropertyInfoJoins">
 	</sql>
     
-	<select id="get" resultType="BizProdCate">
+	<select id="get" resultType="BizProdPropertyInfo">
 		SELECT 
-			<include refid="bizProdCateColumns"/>
-		FROM biz_prod_cate a
-		<include refid="bizProdCateJoins"/>
+			<include refid="bizProdPropertyInfoColumns"/>
+		FROM biz_prod_property_info a
+		<include refid="bizProdPropertyInfoJoins"/>
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="BizProdCate">
+	<select id="findList" resultType="BizProdPropertyInfo">
 		SELECT 
-			<include refid="bizProdCateColumns"/>
-		FROM biz_prod_cate a
-		<include refid="bizProdCateJoins"/>
+			<include refid="bizProdPropertyInfoColumns"/>
+		FROM biz_prod_property_info a
+		<include refid="bizProdPropertyInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="propName != null and propName != ''">
+				AND a.prop_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{propName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{propName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{propName},'%')</if>
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -42,11 +49,11 @@
 		</choose>
 	</select>
 	
-	<select id="findAllList" resultType="BizProdCate">
+	<select id="findAllList" resultType="BizProdPropertyInfo">
 		SELECT 
-			<include refid="bizProdCateColumns"/>
-		FROM biz_prod_cate a
-		<include refid="bizProdCateJoins"/>
+			<include refid="bizProdPropertyInfoColumns"/>
+		FROM biz_prod_property_info a
+		<include refid="bizProdPropertyInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 		</where>		
@@ -60,10 +67,11 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO biz_prod_cate(
+		INSERT INTO biz_prod_property_info(
 			id,
 			prod_id,
-			cat_id,
+			prop_name,
+			prop_description,
 			status,
 			create_id,
 			create_time,
@@ -73,7 +81,8 @@
 		) VALUES (
 			#{id},
 			#{prodId},
-			#{catId},
+			#{propName},
+			#{propDescription},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -84,9 +93,10 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_prod_cate SET 	
+		UPDATE biz_prod_property_info SET 	
 			prod_id = #{prodId},
-			cat_id = #{catId},
+			prop_name = #{propName},
+			prop_description = #{propDescription},
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
@@ -95,7 +105,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE biz_prod_cate SET 
+		UPDATE biz_prod_property_info SET 
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

@@ -125,8 +125,8 @@ public class BizCategoryInfoController extends BaseController {
 	public String delete(BizCategoryInfo bizCategoryInfo, RedirectAttributes redirectAttributes) {
 		bizCategoryInfoService.delete(bizCategoryInfo);
 		addMessage(redirectAttributes, "删除商品类别成功");
-		Integer id = bizCategoryInfo.getParentId()==0 ? null : bizCategoryInfo.getParentId();
-		return "redirect:" + adminPath + "/biz/category/bizCategoryInfo/list?id="+id+"&parentIds="+bizCategoryInfo.getParentIds()+"&cid="+bizCategoryInfo.getId();
+		//Integer id = bizCategoryInfo.getParentId()==0 ? null : bizCategoryInfo.getParentId();
+		return "redirect:" + adminPath + "/biz/category/bizCategoryInfo/list?id="+bizCategoryInfo.getParentId()+"&parentIds="+bizCategoryInfo.getParentIds()+"&cid="+bizCategoryInfo.getId();
 	}
 
 	@ResponseBody

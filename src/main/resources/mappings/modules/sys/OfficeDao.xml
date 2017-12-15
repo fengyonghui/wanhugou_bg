@@ -172,5 +172,36 @@
 					<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 	</update>
-	
+
+
+
+	<select id="queryList" resultType="Office">
+		SELECT
+		<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE
+		a.status = #{DEL_FLAG_NORMAL}
+		<if test="type != null and type != ''">
+			AND a.type = #{type}
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name = #{name}
+		</if>
+		<if test="parent != null and parent.id != null">
+			AND a.parent_id = #{parent.id}
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		OR a.id = #{currentUser.office.id}
+		<!--<if test="currentUser != null and currentUser.UserOfficeList != null and currentUser.UserOfficeList.size() != 0">-->
+
+-- 			OR a.id IN
+			<!--<foreach collection="currentUser.UserOfficeList" item="userOffice" index="index"-->
+					 <!--open="(" close=")" separator=",">-->
+				<!--#{userOffice.office.id}-->
+			<!--</foreach>-->
+		<!--</if>-->
+		ORDER BY  a.code
+	</select>
 </mapper>

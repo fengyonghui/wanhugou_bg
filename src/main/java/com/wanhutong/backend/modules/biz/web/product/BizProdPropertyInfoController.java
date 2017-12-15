@@ -1,11 +1,13 @@
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-package com.wanhutong.backend.modules.product.web;
+package com.wanhutong.backend.modules.biz.web.product;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,12 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.product.entity.BizProdPropertyInfo;
-import com.wanhutong.backend.modules.product.service.BizProdPropertyInfoService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 属性表Controller
@@ -28,7 +26,7 @@ import com.wanhutong.backend.modules.product.service.BizProdPropertyInfoService;
  * @version 2017-12-14
  */
 @Controller
-@RequestMapping(value = "${adminPath}/product/bizProdPropertyInfo")
+@RequestMapping(value = "${adminPath}/biz/product/bizProdPropertyInfo")
 public class BizProdPropertyInfoController extends BaseController {
 
 	@Autowired
@@ -46,22 +44,22 @@ public class BizProdPropertyInfoController extends BaseController {
 		return entity;
 	}
 	
-	@RequiresPermissions("product:bizProdPropertyInfo:view")
+	@RequiresPermissions("biz:product:bizProdPropertyInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizProdPropertyInfo bizProdPropertyInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizProdPropertyInfo> page = bizProdPropertyInfoService.findPage(new Page<BizProdPropertyInfo>(request, response), bizProdPropertyInfo); 
 		model.addAttribute("page", page);
-		return "modules/product/bizProdPropertyInfoList";
+		return "modules/biz/product/bizProdPropertyInfoList";
 	}
 
-	@RequiresPermissions("product:bizProdPropertyInfo:view")
+	@RequiresPermissions("biz:product:bizProdPropertyInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizProdPropertyInfo bizProdPropertyInfo, Model model) {
 		model.addAttribute("bizProdPropertyInfo", bizProdPropertyInfo);
-		return "modules/product/bizProdPropertyInfoForm";
+		return "modules/biz/product/bizProdPropertyInfoForm";
 	}
 
-	@RequiresPermissions("product:bizProdPropertyInfo:edit")
+	@RequiresPermissions("biz:product:bizProdPropertyInfo:edit")
 	@RequestMapping(value = "save")
 	public String save(BizProdPropertyInfo bizProdPropertyInfo, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizProdPropertyInfo)){
@@ -69,15 +67,15 @@ public class BizProdPropertyInfoController extends BaseController {
 		}
 		bizProdPropertyInfoService.save(bizProdPropertyInfo);
 		addMessage(redirectAttributes, "保存属性表成功");
-		return "redirect:"+Global.getAdminPath()+"/product/bizProdPropertyInfo/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProdPropertyInfo/?repage";
 	}
 	
-	@RequiresPermissions("product:bizProdPropertyInfo:edit")
+	@RequiresPermissions("biz:product:bizProdPropertyInfo:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizProdPropertyInfo bizProdPropertyInfo, RedirectAttributes redirectAttributes) {
 		bizProdPropertyInfoService.delete(bizProdPropertyInfo);
 		addMessage(redirectAttributes, "删除属性表成功");
-		return "redirect:"+Global.getAdminPath()+"/product/bizProdPropertyInfo/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProdPropertyInfo/?repage";
 	}
 
 }
