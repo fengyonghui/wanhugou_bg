@@ -50,7 +50,7 @@
                 $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
                     {catIds:ids.toString()},
                     function(data) {
-                        $.map(data, function (PropertyInfo,List<BizCatePropValue>) {
+                        $.map(data, function (value) {
 							alert(data+"========="+value);
                         })
                     })
