@@ -52,13 +52,15 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	
 	@Transactional(readOnly = false)
 	public void save(BizProductInfo bizProductInfo) {
+
 		BizCatePropValue bizCatePropValue=bizCatePropValueService.get(bizProductInfo.getCatePropValue().getId());
 		bizProductInfo.setBrandName(bizCatePropValue.getValue());
+		super.save(bizProductInfo);
 		bizProductInfoDao.deleteProdCate(bizProductInfo);
 		if (bizProductInfo.getCategoryInfoList().size() > 0){
 			bizProductInfoDao.insertProdCate(bizProductInfo);
 		}
-		super.save(bizProductInfo);
+
 	}
 
 

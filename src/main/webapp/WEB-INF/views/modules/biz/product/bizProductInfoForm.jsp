@@ -48,12 +48,16 @@
                 $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
                     {catIds:ids.toString()},
                     function(data) {
-                    	$.each(data,function (index,values) {
-                    	    alert(index);
+                    	$.each(data,function (keys,values) {
+                           var propKeys= keys.split(",");
+                    	    for(var i in propKeys){
+                                alert(propKeys[i])
+                            }
+                            $("#cateProp").append('<input type="checkbox" value=""/>')
+                    	    alert(index)
                           for(var p in values){
                             alert(values[p].propValue.id+"========"+values[p].value)  ;
 						  }
-
                         })
 
                     })
@@ -141,9 +145,9 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label">商品属性：</label>
-			<div class="controls">
-				<div id="cateProp"  style="margin-top:3px;float:left;"></div>
-				<input type="checkbox" />
+			<div  id ="cateProp" class="controls">
+
+
 			</div>
 		</div>
 		<div class="form-actions">
