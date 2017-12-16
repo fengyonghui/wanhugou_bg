@@ -43,7 +43,6 @@
                 {catId:id},
                 function(data,status){
                     $.each(data, function (index, catePropertyInfo) {
-
                         $.each(catePropertyInfo.catePropValueList, function (index, catePropValue) {
 
                             if(props.indexOf(catePropValue.propertyInfoId)!=-1){

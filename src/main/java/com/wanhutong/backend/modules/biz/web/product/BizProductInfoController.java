@@ -83,6 +83,7 @@ public class BizProductInfoController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizProductInfo bizProductInfo, Model model) {
 		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("propBrand"));
+
 		List<BizCatePropValue> catePropValueList=null;
 		if(list!=null && list.size()>0){
 			DefaultProp defaultProp=list.get(0);

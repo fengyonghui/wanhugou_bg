@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.biz.service.category;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.product.BizProdCate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ import com.wanhutong.backend.modules.biz.dao.category.BizCatePropValueDao;
 @Service
 @Transactional(readOnly = true)
 public class BizCatePropValueService extends CrudService<BizCatePropValueDao, BizCatePropValue> {
+	@Autowired
+	private BizCatePropValueDao bizCatePropValueDao;
 
 	public BizCatePropValue get(Integer id) {
 		return super.get(id);
@@ -32,6 +36,10 @@ public class BizCatePropValueService extends CrudService<BizCatePropValueDao, Bi
 	
 	public Page<BizCatePropValue> findPage(Page<BizCatePropValue> page, BizCatePropValue bizCatePropValue) {
 		return super.findPage(page, bizCatePropValue);
+	}
+
+	public List<BizCatePropValue> findCatePropInfoValue(BizProdCate bizProdCate){
+		return bizCatePropValueDao.findCatePropInfoValue(bizProdCate);
 	}
 	
 	@Transactional(readOnly = false)

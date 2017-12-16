@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.biz.dao.category;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdCate;
+
+import java.util.List;
 
 /**
  * 记录分类下所有属性值DAO接口
@@ -14,5 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
  */
 @MyBatisDao
 public interface BizCatePropValueDao extends CrudDao<BizCatePropValue> {
+
+    List<BizCatePropValue> findCatePropInfoValue(BizProdCate bizProdCate);
 	
 }

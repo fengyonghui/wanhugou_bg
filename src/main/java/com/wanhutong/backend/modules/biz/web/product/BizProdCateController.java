@@ -3,22 +3,33 @@
  */
 package com.wanhutong.backend.modules.biz.web.product;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdCate;
+import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdCateService;
+import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品分类表\n产品 &lt;&mdash;&gt; 分类 多对多Controller
@@ -31,6 +42,7 @@ public class BizProdCateController extends BaseController {
 
 	@Autowired
 	private BizProdCateService bizProdCateService;
+
 	
 	@ModelAttribute
 	public BizProdCate get(@RequestParam(required=false) Integer id) {
@@ -77,5 +89,16 @@ public class BizProdCateController extends BaseController {
 		addMessage(redirectAttributes, "删除产品分类表\n产品 &lt;&mdash;&gt; 分类 多对多成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProdCate/?repage";
 	}
+	@ResponseBody
+	@RequestMapping(value = "findCatePropInfoMap")
+	public Map<PropertyInfo,List<BizCatePropValue>> findCatePropInfoMap(BizProdCate bizProdCate,String catIds){
+		if (catIds != null){
+			String[] ids = StringUtils.split(catIds, ",");
+			bizProdCate.setCatIds(Lists.newArrayList(ids));
+		}
+		Map<PropertyInfo,List<BizCatePropValue>> map=bizProdCateService.findCatePropMap(bizProdCate);
+		return map;
+	}
+
 
 }

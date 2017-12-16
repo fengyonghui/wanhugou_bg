@@ -36,7 +36,27 @@
                 data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){
                     tree.checkNode(node, !node.checked, true, true);
                     return false;
-                }}}
+                },onCheck: zTreeOnCheck
+            }}
+            function zTreeOnCheck(event, treeId, treeNode) {
+                var ids = [], nodes = tree.getCheckedNodes(true);
+                for(var i=0; i<nodes.length; i++) {
+                    if(!nodes[i].isParent){
+                        ids.push(nodes[i].id);
+                    }
+
+                }
+                alert(ids.toString());
+                $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
+                    {catIds:ids.toString()},
+                    function(data) {
+                        $.map(data, function (PropertyInfo,List<BizCatePropValue>) {
+							alert(data+"========="+value);
+                        })
+                    })
+
+             //   alert(treeNode.tId + ", " + treeNode.name + "," + treeNode.checked);
+            };
 
             // 分类--菜单
             var zNodes=[
@@ -45,7 +65,7 @@
             // 初始化树结构
             var tree = $.fn.zTree.init($("#cateTree"), setting, zNodes);
             // 不选择父节点
-            tree.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
+            tree.setting.check.chkboxType = { "Y" : "ps", "N" : "ps" };
             // 默认选择节点
             var ids = "${entity.cateIds}".split(",");
             for(var i=0; i<ids.length; i++) {
@@ -113,10 +133,16 @@
 			<div class="controls">
 				<div id="cateTree" class="ztree" style="margin-top:3px;float:left;"></div>
 				<form:hidden path="cateIds"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 			</div>
 		</div>
-
+		<div class="control-group">
+			<label class="control-label">商品属性：</label>
+			<div class="controls">
+				<div id="cateProp"  style="margin-top:3px;float:left;"></div>
+				<input type="checkbox" />
+			</div>
+		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
