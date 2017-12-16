@@ -49,7 +49,7 @@
                     {catIds:ids.toString()},
                     function(data) {
                     	$.each(data,function (index,values) {
-							alert(data.id)
+                    	    alert(index);
                           for(var p in values){
                             alert(values[p].propValue.id+"========"+values[p].value)  ;
 						  }

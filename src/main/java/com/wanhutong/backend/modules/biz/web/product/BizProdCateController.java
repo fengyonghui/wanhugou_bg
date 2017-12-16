@@ -91,12 +91,12 @@ public class BizProdCateController extends BaseController {
 	}
 	@ResponseBody
 	@RequestMapping(value = "findCatePropInfoMap")
-	public Map<PropertyInfo,List<BizCatePropValue>> findCatePropInfoMap(BizProdCate bizProdCate,String catIds){
+	public Map<String,List<BizCatePropValue>> findCatePropInfoMap(BizProdCate bizProdCate,String catIds){
 		if (catIds != null){
 			String[] ids = StringUtils.split(catIds, ",");
 			bizProdCate.setCatIds(Lists.newArrayList(ids));
 		}
-		Map<PropertyInfo,List<BizCatePropValue>> map=bizProdCateService.findCatePropMap(bizProdCate);
+		Map<String,List<BizCatePropValue>> map=bizProdCateService.findCatePropMap(bizProdCate);
 		return map;
 	}
 

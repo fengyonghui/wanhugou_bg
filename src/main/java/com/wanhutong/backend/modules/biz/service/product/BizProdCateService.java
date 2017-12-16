@@ -58,10 +58,10 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 		super.delete(bizProdCate);
 	}
 
-	public Map<PropertyInfo,List<BizCatePropValue>> findCatePropMap(BizProdCate bizProdCate){
+	public Map<String,List<BizCatePropValue>> findCatePropMap(BizProdCate bizProdCate){
 		List<BizCatePropValue> catePropValueList=bizCatePropValueService.findCatePropInfoValue(bizProdCate);
 		Map<Integer,List<BizCatePropValue>> map = new HashMap<Integer,List<BizCatePropValue>>();
-		Map<PropertyInfo,List<BizCatePropValue>> propCateMap = new HashMap<PropertyInfo,List<BizCatePropValue>>();
+		Map<String,List<BizCatePropValue>> propCateMap = new HashMap<String,List<BizCatePropValue>>();
 		List<BizCatePropValue>  propValueList=null;
 		for(BizCatePropValue bizCatePropValue:catePropValueList){
 			if(bizCatePropValue.getSource()!=null && bizCatePropValue.getSource().equals("sys")){
@@ -81,7 +81,8 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 		}
 		for(Integer key :map.keySet()) {
 			PropertyInfo propertyInfo=propertyInfoService.get(key);
-			propCateMap.put(propertyInfo,map.get(key));
+			String sKey = propertyInfo.getId()+","+propertyInfo.getName();
+			propCateMap.put(sKey,map.get(key));
 		}
 		return propCateMap;
 	}
