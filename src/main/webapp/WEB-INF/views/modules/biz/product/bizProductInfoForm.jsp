@@ -123,6 +123,7 @@
 				<form:textarea path="description" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
+
 		<div class="control-group">
 			<label class="control-label">请选择供应商：</label>
 			<div class="controls">
@@ -143,6 +144,7 @@
 				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 			</div>
 		</div>
+
 		<div class="control-group">
 			<label class="control-label">商品属性：</label>
 			<div  id ="cateProp" class="controls">
@@ -155,6 +157,7 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
@@ -198,8 +201,13 @@
 			</td></shiro:hasPermission>
 		</tr>
 		</c:forEach>
-		<div>
-		<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}">增加</a>
-		</div>
+
+		<footer class="footer navbar-fixed-bottom ">
+		<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}" class="button">
+			<button style>增加</button>
+		</a>
+		</footer>
+
+
 </body>
 </html>

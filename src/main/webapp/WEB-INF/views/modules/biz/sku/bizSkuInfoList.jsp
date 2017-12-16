@@ -25,9 +25,16 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>商品名称：</label>
-				<form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
-			</li>
+            <li><label>sku类型：</label>
+                <form:select path="skuType" class="input-xlarge required">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('skuType')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/>
+                </form:select>
+            </li>
+            <li><label>sku名称：</label>
+                <form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
+            </li>
 			<li><label>商品编码：</label>
 				<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
