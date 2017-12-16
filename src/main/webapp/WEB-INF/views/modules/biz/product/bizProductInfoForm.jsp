@@ -44,15 +44,18 @@
                     if(!nodes[i].isParent){
                         ids.push(nodes[i].id);
                     }
-
                 }
-                alert(ids.toString());
                 $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
                     {catIds:ids.toString()},
                     function(data) {
-                        $.map(data, function (value) {
-							alert(data+"========="+value);
+                    	$.each(data,function (index,values) {
+							alert(data.id)
+                          for(var p in values){
+                            alert(values[p].propValue.id+"========"+values[p].value)  ;
+						  }
+
                         })
+
                     })
 
              //   alert(treeNode.tId + ", " + treeNode.name + "," + treeNode.checked);
