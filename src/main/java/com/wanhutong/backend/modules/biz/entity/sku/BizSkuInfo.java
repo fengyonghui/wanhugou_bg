@@ -33,6 +33,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private double buyPrice;   //采购价格
 	private List bizSkuInfo;
 
+
+	private int sign;//sku删除返回的标志
 	public BizSkuInfo() {
 		super();
 	}
@@ -48,7 +50,6 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 //	public void setBizSkuInfo(BizSkuInfo bizSkuInfo) {
 //		this.bizSkuInfo = bizSkuInfo;
 //	}
-
 
 	public BizProductInfo getProductInfo() {
 		return productInfo;
@@ -106,5 +107,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setBizSkuInfo(List bizSkuInfo) {
 		this.bizSkuInfo = bizSkuInfo;
+	}
+
+	public int getSign() {
+		return sign;
+	}
+
+	public void setSign(int sign) {
+		this.sign = sign;
 	}
 }

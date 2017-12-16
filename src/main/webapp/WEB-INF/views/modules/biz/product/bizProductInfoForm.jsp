@@ -168,8 +168,8 @@
 					${bizSkuInfo.id}</a>
 			</td>--%>
 			<td>
-					${bizSkuInfo.skuType}
-			</td>
+                    ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}
+            </td>
 			<td>
 					${bizSkuInfo.name}
 			</td>
@@ -187,7 +187,7 @@
 			</td>
 			<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><td>
 				<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>
-				<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
+				<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=1" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
 			</td></shiro:hasPermission>
 		</tr>
 		</c:forEach>

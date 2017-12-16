@@ -16,11 +16,13 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		su.name AS "updateBy.name"
+		su.name AS "updateBy.name",
+		bpi.name AS "productInfo.name"
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
-		left join sys_user su on a.update_id = su.id
+		join sys_user su on a.update_id = su.id
+		left join biz_product_info bpi on bpi.id = a.prod_id
 	</sql>
     
 	<select id="get" resultType="BizSkuInfo">

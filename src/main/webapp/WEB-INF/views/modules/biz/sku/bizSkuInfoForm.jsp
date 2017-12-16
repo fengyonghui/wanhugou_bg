@@ -42,10 +42,15 @@
 			</div>
 		</div>--%>
 		<div class="control-group">
-			<label class="control-label">试销品、主销品、热销品、尾销品：</label>
+			<label class="control-label">sku类型：</label>
 			<div class="controls">
-				<form:input path="skuType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<%--<form:input path="skuType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>--%>
+                    <form:select path="skuType" class="input-xlarge required">
+                        <form:option value="" label="请选择"/>
+                        <form:options items="${fns:getDictList('skuType')}" itemLabel="label" itemValue="value"
+                                      htmlEscape="false"/>
+                    </form:select>
+                    <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">

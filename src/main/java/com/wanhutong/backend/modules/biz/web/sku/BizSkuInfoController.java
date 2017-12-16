@@ -69,15 +69,18 @@ public class BizSkuInfoController extends BaseController {
 		}
 		bizSkuInfoService.save(bizSkuInfo);
 		addMessage(redirectAttributes, "保存商品sku成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
 	}
-	
+
 	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizSkuInfo bizSkuInfo, RedirectAttributes redirectAttributes) {
 		bizSkuInfoService.delete(bizSkuInfo);
 		addMessage(redirectAttributes, "删除商品sku成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage";
+		if(bizSkuInfo.getSign()==0){
+			return "redirect:"+Global.getAdminPath()+"//biz/sku/bizSkuInfo/?repage";
+        }
+		return "redirect:"+Global.getAdminPath()+"//biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
 	}
 
 }

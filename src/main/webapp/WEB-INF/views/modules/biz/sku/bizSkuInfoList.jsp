@@ -39,9 +39,9 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>商品产品Id</th>
-				<th>sku类型</th>
 				<th>商品名称</th>
+				<th>sku类型</th>
+				<th>sku名称</th>
 				<th>商品编码</th>
 				<%--<th>创建人</th>--%>
 				<th>基础售价</th>
@@ -56,10 +56,10 @@
 		<c:forEach items="${page.list}" var="bizSkuInfo">
 			<tr>
 				<td><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">
-					${bizSkuInfo.id}</a>
+					${bizSkuInfo.productInfo.name}</a>
 					</td>
 					<td>
-						${bizSkuInfo.skuType}
+                        ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}
 					</td>
 					<td>
 						${bizSkuInfo.name}
@@ -87,7 +87,7 @@
 					<%--</td>--%>
 				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><td>
 					<%--<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>--%>
-					<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
+					<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
