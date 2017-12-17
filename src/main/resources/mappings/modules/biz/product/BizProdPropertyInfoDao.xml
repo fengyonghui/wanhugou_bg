@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.product.BizProdPropertyInfoDao">
-    
+	<resultMap id="bizProdPropertyInfoResult" type="BizProdPropertyInfo">
+		<id property="id" column="id" />
+		<result property="propName" column="propName" />
+		<result property="propDescription" column="propDescription" />
+		<result property="createDate" column="createDate" />
+		<result property="delFlag" column="status" />
+		<result property="uVersion" column="uVersion" />
+		<result property="updateDate" column="updateDate" />
+		<association property="productInfo" javaType="BizProductInfo" column="productInfo.id">
+			<id property="id" column="productInfo.id"/>
+		</association>
+		<collection property="prodPropValueList" ofType="BizProdPropValue">
+			<id property="id" column="prodPropValueList.id" />
+			<result  property="propertyValueId" column="propertyValueId"/>
+			<result  property="propertyInfoId" column="propertyInfoId"/>
+		</collection>
+	</resultMap>
+
+
 	<sql id="bizProdPropertyInfoColumns">
 		a.id AS "id",
 		a.prod_id AS "productInfo.id",
@@ -26,11 +44,16 @@
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="BizProdPropertyInfo">
+	<select id="findList" resultMap="bizProdPropertyInfoResult">
 		SELECT 
-			<include refid="bizProdPropertyInfoColumns"/>
+			<include refid="bizProdPropertyInfoColumns"/>,
+			ppv.id AS "prodPropValueList.id",
+			ppv.prop_id AS "propertyInfoId",
+			ppv.pop_value_id AS "propertyValueId",
+			ppv.prod_prop_id AS "prodPropertyInfoId"
 		FROM biz_prod_property_info a
 		<include refid="bizProdPropertyInfoJoins"/>
+		LEFT  JOIN biz_prod_prop_value ppv ON ppv.prod_prop_id=a.id
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="propName != null and propName != ''">
@@ -38,6 +61,9 @@
 					<if test="dbName == 'oracle'">'%'||#{propName}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{propName}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{propName},'%')</if>
+			</if>
+			<if test="productInfo!=null and productInfo.id!=null and productInfo.id!=''">
+				and a.prod_id=#{productInfo.id}
 			</if>
 		</where>
 		<choose>

@@ -28,6 +28,12 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 	private String propValue;							// 属性值
 	private String source;								// sys系统，cate分类
 
+	private Integer propertyInfoId;
+
+	private Integer propertyValueId;
+
+	private Integer prodPropertyInfoId;
+
 	
 	public BizProdPropValue() {
 		super();
@@ -104,5 +110,29 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 
 	public void setSysPropValue(PropValue sysPropValue) {
 		this.sysPropValue = sysPropValue;
+	}
+
+	public Integer getPropertyInfoId() {
+		return propertyInfoId;
+	}
+
+	public void setPropertyInfoId(Integer propertyInfoId) {
+		this.propertyInfoId = propertyInfoId;
+	}
+
+	public Integer getPropertyValueId() {
+		return propertyValueId;
+	}
+
+	public void setPropertyValueId(Integer propertyValueId) {
+		this.propertyValueId = propertyValueId;
+	}
+
+	public Integer getProdPropertyInfoId() {
+		return prodPropertyInfoId;
+	}
+
+	public void setProdPropertyInfoId(Integer prodPropertyInfoId) {
+		this.prodPropertyInfoId = prodPropertyInfoId;
 	}
 }

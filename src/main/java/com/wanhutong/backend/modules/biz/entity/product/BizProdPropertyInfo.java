@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.List;
+
 /**
  * 属性表Entity
  * @author zx
@@ -19,6 +21,7 @@ public class BizProdPropertyInfo extends DataEntity<BizProdPropertyInfo> {
 	private String propName;		// 属性名称
 	private String propDescription;		// 属性描述
 
+	private List<BizProdPropValue> prodPropValueList;
 	private String prodPropertyValues;
 
 
@@ -63,5 +66,13 @@ public class BizProdPropertyInfo extends DataEntity<BizProdPropertyInfo> {
 
 	public void setProdPropertyValues(String prodPropertyValues) {
 		this.prodPropertyValues = prodPropertyValues;
+	}
+
+	public List<BizProdPropValue> getProdPropValueList() {
+		return prodPropValueList;
+	}
+
+	public void setProdPropValueList(List<BizProdPropValue> prodPropValueList) {
+		this.prodPropValueList = prodPropValueList;
 	}
 }

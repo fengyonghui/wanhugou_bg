@@ -110,7 +110,7 @@
 			prod_prop_id = #{prodPropertyInfo.id},
 			<if test="source!=null and source=='sys'">
 				prop_id = #{propertyInfo.id},
-				prop_value_id = #{sysPropValue.id},
+				pop_value_id = #{sysPropValue.id},
 			</if>
 			prop_name = #{propName},
 			prop_value = #{propValue},

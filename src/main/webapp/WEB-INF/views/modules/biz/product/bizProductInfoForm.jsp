@@ -41,6 +41,7 @@
             if($("#id").val()!=''){
                 var ids = "${entity.cateIds}";//后台获取的分类id集合
                 ajaxGetPropInfo(ids);
+                ajaxGetProdPropInfo($("#id").val());
 
             }
             //ztree 复选框操作控制函数
@@ -70,12 +71,26 @@
                             var propName= propKeys[1]
                             $("#cateProp").append('<input class="select_all" id="'+propId+'" name="prodPropertyInfos" type="checkbox" value="'+propId+'" />'+propName+':<span id="span_'+propId+'"/><br/>')
                             for(var p in values){
-                                $("#span_"+propId).append('<input class="value_'+propId+'" name="propertyMap['+propId+'].prodPropertyValues" type="checkbox" value="'+values[p].propValue.id+'" />'+values[p].value+'')
+                                $("#span_"+propId).append('<input id="value_'+values[p].propValue.id+'" class="value_'+propId+'" name="propertyMap['+propId+'].prodPropertyValues" type="checkbox" value="'+values[p].propValue.id+'" />'+values[p].value+'')
                             }
 
                         })
 
                     })
+            }
+            function ajaxGetProdPropInfo(prodId) {
+                $.post("${ctx}/biz/product/bizProdPropertyInfo/findProdPropertyList",
+                    {prodId:prodId},
+                    function(data,status) {
+                        $.each(data, function (index, prodPropertyInfo) {
+                            $.each(prodPropertyInfo.prodPropValueList, function (index, prodPropValue) {
+								$("#"+prodPropValue.propertyInfoId).attr('checked',true)
+
+                                $("#value_"+prodPropValue.propertyValueId).attr('checked',true)
+
+                            });
+                        });
+					});
             }
             $('.select_all').live('click',function(){
                 var obj=$(this).attr("id");
