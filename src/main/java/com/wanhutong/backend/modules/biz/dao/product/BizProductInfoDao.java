@@ -18,5 +18,7 @@ public interface BizProductInfoDao extends CrudDao<BizProductInfo> {
     public int  deleteProdCate(BizProductInfo bizProductInfo);
 
     public int insertProdCate(BizProductInfo bizProductInfo);
+
+    public int deleteProdPropInfoReal(BizProductInfo bizProductInfo);
 	
 }

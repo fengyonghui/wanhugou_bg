@@ -4,7 +4,7 @@
     
 	<sql id="bizProdPropertyInfoColumns">
 		a.id AS "id",
-		a.prod_id AS "prodId",
+		a.prod_id AS "productInfo.id",
 		a.prop_name AS "propName",
 		a.prop_description AS "propDescription",
 		a.status AS "delFlag",
@@ -66,7 +66,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_prod_property_info(
 			id,
 			prod_id,
@@ -80,7 +80,7 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{prodId},
+			#{productInfo.id},
 			#{propName},
 			#{propDescription},
 			#{delFlag},
@@ -94,10 +94,9 @@
 	
 	<update id="update">
 		UPDATE biz_prod_property_info SET 	
-			prod_id = #{prodId},
+			prod_id = #{productInfo.id},
 			prop_name = #{propName},
 			prop_description = #{propDescription},
-			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

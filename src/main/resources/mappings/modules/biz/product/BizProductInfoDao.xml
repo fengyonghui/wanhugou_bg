@@ -194,6 +194,15 @@
 	<delete id="deleteProdCate">
 		DELETE FROM biz_prod_cate WHERE prod_id = #{id}
 	</delete>
+	<delete id="deleteProdPropInfoReal">
+		DELETE biz_prod_property_info,
+		biz_prod_prop_value
+		FROM
+		biz_prod_property_info
+		LEFT JOIN biz_prod_prop_value ON biz_prod_property_info.id = biz_prod_prop_value.prod_prop_id
+		WHERE
+		biz_prod_property_info.prod_id = #{id}
+	</delete>
 	<insert id="insertProdCate">
 		INSERT INTO biz_prod_cate(prod_id, cat_id,create_id,create_time,update_id,update_time)
 		<foreach collection="categoryInfoList" item="cate" separator=" union all ">

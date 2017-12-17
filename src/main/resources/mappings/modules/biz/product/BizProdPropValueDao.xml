@@ -72,10 +72,10 @@
 	<insert id="insert">
 		INSERT INTO biz_prod_prop_value(
 			id,
+			prod_prop_id,
 			prop_id,
-			cate_prop_id,
 			prop_name,
-			cat_value_id,
+			pop_value_id,
 			prop_value,
 			source,
 			create_id,
@@ -86,10 +86,14 @@
 			u_version
 		) VALUES (
 			#{id},
-			#{propId},
-			#{catePropId},
+			#{prodPropertyInfo.id},
+			<if test="source!=null and source=='sys'">
+				#{propertyInfo.id},
+			</if>
 			#{propName},
-			#{catValueId},
+		<if test="source!=null and source=='sys'">
+			#{sysPropValue.id},
+		</if>
 			#{propValue},
 			#{source},
 			#{createBy.id},
@@ -103,13 +107,14 @@
 	
 	<update id="update">
 		UPDATE biz_prod_prop_value SET 	
-			prop_id = #{propId},
-			cate_prop_id = #{catePropId},
+			prod_prop_id = #{prodPropertyInfo.id},
+			<if test="source!=null and source=='sys'">
+				prop_id = #{propertyInfo.id},
+				prop_value_id = #{sysPropValue.id},
+			</if>
 			prop_name = #{propName},
-			cat_value_id = #{catValueId},
 			prop_value = #{propValue},
 			source = #{source},
-			create_time = #{createDate},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},
 			u_version = #{uVersion}

@@ -19,6 +19,8 @@ public class BizProdPropertyInfo extends DataEntity<BizProdPropertyInfo> {
 	private String propName;		// 属性名称
 	private String propDescription;		// 属性描述
 
+	private String prodPropertyValues;
+
 
 	
 	public BizProdPropertyInfo() {
@@ -55,5 +57,11 @@ public class BizProdPropertyInfo extends DataEntity<BizProdPropertyInfo> {
 		this.propDescription = propDescription;
 	}
 
-	
+	public String getProdPropertyValues() {
+		return prodPropertyValues;
+	}
+
+	public void setProdPropertyValues(String prodPropertyValues) {
+		this.prodPropertyValues = prodPropertyValues;
+	}
 }

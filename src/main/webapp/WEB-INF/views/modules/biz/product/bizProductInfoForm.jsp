@@ -38,6 +38,12 @@
                     return false;
                 },onCheck: zTreeOnCheck
             }}
+            if($("#id").val()!=''){
+                var ids = "${entity.cateIds}";//后台获取的分类id集合
+                ajaxGetPropInfo(ids);
+
+            }
+            //ztree 复选框操作控制函数
             function zTreeOnCheck(event, treeId, treeNode) {
                 var ids = [], nodes = tree.getCheckedNodes(true);
                 for(var i=0; i<nodes.length; i++) {
@@ -45,25 +51,41 @@
                         ids.push(nodes[i].id);
                     }
                 }
+                ajaxGetPropInfo(ids);
+
+            };
+
+            /**
+             * 通过分类获取分类属性
+             * @param ids
+             */
+            function ajaxGetPropInfo(ids) {
                 $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
                     {catIds:ids.toString()},
                     function(data) {
-                    	$.each(data,function (keys,values) {
-                           var propKeys= keys.split(",");
-                    	    for(var i in propKeys){
-                                alert(propKeys[i])
+                        $("#cateProp").empty();
+                        $.each(data,function (keys,values) {
+                            var propKeys= keys.split(",");
+                            var propId= propKeys[0];
+                            var propName= propKeys[1]
+                            $("#cateProp").append('<input class="select_all" id="'+propId+'" name="prodPropertyInfos" type="checkbox" value="'+propId+'" />'+propName+':<span id="span_'+propId+'"/><br/>')
+                            for(var p in values){
+                                $("#span_"+propId).append('<input class="value_'+propId+'" name="propertyMap['+propId+'].prodPropertyValues" type="checkbox" value="'+values[p].propValue.id+'" />'+values[p].value+'')
                             }
-                            $("#cateProp").append('<input type="checkbox" value=""/>')
-                    	    alert(index)
-                          for(var p in values){
-                            alert(values[p].propValue.id+"========"+values[p].value)  ;
-						  }
+
                         })
 
                     })
-
-             //   alert(treeNode.tId + ", " + treeNode.name + "," + treeNode.checked);
-            };
+            }
+            $('.select_all').live('click',function(){
+                var obj=$(this).attr("id");
+                var choose=$(".value_"+obj);
+                if($(this).attr('checked')){
+                    choose.attr('checked',true);
+                }else{
+                    choose.attr('checked',false);
+                }
+            });
 
             // 分类--菜单
             var zNodes=[
@@ -148,9 +170,7 @@
 		<div class="control-group">
 			<label class="control-label">商品属性：</label>
 			<div  id ="cateProp" class="controls">
-
-
-			</div>
+            </div>
 		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>

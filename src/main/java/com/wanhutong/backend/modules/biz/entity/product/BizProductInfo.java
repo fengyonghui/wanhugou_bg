@@ -39,6 +39,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 
+
+	private String prodPropertyInfos;
+
+	private Map<String,BizProdPropertyInfo> propertyMap;
+
+	private String source;
+
 	public List<Integer> getCateIdList() {
 		List<Integer> cateIdList = Lists.newArrayList();
 		for (BizCategoryInfo categoryInfo : categoryInfoList) {
@@ -73,12 +80,31 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		}
 
 	}
+
+
 	public BizProductInfo() {
 		super();
 	}
 
 	public BizProductInfo(Integer id){
 		super(id);
+	}
+
+
+	public String getProdPropertyInfos() {
+		return prodPropertyInfos;
+	}
+
+	public void setProdPropertyInfos(String prodPropertyInfos) {
+		this.prodPropertyInfos = prodPropertyInfos;
+	}
+
+	public Map<String, BizProdPropertyInfo> getPropertyMap() {
+		return propertyMap;
+	}
+
+	public void setPropertyMap(Map<String, BizProdPropertyInfo> propertyMap) {
+		this.propertyMap = propertyMap;
 	}
 
 	public String getName() {
@@ -183,4 +209,11 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.skuInfosList = skuInfosList;
 	}
 
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
 }

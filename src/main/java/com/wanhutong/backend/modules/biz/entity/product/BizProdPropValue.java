@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.biz.entity.product;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
+import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -18,11 +20,13 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizProdPropertyInfo prodPropertyInfo;		// biz_prod_property_info.id
-	private BizCatePropertyInfo catePropertyInfo;		// biz_cate_property_info.id
-	private String propName;		// 属性名称
-	private BizCatePropValue catePropValue;		// biz_cate_prop_value.id
-	private String propValue;		// 属性值
-	private String source;		// sys系统，cate分类
+	private BizCatePropertyInfo catePropertyInfo;		//biz_cate_property_info.id或sys_property_info.id
+	private PropertyInfo propertyInfo;					//biz_cate_property_info.id或sys_property_info.id
+	private String propName;							// 属性名称
+	private BizCatePropValue catePropValue;			// biz_cate_prop_value.id
+	private PropValue sysPropValue;   					//biz_cate_prop_value.id或sys_prop_value
+	private String propValue;							// 属性值
+	private String source;								// sys系统，cate分类
 
 	
 	public BizProdPropValue() {
@@ -84,5 +88,21 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 
 	public void setCatePropValue(BizCatePropValue catePropValue) {
 		this.catePropValue = catePropValue;
+	}
+
+	public PropertyInfo getPropertyInfo() {
+		return propertyInfo;
+	}
+
+	public void setPropertyInfo(PropertyInfo propertyInfo) {
+		this.propertyInfo = propertyInfo;
+	}
+
+	public PropValue getSysPropValue() {
+		return sysPropValue;
+	}
+
+	public void setSysPropValue(PropValue sysPropValue) {
+		this.sysPropValue = sysPropValue;
 	}
 }

@@ -9,7 +9,6 @@
 		<result property="delFlag" column="status" />
 		<result property="uVersion" column="uVersion" />
 		<result property="updateDate" column="updateDate" />
-		<!--<result property="propertyInfoId" column="propertyInfoId"/>-->
 		<association property="categoryInfo" javaType="BizCategoryInfo" column="categoryInfo.id">
 			<id property="id" column="categoryInfo.id"/>
 		</association>
@@ -29,7 +28,6 @@
 		a.name AS "name",
 		a.description AS "description",
 -- 		a.sys_prop_id AS "propertyInfo.id",
--- 		a.sys_prop_id AS "propertyInfoId",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.status AS "status",
