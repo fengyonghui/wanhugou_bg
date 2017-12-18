@@ -367,10 +367,12 @@
 			</td></shiro:hasPermission>
 		</tr>
 		</c:forEach>
+		</tbody>
+	</table>
 
 		<footer class="footer navbar-fixed-bottom ">
 		<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}" class="button">
-			<button style>增加</button>
+			<button style>sku增加</button>
 		</a>
 		</footer>
 
