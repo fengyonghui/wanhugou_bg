@@ -44,8 +44,6 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	@Resource
 	private BizCatePropValueService bizCatePropValueService;
 	@Resource
-	private BizCatePropertyInfoService bizCatePropertyInfoService;
-	@Resource
 	private PropertyInfoService propertyInfoService;
 	@Resource
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
@@ -88,19 +86,10 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 				Set<String> keySet = bizProductInfo.getPropertyMap().keySet();
 				if (!keySet.contains(catePropertyInfos[i])) {
 					Integer propId = Integer.parseInt(catePropertyInfos[i]);
-				//	if(bizProductInfo.getSource()!=null && "sys".equals(bizProductInfo.getSource())){
-						PropertyInfo propertyInfo = propertyInfoService.get(propId);
+					PropertyInfo propertyInfo = propertyInfoService.get(propId);
 						prodPropertyInfo.setPropName(propertyInfo.getName());
 						prodPropertyInfo.setPropDescription(propertyInfo.getDescription());
 						prodPropValue.setPropertyInfo(propertyInfo);
-
-//					}else if(bizProductInfo.getSource()!=null && "cate".equals(bizProductInfo.getSource())){
-//						BizCatePropertyInfo catePropertyInfo = bizCatePropertyInfoService.get(propId);
-//						prodPropertyInfo.setPropName(catePropertyInfo.getName());
-//						prodPropertyInfo.setPropDescription(catePropertyInfo.getDescription());
-//						prodPropValue.setCatePropertyInfo(catePropertyInfo);
-//
-//					}
 
 					prodPropertyInfo.setProductInfo(bizProductInfo);
 					bizProdPropertyInfoService.save(prodPropertyInfo);
@@ -118,7 +107,6 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 			for (Map.Entry<String, BizProdPropertyInfo> entry : bizProductInfo.getPropertyMap().entrySet()) {
 				Integer propId = Integer.parseInt(entry.getKey());
 				BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
-				//if(bizProductInfo.getSource()!=null && "sys".equals(bizProductInfo.getSource())){
 					PropertyInfo propertyInfo = propertyInfoService.get(propId);
 					bizProdPropertyInfo.setPropName(propertyInfo.getName());
 					bizProdPropertyInfo.setPropDescription(propertyInfo.getDescription());
@@ -142,9 +130,38 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 						bizProdPropValueService.save(prodPropValue);
 					}
 				}
-			//	}
 
 			}
+		}
+
+		//获取产品特有的属性
+		if (bizProductInfo.getProdPropertyMap() != null) {
+			for (Map.Entry<String, BizProdPropertyInfo> entry : bizProductInfo.getProdPropertyMap().entrySet()) {
+				String propNameDesc = entry.getKey();
+				String[]propNameDescArr=propNameDesc.split("_");
+				BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
+				bizProdPropertyInfo.setPropName(propNameDescArr[0]);
+				bizProdPropertyInfo.setPropDescription(propNameDescArr[1]);
+				bizProdPropertyInfo.setProductInfo(bizProductInfo);
+
+				bizProdPropertyInfoService.save(bizProdPropertyInfo);
+
+				String prodOwnValueStr = bizProdPropertyInfo.getPropOwnValues();
+				if (prodOwnValueStr != null && !"".equals(prodOwnValueStr)) {
+					String[] prodOwnValueValues = prodOwnValueStr.split(",");
+					for (int j = 0; j < prodOwnValueValues.length; j++) {
+						prodPropValue.setId(null);
+						prodPropValue.setSource("prod");
+						prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
+						prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+						prodPropValue.setPropValue(prodOwnValueValues[j]);
+						bizProdPropValueService.save(prodPropValue);
+					}
+				}
+
+			}
+
+
 		}
 
 	}

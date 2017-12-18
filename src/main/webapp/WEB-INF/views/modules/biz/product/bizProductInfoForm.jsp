@@ -41,7 +41,13 @@
             if($("#id").val()!=''){
                 var ids = "${entity.cateIds}";//后台获取的分类id集合
                 ajaxGetPropInfo(ids);
-                ajaxGetProdPropInfo($("#id").val());
+                t = setTimeout(function() {
+                    ajaxGetProdPropInfo($("#id").val());
+                }, 500);
+                t = setTimeout(function() {
+                    ajaxGetProdOwnPropInfo($("#id").val());
+                }, 600);
+
 
             }
             //ztree 复选框操作控制函数
@@ -61,6 +67,7 @@
              * @param ids
              */
             function ajaxGetPropInfo(ids) {
+
                 $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
                     {catIds:ids.toString()},
                     function(data) {
@@ -80,18 +87,35 @@
             }
             function ajaxGetProdPropInfo(prodId) {
                 $.post("${ctx}/biz/product/bizProdPropertyInfo/findProdPropertyList",
-                    {prodId:prodId},
+                    {prodId:prodId,ranNum:Math.random()},
                     function(data,status) {
                         $.each(data, function (index, prodPropertyInfo) {
                             $.each(prodPropertyInfo.prodPropValueList, function (index, prodPropValue) {
 								$("#"+prodPropValue.propertyInfoId).attr('checked',true)
-
                                 $("#value_"+prodPropValue.propertyValueId).attr('checked',true)
-
                             });
                         });
 					});
             }
+
+            function ajaxGetProdOwnPropInfo(prodId) {
+                $.post("${ctx}/biz/product/bizProdPropValue/findList",
+                    {prodId:prodId,source:"prod",ranNum:Math.random()},
+                    function(data,status) {
+                        $.each(data, function (keys,values) {
+                            var propKeys= keys.split(",");
+                            var propName= propKeys[0];
+                            var propDesc= propKeys[1]
+                            $("#ownPropInfo").append("<input style='margin-bottom: 10px' onblur='changePropprodName($(this));' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:");
+                            for(var p in values){
+                                    $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' type='text' name='prodPropertyMap["+propName+"_"+propDesc+"].propOwnValues' value='"+values[p].propValue+"'/>")
+
+
+                            }
+                            $("#ownPropInfo").append("<br/>")
+                        });
+                    });
+            };
             $('.select_all').live('click',function(){
                 var obj=$(this).attr("id");
                 var choose=$(".value_"+obj);
@@ -120,7 +144,47 @@
             }
             // 默认展开全部节点
             tree.expandAll(true);
+
+            var i=0;
+            $("#addPropValue").click(function () {
+                if($("#prodPropValueList"+i).val()==''){
+                    alert('属性不能为空');
+                    return false;
+                }
+                i++;
+                $("#propValues").append("<input type='text' id='prodPropValueList"+i+"' name=\"prodPropValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
+            });
+            $("#but_sub").click(function () {
+                var propName=$("#propName").val();
+                var propDescription=$("#propDescription").val();
+                var propValues  = $("#propValues input");
+                if(propName!=''){
+				$("#ownPropInfo").append("<input style='margin-bottom: 10px' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:");
+                	propValues.each(function() {
+                    var v=$(this).val();
+                    if(v!=""){
+                        $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' type='text' name='prodPropertyMap["+propName+"_"+propDescription+"].propOwnValues' value='"+v+"'/>")
+                    }
+
+                })
+				$("#ownPropInfo").append("<br/>");
+                }
+            })
+
+
+
 		});
+        function changePropprodName(obj){
+            alert(obj.val());
+//			var values=obj.nextAll();
+//			for(var i in values){
+//                var orginName= values[i].attr("name");
+//                alert(orginName);
+//
+//				}
+
+        }
+
 	</script>
 </head>
 <body>
@@ -187,11 +251,78 @@
 			<div  id ="cateProp" class="controls">
             </div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">增加特有属性：</label>
+			<div  class="controls">
+					<span id="ownPropInfo" style="margin-bottom: 10px">
+
+					</span>
+
+				<button  data-toggle="modal" data-target="#myModal" type="button" class="btn btn-default">
+					<span class="icon-plus"></span>
+				</button>
+			</div>
+		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+	<!-- 模态框（Modal） -->
+	<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">×
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						属性与属性值
+					</h4>
+				</div>
+				<%--&lt;%&ndash;@elvariable id="prodPropertyInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo"&ndash;%&gt;--%>
+				<%--<form:form id="inputForm2" modelAttribute="prodPropertyInfo" action="${ctx}/biz/product/bizProdPropertyInfo/savePropInfo" method="post" class="form-horizontal">--%>
+
+					<div class="modal-body">
+						<div class="control-group">
+							<label class="control-label">属性名称：</label>
+							<div class="controls">
+								<input type="text" id="propName"   maxlength="30" class="input-xlarge required"/>
+								<span class="help-inline"><font color="red">*</font> </span>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label">属性描述：</label>
+							<div class="controls">
+								<input type="text" id="propDescription" maxlength="200" class="input-xlarge required"/>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label">属性值：</label>
+							<div class="controls">
+						<span id="propValues">
+							<input id="prodPropValueList0" type="text"   maxlength="512" class="input-small"/>
+						</span>
+								<button id="addPropValue" type="button" class="btn btn-default">
+									<span class="icon-plus"></span>
+								</button>
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default"
+								data-dismiss="modal">关闭
+						</button>
+						<shiro:hasPermission name="biz:category:bizCatePropertyInfo:edit">
+							<button id="but_sub"type="button" class="btn btn-primary">
+								保存
+							</button>
+						</shiro:hasPermission>
+					</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">

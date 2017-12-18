@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -33,9 +34,9 @@ import java.util.List;
 public class BizProdPropertyInfoController extends BaseController {
 
 	@Autowired
-	private BizProdPropertyInfoService bizProdPropertyInfoService;
-	@Autowired
 	private BizProductInfoService bizProductInfoService;
+	@Autowired
+	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	
 	@ModelAttribute
 	public BizProdPropertyInfo get(@RequestParam(required=false) Integer id) {
@@ -87,7 +88,23 @@ public class BizProdPropertyInfoController extends BaseController {
 		addMessage(redirectAttributes, "保存属性表成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProdPropertyInfo/?repage";
 	}
-	
+	@RequiresPermissions("biz:product:bizProdPropertyInfo:edit")
+	@ResponseBody
+	@RequestMapping(value = "savePropInfo")
+	public String save(BizProdPropertyInfo bizProdPropertyInfo, Model model){
+		String str="";
+		try{
+			if (!beanValidator(model, bizProdPropertyInfo)){
+				return form(bizProdPropertyInfo, model);
+			}
+			bizProdPropertyInfoService.save(bizProdPropertyInfo);
+			str="ok";
+		}catch (Exception e){
+			str="error";
+		}
+
+		return  str;
+	}
 	@RequiresPermissions("biz:product:bizProdPropertyInfo:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizProdPropertyInfo bizProdPropertyInfo, RedirectAttributes redirectAttributes) {

@@ -16,6 +16,7 @@
 			<id property="id" column="prodPropValueList.id" />
 			<result  property="propertyValueId" column="propertyValueId"/>
 			<result  property="propertyInfoId" column="propertyInfoId"/>
+			<result property="propValue" column="propValue"/>
 		</collection>
 	</resultMap>
 
@@ -49,8 +50,9 @@
 			<include refid="bizProdPropertyInfoColumns"/>,
 			ppv.id AS "prodPropValueList.id",
 			ppv.prop_id AS "propertyInfoId",
-			ppv.pop_value_id AS "propertyValueId",
-			ppv.prod_prop_id AS "prodPropertyInfoId"
+			ppv.prop_value_id AS "propertyValueId",
+			ppv.prod_prop_id AS "prodPropertyInfoId",
+			ppv.prop_value AS "propValue"
 		FROM biz_prod_property_info a
 		<include refid="bizProdPropertyInfoJoins"/>
 		LEFT  JOIN biz_prod_prop_value ppv ON ppv.prod_prop_id=a.id
@@ -65,6 +67,7 @@
 			<if test="productInfo!=null and productInfo.id!=null and productInfo.id!=''">
 				and a.prod_id=#{productInfo.id}
 			</if>
+
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

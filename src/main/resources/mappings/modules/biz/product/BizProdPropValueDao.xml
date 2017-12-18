@@ -4,10 +4,13 @@
     
 	<sql id="bizProdPropValueColumns">
 		a.id AS "id",
-		a.prop_id AS "propId",
-		a.cate_prop_id AS "catePropId",
+		a.prod_prop_id AS "prodPropertyInfo.id",
+		ppi.prod_id AS "prodPropertyInfo.productInfo.id",
+		a.prop_id AS "catePropertyInfo.id",
+		a.prop_id AS "propertyInfo.id",
 		a.prop_name AS "propName",
-		a.cat_value_id AS "catValueId",
+		a.prop_value_id AS "catePropValue.id",
+		a.prop_value_id AS "sysPropValue.id",
 		a.prop_value AS "propValue",
 		a.source AS "source",
 		a.create_id AS "createBy.id",
@@ -19,6 +22,7 @@
 	</sql>
 	
 	<sql id="bizProdPropValueJoins">
+		LEFT JOIN biz_prod_property_info ppi ON ppi.id=a.prod_prop_id
 	</sql>
     
 	<select id="get" resultType="BizProdPropValue">
@@ -41,6 +45,12 @@
 					<if test="dbName == 'oracle'">'%'||#{propName}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{propName}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{propName},'%')</if>
+			</if>
+			<if test="source != null and source != ''">
+				AND a.source =#{source}
+			</if>
+			<if test="prodPropertyInfo!=null and prodPropertyInfo.productInfo!=null and prodPropertyInfo.productInfo.id !=null">
+				and ppi.prod_id = #{prodPropertyInfo.productInfo.id}
 			</if>
 		</where>
 		<choose>
@@ -73,9 +83,13 @@
 		INSERT INTO biz_prod_prop_value(
 			id,
 			prod_prop_id,
+		<if test="source!=null and source=='sys'">
 			prop_id,
+		</if>
 			prop_name,
-			pop_value_id,
+		<if test="source!=null and source=='sys'">
+			prop_value_id,
+		</if>
 			prop_value,
 			source,
 			create_id,
@@ -110,7 +124,7 @@
 			prod_prop_id = #{prodPropertyInfo.id},
 			<if test="source!=null and source=='sys'">
 				prop_id = #{propertyInfo.id},
-				pop_value_id = #{sysPropValue.id},
+				prop_value_id = #{sysPropValue.id},
 			</if>
 			prop_name = #{propName},
 			prop_value = #{propValue},

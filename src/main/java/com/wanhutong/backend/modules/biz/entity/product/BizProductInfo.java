@@ -37,12 +37,16 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String cateIds; //多种分类
 
+	private String propNames;
+
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 
 
 	private String prodPropertyInfos;
 
 	private Map<String,BizProdPropertyInfo> propertyMap;
+
+	private Map<String,BizProdPropertyInfo> prodPropertyMap;
 
 	private String source;
 
@@ -215,5 +219,21 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public Map<String, BizProdPropertyInfo> getProdPropertyMap() {
+		return prodPropertyMap;
+	}
+
+	public void setProdPropertyMap(Map<String, BizProdPropertyInfo> prodPropertyMap) {
+		this.prodPropertyMap = prodPropertyMap;
+	}
+
+	public String getPropNames() {
+		return propNames;
+	}
+
+	public void setPropNames(String propNames) {
+		this.propNames = propNames;
 	}
 }

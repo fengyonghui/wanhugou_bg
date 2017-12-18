@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
@@ -25,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -94,6 +96,7 @@ public class BizProductInfoController extends BaseController {
 
 			model.addAttribute("catePropValueList",catePropValueList);
 			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
+			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
 			model.addAttribute("entity", bizProductInfo);
 		return "modules/biz/product/bizProductInfoForm";
 	}
@@ -108,6 +111,7 @@ public class BizProductInfoController extends BaseController {
 		addMessage(redirectAttributes, "保存产品信息表成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/?repage";
 	}
+
 	
 	@RequiresPermissions("biz:product:bizProductInfo:edit")
 	@RequestMapping(value = "delete")

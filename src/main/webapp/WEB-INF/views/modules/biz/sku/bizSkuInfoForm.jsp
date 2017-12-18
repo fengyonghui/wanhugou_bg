@@ -22,6 +22,27 @@
 					}
 				}
 			});
+			if($("#id").val()!=''){
+                var prodId=$("#prodId").val();
+                ajaxGetProdPropInfo(prodId);
+			}
+
+            /***
+			 * 通过产品Id获取属性
+             * @param prodId
+             */
+            function ajaxGetProdPropInfo(prodId) {
+                $.post("${ctx}/biz/product/bizProdPropertyInfo/findProdPropertyList",
+                    {prodId:prodId,ranNum:Math.random()},
+                    function(data,status) {
+                        $.each(data, function (index, prodPropertyInfo) {
+                            $.each(prodPropertyInfo.prodPropValueList, function (index, prodPropValue) {
+//                                $("#"+prodPropValue.propertyInfoId).attr('checked',true)
+//                                $("#value_"+prodPropValue.propertyValueId).attr('checked',true)
+                            });
+                        });
+                    });
+            }
 		});
 	</script>
 </head>
@@ -32,8 +53,8 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<form:hidden path="productInfo.id"/>
-		<sys:message content="${message}"/>		
+		<form:hidden id="prodId" path="productInfo.id"/>
+		<sys:message content="${message}"/>
 		<%--<div class="control-group">
 			<label class="control-label">所属产品id：</label>
 			<div class="controls">
@@ -44,7 +65,6 @@
 		<div class="control-group">
 			<label class="control-label">sku类型：</label>
 			<div class="controls">
-				<%--<form:input path="skuType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>--%>
                     <form:select path="skuType" class="input-xlarge required">
                         <form:option value="" label="请选择"/>
                         <form:options items="${fns:getDictList('skuType')}" itemLabel="label" itemValue="value"
@@ -79,6 +99,11 @@
 			<div class="controls">
 				<form:input path="buyPrice" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">商品属性：</label>
+			<div  id ="cateProp" class="controls">
 			</div>
 		</div>
 		<div class="form-actions">

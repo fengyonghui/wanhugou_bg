@@ -23,6 +23,7 @@ public class BizProdPropertyInfo extends DataEntity<BizProdPropertyInfo> {
 
 	private List<BizProdPropValue> prodPropValueList;
 	private String prodPropertyValues;
+	private String propOwnValues;
 
 
 	
@@ -74,5 +75,13 @@ public class BizProdPropertyInfo extends DataEntity<BizProdPropertyInfo> {
 
 	public void setProdPropValueList(List<BizProdPropValue> prodPropValueList) {
 		this.prodPropValueList = prodPropValueList;
+	}
+
+	public String getPropOwnValues() {
+		return propOwnValues;
+	}
+
+	public void setPropOwnValues(String propOwnValues) {
+		this.propOwnValues = propOwnValues;
 	}
 }
