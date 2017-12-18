@@ -85,7 +85,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_sku_info(
 			id,
 			prod_id,
@@ -137,5 +137,11 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<delete id="deleteSkuPropInfoReal">
+		DELETE FROM biz_sku_prop_value
+		WHERE
+		biz_sku_prop_value.sku_id = #{id}
+	</delete>
 	
 </mapper>

@@ -4,11 +4,12 @@
     
 	<sql id="bizSkuPropValueColumns">
 		a.id AS "id",
-		a.sku_id AS "skuId",
-		a.prod_prop_id AS "prodPropId",
+		a.sku_id AS "skuInfo.id",
+		a.prod_prop_id AS "prodPropertyInfo.id",
 		a.prop_name AS "propName",
-		a.prod_value_id AS "prodValueId",
+		a.prod_value_id AS "prodPropValue.id",
 		a.prop_value AS "propValue",
+		a.source AS "source",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -35,8 +36,8 @@
 		<include refid="bizSkuPropValueJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="skuId != null and skuId != ''">
-				AND a.sku_id = #{skuId}
+			<if test="skuInfo!=null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.sku_id = #{skuInfo.id}
 			</if>
 			<if test="propName != null and propName != ''">
 				AND a.prop_name = #{propName}
@@ -76,6 +77,7 @@
 			prop_name,
 			prod_value_id,
 			prop_value,
+			source,
 			status,
 			create_id,
 			create_time,
@@ -84,11 +86,12 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{skuId},
-			#{prodPropId},
+			#{skuInfo.id},
+			#{prodPropertyInfo.id},
 			#{propName},
-			#{prodValueId},
+			#{prodPropValue.id},
 			#{propValue},
+			#{source},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -117,5 +120,7 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+
 	
 </mapper>

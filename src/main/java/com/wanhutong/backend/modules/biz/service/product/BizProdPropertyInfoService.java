@@ -3,7 +3,9 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.wanhutong.backend.modules.biz.dao.product.BizProdPropertyInfoDao;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
@@ -39,6 +41,20 @@ public class BizProdPropertyInfoService extends CrudService<BizProdPropertyInfoD
 
 	public Page<BizProdPropertyInfo> findPage(Page<BizProdPropertyInfo> page, BizProdPropertyInfo bizProdPropertyInfo) {
 		return super.findPage(page, bizProdPropertyInfo);
+	}
+
+	public Map<Integer,List<BizProdPropValue>> findMapList(BizProdPropertyInfo bizProdPropertyInfo){
+		BizProdPropValue prodPropValue=new BizProdPropValue();
+		List<BizProdPropertyInfo> list=findList(bizProdPropertyInfo);
+		Map<Integer,List<BizProdPropValue>> map=new HashMap<Integer,List<BizProdPropValue>>();
+		for(BizProdPropertyInfo info:list){
+			prodPropValue.setId(null);
+			prodPropValue.setProdPropertyInfo(info);
+			List<BizProdPropValue> valueList=bizProdPropValueService.findList(prodPropValue);
+			map.put(info.getId(),valueList);
+		}
+
+		return map;
 	}
 
 	@Transactional(readOnly = false)

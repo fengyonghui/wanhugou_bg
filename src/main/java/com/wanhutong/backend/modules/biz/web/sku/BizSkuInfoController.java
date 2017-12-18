@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.biz.web.sku;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +25,9 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 商品skuController
  * @author zx
@@ -33,6 +39,8 @@ public class BizSkuInfoController extends BaseController {
 
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	
 	@ModelAttribute
 	public BizSkuInfo get(@RequestParam(required=false) Integer id) {
@@ -58,6 +66,12 @@ public class BizSkuInfoController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizSkuInfo bizSkuInfo, Model model) {
 		model.addAttribute("bizSkuInfo", bizSkuInfo);
+		BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
+		bizProdPropertyInfo.setProductInfo(bizSkuInfo.getProductInfo());
+		List<BizProdPropertyInfo> prodPropertyInfoList= bizProdPropertyInfoService.findList(bizProdPropertyInfo);
+		Map<Integer,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
+		model.addAttribute("prodPropInfoList", prodPropertyInfoList);
+		model.addAttribute("map", map);
 		return "modules/biz/sku/bizSkuInfoForm";
 	}
 

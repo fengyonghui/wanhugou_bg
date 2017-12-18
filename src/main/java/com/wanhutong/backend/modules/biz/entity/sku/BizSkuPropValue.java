@@ -3,6 +3,8 @@
  */
 package com.wanhutong.backend.modules.biz.entity.sku;
 
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
@@ -19,11 +21,12 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 	
 	private static final long serialVersionUID = 1L;
-	private String skuId;		// biz_sku_info.id
-	private String prodPropId;		// prod_prop_id
+	private BizSkuInfo skuInfo;		// biz_sku_info.id
+	private BizProdPropertyInfo prodPropertyInfo;		// prod_prop_id
 	private String propName;		// prop_name
-	private String prodValueId;		// biz_prod_prop_value.id
+	private BizProdPropValue prodPropValue;		// biz_prod_prop_value.id
 	private String propValue;		// biz_prod_prop_value
+	private String source;
 	
 	public BizSkuPropValue() {
 		super();
@@ -33,24 +36,6 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 		super(id);
 	}
 
-//	@id长度必须介于 1 和 11 之间")
-	public String getSkuId() {
-		return skuId;
-	}
-
-	public void setSkuId(String skuId) {
-		this.skuId = skuId;
-	}
-	
-	@Length(min=0, max=11, message="prod_prop_id长度必须介于 0 和 11 之间")
-	public String getProdPropId() {
-		return prodPropId;
-	}
-
-	public void setProdPropId(String prodPropId) {
-		this.prodPropId = prodPropId;
-	}
-	
 	@Length(min=1, max=30, message="prop_name长度必须介于 1 和 30 之间")
 	public String getPropName() {
 		return propName;
@@ -59,16 +44,7 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 	public void setPropName(String propName) {
 		this.propName = propName;
 	}
-	
-//	@id长度必须介于 1 和 11 之间")
-	public String getProdValueId() {
-		return prodValueId;
-	}
 
-	public void setProdValueId(String prodValueId) {
-		this.prodValueId = prodValueId;
-	}
-	
 	@Length(min=1, max=100, message="biz_prod_prop_value长度必须介于 1 和 100 之间")
 	public String getPropValue() {
 		return propValue;
@@ -78,5 +54,35 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 		this.propValue = propValue;
 	}
 
-	
+	public BizSkuInfo getSkuInfo() {
+		return skuInfo;
+	}
+
+	public void setSkuInfo(BizSkuInfo skuInfo) {
+		this.skuInfo = skuInfo;
+	}
+
+	public BizProdPropertyInfo getProdPropertyInfo() {
+		return prodPropertyInfo;
+	}
+
+	public void setProdPropertyInfo(BizProdPropertyInfo prodPropertyInfo) {
+		this.prodPropertyInfo = prodPropertyInfo;
+	}
+
+	public BizProdPropValue getProdPropValue() {
+		return prodPropValue;
+	}
+
+	public void setProdPropValue(BizProdPropValue prodPropValue) {
+		this.prodPropValue = prodPropValue;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
 }

@@ -17,4 +17,5 @@ import java.util.List;
 @MyBatisDao
 public interface BizSkuInfoDao extends CrudDao<BizSkuInfo> {
 
+   void deleteSkuPropInfoReal(BizSkuInfo bizSkuInfo);
 }

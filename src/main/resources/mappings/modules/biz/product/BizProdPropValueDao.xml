@@ -49,6 +49,9 @@
 			<if test="source != null and source != ''">
 				AND a.source =#{source}
 			</if>
+			<if test="prodPropertyInfo != null and prodPropertyInfo.id !=null and prodPropertyInfo.id != ''">
+				AND a.prod_prop_id =#{prodPropertyInfo.id}
+			</if>
 			<if test="prodPropertyInfo!=null and prodPropertyInfo.productInfo!=null and prodPropertyInfo.productInfo.id !=null">
 				and ppi.prod_id = #{prodPropertyInfo.productInfo.id}
 			</if>

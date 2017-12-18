@@ -23,23 +23,21 @@
 				}
 			});
 			if($("#id").val()!=''){
-                var prodId=$("#prodId").val();
-                ajaxGetProdPropInfo(prodId);
+               alert($("#id").val()) ;
+                ajaxGetSkuPropInfo($("#id").val());
 			}
 
             /***
 			 * 通过产品Id获取属性
              * @param prodId
              */
-            function ajaxGetProdPropInfo(prodId) {
-                $.post("${ctx}/biz/product/bizProdPropertyInfo/findProdPropertyList",
-                    {prodId:prodId,ranNum:Math.random()},
+            function ajaxGetSkuPropInfo(skuId) {
+                $.post("${ctx}/biz/sku/bizSkuPropValue/findList",
+                    {skuId:skuId,ranNum:Math.random()},
                     function(data,status) {
-                        $.each(data, function (index, prodPropertyInfo) {
-                            $.each(prodPropertyInfo.prodPropValueList, function (index, prodPropValue) {
-//                                $("#"+prodPropValue.propertyInfoId).attr('checked',true)
-//                                $("#value_"+prodPropValue.propertyValueId).attr('checked',true)
-                            });
+                        $.each(data, function (index, skuPropValue) {
+                            $("#"+skuPropValue.prodPropertyInfo.id).attr('checked',true);
+                            $("#value_"+skuPropValue.prodPropValue.id).attr('checked',true);
                         });
                     });
             }
@@ -101,9 +99,17 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+
 		<div class="control-group">
-			<label class="control-label">商品属性：</label>
-			<div  id ="cateProp" class="controls">
+			<label class="control-label">选择sku属性：</label>
+			<div class="controls">
+				<c:forEach items="${prodPropInfoList}" var="propertyInfo">
+					<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="prodPropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.propName}：
+					<c:forEach items="${map[propertyInfo.id]}" var="propValue">
+						<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${propertyInfo.id}].prodPropertyValues" value="${propValue.id}"/> ${propValue.propValue}
+					</c:forEach>
+					<br/>
+				</c:forEach>
 			</div>
 		</div>
 		<div class="form-actions">

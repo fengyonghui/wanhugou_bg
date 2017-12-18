@@ -3,12 +3,14 @@
  */
 package com.wanhutong.backend.modules.biz.entity.sku;
 
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -32,6 +34,10 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private double basePrice; //基础售价
 	private double buyPrice;   //采购价格
 	private List bizSkuInfo;
+
+	private String skuPropertyInfos;
+
+	private Map<String,BizProdPropertyInfo> prodPropMap;
 
 
 	private int sign;//sku删除返回的标志
@@ -115,5 +121,21 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setSign(int sign) {
 		this.sign = sign;
+	}
+
+	public String getSkuPropertyInfos() {
+		return skuPropertyInfos;
+	}
+
+	public void setSkuPropertyInfos(String skuPropertyInfos) {
+		this.skuPropertyInfos = skuPropertyInfos;
+	}
+
+	public Map<String, BizProdPropertyInfo> getProdPropMap() {
+		return prodPropMap;
+	}
+
+	public void setProdPropMap(Map<String, BizProdPropertyInfo> prodPropMap) {
+		this.prodPropMap = prodPropMap;
 	}
 }

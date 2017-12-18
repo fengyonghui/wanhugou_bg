@@ -43,10 +43,10 @@
                 ajaxGetPropInfo(ids);
                 t = setTimeout(function() {
                     ajaxGetProdPropInfo($("#id").val());
-                }, 500);
+                }, 100);
                 t = setTimeout(function() {
                     ajaxGetProdOwnPropInfo($("#id").val());
-                }, 600);
+                }, 150);
 
 
             }
