@@ -110,7 +110,7 @@
                             var propKeys= keys.split(",");
                             var propName= propKeys[0];
                             var propDesc= propKeys[1]
-                            $("#ownPropInfo").append("<input style='margin-bottom: 10px' onblur='cancelValue($(this),\""+str[a]+"\");' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:<input type='hidden'  name='propNames' value='"+str[a]+"_'/>");
+                            $("#ownPropInfo").append("<input title='"+str[a]+"' style='margin-bottom: 10px' onblur='cancelValue($(this),\""+str[a]+"\");' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:<input type='hidden'  name='propNames' value='"+str[a]+"_'/>");
                             for(var p in values){
                                     $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' class='"+str[a]+"' type='text' name='propOwnValues' value='"+values[p].propValue+"'/><input type='hidden'  name='propOwnValues' value='"+str[a]+"_'>")
 
@@ -168,7 +168,7 @@
               //  var propDescription=$("#propDescription").val();
                 var propValues  = $("#propValues input");
                 if(propName!=''){
-				$("#ownPropInfo").append("<input style='margin-bottom: 10px' onblur='cancelValue($(this),\""+str[a]+"\");' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:<input type='hidden'  name='propNames' value='"+str[a]+"_'/>");
+				$("#ownPropInfo").append("<input title='"+str[a]+"' style='margin-bottom: 10px' onblur='cancelValue($(this),\""+str[a]+"\");' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:<input type='hidden'  name='propNames' value='"+str[a]+"_'/>");
                 	propValues.each(function() {
                     var v=$(this).val();
                     if(v!=""){
@@ -185,7 +185,25 @@
 
 		});
         function addPropValueInfo(va){
-            $("#id_"+va).before("<input style=\"width: 60px;margin-bottom: 10px\" type=\"text\" name=\"propOwnValues\" /><input type=\"hidden\" name=\"propOwnValues\" value="+va+"_>")
+			var t=$("input[title="+va+"]").val();
+			if(t==''){
+			    alert("属性不能为空");
+			    return;
+			}
+			var flag=true;
+            $("."+va).each(function (pv) {
+				if($(this).val()==''){
+                    flag=false;
+                    return false;
+				}
+            });
+            if(!flag){
+                alert("属性值不能为空");
+                return false;
+			}else {
+                $("#id_"+va).before("<input class='"+va+"' style=\"width: 60px;margin-bottom: 10px\" type=\"text\" name=\"propOwnValues\" /><input type=\"hidden\" name=\"propOwnValues\" value="+va+"_>")
+			}
+
         }
         function cancelValue(obj,k) {
             if(obj.val()==''){
