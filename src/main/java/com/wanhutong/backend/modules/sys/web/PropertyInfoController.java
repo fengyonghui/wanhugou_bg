@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.sys.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.service.PropValueService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,19 +39,32 @@ public class PropertyInfoController extends BaseController {
 
 	@Autowired
 	private PropertyInfoService propertyInfoService;
-	
+	@Autowired
+	private PropValueService propValueService;
+
 	@ModelAttribute
 	public PropertyInfo get(@RequestParam(required=false) Integer id) {
 		PropertyInfo entity = null;
 		if (id!=null){
 			entity = propertyInfoService.get(id);
+			PropValue propValue = new PropValue();
+			propValue.setPropertyInfo(entity);
+			List<PropValue> propValueList = propValueService.findList(propValue);
+			entity.setPropValueList(propValueList);
 		}
 		if (entity == null){
 			entity = new PropertyInfo();
+
+//		if(entity.getId() == entity.getPropValue().getPropertyInfo().getId()){
+//			entity = propertyInfoService.get(id);
+//			PropValue propValue = new PropValue();
+//			List<PropValue> propValueList = propValueService.findList(propValue);
+//			entity.setPropValueList(propValueList);
+//			}
 		}
 		return entity;
 	}
-	
+
 	@RequiresPermissions("sys:propertyInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(PropertyInfo propertyInfo, HttpServletRequest request, HttpServletResponse response, Model model) {

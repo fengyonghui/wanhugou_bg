@@ -34,6 +34,7 @@
 		<include refid="propertyInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>

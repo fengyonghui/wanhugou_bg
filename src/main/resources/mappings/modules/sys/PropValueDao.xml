@@ -15,6 +15,7 @@
 	</sql>
 	
 	<sql id="propValueJoins">
+		left join sys_property_info spi on a.prop_id = spi.id
 	</sql>
     
 	<select id="get" resultType="PropValue">

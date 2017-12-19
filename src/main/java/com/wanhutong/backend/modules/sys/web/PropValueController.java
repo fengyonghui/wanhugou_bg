@@ -39,6 +39,7 @@ public class PropValueController extends BaseController {
 		PropValue entity = null;
 		if (id!=null){
 			entity = propValueService.get(id);
+
 		}
 		if (entity == null){
 			entity = new PropValue();

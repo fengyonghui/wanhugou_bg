@@ -21,6 +21,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class PropertyInfo extends DataEntity<PropertyInfo> {
 	
 	private static final long serialVersionUID = 1L;
+	private PropValue propValue;
 	private String name;		// 分类名称
 	private String description;		// 分类描述
 
@@ -33,6 +34,14 @@ public class PropertyInfo extends DataEntity<PropertyInfo> {
 
 	public PropertyInfo(Integer id){
 		super(id);
+	}
+
+	public PropValue getPropValue() {
+		return propValue;
+	}
+
+	public void setPropValue(PropValue propValue) {
+		this.propValue = propValue;
 	}
 
 	@Length(min=1, max=30, message="分类名称长度必须介于 1 和 30 之间")
