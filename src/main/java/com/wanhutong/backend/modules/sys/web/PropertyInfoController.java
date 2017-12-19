@@ -6,7 +6,6 @@ package com.wanhutong.backend.modules.sys.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

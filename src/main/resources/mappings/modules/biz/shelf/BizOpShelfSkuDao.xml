@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuDao">
+    
+	<sql id="bizOpShelfSkuColumns">
+		a.id AS "id",
+		a.shelf_id AS "opShelfInfo.id",
+		a.sku_id AS "skuInfo.id",
+		a.center_id AS "centerOffice.id",
+		a.shelf_user AS "shelfUser.id",
+		a.shelf_qty AS "shelfQty",
+		a.org_price AS "orgPrice",
+		a.sale_price AS "salePrice",
+		a.min_qty AS "minQty",
+		a.max_qty AS "maxQty",
+		a.shelf_time AS "shelfTime",
+		a.unshelf_user AS "unshelfUser.id",
+		a.unshelf_time AS "unshelfTime",
+		a.priority AS "priority",
+		a.status AS "status",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizOpShelfSkuJoins">
+	</sql>
+    
+	<select id="get" resultType="BizOpShelfSku">
+		SELECT 
+			<include refid="bizOpShelfSkuColumns"/>
+		FROM biz_op_shelf_sku a
+		<include refid="bizOpShelfSkuJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizOpShelfSku">
+		SELECT 
+			<include refid="bizOpShelfSkuColumns"/>
+		FROM biz_op_shelf_sku a
+		<include refid="bizOpShelfSkuJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">
+				AND a.shelf_user = #{shelfUser.id}
+			</if>
+			<if test="shelfTime != null and shelfTime != ''">
+				AND a.shelf_time = #{shelfTime}
+			</if>
+			<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
+				AND a.unshelf_user = #{unshelfUser.id}
+			</if>
+			<if test="unshelfTime != null and unshelfTime != ''">
+				AND a.unshelf_time = #{unshelfTime}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizOpShelfSku">
+		SELECT 
+			<include refid="bizOpShelfSkuColumns"/>
+		FROM biz_op_shelf_sku a
+		<include refid="bizOpShelfSkuJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_op_shelf_sku(
+			id,
+			shelf_id,
+			sku_id,
+			center_id,
+			shelf_user,
+			shelf_qty,
+			org_price,
+			sale_price,
+			min_qty,
+			max_qty,
+			shelf_time,
+			unshelf_user,
+			unshelf_time,
+			priority,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{opShelfInfo.id},
+			#{skuInfo.id},
+			#{centerOffice.id},
+			#{shelfUser.id},
+			#{shelfQty},
+			#{orgPrice},
+			#{salePrice},
+			#{minQty},
+			#{maxQty},
+			#{shelfTime},
+			#{unshelfUser.id},
+			#{unshelfTime},
+			#{priority},
+			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_op_shelf_sku SET 	
+			shelf_id = #{opShelfInfo.id},
+			sku_id = #{skuInfo.id},
+			center_id = #{centerOffice.id},
+			shelf_user = #{shelfUser.id},
+			shelf_qty = #{shelfQty},
+			org_price = #{orgPrice},
+			sale_price = #{salePrice},
+			min_qty = #{minQty},
+			max_qty = #{maxQty},
+			shelf_time = #{shelfTime},
+			unshelf_user = #{unshelfUser.id},
+			unshelf_time = #{unshelfTime},
+			priority = #{priority},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_op_shelf_sku SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
