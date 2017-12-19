@@ -363,9 +363,9 @@
 		<thead>
 		<tr>
 			<%--<th>商品产品Id</th>--%>
+			<th>sku名称</th>
 			<th>sku类型</th>
-			<th>商品名称</th>
-			<th>商品编码</th>
+			<th>sku编码</th>
 			<th>基础售价</th>
 			<th>采购价格</th>
 			<th>更新人</th>
@@ -377,12 +377,13 @@
 			<%--<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizSkuInfo.id}">
 					${bizSkuInfo.id}</a>
 			</td>--%>
+			<td><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">
+					${bizSkuInfo.name}
+			</a>
+			</td>
 			<td>
                     ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}
             </td>
-			<td>
-					${bizSkuInfo.name}
-			</td>
 			<td>
 					${bizSkuInfo.partNo}
 			</td>
