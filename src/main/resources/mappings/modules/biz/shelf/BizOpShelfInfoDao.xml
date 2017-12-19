@@ -6,15 +6,17 @@
 		a.id AS "id",
 		a.name AS "name",
 		a.description AS "description",
-		a.status AS "status",
+		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		su.name AS "updateBy.name"
 	</sql>
 	
 	<sql id="bizOpShelfInfoJoins">
+		LEFT JOIN sys_user su on su.id  = a.update_id
 	</sql>
     
 	<select id="get" resultType="BizOpShelfInfo">
@@ -80,7 +82,7 @@
 			#{id},
 			#{name},
 			#{description},
-			#{status},
+			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},

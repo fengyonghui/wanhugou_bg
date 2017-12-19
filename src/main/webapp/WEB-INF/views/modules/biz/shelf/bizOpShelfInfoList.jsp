@@ -37,8 +37,10 @@
 		<thead>
 			<tr>
 				<th>货架名称</th>
-				<th>update_id</th>
-				<th>update_time</th>
+				<th>货架描述</th>
+				<th>创建时间</th>
+				<th>更新人</th>
+				<th>更新时间</th>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -49,10 +51,16 @@
 					${bizOpShelfInfo.name}
 				</a></td>
 				<td>
-					${bizOpShelfInfo.updateId.id}
+					${description}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizOpShelfInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${bizOpShelfInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+					${bizOpShelfInfo.updateBy.name}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizOpShelfInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit"><td>
     				<a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">修改</a>
