@@ -3,11 +3,9 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
@@ -133,36 +131,68 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
 			}
 		}
-
-		//获取产品特有的属性
-		if (bizProductInfo.getProdPropertyMap() != null) {
-			for (Map.Entry<String, BizProdPropertyInfo> entry : bizProductInfo.getProdPropertyMap().entrySet()) {
-				String propNameDesc = entry.getKey();
-				String[]propNameDescArr=propNameDesc.split("_");
-				BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
-				bizProdPropertyInfo.setPropName(propNameDescArr[0]);
-				bizProdPropertyInfo.setPropDescription(propNameDescArr[1]);
-				bizProdPropertyInfo.setProductInfo(bizProductInfo);
-
-				bizProdPropertyInfoService.save(bizProdPropertyInfo);
-
-				String prodOwnValueStr = bizProdPropertyInfo.getPropOwnValues();
-				if (prodOwnValueStr != null && !"".equals(prodOwnValueStr)) {
-					String[] prodOwnValueValues = prodOwnValueStr.split(",");
-					for (int j = 0; j < prodOwnValueValues.length; j++) {
-						prodPropValue.setId(null);
-						prodPropValue.setSource("prod");
-						prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
-						prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
-						prodPropValue.setPropValue(prodOwnValueValues[j]);
-						bizProdPropValueService.save(prodPropValue);
-					}
-				}
-
+		/**
+		 * 商品特有属性
+		 */
+		String[] valuesArr=bizProductInfo.getPropOwnValues().split("_");
+		Map<String,List<String>> map=new HashMap();
+		List<String> strList=null;
+		for(int i=0;i<valuesArr.length;i++){
+			if(valuesArr[i]==null || "".equals(valuesArr[i])){
+				continue;
 			}
-
-
+			if(valuesArr[i].startsWith(",")){
+				valuesArr[i]=valuesArr[i].substring(1);
+			}
+			String[] valuesFlag=valuesArr[i].split(",");
+			if(valuesFlag.length<=1){
+				continue;
+			}
+			String key=(valuesFlag[1]);
+			if(map.containsKey(key)){
+				List<String> values = map.get(key);
+				map.remove(key);
+				values.add(valuesFlag[0]);
+				map.put(key,values);
+			}else {
+				strList=new ArrayList<String>();
+				strList.add(valuesFlag[0]);
+				map.put(key,strList);
+			}
 		}
+		if(bizProductInfo.getPropNames()!=null && !"".equals(bizProductInfo.getPropNames())){
+			BizProdPropertyInfo bizProdPropertyInfo=new BizProdPropertyInfo();
+			String [] propNameArr=bizProductInfo.getPropNames().split("_");
+			for(int i=0;i<propNameArr.length;i++){
+				if(propNameArr[i]==null || "".equals(propNameArr[i])){
+					continue;
+				}
+				if(propNameArr[i].startsWith(",")){
+
+					propNameArr[i]=propNameArr[i].substring(1);
+				}
+				String[] nameFlag=propNameArr[i].split(",");
+				if(nameFlag.length<=1){
+					continue;
+				}
+				String flag=nameFlag[1];
+				bizProdPropertyInfo.setId(null);
+				bizProdPropertyInfo.setProductInfo(bizProductInfo);
+				bizProdPropertyInfo.setPropName(nameFlag[0]);
+				bizProdPropertyInfoService.save(bizProdPropertyInfo);
+				BizProdPropValue bizProdPropValue=new BizProdPropValue();
+				List<String> stringList=map.get(flag);
+				for(String str:stringList){
+					bizProdPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+					bizProdPropValue.setSource("prod");
+					bizProdPropValue.setPropValue(str);
+					bizProdPropValue.setPropName(bizProdPropertyInfo.getPropName());
+
+					bizProdPropValueService.save(bizProdPropValue);
+				}
+			}
+		}
+
 
 	}
 

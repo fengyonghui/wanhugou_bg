@@ -93,7 +93,6 @@ public class BizProductInfoController extends BaseController {
 			bizCatePropValue.setCatePropertyInfo(bizCatePropertyInfo);
 			catePropValueList=bizCatePropValueService.findList(bizCatePropValue);
 		}
-
 			model.addAttribute("catePropValueList",catePropValueList);
 			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());

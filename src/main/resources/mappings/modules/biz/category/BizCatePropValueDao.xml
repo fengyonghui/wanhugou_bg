@@ -5,9 +5,10 @@
 	<sql id="bizCatePropValueColumns">
 		a.id AS "id",
 		a.prop_id AS "catePropertyInfo.id",
-		a.value AS "value",
+		a.`value` AS "value",
 		a.prop_name AS "propName",
 		a.sys_prop_value_id AS "propValue.id",
+		a.sys_prop_value_id AS "propertyValueId",
 		a.sys_prop_id AS "propertyInfo.id",
 		a.source AS "source",
 		a.create_id AS "createBy.id",
@@ -82,7 +83,7 @@
 			<if test="categoryInfo!=null and categoryInfo.id!=null and categoryInfo.id!=''">
 				and pc.cat_id=#{categoryInfo.id}
 			</if>
-			<if test="catIds!=null and catIds!=''">
+			<if test="catIds!=null and catIds!='' and catIds.size()!=0">
 				and pc.cat_id in
 				<foreach collection="catIds" item="catId" index="index"
 				open="(" close=")" separator=",">
@@ -90,7 +91,6 @@
 				</foreach>
 			</if>
 		</where>
-
 		GROUP BY a.source, a.sys_prop_value_id
 	</select>
 	

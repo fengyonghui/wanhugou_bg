@@ -92,7 +92,7 @@ public class BizProdCateController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "findCatePropInfoMap")
 	public Map<String,List<BizCatePropValue>> findCatePropInfoMap(BizProdCate bizProdCate,String catIds){
-		if (catIds != null){
+		if (catIds != null && !"".equals(catIds)){
 			String[] ids = StringUtils.split(catIds, ",");
 			bizProdCate.setCatIds(Lists.newArrayList(ids));
 		}

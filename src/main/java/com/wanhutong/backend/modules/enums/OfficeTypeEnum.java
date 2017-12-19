@@ -5,7 +5,7 @@ package com.wanhutong.backend.modules.enums;
  */
 public enum OfficeTypeEnum {
 
-   OFFICE ,COMPANY,DEPARTMENT, GROUP,OTHER,WANHUTONG,CUSTOMER,VENDOR;
+   OFFICE ,COMPANY,DEPARTMENT, GROUP,OTHER,WANHUTONG,VENDOR;
 
     public static void main(String[] args) {
 

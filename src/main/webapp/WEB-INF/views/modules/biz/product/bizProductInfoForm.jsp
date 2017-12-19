@@ -43,10 +43,10 @@
                 ajaxGetPropInfo(ids);
                 t = setTimeout(function() {
                     ajaxGetProdPropInfo($("#id").val());
-                }, 100);
+                }, 150);
                 t = setTimeout(function() {
                     ajaxGetProdOwnPropInfo($("#id").val());
-                }, 150);
+                }, 100);
 
 
             }
@@ -77,9 +77,12 @@
                             var propId= propKeys[0];
                             var propName= propKeys[1]
                             $("#cateProp").append('<input class="select_all" id="'+propId+'" name="prodPropertyInfos" type="checkbox" value="'+propId+'" />'+propName+':<span id="span_'+propId+'"/><br/>')
-                            for(var p in values){
-                                $("#span_"+propId).append('<input id="value_'+values[p].propValue.id+'" class="value_'+propId+'" name="propertyMap['+propId+'].prodPropertyValues" type="checkbox" value="'+values[p].propValue.id+'" />'+values[p].value+'')
-                            }
+                                for(var p in values){
+                                if(values[p].value!=null){
+                                    $("#span_"+propId).append('<input id="value_'+values[p].propertyValueId+'" class="value_'+propId+'" name="propertyMap['+propId+'].prodPropertyValues" type="checkbox" value="'+values[p].propertyValueId+'" />'+values[p].value+'')
+								}
+							}
+
 
                         })
 
@@ -97,7 +100,8 @@
                         });
 					});
             }
-
+            var  a=0;
+            var str=["a","b","c","d","e","f","g","h","j","k","l","m","n"];
             function ajaxGetProdOwnPropInfo(prodId) {
                 $.post("${ctx}/biz/product/bizProdPropValue/findList",
                     {prodId:prodId,source:"prod",ranNum:Math.random()},
@@ -106,13 +110,14 @@
                             var propKeys= keys.split(",");
                             var propName= propKeys[0];
                             var propDesc= propKeys[1]
-                            $("#ownPropInfo").append("<input style='margin-bottom: 10px' onblur='changePropprodName($(this));' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:");
+                            $("#ownPropInfo").append("<input style='margin-bottom: 10px' onblur='cancelValue($(this),\""+str[a]+"\");' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:<input type='hidden'  name='propNames' value='"+str[a]+"_'/>");
                             for(var p in values){
-                                    $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' type='text' name='prodPropertyMap["+propName+"_"+propDesc+"].propOwnValues' value='"+values[p].propValue+"'/>")
+                                    $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' class='"+str[a]+"' type='text' name='propOwnValues' value='"+values[p].propValue+"'/><input type='hidden'  name='propOwnValues' value='"+str[a]+"_'>")
 
 
                             }
-                            $("#ownPropInfo").append("<br/>")
+                            $("#ownPropInfo").append("<button id='id_"+str[a]+"' onclick='addPropValueInfo(\""+str[a]+"\")'  type=\"button\" class=\"btn btn-default\"><span class=\"icon-plus\"></span></button><br/>");
+							a++;
                         });
                     });
             };
@@ -154,34 +159,38 @@
                 i++;
                 $("#propValues").append("<input type='text' id='prodPropValueList"+i+"' name=\"prodPropValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
             });
+
+            /**
+			 * 弹出框保存
+             */
             $("#but_sub").click(function () {
                 var propName=$("#propName").val();
-                var propDescription=$("#propDescription").val();
+              //  var propDescription=$("#propDescription").val();
                 var propValues  = $("#propValues input");
                 if(propName!=''){
-				$("#ownPropInfo").append("<input style='margin-bottom: 10px' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:");
+				$("#ownPropInfo").append("<input style='margin-bottom: 10px' onblur='cancelValue($(this),\""+str[a]+"\");' class='input-mini' type='text' name='propNames' value='"+propName+"'/>:<input type='hidden'  name='propNames' value='"+str[a]+"_'/>");
                 	propValues.each(function() {
                     var v=$(this).val();
                     if(v!=""){
-                        $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' type='text' name='prodPropertyMap["+propName+"_"+propDescription+"].propOwnValues' value='"+v+"'/>")
+                        $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' class='"+str[a]+"' type='text' name='propOwnValues' value='"+v+"'/><input type='hidden'  name='propOwnValues' value='"+str[a]+"_'>")
                     }
-
                 })
-				$("#ownPropInfo").append("<br/>");
+				$("#ownPropInfo").append("<button id='id_"+str[a]+"' onclick='addPropValueInfo(\""+str[a]+"\")'  type=\"button\" class=\"btn btn-default\"><span class=\"icon-plus\"></span></button><br/>");
                 }
+                a++;
+                $('#myModal').modal('hide');
             })
 
 
 
 		});
-        function changePropprodName(obj){
-            alert(obj.val());
-//			var values=obj.nextAll();
-//			for(var i in values){
-//                var orginName= values[i].attr("name");
-//                alert(orginName);
-//
-//				}
+        function addPropValueInfo(va){
+            $("#id_"+va).before("<input style=\"width: 60px;margin-bottom: 10px\" type=\"text\" name=\"propOwnValues\" /><input type=\"hidden\" name=\"propOwnValues\" value="+va+"_>")
+        }
+        function cancelValue(obj,k) {
+            if(obj.val()==''){
+                obj.parent().children("."+k).remove();
+			}
 
         }
 
@@ -226,11 +235,11 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">请选择供应商：</label>
+			<label class="control-label">请选择采购商：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
 								labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="供应商"  url="/sys/office/queryTreeList?type=7" extId="${office.id}"
+								title="采购商"  url="/sys/office/queryTreeList?type=6" extId="${office.id}"
 								cssClass="input-xlarge required"
 								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -370,11 +379,14 @@
 		</tbody>
 	</table>
 
-		<footer class="footer navbar-fixed-bottom ">
-		<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}" class="button">
-			<button style>sku增加</button>
-		</a>
-		</footer>
+		<div class="form-actions">
+			<c:if test="${entity.id !=null && entity.id!='' }">
+				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><input type="button"
+																				 onclick="javascript:window.location.href='${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}';"
+																				 class="btn btn-primary"
+																				 value="sku信息添加"/></shiro:hasPermission>
+			</c:if>
+		</div>
 
 
 </body>

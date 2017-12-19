@@ -39,6 +39,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String propNames;
 
+	private String propOwnValues;
+
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 
 
@@ -235,5 +237,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setPropNames(String propNames) {
 		this.propNames = propNames;
+	}
+
+	public String getPropOwnValues() {
+		return propOwnValues;
+	}
+
+	public void setPropOwnValues(String propOwnValues) {
+		this.propOwnValues = propOwnValues;
 	}
 }
