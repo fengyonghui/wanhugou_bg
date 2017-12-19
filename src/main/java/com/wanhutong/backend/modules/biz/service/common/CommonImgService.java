@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.biz.service.common;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +44,30 @@ public class CommonImgService extends CrudService<CommonImgDao, CommonImg> {
 	@Transactional(readOnly = false)
 	public void delete(CommonImg commonImg) {
 		super.delete(commonImg);
+	}
+
+	@Transactional(readOnly = false)
+	public void saveCommonImg(BizProductInfo bizProductInfo) {
+		String photos=bizProductInfo.getPhotos();
+		if(photos!=null){
+			CommonImg commonImg=new CommonImg();
+			photos=photos.substring(1);
+			String[]photoArr=photos.split("\\|");
+			if(photoArr.length>=1){
+				for (int i=0;i<photoArr.length;i++){
+					commonImg.setImgPath(photoArr[i]);
+					commonImg.setImgSort(i);
+					commonImg.setImgType(ImgEnum.MAIN_PRODUCT.getCode());
+					commonImg.setObjectId(bizProductInfo.getId());
+					commonImg.setImgServer("baidu");
+					commonImg.setObjectName("biz_product_info");
+					super.save(commonImg);
+				}
+
+			}
+
+
+		}
 	}
 	
 }

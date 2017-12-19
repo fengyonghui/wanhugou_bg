@@ -1,6 +1,6 @@
-package com.wanhutong.backend.modules.biz.dao.common;
+package com.wanhutong.backend.modules.enums;
 
-public enum EnumImg{
+public enum ImgEnum{
 
     /**用户头像*/
     USER_PHOTO(0,"用户头像"),
@@ -36,7 +36,7 @@ public enum EnumImg{
         this.name = name;
     }
 
-    private EnumImg(int code, String name){
+    private ImgEnum(int code, String name){
         this.code = code;
         this.name = name;
         }

@@ -17,6 +17,7 @@ import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueServic
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
@@ -80,6 +81,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		}
 		BizProdPropValue prodPropValue = new BizProdPropValue();
 		BizProdPropertyInfo prodPropertyInfo = new BizProdPropertyInfo();
+		/**
+		 * 产品选择分类属性（只选择属性，没有值）
+		 */
 		String catePropertyInfoStr = bizProductInfo.getProdPropertyInfos();
 		bizProductInfoDao.deleteProdPropInfoReal(bizProductInfo);
 		if (catePropertyInfoStr != null && !catePropertyInfoStr.isEmpty()) {
@@ -105,6 +109,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 			}
 
 		}
+		/**
+		 * 选择分类属性（属性和值）
+		 */
 		if (bizProductInfo.getPropertyMap() != null) {
 			for (Map.Entry<String, BizProdPropertyInfo> entry : bizProductInfo.getPropertyMap().entrySet()) {
 				Integer propId = Integer.parseInt(entry.getKey());
@@ -196,9 +203,13 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 				}
 			}
 		}
+		commonImgService.saveCommonImg(bizProductInfo);
+
 
 
 	}
+	//保存图片“|”分割图片
+
 
 
 	@Transactional(readOnly = false)

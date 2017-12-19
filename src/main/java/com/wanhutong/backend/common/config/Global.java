@@ -57,7 +57,7 @@ public class Global {
 	/**
 	 * 上传文件基础虚拟路径
 	 */
-	public static final String USERFILES_BASE_URL = "/userfiles/";
+	public static final String USERFILES_BASE_URL = "/upload/";
 	
 	/**
 	 * 获取当前对象实例

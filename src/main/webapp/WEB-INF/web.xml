@@ -165,7 +165,7 @@
 	</servlet>
 	<servlet-mapping>
 	  	<servlet-name>UserfilesDownloadServlet</servlet-name>
-	  	<url-pattern>/userfiles/*</url-pattern>
+	  	<url-pattern>/upload/*</url-pattern>
 	</servlet-mapping>
 	
 	<!-- Validate code -->

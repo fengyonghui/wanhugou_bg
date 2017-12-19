@@ -35,13 +35,14 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String minPrice;		// 最低售价
 	private String maxPrice;		// 最高售价
 	private String skuInfos; //多种商品信息
-	private Map<String,BizSkuInfo> skuInfoMap;
 
 	private String cateIds; //多种分类
 
 	private String propNames;
 
 	private String propOwnValues;
+
+	private String photos; //产品图片
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
@@ -177,15 +178,6 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setSkuInfos(String skuInfos) {
 		this.skuInfos = skuInfos;
 	}
-
-//	public Map<String, BizSkuInfo> getSkuInfoMap() {
-//		return skuInfoMap;
-//	}
-//
-//	public void setSkuInfoMap(Map<String, BizSkuInfo> skuInfoMap) {
-//		this.skuInfoMap = skuInfoMap;
-//	}
-
 	public BizCatePropValue getCatePropValue() {
 		return catePropValue;
 	}
@@ -265,5 +257,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setPropOwnValues(String propOwnValues) {
 		this.propOwnValues = propOwnValues;
+	}
+
+	public String getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(String photos) {
+		this.photos = photos;
 	}
 }

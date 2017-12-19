@@ -23,9 +23,9 @@ public class CommonImg extends DataEntity<CommonImg> {
 	private static final long serialVersionUID = 1L;
 	private BizProductInfo bizProductInfo;
 	private String objectName;		// 对象名称，表名称
-	private String objectId;		// 对应表的主键
-	private String imgType;		// 图片类型
-	private String imgSort;		// 排序
+	private Integer objectId;		// 对应表的主键
+	private Integer imgType;		// 图片类型
+	private Integer imgSort;		// 排序
 	private String imgServer;		// 图片服务器地址
 	private String imgPath;		// 图片路径
 	private String imgLink;		// 图片连接地址
@@ -56,34 +56,31 @@ public class CommonImg extends DataEntity<CommonImg> {
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
 	}
-	
-	@Length(min=1, max=11, message="对应表的主键长度必须介于 1 和 11 之间")
-	public String getObjectId() {
+
+	public Integer getObjectId() {
 		return objectId;
 	}
 
-	public void setObjectId(String objectId) {
+	public void setObjectId(Integer objectId) {
 		this.objectId = objectId;
 	}
-	
-	@Length(min=1, max=4, message="图片类型长度必须介于 1 和 4 之间")
-	public String getImgType() {
+
+	public Integer getImgType() {
 		return imgType;
 	}
 
-	public void setImgType(String imgType) {
+	public void setImgType(Integer imgType) {
 		this.imgType = imgType;
 	}
-	
-	@Length(min=1, max=11, message="排序长度必须介于 1 和 11 之间")
-	public String getImgSort() {
+
+	public Integer getImgSort() {
 		return imgSort;
 	}
 
-	public void setImgSort(String imgSort) {
+	public void setImgSort(Integer imgSort) {
 		this.imgSort = imgSort;
 	}
-	
+
 	@Length(min=1, max=100, message="图片服务器地址长度必须介于 1 和 100 之间")
 	public String getImgServer() {
 		return imgServer;

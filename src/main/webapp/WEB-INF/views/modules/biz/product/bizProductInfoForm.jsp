@@ -232,8 +232,8 @@
 		<div class="control-group">
 			<label class="control-label">商品图片:</label>
 			<div class="controls">
-				<form:hidden id="commonImg" path="commonImg" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="commonImg" type="images" uploadPath="/image/pic/item" selectMultiple="false" maxWidth="100" maxHeight="100"/>
+				<form:hidden id="prodImg" path="photos" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="prodImg" type="images" uploadPath="/prod/item" selectMultiple="true" maxWidth="100" maxHeight="100"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -325,12 +325,12 @@
 								<span class="help-inline"><font color="red">*</font> </span>
 							</div>
 						</div>
-						<div class="control-group">
-							<label class="control-label">属性描述：</label>
-							<div class="controls">
-								<input type="text" id="propDescription" maxlength="200" class="input-xlarge required"/>
-							</div>
-						</div>
+						<%--<div class="control-group">--%>
+							<%--<label class="control-label">属性描述：</label>--%>
+							<%--<div class="controls">--%>
+								<%--<input type="text" id="propDescription" maxlength="200" class="input-xlarge required"/>--%>
+							<%--</div>--%>
+						<%--</div>--%>
 						<div class="control-group">
 							<label class="control-label">属性值：</label>
 							<div class="controls">
