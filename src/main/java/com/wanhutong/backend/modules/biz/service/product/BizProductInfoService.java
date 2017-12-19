@@ -9,12 +9,14 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
@@ -51,6 +53,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	private BizProdPropValueService bizProdPropValueService;
 	@Resource
 	private PropValueService propValueService;
+	@Resource
+	private CommonImgService commonImgService;
 
 
 	public BizProductInfo get(Integer id) {

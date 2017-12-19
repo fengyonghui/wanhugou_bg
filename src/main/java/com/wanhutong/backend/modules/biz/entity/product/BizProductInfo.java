@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.entity.product;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private static final long serialVersionUID = 1L;
+	private CommonImg commonImg;
 	private String name;		// 商品名称
 	private String prodCode;		// 商品代码--厂家定的-或自己定的
 	private BizCatePropValue catePropValue;		// biz_cate_prop_value.id, 对应品牌分类的属性值ID
@@ -42,6 +44,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String propOwnValues;
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
+	private List<CommonImg> commonImgList = Lists.newArrayList();
 
 
 	private String prodPropertyInfos;
@@ -51,6 +54,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private Map<String,BizProdPropertyInfo> prodPropertyMap;
 
 	private String source;
+
+
 
 	public List<Integer> getCateIdList() {
 		List<Integer> cateIdList = Lists.newArrayList();
@@ -205,7 +210,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.categoryInfoList = categoryInfoList;
 	}
 
+	public List<CommonImg> getCommonImgList() {
+		return commonImgList;
+	}
 
+	public void setCommonImgList(List<CommonImg> commonImgList) {
+		this.commonImgList = commonImgList;
+	}
 
 	public List<BizSkuInfo> getSkuInfosList() {
 		return skuInfosList;
@@ -238,6 +249,15 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setPropNames(String propNames) {
 		this.propNames = propNames;
 	}
+
+	public CommonImg getCommonImg() {
+		return commonImg;
+	}
+
+	public void setCommonImg(CommonImg commonImg) {
+		this.commonImg = commonImg;
+	}
+
 
 	public String getPropOwnValues() {
 		return propOwnValues;

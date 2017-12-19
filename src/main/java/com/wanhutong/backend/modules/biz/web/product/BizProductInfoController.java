@@ -9,12 +9,14 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
@@ -56,22 +58,35 @@ public class BizProductInfoController extends BaseController {
 	@Autowired
 	private BizCategoryInfoService bizCategoryInfoService;
 
+	@Autowired
+	private CommonImgService commonImgService;
+
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
 		BizProductInfo entity = null;
+
 		if (id!=null){
 			entity = bizProductInfoService.get(id);
 			BizSkuInfo bizSkuInfo=new BizSkuInfo();
 			bizSkuInfo.setProductInfo(entity);
 			List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
 			entity.setSkuInfosList(skuInfosList);
+
+//			CommonImg commonImg = new CommonImg();
+//			String Img = commonImg.getImgServer()+commonImg.getImgPath();
+//			commonImg.setBizProductInfo(entity);
+//			commonImg.setImg(commonImg.getImgServer()+commonImg.getImgPath());
+//			List<CommonImg> commonImgList = commonImgService.findList(commonImg);
+//			entity.setCommonImgList(commonImgList);
 		}
 		if (entity == null){
 			entity = new BizProductInfo();
 		}
+
 		return entity;
 	}
-	
+
+
 	@RequiresPermissions("biz:product:bizProductInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {

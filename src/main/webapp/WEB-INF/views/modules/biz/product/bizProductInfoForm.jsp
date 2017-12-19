@@ -230,6 +230,13 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">商品图片:</label>
+			<div class="controls">
+				<form:hidden id="commonImg" path="commonImg" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="commonImg" type="images" uploadPath="/image/pic/item" selectMultiple="false" maxWidth="100" maxHeight="100"/>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">商品代码：</label>
 			<div class="controls">
 				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
