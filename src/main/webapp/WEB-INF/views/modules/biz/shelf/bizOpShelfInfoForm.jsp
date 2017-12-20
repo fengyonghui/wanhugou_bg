@@ -43,7 +43,7 @@
 		<div class="control-group">
 			<label class="control-label">货架描述：</label>
 			<div class="controls">
-				<form:input path="description" htmlEscape="false" class="input-xlarge "/>
+				<form:textarea path="description" htmlEscape="false" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="form-actions">

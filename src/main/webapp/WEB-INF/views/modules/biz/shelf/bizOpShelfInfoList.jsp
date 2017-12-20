@@ -37,7 +37,7 @@
 		<thead>
 			<tr>
 				<th>货架名称</th>
-				<th>货架描述</th>
+				<%--<th>货架描述</th>--%>
 				<th>创建时间</th>
 				<th>更新人</th>
 				<th>更新时间</th>
@@ -50,9 +50,9 @@
 				<td><a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">
 					${bizOpShelfInfo.name}
 				</a></td>
-				<td>
+				<%--<td>
 					${description}
-				</td>
+				</td>--%>
 				<td>
 					<fmt:formatDate value="${bizOpShelfInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
