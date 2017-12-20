@@ -7,6 +7,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.FileUtils;
 import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm.Principal;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -54,7 +55,12 @@ public class CKFinderConfig extends Configuration {
 //			Principal principal = (Principal)SecurityUtils.getSubject().getPrincipal();
 //			this.baseURL = ServletContextFactory.getServletContext().getContextPath()+"/userfiles/"+principal+"/";
 			this.baseURL = FileUtils.path(Servlets.getRequest().getContextPath() + Global.USERFILES_BASE_URL + principal + "/");
+//			this.baseDir = FileUtils.path(Global.getUserfilesBaseDir() + Global.USERFILES_BASE_URL + principal + "/");
+
+//			this.baseURL = DsConfig.getImgServer() + Global.USERFILES_BASE_URL + principal + "/";
 			this.baseDir = FileUtils.path(Global.getUserfilesBaseDir() + Global.USERFILES_BASE_URL + principal + "/");
+
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

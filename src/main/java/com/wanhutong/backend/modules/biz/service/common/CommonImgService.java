@@ -57,7 +57,7 @@ public class CommonImgService extends CrudService<CommonImgDao, CommonImg> {
 				for (int i=0;i<photoArr.length;i++){
 					commonImg.setImgPath(photoArr[i]);
 					commonImg.setImgSort(i);
-					commonImg.setImgType(ImgEnum.MAIN_PRODUCT.getCode());
+					commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
 					commonImg.setObjectId(bizProductInfo.getId());
 					commonImg.setImgServer("baidu");
 					commonImg.setObjectName("biz_product_info");

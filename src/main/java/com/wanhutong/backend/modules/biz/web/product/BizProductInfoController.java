@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -54,10 +55,8 @@ public class BizProductInfoController extends BaseController {
 	private DefaultPropService defaultPropService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
-
 	@Autowired
 	private BizCategoryInfoService bizCategoryInfoService;
-
 	@Autowired
 	private CommonImgService commonImgService;
 
@@ -72,12 +71,24 @@ public class BizProductInfoController extends BaseController {
 			List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
 			entity.setSkuInfosList(skuInfosList);
 
-//			CommonImg commonImg = new CommonImg();
-//			String Img = commonImg.getImgServer()+commonImg.getImgPath();
-//			commonImg.setBizProductInfo(entity);
-//			commonImg.setImg(commonImg.getImgServer()+commonImg.getImgPath());
-//			List<CommonImg> commonImgList = commonImgService.findList(commonImg);
-//			entity.setCommonImgList(commonImgList);
+			CommonImg commonImg=new CommonImg();
+			commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
+			commonImg.setObjectId(entity.getId());
+			commonImg.setObjectName("biz_product_info");
+
+			List<CommonImg> imgList=commonImgService.findList(commonImg);
+
+			entity.setCommonImgList(imgList);
+
+//			if(imgList!=null&&imgList.size()>0){
+//				entity.setProdIndex(imgList.get(0));
+//			}
+//			BizImg img=new BizImg();
+//			img.setImgKey(ImgEnum.PRODUCT_DETAIL_BANNER_IMG.name());
+//			img.setObjectId(id.longValue());
+//			img.setObjectName(entity.getClass().getSimpleName());
+//			List<BizImg> imgs=bizImgService.findList(img);
+//			entity.setImgList(imgs);
 		}
 		if (entity == null){
 			entity = new BizProductInfo();
