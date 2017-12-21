@@ -23,7 +23,6 @@
 				}
 			});
 			if($("#id").val()!=''){
-               alert($("#id").val()) ;
                 ajaxGetSkuPropInfo($("#id").val());
 			}
 

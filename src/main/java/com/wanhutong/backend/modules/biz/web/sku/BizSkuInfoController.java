@@ -6,9 +6,12 @@ package com.wanhutong.backend.modules.biz.web.sku;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,6 +44,8 @@ public class BizSkuInfoController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
+	@Autowired
+	private CommonImgService commonImgService;
 	
 	@ModelAttribute
 	public BizSkuInfo get(@RequestParam(required=false) Integer id) {
@@ -70,6 +75,23 @@ public class BizSkuInfoController extends BaseController {
 		bizProdPropertyInfo.setProductInfo(bizSkuInfo.getProductInfo());
 		List<BizProdPropertyInfo> prodPropertyInfoList= bizProdPropertyInfoService.findList(bizProdPropertyInfo);
 		Map<Integer,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
+
+		CommonImg commonImg=new CommonImg();
+		commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+		commonImg.setObjectId(bizSkuInfo.getId());
+		commonImg.setObjectName("biz_sku_info");
+		if(bizSkuInfo.getId()!=null){
+			List<CommonImg> imgList=commonImgService.findList(commonImg);
+			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+			String photos="";
+			for(CommonImg img:imgList){
+				photos+="|"+img.getImgPath();
+			}
+			if(!"".equals(photos)){
+				bizSkuInfo.setPhotos(photos);
+			}
+		}
+
 		model.addAttribute("prodPropInfoList", prodPropertyInfoList);
 		model.addAttribute("map", map);
 		return "modules/biz/sku/bizSkuInfoForm";
