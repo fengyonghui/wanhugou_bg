@@ -114,6 +114,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">分类图片：</label>
+			<div class="controls">
+				<form:hidden path="imgId"/>
+				<form:hidden id="prodImg" path="catePhoto" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="prodImg" type="images" uploadPath="/cate/item" selectMultiple="false" maxWidth="100" maxHeight="100"/>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">分类描述：</label>
 			<div class="controls">
 				<form:input path="description" htmlEscape="false" maxlength="512" class="input-xlarge "/>

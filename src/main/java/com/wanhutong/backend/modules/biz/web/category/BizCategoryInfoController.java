@@ -11,8 +11,11 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatelogInfoService;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
@@ -50,6 +53,8 @@ public class BizCategoryInfoController extends BaseController {
 	private PropertyInfoService propertyInfoService;
 	@Autowired
 	private DefaultPropService defaultPropService;
+	@Autowired
+	private CommonImgService commonImgService;
 	
 	@ModelAttribute
 	public BizCategoryInfo get(@RequestParam(required=false) Integer id) {
@@ -91,15 +96,24 @@ public class BizCategoryInfoController extends BaseController {
                categoryInfo.setDescription(bizCatelogInfo.getDescription());
                bizCategoryInfo.setParent(categoryInfo);
            }
-
 		}else {
 			bizCategoryInfo.setParent(bizCategoryInfoService.get(bizCategoryInfo.getParent().getId()));
-
 		}
-
 		PropertyInfo propertyInfo=new PropertyInfo();
 		List<PropertyInfo> propertyInfoList=propertyInfoService.findList(propertyInfo);
 		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
+		CommonImg commonImg=new CommonImg();
+
+		commonImg.setImgType(ImgEnum.CATEGORY_TYPE.getCode());
+		commonImg.setObjectId(bizCategoryInfo.getId());
+		commonImg.setObjectName("biz_category_info");
+		if(bizCategoryInfo.getId()!=null){
+			List<CommonImg> imgList=commonImgService.findList(commonImg);
+			if(imgList!=null && imgList.size()>0){
+				bizCategoryInfo.setCatePhoto(imgList.get(0).getImgPath());
+				bizCategoryInfo.setImgId(imgList.get(0).getId());
+			}
+		}
 		model.addAttribute("bizCategoryInfo", bizCategoryInfo);
 		model.addAttribute("propertyInfo",propertyInfo);
 		model.addAttribute("propertyInfoList", propertyInfoList);
@@ -139,7 +153,6 @@ public class BizCategoryInfoController extends BaseController {
 			map.put("id", 0);
 			map.put("name", catelogInfo.getName());
 			 mapList=treeDataInfo(extId,catelogInfo);
-//
 			mapList.add(map);
 		}
 		return mapList;
@@ -154,7 +167,6 @@ public class BizCategoryInfoController extends BaseController {
 					&& Global.YES.equals(e.getStatus().toString())){
 				Map<String, Object> map = Maps.newHashMap();
 				Integer pid=e.getParentId();
-
 				map.put("id", e.getId());
 				map.put("pId", pid);
 				map.put("pIds", e.getParentIds());

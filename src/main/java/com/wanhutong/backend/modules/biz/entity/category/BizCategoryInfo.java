@@ -22,6 +22,9 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	private Byte status;//是否可用
 	private Integer cid;//用于参数传递
 
+	private String catePhoto; //分类图片
+	private Integer imgId;
+
 	private List<BizCatePropertyInfo> catePropertyInfoList;
 
 	private Map<String,BizCatePropertyInfo> propertyMap;
@@ -87,7 +90,21 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 		this.catePropertyInfoList = catePropertyInfoList;
 	}
 
+	public String getCatePhoto() {
+		return catePhoto;
+	}
 
+	public void setCatePhoto(String catePhoto) {
+		this.catePhoto = catePhoto;
+	}
+
+	public Integer getImgId() {
+		return imgId;
+	}
+
+	public void setImgId(Integer imgId) {
+		this.imgId = imgId;
+	}
 
 	public String getCatePropertyInfos() {
 		return catePropertyInfos;

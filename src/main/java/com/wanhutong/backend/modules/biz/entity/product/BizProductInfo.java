@@ -36,6 +36,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String maxPrice;		// 最高售价
 	private String skuInfos; //多种商品信息
 	private String imgUrl;   //图片地址
+	private String photoDetails;
 
 	private String cateIds; //多种分类
 
@@ -274,5 +275,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
+	}
+
+	public String getPhotoDetails() {
+		return photoDetails;
+	}
+
+	public void setPhotoDetails(String photoDetails) {
+		this.photoDetails = photoDetails;
 	}
 }

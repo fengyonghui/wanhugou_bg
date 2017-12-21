@@ -258,6 +258,13 @@
 				<form:textarea path="description" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">商品详情图片:</label>
+			<div class="controls">
+				<form:hidden id="prodDetailImg" path="photoDetails" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="prodDetailImg" type="images" uploadPath="/prod/detail" selectMultiple="true" maxWidth="100" maxHeight="100"/>
+			</div>
+		</div>
 
 		<div class="control-group">
 			<label class="control-label">请选择供应商：</label>

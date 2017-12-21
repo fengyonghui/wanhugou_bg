@@ -108,12 +108,21 @@ public class BizProductInfoController extends BaseController {
 		commonImg.setObjectName("biz_product_info");
 		if(bizProductInfo.getId()!=null){
 			List<CommonImg> imgList=commonImgService.findList(commonImg);
+			commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
+			List<CommonImg> subImgList=commonImgService.findList(commonImg);
 			String photos="";
+			String photoDetails="";
 			for(CommonImg img:imgList){
 				photos+="|"+img.getImgPath();
 			}
 			if(!"".equals(photos)){
 				bizProductInfo.setPhotos(photos);
+			}
+			for(CommonImg img:subImgList){
+				photoDetails+="|"+img.getImgPath();
+			}
+			if(!"".equals(photoDetails)){
+				bizProductInfo.setPhotoDetails(photoDetails);
 			}
 		}
 			model.addAttribute("catePropValueList",catePropValueList);

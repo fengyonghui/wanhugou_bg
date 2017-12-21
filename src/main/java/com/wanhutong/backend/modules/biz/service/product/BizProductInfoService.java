@@ -80,6 +80,124 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		if (bizProductInfo.getCategoryInfoList().size() > 0){
 			bizProductInfoDao.insertProdCate(bizProductInfo);
 		}
+		/**
+		 * 保存商品分类属性与属性值
+		 */
+		saveCatePropAndValue(bizProductInfo);
+		/**
+		 * 商品特有属性与值
+		 */
+		saveOwnProp(bizProductInfo);
+		//保存产品图片
+		saveCommonImg(bizProductInfo);
+
+
+
+	}
+	@Transactional(readOnly = false)
+	public void saveCommonImg(BizProductInfo bizProductInfo) {
+		String photos=bizProductInfo.getPhotos();
+		String photoDetails=bizProductInfo.getPhotoDetails();
+		boolean flag=false;
+		CommonImg commonImg=new CommonImg();
+		if(photos!=null && !"".equals(photos)) {
+			photos = photos.substring(1);
+			commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
+			flag=true;
+		}
+		if(photoDetails!=null && !"".equals(photoDetails)){
+			photos=photoDetails.substring(1);
+			commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
+			flag=true;
+		}
+		if(flag){
+			String[]photoArr=photos.split("\\|");
+			if(photoArr.length>=1){
+				commonImg.setObjectId(bizProductInfo.getId());
+				commonImg.setObjectName("biz_product_info");
+				commonImgService.deleteCommonImg(commonImg);
+				for (int i=0;i<photoArr.length;i++){
+					commonImg.setImgPath(photoArr[i]);
+					commonImg.setImgSort(i);
+					commonImg.setImgServer(DsConfig.getImgServer());
+					commonImgService.save(commonImg);
+					if(i==0 && commonImg.getImgType()==ImgEnum.MAIN_PRODUCT_TYPE.getCode()){
+						bizProductInfo.setImgUrl(commonImg.getImgServer()+commonImg.getImgPath());
+						super.save(bizProductInfo);
+					}
+				}
+		}
+
+
+			}
+
+	}
+
+	private void  saveOwnProp(BizProductInfo bizProductInfo){
+		if(bizProductInfo.getPropOwnValues()!=null&&!"".equals(bizProductInfo.getPropOwnValues())){
+			String[] valuesArr=bizProductInfo.getPropOwnValues().split("_");
+			Map<String,List<String>> map=new HashMap();
+			List<String> strList=null;
+			for(int i=0;i<valuesArr.length;i++){
+				if(valuesArr[i]==null || "".equals(valuesArr[i])){
+					continue;
+				}
+				if(valuesArr[i].startsWith(",")){
+					valuesArr[i]=valuesArr[i].substring(1);
+				}
+				String[] valuesFlag=valuesArr[i].split(",");
+				if(valuesFlag.length<=1){
+					continue;
+				}
+				String key=(valuesFlag[1]);
+				if(map.containsKey(key)){
+					List<String> values = map.get(key);
+					map.remove(key);
+					values.add(valuesFlag[0]);
+					map.put(key,values);
+				}else {
+					strList=new ArrayList<String>();
+					strList.add(valuesFlag[0]);
+					map.put(key,strList);
+				}
+			}
+			if(bizProductInfo.getPropNames()!=null && !"".equals(bizProductInfo.getPropNames())){
+				BizProdPropertyInfo bizProdPropertyInfo=new BizProdPropertyInfo();
+				String [] propNameArr=bizProductInfo.getPropNames().split("_");
+				for(int i=0;i<propNameArr.length;i++){
+					if(propNameArr[i]==null || "".equals(propNameArr[i])){
+						continue;
+					}
+					if(propNameArr[i].startsWith(",")){
+
+						propNameArr[i]=propNameArr[i].substring(1);
+					}
+					String[] nameFlag=propNameArr[i].split(",");
+					if(nameFlag.length<=1){
+						continue;
+					}
+					String flag=nameFlag[1];
+					bizProdPropertyInfo.setId(null);
+					bizProdPropertyInfo.setProductInfo(bizProductInfo);
+					bizProdPropertyInfo.setPropName(nameFlag[0]);
+					bizProdPropertyInfoService.save(bizProdPropertyInfo);
+					BizProdPropValue bizProdPropValue=new BizProdPropValue();
+					List<String> stringList=map.get(flag);
+					for(String str:stringList){
+						bizProdPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+						bizProdPropValue.setSource("prod");
+						bizProdPropValue.setPropValue(str);
+						bizProdPropValue.setPropName(bizProdPropertyInfo.getPropName());
+
+						bizProdPropValueService.save(bizProdPropValue);
+					}
+				}
+			}
+
+		}
+	}
+
+	private void saveCatePropAndValue(BizProductInfo bizProductInfo){
 		BizProdPropValue prodPropValue = new BizProdPropValue();
 		BizProdPropertyInfo prodPropertyInfo = new BizProdPropertyInfo();
 		/**
@@ -94,9 +212,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 				if (!keySet.contains(catePropertyInfos[i])) {
 					Integer propId = Integer.parseInt(catePropertyInfos[i]);
 					PropertyInfo propertyInfo = propertyInfoService.get(propId);
-						prodPropertyInfo.setPropName(propertyInfo.getName());
-						prodPropertyInfo.setPropDescription(propertyInfo.getDescription());
-						prodPropValue.setPropertyInfo(propertyInfo);
+					prodPropertyInfo.setPropName(propertyInfo.getName());
+					prodPropertyInfo.setPropDescription(propertyInfo.getDescription());
+					prodPropValue.setPropertyInfo(propertyInfo);
 
 					prodPropertyInfo.setProductInfo(bizProductInfo);
 					bizProdPropertyInfoService.save(prodPropertyInfo);
@@ -117,10 +235,10 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 			for (Map.Entry<String, BizProdPropertyInfo> entry : bizProductInfo.getPropertyMap().entrySet()) {
 				Integer propId = Integer.parseInt(entry.getKey());
 				BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
-					PropertyInfo propertyInfo = propertyInfoService.get(propId);
-					bizProdPropertyInfo.setPropName(propertyInfo.getName());
-					bizProdPropertyInfo.setPropDescription(propertyInfo.getDescription());
-					bizProdPropertyInfo.setProductInfo(bizProductInfo);
+				PropertyInfo propertyInfo = propertyInfoService.get(propId);
+				bizProdPropertyInfo.setPropName(propertyInfo.getName());
+				bizProdPropertyInfo.setPropDescription(propertyInfo.getDescription());
+				bizProdPropertyInfo.setProductInfo(bizProductInfo);
 
 				bizProdPropertyInfoService.save(bizProdPropertyInfo);
 
@@ -143,108 +261,12 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
 			}
 		}
-		/**
-		 * 商品特有属性
-		 */
-		if(bizProductInfo.getPropOwnValues()!=null&&!"".equals(bizProductInfo.getPropOwnValues())){
-
-		String[] valuesArr=bizProductInfo.getPropOwnValues().split("_");
-		Map<String,List<String>> map=new HashMap();
-		List<String> strList=null;
-		for(int i=0;i<valuesArr.length;i++){
-			if(valuesArr[i]==null || "".equals(valuesArr[i])){
-				continue;
-			}
-			if(valuesArr[i].startsWith(",")){
-				valuesArr[i]=valuesArr[i].substring(1);
-			}
-			String[] valuesFlag=valuesArr[i].split(",");
-			if(valuesFlag.length<=1){
-				continue;
-			}
-			String key=(valuesFlag[1]);
-			if(map.containsKey(key)){
-				List<String> values = map.get(key);
-				map.remove(key);
-				values.add(valuesFlag[0]);
-				map.put(key,values);
-			}else {
-				strList=new ArrayList<String>();
-				strList.add(valuesFlag[0]);
-				map.put(key,strList);
-			}
-		}
-		if(bizProductInfo.getPropNames()!=null && !"".equals(bizProductInfo.getPropNames())){
-			BizProdPropertyInfo bizProdPropertyInfo=new BizProdPropertyInfo();
-			String [] propNameArr=bizProductInfo.getPropNames().split("_");
-			for(int i=0;i<propNameArr.length;i++){
-				if(propNameArr[i]==null || "".equals(propNameArr[i])){
-					continue;
-				}
-				if(propNameArr[i].startsWith(",")){
-
-					propNameArr[i]=propNameArr[i].substring(1);
-				}
-				String[] nameFlag=propNameArr[i].split(",");
-				if(nameFlag.length<=1){
-					continue;
-				}
-				String flag=nameFlag[1];
-				bizProdPropertyInfo.setId(null);
-				bizProdPropertyInfo.setProductInfo(bizProductInfo);
-				bizProdPropertyInfo.setPropName(nameFlag[0]);
-				bizProdPropertyInfoService.save(bizProdPropertyInfo);
-				BizProdPropValue bizProdPropValue=new BizProdPropValue();
-				List<String> stringList=map.get(flag);
-				for(String str:stringList){
-					bizProdPropValue.setProdPropertyInfo(bizProdPropertyInfo);
-					bizProdPropValue.setSource("prod");
-					bizProdPropValue.setPropValue(str);
-					bizProdPropValue.setPropName(bizProdPropertyInfo.getPropName());
-
-					bizProdPropValueService.save(bizProdPropValue);
-				}
-			}
-		}
-
-		}
-		saveCommonImg(bizProductInfo);
-
-
-
 	}
-	@Transactional(readOnly = false)
-	public void saveCommonImg(BizProductInfo bizProductInfo) {
-		String photos=bizProductInfo.getPhotos();
-		if(photos!=null && !"".equals(photos)){
-			CommonImg commonImg=new CommonImg();
-			photos=photos.substring(1);
-			String[]photoArr=photos.split("\\|");
-			if(photoArr.length>=1){
-				commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
-				commonImg.setObjectId(bizProductInfo.getId());
-				commonImg.setObjectName("biz_product_info");
-				commonImgService.deleteCommonImg(commonImg);
-				for (int i=0;i<photoArr.length;i++){
-
-					commonImg.setImgPath(photoArr[i]);
-					commonImg.setImgSort(i);
-					commonImg.setImgServer(DsConfig.getImgServer());
-					commonImgService.save(commonImg);
-					if(i==0){
-						bizProductInfo.setImgUrl(commonImg.getImgServer()+commonImg.getImgPath());
-						super.save(bizProductInfo);
-					}
-				}
-			}
-		}
-	}
-
-
 
 	@Transactional(readOnly = false)
 	public void delete(BizProductInfo bizProductInfo) {
 		super.delete(bizProductInfo);
 	}
+
 	
 }

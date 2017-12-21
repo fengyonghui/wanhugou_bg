@@ -61,7 +61,7 @@
 			</div>
 		</div>--%>
 		<div class="control-group">
-			<label class="control-label">sku类型：</label>
+			<label class="control-label">SKU类型：</label>
 			<div class="controls">
                     <form:select path="skuType" class="input-xlarge required">
                         <form:option value="" label="请选择"/>
@@ -72,17 +72,24 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品名称：</label>
+			<label class="control-label">SKU商品名称：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="100" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品编码：</label>
+			<label class="control-label">SKU商品编码：</label>
 			<div class="controls">
 				<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">SKU商品图片:</label>
+			<div class="controls">
+				<form:hidden id="prodImg" path="photos" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="prodImg" type="images" uploadPath="/sku/item" selectMultiple="true" maxWidth="100" maxHeight="100"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -101,7 +108,7 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">选择sku属性：</label>
+			<label class="control-label">选择SKU属性：</label>
 			<div class="controls">
 				<c:forEach items="${prodPropInfoList}" var="propertyInfo">
 					<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="prodPropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.propName}：

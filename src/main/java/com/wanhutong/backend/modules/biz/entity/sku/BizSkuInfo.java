@@ -37,6 +37,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	private String skuPropertyInfos;
 
+	private String photos;
+
 	private Map<String,BizProdPropertyInfo> prodPropMap;
 
 
@@ -137,5 +139,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setProdPropMap(Map<String, BizProdPropertyInfo> prodPropMap) {
 		this.prodPropMap = prodPropMap;
+	}
+
+	public String getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(String photos) {
+		this.photos = photos;
 	}
 }

@@ -5,11 +5,15 @@ package com.wanhutong.backend.modules.biz.service.category;
 
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.TreeService;
+import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
@@ -44,6 +48,8 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	private BizCatePropValueService bizCatePropValueService;
 	@Autowired
 	private BizCategoryInfoDao bizCategoryInfoDao;
+	@Resource
+	private CommonImgService commonImgService;
 
 	public BizCategoryInfo get(Integer id) {
 		return super.get(id);
@@ -129,6 +135,19 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 
 			}
 		}
+		CommonImg commonImg=null;
+		if(bizCategoryInfo.getImgId()==null){
+			commonImg=new CommonImg();
+		}else {
+			commonImg=commonImgService.get(bizCategoryInfo.getImgId());
+		}
+		commonImg.setImgType(ImgEnum.CATEGORY_TYPE.getCode());
+		commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
+		commonImg.setObjectName("biz_category_info");
+		commonImg.setObjectId(bizCategoryInfo.getId());
+		commonImg.setImgServer(DsConfig.getImgServer());
+		commonImg.setImgSort(10);
+		commonImgService.save(commonImg);
 
 		UserUtils.removeCache(UserUtils.CACHE_CATEGORYINFO_LIST);
 	}
