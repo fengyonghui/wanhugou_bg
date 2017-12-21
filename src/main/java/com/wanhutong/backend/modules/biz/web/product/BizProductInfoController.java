@@ -71,24 +71,7 @@ public class BizProductInfoController extends BaseController {
 			List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
 			entity.setSkuInfosList(skuInfosList);
 
-			CommonImg commonImg=new CommonImg();
-			commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
-			commonImg.setObjectId(entity.getId());
-			commonImg.setObjectName("biz_product_info");
 
-			List<CommonImg> imgList=commonImgService.findList(commonImg);
-
-			entity.setCommonImgList(imgList);
-
-//			if(imgList!=null&&imgList.size()>0){
-//				entity.setProdIndex(imgList.get(0));
-//			}
-//			BizImg img=new BizImg();
-//			img.setImgKey(ImgEnum.PRODUCT_DETAIL_BANNER_IMG.name());
-//			img.setObjectId(id.longValue());
-//			img.setObjectName(entity.getClass().getSimpleName());
-//			List<BizImg> imgs=bizImgService.findList(img);
-//			entity.setImgList(imgs);
 		}
 		if (entity == null){
 			entity = new BizProductInfo();
@@ -119,6 +102,20 @@ public class BizProductInfoController extends BaseController {
 			bizCatePropValue.setCatePropertyInfo(bizCatePropertyInfo);
 			catePropValueList=bizCatePropValueService.findList(bizCatePropValue);
 		}
+		CommonImg commonImg=new CommonImg();
+		commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
+		commonImg.setObjectId(bizProductInfo.getId());
+		commonImg.setObjectName("biz_product_info");
+		List<CommonImg> imgList=commonImgService.findList(commonImg);
+		String photos="";
+		for(CommonImg img:imgList){
+			photos+="\\|"+img.getImgPath();
+		}
+		if(photos!=""){
+			photos=photos.substring(1);
+		}
+
+		bizProductInfo.setPhotos(photos);
 			model.addAttribute("catePropValueList",catePropValueList);
 			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());

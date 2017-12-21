@@ -14,5 +14,5 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
  */
 @MyBatisDao
 public interface CommonImgDao extends CrudDao<CommonImg> {
-	
+   int  deleteCommonImg(CommonImg commonImg);
 }

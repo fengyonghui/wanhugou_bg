@@ -45,6 +45,9 @@
 			<if test="imgType != null and imgType != ''">
 				AND a.img_type = #{imgType}
 			</if>
+			<if test="objectId!=null and objectId!=''">
+				and a.object_id=#{objectId}
+			</if>
 			<if test="imgServer != null and imgServer != ''">
 				AND a.img_server = #{imgServer}
 			</if>
@@ -133,5 +136,10 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<delete id="deleteCommonImg">
+		delete from common_img  where common_img.object_id = #{objectId} and common_img.img_type =#{imgType}
+		and common_img.object_name = #{objectName}
+	</delete>
 	
 </mapper>

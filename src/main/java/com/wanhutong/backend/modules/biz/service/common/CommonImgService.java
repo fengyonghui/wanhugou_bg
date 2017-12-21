@@ -5,8 +5,10 @@ package com.wanhutong.backend.modules.biz.service.common;
 
 import java.util.List;
 
+import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,8 @@ import com.wanhutong.backend.modules.biz.dao.common.CommonImgDao;
 @Service
 @Transactional(readOnly = true)
 public class CommonImgService extends CrudService<CommonImgDao, CommonImg> {
+	@Autowired
+	private CommonImgDao commonImgDao;
 
 	public CommonImg get(Integer id) {
 		return super.get(id);
@@ -54,13 +58,14 @@ public class CommonImgService extends CrudService<CommonImgDao, CommonImg> {
 			photos=photos.substring(1);
 			String[]photoArr=photos.split("\\|");
 			if(photoArr.length>=1){
+				commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
+				commonImg.setObjectId(bizProductInfo.getId());
+				commonImg.setObjectName("biz_product_info");
+				commonImgDao.deleteCommonImg(commonImg);
 				for (int i=0;i<photoArr.length;i++){
 					commonImg.setImgPath(photoArr[i]);
 					commonImg.setImgSort(i);
-					commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
-					commonImg.setObjectId(bizProductInfo.getId());
-					commonImg.setImgServer("baidu");
-					commonImg.setObjectName("biz_product_info");
+					commonImg.setImgServer(DsConfig.getImgServer());
 					super.save(commonImg);
 				}
 

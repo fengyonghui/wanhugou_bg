@@ -145,6 +145,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		/**
 		 * 商品特有属性
 		 */
+		if(bizProductInfo.getPropOwnValues()!=null&&!"".equals(bizProductInfo.getPropOwnValues())){
+
 		String[] valuesArr=bizProductInfo.getPropOwnValues().split("_");
 		Map<String,List<String>> map=new HashMap();
 		List<String> strList=null;
@@ -202,6 +204,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 					bizProdPropValueService.save(bizProdPropValue);
 				}
 			}
+		}
+
 		}
 		commonImgService.saveCommonImg(bizProductInfo);
 
