@@ -181,7 +181,7 @@ public class OfficeController extends BaseController {
 	public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type,RedirectAttributes redirectAttributes) {
 		List<Office> list = null;
 		if(StringUtils.isNotBlank(type)){
-			list = officeService.filerOffice(null, OfficeTypeEnum.VENDOR);
+			list = officeService.filerOffice(null,OfficeTypeEnum.stateOf(type));
 		}
 		if(list == null || list.size() == 0){
 			addMessage(redirectAttributes, "列表不存在");

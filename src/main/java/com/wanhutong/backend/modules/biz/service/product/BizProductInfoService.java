@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.service.product;
 import java.util.*;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
@@ -207,12 +208,37 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		}
 
 		}
-		commonImgService.saveCommonImg(bizProductInfo);
+		saveCommonImg(bizProductInfo);
 
 
 
 	}
-	//保存图片“|”分割图片
+	@Transactional(readOnly = false)
+	public void saveCommonImg(BizProductInfo bizProductInfo) {
+		String photos=bizProductInfo.getPhotos();
+		if(photos!=null && !"".equals(photos)){
+			CommonImg commonImg=new CommonImg();
+			photos=photos.substring(1);
+			String[]photoArr=photos.split("\\|");
+			if(photoArr.length>=1){
+				commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
+				commonImg.setObjectId(bizProductInfo.getId());
+				commonImg.setObjectName("biz_product_info");
+				commonImgService.deleteCommonImg(commonImg);
+				for (int i=0;i<photoArr.length;i++){
+
+					commonImg.setImgPath(photoArr[i]);
+					commonImg.setImgSort(i);
+					commonImg.setImgServer(DsConfig.getImgServer());
+					commonImgService.save(commonImg);
+					if(i==0){
+						bizProductInfo.setImgUrl(commonImg.getImgServer()+commonImg.getImgPath());
+						super.save(bizProductInfo);
+					}
+				}
+			}
+		}
+	}
 
 
 

@@ -49,30 +49,11 @@ public class CommonImgService extends CrudService<CommonImgDao, CommonImg> {
 	public void delete(CommonImg commonImg) {
 		super.delete(commonImg);
 	}
-
 	@Transactional(readOnly = false)
-	public void saveCommonImg(BizProductInfo bizProductInfo) {
-		String photos=bizProductInfo.getPhotos();
-		if(photos!=null){
-			CommonImg commonImg=new CommonImg();
-			photos=photos.substring(1);
-			String[]photoArr=photos.split("\\|");
-			if(photoArr.length>=1){
-				commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
-				commonImg.setObjectId(bizProductInfo.getId());
-				commonImg.setObjectName("biz_product_info");
-				commonImgDao.deleteCommonImg(commonImg);
-				for (int i=0;i<photoArr.length;i++){
-					commonImg.setImgPath(photoArr[i]);
-					commonImg.setImgSort(i);
-					commonImg.setImgServer(DsConfig.getImgServer());
-					super.save(commonImg);
-				}
-
-			}
-
-
-		}
+	public void   deleteCommonImg(CommonImg commonImg){
+		commonImgDao.deleteCommonImg(commonImg);
 	}
+
+
 	
 }

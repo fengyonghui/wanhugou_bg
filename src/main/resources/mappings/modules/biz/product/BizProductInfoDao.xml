@@ -139,6 +139,7 @@
 			<if test="maxPrice!=null">
 				max_price,
 			</if>
+			img_url,
 			status,
 			create_id,
 			create_time,
@@ -159,6 +160,7 @@
 		<if test="maxPrice!=null">
 			#{maxPrice},
 		</if>
+			#{imgUrl},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -169,15 +171,35 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_product_info SET 	
+		UPDATE biz_product_info SET
+		<if test="name!=null and name !=''">
 			`name` = #{name},
+		</if>
+		<if test="prodCode!=null and prodCode!=''">
 			prod_code = #{prodCode},
+		</if>
+		<if test="catePropValue!=null and catePropValue.id!=null and catePropValue.id!=''">
 			brand_id = #{catePropValue.id},
+		</if>
+		<if test="brandName!=null and brandName!=''">
 			brand_name = #{brandName},
+		</if>
+		<if test="imgUrl!=null and imgUrl!=''">
+			img_url = #{imgUrl},
+		</if>
+		<if test="description!=null and description!=''">
 			description = #{description},
+		</if>
+		<if test="office!=null and office.id!=null and office.id!=''">
 			vendor_id = #{office.id},
+		</if>
+		<if test="minPrice!=null">
 			min_price = #{minPrice},
+		</if>
+		<if test="maxPrice!=null">
 			max_price = #{maxPrice},
+		</if>
+
 			u_version = #{uVersion},
 			update_time = #{updateDate},
 			update_id = #{updateBy.id}
