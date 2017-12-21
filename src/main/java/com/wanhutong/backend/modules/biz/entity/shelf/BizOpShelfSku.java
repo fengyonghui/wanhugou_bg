@@ -35,6 +35,9 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	private Date unshelfTime;		// 下架时间
 	private Integer priority;		// 显示次序
 
+	private Date shelfStartTime;  //上架开始时间
+	private Date shelfEndTime;  //上架结束时间
+
 	
 	public BizOpShelfSku() {
 		super();
@@ -152,4 +155,19 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 		this.unshelfTime = unshelfTime;
 	}
 
+	public Date getShelfStartTime() {
+		return shelfStartTime;
+	}
+
+	public void setShelfStartTime(Date shelfStartTime) {
+		this.shelfStartTime = shelfStartTime;
+	}
+
+	public Date getShelfEndTime() {
+		return shelfEndTime;
+	}
+
+	public void setShelfEndTime(Date shelfEndTime) {
+		this.shelfEndTime = shelfEndTime;
+	}
 }

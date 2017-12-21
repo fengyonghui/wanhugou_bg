@@ -65,6 +65,7 @@
 				<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit"><td>
     				<a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">修改</a>
 					<a href="${ctx}/biz/shelf/bizOpShelfInfo/delete?id=${bizOpShelfInfo.id}" onclick="return confirmx('确认要删除该货架信息吗？', this.href)">删除</a>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">商品sku上下架管理</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

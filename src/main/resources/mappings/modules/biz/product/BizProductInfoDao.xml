@@ -56,7 +56,6 @@
 	
 	<sql id="bizProductInfoJoins">
 		 LEFT JOIN sys_office so ON so.id = a.vendor_id
-
 	</sql>
     
 	<select id="get" resultMap="productInfoResult">

@@ -25,22 +25,30 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>上架人：</label>
-				<form:input path="shelfUser" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>sku名称：</label>
+				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
+			<li><label>采购中心ID：</label>
+				<form:input path="centerOffice.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
+			<%--<li><label>上架人：</label>
+				<form:input path="shelfUser.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>--%>
 			<li><label>上架时间：</label>
-				<input name="shelfTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+				<input name="shelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					value="<fmt:formatDate value="${bizOpShelfSku.shelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</li>
-			<li><label>下架人：</label>
-				<form:input path="unshelfUser" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>下架时间：</label>
+			 至
+
+             <input name="shelfEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOpShelfSku.shelfEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+            </li>
+			<%--<li><label>下架时间：</label>
 				<input name="unshelfTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</li>
+			</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -49,18 +57,19 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>上架商品ID</th>
-				<th>采购中心ID（sys_office.id） 0:代表平台商品</th>
+				<th>sku名称</th>
+				<th>采购中心ID</th>
 				<th>上架人</th>
 				<th>上架数量</th>
 				<th>原价</th>
 				<th>销售单价-现价</th>
-				<th>此单价所对应的最低销售数量；</th>
-				<th>此单价所对应的最高销售数量；0：不限制</th>
+				<th>此单价所对应的最低销售数量</th>
+				<th>此单价所对应的最高销售数量</th>
 				<th>上架时间</th>
 				<th>下架人</th>
 				<th>下架时间</th>
 				<th>显示次序</th>
+				<th>创建人</th>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -68,13 +77,13 @@
 		<c:forEach items="${page.list}" var="bizOpShelfSku">
 			<tr>
 				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
-					${bizOpShelfSku.skuId}
+					${bizOpShelfSku.skuInfo.name}
 				</a></td>
 				<td>
-					${bizOpShelfSku.centerId}
+					${bizOpShelfSku.centerOffice.id}
 				</td>
 				<td>
-					${bizOpShelfSku.shelfUser}
+					${bizOpShelfSku.createBy.name}
 				</td>
 				<td>
 					${bizOpShelfSku.shelfQty}
@@ -95,13 +104,16 @@
 					<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-					${bizOpShelfSku.unshelfUser}
+					${bizOpShelfSku.unshelfUser.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 					${bizOpShelfSku.priority}
+				</td>
+				<td>
+					${bizOpShelfSku.createBy.name}
 				</td>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
     				<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>

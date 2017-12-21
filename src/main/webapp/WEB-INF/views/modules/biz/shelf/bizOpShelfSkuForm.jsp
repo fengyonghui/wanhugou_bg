@@ -36,29 +36,34 @@
 		<div class="control-group">
 			<label class="control-label">货架ID：</label>
 			<div class="controls">
-				<form:input path="shelfId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="opShelfInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">上架商品ID：</label>
+			<label class="control-label">上架商品id：</label>
 			<div class="controls">
-				<form:input path="skuId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">采购中心ID（sys_office.id） 0:代表平台商品：</label>
+			<label class="control-label">采购中心ID( 0:代表平台商品)：</label>
 			<div class="controls">
-				<form:input path="centerId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<%--<form:input path="centerOffice.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>--%>
+					<form:select path="centerOffice.id" class="input-xlarge required">
+						<form:option value="" label="请选择"/>
+						<form:options items="${centerOffice.id}" itemLabel="label" itemValue="value"
+									  htmlEscape="false"/>
+					</form:select>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">上架人：</label>
 			<div class="controls">
-				<form:input path="shelfUser" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="createBy.name" htmlEscape="false" maxlength="11" class="input-xlarge" readonly="true"/>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 			</div>
 		</div>
 		<div class="control-group">
@@ -108,7 +113,7 @@
 		<div class="control-group">
 			<label class="control-label">下架人：</label>
 			<div class="controls">
-				<form:input path="unshelfUser" htmlEscape="false" maxlength="11" class="input-xlarge "/>
+				<form:input path="unshelfUser" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -123,38 +128,6 @@
 			<label class="control-label">显示次序：</label>
 			<div class="controls">
 				<form:input path="priority" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">创建时间：</label>
-			<div class="controls">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizOpShelfSku.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">版本管理：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="3" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">最后更新人ID：</label>
-			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_time：</label>
-			<div class="controls">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizOpShelfSku.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
