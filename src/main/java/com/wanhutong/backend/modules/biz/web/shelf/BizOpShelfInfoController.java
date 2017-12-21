@@ -46,8 +46,8 @@ public class BizOpShelfInfoController extends BaseController {
 			entity = bizOpShelfInfoService.get(id);
 			BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
 			bizOpShelfSku.setOpShelfInfo(entity);
-			List<BizOpShelfSku> OpShelfSkusList = bizOpShelfSkuService.findList(bizOpShelfSku);
-			entity.setOpShelfSkusList(OpShelfSkusList);
+			List<BizOpShelfSku> opShelfSkusList = bizOpShelfSkuService.findList(bizOpShelfSku);
+			entity.setOpShelfSkusList(opShelfSkusList);
 		}
 		if (entity == null){
 			entity = new BizOpShelfInfo();

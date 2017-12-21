@@ -23,7 +23,7 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 货架名称
 	private String description;		// 货架描述
-	private List<BizOpShelfSku> OpShelfSkusList;
+	private List<BizOpShelfSku> opShelfSkusList;
 	private String OpShelfSkus;
 
 	
@@ -53,11 +53,11 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 	}
 
 	public List<BizOpShelfSku> getOpShelfSkusList() {
-		return OpShelfSkusList;
+		return opShelfSkusList;
 	}
 
 	public void setOpShelfSkusList(List<BizOpShelfSku> opShelfSkusList) {
-		OpShelfSkusList = opShelfSkusList;
+		this.opShelfSkusList = opShelfSkusList;
 	}
 
 	public String getOpShelfSkus() {
