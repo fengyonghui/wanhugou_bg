@@ -260,11 +260,11 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">请选择采购商：</label>
+			<label class="control-label">请选择供应商：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
 								labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="采购商"  url="/sys/office/queryTreeList?type=6" extId="${office.id}"
+								title="供应商"  url="/sys/office/queryTreeList?type=7" extId="${office.id}"
 								cssClass="input-xlarge required"
 								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>

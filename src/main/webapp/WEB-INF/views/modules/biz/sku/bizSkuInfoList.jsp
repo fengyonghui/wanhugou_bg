@@ -63,7 +63,7 @@
 		<c:forEach items="${page.list}" var="bizSkuInfo">
 			<tr>
 				<td>
-					${bizSkuInfo.productInfo.name}
+					<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizSkuInfo.productInfo.id}">${bizSkuInfo.productInfo.name}</a>
 					</td>
 					<td>
                         ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}

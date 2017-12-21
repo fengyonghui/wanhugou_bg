@@ -37,7 +37,7 @@
 			<li><label>上架时间：</label>
 				<input name="shelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizOpShelfSku.shelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			 至
 
              <input name="shelfEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
