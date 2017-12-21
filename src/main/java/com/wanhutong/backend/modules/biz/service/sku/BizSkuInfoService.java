@@ -55,7 +55,7 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		}
 		return null;
 	}
-	
+
 	public Page<BizSkuInfo> findPage(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
 		return super.findPage(page, bizSkuInfo);
 	}

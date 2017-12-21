@@ -7,6 +7,8 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.NotNull;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -37,6 +39,7 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	private Date shelfStartTime;  //上架开始时间
 	private Date shelfEndTime;  //上架结束时间
+
 
 	
 	public BizOpShelfSku() {

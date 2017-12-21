@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSku/">商品上架列表</a></li>
-		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfSku/form">商品上架添加</a></li></shiro:hasPermission>
+		<%--<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfSku/form">商品上架添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSku/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -39,7 +39,6 @@
 					value="<fmt:formatDate value="${bizOpShelfSku.shelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			 至
-
              <input name="shelfEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
                    value="<fmt:formatDate value="${bizOpShelfSku.shelfEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>

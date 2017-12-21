@@ -32,33 +32,41 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSku/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<form:hidden id="shelfId" path="opShelfInfo.id"/>
 		<sys:message content="${message}"/>		
-		<div class="control-group">
+		<%--<div class="control-group">
 			<label class="control-label">货架ID：</label>
 			<div class="controls">
 				<form:input path="opShelfInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>
+		</div>--%>
 		<div class="control-group">
-			<label class="control-label">上架商品id：</label>
-			<div class="controls">
-				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+			<label class="control-label">sku名称：</label>
+			<sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOpShelfSku.skuInfo.id}" labelName="skuInfo.name"
+							labelValue="${bizOpShelfSku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+							title="sku名称"  url="/biz/sku/queryList" extId="${skuInfo.id}"
+							cssClass="input-xlarge required"
+							allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
 				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+			</sys:treeselect>
 		</div>
 		<div class="control-group">
-			<label class="control-label">采购中心ID( 0:代表平台商品)：</label>
+			<label class="control-label">采购中心ID：</label>
 			<div class="controls">
 				<%--<form:input path="centerOffice.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>--%>
-					<form:select path="centerOffice.id" class="input-xlarge required">
-						<form:option value="" label="请选择"/>
-						<form:options items="${centerOffice.id}" itemLabel="label" itemValue="value"
-									  htmlEscape="false"/>
-					</form:select>
+					<sys:treeselect id="Office" name="Office.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
+                     labelValue="${bizOpShelfSku.centerOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+                                    title="采购中心"  url="/sys/office/queryTreeList?type=6" extId="${centerOffice.id}"
+                                    cssClass="input-xlarge required"
+                                    allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
+                        <span class="help-inline"><font color="red">*( 0:代表平台商品)</font> </span>
+					</sys:treeselect>
 			</div>
 		</div>
+
+		<c:if test="${bizOpShelfSku.id != null}">
 		<div class="control-group">
 			<label class="control-label">上架人：</label>
 			<div class="controls">
@@ -66,6 +74,7 @@
 				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 			</div>
 		</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">上架数量：</label>
 			<div class="controls">
@@ -81,24 +90,24 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">销售单价-现价：</label>
+			<label class="control-label">现价：</label>
 			<div class="controls">
 				<form:input path="salePrice" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">* (销售单价)</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">此单价所对应的最低销售数量；：</label>
+			<label class="control-label">最低销售数量：</label>
 			<div class="controls">
 				<form:input path="minQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">* (该单价所对应的)</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">此单价所对应的最高销售数量；0：不限制：</label>
+			<label class="control-label">最高销售数量：</label>
 			<div class="controls">
 				<form:input path="maxQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">* (该单价所对应的，0：不限制)</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -110,12 +119,14 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		<c:if test="${bizOpShelfSku.id != null}">
 		<div class="control-group">
 			<label class="control-label">下架人：</label>
 			<div class="controls">
-				<form:input path="unshelfUser" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="unshelfUser.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 			</div>
 		</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">下架时间：</label>
 			<div class="controls">
@@ -136,5 +147,6 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+
 </body>
 </html>
