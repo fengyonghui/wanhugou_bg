@@ -93,9 +93,11 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		return offices;
 
 	}
+
 	public List<Office> queryList(Office office){
 		return officeDao.queryList(office);
 	}
+
 
 	@Transactional(readOnly = false)
 	public void save(Office office) {

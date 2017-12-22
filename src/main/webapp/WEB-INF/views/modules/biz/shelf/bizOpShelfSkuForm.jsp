@@ -61,7 +61,8 @@
                                     title="采购中心"  url="/sys/office/queryTreeList?type=6" extId="${centerOffice.id}"
                                     cssClass="input-xlarge required"
                                     allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
-                        <span class="help-inline"><font color="red">*( 0:代表平台商品)</font> </span>
+                        <span class="help-inline">
+                            <font color="red">*</font><font>( 0:代表平台商品)</font> </span>
 					</sys:treeselect>
 			</div>
 		</div>
@@ -93,21 +94,21 @@
 			<label class="control-label">现价：</label>
 			<div class="controls">
 				<form:input path="salePrice" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">* (销售单价)</font> </span>
+				<span class="help-inline"><font color="red">* </font><font>(销售单价)</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">最低销售数量：</label>
 			<div class="controls">
 				<form:input path="minQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">* (该单价所对应的)</font> </span>
+				<span class="help-inline"><font color="red">* </font><font>(该单价所对应的)</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">最高销售数量：</label>
 			<div class="controls">
 				<form:input path="maxQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">* (该单价所对应的，0：不限制)</font> </span>
+				<span class="help-inline"><font color="red">* </font><font>(该单价所对应的，0：不限制)</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
