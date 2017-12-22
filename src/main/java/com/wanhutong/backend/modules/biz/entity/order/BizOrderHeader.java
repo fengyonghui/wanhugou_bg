@@ -31,7 +31,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Integer invStatus;		// 0 不开发票 1 未开发票 3 已开发票
 	private Integer bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付 3同意发货 4已发货 5客户已收货 6 已完成
 	private BizPlatformInfo plateformId;		// 订单来源； biz_platform_info.id
-	private CommonLocation shipToAddr;		// 订单收货地址： common_location.id
+	private CommonLocation bizLocation;		// 订单收货地址： common_location.id
 
 	public BizOrderHeader() {
 		super();
@@ -89,15 +89,15 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.plateformId = plateformId;
 	}
 
-	public CommonLocation getShipToAddr() {
-		return shipToAddr;
-	}
+    public CommonLocation getBizLocation() {
+        return bizLocation;
+    }
 
-	public void setShipToAddr(CommonLocation shipToAddr) {
-		this.shipToAddr = shipToAddr;
-	}
+    public void setBizLocation(CommonLocation bizLocation) {
+        this.bizLocation = bizLocation;
+    }
 
-	public Integer getOrderType() {
+    public Integer getOrderType() {
 		return orderType;
 	}
 

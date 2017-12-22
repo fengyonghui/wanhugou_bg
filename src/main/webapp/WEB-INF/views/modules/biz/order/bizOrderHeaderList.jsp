@@ -34,7 +34,7 @@
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select></li>
-			<li><label>客户ID：<!--客户ID sys_office.id &amp;  type=customer：--></label>
+			<li><label>客户名称：</label>
 				<form:input path="customer.id" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -47,7 +47,7 @@
 			<tr>
 				<th>订单编号</th>
 				<th>订单类型</th>
-				<th>客户名</th>
+				<th>客户名称</th>
 				<th>订单详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>
@@ -93,7 +93,7 @@
 					${bizOrderHeader.plateformId}
 				</td>
 				<td>
-					${bizOrderHeader.shipToAddr}
+					${bizOrderHeader.bizLocation.id}
 				</td>
 				<td>
 					${bizOrderHeader.createBy.id}

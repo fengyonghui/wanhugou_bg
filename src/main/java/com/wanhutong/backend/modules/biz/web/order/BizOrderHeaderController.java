@@ -57,7 +57,7 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizOrderHeader bizOrderHeader, Model model) {
-		model.addAttribute("bizOrderHeader", bizOrderHeader);
+		model.addAttribute("entity", bizOrderHeader);
 		return "modules/biz/order/bizOrderHeaderForm";
 	}
 
