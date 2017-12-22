@@ -84,35 +84,35 @@
 		</div>--%>
 
 		<div class="control-group">
-			<label class="control-label">上架数量：</label>
+			<label class="control-label">上架数量(个)：</label>
 			<div class="controls">
 				<form:input path="shelfQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">原价：</label>
+			<label class="control-label">原价(元)：</label>
 			<div class="controls">
 				<form:input path="orgPrice" htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">现价：</label>
+			<label class="control-label">现价(元)：</label>
 			<div class="controls">
 				<form:input path="salePrice" htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">* </font><font>(销售单价)</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">最低销售数量：</label>
+			<label class="control-label">最低销售数量(个)：</label>
 			<div class="controls">
 				<form:input path="minQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">* </font><font>(该单价所对应的)</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">最高销售数量：</label>
+			<label class="control-label">最高销售数量(个)：</label>
 			<div class="controls">
 				<form:input path="maxQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">* </font><font>(该单价所对应的，0：不限制)</font> </span>
