@@ -28,22 +28,24 @@
 			<li><label>sku名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>采购中心：</label>
-				<form:input path="centerOffice.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>上架时间：</label>
+				<input name="shelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizOpShelfSku.shelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="shelfEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizOpShelfSku.shelfEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
+		</ul>
 			<%--<li><label>上架人：</label>
 				<form:input path="shelfUser.id" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>--%>
-			<li><label>上架时间：</label>
-				<input name="shelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizOpShelfSku.shelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-			 至
-             <input name="shelfEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                   value="<fmt:formatDate value="${bizOpShelfSku.shelfEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-            </li>
+		<ul class="ul-form">
 
+			<li><label>采购中心：</label>
+				<form:input path="centerOffice.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
 			<li><label>下架时间：</label>
 				<input name="unShelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizOpShelfSku.unShelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
