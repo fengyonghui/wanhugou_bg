@@ -3,6 +3,8 @@
  */
 package com.wanhutong.backend.modules.common.entity.location;
 
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
@@ -19,20 +21,27 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class CommonLocation extends DataEntity<CommonLocation> {
 	
 	private static final long serialVersionUID = 1L;
-	private String provinceId;		// 省份
-	private String cityId;		// 城市
-	private String regionId;		// 区域
+	private SysRegion province;		// 省份
+	private SysRegion city;		// 城市
+	private SysRegion region;		// 区域
 	private String pcrName;		// 省市区对应名称
 	private String address;		// 详细地址
 	private String zipCode;		// 邮编
 	private String longitude;		// 经度
 	private String latitude;		// 纬度
-	private String status;		// 0，无效；1；有效
-	private User createId;		// create_id
-	private Date createTime;		// create_time
-	private String uVersion;		// u_version
-	private User updateId;		// update_id
-	private Date updateTime;		// update_time
+
+	private Integer selectedRegionId;
+
+
+	public Integer getSelectedRegionId() {
+		return selectedRegionId;
+	}
+
+	public void setSelectedRegionId(Integer selectedRegionId) {
+		this.selectedRegionId = selectedRegionId;
+	}
+
+
 	
 	public CommonLocation() {
 		super();
@@ -42,37 +51,31 @@ public class CommonLocation extends DataEntity<CommonLocation> {
 		super(id);
 	}
 
-	@Length(min=1, max=6, message="省份长度必须介于 1 和 6 之间")
-	public String getProvinceId() {
-		return provinceId;
+	public SysRegion getProvince() {
+		return province;
 	}
 
-	public void setProvinceId(String provinceId) {
-		this.provinceId = provinceId;
-	}
-	
-	@Length(min=1, max=6, message="城市长度必须介于 1 和 6 之间")
-	public String getCityId() {
-		return cityId;
+	public void setProvince(SysRegion province) {
+		this.province = province;
 	}
 
-	public void setCityId(String cityId) {
-		this.cityId = cityId;
-	}
-	
-	@Length(min=0, max=6, message="区域长度必须介于 0 和 6 之间")
-	public String getRegionId() {
-		return regionId;
+	public SysRegion getCity() {
+		return city;
 	}
 
-	public void setRegionId(String regionId) {
-		this.regionId = regionId;
+	public void setCity(SysRegion city) {
+		this.city = city;
 	}
-	
-	@Length(min=1, max=60, message="省市区对应名称长度必须介于 1 和 60 之间")
-	public String getPcrName() {
-		return pcrName;
+
+	public SysRegion getRegion() {
+		return region;
 	}
+
+	public void setRegion(SysRegion region) {
+		this.region = region;
+	}
+
+
 
 	public void setPcrName(String pcrName) {
 		this.pcrName = pcrName;
@@ -111,61 +114,29 @@ public class CommonLocation extends DataEntity<CommonLocation> {
 	public void setLatitude(String latitude) {
 		this.latitude = latitude;
 	}
-	
-	@Length(min=1, max=4, message="0，无效；1；有效长度必须介于 1 和 4 之间")
-	public String getStatus() {
-		return status;
+
+
+	public String getFullAddress(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(getPcrName());
+		if(address!=null && !"".equals(address)){
+			sb.append(address);
+		}
+		return sb.toString();
+	}
+	public String getPcrName() {
+		StringBuilder sb = new StringBuilder();
+		if (province!=null && StringUtils.isNotBlank(province.getName())){
+			sb.append(province.getName());
+		}
+		if (city!=null && StringUtils.isNotBlank(city.getName())){
+			sb.append(city.getName());
+		}
+		if (region!=null && StringUtils.isNotBlank(region.getName())){
+			sb.append(region.getName());
+		}
+		return sb.toString();
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	
-	@NotNull(message="create_id不能为空")
-	public User getCreateId() {
-		return createId;
-	}
-
-	public void setCreateId(User createId) {
-		this.createId = createId;
-	}
-	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@NotNull(message="create_time不能为空")
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	
-	@Length(min=1, max=3, message="u_version长度必须介于 1 和 3 之间")
-	public String getUVersion() {
-		return uVersion;
-	}
-
-	public void setUVersion(String uVersion) {
-		this.uVersion = uVersion;
-	}
-	
-	@NotNull(message="update_id不能为空")
-	public User getUpdateId() {
-		return updateId;
-	}
-
-	public void setUpdateId(User updateId) {
-		this.updateId = updateId;
-	}
-	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@NotNull(message="update_time不能为空")
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
 	
 }

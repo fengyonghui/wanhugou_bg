@@ -7,8 +7,7 @@
 		a.code AS "code",
 		a.pcode AS "pcode",
 		a.name AS "name",
-		a.level AS "level",
-		a.open_status AS "openStatus"
+		a.level AS "level"
 	</sql>
 	
 	<sql id="sysRegionJoins">
@@ -31,6 +30,12 @@
 			
 			<if test="code != null and code != ''">
 				AND a.code = #{code}
+			</if>
+			<if test="pcode != null and pcode != ''">
+				AND a.pcode =
+				<if test="dbName == 'oracle'">#{pcode}</if>
+				<if test="dbName == 'mssql'">#{pcode}</if>
+				<if test="dbName == 'mysql'">#{pcode}</if>
 			</if>
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
@@ -71,15 +76,13 @@
 			code,
 			pcode,
 			name,
-			level,
-			open_status
+			level
 		) VALUES (
 			#{id},
 			#{code},
 			#{pcode},
 			#{name},
-			#{level},
-			#{openStatus}
+			#{level}
 		)
 	</insert>
 	
@@ -88,8 +91,7 @@
 			code = #{code},
 			pcode = #{pcode},
 			name = #{name},
-			level = #{level},
-			open_status = #{openStatus}
+			level = #{level}
 		WHERE id = #{id}
 	</update>
 	

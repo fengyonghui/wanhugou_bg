@@ -43,5 +43,13 @@ public class SysRegionService extends CrudService<SysRegionDao, SysRegion> {
 	public void delete(SysRegion sysRegion) {
 		super.delete(sysRegion);
 	}
+
+	public SysRegion getByCode(String code){
+		SysRegion sysRegion = new SysRegion();
+		sysRegion.setCode(code);
+		List<SysRegion> sysRegions = findList(sysRegion);
+
+		return sysRegions.size()>0?sysRegions.get(0):null;
+	}
 	
 }

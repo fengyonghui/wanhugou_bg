@@ -8,13 +8,20 @@
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
 		so.name as "customer.name",
+		c.province_id as "bizLocation.province.id",
+		province.name as "bizLocation.province.name",
+		c.city_id as "bizLocation.city.id",
+		city.name as "bizLocation.city.name",
+		c.region_id as "bizLocation.region.id",
+		reg.name as "bizLocation.region.name",
+		c.address as "bizLocation.address",
 		a.total_detail AS "totalDetail",
 		a.total_exp AS "totalExp",
 		a.freight AS "freight",
 		a.inv_status AS "invStatus",
 		a.biz_status AS "bizStatus",
 		a.plateform_id AS "plateformId",
-		a.ship_to_addr AS "shipToAddr",
+		a.ship_to_addr AS "bizLocation.id",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -25,6 +32,10 @@
 	
 	<sql id="bizOrderHeaderJoins">
 		left join sys_office as so on a.cust_id=so.id
+		LEFT JOIN common_location c ON c.id = a.ship_to_addr
+        LEFT JOIN sys_region province ON c.province_id = province.id
+        LEFT JOIN sys_region city ON c.city_id = city.id
+        LEFT JOIN sys_region reg ON c.region_id = reg.id
 
 	</sql>
     
@@ -109,7 +120,7 @@
 			#{invStatus},
 			#{bizStatus},
 			#{plateformId.id},
-			#{shipToAddr.id},
+			#{bizLocation.id},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -129,12 +140,11 @@
 			freight = #{freight},
 			inv_status = #{invStatus},
 			biz_status = #{bizStatus},
-			plateform_id = #{plateformId},
-			ship_to_addr = #{shipToAddr},
-			create_time = #{createTime},
+			plateform_id = #{plateformId.id},
+			ship_to_addr = #{bizLocation.id},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

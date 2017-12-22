@@ -6,7 +6,10 @@ package com.wanhutong.backend.modules.biz.service.order;
 import java.util.List;
 
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +17,8 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+
+import javax.annotation.Resource;
 
 import static com.wanhutong.backend.common.utils.GenerateOrderUtils.getOrderNum;
 
@@ -25,6 +30,8 @@ import static com.wanhutong.backend.common.utils.GenerateOrderUtils.getOrderNum;
 @Service
 @Transactional(readOnly = true)
 public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrderHeader> {
+	@Resource
+	private CommonLocationService commonLocationService;
 
 	public BizOrderHeader get(Integer id) {
 		return super.get(id);
@@ -40,9 +47,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 	
 	@Transactional(readOnly = false)
 	public void save(BizOrderHeader bizOrderHeader) {
-//		GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()),bizOrderHeader.getCustId().getId());
+		CommonLocation bizLocation = bizOrderHeader.getBizLocation();
+		if(bizLocation.getRegion()==null){
+			bizLocation.setRegion(new SysRegion());
+		}
+		commonLocationService.updateCommonLocation(bizLocation);
 		String orderNum=GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()),bizOrderHeader.getCustomer().getId());
 		bizOrderHeader.setOrderNum(orderNum);
+		bizOrderHeader.setBizLocation(bizLocation);
 		super.save(bizOrderHeader);
 	}
 	

@@ -22,6 +22,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import com.wanhutong.backend.modules.sys.service.SysRegionService;
 
+import java.util.List;
+
 /**
  * 角色区域表Controller
  * @author zx
@@ -79,5 +81,35 @@ public class SysRegionController extends BaseController {
 		addMessage(redirectAttributes, "删除角色区域表成功");
 		return "redirect:"+Global.getAdminPath()+"/sys/sysRegion/?repage";
 	}
+
+	@RequestMapping(value = "tag/selectRegion")
+	public String selectRegion(SysRegion sysRegion, Model model, String pCode, String oldId, String regionNames
+			, @RequestParam(required = false,defaultValue = "") String oldName ) {
+
+		if (org.apache.commons.lang3.StringUtils.isBlank(regionNames)){
+			regionNames = "";
+		}
+		if (org.apache.commons.lang3.StringUtils.isBlank(pCode)) {
+			pCode = "0";
+		}else if (!pCode.equals("0")){
+			SysRegion sysRegion1 = new SysRegion();
+			sysRegion1.setCode(pCode);
+			List<SysRegion> list = sysRegionService.findList(sysRegion1);
+			sysRegion1 = list.get(0);
+			if(!"市辖区".equals(sysRegion1.getName()) && !"县".equals(sysRegion1.getName())){
+				regionNames += sysRegion1.getName();
+			}
+		}
+
+		sysRegion.setPcode(pCode);
+		List<SysRegion> list = sysRegionService.findList(sysRegion);
+		model.addAttribute("list", list);
+		model.addAttribute("pCode", pCode);
+		model.addAttribute("oldId", oldId);
+		model.addAttribute("regionNames", regionNames);
+		model.addAttribute("oldName", oldName);
+		return "modules/common/location/tag-region-list";
+	}
+
 
 }

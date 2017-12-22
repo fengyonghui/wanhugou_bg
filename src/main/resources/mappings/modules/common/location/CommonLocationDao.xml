@@ -4,23 +4,29 @@
     
 	<sql id="commonLocationColumns">
 		a.id AS "id",
-		a.province_id AS "provinceId",
-		a.city_id AS "cityId",
-		a.region_id AS "regionId",
+		a.province_id AS "province.id",
+		a.city_id AS "city.id",
+		a.region_id AS "region.id",
 		a.pcr_name AS "pcrName",
 		a.address AS "address",
 		a.zip_code AS "zipCode",
 		a.longitude AS "longitude",
 		a.latitude AS "latitude",
+		 province.name as "province.name",
+        city.name as "city.name",
+        reg.name as "region.name"
 		a.status AS "status",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="commonLocationJoins">
+		LEFT JOIN sys_region province ON province.id = a.province_id
+		LEFT JOIN sys_region city ON city.id = a.city_id
+		LEFT JOIN sys_region reg ON reg.id = a.region_id
 	</sql>
     
 	<select id="get" resultType="CommonLocation">
@@ -83,7 +89,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO common_location(
 			id,
 			province_id,
@@ -102,37 +108,36 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{provinceId},
-			#{cityId},
-			#{regionId},
+			#{province.id},
+			#{city.id},
+			#{region.id},
 			#{pcrName},
 			#{address},
 			#{zipCode},
 			#{longitude},
 			#{latitude},
-			#{status},
-			#{createId.id},
-			#{createTime},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
 			#{uVersion},
-			#{updateId.id},
-			#{updateTime}
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE common_location SET 	
-			province_id = #{provinceId},
-			city_id = #{cityId},
-			region_id = #{regionId},
+			province_id = #{province.id},
+			city_id = #{city.id},
+			region_id = #{region.id},
 			pcr_name = #{pcrName},
 			address = #{address},
 			zip_code = #{zipCode},
 			longitude = #{longitude},
 			latitude = #{latitude},
-			create_time = #{createTime},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

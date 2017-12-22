@@ -40,7 +40,7 @@
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
-		</div>-->
+		</div>--%>
 		<div class="control-group">
 			<label class="control-label">订单类型：</label>
 			<div class="controls">
@@ -93,7 +93,7 @@
                     <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select>
 				<%--<form:input path="invStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>-->
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">*</font> </span> --%>
 			</div>
 		</div>
 		<div class="control-group">
@@ -104,7 +104,7 @@
                     <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select>
 				<%--<form:input path="bizStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>-->
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">*</font> </span>--%>
 			</div>
 		</div>
 		<div class="control-group">
@@ -115,14 +115,6 @@
 			</div>
 		</div>
 		<biz:selectLocationForm/>
-
-		<%--<div class="control-group">
-			<label class="control-label">订单收货地址：</label>
-			<div class="controls">
-				<form:input path="shipToAddr.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>-->
 
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
