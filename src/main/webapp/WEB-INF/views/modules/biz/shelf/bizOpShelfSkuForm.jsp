@@ -44,9 +44,9 @@
 		<div class="control-group">
 			<label class="control-label">sku名称：</label>
 			<div class="controls">
-				<sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOpShelfSku.skuInfo.id}" labelName="skuInfo.name"
+				<sys:treeselect id="skuInfo" name="skuInfo.id" value="${entity.skuProd.id}" labelName="skuInfo.name"
 								labelValue="${bizOpShelfSku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="sku名称"  url="/biz/sku/bizSkuInfo/querySkuTreeList" extId="${skuInfo.id}"
+								title="sku名称"  url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"
 								cssClass="input-xlarge required"
 								allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
 					<span class="help-inline"><font color="red">*</font> </span>

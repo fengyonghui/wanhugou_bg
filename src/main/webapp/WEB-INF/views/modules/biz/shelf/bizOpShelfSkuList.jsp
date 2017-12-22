@@ -76,7 +76,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizOpShelfSku">
 			<tr>
-				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
+				<td><a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfSku.opShelfInfo.id}">
 					${bizOpShelfSku.skuInfo.name}
 				</a></td>
 				<td>

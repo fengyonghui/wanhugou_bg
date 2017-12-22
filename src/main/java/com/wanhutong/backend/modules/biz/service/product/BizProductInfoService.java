@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -57,6 +58,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	private PropValueService propValueService;
 	@Resource
 	private CommonImgService commonImgService;
+	@Resource
+	private BizSkuInfoService bizSkuInfoService;
 
 
 	public BizProductInfo get(Integer id) {
@@ -268,5 +271,33 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		super.delete(bizProductInfo);
 	}
 
+
+	public List<SkuProd> convertList(BizProductInfo bizProductInfo){
+		List<BizProductInfo> productInfoList=findList(bizProductInfo);
+
+		List<SkuProd> skuProdList=Lists.newArrayList();
+
+		for (BizProductInfo productInfo:productInfoList) {
+			SkuProd skuProd=new SkuProd();
+			BizSkuInfo bizSkuInfo=new BizSkuInfo();
+			Integer id=productInfo.getId();
+			String name=productInfo.getName();
+			skuProd.setId(-id);
+			skuProd.setName(name);
+			skuProd.setPid(0);
+			skuProdList.add(skuProd);
+			bizSkuInfo.setProductInfo(productInfo);
+
+			List<BizSkuInfo> skuInfoList=bizSkuInfoService.findList(bizSkuInfo);
+			for (BizSkuInfo skuInfo:skuInfoList){
+				SkuProd subSkuProd=new SkuProd();
+				subSkuProd.setName(skuInfo.getName());
+				subSkuProd.setId(skuInfo.getId());
+				subSkuProd.setPid(-id);
+				skuProdList.add(subSkuProd);
+			}
+		}
+		return skuProdList;
+	}
 	
 }

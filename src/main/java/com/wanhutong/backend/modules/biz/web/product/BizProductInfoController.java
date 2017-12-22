@@ -3,6 +3,8 @@
  */
 package com.wanhutong.backend.modules.biz.web.product;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
@@ -10,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -35,6 +38,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 产品信息表Controller
@@ -150,6 +154,36 @@ public class BizProductInfoController extends BaseController {
 		bizProductInfoService.delete(bizProductInfo);
 		addMessage(redirectAttributes, "删除产品信息表成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/?repage";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "querySkuTreeList")
+	public List<Map<String, Object>> querySkuTreeList(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes) {
+		List<SkuProd> list = null;
+
+		list = bizProductInfoService.convertList(bizProductInfo);
+
+		if(list == null || list.size() == 0){
+			addMessage(redirectAttributes, "列表不存在");
+		}
+		return convertList(list);
+	}
+
+
+
+	private List<Map<String, Object>> convertList(List<SkuProd> list){
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		if(list != null && list.size() > 0 ){
+			for (int i = 0; i < list.size(); i++) {
+				SkuProd e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getPid());
+				map.put("name", e.getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
 	}
 
 }

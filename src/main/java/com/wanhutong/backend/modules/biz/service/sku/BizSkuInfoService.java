@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
@@ -122,5 +123,6 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	public void delete(BizSkuInfo bizSkuInfo) {
 		super.delete(bizSkuInfo);
 	}
+
 	
 }

@@ -4,6 +4,7 @@ public class SkuProd {
 
     private Integer id;
     private String name;
+
     private Integer pid;
 
     public Integer getId() {

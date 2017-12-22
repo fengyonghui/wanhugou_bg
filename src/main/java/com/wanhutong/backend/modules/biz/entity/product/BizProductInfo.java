@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String propOwnValues;
 
 	private String photos; //产品图片
+
+	private SkuProd skuProd;
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
@@ -283,5 +286,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setPhotoDetails(String photoDetails) {
 		this.photoDetails = photoDetails;
+	}
+
+	public SkuProd getSkuProd() {
+		return skuProd;
+	}
+
+	public void setSkuProd(SkuProd skuProd) {
+		this.skuProd = skuProd;
 	}
 }

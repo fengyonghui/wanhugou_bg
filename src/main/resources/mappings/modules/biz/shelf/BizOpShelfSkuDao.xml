@@ -7,6 +7,7 @@
 		a.shelf_id AS "opShelfInfo.id",
 		a.sku_id AS "skuInfo.id",
 		a.center_id AS "centerOffice.id",
+		so.name AS "centerOffice.name",
 		a.shelf_user AS "shelfUser.id",
 		a.shelf_qty AS "shelfQty",
 		a.org_price AS "orgPrice",
@@ -30,6 +31,7 @@
 	<sql id="bizOpShelfSkuJoins">
 		LEFT JOIN sys_user su on su.id = a.update_id
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
+		LEFT JOIN sys_office so ON so.id=a.center_id
 	</sql>
     
 	<select id="get" resultType="BizOpShelfSku">
