@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
 <head>
 	<title>订单信息管理</title>
@@ -47,7 +48,7 @@
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select>
-				<!--<form:input path="orderType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>-->
+				<%--<form:input path="orderType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>--%>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div></div>
 
@@ -112,7 +113,7 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<biz:
+		<biz:selectLocationForm/>
 		<!--<div class="control-group">
 			<label class="control-label">订单收货地址：</label>
 			<div class="controls">
