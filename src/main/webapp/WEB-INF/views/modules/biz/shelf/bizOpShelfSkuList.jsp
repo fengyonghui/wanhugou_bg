@@ -28,8 +28,8 @@
 			<li><label>sku名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>采购中心ID：</label>
-				<form:input path="centerOffice.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>采购中心：</label>
+				<form:input path="centerOffice.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<%--<li><label>上架人：</label>
 				<form:input path="shelfUser.id" htmlEscape="false" maxlength="11" class="input-medium"/>
@@ -44,11 +44,15 @@
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
             </li>
 
-			<%--<li><label>下架时间：</label>
-				<input name="unshelfTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</li>--%>
+			<li><label>下架时间：</label>
+				<input name="unShelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					value="<fmt:formatDate value="${bizOpShelfSku.unShelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+                至
+                <input name="unShelfEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                       value="<fmt:formatDate value="${bizOpShelfSku.unShelfEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -58,17 +62,17 @@
 		<thead>
 			<tr>
 				<th>sku名称</th>
-				<th>采购中心ID</th>
-				<th>上架人</th>
+				<th>采购中心</th>
 				<th>上架数量</th>
-				<th>原价</th>
-				<th>销售单价-现价</th>
-				<th>此单价所对应的最低销售数量</th>
-				<th>此单价所对应的最高销售数量</th>
+				<th>原价(元)</th>
+				<th>现价(元)</th>
+				<th>最低销售数量(个)</th>
+				<th>最高销售数量(个)</th>
+                <th>显示次序</th>
+                <th>上架人</th>
 				<th>上架时间</th>
 				<th>下架人</th>
 				<th>下架时间</th>
-				<th>显示次序</th>
 				<th>创建人</th>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -80,10 +84,7 @@
 					${bizOpShelfSku.skuInfo.name}
 				</a></td>
 				<td>
-					${bizOpShelfSku.centerOffice.id}
-				</td>
-				<td>
-					${bizOpShelfSku.createBy.name}
+					${bizOpShelfSku.centerOffice.name}
 				</td>
 				<td>
 					${bizOpShelfSku.shelfQty}
@@ -100,6 +101,12 @@
 				<td>
 					${bizOpShelfSku.maxQty}
 				</td>
+                <td>
+                        ${bizOpShelfSku.priority}
+                </td>
+                <td>
+                        ${bizOpShelfSku.createBy.name}
+                </td>
 				<td>
 					<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
@@ -110,13 +117,9 @@
 					<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-					${bizOpShelfSku.priority}
-				</td>
-				<td>
 					${bizOpShelfSku.createBy.name}
 				</td>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
-    				<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
 					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该商品上架吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
