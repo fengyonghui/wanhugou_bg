@@ -60,10 +60,17 @@
 			<!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">
 				AND a.shelf_user = #{shelfUser.id}
 			</if>-->
-			<if test="shelfStartTime != null and shelfTime != '' and shelfEndTime != null and shelfEndTime != ''">
+			<if test="shelfStartTime != null and shelfStartTime != '' and shelfEndTime != null and shelfEndTime != ''">
 				AND a.shelf_time BETWEEN #{shelfStartTime} and #{shelfEndTime}
             </if>
 
+            <if test="shelfStartTime != null and shelfStartTime != ''and shelfEndTime == null ">
+                AND a.shelf_time &gt;= #{shelfStartTime}
+            </if>
+
+            <if test="shelfStartTime == null and shelfEndTime != null and shelfEndTime != ''" >
+                AND a.shelf_time &lt;= #{shelfEndTime}
+            </if>
 			<!--<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
 				AND a.unshelf_user = #{unshelfUser.id}
 			</if>-->
