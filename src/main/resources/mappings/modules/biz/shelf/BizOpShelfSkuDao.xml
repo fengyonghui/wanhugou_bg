@@ -50,14 +50,14 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">-->
-			<if test="skuInfo != null and skuInfo.id != '' and skuInfo != ''">
+			<if test="skuInfo != null and skuInfo.id != '' and skuInfo != '' ">
 				AND bsi.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
-			<if test="centerOffice != null and centerOffice != ''and centerOffice.id != null">
-				AND a.center_id = #{centerOffice.id}
+			<if test="centerOffice != null and centerOffice != ''and centerOffice.name != null and centerOffice.name != ''">
+				AND so.name = #{centerOffice.name}
 			</if>
 			<!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">
 				AND a.shelf_user = #{shelfUser.id}
@@ -73,6 +73,18 @@
             <if test="shelfStartTime == null and shelfEndTime != null and shelfEndTime != ''" >
                 AND a.shelf_time &lt;= #{shelfEndTime}
             </if>
+
+			<if test="unShelfStartTime != null and unShelfStartTime != '' and unShelfEndTime != null and unShelfEndTime != ''">
+				AND a.unShelf_time BETWEEN #{unShelfStartTime} and #{unShelfEndTime}
+			</if>
+
+			<if test="unShelfStartTime != null and unShelfStartTime != ''and unShelfEndTime == null ">
+				AND a.unShelf_time &gt;= #{unShelfStartTime}
+			</if>
+
+			<if test="unShelfStartTime == null and unShelfEndTime != null and unShelfEndTime != ''" >
+				AND a.unShelf_time &lt;= #{unShelfEndTime}
+			</if>
 			<!--<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
 				AND a.unshelf_user = #{unshelfUser.id}
 			</if>-->

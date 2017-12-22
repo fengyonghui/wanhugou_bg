@@ -40,6 +40,9 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	private Date shelfStartTime;  //上架开始时间
 	private Date shelfEndTime;  //上架结束时间
 
+	private Date unShelfStartTime; //下架查询开始时间
+	private Date unShelfEndTime; //下架查询结束时间
+
 	private int shelfSign; //货架删除返回标志
 
 
@@ -174,6 +177,22 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	public void setShelfEndTime(Date shelfEndTime) {
 		this.shelfEndTime = shelfEndTime;
+	}
+
+	public Date getUnShelfStartTime() {
+		return unShelfStartTime;
+	}
+
+	public void setUnShelfStartTime(Date unShelfStartTime) {
+		this.unShelfStartTime = unShelfStartTime;
+	}
+
+	public Date getUnShelfEndTime() {
+		return unShelfEndTime;
+	}
+
+	public void setUnShelfEndTime(Date unShelfEndTime) {
+		this.unShelfEndTime = unShelfEndTime;
 	}
 
 	public int getShelfSign() {

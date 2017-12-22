@@ -58,16 +58,16 @@
 		<tr>
 			<th>sku名称</th>
 			<th>采购中心</th>
-			<th>上架人</th>
 			<th>上架数量</th>
 			<th>原价(元)</th>
 			<th>现价(元)</th>
 			<th>最低销售数量(个)</th>
 			<th>最高销售数量(个)</th>
+			<th>显示次序</th>
+			<th>上架人</th>
 			<th>上架时间</th>
 			<th>下架人</th>
 			<th>下架时间</th>
-			<th>显示次序</th>
 			<th>创建人</th>
 			<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><th>操作</th></shiro:hasPermission>
 		</tr>
@@ -80,9 +80,6 @@
 				</a></td>
 				<td>
 						${bizOpShelfSku.centerOffice.id}
-				</td>
-				<td>
-						${bizOpShelfSku.createBy.name}
 				</td>
 				<td>
 						${bizOpShelfSku.shelfQty}
@@ -100,6 +97,12 @@
 						${bizOpShelfSku.maxQty}
 				</td>
 				<td>
+						${bizOpShelfSku.priority}
+				</td>
+				<td>
+						${bizOpShelfSku.createBy.name}
+				</td>
+				<td>
 					<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
@@ -107,9 +110,6 @@
 				</td>
 				<td>
 					<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
-						${bizOpShelfSku.priority}
 				</td>
 				<td>
 						${bizOpShelfSku.createBy.name}
