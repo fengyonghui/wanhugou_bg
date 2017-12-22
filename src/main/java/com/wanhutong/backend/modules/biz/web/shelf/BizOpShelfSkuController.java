@@ -69,7 +69,7 @@ public class BizOpShelfSkuController extends BaseController {
 		}
 		bizOpShelfSkuService.save(bizOpShelfSku);
 		addMessage(redirectAttributes, "保存商品上架成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/form?id=" + bizOpShelfSku.getOpShelfInfo().getId() ;
 	}
 	
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")

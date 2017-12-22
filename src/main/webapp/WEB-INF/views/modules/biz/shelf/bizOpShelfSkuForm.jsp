@@ -56,7 +56,7 @@
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
-					<sys:treeselect id="Office" name="Office.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
+					<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
                      labelValue="${bizOpShelfSku.centerOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                                     title="采购中心"  url="/sys/office/queryTreeList?type=6" extId="${centerOffice.id}"
                                     cssClass="input-xlarge required"
@@ -67,14 +67,22 @@
 		</div>
 
 		<c:if test="${bizOpShelfSku.id != null}">
-		<div class="control-group">
+				<div class="control-group">
+					<label class="control-label">上架人：</label>
+					<div class="controls">
+						<form:input path="createBy.name" htmlEscape="false" maxlength="11" class="input-xlarge" readonly="true"/>
+							<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+					</div>
+				</div>
+		</c:if>
+		<%--<div class="control-group">
 			<label class="control-label">上架人：</label>
 			<div class="controls">
 				<form:input path="createBy.name" htmlEscape="false" maxlength="11" class="input-xlarge" readonly="true"/>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+				&lt;%&ndash;<span class="help-inline"><font color="red">*</font> </span>&ndash;%&gt;
 			</div>
-		</div>
-		</c:if>
+		</div>--%>
+
 		<div class="control-group">
 			<label class="control-label">上架数量：</label>
 			<div class="controls">
@@ -120,13 +128,21 @@
 			</div>
 		</div>
 		<c:if test="${bizOpShelfSku.id != null}">
+				<div class="control-group">
+					<label class="control-label">下架人：</label>
+					<div class="controls">
+						<form:input path="createBy.name" htmlEscape="false" maxlength="11" class="input-xlarge" readonly="true"/>
+					</div>
+				</div>
+		</c:if>
+		<%--<c:if test="${bizOpShelfSku.id != null}">
 		<div class="control-group">
 			<label class="control-label">下架人：</label>
 			<div class="controls">
 				<form:input path="createBy.name" htmlEscape="false" maxlength="11" class="input-xlarge" readonly="true"/>
 			</div>
 		</div>
-		</c:if>
+		</c:if>--%>
 		<div class="control-group">
 			<label class="control-label">下架时间：</label>
 			<div class="controls">
