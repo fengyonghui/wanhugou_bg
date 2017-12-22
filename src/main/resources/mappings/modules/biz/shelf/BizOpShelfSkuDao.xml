@@ -85,6 +85,10 @@
 			<if test="unShelfStartTime == null and unShelfEndTime != null and unShelfEndTime != ''" >
 				AND a.unShelf_time &lt;= #{unShelfEndTime}
 			</if>
+
+			<if test="opShelfInfo != null and opShelfInfo.id !=null and opShelfInfo.id != ''">
+				AND a.shelf_id = #{opShelfInfo.id}
+			</if>
 			<!--<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
 				AND a.unshelf_user = #{unshelfUser.id}
 			</if>-->
