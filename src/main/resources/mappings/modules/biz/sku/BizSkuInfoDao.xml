@@ -21,7 +21,7 @@
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
-		join sys_user su on a.update_id = su.id
+		LEFT join sys_user su on a.update_id = su.id
 		left join biz_product_info bpi on bpi.id = a.prod_id
 	</sql>
     

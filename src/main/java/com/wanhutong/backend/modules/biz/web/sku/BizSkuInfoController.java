@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.sku;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
@@ -19,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -117,6 +120,37 @@ public class BizSkuInfoController extends BaseController {
 			return "redirect:"+Global.getAdminPath()+"//biz/sku/bizSkuInfo/?repage";
         }
 		return "redirect:"+Global.getAdminPath()+"//biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "querySkuTreeList")
+	public List<Map<String, Object>> querySkuTreeList(@RequestParam(required = false) String type,BizSkuInfo bizSkuInfo,RedirectAttributes redirectAttributes) {
+		List<BizSkuInfo> list = null;
+
+			list = bizSkuInfoService.findList(bizSkuInfo);
+
+		if(list == null || list.size() == 0){
+			addMessage(redirectAttributes, "列表不存在");
+		}
+		return convertList(list);
+	}
+
+
+
+	private List<Map<String, Object>> convertList(List<BizSkuInfo> list){
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		if(list != null && list.size() > 0 ){
+			for (int i = 0; i < list.size(); i++) {
+				BizSkuInfo e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getProductInfo().getId());
+			//	map.put("pIds", e.getProductInfo().getId());
+				map.put("name", e.getProductInfo().getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
 	}
 
 }

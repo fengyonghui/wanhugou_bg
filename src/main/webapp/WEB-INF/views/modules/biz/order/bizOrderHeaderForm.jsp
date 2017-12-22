@@ -87,6 +87,7 @@
 		<div class="control-group">
 			<label class="control-label">发票类型：</label>
 			<div class="controls">
+
                  <form:select path="invStatus" class="input-medium required">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"

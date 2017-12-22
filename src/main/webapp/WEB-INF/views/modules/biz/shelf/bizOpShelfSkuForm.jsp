@@ -43,19 +43,19 @@
 		</div>--%>
 		<div class="control-group">
 			<label class="control-label">sku名称：</label>
-			<sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOpShelfSku.skuInfo.id}" labelName="skuInfo.name"
-							labelValue="${bizOpShelfSku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-							title="sku名称"  url="/biz/sku/queryList" extId="${skuInfo.id}"
-							cssClass="input-xlarge required"
-							allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
-				<span class="help-inline"><font color="red">*</font> </span>
-			</sys:treeselect>
+			<div class="controls">
+				<sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOpShelfSku.skuInfo.id}" labelName="skuInfo.name"
+								labelValue="${bizOpShelfSku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="sku名称"  url="/biz/sku/bizSkuInfo/querySkuTreeList" extId="${skuInfo.id}"
+								cssClass="input-xlarge required"
+								allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
+					<span class="help-inline"><font color="red">*</font> </span>
+				</sys:treeselect>
+			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">采购中心ID：</label>
+			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<%--<form:input path="centerOffice.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>--%>
 					<sys:treeselect id="Office" name="Office.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
                      labelValue="${bizOpShelfSku.centerOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                                     title="采购中心"  url="/sys/office/queryTreeList?type=6" extId="${centerOffice.id}"
