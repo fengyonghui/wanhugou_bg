@@ -116,7 +116,7 @@
 				</td>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
     				<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
-					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}" onclick="return confirmx('确认要删除该商品上架吗？', this.href)">删除</a>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该商品上架吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

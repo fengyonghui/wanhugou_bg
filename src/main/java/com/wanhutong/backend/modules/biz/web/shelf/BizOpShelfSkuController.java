@@ -77,7 +77,10 @@ public class BizOpShelfSkuController extends BaseController {
 	public String delete(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
 		bizOpShelfSkuService.delete(bizOpShelfSku);
 		addMessage(redirectAttributes, "删除商品上架成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
+		if(bizOpShelfSku.getShelfSign()==0){
+			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
+		}
+		return "redirect:"+Global.getAdminPath()+"//biz/shelf/bizOpShelfInfo/form?id="+bizOpShelfSku.getOpShelfInfo().getId();
+	}
 	}
 
-}
