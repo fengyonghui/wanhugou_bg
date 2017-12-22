@@ -88,7 +88,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/category/bizCategoryInfo/">商品类别列表</a></li>
+		<li><a href="${ctx}/biz/category/bizCategoryInfo/list?id=${bizCategoryInfo.parentId}&parentIds=${bizCategoryInfo.parentIds}&cid=${bizCategoryInfo.id}">商品类别列表</a></li>
 		<li class="active"><a href="${ctx}/biz/category/bizCategoryInfo/form?id=${bizCategoryInfo.id}">商品类别<shiro:hasPermission name="biz:category:bizCategoryInfo:edit">${not empty bizCategoryInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:category:bizCategoryInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 

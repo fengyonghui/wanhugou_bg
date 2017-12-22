@@ -33,8 +33,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String brandName;		// 品牌名称，冗余字段，提升查询效率
 	private String description;		// 商品描述
 	private Office office;		// sys_office.id &amp; type= vendor
-	private String minPrice;		// 最低售价
-	private String maxPrice;		// 最高售价
+	private Double minPrice;		// 最低售价
+	private Double maxPrice;		// 最高售价
 	private String skuInfos; //多种商品信息
 	private String imgUrl;   //图片地址
 	private String photoDetails;
@@ -159,20 +159,19 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.description = description;
 	}
 
-	
-	public String getMinPrice() {
+	public Double getMinPrice() {
 		return minPrice;
 	}
 
-	public void setMinPrice(String minPrice) {
+	public void setMinPrice(Double minPrice) {
 		this.minPrice = minPrice;
 	}
-	
-	public String getMaxPrice() {
+
+	public Double getMaxPrice() {
 		return maxPrice;
 	}
 
-	public void setMaxPrice(String maxPrice) {
+	public void setMaxPrice(Double maxPrice) {
 		this.maxPrice = maxPrice;
 	}
 

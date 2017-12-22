@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.shelf;
 
+import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
@@ -45,6 +46,7 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	private int shelfSign; //货架删除返回标志
 
+	private SkuProd skuProd;
 
 	
 	public BizOpShelfSku() {
@@ -201,5 +203,13 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	public void setShelfSign(int shelfSign) {
 		this.shelfSign = shelfSign;
+	}
+
+	public SkuProd getSkuProd() {
+		return skuProd;
+	}
+
+	public void setSkuProd(SkuProd skuProd) {
+		this.skuProd = skuProd;
 	}
 }

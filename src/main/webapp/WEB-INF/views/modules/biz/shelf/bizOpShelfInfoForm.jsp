@@ -78,9 +78,11 @@
 				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
 						${bizOpShelfSku.skuInfo.name}
 				</a></td>
+
 				<td>
-						${bizOpShelfSku.centerOffice.id}
+						${bizOpShelfSku.centerOffice.name}
 				</td>
+
 				<td>
 						${bizOpShelfSku.shelfQty}
 				</td>
@@ -100,7 +102,7 @@
 						${bizOpShelfSku.priority}
 				</td>
 				<td>
-						${bizOpShelfSku.createBy.name}
+						${bizOpShelfSku.shelfUser.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>

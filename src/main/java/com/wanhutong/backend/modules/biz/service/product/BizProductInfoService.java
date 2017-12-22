@@ -76,11 +76,18 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	
 	@Transactional(readOnly = false)
 	public void save(BizProductInfo bizProductInfo) {
-		BizCatePropValue bizCatePropValue=bizCatePropValueService.get(bizProductInfo.getCatePropValue().getId());
-		bizProductInfo.setBrandName(bizCatePropValue.getValue());
+		if(bizProductInfo.getCatePropValue()!=null && bizProductInfo.getCatePropValue().getId()!=null){
+			BizCatePropValue bizCatePropValue=bizCatePropValueService.get(bizProductInfo.getCatePropValue().getId());
+			if(bizCatePropValue!=null){
+				bizProductInfo.setBrandName(bizCatePropValue.getValue());
+			}
+
+		}
+
 		super.save(bizProductInfo);
-		bizProductInfoDao.deleteProdCate(bizProductInfo);
-		if (bizProductInfo.getCategoryInfoList().size() > 0){
+
+		if (bizProductInfo.getCategoryInfoList()!=null && bizProductInfo.getCategoryInfoList().size() > 0){
+			bizProductInfoDao.deleteProdCate(bizProductInfo);
 			bizProductInfoDao.insertProdCate(bizProductInfo);
 		}
 		/**
@@ -96,6 +103,11 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
 
 
+	}
+
+	@Transactional(readOnly = false)
+	public void saveProd(BizProductInfo bizProductInfo) {
+		super.save(bizProductInfo);
 	}
 	@Transactional(readOnly = false)
 	public void saveCommonImg(BizProductInfo bizProductInfo) {

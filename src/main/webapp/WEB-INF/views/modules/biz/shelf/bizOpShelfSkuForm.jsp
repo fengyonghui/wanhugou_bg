@@ -44,7 +44,7 @@
 		<div class="control-group">
 			<label class="control-label">sku名称：</label>
 			<div class="controls">
-				<sys:treeselect id="skuInfo" name="skuInfo.id" value="${entity.skuProd.id}" labelName="skuInfo.name"
+				<sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOpShelfSku.skuProd.id}" labelName="skuInfo.name"
 								labelValue="${bizOpShelfSku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
 								title="sku名称"  url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"
 								cssClass="input-xlarge required"
@@ -58,7 +58,7 @@
 			<div class="controls">
 					<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
                      labelValue="${bizOpShelfSku.centerOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-                                    title="采购中心"  url="/sys/office/queryTreeList?type=6" extId="${centerOffice.id}"
+                                    title="采购中心"  url="/sys/office/queryTreeList?type=8" extId="${centerOffice.id}"
                                     cssClass="input-xlarge required"
                                     allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
 					</sys:treeselect>

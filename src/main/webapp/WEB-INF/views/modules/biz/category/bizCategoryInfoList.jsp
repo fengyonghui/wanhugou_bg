@@ -18,7 +18,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/category/bizCategoryInfo/">商品类别列表</a></li>
+		<li class="active"><a href="${ctx}/biz/category/bizCategoryInfo/list?id=${bizCategoryInfo.parentId}&parentIds=${bizCategoryInfo.parentIds}&cid=${bizCategoryInfo.id}">商品类别列表</a></li>
 		<shiro:hasPermission name="biz:category:bizCategoryInfo:edit"><li><a href="${ctx}/biz/category/bizCategoryInfo/form?parent.id=${bizCategoryInfo.cid}">商品类别添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCategoryInfo" action="${ctx}/biz/category/bizCategoryInfo/list" method="post" class="breadcrumb form-search">

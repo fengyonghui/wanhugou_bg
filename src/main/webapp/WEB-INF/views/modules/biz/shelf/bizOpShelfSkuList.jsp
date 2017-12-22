@@ -107,13 +107,13 @@
                         ${bizOpShelfSku.priority}
                 </td>
                 <td>
-                        ${bizOpShelfSku.createBy.name}
+                        ${bizOpShelfSku.shelfUser.name}
                 </td>
 				<td>
 					<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-					${bizOpShelfSku.createBy.name}
+					${bizOpShelfSku.unshelfUser.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>

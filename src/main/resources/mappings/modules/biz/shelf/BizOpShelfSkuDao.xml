@@ -6,30 +6,38 @@
 		a.id AS "id",
 		a.shelf_id AS "opShelfInfo.id",
 		a.sku_id AS "skuInfo.id",
+		a.sku_id AS "skuProd.id",
 		a.center_id AS "centerOffice.id",
 		so.name AS "centerOffice.name",
 		a.shelf_user AS "shelfUser.id",
+		shu.name AS "shelfUser.name",
 		a.shelf_qty AS "shelfQty",
 		a.org_price AS "orgPrice",
 		a.sale_price AS "salePrice",
 		a.min_qty AS "minQty",
 		a.max_qty AS "maxQty",
 		a.shelf_time AS "shelfTime",
-		a.unshelf_user AS "unshelfUser.name",
+		a.unshelf_user AS "unshelfUser.id",
+		ushu.name AS "unshelfUser.name",
 		a.unshelf_time AS "unshelfTime",
 		a.priority AS "priority",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
+		suc.name AS "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		su.name AS "createBy.name",
-		bsi.name AS "skuInfo.name"
+		su.name AS "updateBy.name",
+		bsi.name AS "skuInfo.name",
+		bsi.prod_id AS "skuInfo.productInfo.id"
 	</sql>
 	
 	<sql id="bizOpShelfSkuJoins">
+		LEFT JOIN sys_user suc on suc.id = a.create_id
 		LEFT JOIN sys_user su on su.id = a.update_id
+		LEFT JOIN sys_user shu ON shu.id=a.shelf_user
+		LEFT JOIN sys_user ushu ON ushu.id=a.unshelf_user
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_office so ON so.id=a.center_id
 	</sql>
@@ -101,6 +109,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.update_time DESC
 			</otherwise>
 		</choose>
 	</select>
