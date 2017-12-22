@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.common.dao.location.CommonLocationDao">
+    
+	<sql id="commonLocationColumns">
+		a.id AS "id",
+		a.province_id AS "provinceId",
+		a.city_id AS "cityId",
+		a.region_id AS "regionId",
+		a.pcr_name AS "pcrName",
+		a.address AS "address",
+		a.zip_code AS "zipCode",
+		a.longitude AS "longitude",
+		a.latitude AS "latitude",
+		a.status AS "status",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateId.id",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="commonLocationJoins">
+	</sql>
+    
+	<select id="get" resultType="CommonLocation">
+		SELECT 
+			<include refid="commonLocationColumns"/>
+		FROM common_location a
+		<include refid="commonLocationJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CommonLocation">
+		SELECT 
+			<include refid="commonLocationColumns"/>
+		FROM common_location a
+		<include refid="commonLocationJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="provinceId != null and provinceId != ''">
+				AND a.province_id = #{provinceId}
+			</if>
+			<if test="cityId != null and cityId != ''">
+				AND a.city_id = #{cityId}
+			</if>
+			<if test="regionId != null and regionId != ''">
+				AND a.region_id = #{regionId}
+			</if>
+			<if test="pcrName != null and pcrName != ''">
+				AND a.pcr_name = #{pcrName}
+			</if>
+			<if test="createId != null and createId.id != null and createId.id != ''">
+				AND a.create_id = #{createId.id}
+			</if>
+			<if test="updateId != null and updateId.id != null and updateId.id != ''">
+				AND a.update_id = #{updateId.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="CommonLocation">
+		SELECT 
+			<include refid="commonLocationColumns"/>
+		FROM common_location a
+		<include refid="commonLocationJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO common_location(
+			id,
+			province_id,
+			city_id,
+			region_id,
+			pcr_name,
+			address,
+			zip_code,
+			longitude,
+			latitude,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{provinceId},
+			#{cityId},
+			#{regionId},
+			#{pcrName},
+			#{address},
+			#{zipCode},
+			#{longitude},
+			#{latitude},
+			#{status},
+			#{createId.id},
+			#{createTime},
+			#{uVersion},
+			#{updateId.id},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE common_location SET 	
+			province_id = #{provinceId},
+			city_id = #{cityId},
+			region_id = #{regionId},
+			pcr_name = #{pcrName},
+			address = #{address},
+			zip_code = #{zipCode},
+			longitude = #{longitude},
+			latitude = #{latitude},
+			create_time = #{createTime},
+			u_version = #{uVersion},
+			update_id = #{updateId.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE common_location SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

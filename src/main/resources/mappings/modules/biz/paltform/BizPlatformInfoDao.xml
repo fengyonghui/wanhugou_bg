@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.paltform.BizPlatformInfoDao">
+    
+	<sql id="bizPlatformInfoColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.description AS "description",
+		a.u_version AS "uVersion",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.status AS "status",
+		a.update_id AS "updateId.id",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="bizPlatformInfoJoins">
+	</sql>
+    
+	<select id="get" resultType="BizPlatformInfo">
+		SELECT 
+			<include refid="bizPlatformInfoColumns"/>
+		FROM biz_platform_info a
+		<include refid="bizPlatformInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizPlatformInfo">
+		SELECT 
+			<include refid="bizPlatformInfoColumns"/>
+		FROM biz_platform_info a
+		<include refid="bizPlatformInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="createId != null and createId.id != null and createId.id != ''">
+				AND a.create_id = #{createId.id}
+			</if>
+			<if test="updateId != null and updateId.id != null and updateId.id != ''">
+				AND a.update_id = #{updateId.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizPlatformInfo">
+		SELECT 
+			<include refid="bizPlatformInfoColumns"/>
+		FROM biz_platform_info a
+		<include refid="bizPlatformInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_platform_info(
+			id,
+			name,
+			description,
+			u_version,
+			create_id,
+			create_time,
+			status,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{name},
+			#{description},
+			#{uVersion},
+			#{createId.id},
+			#{createTime},
+			#{status},
+			#{updateId.id},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_platform_info SET 	
+			name = #{name},
+			description = #{description},
+			u_version = #{uVersion},
+			create_time = #{createTime},
+			update_id = #{updateId.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_platform_info SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
