@@ -6,11 +6,15 @@ package com.wanhutong.backend.modules.biz.service.sku;
 import java.util.List;
 import java.util.Map;
 
+import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +40,8 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	private BizProdPropValueService bizProdPropValueService;
 	@Resource
 	private BizSkuPropValueService bizSkuPropValueService;
+	@Resource
+	private CommonImgService commonImgService;
 	@Autowired
 	private BizSkuInfoDao bizSkuInfoDao;
 
@@ -49,7 +55,7 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		}
 		return null;
 	}
-	
+
 	public Page<BizSkuInfo> findPage(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
 		return super.findPage(page, bizSkuInfo);
 	}
@@ -84,6 +90,31 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 
 			}
 		}
+		//sku图片保存
+		saveCommonImg(bizSkuInfo);
+	}
+
+	@Transactional(readOnly = false)
+	public void saveCommonImg(BizSkuInfo bizSkuInfo) {
+		String photos=bizSkuInfo.getPhotos();
+		CommonImg commonImg=new CommonImg();
+		if(photos!=null && !"".equals(photos)) {
+			photos = photos.substring(1);
+			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+			String[]photoArr=photos.split("\\|");
+			if(photoArr.length>=1){
+				commonImg.setObjectId(bizSkuInfo.getId());
+				commonImg.setObjectName("biz_sku_info");
+				commonImgService.deleteCommonImg(commonImg);
+				for (int i=0;i<photoArr.length;i++){
+					commonImg.setImgPath(photoArr[i]);
+					commonImg.setImgSort(i);
+					commonImg.setImgServer(DsConfig.getImgServer());
+					commonImgService.save(commonImg);
+				}
+			}
+		}
+
 	}
 	
 	@Transactional(readOnly = false)

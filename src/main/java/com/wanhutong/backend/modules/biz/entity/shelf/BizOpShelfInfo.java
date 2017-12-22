@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -21,6 +23,8 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 货架名称
 	private String description;		// 货架描述
+	private List<BizOpShelfSku> opShelfSkusList;
+	private String OpShelfSkus;
 
 	
 	public BizOpShelfInfo() {
@@ -48,4 +52,19 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 		this.description = description;
 	}
 
+	public List<BizOpShelfSku> getOpShelfSkusList() {
+		return opShelfSkusList;
+	}
+
+	public void setOpShelfSkusList(List<BizOpShelfSku> opShelfSkusList) {
+		this.opShelfSkusList = opShelfSkusList;
+	}
+
+	public String getOpShelfSkus() {
+		return OpShelfSkus;
+	}
+
+	public void setOpShelfSkus(String opShelfSkus) {
+		OpShelfSkus = opShelfSkus;
+	}
 }

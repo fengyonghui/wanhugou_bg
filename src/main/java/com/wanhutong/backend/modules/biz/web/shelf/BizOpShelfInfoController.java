@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.shelf;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 
+import java.util.List;
+
 /**
  * 运营货架信息Controller
  * @author liuying
@@ -33,12 +37,17 @@ public class BizOpShelfInfoController extends BaseController {
 
 	@Autowired
 	private BizOpShelfInfoService bizOpShelfInfoService;
-	
+	@Autowired
+	private BizOpShelfSkuService bizOpShelfSkuService;
 	@ModelAttribute
 	public BizOpShelfInfo get(@RequestParam(required=false) Integer id) {
 		BizOpShelfInfo entity = null;
 		if (id!=null){
 			entity = bizOpShelfInfoService.get(id);
+			BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+			bizOpShelfSku.setOpShelfInfo(entity);
+			List<BizOpShelfSku> opShelfSkusList = bizOpShelfSkuService.findList(bizOpShelfSku);
+			entity.setOpShelfSkusList(opShelfSkusList);
 		}
 		if (entity == null){
 			entity = new BizOpShelfInfo();

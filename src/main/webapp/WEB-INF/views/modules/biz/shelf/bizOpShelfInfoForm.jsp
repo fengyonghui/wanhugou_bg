@@ -51,5 +51,82 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+
+	<sys:message content="${message}"/>
+	<table id="contentTable" class="table table-striped table-bordered table-condensed">
+		<thead>
+		<tr>
+			<th>sku名称</th>
+			<th>采购中心ID</th>
+			<th>上架人</th>
+			<th>上架数量</th>
+			<th>原价</th>
+			<th>现价</th>
+			<th>最低销售数量</th>
+			<th>最高销售数量</th>
+			<th>上架时间</th>
+			<th>下架人</th>
+			<th>下架时间</th>
+			<th>显示次序</th>
+			<th>创建人</th>
+			<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><th>操作</th></shiro:hasPermission>
+		</tr>
+		</thead>
+		<tbody>
+		<c:forEach items="${bizOpShelfInfo.opShelfSkusList}" var="bizOpShelfSku">
+			<tr>
+				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
+						${bizOpShelfSku.skuInfo.name}
+				</a></td>
+				<td>
+						${bizOpShelfSku.centerOffice.id}
+				</td>
+				<td>
+						${bizOpShelfSku.createBy.name}
+				</td>
+				<td>
+						${bizOpShelfSku.shelfQty}
+				</td>
+				<td>
+						${bizOpShelfSku.orgPrice}
+				</td>
+				<td>
+						${bizOpShelfSku.salePrice}
+				</td>
+				<td>
+						${bizOpShelfSku.minQty}
+				</td>
+				<td>
+						${bizOpShelfSku.maxQty}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+						${bizOpShelfSku.unshelfUser.name}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+						${bizOpShelfSku.priority}
+				</td>
+				<td>
+						${bizOpShelfSku.createBy.name}
+				</td>
+				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=1" onclick="return confirmx('确认要删除该商品上架吗？', this.href)">删除</a>
+				</td></shiro:hasPermission>
+			</tr>
+		</c:forEach>
+		</tbody>
+	</table>
+	<div class="form-actions">
+		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input type="button"
+																   onclick="javascript:window.location.href='${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}&opShelfInfo.id=${bizOpShelfInfo.id}';"
+																   class="btn btn-primary"
+																   value="sku上架商品添加"/></shiro:hasPermission>
+	</div>
 </body>
 </html>
