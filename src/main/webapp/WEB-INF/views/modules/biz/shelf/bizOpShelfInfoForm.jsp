@@ -122,11 +122,13 @@
 		</c:forEach>
 		</tbody>
 	</table>
+    <c:if test="${bizOpShelfInfo != null and bizOpShelfInfo.id != null}">
 	<div class="form-actions">
 		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input type="button"
 																   onclick="javascript:window.location.href='${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}&opShelfInfo.id=${bizOpShelfInfo.id}';"
 																   class="btn btn-primary"
 																   value="sku上架商品添加"/></shiro:hasPermission>
 	</div>
+    </c:if>
 </body>
 </html>
