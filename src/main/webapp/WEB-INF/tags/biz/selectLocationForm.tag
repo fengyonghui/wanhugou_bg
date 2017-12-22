@@ -6,7 +6,7 @@
     <%--<a class="accordion-toggle" href="javascript:void(0);">详细地址</a>--%>
 </div>
 <div class="control-group">
-    <label class="control-label">所在地区:</label>
+    <label class="control-label">所在地区：</label>
     <div class="controls">
         <input type="hidden" id="locationId" name="locationId" value="${entity.bizLocation.id}"/>
         <form:hidden path="bizLocation.selectedRegionId" id="regionId" value="${entity.bizLocation.selectedRegionId}"/>

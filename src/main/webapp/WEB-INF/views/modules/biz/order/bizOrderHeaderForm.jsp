@@ -34,13 +34,13 @@
 	<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
-		<%--<div class="control-group">
+		<div class="control-group">
 			<label class="control-label">订单编号：</label>
 			<div class="controls">
-				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
+				</span>
 			</div>
-		</div>--%>
+		</div>
 		<div class="control-group">
 			<label class="control-label">订单类型：</label>
 			<div class="controls">
@@ -48,7 +48,6 @@
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select>
-				<%--<form:input path="orderType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>--%>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div></div>
 
@@ -57,7 +56,7 @@
 			<div class="controls">
                 <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
                                 labelValue="${entity.customer.id}" notAllowSelectRoot="true" notAllowSelectParent="true"
-                                title="选择客户"  url="/sys/office/queryTreeList?type=6"
+                                title="客户"  url="/sys/office/queryTreeList?type=6"
                                 cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -110,7 +109,7 @@
 		<div class="control-group">
 			<label class="control-label">订单来源；</label>
 			<div class="controls">
-				<form:input path="plateformId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="platformInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

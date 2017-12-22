@@ -35,7 +35,11 @@
                     <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select></li>
 			<li><label>客户名称：</label>
-				<form:input path="customer.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			     <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
+                                                labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+                                                title="客户"  url="/sys/office/queryTreeList?type=6"
+                                                cssClass="input-medium required"
+                                                allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -51,13 +55,13 @@
 				<th>订单详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>
-				<th>发票类型</th>
+				<th>发票状态</th>
 				<th>业务状态</th>
 				<th>订单来源</th>
 				<th>订单收货地址</th>
-				<th>创建者</th>
+				<th>创建人</th>
 				<th>订单创建时间</th>
-				<th>更新者</th>
+				<th>更新人</th>
 				<th>订单更新时间</th>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -72,7 +76,7 @@
 					${bizOrderHeader.orderType}
 				</td>
 				<td>
-					${bizOrderHeader.customer.id}
+					${bizOrderHeader.customer.name}
 				</td>
 				<td>
 					${bizOrderHeader.totalDetail}
@@ -90,13 +94,13 @@
 					${bizOrderHeader.bizStatus}
 				</td>
 				<td>
-					${bizOrderHeader.plateformId}
+					${bizOrderHeader.platformInfo.id}
 				</td>
 				<td>
-					${bizOrderHeader.bizLocation.id}
+					${bizOrderHeader.bizLocation.pcrName}${bizOrderHeader.bizLocation.address}
 				</td>
 				<td>
-					${bizOrderHeader.createBy.id}
+					${bizOrderHeader.createBy.name}
 				</td>
 				<td>
                     <fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

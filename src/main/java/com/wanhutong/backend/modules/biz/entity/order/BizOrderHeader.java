@@ -30,7 +30,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Double freight;		// 运费
 	private Integer invStatus;		// 0 不开发票 1 未开发票 3 已开发票
 	private Integer bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付 3同意发货 4已发货 5客户已收货 6 已完成
-	private BizPlatformInfo plateformId;		// 订单来源； biz_platform_info.id
+	private BizPlatformInfo platformInfo;		// 订单来源； biz_platform_info.id
 	private CommonLocation bizLocation;		// 订单收货地址： common_location.id
 
 	public BizOrderHeader() {
@@ -81,13 +81,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.freight = freight;
 	}
 
-	public BizPlatformInfo getPlateformId() {
-		return plateformId;
-	}
+    public BizPlatformInfo getPlatformInfo() {
+        return platformInfo;
+    }
 
-	public void setPlateformId(BizPlatformInfo plateformId) {
-		this.plateformId = plateformId;
-	}
+    public void setPlatformInfo(BizPlatformInfo platformInfo) {
+        this.platformInfo = platformInfo;
+    }
 
     public CommonLocation getBizLocation() {
         return bizLocation;
