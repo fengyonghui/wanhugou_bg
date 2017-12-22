@@ -61,9 +61,8 @@
                                     title="采购中心"  url="/sys/office/queryTreeList?type=6" extId="${centerOffice.id}"
                                     cssClass="input-xlarge required"
                                     allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
-                        <span class="help-inline">
-                            <font color="red">*</font><font>( 0:代表平台商品)</font> </span>
 					</sys:treeselect>
+				<span class="help-inline"><font color="red">*</font><font>( 0:代表平台商品)</font> </span>
 			</div>
 		</div>
 
