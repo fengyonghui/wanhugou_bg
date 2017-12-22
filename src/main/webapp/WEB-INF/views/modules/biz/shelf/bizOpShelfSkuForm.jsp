@@ -123,7 +123,7 @@
 		<div class="control-group">
 			<label class="control-label">下架人：</label>
 			<div class="controls">
-				<form:input path="unshelfUser.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="createBy.name" htmlEscape="false" maxlength="11" class="input-xlarge" readonly="true"/>
 			</div>
 		</div>
 		</c:if>
