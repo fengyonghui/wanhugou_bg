@@ -73,7 +73,7 @@
 					${bizOrderHeader.orderNum}
 				</a></td>
 				<td>
-					${bizOrderHeader.orderType}
+					${fns:getDictLabel(bizOrderHeader.orderType, 'biz_order_type', '未知状态')}
 				</td>
 				<td>
 					${bizOrderHeader.customer.name}
@@ -88,13 +88,13 @@
 					${bizOrderHeader.freight}
 				</td>
 				<td>
-					${bizOrderHeader.invStatus}
+					${fns:getDictLabel(bizOrderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 				</td>
 				<td>
-					${bizOrderHeader.bizStatus}
+					${fns:getDictLabel(bizOrderHeader.bizStatus, 'biz_order_status', '未知状态')}
 				</td>
 				<td>
-					${bizOrderHeader.platformInfo.id}
+					${bizOrderHeader.platformInfo.name}
 				</td>
 				<td>
 					${bizOrderHeader.bizLocation.pcrName}${bizOrderHeader.bizLocation.address}
@@ -106,7 +106,7 @@
                     <fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                 </td>
 				<td>
-					${bizOrderHeader.updateBy.id}
+					${bizOrderHeader.updateBy.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

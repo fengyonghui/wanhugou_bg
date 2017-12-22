@@ -55,7 +55,7 @@
 			<label class="control-label">客户名称：</label>
 			<div class="controls">
                 <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
-                                labelValue="${entity.customer.id}" notAllowSelectRoot="true" notAllowSelectParent="true"
+                                labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                                 title="客户"  url="/sys/office/queryTreeList?type=6"
                                 cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
@@ -84,15 +84,13 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">发票类型：</label>
+			<label class="control-label">发票状态：</label>
 			<div class="controls">
-
                  <form:select path="invStatus" class="input-medium required">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select>
-				<%--<form:input path="invStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>-->
-				<span class="help-inline"><font color="red">*</font> </span> --%>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -102,8 +100,7 @@
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select>
-				<%--<form:input path="bizStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>-->
-				<span class="help-inline"><font color="red">*</font> </span>--%>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
