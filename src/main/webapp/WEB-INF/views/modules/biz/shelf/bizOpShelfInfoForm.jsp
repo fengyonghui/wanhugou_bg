@@ -58,7 +58,7 @@
 		<tr>
 			<th>sku名称</th>
 			<th>采购中心</th>
-			<th>上架数量</th>
+			<th>上架数量(个)</th>
 			<th>原价(元)</th>
 			<th>现价(元)</th>
 			<th>最低销售数量(个)</th>
@@ -122,11 +122,13 @@
 		</c:forEach>
 		</tbody>
 	</table>
+    <c:if test="${bizOpShelfInfo != null and bizOpShelfInfo.id != null}">
 	<div class="form-actions">
 		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input type="button"
 																   onclick="javascript:window.location.href='${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}&opShelfInfo.id=${bizOpShelfInfo.id}';"
 																   class="btn btn-primary"
 																   value="sku上架商品添加"/></shiro:hasPermission>
 	</div>
+    </c:if>
 </body>
 </html>
