@@ -40,16 +40,13 @@
 				<form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
 			</div>
 		</div>
-
-		    <div class="control-group">
-                <label class="control-label">商品详情：</label>
-                <div class="controls">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form">
-                        <form:input path="totalDetail" value="选择商品" type="button"  htmlEscape="false" class="input-xlarge required"/></a>
-                        <span class="help-inline"><font color="red">*</font>
-                </div>
-            </div>
-
+               <%-- <div class="control-group">
+                    <label class="control-label">商品详情：</label>
+                    <div class="controls">
+                            <a href="${ctx}/biz/order/bizOrderDetail/form">
+                            <form:input path="totalDetail" value="选择商品" type="button"  htmlEscape="false" class="input-xlarge required"/></a>
+                    </div>
+                </div>--%>
 		<div class="control-group">
 			<label class="control-label">订单类型：</label>
 			<div class="controls">
@@ -121,7 +118,7 @@
 		<biz:selectLocationForm/>
 
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="选购商品"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

@@ -69,7 +69,8 @@ public class BizOrderHeaderController extends BaseController {
 		}
 		bizOrderHeaderService.save(bizOrderHeader);
 		addMessage(redirectAttributes, "保存订单信息成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
+//		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form";
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")

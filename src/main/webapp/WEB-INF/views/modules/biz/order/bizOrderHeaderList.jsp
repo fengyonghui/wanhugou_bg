@@ -68,7 +68,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizOrderHeader">
 			<tr>
-				<td><a href="${ctx}/biz/order/bizOrderDetail/form">
+				<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">
 					${bizOrderHeader.orderNum}
 				</a></td>
 				<td>
