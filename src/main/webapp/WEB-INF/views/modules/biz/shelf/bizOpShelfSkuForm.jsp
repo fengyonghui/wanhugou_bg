@@ -60,7 +60,6 @@
                      labelValue="${bizOpShelfSku.centerOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                                     title="采购中心"  url="/sys/office/queryTreeList?type=8" extId="${centerOffice.id}"
                                     cssClass="input-xlarge "
-                                    title="采购中心"
                                     allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
                     </sys:treeselect>
 				<span class="help-inline"> </span>
