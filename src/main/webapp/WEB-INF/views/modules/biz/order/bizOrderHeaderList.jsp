@@ -28,7 +28,6 @@
 			<li><label>订单编号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-			    <!--<li><form:input path="orderType" htmlEscape="false" maxlength="4" class="input-medium"/></li>-->
 			 <li><label>订单类型：</label>
                 <form:select path="orderType" class="input-medium required">
                     <form:option value="" label="请选择"/>
@@ -69,7 +68,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizOrderHeader">
 			<tr>
-				<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">
+				<td><a href="${ctx}/biz/order/bizOrderDetail/form">
 					${bizOrderHeader.orderNum}
 				</a></td>
 				<td>

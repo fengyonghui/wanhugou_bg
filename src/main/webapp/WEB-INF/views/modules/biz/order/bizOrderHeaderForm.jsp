@@ -38,9 +38,18 @@
 			<label class="control-label">订单编号：</label>
 			<div class="controls">
 				<form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
-				</span>
 			</div>
 		</div>
+
+		    <div class="control-group">
+                <label class="control-label">商品详情：</label>
+                <div class="controls">
+                        <a href="${ctx}/biz/order/bizOrderDetail/form">
+                        <form:input path="totalDetail" value="选择商品" type="button"  htmlEscape="false" class="input-xlarge required"/></a>
+                        <span class="help-inline"><font color="red">*</font>
+                </div>
+            </div>
+
 		<div class="control-group">
 			<label class="control-label">订单类型：</label>
 			<div class="controls">
@@ -50,7 +59,6 @@
                             htmlEscape="false"/></form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div></div>
-
 		<div class="control-group">
 			<label class="control-label">客户名称：</label>
 			<div class="controls">

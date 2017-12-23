@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderDetailDao">
+    
+	<sql id="bizOrderDetailColumns">
+		a.id AS "id",
+		a.order_id AS "orderHeader.id",
+		a.line_no AS "lineNo",
+		a.p_line_no AS "pLineNo",
+		a.sku_no AS "skuNo",
+		a.part_no AS "partNo",
+		a.sku_name AS "skuName",
+		a.unit_price AS "unitPrice",
+		a.ord_qty AS "ordQty"
+		/*a.create_id AS "createBy.id",
+		su.name as "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"*/
+	</sql>
+	
+	<sql id="bizOrderDetailJoins">
+	</sql>
+    
+	<select id="get" resultType="BizOrderDetail">
+		SELECT 
+			<include refid="bizOrderDetailColumns"/>
+		FROM biz_order_detail a
+		<include refid="bizOrderDetailJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizOrderDetail">
+		SELECT 
+			<include refid="bizOrderDetailColumns"/>
+		FROM biz_order_detail a
+		<include refid="bizOrderDetailJoins"/>
+		<where>
+			
+			<if test="orderHeader != null and orderHeader != null and orderHeader !=''">
+				AND a.order_id = #{orderHeader.id}
+			</if>
+			<if test="lineNo != null and lineNo != ''">
+				AND a.line_no = #{lineNo}
+			</if>
+			<if test="pLineNo != null and pLineNo != ''">
+				AND a.p_line_no = #{pLineNo}
+			</if>
+			<if test="skuNo != null and skuNo != ''">
+				AND a.sku_no = #{skuNo}
+			</if>
+			<!--<if test="createId != null and createId.id != null and createId.id != ''">
+				AND a.create_id = #{createId.id}
+			</if>
+			<if test="uVersion != null and uVersion != ''">
+				AND a.u_version = #{uVersion}
+			</if>
+			<if test="updateId != null and updateId.id != null and updateId.id != ''">
+				AND a.update_id = #{updateId.id}
+			</if>-->
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizOrderDetail">
+		SELECT 
+			<include refid="bizOrderDetailColumns"/>
+		FROM biz_order_detail a
+		<include refid="bizOrderDetailJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_order_detail(
+			id,
+			order_id,
+			line_no,
+			p_line_no,
+			sku_no,
+			part_no,
+			sku_name,
+			unit_price,
+			ord_qty,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{orderHeader.id},
+			#{lineNo},
+			#{pLineNo},
+			#{skuNo},
+			#{partNo},
+			#{skuName},
+			#{unitPrice},
+			#{ordQty},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_order_detail SET 	
+			order_id = #{orderHeader.id},
+			line_no = #{lineNo},
+			p_line_no = #{pLineNo},
+			sku_no = #{skuNo},
+			part_no = #{partNo},
+			sku_name = #{skuName},
+			unit_price = #{unitPrice},
+			ord_qty = #{ordQty},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_order_detail
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
