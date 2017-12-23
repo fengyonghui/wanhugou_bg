@@ -10,7 +10,6 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.PropValue;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
@@ -31,7 +30,6 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String name;		// 商品名称
 	private String prodCode;		// 商品代码--厂家定的-或自己定的
 	private BizCatePropValue catePropValue;		// biz_cate_prop_value.id, 对应品牌分类的属性值ID
-	private PropValue propValue; //品牌Id
 	private String brandName;		// 品牌名称，冗余字段，提升查询效率
 	private String description;		// 商品描述
 	private Office office;		// sys_office.id &amp; type= vendor
@@ -295,14 +293,5 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setSkuProd(SkuProd skuProd) {
 		this.skuProd = skuProd;
-	}
-
-
-	public PropValue getPropValue() {
-		return propValue;
-	}
-
-	public void setPropValue(PropValue propValue) {
-		this.propValue = propValue;
 	}
 }

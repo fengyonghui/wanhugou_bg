@@ -24,11 +24,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
-import com.wanhutong.backend.modules.sys.entity.PropValue;
-import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
-import com.wanhutong.backend.modules.sys.service.PropValueService;
-import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,10 +63,6 @@ public class BizProductInfoController extends BaseController {
 	private BizCategoryInfoService bizCategoryInfoService;
 	@Autowired
 	private CommonImgService commonImgService;
-	@Autowired
-	private PropertyInfoService propertyInfoService;
-	@Autowired
-	private PropValueService propValueService;
 
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
@@ -106,14 +98,13 @@ public class BizProductInfoController extends BaseController {
 	public String form(BizProductInfo bizProductInfo, Model model) {
 		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("propBrand"));
 
-		List<PropValue> catePropValueList=null;
+		List<BizCatePropValue> catePropValueList=null;
 		if(list!=null && list.size()>0){
 			DefaultProp defaultProp=list.get(0);
-			PropertyInfo propertyInfo=propertyInfoService.get(Integer.parseInt(defaultProp.getPropValue()));
-			PropValue bizCatePropValue=new PropValue();
-			bizCatePropValue.setPropertyInfo(propertyInfo);
-			catePropValueList=propValueService.findList(bizCatePropValue);
-		//	catePropValueList=bizCatePropValueService.findList(bizCatePropValue);
+			BizCatePropertyInfo bizCatePropertyInfo=bizCatePropertyInfoService.get(Integer.parseInt(defaultProp.getPropValue()));
+			BizCatePropValue bizCatePropValue=new BizCatePropValue();
+			bizCatePropValue.setCatePropertyInfo(bizCatePropertyInfo);
+			catePropValueList=bizCatePropValueService.findList(bizCatePropValue);
 		}
 		CommonImg commonImg=new CommonImg();
 		commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
