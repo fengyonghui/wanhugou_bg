@@ -40,9 +40,18 @@
             }}
             if($("#id").val()!=''){
                 var ids = "${entity.cateIds}";//后台获取的分类id集合
-                ajaxGetPropInfo(ids);
+                var cateValueId= $("#cateValueId").val();
+                ajaxGetPropInfoBrand(ids);
+                t = setTimeout(function() {
+                    ajaxGetPropInfo(ids);
+
+                }, 100);
+
+
+
                 t = setTimeout(function() {
                     ajaxGetProdPropInfo($("#id").val());
+
                 }, 150);
                 t = setTimeout(function() {
                     ajaxGetProdOwnPropInfo($("#id").val());
@@ -59,8 +68,32 @@
                     }
                 }
                 ajaxGetPropInfo(ids);
+                ajaxGetPropInfoBrand(ids);
 
             };
+
+            /**
+             * 通过分类获取品牌
+             */
+
+            function ajaxGetPropInfoBrand(ids) {
+                $.post("${ctx}/biz/product/bizProdCate/findCatePropMap4Brand",
+                    {catIds:ids.toString()},
+                    function(data) {
+                        $.each(data,function (index,catePropValue) {
+                            if(cateValueId==catePropValue.id){
+                                $("#s2id_catePropValueId").find("span").eq(0).text(catePropValue.value);
+                                $("#catePropValueId").append('<option selected="selected"   value="'+catePropValue.id+'">'+catePropValue.value+'</option>');
+
+                            }else {
+                                $("#catePropValueId").append('<option value="'+catePropValue.id+'">'+catePropValue.value+'</option>');
+                            }
+
+
+                        })
+
+                    })
+            }
 
             /**
              * 通过分类获取分类属性
@@ -77,11 +110,11 @@
                             var propId= propKeys[0];
                             var propName= propKeys[1]
                             $("#cateProp").append('<input class="select_all" id="'+propId+'" name="prodPropertyInfos" type="checkbox" value="'+propId+'" />'+propName+':<span id="span_'+propId+'"/><br/>')
-                                for(var p in values){
+                            for(var p in values){
                                 if(values[p].value!=null){
                                     $("#span_"+propId).append('<input id="value_'+values[p].propertyValueId+'" class="value_'+propId+'" name="propertyMap['+propId+'].prodPropertyValues" type="checkbox" value="'+values[p].propertyValueId+'" />'+values[p].value+'')
-								}
-							}
+                                }
+                            }
 
 
                         })
@@ -219,8 +252,10 @@
 		<li><a href="${ctx}/biz/product/bizProductInfo/">商品信息表列表</a></li>
 		<li class="active"><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">商品信息表<shiro:hasPermission name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
+    <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
 	<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+        <input type="text" id="cateValueId" value="${bizProductInfo.catePropValue.id}"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">商品名称：</label>
@@ -244,13 +279,7 @@
 			</div>
 		</div>
 
-		<div class="control-group">
-			<label class="control-label">请选择品牌:</label>
-			<div class="controls">
-				<from:select path="catePropValue.id" items="${catePropValueList}" itemLabel="value" itemValue="id" htmlEscape="false" class="input-xlarge required"/>
-								<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+
 
 		<div class="control-group">
 			<label class="control-label">商品描述：</label>
@@ -286,6 +315,17 @@
 				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 			</div>
 		</div>
+        <div class="control-group">
+            <label class="control-label">请选择品牌:</label>
+            <div class="controls">
+                <select id="catePropValueId" name="catePropValue.id" autofocus="autofocus" class="input-xlarge required" >
+                <option value="">请选择</option>
+            </select>
+
+
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
 
 		<div class="control-group">
 			<label class="control-label">商品属性：</label>

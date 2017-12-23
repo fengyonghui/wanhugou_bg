@@ -96,9 +96,22 @@ public class BizProdCateController extends BaseController {
 			String[] ids = StringUtils.split(catIds, ",");
 			bizProdCate.setCatIds(Lists.newArrayList(ids));
 		}
-		Map<String,List<BizCatePropValue>> map=bizProdCateService.findCatePropMap(bizProdCate);
+		Map<String,List<BizCatePropValue>> map=bizProdCateService.findCatePropMap4Page(bizProdCate);
 		return map;
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "findCatePropMap4Brand")
+	public List<BizCatePropValue> findCatePropMap4Brand(BizProdCate bizProdCate,String catIds){
+		if (catIds != null && !"".equals(catIds)){
+			String[] ids = StringUtils.split(catIds, ",");
+			bizProdCate.setCatIds(Lists.newArrayList(ids));
+		}
+		List<BizCatePropValue> list=bizProdCateService.findCatePropMap4Brand(bizProdCate);
+		return list;
+	}
+
+
 
 
 }
