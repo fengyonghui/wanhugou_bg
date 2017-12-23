@@ -136,7 +136,9 @@
 			id,
 			shelf_id,
 			sku_id,
-			center_id,
+			<if test="centerOffice != null and centerOffice.id != null ">
+                center_id,
+            </if>
 			shelf_user,
 			shelf_qty,
 			org_price,
@@ -157,7 +159,9 @@
 			#{id},
 			#{opShelfInfo.id},
 			#{skuInfo.id},
+        <if test="centerOffice != null and centerOffice.id != null ">
 			#{centerOffice.id},
+        </if>
 			#{createBy.id},
 			#{shelfQty},
 			#{orgPrice},
@@ -181,7 +185,9 @@
 		UPDATE biz_op_shelf_sku SET 	
 			shelf_id = #{opShelfInfo.id},
 			sku_id = #{skuInfo.id},
+        <if test="centerOffice != null and centerOffice.id != null ">
 			center_id = #{centerOffice.id},
+        </if>
 			shelf_user = #{shelfUser.id},
 			shelf_qty = #{shelfQty},
 			org_price = #{orgPrice},

@@ -78,11 +78,16 @@
 				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
 						${bizOpShelfSku.skuInfo.name}
 				</a></td>
-
 				<td>
-						${bizOpShelfSku.centerOffice.name}
+				<c:choose>
+					<c:when test="${bizOpShelfSku.centerOffice.id == 0}">
+						平台商品
+					</c:when>
+					<c:otherwise>
+								${bizOpShelfSku.centerOffice.name}
+					</c:otherwise>
+				</c:choose>
 				</td>
-
 				<td>
 						${bizOpShelfSku.shelfQty}
 				</td>
