@@ -49,8 +49,8 @@
 								title="sku名称"  url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"
 								cssClass="input-xlarge required"
 								allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
-					<span class="help-inline"><font color="red">*</font> </span>
 				</sys:treeselect>
+                <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -59,10 +59,12 @@
 					<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
                      labelValue="${bizOpShelfSku.centerOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                                     title="采购中心"  url="/sys/office/queryTreeList?type=8" extId="${centerOffice.id}"
-                                    cssClass="input-xlarge required"
+                                    cssClass="input-xlarge "
+                                    title="采购中心"
                                     allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
-					</sys:treeselect>
-				<span class="help-inline"><font color="red">*</font><font>( 0:代表平台商品)</font> </span>
+                    </sys:treeselect>
+				<span class="help-inline"> </span>
+
 			</div>
 		</div>
 
