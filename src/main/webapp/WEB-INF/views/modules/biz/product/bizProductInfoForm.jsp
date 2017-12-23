@@ -255,7 +255,7 @@
     <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
 	<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-        <input type="text" id="cateValueId" value="${bizProductInfo.catePropValue.id}"/>
+        <input type="hidden" id="cateValueId" value="${bizProductInfo.catePropValue.id}"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">商品名称：</label>
