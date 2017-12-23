@@ -18,6 +18,9 @@
 			<result property="name" column="office.name"/>
 			<result property="type" column="office.type"/>
 		</association>
+		<association property="propValue" javaType="PropValue" column="propValue.id">
+			<id property="id" column="propValue.id"/>
+		</association>
 		<association property="catePropValue" javaType="BizCatePropValue" column="catePropValue.id">
 			<id property="id" column="catePropValue.id"/>
 		</association>
@@ -38,7 +41,7 @@
 		a.id AS "id",
 		a.name AS "name",
 		a.prod_code AS "prodCode",
-		a.brand_id AS "catePropValue.id",
+		a.brand_id AS "propValue.id",
 		a.brand_name AS "brandName",
 		so.name AS "office.name",
 		so.type AS "office.type",

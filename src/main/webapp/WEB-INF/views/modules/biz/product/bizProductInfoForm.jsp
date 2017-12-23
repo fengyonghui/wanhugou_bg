@@ -247,7 +247,7 @@
 		<div class="control-group">
 			<label class="control-label">请选择品牌:</label>
 			<div class="controls">
-				<from:select path="catePropValue.id" items="${catePropValueList}" itemLabel="value" itemValue="id" htmlEscape="false" class="input-xlarge required"/>
+				<from:select path="propValue.id" items="${catePropValueList}" itemLabel="value" itemValue="id" htmlEscape="false" class="input-xlarge required"/>
 								<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
