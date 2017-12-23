@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderDao">
+    
+	<sql id="bizRequestHeaderColumns">
+		a.id AS "id",
+		a.req_no AS "reqNo",
+		a.req_type AS "reqType",
+		a.from_id AS "fromOffice.id",
+		a.to_id AS "toOffice.id",
+		so.name AS "fromOffice.name",
+		sot.name AS "toOffice.name",
+		a.recv_eta AS "recvEta",
+		a.remark AS "remark",
+		a.biz_status AS "bizStatus",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		suu.name AS "updateBy.name",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizRequestHeaderJoins">
+		LEFT JOIN sys_office so ON so.id=a.from_id
+		LEFT JOIN sys_office sot ON sot.id=a.to_id
+		LEFT JOIN sys_user suu ON suu.id=a.update_id
+	</sql>
+    
+	<select id="get" resultType="BizRequestHeader">
+		SELECT 
+			<include refid="bizRequestHeaderColumns"/>
+		FROM biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizRequestHeader">
+		SELECT 
+			<include refid="bizRequestHeaderColumns"/>
+		FROM biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="reqNo != null and reqNo != ''">
+				AND a.req_no = #{reqNo}
+			</if>
+			<if test="reqType != null and reqType != ''">
+				AND a.req_type = #{reqType}
+			</if>
+			<if test="fromOffice != null and fromOffice.id !=null and fromOffice.id != ''">
+				AND a.from_id = #{fromOffice.id}
+			</if>
+			<if test="recvEta != null and recvEta != ''">
+				AND a.recv_eta = #{recvEta}
+			</if>
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizRequestHeader">
+		SELECT 
+			<include refid="bizRequestHeaderColumns"/>
+		FROM biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_request_header(
+			id,
+			req_no,
+			req_type,
+			from_id,
+			to_id,
+			recv_eta,
+			remark,
+			biz_status,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{reqNo},
+			#{reqType},
+			#{fromOffice.id},
+			#{toOffice.id},
+			#{recvEta},
+			#{remark},
+			#{bizStatus},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_request_header SET 	
+			req_no = #{reqNo},
+			req_type = #{reqType},
+			from_id = #{fromOffice.id},
+			to_id = #{toOffice.id},
+			recv_eta = #{recvEta},
+			remark = #{remark},
+			biz_status = #{bizStatus},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_request_header SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

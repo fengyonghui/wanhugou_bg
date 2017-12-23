@@ -1,0 +1,117 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<html>
+<head>
+	<title>备货清单管理</title>
+	<meta name="decorator" content="default"/>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+		});
+		function page(n,s){
+			$("#pageNo").val(n);
+			$("#pageSize").val(s);
+			$("#searchForm").submit();
+        	return false;
+        }
+	</script>
+</head>
+<body>
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
+		<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><li><a href="${ctx}/biz/request/bizRequestHeader/form">备货清单添加</a></li></shiro:hasPermission>
+	</ul>
+	<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeader/" method="post" class="breadcrumb form-search">
+		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<ul class="ul-form">
+			<li><label>备货单号：</label>
+				<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
+			<li><label>备货类型：</label>
+				<form:select path="reqType" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('biz_req_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</li>
+			<li><label>采购中心：</label>
+				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
+								labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
+				</sys:treeselect>
+			</li>
+			<li><label>期望收货时间：</label>
+				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+			</li>
+			<li><label>业务状态：</label>
+				<form:select path="bizStatus" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
+			</li>
+			<%--<li><label>创建人：</label>--%>
+				<%--<form:input path="createBy.id" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
+			<%--</li>--%>
+			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="clearfix"></li>
+		</ul>
+	</form:form>
+	<sys:message content="${message}"/>
+	<table id="contentTable" class="table table-striped table-bordered table-condensed">
+		<thead>
+			<tr>
+				<th>备货单号</th>
+				<th>备货单类型</th>
+				<th>采购中心</th>
+				<th>备货中心</th>
+				<th>期望收货时间</th>
+				<th>备注</th>
+				<th>业务状态</th>
+				<th>更新人</th>
+				<th>更新时间</th>
+				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><th>操作</th></shiro:hasPermission>
+			</tr>
+		</thead>
+		<tbody>
+		<c:forEach items="${page.list}" var="bizRequestHeader">
+			<tr>
+				<td><a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizRequestHeader.id}">
+					${bizRequestHeader.reqNo}
+				</a></td>
+				<td>
+					${fns:getDictLabel(bizRequestHeader.reqType, 'biz_req_type', '未知类型')}
+				</td>
+				<td>
+					${bizRequestHeader.fromOffice.name}
+				</td>
+				<td>
+					${bizRequestHeader.toOffice.name}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+					${bizRequestHeader.remark}
+				</td>
+				<td>
+					${fns:getDictLabel(bizRequestHeader.bizStatus, 'biz_req_status', '未知类型')}
+				</td>
+				<td>
+					${bizRequestHeader.updateBy.name}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizRequestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
+    				<a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizRequestHeader.id}">修改</a>
+					<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${bizRequestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+				</td></shiro:hasPermission>
+			</tr>
+		</c:forEach>
+		</tbody>
+	</table>
+	<div class="pagination">${page}</div>
+</body>
+</html>
