@@ -11,7 +11,9 @@ import java.util.Map;
 import com.wanhutong.backend.modules.biz.dao.product.BizProdCateDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
+import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,8 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 	private BizCatePropValueService bizCatePropValueService;
 	@Resource
 	private PropertyInfoService propertyInfoService;
+	@Resource
+	private DefaultPropService defaultPropService;
 
 	public BizProdCate get(Integer id) {
 		return super.get(id);
@@ -58,10 +62,10 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 		super.delete(bizProdCate);
 	}
 
-	public Map<String,List<BizCatePropValue>> findCatePropMap(BizProdCate bizProdCate){
+	public Map<Integer,List<BizCatePropValue>> findCatePropMap(BizProdCate bizProdCate){
 		List<BizCatePropValue> catePropValueList=bizCatePropValueService.findCatePropInfoValue(bizProdCate);
 		Map<Integer,List<BizCatePropValue>> map = new HashMap<Integer,List<BizCatePropValue>>();
-		Map<String,List<BizCatePropValue>> propCateMap = new HashMap<String,List<BizCatePropValue>>();
+
 		List<BizCatePropValue>  propValueList=null;
 		for(BizCatePropValue bizCatePropValue:catePropValueList){
 			if(bizCatePropValue.getSource()!=null && bizCatePropValue.getSource().equals("sys")){
@@ -79,12 +83,36 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 				}
 			}
 		}
+		return map;
+	}
+
+	public Map<String,List<BizCatePropValue>> findCatePropMap4Page(BizProdCate bizProdCate){
+		Map<String,List<BizCatePropValue>> propCateMap = new HashMap<String,List<BizCatePropValue>>();
+		Map<Integer,List<BizCatePropValue>> map=findCatePropMap( bizProdCate);
 		for(Integer key :map.keySet()) {
 			PropertyInfo propertyInfo=propertyInfoService.get(key);
 			String sKey = propertyInfo.getId()+","+propertyInfo.getName();
 			propCateMap.put(sKey,map.get(key));
 		}
 		return propCateMap;
+	}
+	public List<BizCatePropValue> findCatePropMap4Brand(BizProdCate bizProdCate){
+		List<BizCatePropValue> brandList= new ArrayList<BizCatePropValue>();
+		Map<Integer,List<BizCatePropValue>> map=findCatePropMap( bizProdCate);
+		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("propBrand"));
+		if(list!=null && list.size()>0) {
+			DefaultProp defaultProp = list.get(0);
+			for (Integer key :map.keySet()) {
+			//	for(BizCatePropValue catePropValue:catePropValueList){
+					if(key==Integer.parseInt(defaultProp.getPropValue())){
+
+						brandList=	map.get(key);
+					}
+			//	}
+			}
+		}
+
+		return brandList;
 	}
 
 }

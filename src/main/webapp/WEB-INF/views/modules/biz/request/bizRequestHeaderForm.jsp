@@ -80,6 +80,15 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">增加商品：</label>
+			<div class="controls">
+				<button  type="button" class="btn btn-default">
+					<span class="icon-plus"></span>
+				</button>
+			</div>
+		</div>
+
+		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">
 				<form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>
@@ -95,6 +104,7 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
