@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.sys.dao.office.SysOfficeAddressDao">
+    
+	<sql id="sysOfficeAddressColumns">
+		a.id AS "id",
+		a.office_id AS "office.id",
+		o2.name AS "office.name",
+		a.addr_id AS "addrLocation.id",
+		cl.pcr_name as "addrLocation.name",
+		a.type AS "type",
+		a.default AS "deFault",
+		a.status AS "status",
+		a.create_id AS "createBy.id",
+		su.name as "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="sysOfficeAddressJoins">
+		LEFT JOIN sys_office o2 ON o2.id=a.office_id
+		left join sys_user su on su.id=a.create_id
+		LEFT JOIN common_location cl ON cl.id=a.addr_id
+	</sql>
+    
+	<select id="get" resultType="SysOfficeAddress">
+		SELECT 
+			<include refid="sysOfficeAddressColumns"/>
+		FROM sys_office_address a
+		<include refid="sysOfficeAddressJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysOfficeAddress">
+		SELECT 
+			<include refid="sysOfficeAddressColumns"/>
+		FROM sys_office_address a
+		<include refid="sysOfficeAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="office != null and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="addrLocation != null and addrLocation.id != null and addrLocation.id != ''">
+				AND a.addr_id = #{addrLocation.id}
+			</if>
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="deFault != null and deFault != ''">
+				AND a.default = #{deFault}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
+				AND a.update_id = #{updateBy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysOfficeAddress">
+		SELECT 
+			<include refid="sysOfficeAddressColumns"/>
+		FROM sys_office_address a
+		<include refid="sysOfficeAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_office_address(
+			id,
+			office_id,
+			addr_id,
+			type,
+			default,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{office.id},
+			#{addrLocation.id},
+			#{type},
+			#{deFault},
+			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_office_address SET 	
+			office_id = #{office.id},
+			addr_id = #{addrLocation.id},
+			type = #{type},
+			default = #{deFault},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_office_address SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
