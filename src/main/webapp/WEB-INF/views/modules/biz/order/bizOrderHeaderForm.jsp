@@ -158,6 +158,7 @@
             <label class="control-label">详细地址；</label>
             <div class="controls">
                 <input type="text" id="address" htmlEscape="false" class="input-xlarge required"/>
+                 <%--<form:input path="bizLocation"  htmlEscape="false" class="input-xlarge required"/>--%>
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
