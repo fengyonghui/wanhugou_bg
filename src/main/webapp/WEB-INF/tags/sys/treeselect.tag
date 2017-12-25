@@ -70,6 +70,7 @@
 					}
 					$("#${id}Id").val(ids.join(",").replace(/u_/ig,""));
 					$("#${id}Name").val(names.join(","));
+                    ${onchange!=null?onchange:null}
 				}//<c:if test="${allowClear}">
 				else if (v=="clear"){
 					$("#${id}Id").val("");

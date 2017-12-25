@@ -26,9 +26,11 @@
 		});
 		 function clickBut(){
 		 alert("---测试");
+		 var officeId=$('#officeId').val();
+		 alert(officeId)
             $.ajax({
                 type:"post",
-                url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id=$(this).val()",
+                url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
                 success:function(data){
                     console(data);
                 }
