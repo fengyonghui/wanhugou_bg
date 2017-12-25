@@ -25,23 +25,41 @@
 			});
 		});
 		 function clickBut(){
-		 alert("---测试");
 		 var officeId=$('#officeId').val();
-		 alert(officeId)
             $.ajax({
                 type:"post",
                 url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
+                dataType:"json",
                 success:function(data){
-                    console(data);
+                   $.each(data,function(index,address){
+                        console.log(address.bizLocation);
+                        var option=$("<option/>").text(address.bizLocation.province.name).val(address.bizLocation.province.name);
+                        $("#province").append(option);
+                       /* $("#province").val(address.bizLocation.province);
+                        $("#city").val(address.bizLocation.city);
+                        $("#region").val(address.bizLocation.region);
+                        $("#address").val(address.bizLocation.address);*/
+                   });
+                   //当省份的数据加载完毕之后 默认选中第一个遍历出来的省份信息   只需要直接执行省份的改变即可
+                   $("#province").change();
                 }
             });
+          /*  //给省绑定改变事件
+            $("#province").change(function(){
+                $("#city").empty();
+                    //获取当前选中省份的编号
+                    var code = $(this).val();
+                    //根据省的编号查询当前省份下的所有城市
+                    $.post("${ctx}/sys/office/sysOfficeAddress/findAddrByOffice",{"provinceCode":code},function(result){
+                        console.log(result+"-----测试2----");
+                    })*/
          }
 	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
-		<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">订单信息<shiro:hasPermission name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/formcid=${bizOrderHeader.id}">订单信息<shiro:hasPermission name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -126,11 +144,20 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<%--<biz:selectLocationForm/>地区--%>
         <div class="control-group">
             <label class="control-label">收货地址；</label>
             <div class="controls">
-                <form:input path="platformInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                 <select id="province" class="input-medium" name="dept" style="width:200px;"></select>
+                 <select id="city" class="easyui-combobox input-medium" name="dept" style="width:200px;"></select>
+                 <select id="region" class="easyui-combobox input-medium" name="dept" style="width:200px;"></select>
+                <%--<form:input path="bizLocation"  htmlEscape="false" class="input-xlarge required"/>--%>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">详细地址；</label>
+            <div class="controls">
+                <input type="text" id="address" htmlEscape="false" class="input-xlarge required"/>
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
