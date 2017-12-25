@@ -21,6 +21,7 @@
 <%@ attribute name="smallBtn" type="java.lang.Boolean" required="false" description="缩小按钮显示"%>
 <%@ attribute name="hideBtn" type="java.lang.Boolean" required="false" description="是否显示按钮"%>
 <%@ attribute name="disabled" type="java.lang.String" required="false" description="是否限制选择，如果限制，设置为disabled"%>
+<%@ attribute name="onchange"  required="false" rtexprvalue="true" %>
 <%@ attribute name="dataMsgRequired" type="java.lang.String" required="false" description=""%>
 <div class="input-append">
 	<input id="${id}Id" name="${name}" class="${cssClass}" type="hidden" value="${value}"/>

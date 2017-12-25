@@ -175,6 +175,16 @@ public class OfficeController extends BaseController {
 		}
 		return mapList;
 	}
+
+	@RequestMapping("queryTreeList2")
+	public String getImgTreeList2(String type2) {
+		//处理参数
+		System.out.println(type2);
+		System.out.println("------------------------------");
+		return "成功";
+	}
+
+
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "queryTreeList")

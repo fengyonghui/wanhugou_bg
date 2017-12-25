@@ -25,19 +25,16 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>地址一：</label>
+			<li><label>机构名称：</label>
 				<sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}" labelName="office.name" labelValue="${sysOfficeAddress.office.name}"
-					title="名称" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+					title="名称" url="/sys/office/treeData?type=2" cssClass="input-xlarge" allowClear="true" notAllowSelectParent="true"/>
 			</li>
-			<li><label>地址类型：</label>
+			<%--<li><label>地址类型：</label>
                  <form:select path="type" class="input-medium required">
                         <form:option value="" label="请选择"/>
                         <form:options items="${fns:getDictList('office_type')}" itemLabel="label" itemValue="value"
                         htmlEscape="false"/></form:select>
-			</li>
-			<li><label>初始值：</label>
-				<form:input path="deFault" htmlEscape="false" maxlength="1" class="input-medium"/>
-			</li>
+			</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -46,11 +43,10 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>地址一</th>
-				<th>地址二</th>
+				<th>机构名称</th>
+				<th>详细地址</th>
 				<th>地址类型</th>
-				<th>初始值</th>
-				<th>活跃度</th>
+				<th>是否默认</th>
 				<th>创建人</th>
 				<th>创建时间</th>
 				<shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><th>操作</th></shiro:hasPermission>
@@ -63,22 +59,19 @@
 					${sysOfficeAddress.office.name}
 				</a></td>
 				<td>
-					${sysOfficeAddress.addrLocation.id}
+					${sysOfficeAddress.bizLocation.pcrName}${sysOfficeAddress.bizLocation.address}
 				</td>
 				<td>
-					${sysOfficeAddress.type}
+					${fns:getDictLabel(sysOfficeAddress.type, 'office_type', '未知类型')}
 				</td>
 				<td>
-					${sysOfficeAddress.deFault}
+					${fns:getDictLabel(sysOfficeAddress.deFault, 'sysadd_deFault', '未知状态')}
 				</td>
 				<td>
-					${fns:getDictLabel(sysOfficeAddress.status, 'status', '')}
+					${sysOfficeAddress.createBy.name}
 				</td>
 				<td>
-					${sysOfficeAddress.createBy.id}
-				</td>
-				<td>
-					${sysOfficeAddress.createDate}
+					<fmt:formatDate value="${sysOfficeAddress.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><td>
     				<a href="${ctx}/sys/office/sysOfficeAddress/form?id=${sysOfficeAddress.id}">修改</a>

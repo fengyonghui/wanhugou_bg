@@ -22,10 +22,9 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	
 	private static final long serialVersionUID = 1L;
 	private Office office;		// sys_office.id
-	private CommonLocation addrLocation;		// common_location.id
+	private CommonLocation bizLocation;		// common_location.id
 	private Integer type;		// 1: 收货地址；2 公司地址；
 	private Integer deFault;		// 1: 默认； 0：非默认
-	private Integer status;		// 1:active; 0:inactive
 
 	public SysOfficeAddress() {
 		super();
@@ -44,12 +43,12 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 		this.office = office;
 	}
 
-	public CommonLocation getAddrLocation() {
-		return addrLocation;
+	public CommonLocation getBizLocation() {
+		return bizLocation;
 	}
 
-	public void setAddrLocation(CommonLocation addrLocation) {
-		this.addrLocation = addrLocation;
+	public void setBizLocation(CommonLocation bizLocation) {
+		this.bizLocation = bizLocation;
 	}
 
 	public Integer getType() {
@@ -68,11 +67,4 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 		this.deFault = deFault;
 	}
 
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
 }

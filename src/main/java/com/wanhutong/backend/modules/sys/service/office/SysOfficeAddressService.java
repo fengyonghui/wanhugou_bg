@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.sys.service.office;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ import com.wanhutong.backend.modules.sys.dao.office.SysOfficeAddressDao;
 @Service
 @Transactional(readOnly = true)
 public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, SysOfficeAddress> {
+	@Autowired
+	private CommonLocationService commonLocationService;
 
 	public SysOfficeAddress get(Integer id) {
 		return super.get(id);
@@ -36,6 +40,9 @@ public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, Sy
 	
 	@Transactional(readOnly = false)
 	public void save(SysOfficeAddress sysOfficeAddress) {
+		if(sysOfficeAddress.getBizLocation()!=null){
+			commonLocationService.updateCommonLocation(sysOfficeAddress.getBizLocation());
+		}
 		super.save(sysOfficeAddress);
 	}
 	

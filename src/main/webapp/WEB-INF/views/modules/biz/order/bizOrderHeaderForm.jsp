@@ -24,6 +24,16 @@
 				}
 			});
 		});
+		 function clickBut(){
+		 alert("---测试");
+            $.ajax({
+                type:"post",
+                url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id=$(this).val()",
+                success:function(data){
+                    console(data);
+                }
+            });
+         }
 	</script>
 </head>
 <body>
@@ -61,9 +71,8 @@
 			<div class="controls">
                 <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
                                 labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-                                title="客户"  url="/sys/office/queryTreeList?type=6"
-                                cssClass="input-xlarge required"
-                                allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+                                title="客户"  url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+                                allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -115,8 +124,14 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<biz:selectLocationForm/>
-
+		<%--<biz:selectLocationForm/>地区--%>
+        <div class="control-group">
+            <label class="control-label">收货地址；</label>
+            <div class="controls">
+                <form:input path="platformInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="选购商品"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

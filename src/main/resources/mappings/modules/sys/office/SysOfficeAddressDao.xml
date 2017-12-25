@@ -6,11 +6,17 @@
 		a.id AS "id",
 		a.office_id AS "office.id",
 		o2.name AS "office.name",
-		a.addr_id AS "addrLocation.id",
-		cl.pcr_name as "addrLocation.name",
+		a.addr_id AS "bizLocation.id",
+		c.province_id as "bizLocation.province.id",
+		province.name as "bizLocation.province.name",
+		c.city_id as "bizLocation.city.id",
+		city.name as "bizLocation.city.name",
+		c.region_id as "bizLocation.region.id",
+		reg.name as "bizLocation.region.name",
+		c.address as "bizLocation.address",
 		a.type AS "type",
 		a.default AS "deFault",
-		a.status AS "status",
+		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		su.name as "createBy.name",
 		a.create_time AS "createDate",
@@ -22,7 +28,10 @@
 	<sql id="sysOfficeAddressJoins">
 		LEFT JOIN sys_office o2 ON o2.id=a.office_id
 		left join sys_user su on su.id=a.create_id
-		LEFT JOIN common_location cl ON cl.id=a.addr_id
+		LEFT JOIN common_location c ON c.id=a.addr_id
+		 LEFT JOIN sys_region province ON c.province_id = province.id
+        LEFT JOIN sys_region city ON c.city_id = city.id
+        LEFT JOIN sys_region reg ON c.region_id = reg.id
 	</sql>
     
 	<select id="get" resultType="SysOfficeAddress">
@@ -43,8 +52,8 @@
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
-			<if test="addrLocation != null and addrLocation.id != null and addrLocation.id != ''">
-				AND a.addr_id = #{addrLocation.id}
+			<if test="bizLocation != null and bizLocation.id != null and bizLocation.id != ''">
+				AND a.addr_id = #{bizLocation.id}
 			</if>
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
@@ -52,8 +61,8 @@
 			<if test="deFault != null and deFault != ''">
 				AND a.default = #{deFault}
 			</if>
-			<if test="status != null and status != ''">
-				AND a.status = #{status}
+			<if test="delFlag != null and delFlag != ''">
+				AND a.status = #{delFlag}
 			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_id = #{createBy.id}
@@ -93,8 +102,8 @@
 			id,
 			office_id,
 			addr_id,
-			type,
-			default,
+			`type`,
+			`default`,
 			status,
 			create_id,
 			create_time,
@@ -104,10 +113,10 @@
 		) VALUES (
 			#{id},
 			#{office.id},
-			#{addrLocation.id},
+			#{bizLocation.id},
 			#{type},
 			#{deFault},
-			#{status},
+			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -119,10 +128,9 @@
 	<update id="update">
 		UPDATE sys_office_address SET 	
 			office_id = #{office.id},
-			addr_id = #{addrLocation.id},
-			type = #{type},
-			default = #{deFault},
-			create_time = #{createDate},
+			addr_id = #{bizLocation.id},
+			`type` = #{type},
+			`default` = #{deFault},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

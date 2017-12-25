@@ -22,6 +22,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 
+import java.util.List;
+
 /**
  * 地址管理(公司+详细地址)Controller
  * @author OuyangXiutian
@@ -45,7 +47,14 @@ public class SysOfficeAddressController extends BaseController {
 		}
 		return entity;
 	}
-	
+
+	@RequiresPermissions("sys:office:sysOfficeAddress:view")
+	@RequestMapping(value = "findAddrByOffice")
+	public List<SysOfficeAddress> findAddrByOffice(SysOfficeAddress sysOfficeAddress, HttpServletRequest request, HttpServletResponse response, Model model) {
+		List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
+		return list;
+	}
+
 	@RequiresPermissions("sys:office:sysOfficeAddress:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(SysOfficeAddress sysOfficeAddress, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -57,7 +66,7 @@ public class SysOfficeAddressController extends BaseController {
 	@RequiresPermissions("sys:office:sysOfficeAddress:view")
 	@RequestMapping(value = "form")
 	public String form(SysOfficeAddress sysOfficeAddress, Model model) {
-		model.addAttribute("sysOfficeAddress", sysOfficeAddress);
+		model.addAttribute("entity", sysOfficeAddress);
 		return "modules/sys/office/sysOfficeAddressForm";
 	}
 

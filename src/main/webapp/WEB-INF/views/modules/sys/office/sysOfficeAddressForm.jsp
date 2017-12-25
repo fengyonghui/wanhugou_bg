@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
 <head>
 	<title>地址信息管理</title>
@@ -34,18 +35,10 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">地址一：</label>
+			<label class="control-label">机构名称：</label>
 			<div class="controls">
-                 <sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}" labelName="office.name" labelValue="${sysOfficeAddress.office.name}"
-                        title="名称" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">地址二：</label>
-			<div class="controls">
-			    <input type="text" value="${sysOfficeAddress.addrLocation}">
-				<form:input path="addrLocation" value="${office.id}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                 <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.name" labelValue="${entity.office.name}"
+                        title="名称" url="/sys/office/treeData?type=2" cssClass="input-small required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -59,11 +52,12 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		 <biz:selectLocationForm/>
 		<div class="control-group">
-			<label class="control-label">初始值：</label>
+			<label class="control-label">设为默认：</label>
 			<div class="controls">
-				<form:input path="deFault" htmlEscape="false" maxlength="1" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+                <form:input path="deFault" htmlEscape="false" maxlength="1" class="input-medium required"/>
+				<span class="help-inline"><font color="red">*</font>0(非默认)，1(默认)</span>
 			</div>
 		</div>
 

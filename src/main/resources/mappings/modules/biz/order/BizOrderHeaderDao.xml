@@ -41,6 +41,7 @@
         LEFT JOIN sys_region reg ON c.region_id = reg.id
 		left join sys_user su on a.create_id=su.id
 		left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
+
 	</sql>
     
 	<select id="get" resultType="BizOrderHeader">
