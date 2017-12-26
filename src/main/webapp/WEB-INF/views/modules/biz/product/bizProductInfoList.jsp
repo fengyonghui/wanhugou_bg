@@ -45,6 +45,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>商品图片</th>
 				<th>商品名称</th>
 				<th>商品代码</th>
 				<th>品牌名称</th>
@@ -59,6 +60,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizProductInfo">
 			<tr>
+				<td><img src="${bizProductInfo.imgUrl}"/></td>
 				<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">
 					${bizProductInfo.name}
 				</a></td>

@@ -3,9 +3,15 @@
  */
 package com.wanhutong.backend.modules.biz.entity.request;
 
+import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.NotNull;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -27,6 +33,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Date recvEta;		// 期望收货时间
 	private String remark;		// 备注
 	private Byte bizStatus;		// 业务状态：0未审核 1审核通过 2备货中 3 完成 4关闭
+	private String skuIds;
+	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
+	private BizProductInfo productInfo;
+
+	private List<BizRequestDetail> requestDetailList;
 	
 	public BizRequestHeader() {
 		super();
@@ -95,5 +106,50 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setBizStatus(Byte bizStatus) {
 		this.bizStatus = bizStatus;
+	}
+
+	public String getSkuIds() {
+		skuIds= StringUtils.join(getSkuIdList(), ",");
+		return skuIds;
+	}
+	public List<Integer> getSkuIdList() {
+		List<Integer> skuIdList = Lists.newArrayList();
+		for (BizSkuInfo skuInfo : skuInfoList) {
+			skuIdList.add(skuInfo.getId());
+		}
+		return skuIdList;
+	}
+
+	public List<BizRequestDetail> getRequestDetailList() {
+		return requestDetailList;
+	}
+
+	public void setRequestDetailList(List<BizRequestDetail> requestDetailList) {
+		this.requestDetailList = requestDetailList;
+	}
+
+	public void setSkuIds(String skuIds) {
+		skuInfoList = Lists.newArrayList();
+		if (skuIds != null){
+			String[] ids = StringUtils.split(skuIds, ",");
+			setSkuIdList(Lists.newArrayList(ids));
+		}
+		this.skuIds = skuIds;
+	}
+	public void setSkuIdList(List<String> skuIdList) {
+		skuInfoList = Lists.newArrayList();
+		for (String skuId : skuIdList) {
+			BizSkuInfo skuInfo = new BizSkuInfo();
+			skuInfo.setId(Integer.valueOf(skuId));
+			skuInfoList.add(skuInfo);
+		}
+	}
+
+	public BizProductInfo getProductInfo() {
+		return productInfo;
+	}
+
+	public void setProductInfo(BizProductInfo productInfo) {
+		this.productInfo = productInfo;
 	}
 }

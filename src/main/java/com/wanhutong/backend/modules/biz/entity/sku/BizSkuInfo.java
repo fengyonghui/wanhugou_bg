@@ -41,6 +41,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	private Map<String,BizProdPropertyInfo> prodPropMap;
 
+	private List<String> skuIds;
+
 
 	private int sign;//sku删除返回的标志
 	public BizSkuInfo() {
@@ -147,5 +149,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setPhotos(String photos) {
 		this.photos = photos;
+	}
+
+	public List<String> getSkuIds() {
+		return skuIds;
+	}
+
+	public void setSkuIds(List<String> skuIds) {
+		this.skuIds = skuIds;
 	}
 }

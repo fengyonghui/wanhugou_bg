@@ -4,8 +4,10 @@
     
 	<sql id="bizProdCateColumns">
 		a.id AS "id",
-		a.prod_id AS "prodId",
-		a.cat_id AS "catId",
+		a.prod_id AS "productInfo.id",
+		a.cat_id AS "categoryInfo.id",
+		ci.name AS "categoryInfo.name",
+		p.name AS "parent.name",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -15,6 +17,9 @@
 	</sql>
 	
 	<sql id="bizProdCateJoins">
+		LEFT JOIN biz_category_info ci ON a.cat_id = ci.id
+		LEFT JOIN biz_category_info p ON p.id = ci.p_id
+		LEFT JOIN biz_product_info pi on pi.id=a.prod_id
 	</sql>
     
 	<select id="get" resultType="BizProdCate">
@@ -32,6 +37,12 @@
 		<include refid="bizProdCateJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="productInfo!=null and productInfo.id!=null and productInfo.id !=''">
+				and a.prod_id = #{productInfo.id}
+			</if>
+			<if test="categoryInfo!=null and categoryInfo.id!=null and categoryInfo.id !=''">
+				and a.cat_id = #{categoryInfo.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

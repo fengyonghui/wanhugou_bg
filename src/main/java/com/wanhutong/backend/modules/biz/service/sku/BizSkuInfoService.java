@@ -3,19 +3,28 @@
  */
 package com.wanhutong.backend.modules.biz.service.sku;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdCate;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.product.BizProdCateService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +54,12 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	private CommonImgService commonImgService;
 	@Autowired
 	private BizSkuInfoDao bizSkuInfoDao;
+	@Autowired
+	private BizProductInfoDao bizProductInfoDao;
+	@Autowired
+	private BizProdCateService bizProdCateService;
+	@Autowired
+	private OfficeService officeService;
 
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
@@ -57,6 +72,43 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		return null;
 	}
 
+	public List<BizSkuInfo> findListForProd(BizSkuInfo bizSkuInfo) {
+		List<BizSkuInfo> list=new ArrayList<BizSkuInfo>();
+		List<BizSkuInfo> skuInfoList=super.findList(bizSkuInfo);
+		for(BizSkuInfo skuInfo:skuInfoList){
+			BizSkuInfo info=findListProd(skuInfo);
+			list.add(info);
+		}
+
+		return list;
+	}
+
+	/**
+	 * 返回SKU获取SKU组合数据
+	 * @param skuInfo
+	 * @return
+	 */
+	public BizSkuInfo findListProd(BizSkuInfo skuInfo){
+		Integer prodId=	skuInfo.getProductInfo().getId();
+		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
+		Office office=officeService.get(bizProductInfo.getOffice().getId());
+		bizProductInfo.setOffice(office);
+		BizProdCate bizProdCate=new BizProdCate();
+		bizProdCate.setProductInfo(bizProductInfo);
+		List<BizCategoryInfo> categoryInfos= Lists.newArrayList();
+		List<BizProdCate> prodCateList=bizProdCateService.findList(bizProdCate);
+		for(BizProdCate prodCate:prodCateList){
+			categoryInfos.add(prodCate.getCategoryInfo());
+		}
+		bizProductInfo.setCategoryInfoList(categoryInfos);
+		skuInfo.setProductInfo(bizProductInfo);
+		return skuInfo;
+
+	}
+
+ public  List<BizSkuInfo> findAllList(){
+		return bizSkuInfoDao.findAllList(new BizSkuInfo());
+ }
 
 	public Page<BizSkuInfo> findPage(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
 		return super.findPage(page, bizSkuInfo);

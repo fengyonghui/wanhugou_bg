@@ -17,7 +17,11 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		su.name AS "updateBy.name",
-		bpi.name AS "productInfo.name"
+		bpi.name AS "productInfo.name",
+		bpi.img_url AS "productInfo.imgUrl",
+		bpi.brand_name AS "productInfo.brandName",
+		bpi.prod_code AS "productInfo.prodCode",
+		bpi.vendor_id AS "productInfo.office.id"
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
@@ -57,6 +61,13 @@
 			</if>
 			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
 				AND a.prod_id =#{productInfo.id}
+			</if>
+			<if test="skuIds!=null and skuIds!='' and skuIds.size()!=0">
+				and a.id in
+				<foreach collection="skuIds" item="skuId" index="index"
+						 open="(" close=")" separator=",">
+					#{skuId}
+				</foreach>
 			</if>
 		</where>
 		<choose>

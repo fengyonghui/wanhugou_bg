@@ -106,9 +106,13 @@ public class BizProdCateController extends BaseController {
 		if (catIds != null && !"".equals(catIds)){
 			String[] ids = StringUtils.split(catIds, ",");
 			bizProdCate.setCatIds(Lists.newArrayList(ids));
+			List<BizCatePropValue> list=bizProdCateService.findCatePropMap4Brand(bizProdCate);
+			return list;
+		}else {
+			return null;
 		}
-		List<BizCatePropValue> list=bizProdCateService.findCatePropMap4Brand(bizProdCate);
-		return list;
+
+
 	}
 
 

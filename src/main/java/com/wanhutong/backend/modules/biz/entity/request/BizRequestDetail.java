@@ -22,7 +22,7 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizRequestHeader requestHeader;		// biz_request_header.id
-	private String lineNo;		// 行号
+	private Integer lineNo;		// 行号
 	private BizSkuInfo skuInfo;		// biz_sku_info.id
 	private Integer reqQty;		// 请求数量
 	private Integer recvQty;		// 收货数量
@@ -38,17 +38,14 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	}
 
 
-	
-	@Length(min=1, max=11, message="行号长度必须介于 1 和 11 之间")
-	public String getLineNo() {
+	public Integer getLineNo() {
 		return lineNo;
 	}
 
-	public void setLineNo(String lineNo) {
+	public void setLineNo(Integer lineNo) {
 		this.lineNo = lineNo;
 	}
 
-	
 	@Length(min=0, max=200, message="备注长度必须介于 0 和 200 之间")
 	public String getRemark() {
 		return remark;

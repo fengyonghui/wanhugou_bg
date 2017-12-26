@@ -120,6 +120,17 @@ public class BizSkuInfoController extends BaseController {
         }
 		return "redirect:"+Global.getAdminPath()+"//biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
 	}
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findSkuList")
+	public List<BizSkuInfo> findSkuList(BizSkuInfo bizSkuInfo, String skuIds){
+		if (skuIds != null && !"".equals(skuIds)){
+			String[] ids =StringUtils.split(skuIds, ",");
+			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
+		}
+		List<BizSkuInfo> list=bizSkuInfoService.findListForProd(bizSkuInfo);
+		return list;
+	}
 
 
 

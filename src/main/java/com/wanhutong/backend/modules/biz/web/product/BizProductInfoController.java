@@ -90,16 +90,6 @@ public class BizProductInfoController extends BaseController {
 	@RequiresPermissions("biz:product:bizProductInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizProductInfo bizProductInfo, Model model) {
-//		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("propBrand"));
-//
-//		List<BizCatePropValue> catePropValueList=null;
-//		if(list!=null && list.size()>0){
-//			DefaultProp defaultProp=list.get(0);
-//			BizCatePropertyInfo bizCatePropertyInfo=bizCatePropertyInfoService.get(Integer.parseInt(defaultProp.getPropValue()));
-//			BizCatePropValue bizCatePropValue=new BizCatePropValue();
-//			bizCatePropValue.setCatePropertyInfo(bizCatePropertyInfo);
-//			catePropValueList=bizCatePropValueService.findList(bizCatePropValue);
-//		}
 		CommonImg commonImg=new CommonImg();
 		commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
 		commonImg.setObjectId(bizProductInfo.getId());
@@ -123,7 +113,6 @@ public class BizProductInfoController extends BaseController {
 				bizProductInfo.setPhotoDetails(photoDetails);
 			}
 		}
-			//model.addAttribute("catePropValueList",catePropValueList);
 			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
 			model.addAttribute("entity", bizProductInfo);
