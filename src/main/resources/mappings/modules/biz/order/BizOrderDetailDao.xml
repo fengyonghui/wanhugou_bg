@@ -5,22 +5,28 @@
 	<sql id="bizOrderDetailColumns">
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
+		boh.order_num as "orderHeader.orderNum",
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
-		a.sku_no AS "skuNo",
+		a.sku_no AS "skuInfo.id",
+		bsi.name as "skuInfo.name",
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
 		a.unit_price AS "unitPrice",
-		a.ord_qty AS "ordQty"
-		/*a.create_id AS "createBy.id",
+		a.sent_qty as "sentQty",
+		a.ord_qty AS "ordQty",
+		a.create_id AS "createBy.id",
 		su.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"*/
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizOrderDetailJoins">
+		left join sys_user su on a.create_id=su.id
+		left join biz_sku_info bsi on a.sku_no=bsi.id
+		left join biz_order_header boh on a.order_id=boh.id
 	</sql>
     
 	<select id="get" resultType="BizOrderDetail">
@@ -38,7 +44,7 @@
 		<include refid="bizOrderDetailJoins"/>
 		<where>
 			
-			<if test="orderHeader != null and orderHeader != null and orderHeader !=''">
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
 				AND a.order_id = #{orderHeader.id}
 			</if>
 			<if test="lineNo != null and lineNo != ''">
@@ -47,18 +53,18 @@
 			<if test="pLineNo != null and pLineNo != ''">
 				AND a.p_line_no = #{pLineNo}
 			</if>
-			<if test="skuNo != null and skuNo != ''">
-				AND a.sku_no = #{skuNo}
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.sku_no = #{skuInfo.id}
 			</if>
-			<!--<if test="createId != null and createId.id != null and createId.id != ''">
-				AND a.create_id = #{createId.id}
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
 			</if>
 			<if test="uVersion != null and uVersion != ''">
 				AND a.u_version = #{uVersion}
 			</if>
-			<if test="updateId != null and updateId.id != null and updateId.id != ''">
-				AND a.update_id = #{updateId.id}
-			</if>-->
+			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
+				AND a.update_id = #{updateBy.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -96,6 +102,7 @@
 			part_no,
 			sku_name,
 			unit_price,
+			sent_qty,
 			ord_qty,
 			create_id,
 			create_time,
@@ -107,10 +114,11 @@
 			#{orderHeader.id},
 			#{lineNo},
 			#{pLineNo},
-			#{skuNo},
+			#{skuInfo.id},
 			#{partNo},
 			#{skuName},
 			#{unitPrice},
+			#{sentQty},
 			#{ordQty},
 			#{createBy.id},
 			#{createDate},
@@ -125,10 +133,11 @@
 			order_id = #{orderHeader.id},
 			line_no = #{lineNo},
 			p_line_no = #{pLineNo},
-			sku_no = #{skuNo},
+			sku_no = #{skuInfo.id},
 			part_no = #{partNo},
 			sku_name = #{skuName},
 			unit_price = #{unitPrice},
+			sent_qty = #{sentQty},
 			ord_qty = #{ordQty},
 			create_time = #{createDate},
 			u_version = #{uVersion},

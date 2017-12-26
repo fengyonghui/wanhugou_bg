@@ -35,7 +35,7 @@
 				<form:input path="pLineNo" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>biz_sku_info.id：</label>
-				<form:input path="skuNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.id" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -61,7 +61,7 @@
 		<c:forEach items="${page.list}" var="bizOrderDetail">
 			<tr>
 				<td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">
-					${bizOrderDetail.orderHeader}
+					${bizOrderDetail.orderHeader.id}
 				</a></td>
 				<td>
 					${bizOrderDetail.lineNo}
@@ -70,7 +70,7 @@
 					${bizOrderDetail.pLineNo}
 				</td>
 				<td>
-					${bizOrderDetail.skuNo}
+					${bizOrderDetail.skuInfo.id}
 				</td>
 				<td>
 					${bizOrderDetail.partNo}

@@ -22,7 +22,27 @@
 					}
 				}
 			});
+			if($("#id").val()!=""){
+                clickSuk();
+            }
 		});
+		/*function clickSuk(){
+             var skuNameId=$('#skuNameId').val();
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/biz/order/bizOrderDetail/findSysBySku?skuInfo.id="+skuNameId,
+                    dataType:"json",
+                    success:function(data){
+                    console.log(JSON.stringify(data)+"测试");
+                       $.each(data,function(index,add){
+                             console.log(add);
+                            console.log(add.skuInfo.id);
+                          //  $("#sku").val(add.skuInfo.id);
+                       });
+                      // $("#sku").change();
+                    }
+                });
+            }*/
 	</script>
 </head>
 <body>
@@ -34,19 +54,39 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
+            <label class="control-label">订单表ID：</label>
+            <div class="controls"><%--不可编辑标签属性 disabled="true" placeholder="系统生成"--%>
+                <form:input path="orderHeader.id"  htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">订单行情号：</label>
+            <div class="controls">
+                <form:input path="lineNo" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font></span>
+            </div>
+        </div>
+		<div class="control-group">
             <label class="control-label">sku商品名称：</label>
                 <div class="controls">
-                    <sys:treeselect id="skuName" name="skuInfo.id" value="${bizOpShelfSku.skuProd.id}" labelName="skuInfo.name"
+                    <sys:treeselect id="skuName" name="skuName" value="${bizOpShelfSku.skuProd.id}" labelName="skuName"
                             labelValue="${bizOpShelfSku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                             title="商品名称"  url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"
-                            cssClass="input-xlarge required"
+                            cssClass="input-xlarge required" onchange="clickSuk();"
                             allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
                         <span class="help-inline"><font color="red">*</font> </span>
                     </sys:treeselect>
                 </div>
 		</div>
+         <div class="control-group">
+            <label class="control-label">sku商品ID：</label>
+            <div class="controls">
+                <form:input path="skuInfo.id" id="sku" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
 		<div class="control-group">
-			<label class="control-label">商品编号：</label>
+			<label class="control-label">商品编码：</label>
 			<div class="controls">
 				<form:input path="partNo" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -55,8 +95,7 @@
 		<div class="control-group">
             <label class="control-label">商品单价：</label>
             <div class="controls">
-                <form:input path="unitPrice" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font> </span>
+                <form:input path="unitPrice" disabled="true" value="11" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
             </div>
 		</div>
 		<div class="control-group">
@@ -66,46 +105,71 @@
 				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
-    	<div class="breadcrumb">
-    		<input id="assignButton" class="btn btn-primary" type="button" value="保存商品"/>
-    		<input type="reset" style="display:none;" />
-    		<script type="text/javascript">
-    		  $(function(){
-                  $("#assignButton").click(function(){
-                      if($("#skuNameName").val()!="" && $("#partNo").val()!="" && $("#unitPrice").val()!="" && $("#ordQty").val()!=""){
-                        var html="<tr><td>1</td>"
-                                    +"<td>"+$("#skuNameName").val()+"</td>"
-                                    +"<td>"+$("#partNo").val()+"</td>"
-                                    +"<td>"+$("#unitPrice").val()+"</td>"
-                                    +"<td>"+$("#ordQty").val()+"</td>"
-                                    +"<td><a href='#' onclick='delRow(this)'>移除</a></td></tr>";
-                         $("#contentTable2").append(html);
-                      }
-                  });$("input[type=reset]").trigger("click");
-            });
-            //删除行
-            function delRow(obj){
-                var Row=obj.parentNode;
-                var Row=obj.parentNode; //tr
-                while(Row.tagName.toLowerCase()!="tr"){
-                    Row=Row.parentNode;
-                }
-                Row.parentNode.removeChild(Row); //删除行
-            }
-    		</script>
-    	</div>
-    	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-    		<thead><tr><th>订单详情行号</th><th>sku商品名称</th><th>商品编号</th><th>商品单价</th><th>采购数量</th><shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
-    		<tbody id="contentTable2">
-    		<c:forEach items="${userList}" var="user"></c:forEach>
-    		</tbody>
-    	</table>
-
+		<div class="control-group">
+            <label class="control-label">发货数量：</label>
+            <div class="controls">
+                <form:input path="sentQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font></span>
+            </div>
+        </div>
     	<div class="form-actions">
             <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
-            <input id="btnSubmit" class="btn btn-primary" type="submit" value="提交订单详情"/>&nbsp;</shiro:hasPermission>
-            <input id="btnCancel" class="btn" type="button" value="返回订单列表" onclick="history.go(-1)"/>
+            <input id="btnSubmit" class="btn btn-primary" type="submit" onclick="window.location.reload()" value="保存"/>&nbsp;</shiro:hasPermission>
+            <input id="btnCancel" class="btn" type="button" value="返回" onclick="history.go(-1)"/>
         </div>
        </form:form>
+
+
+  <%--详情列表--%>
+   	<table id="contentTable" class="table table-striped table-bordered table-condensed">
+   		<thead>
+   			<tr>
+   				<th>biz_order_header.id</th>
+   				<th>订单详情行号</th>
+   				<th>bom产品 kit</th>
+   				<th>biz_sku_info.id</th>
+   				<th>商品编号</th>
+   				<th>商品名称</th>
+   				<th>商品单价</th>
+   				<th>采购数量</th>
+   				<shiro:hasPermission name="biz:order:bizOrderDetail:edit"><th>操作</th></shiro:hasPermission>
+   			</tr>
+   		</thead>
+   		<tbody>
+   		<c:forEach items="${page.list}" var="bizOrderDetail">
+   			<tr>
+   				<td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">
+   					${bizOrderDetail.orderHeader.id}
+   				</a></td>
+   				<td>
+   					${bizOrderDetail.lineNo}
+   				</td>
+   				<td>
+   					${bizOrderDetail.pLineNo}
+   				</td>
+   				<td>
+   					${bizOrderDetail.skuInfo.id}
+   				</td>
+   				<td>
+   					${bizOrderDetail.partNo}
+   				</td>
+   				<td>
+   					${bizOrderDetail.skuName}
+   				</td>
+   				<td>
+   					${bizOrderDetail.unitPrice}
+   				</td>
+   				<td>
+   					${bizOrderDetail.ordQty}
+   				</td>
+   				<shiro:hasPermission name="biz:order:bizOrderDetail:edit"><td>
+       				<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">修改</a>
+   					<a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}" onclick="return confirmx('确认要删除该订单详情吗？', this.href)">删除</a>
+   				</td></shiro:hasPermission>
+   			</tr>
+   		</c:forEach>
+   		</tbody>
+   	</table>
+   	<div class="pagination">${page}</div>
 </body>
 </html>

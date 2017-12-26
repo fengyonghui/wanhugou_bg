@@ -23,37 +23,39 @@
 					}
 				}
 			});
+        if($("#id").val()!=""){
+            clickBut();
+        }
 		});
-		 function clickBut(){
-		 var officeId=$('#officeId').val();
-            $.ajax({
-                type:"post",
-                url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
-                dataType:"json",
-                success:function(data){
-                   $.each(data,function(index,address){
-                        console.log(address.bizLocation);
-                        var option=$("<option/>").text(address.bizLocation.province.name).val(address.bizLocation.province.name);
-                        $("#province").append(option);
-                       /* $("#province").val(address.bizLocation.province);
-                        $("#city").val(address.bizLocation.city);
-                        $("#region").val(address.bizLocation.region);
-                        $("#address").val(address.bizLocation.address);*/
-                   });
-                   //当省份的数据加载完毕之后 默认选中第一个遍历出来的省份信息   只需要直接执行省份的改变即可
-                   $("#province").change();
-                }
-            });
-          /*  //给省绑定改变事件
-            $("#province").change(function(){
-                $("#city").empty();
-                    //获取当前选中省份的编号
-                    var code = $(this).val();
-                    //根据省的编号查询当前省份下的所有城市
-                    $.post("${ctx}/sys/office/sysOfficeAddress/findAddrByOffice",{"provinceCode":code},function(result){
-                        console.log(result+"-----测试2----");
-                    })*/
-         }
+          function clickBut(){
+             var officeId=$('#officeId').val();
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
+                    dataType:"json",
+                    success:function(data){
+                     $("#province").empty();
+                     $("#city").empty();
+                     $("#region").empty();
+                     $("#address").empty();
+                       $.each(data,function(index,add){
+                            console.log(add.bizLocation.address);
+                            var option2=$("<option/>").text(add.bizLocation.province.name).val(add.bizLocation.province.id);
+                            $("#province").append(option2);
+                            var option3=$("<option/>").text(add.bizLocation.city.name).val(add.bizLocation.city.id);
+                            $("#city").append(option3);
+                            var option4=$("<option/>").text(add.bizLocation.region.name).val(add.bizLocation.region.id);
+                            $("#region").append(option4);
+                            $("#address").val(add.bizLocation.address);
+                       });
+                       //当省份的数据加载完毕之后 默认选中第一个遍历出来的省份信息   只需要直接执行省份的改变即可
+                       $("#province").change();
+                       $("#city").change();
+                       $("#region").change();
+                       $("#address").change();
+                    }
+                });
+            }
 	</script>
 </head>
 <body>
@@ -70,13 +72,6 @@
 				<form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
 			</div>
 		</div>
-               <%-- <div class="control-group">
-                    <label class="control-label">商品详情：</label>
-                    <div class="controls">
-                            <a href="${ctx}/biz/order/bizOrderDetail/form">
-                            <form:input path="totalDetail" value="选择商品" type="button"  htmlEscape="false" class="input-xlarge required"/></a>
-                    </div>
-                </div>--%>
 		<div class="control-group">
 			<label class="control-label">订单类型：</label>
 			<div class="controls">
@@ -147,17 +142,19 @@
         <div class="control-group">
             <label class="control-label">收货地址；</label>
             <div class="controls">
-                 <select id="province" class="input-medium" name="dept" style="width:200px;"></select>
-                 <select id="city" class="easyui-combobox input-medium" name="dept" style="width:200px;"></select>
-                 <select id="region" class="easyui-combobox input-medium" name="dept" style="width:200px;"></select>
-                <%--<form:input path="bizLocation"  htmlEscape="false" class="input-xlarge required"/>--%>
+                 <select id="province" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
+                    <option value="-1">—— 省 ——</option></select>
+                 <select id="city" class="input-medium" name="bizLocation.city.id" style="width:150px;text-align: center;">
+                     <option value="-1">—— 市 ——</option></select>
+                 <select id="region" class="input-medium" name="bizLocation.region.id" style="width:150px;text-align: center;">
+                    <option value="-1">—— 区 ——</option></select>
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">详细地址；</label>
             <div class="controls">
-                <input type="text" id="address" htmlEscape="false" class="input-xlarge required"/>
+                <input type="text" id="address" name="bizLocation.address" htmlEscape="false" class="input-xlarge required"/>
                  <%--<form:input path="bizLocation"  htmlEscape="false" class="input-xlarge required"/>--%>
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>

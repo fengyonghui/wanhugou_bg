@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.order;
 
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
@@ -22,11 +23,12 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 	private BizOrderHeader orderHeader;		// biz_order_header.id
 	private String lineNo;		// 订单详情行号
 	private String pLineNo;		// bom产品 kit
-	private String skuNo;		// biz_sku_info.id
+	private BizSkuInfo skuInfo;		// biz_sku_info.id
 	private String partNo;		// 商品编号
 	private String skuName;		// 商品名称
-	private String unitPrice;		// 商品单价
-	private String ordQty;		// 采购数量
+	private double unitPrice;		// 商品单价
+	private Integer sentQty;		//发货数量
+	private Integer ordQty;		// 采购数量
 	
 	public BizOrderDetail() {
 		super();
@@ -62,16 +64,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 	public void setPLineNo(String pLineNo) {
 		this.pLineNo = pLineNo;
 	}
-	
-//	@id长度必须介于 1 和 11 之间")
-	public String getSkuNo() {
-		return skuNo;
-	}
 
-	public void setSkuNo(String skuNo) {
-		this.skuNo = skuNo;
-	}
-	
 	@Length(min=0, max=30, message="商品编号长度必须介于 0 和 30 之间")
 	public String getPartNo() {
 		return partNo;
@@ -89,23 +82,6 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 	public void setSkuName(String skuName) {
 		this.skuName = skuName;
 	}
-	
-	public String getUnitPrice() {
-		return unitPrice;
-	}
-
-	public void setUnitPrice(String unitPrice) {
-		this.unitPrice = unitPrice;
-	}
-	
-	@Length(min=1, max=11, message="采购数量长度必须介于 1 和 11 之间")
-	public String getOrdQty() {
-		return ordQty;
-	}
-
-	public void setOrdQty(String ordQty) {
-		this.ordQty = ordQty;
-	}
 
 	public String getpLineNo() {
 		return pLineNo;
@@ -113,5 +89,37 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
 	public void setpLineNo(String pLineNo) {
 		this.pLineNo = pLineNo;
+	}
+
+	public BizSkuInfo getSkuInfo() {
+		return skuInfo;
+	}
+
+	public void setSkuInfo(BizSkuInfo skuInfo) {
+		this.skuInfo = skuInfo;
+	}
+
+	public double getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(double unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
+	public Integer getOrdQty() {
+		return ordQty;
+	}
+
+	public void setOrdQty(Integer ordQty) {
+		this.ordQty = ordQty;
+	}
+
+	public Integer getSentQty() {
+		return sentQty;
+	}
+
+	public void setSentQty(Integer sentQty) {
+		this.sentQty = sentQty;
 	}
 }
