@@ -186,7 +186,7 @@
 
 
 
-  <%--详情列表--%>
+ <%--详情列表--%>
 <sys:message content="${message}"/>
 <c:if test="${entity.id !=null && entity.id!='' }">
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
