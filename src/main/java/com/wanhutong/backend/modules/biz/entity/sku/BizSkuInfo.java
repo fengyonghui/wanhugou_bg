@@ -31,8 +31,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String skuType;		// 试销品、主销品、热销品、尾销品
 	private String name;		// 商品名称
 	private String partNo;    //商品编码
-	private double basePrice; //基础售价
-	private double buyPrice;   //采购价格
+	private Double basePrice; //基础售价
+	private Double buyPrice;   //采购价格
 	private List bizSkuInfo;
 
 	private String skuPropertyInfos;
@@ -95,19 +95,19 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 		this.partNo = partNo;
 	}
 
-	public double getBasePrice() {
+	public Double getBasePrice() {
 		return basePrice;
 	}
 
-	public void setBasePrice(double basePrice) {
+	public void setBasePrice(Double basePrice) {
 		this.basePrice = basePrice;
 	}
 
-	public double getBuyPrice() {
+	public Double getBuyPrice() {
 		return buyPrice;
 	}
 
-	public void setBuyPrice(double buyPrice) {
+	public void setBuyPrice(Double buyPrice) {
 		this.buyPrice = buyPrice;
 	}
 

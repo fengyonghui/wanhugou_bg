@@ -10,6 +10,8 @@ import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -32,6 +34,15 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Integer bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付 3同意发货 4已发货 5客户已收货 6 已完成
 	private BizPlatformInfo platformInfo;		// 订单来源； biz_platform_info.id
 	private CommonLocation bizLocation;		// 订单收货地址： common_location.id
+	private List<BizOrderDetail> orderDetailList;
+
+	public List<BizOrderDetail> getOrderDetailList() {
+		return orderDetailList;
+	}
+
+	public void setOrderDetailList(List<BizOrderDetail> orderDetailList) {
+		this.orderDetailList = orderDetailList;
+	}
 
 	public BizOrderHeader() {
 		super();

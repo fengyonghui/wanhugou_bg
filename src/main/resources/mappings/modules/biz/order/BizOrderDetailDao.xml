@@ -5,7 +5,7 @@
 	<sql id="bizOrderDetailColumns">
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
-		boh.order_num as "orderHeader.orderNum",
+		boh.order_num AS "orderHeader.orderNum",
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
 		a.sku_no AS "skuInfo.id",

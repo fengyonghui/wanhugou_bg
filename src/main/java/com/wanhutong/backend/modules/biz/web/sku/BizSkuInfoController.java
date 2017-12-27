@@ -49,7 +49,7 @@ public class BizSkuInfoController extends BaseController {
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	@Autowired
 	private CommonImgService commonImgService;
-	
+
 	@ModelAttribute
 	public BizSkuInfo get(@RequestParam(required=false) Integer id) {
 		BizSkuInfo entity = null;
@@ -131,7 +131,13 @@ public class BizSkuInfoController extends BaseController {
 		List<BizSkuInfo> list=bizSkuInfoService.findListForProd(bizSkuInfo);
 		return list;
 	}
-
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findSysBySku")
+	public BizSkuInfo findSysBySku(Integer skuId, HttpServletRequest request, HttpServletResponse response, Model model) {
+        BizSkuInfo bizSkuInfo = bizSkuInfoService.get(skuId);
+		return bizSkuInfo;
+	}
 
 
 }

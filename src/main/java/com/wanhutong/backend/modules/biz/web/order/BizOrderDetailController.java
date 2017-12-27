@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class BizOrderDetailController extends BaseController {
 
 	@Autowired
 	private BizOrderDetailService bizOrderDetailService;
+
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
 
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
@@ -81,7 +85,7 @@ public class BizOrderDetailController extends BaseController {
 		}
 		bizOrderDetailService.save(bizOrderDetail);
 		addMessage(redirectAttributes, "保存订单详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form";
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderDetail:edit")
@@ -89,7 +93,7 @@ public class BizOrderDetailController extends BaseController {
 	public String delete(BizOrderDetail bizOrderDetail, RedirectAttributes redirectAttributes) {
 		bizOrderDetailService.delete(bizOrderDetail);
 		addMessage(redirectAttributes, "删除订单详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
 	}
 
 }

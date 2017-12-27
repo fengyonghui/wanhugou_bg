@@ -38,21 +38,32 @@
                      $("#city").empty();
                      $("#region").empty();
                      $("#address").empty();
-                       $.each(data,function(index,add){
-                            console.log(add.bizLocation.address);
-                            var option2=$("<option/>").text(add.bizLocation.province.name).val(add.bizLocation.province.id);
-                            $("#province").append(option2);
-                            var option3=$("<option/>").text(add.bizLocation.city.name).val(add.bizLocation.city.id);
-                            $("#city").append(option3);
-                            var option4=$("<option/>").text(add.bizLocation.region.name).val(add.bizLocation.region.id);
-                            $("#region").append(option4);
-                            $("#address").val(add.bizLocation.address);
-                       });
-                       //当省份的数据加载完毕之后 默认选中第一个遍历出来的省份信息   只需要直接执行省份的改变即可
-                       $("#province").change();
-                       $("#city").change();
-                       $("#region").change();
-                       $("#address").change();
+                     console.log(data+"----c");
+                     if(data==''){
+                         console.log("数据为空");
+                         $("#add1").css("display","none");
+                         $("#add2").css("display","block");
+                         $("#add3").css("display","none");
+                     }else{
+                        $("#add1").css("display","block");
+                        $("#add2").css("display","none");
+                        $("#add3").css("display","block");
+                           $.each(data,function(index,add){
+                                console.log(add.bizLocation.address);
+                                var option2=$("<option/>").text(add.bizLocation.province.name).val(add.bizLocation.province.id);
+                                $("#province").append(option2);
+                                var option3=$("<option/>").text(add.bizLocation.city.name).val(add.bizLocation.city.id);
+                                $("#city").append(option3);
+                                var option4=$("<option/>").text(add.bizLocation.region.name).val(add.bizLocation.region.id);
+                                $("#region").append(option4);
+                                $("#address").val(add.bizLocation.address);
+                           });
+                           //当省份的数据加载完毕之后 默认选中第一个遍历出来的省份信息   只需要直接执行省份的改变即可
+                           $("#province").change();
+                           $("#city").change();
+                           $("#region").change();
+                           $("#address").change();
+                        }
                     }
                 });
             }
@@ -139,7 +150,7 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-        <div class="control-group">
+        <div class="control-group" id="add1">
             <label class="control-label">收货地址；</label>
             <div class="controls">
                  <select id="province" class="input-medium" name="bizLocation.province.id" style="width:150px;text-align: center;">
@@ -151,7 +162,15 @@
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
-        <div class="control-group">
+        <div class="control-group" id="add2" style="display:none">
+                    <label class="control-label">收货地址；</label>
+                    <div class="controls">
+                        <a href="${ctx}/sys/office/sysOfficeAddress/form2?idd=-99">
+                        <input type="button" value="新增地址" htmlEscape="false" class="btn btn-primary required"/></a>
+                        <span class="help-inline"><font color="red">*</font> </span>
+                    </div>
+                </div>
+        <div class="control-group" id="add3">
             <label class="control-label">详细地址；</label>
             <div class="controls">
                 <input type="text" id="address" name="bizLocation.address" htmlEscape="false" class="input-xlarge required"/>
@@ -164,5 +183,57 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+
+
+
+  <%--详情列表--%>
+<sys:message content="${message}"/>
+<c:if test="${entity.id !=null && entity.id!='' }">
+<table id="contentTable" class="table table-striped table-bordered table-condensed">
+    <thead>
+    <tr>
+        <th>详情行号</th>
+        <th>商品名称</th>
+        <th>商品编号</th>
+        <th>商品单价</th>
+        <th>采购数量</th>
+        <th>发货数量</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+  <c:forEach items="${entity.orderDetailList}" var="bizOrderDetail">
+    <tr>
+        <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">
+                ${bizOrderDetail.id}</a>
+        </td>
+        <td>
+                ${bizOrderDetail.skuName}
+        </td>
+        <td>
+                ${bizOrderDetail.partNo}
+        </td>
+        <td>
+                ${bizOrderDetail.unitPrice}
+        </td>
+        <td>
+                ${bizOrderDetail.ordQty}
+        </td>
+        <td>
+                ${bizOrderDetail.sentQty}
+        </td>
+        <td>
+                <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+        </td>
+        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><td>
+            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">修改</a>
+            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1" onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+        </td></shiro:hasPermission>
+    </tr>
+    </c:forEach>
+    </tbody>
+</table>
+ </c:if>
 </body>
 </html>

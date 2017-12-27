@@ -31,7 +31,9 @@
 		<li><a href="${ctx}/sys/office/sysOfficeAddress/">地址信息列表</a></li>
 		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/form?id=${sysOfficeAddress.id}">地址信息<shiro:hasPermission name="sys:office:sysOfficeAddress:edit">${not empty sysOfficeAddress.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:office:sysOfficeAddress:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
+
 	<form:form id="inputForm" modelAttribute="sysOfficeAddress" action="${ctx}/sys/office/sysOfficeAddress/save" method="post" class="form-horizontal">
+
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
@@ -60,11 +62,24 @@
 				<span class="help-inline"><font color="red">*</font>0(非默认)，1(默认)</span>
 			</div>
 		</div>
-
+		<div class="control-group" style="display:none">
+            <div class="controls">
+                <input type="text" name="idd" value="${param.idd}" htmlEscape="false" maxlength="1" class="input-medium required"/>
+            </div>
+        </div>
+        <c:if test="${param.idd==-99}">
 		<div class="form-actions">
-			<shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="sys:office:sysOfficeAddress:edit">
+			<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
+		</c:if>
+		<c:if test="${param.idd!=-99}">
+            <div class="form-actions">
+                <shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+            </div>
+            </c:if>
 	</form:form>
 </body>
 </html>

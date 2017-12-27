@@ -5,6 +5,9 @@ package com.wanhutong.backend.modules.biz.service.order;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,9 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderDetailDao;
 @Transactional(readOnly = true)
 public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrderDetail> {
 
+	@Autowired
+	private BizSkuInfoService bizSkuInfoService;
+
 	public BizOrderDetail get(Integer id) {
 		return super.get(id);
 	}
@@ -36,6 +42,9 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
 	
 	@Transactional(readOnly = false)
 	public void save(BizOrderDetail bizOrderDetail) {
+		Integer skuId = bizOrderDetail.getSkuInfo().getId();
+		BizSkuInfo bizSkuInfo = bizSkuInfoService.get(skuId);
+		bizOrderDetail.setSkuName(bizSkuInfo.getName());
 		super.save(bizOrderDetail);
 	}
 	

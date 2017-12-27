@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 
+import java.util.List;
+
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Controller
  * @author OuyangXiutian
@@ -33,13 +37,19 @@ public class BizOrderHeaderController extends BaseController {
 
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizOrderDetailService bizOrderDetailService;
 	
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
 		BizOrderHeader entity = null;
 		if (id!=null){
 			entity = bizOrderHeaderService.get(id);
-		}
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(entity);
+            List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
+            entity.setOrderDetailList(list);
+        }
 		if (entity == null){
 			entity = new BizOrderHeader();
 		}
@@ -70,7 +80,7 @@ public class BizOrderHeaderController extends BaseController {
 		bizOrderHeaderService.save(bizOrderHeader);
 		addMessage(redirectAttributes, "保存订单信息成功");
 //		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+bizOrderHeader.getId();
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")
