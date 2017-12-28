@@ -132,6 +132,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		if (user.getId() == null){
 			user.preInsert();
 			userDao.insert(user);
+			userDao.insertUserRole(user);
 		}else{
 			// 清除原用户机构用户缓存
 			User oldUser = userDao.get(user.getId());
