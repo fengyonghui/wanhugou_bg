@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -78,6 +79,19 @@ public class BizRequestDetailController extends BaseController {
 		bizRequestDetailService.delete(bizRequestDetail);
 		addMessage(redirectAttributes, "删除备货清单详细信息成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestDetail/?repage";
+	}
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestDetail:edit")
+	@RequestMapping(value = "delItem")
+	public String delItem(BizRequestDetail bizRequestDetail, RedirectAttributes redirectAttributes) {
+		String data="ok";
+		try {
+			bizRequestDetailService.delete(bizRequestDetail);
+		}catch (Exception e){
+			data="error"; }
+		return data;
+
+
 	}
 
 }

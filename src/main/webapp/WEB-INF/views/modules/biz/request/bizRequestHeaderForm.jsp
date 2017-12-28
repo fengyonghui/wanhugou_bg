@@ -72,7 +72,9 @@
 							}
                             $.each(data,function (index,skuInfo) {
                                 if(id!=''){
-                                    index=parseInt($("#aaId").val())+1;
+                                   if($("#aaId").val()!=''){
+                                       index=parseInt($("#aaId").val())+1;
+								   }
                                 }
                                 var cateName="";
                                 if(skuInfo.productInfo.categoryInfoList!=null){
@@ -120,6 +122,23 @@
 		function removeItem(obj) {
 			$("#"+obj).remove();
         }
+        function delItem(obj) {
+		    if(confirm("您确认删除此条信息吗？")){
+                $.ajax({
+                type:"post",
+                url:"${ctx}/biz/request/bizRequestDetail/delItem",
+                data:{id:obj},
+                success:function (data) {
+                if(data=='ok'){
+                    alert("删除成功！");
+                $("#"+obj).remove();
+                	}
+                }
+                })
+			}
+
+
+        }
 	</script>
 </head>
 <body>
@@ -137,16 +156,16 @@
 				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 			<%--</div>--%>
 		<%--</div>--%>
-		<div class="control-group">
-			<label class="control-label">备货单类型：</label>
-			<div class="controls">
-				<form:select path="reqType" class="input-xlarge required">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('biz_req_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">备货单类型：</label>--%>
+			<%--<div class="controls">--%>
+				<%--<form:select path="reqType" class="input-xlarge required">--%>
+					<%--<form:option value="" label="请选择"/>--%>
+					<%--<form:options items="${fns:getDictList('biz_req_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
+				<%--</form:select>--%>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
@@ -157,16 +176,16 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">备货中心：</label>
-			<div class="controls">
-				<sys:treeselect id="toOffice" name="toOffice.id" value="${entity.toOffice.id}" labelName="toOffice.name"
-								labelValue="${entity.toOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="备货中心"  url="/sys/office/queryTreeList?type=9" cssClass="input-xlarge required" dataMsgRequired="必填信息">
-				</sys:treeselect>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">备货中心：</label>--%>
+			<%--<div class="controls">--%>
+				<%--<sys:treeselect id="toOffice" name="toOffice.id" value="${entity.toOffice.id}" labelName="toOffice.name"--%>
+								<%--labelValue="${entity.toOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"--%>
+								<%--title="备货中心"  url="/sys/office/queryTreeList?type=9" cssClass="input-xlarge required" dataMsgRequired="必填信息">--%>
+				<%--</sys:treeselect>--%>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">期望收货时间：</label>
 			<div class="controls">
@@ -228,7 +247,7 @@
 									<input name='requestDetailList[${reqStatus.index}].reqQty' value="${reqDetail.reqQty}" type='text'/>
 								</td>
 								<td><shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-									<a href="${ctx}/biz/request/bizRequestDetail/delete?id=${bizRequestDetail.id}" onclick="return confirmx('确认要删除该备货清单详细信息吗？', this.href)">删除</a>
+									<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
 									</shiro:hasPermission>
 								</td>
 							</tr>
@@ -279,10 +298,10 @@
 					</div>
 					<div class="modal-body">
 						<div class="control-group">
-
+							<ul class="ul-form">
 									<li><label>商品名称：</label>
 										<input id="productName"  htmlEscape="false" class="input-medium"/>
-									</li>	<ul class="ul-form">
+									</li>	
 									<li><label>商品代码：</label>
 										<input id="prodCode"  htmlEscape="false" maxlength="10" class="input-medium"/>
 									</li>

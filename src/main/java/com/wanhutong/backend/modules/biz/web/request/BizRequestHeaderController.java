@@ -94,7 +94,6 @@ public class BizRequestHeaderController extends BaseController {
 				reqDetailList.add(requestDetail);
 			}
 		}
-
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
 		return "modules/biz/request/bizRequestHeaderForm";
