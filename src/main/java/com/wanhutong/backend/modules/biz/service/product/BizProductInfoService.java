@@ -81,7 +81,6 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 			if(bizCatePropValue!=null){
 				bizProductInfo.setBrandName(bizCatePropValue.getValue());
 			}
-
 		}
 
 		super.save(bizProductInfo);
@@ -113,38 +112,45 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	public void saveCommonImg(BizProductInfo bizProductInfo) {
 		String photos=bizProductInfo.getPhotos();
 		String photoDetails=bizProductInfo.getPhotoDetails();
-		boolean flag=false;
+		String photoLists=bizProductInfo.getPhotoLists();
 		CommonImg commonImg=new CommonImg();
 		if(photos!=null && !"".equals(photos)) {
 			photos = photos.substring(1);
 			commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
-			flag=true;
+			saveProdImg(commonImg,bizProductInfo,photos);
 		}
+		if(photoLists!=null && !"".equals(photoLists)) {
+			photoLists = photoLists.substring(1);
+			commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
+			saveProdImg(commonImg,bizProductInfo,photoLists);
+		}
+
 		if(photoDetails!=null && !"".equals(photoDetails)){
-			photos=photoDetails.substring(1);
+			photoDetails=photoDetails.substring(1);
 			commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
-			flag=true;
+			saveProdImg(commonImg,bizProductInfo,photoDetails);
+
 		}
-		if(flag){
-			String[]photoArr=photos.split("\\|");
-			if(photoArr.length>=1){
-				commonImg.setObjectId(bizProductInfo.getId());
-				commonImg.setObjectName("biz_product_info");
-				commonImgService.deleteCommonImg(commonImg);
-				for (int i=0;i<photoArr.length;i++){
-					commonImg.setImgPath(photoArr[i]);
-					commonImg.setImgSort(i);
-					commonImg.setImgServer(DsConfig.getImgServer());
-					commonImgService.save(commonImg);
-					if(i==0 && commonImg.getImgType()==ImgEnum.MAIN_PRODUCT_TYPE.getCode()){
-						bizProductInfo.setImgUrl(commonImg.getImgServer()+commonImg.getImgPath());
-						super.save(bizProductInfo);
+	}
+
+		public  void saveProdImg(CommonImg commonImg,BizProductInfo bizProductInfo,String photos){
+				String[]photoArr=photos.split("\\|");
+				if(photoArr.length>=1){
+					commonImg.setObjectId(bizProductInfo.getId());
+					commonImg.setObjectName("biz_product_info");
+					commonImgService.deleteCommonImg(commonImg);
+					for (int i=0;i<photoArr.length;i++){
+						commonImg.setImgPath(photoArr[i]);
+						commonImg.setImgSort(i);
+						commonImg.setImgServer(DsConfig.getImgServer());
+						commonImgService.save(commonImg);
+						if(i==0 && commonImg.getImgType()==ImgEnum.MAIN_PRODUCT_TYPE.getCode()){
+							bizProductInfo.setImgUrl(commonImg.getImgServer()+commonImg.getImgPath());
+							super.save(bizProductInfo);
+						}
 					}
 				}
-		}
 
-
-			}
 
 	}
 
