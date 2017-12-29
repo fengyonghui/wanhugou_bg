@@ -3,11 +3,13 @@
  */
 package com.wanhutong.backend.modules.biz.web.order;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,13 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -43,13 +40,20 @@ public class BizOrderHeaderController extends BaseController {
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
 		BizOrderHeader entity = null;
-		if (id!=null){
+		Double sum = 0.0;
+		if (id!=null && id!=0){
 			entity = bizOrderHeaderService.get(id);
-            BizOrderDetail bizOrderDetail = new BizOrderDetail();
-            bizOrderDetail.setOrderHeader(entity);
-            List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
-            entity.setOrderDetailList(list);
-        }
+			BizOrderDetail bizOrderDetail = new BizOrderDetail();
+			bizOrderDetail.setOrderHeader(entity);
+			List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
+			for (BizOrderDetail detail : list) {
+				Double price = detail.getUnitPrice();
+				Integer ordQty = detail.getOrdQty();
+				sum+=price*ordQty;
+			}
+			entity.setTotalDetail(sum);
+			entity.setOrderDetailList(list);
+		}
 		if (entity == null){
 			entity = new BizOrderHeader();
 		}
@@ -77,10 +81,17 @@ public class BizOrderHeaderController extends BaseController {
 		if (!beanValidator(model, bizOrderHeader)){
 			return form(bizOrderHeader, model);
 		}
+		if(bizOrderHeader.getTotalDetail()==null){
+			bizOrderHeader.setTotalDetail(0.0);
+		}
 		bizOrderHeaderService.save(bizOrderHeader);
 		addMessage(redirectAttributes, "保存订单信息成功");
 //		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+bizOrderHeader.getId();
+		Integer orId = bizOrderHeader.getId();
+		if(orId !=null && orId !=0){
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId;
+		}
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form";
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")

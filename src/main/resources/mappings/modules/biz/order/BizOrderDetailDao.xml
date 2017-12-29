@@ -151,4 +151,7 @@
 		WHERE id = #{id}
 	</update>
 	
+	<select id="findMaxLine" resultType="Integer"   parameterType="BizOrderDetail">
+		select max(a.line_no) from biz_order_detail a where a.order_id=#{orderHeader.id}
+	</select>
 </mapper>

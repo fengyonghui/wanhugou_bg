@@ -25,6 +25,24 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	private CommonLocation bizLocation;		// common_location.id
 	private Integer type;		// 1: 收货地址；2 公司地址；
 	private Integer deFault;		// 1: 默认； 0：非默认
+	private Integer ohId;		//用于添加地址传参
+	private String flag;		//用于传参标记
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+
+	public Integer getOhId() {
+		return ohId;
+	}
+
+	public void setOhId(Integer ohId) {
+		this.ohId = ohId;
+	}
 
 	public SysOfficeAddress() {
 		super();

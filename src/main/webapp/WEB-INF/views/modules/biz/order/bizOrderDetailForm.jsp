@@ -26,24 +26,24 @@
                 clickSuk();
             }
 		});
-		function clickSuk(){
-             var skuNameId=$('#skuNameId').val();
+		function clickSku(){
+             var skuInfoId=$('#skuInfoId').val();
              $("#partNo").empty();
               $("#unitPrice").empty();
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/sku/bizSkuInfo/findSysBySku?skuId="+skuNameId,
+                    url:"${ctx}/biz/sku/bizSkuInfo/findSysBySku?skuId="+skuInfoId,
                     dataType:"json",
                     success:function(data){
                              console.log(data);
                            $("#partNo").val(data.partNo);
                            $("#unitPrice").val(data.buyPrice);
                        }
-
                 });
                 $("#partNo").change();
                 $("#unitPrice").change();
             }
+
 	</script>
 </head>
 <body>
@@ -54,21 +54,23 @@
 	<form:form id="inputForm" modelAttribute="bizOrderDetail" action="${ctx}/biz/order/bizOrderDetail/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<form:hidden path="orderHeader.id"/>
+		<form:hidden path="maxLineNo"/>
 		<sys:message content="${message}"/>
         <div class="control-group">
             <label class="control-label">订单行号：</label>
             <div class="controls">
-                <form:input path="lineNo" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                <form:input path="lineNo"  disabled="true" placeholder="${bizOrderDetail.maxLineNo}" htmlEscape="false" class="input-xlarge required"/>
+                <input name="lineNo" value="${bizOrderDetail.maxLineNo}" htmlEscape="false" type="hidden" class="required"/>
                 <span class="help-inline"><font color="red">*</font></span>
             </div>
         </div>
 		<div class="control-group">
             <label class="control-label">sku商品名称：</label>
                 <div class="controls">
-                   <sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOpShelfSku.skuProd.id}" labelName="skuInfo.name"
-                                    labelValue="${bizOpShelfSku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+                    <sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOrderDetail.skuInfo.id}" labelName="skuInfo.id"
+                                    labelValue="${bizOrderDetail.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                                     title="sku名称"  url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"
-                                    cssClass="input-xlarge required"
+                                    cssClass="input-xlarge required" onchange="clickSku();"
                                     allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
                     </sys:treeselect>
                 </div>
@@ -76,7 +78,8 @@
 		<div class="control-group">
 			<label class="control-label">商品编码：</label>
 			<div class="controls">
-				<form:input path="partNo" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="partNo" htmlEscape="false" readOnly="true" class="input-xlarge"/>
+                <input name="partNo" htmlEscape="false" type="hidden"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -101,13 +104,13 @@
         </div>
     	<div class="form-actions">
             <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
-            <input id="btnSubmit" class="btn btn-primary" type="submit" onclick="location.reload()" value="保存"/>&nbsp;</shiro:hasPermission>
+            <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;</shiro:hasPermission>
             <input id="btnCancel" class="btn" type="button" value="返回" onclick="history.go(-1)"/>
         </div>
        </form:form>
 
 
-  <%--详情列表--%>
+  <%--详情列表
  <sys:message content="${message}"/>
  <table id="contentTable" class="table table-striped table-bordered table-condensed">
      <thead>
@@ -155,6 +158,6 @@
      </c:forEach>
      </tbody>
  </table>
-  </c:if>
+  </c:if>--%>
 </body>
 </html>

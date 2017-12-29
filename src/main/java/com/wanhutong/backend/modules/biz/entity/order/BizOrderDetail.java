@@ -3,14 +3,9 @@
  */
 package com.wanhutong.backend.modules.biz.entity.order;
 
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 订单详情(销售订单)Entity
@@ -30,6 +25,26 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 	private Integer sentQty;		//发货数量
 	private Integer ordQty;		// 采购数量
 	
+	private Integer maxLineNo;		//最大的行号
+	
+	public Integer getMaxLineNo() {
+		return maxLineNo;
+	}
+	
+	public void setMaxLineNo(Integer maxLineNo) {
+		this.maxLineNo = maxLineNo;
+	}
+	
+	private Integer orderId;	//用于修改跳转地址保存修改信息后跳转
+
+	public Integer getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
+	}
+
 	public BizOrderDetail() {
 		super();
 	}

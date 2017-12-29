@@ -10,8 +10,12 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
+				    if($("#address").val()==''){
+				        $("#addError").css("display","inline-block")
+				        return false;
+				    }
+                        form.submit();
+				        loading('正在提交，请稍等...');
 				},
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
@@ -38,27 +42,29 @@
                      $("#city").empty();
                      $("#region").empty();
                      $("#address").empty();
-                     console.log(data+"----c");
                      if(data==''){
                          console.log("数据为空");
                          $("#add1").css("display","none");
                          $("#add2").css("display","block");
                          $("#add3").css("display","none");
                      }else{
+                         console.log("数据不为空显示");
                         $("#add1").css("display","block");
                         $("#add2").css("display","none");
                         $("#add3").css("display","block");
                            $.each(data,function(index,add){
-                                console.log(add.bizLocation.address);
-                                var option2=$("<option/>").text(add.bizLocation.province.name).val(add.bizLocation.province.id);
-                                $("#province").append(option2);
-                                var option3=$("<option/>").text(add.bizLocation.city.name).val(add.bizLocation.city.id);
-                                $("#city").append(option3);
-                                var option4=$("<option/>").text(add.bizLocation.region.name).val(add.bizLocation.region.id);
-                                $("#region").append(option4);
-                                $("#address").val(add.bizLocation.address);
+                                 /*console.log(JSON.stringify(add)+"----");*/
+                                if(add.deFault ==1){
+                                    var option2=$("<option/>").text(add.bizLocation.province.name).val(add.bizLocation.province.id);
+                                    $("#province").append(option2);
+                                    var option3=$("<option/>").text(add.bizLocation.city.name).val(add.bizLocation.city.id);
+                                    $("#city").append(option3);
+                                    var option4=$("<option/>").text(add.bizLocation.region.name).val(add.bizLocation.region.id);
+                                    $("#region").append(option4);
+                                    $("#address").val(add.bizLocation.address);
+                                 }
                            });
-                           //当省份的数据加载完毕之后 默认选中第一个遍历出来的省份信息   只需要直接执行省份的改变即可
+                           //当省份的数据加载完毕之后 默认选中第一个遍历出来的省份信息
                            $("#province").change();
                            $("#city").change();
                            $("#region").change();
@@ -72,7 +78,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
-		<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/formcid=${bizOrderHeader.id}">订单信息<shiro:hasPermission name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">订单信息<shiro:hasPermission name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -105,8 +111,8 @@
 		<div class="control-group">
 			<label class="control-label">订单详情总价：</label>
 			<div class="controls">
-				<form:input path="totalDetail" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="totalDetail" htmlEscape="false" placeholder="0" readOnly="true" class="input-xlarge"/>
+				<input name="totalDetail" value="${entity.totalDetail}" htmlEscape="false" type="hidden"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -165,9 +171,10 @@
         <div class="control-group" id="add2" style="display:none">
                     <label class="control-label">收货地址；</label>
                     <div class="controls">
-                        <a href="${ctx}/sys/office/sysOfficeAddress/form2?idd=-99">
-                        <input type="button" value="新增地址" htmlEscape="false" class="btn btn-primary required"/></a>
-                        <span class="help-inline"><font color="red">*</font> </span>
+                        <a href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&flag=order">
+                        <input type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/></a>
+                        <label class="error" id="addError" style="display:none;">必填信息</label>
+                        <span class="help-inline"><font color="red">*</font></span>
                     </div>
                 </div>
         <div class="control-group" id="add3">
@@ -205,8 +212,8 @@
     <tbody>
   <c:forEach items="${entity.orderDetailList}" var="bizOrderDetail">
     <tr>
-        <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">
-                ${bizOrderDetail.id}</a>
+        <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">
+                ${bizOrderDetail.lineNo}</a>
         </td>
         <td>
                 ${bizOrderDetail.skuName}
@@ -227,7 +234,7 @@
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
         </td>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><td>
-            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">修改</a>
+            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>
             <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1" onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
         </td></shiro:hasPermission>
     </tr>

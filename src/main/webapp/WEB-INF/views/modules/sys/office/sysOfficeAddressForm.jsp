@@ -24,6 +24,7 @@
 				}
 			});
 		});
+
 	</script>
 </head>
 <body>
@@ -35,19 +36,21 @@
 	<form:form id="inputForm" modelAttribute="sysOfficeAddress" action="${ctx}/sys/office/sysOfficeAddress/save" method="post" class="form-horizontal">
 
 		<form:hidden path="id"/>
+		<form:hidden path="ohId"/>
+		<form:hidden path="flag"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">机构名称：</label>
 			<div class="controls">
                  <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.name" labelValue="${entity.office.name}"
-                        title="名称" url="/sys/office/treeData?type=2" cssClass="input-small required" allowClear="true" notAllowSelectParent="true"/>
+                        title="名称" url="/sys/office/treeData?type=2" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">地址类型：</label>
 			<div class="controls">
-				 <form:select path="type" class="input-medium required">
+				 <form:select path="type" class="input-xlarge required" onchange="clickOfficeAdd();">
                             <form:option value="" label="请选择"/>
                             <form:options items="${fns:getDictList('office_type')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select>
@@ -56,30 +59,23 @@
 		</div>
 		 <biz:selectLocationForm/>
 		<div class="control-group">
-			<label class="control-label">设为默认：</label>
+			<label class="control-label">是否默认：</label>
 			<div class="controls">
-                <form:input path="deFault" htmlEscape="false" maxlength="1" class="input-medium required"/>
-				<span class="help-inline"><font color="red">*</font>0(非默认)，1(默认)</span>
+			    <label><input name="deFault" type="radio" checked="checked" value="1" />默认</label>
+			    <label><input name="deFault" type="radio" value="0" />非默认</label>
+			    <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group" style="display:none">
             <div class="controls">
-                <input type="text" name="idd" value="${param.idd}" htmlEscape="false" maxlength="1" class="input-medium required"/>
+                <input type="text" name="idd" value="${param.idd}" htmlEscape="false" maxlength="1" class="input-xlarge required"/>
             </div>
         </div>
-        <c:if test="${param.idd==-99}">
 		<div class="form-actions">
 			<shiro:hasPermission name="sys:office:sysOfficeAddress:edit">
 			<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
-		</c:if>
-		<c:if test="${param.idd!=-99}">
-            <div class="form-actions">
-                <shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
-                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-            </div>
-            </c:if>
 	</form:form>
 </body>
 </html>

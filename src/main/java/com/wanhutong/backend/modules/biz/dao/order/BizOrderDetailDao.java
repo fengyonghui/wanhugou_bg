@@ -14,5 +14,5 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
  */
 @MyBatisDao
 public interface BizOrderDetailDao extends CrudDao<BizOrderDetail> {
-	
+	public Integer findMaxLine(BizOrderDetail bizOrderDetail);
 }

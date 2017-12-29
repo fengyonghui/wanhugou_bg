@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,17 +76,31 @@ public class SysOfficeAddressController extends BaseController {
 
 	@RequiresPermissions("sys:office:sysOfficeAddress:edit")
 	@RequestMapping(value = "save")
-	public String save(SysOfficeAddress sysOfficeAddress,Integer idd, Model model, RedirectAttributes redirectAttributes) {
+	public String save(SysOfficeAddress sysOfficeAddress, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, sysOfficeAddress)){
 			return form(sysOfficeAddress, model);
 		}
+
+		if(sysOfficeAddress.getDeFault() ==1 ){
+			SysOfficeAddress address = new SysOfficeAddress();
+			BeanUtils.copyProperties(sysOfficeAddress,address);
+			address.setType(null);
+			List<SysOfficeAddress> list = sysOfficeAddressService.findList(address);
+			if(list.size()>0){
+				SysOfficeAddress officeAddress=list.get(0);
+				officeAddress.setDeFault(0);
+				sysOfficeAddressService.save(officeAddress);
+			}
+		}
 		sysOfficeAddressService.save(sysOfficeAddress);
 		addMessage(redirectAttributes, "保存地址信息成功");
-		System.out.println(idd);
-		if(idd==-99){
-//			销售订单新增地址转
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?repage";
-		}
+		if(sysOfficeAddress.getFlag()!=null && sysOfficeAddress.getFlag().equals("order")){
+					Integer ohId=sysOfficeAddress.getOhId();
+					if(ohId==null){
+						ohId=0;
+					}
+					return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+ohId;
+				}
 		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
 	}
 	
@@ -95,15 +110,6 @@ public class SysOfficeAddressController extends BaseController {
 		sysOfficeAddressService.delete(sysOfficeAddress);
 		addMessage(redirectAttributes, "删除地址信息成功");
 		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
-	}
-
-//	销售订单点击跳转地址方法2
-	@RequiresPermissions("sys:office:sysOfficeAddress:view")
-	@RequestMapping(value = "form2")
-	public String form2(SysOfficeAddress sysOfficeAddress,Integer idd, Model model) {
-		model.addAttribute("entity2", sysOfficeAddress);
-		System.out.println(idd);
-		return "modules/sys/office/sysOfficeAddressForm";
 	}
 
 }
