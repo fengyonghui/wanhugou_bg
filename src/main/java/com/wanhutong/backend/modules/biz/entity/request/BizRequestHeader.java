@@ -38,6 +38,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private BizProductInfo productInfo;
 
 	private List<BizRequestDetail> requestDetailList;
+
+	private String startDate;
+
+	private String endDate;
 	
 	public BizRequestHeader() {
 		super();
@@ -151,5 +155,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setProductInfo(BizProductInfo productInfo) {
 		this.productInfo = productInfo;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 }

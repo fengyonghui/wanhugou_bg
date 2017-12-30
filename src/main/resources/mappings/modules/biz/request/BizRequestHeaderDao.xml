@@ -44,7 +44,11 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="reqNo != null and reqNo != ''">
-				AND a.req_no = #{reqNo}
+				AND a.req_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
 			</if>
 			<if test="reqType != null and reqType != ''">
 				AND a.req_type = #{reqType}
@@ -53,9 +57,9 @@
 				AND a.from_id = #{fromOffice.id}
 			</if>
 			<if test="recvEta != null and recvEta != ''">
-				AND a.recv_eta = #{recvEta}
+				AND  a.recv_eta BETWEEN ${startDate} AND ${endDate}
 			</if>
-			<if test="bizStatus != null and bizStatus != ''">
+			<if test="bizStatus != null and bizStatus != -1">
 				AND a.biz_status = #{bizStatus}
 			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
