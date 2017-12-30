@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao">
+    
+	<sql id="bizPoHeaderColumns">
+		a.id AS "id",
+		a.order_num AS "orderNum",
+		a.vend_id AS "vendId",
+		a.total_detail AS "totalDetail",
+		a.total_exp AS "totalExp",
+		a.freight AS "freight",
+		a.inv_status AS "invStatus",
+		a.biz_status AS "bizStatus",
+		a.plateform_id AS "plateformId",
+		a.status AS "status",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateId.id",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="bizPoHeaderJoins">
+	</sql>
+    
+	<select id="get" resultType="BizPoHeader">
+		SELECT 
+			<include refid="bizPoHeaderColumns"/>
+		FROM biz_po_header a
+		<include refid="bizPoHeaderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizPoHeader">
+		SELECT 
+			<include refid="bizPoHeaderColumns"/>
+		FROM biz_po_header a
+		<include refid="bizPoHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="vendId != null and vendId != ''">
+				AND a.vend_id = #{vendId}
+			</if>
+			<if test="invStatus != null and invStatus != ''">
+				AND a.inv_status = #{invStatus}
+			</if>
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="plateformId != null and plateformId != ''">
+				AND a.plateform_id = #{plateformId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizPoHeader">
+		SELECT 
+			<include refid="bizPoHeaderColumns"/>
+		FROM biz_po_header a
+		<include refid="bizPoHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_po_header(
+			id,
+			order_num,
+			vend_id,
+			total_detail,
+			total_exp,
+			freight,
+			inv_status,
+			biz_status,
+			plateform_id,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{orderNum},
+			#{vendId},
+			#{totalDetail},
+			#{totalExp},
+			#{freight},
+			#{invStatus},
+			#{bizStatus},
+			#{plateformId},
+			#{status},
+			#{createId.id},
+			#{createTime},
+			#{uVersion},
+			#{updateId.id},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_po_header SET 	
+			order_num = #{orderNum},
+			vend_id = #{vendId},
+			total_detail = #{totalDetail},
+			total_exp = #{totalExp},
+			freight = #{freight},
+			inv_status = #{invStatus},
+			biz_status = #{bizStatus},
+			plateform_id = #{plateformId},
+			u_version = #{uVersion},
+			update_id = #{updateId.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_po_header SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

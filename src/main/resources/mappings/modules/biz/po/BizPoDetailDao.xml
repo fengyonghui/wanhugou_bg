@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.po.BizPoDetailDao">
+    
+	<sql id="bizPoDetailColumns">
+		a.id AS "id",
+		a.order_id AS "orderId",
+		a.line_no AS "lineNo",
+		a.p_line_no AS "pLineNo",
+		a.sku_no AS "skuNo",
+		a.part_no AS "partNo",
+		a.sku_name AS "skuName",
+		a.unit_price AS "unitPrice",
+		a.ord_qty AS "ordQty",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateId.id",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="bizPoDetailJoins">
+	</sql>
+    
+	<select id="get" resultType="BizPoDetail">
+		SELECT 
+			<include refid="bizPoDetailColumns"/>
+		FROM biz_po_detail a
+		<include refid="bizPoDetailJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizPoDetail">
+		SELECT 
+			<include refid="bizPoDetailColumns"/>
+		FROM biz_po_detail a
+		<include refid="bizPoDetailJoins"/>
+		<where>
+			
+			<if test="partNo != null and partNo != ''">
+				AND a.part_no = #{partNo}
+			</if>
+			<if test="skuName != null and skuName != ''">
+				AND a.sku_name = #{skuName}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizPoDetail">
+		SELECT 
+			<include refid="bizPoDetailColumns"/>
+		FROM biz_po_detail a
+		<include refid="bizPoDetailJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_po_detail(
+			id,
+			order_id,
+			line_no,
+			p_line_no,
+			sku_no,
+			part_no,
+			sku_name,
+			unit_price,
+			ord_qty,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{orderId},
+			#{lineNo},
+			#{pLineNo},
+			#{skuNo},
+			#{partNo},
+			#{skuName},
+			#{unitPrice},
+			#{ordQty},
+			#{createId.id},
+			#{createTime},
+			#{uVersion},
+			#{updateId.id},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_po_detail SET 	
+			order_id = #{orderId},
+			line_no = #{lineNo},
+			p_line_no = #{pLineNo},
+			sku_no = #{skuNo},
+			part_no = #{partNo},
+			sku_name = #{skuName},
+			unit_price = #{unitPrice},
+			ord_qty = #{ordQty},
+			u_version = #{uVersion},
+			update_id = #{updateId.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_po_detail
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

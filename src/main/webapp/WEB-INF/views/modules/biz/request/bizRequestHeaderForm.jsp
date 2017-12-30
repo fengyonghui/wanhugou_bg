@@ -1,3 +1,4 @@
+<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
@@ -194,7 +195,13 @@
 						<th>品牌名称</th>
 						<th>供应商</th>
 						<th>SKU</th>
-						<th>申报数量</th>
+						<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
+							<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+								<th>申报数量</th>
+								<th>购买数量</th>
+							</shiro:hasPermission>
+						</c:if>
+						<th>价钱</th>
 						<th>操作</th>
 					</tr>
 					</thead>
@@ -222,6 +229,15 @@
 									<input type='hidden' name='requestDetailList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
 									<input name='requestDetailList[${reqStatus.index}].reqQty' value="${reqDetail.reqQty}" type='text'/>
 								</td>
+								<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
+								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+								<td>
+									<input>
+								</td>
+								<td>
+
+								</td>
+								</shiro:hasPermission>
 								<td><shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 									<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
 									</shiro:hasPermission>
