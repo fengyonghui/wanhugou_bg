@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,7 +37,13 @@ public class BizInventorySkuController extends BaseController {
 
 	@Autowired
 	private BizInventorySkuService bizInventorySkuService;
-	
+
+	@Autowired
+	private BizInventoryInfoService bizInventoryInfoService;
+
+	@Autowired
+	private BizSkuInfoService bizSkuInfoService;
+
 	@ModelAttribute
 	public BizInventorySku get(@RequestParam(required=false) Integer id) {
 		BizInventorySku entity = null;
@@ -57,6 +67,8 @@ public class BizInventorySkuController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInventorySku:view")
 	@RequestMapping(value = "form")
 	public String form(BizInventorySku bizInventorySku, Model model) {
+		BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
+		bizInventorySku.setInvInfo(bizInventoryInfo);
 		model.addAttribute("entity", bizInventorySku);
 		return "modules/biz/inventory/bizInventorySkuForm";
 	}

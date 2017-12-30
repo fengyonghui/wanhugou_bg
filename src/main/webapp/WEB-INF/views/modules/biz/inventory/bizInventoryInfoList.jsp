@@ -50,7 +50,7 @@
 					${bizInventoryInfo.name}
 				</a></td>
 				<shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit"><td>
-					<a href="${ctx}/biz/inventory/bizInventorySku/list">库存详情</a>
+					<a href="${ctx}/biz/inventory/bizInventorySku/list?invInfo.id=${bizInventoryInfo.id}">库存详情</a>
     				<%--<a href="${ctx}/biz/inventory/bizInventoryInfo/form?id=${bizInventoryInfo.id}">修改</a>
 					<a href="${ctx}/biz/inventory/bizInventoryInfo/delete?id=${bizInventoryInfo.id}" onclick="return confirmx('确认要删除该仓库信息吗？', this.href)">删除</a>--%>
 				</td></shiro:hasPermission>

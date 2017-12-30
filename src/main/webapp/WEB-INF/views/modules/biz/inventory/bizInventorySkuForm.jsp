@@ -28,7 +28,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/inventory/bizInventorySku/">商品库存详情列表</a></li>
-		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}">商品库存详情<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">${not empty bizInventorySku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInventorySku:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/form">商品库存详情<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">${not empty bizInventorySku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInventorySku:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -36,21 +36,32 @@
 		<div class="control-group">
 			<label class="control-label">仓库名称：</label>
 			<div class="controls">
-				<form:input path="invId.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<input value="${entity.invInfo.name}" disabled="true" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:hidden path="invInfo.id"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品名称：</label>
+			<label class="control-label">sku商品名称：</label>
 			<div class="controls">
-				<form:input path="skuId.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizInventorySku.skuInfo.id}" labelName="skuInfo.id"
+								labelValue="${bizInventorySku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="sku名称"  url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"
+								cssClass="input-xlarge required" onchange="clickSku();"
+								allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
+				</sys:treeselect>
+				<%--<form:input path="skuId.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>--%>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">库存类型：</label>
 			<div class="controls">
-				<form:input path="invType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
+				<form:select path="invType" class="input-medium required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('inv_type')}" itemLabel="label" itemValue="value"
+								  htmlEscape="false"/></form:select>
+				<%--<form:input path="invType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>--%>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -83,9 +94,12 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">专属库存的客户：</label>
+			<label class="control-label">库存专属客户名称：</label>
 			<div class="controls">
-				<form:input path="custId.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
+								labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="客户"  url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+								allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

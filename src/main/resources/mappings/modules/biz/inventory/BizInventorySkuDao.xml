@@ -5,16 +5,16 @@
 	<sql id="bizInventorySkuColumns">
 		a.id AS "id",
 		a.inv_id AS "invId.id",
-		i.name AS "invId.name",
-		a.sku_id AS "skuId.id",
-		sku.name AS "skuId.name",
+		i.name AS "invInfo.name",
+		a.sku_id AS "skuInfo.id",
+		sku.name AS "skuInfo.name",
 		a.inv_type AS "invType",
 		a.stock_qty AS "stockQty",
 		a.s_ord_qty AS "sOrdQty",
 		a.trans_in_qty AS "transInQty",
 		a.trans_out_qty AS "transOutQty",
-		a.cust_id AS "custId.id",
-		s.name AS "custId.name",
+		a.cust_id AS "customer.id",
+		s.name AS "customer.name",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -44,11 +44,11 @@
 		<include refid="bizInventorySkuJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="invId != null and invId != ''">
-				AND i.name = #{invId.name}
+			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
+				AND i.id = #{invInfo.id}
 			</if>
-			<if test="skuId != null and skuId != ''">
-				AND sku.name = #{skuId.name}
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND sku.id = #{skuInfo.id}
 			</if>
 			<if test="invType != null and invType != ''">
 				AND a.inv_type = #{invType}
@@ -99,14 +99,14 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{invId.id},
-			#{skuId.id},
+			#{invInfo.id},
+			#{skuInfo.id},
 			#{invType},
 			#{stockQty},
 			#{sOrdQty},
 			#{transInQty},
 			#{transOutQty},
-			#{custId.id},
+			#{customer.id},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -118,14 +118,14 @@
 	
 	<update id="update">
 		UPDATE biz_inventory_sku SET 	
-			inv_id = #{invId.id},
-			sku_id = #{skuId.id},
+			inv_id = #{invInfo.id},
+			sku_id = #{skuInfo.id},
 			inv_type = #{invType},
 			stock_qty = #{stockQty},
 			s_ord_qty = #{sOrdQty},
 			trans_in_qty = #{transInQty},
 			trans_out_qty = #{transOutQty},
-			cust_id = #{custId.id},
+			cust_id = #{customer.id},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

@@ -8,7 +8,7 @@
 <div class="control-group">
     <label class="control-label">所在地区：</label>
     <div class="controls">
-        <input type="hidden" id="locationId" name="locatcdionId" value="${entity.bizLocation.id}"/>
+        <input type="hidden" id="locationId" name="locationId" value="${entity.bizLocation.id}"/>
         <form:hidden path="bizLocation.selectedRegionId" id="regionId" value="${entity.bizLocation.selectedRegionId}"/>
         <input type="text" id="regionName" value="${entity.bizLocation.pcrName}" readonly="readonly" required="true"/>
         <biz:selectregion id="region_id" name="regionName" selectedId="regionId"/>

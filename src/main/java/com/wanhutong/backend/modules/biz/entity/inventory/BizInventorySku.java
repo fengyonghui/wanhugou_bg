@@ -16,14 +16,14 @@ import org.hibernate.validator.constraints.Length;
 public class BizInventorySku extends DataEntity<BizInventorySku> {
 
 	private static final long serialVersionUID = 1L;
-	private BizInventoryInfo invId;        // 仓库ID，biz_inventory_info.id
-	private BizSkuInfo skuId;        // biz_sku_info.id
+	private BizInventoryInfo invInfo;        // 仓库ID，biz_inventory_info.id
+	private BizSkuInfo skuInfo;        // biz_sku_info.id
 	private String invType;        // 库存类型：1常规；2残损；3专属
 	private String stockQty;        // 库存数量--入库时数量增加，出库时减少
 	private String sOrdQty;        // 销售订单数量
 	private String transInQty;        // 调入数量--仓库间商品调拨，调拨单已审批
 	private String transOutQty;        // 调出数量--仓库间商品调拨，调拨单对方已出库
-	private Office custId;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
+	private Office customer;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
 
 	public BizInventorySku() {
 		super();
@@ -33,28 +33,28 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 		super(id);
 	}
 
-	public BizInventoryInfo getInvId() {
-		return invId;
+	public BizInventoryInfo getInvInfo() {
+		return invInfo;
 	}
 
-	public void setInvId(BizInventoryInfo invId) {
-		this.invId = invId;
+	public void setInvInfo(BizInventoryInfo invInfo) {
+		this.invInfo = invInfo;
 	}
 
-	public BizSkuInfo getSkuId() {
-		return skuId;
+	public BizSkuInfo getSkuInfo() {
+		return skuInfo;
 	}
 
-	public void setSkuId(BizSkuInfo skuId) {
-		this.skuId = skuId;
+	public void setSkuInfo(BizSkuInfo skuInfo) {
+		this.skuInfo = skuInfo;
 	}
 
-	public Office getCustId() {
-		return custId;
+	public Office getCustomer() {
+		return customer;
 	}
 
-	public void setCustId(Office custId) {
-		this.custId = custId;
+	public void setCustomer(Office customer) {
+		this.customer = customer;
 	}
 
 	@Length(min = 1, max = 4, message = "库存类型：1常规；2残损；3专属长度必须介于 1 和 4 之间")

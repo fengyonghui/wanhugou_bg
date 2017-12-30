@@ -19,17 +19,17 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/">商品库存详情列表</a></li>
-		<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><li><a href="${ctx}/biz/inventory/bizInventorySku/form">商品库存详情添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><li><a href="${ctx}/biz/inventory/bizInventorySku/form?invInfo.id=${bizInventorySku.invInfo.id}">商品库存详情添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>仓库名称：</label>
-				<form:input path="invId.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>商品名称：</label>
-				<form:input path="skuId.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>库存类型：</label>
 				<form:input path="invType" htmlEscape="false" maxlength="4" class="input-medium"/>
@@ -60,17 +60,17 @@
 					${bizInventorySku.invType}
 				</a></td>
 				<td>
-					${bizInventorySku.invId.name}
+					${bizInventorySku.invInfo.name}
 				</td>
 				<td>
-					${bizInventorySku.skuId.name}
+					${bizInventorySku.skuInfo.name}
 				</td>
 				<td>
 					${bizInventorySku.stockQty}
 				</td>
-				<td>
-					${bizInventorySku.sOrdQty}
-				</td>
+				<%--<td>--%>
+					<%--${bizInventorySku.sOrdQty}--%>
+				<%--</td>--%>
 				<td>
 					${bizInventorySku.transInQty}
 				</td>
@@ -78,7 +78,7 @@
 					${bizInventorySku.transOutQty}
 				</td>
 				<td>
-					${bizInventorySku.custId.name}
+					${bizInventorySku.customer.name}
 				</td>
 				<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><td>
     				<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}">修改</a>
