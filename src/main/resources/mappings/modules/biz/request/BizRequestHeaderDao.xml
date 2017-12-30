@@ -92,7 +92,9 @@
 		INSERT INTO biz_request_header(
 			id,
 			req_no,
-			req_type,
+			<if test="reqType!=null">
+				req_type,
+			</if>
 			from_id,
 			to_id,
 			recv_eta,
@@ -107,7 +109,9 @@
 		) VALUES (
 			#{id},
 			#{reqNo},
+		<if test="reqType!=null">
 			#{reqType},
+		</if>
 			#{fromOffice.id},
 			#{toOffice.id},
 			#{recvEta},
@@ -125,7 +129,10 @@
 	<update id="update">
 		UPDATE biz_request_header SET 	
 			req_no = #{reqNo},
-			req_type = #{reqType},
+			<if test="reqType!=null">
+				req_type = #{reqType},
+			</if>
+
 			from_id = #{fromOffice.id},
 			to_id = #{toOffice.id},
 			recv_eta = #{recvEta},

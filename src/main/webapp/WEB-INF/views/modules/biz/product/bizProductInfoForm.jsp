@@ -447,6 +447,7 @@
 			<th>基础售价</th>
 			<th>采购价格</th>
 			<th>更新人</th>
+				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><th>操作</th></shiro:hasPermission>
 		</tr>
 		</thead>
 		<tbody>

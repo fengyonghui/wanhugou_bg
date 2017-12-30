@@ -28,7 +28,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	
 //	private BizSkuInfo bizSkuInfo;
 	private BizProductInfo productInfo;		// 所属产品id
-	private String skuType;		// 试销品、主销品、热销品、尾销品
+	private Integer skuType;		// 试销品、主销品、热销品、尾销品
 	private String name;		// 商品名称
 	private String partNo;    //商品编码
 	private Double basePrice; //基础售价
@@ -69,15 +69,14 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 		this.productInfo = productInfo;
 	}
 
-	@Length(min=1, max=4, message="试销品、主销品、热销品、尾销品长度必须介于 1 和 4 之间")
-	public String getSkuType() {
+	public Integer getSkuType() {
 		return skuType;
 	}
 
-	public void setSkuType(String skuType) {
+	public void setSkuType(Integer skuType) {
 		this.skuType = skuType;
 	}
-	
+
 	@Length(min=1, max=100, message="商品名称长度必须介于 1 和 100 之间")
 	public String getName() {
 		return name;
