@@ -50,27 +50,32 @@ public class BizInventoryInfoController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInventoryInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizInventoryInfo bizInventoryInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizInventoryInfo> page = bizInventoryInfoService.findPage(new Page<BizInventoryInfo>(request, response), bizInventoryInfo); 
+		Page<BizInventoryInfo> page = bizInventoryInfoService.findPage(new Page<BizInventoryInfo>(request, response), bizInventoryInfo);
+		String zt = request.getParameter("zt");//zt表示请求状态：1、商品库存管理 2、库存盘点 3、收货管理
+		model.addAttribute("zt",zt);
 		model.addAttribute("page", page);
 		return "modules/biz/inventory/bizInventoryInfoList";
 	}
 
 	@RequiresPermissions("biz:inventory:bizInventoryInfo:view")
 	@RequestMapping(value = "form")
-	public String form(BizInventoryInfo bizInventoryInfo, Model model) {
+	public String form(BizInventoryInfo bizInventoryInfo, Model model, HttpServletRequest request) {
+		String zt = request.getParameter("zt");
+		model.addAttribute("zt",zt);
 		model.addAttribute("entity", bizInventoryInfo);
 		return "modules/biz/inventory/bizInventoryInfoForm";
 	}
 
 	@RequiresPermissions("biz:inventory:bizInventoryInfo:edit")
 	@RequestMapping(value = "save")
-	public String save(BizInventoryInfo bizInventoryInfo, Model model, RedirectAttributes redirectAttributes) {
+	public String save(BizInventoryInfo bizInventoryInfo, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizInventoryInfo)){
-			return form(bizInventoryInfo, model);
+			return form(bizInventoryInfo, model,request);
 		}
 		bizInventoryInfoService.save(bizInventoryInfo);
+		String zt = request.getParameter("zt");
 		addMessage(redirectAttributes, "保存仓库信息成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventoryInfo/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventoryInfo/?repage&zt="+zt;
 	}
 	
 	@RequiresPermissions("biz:inventory:bizInventoryInfo:edit")

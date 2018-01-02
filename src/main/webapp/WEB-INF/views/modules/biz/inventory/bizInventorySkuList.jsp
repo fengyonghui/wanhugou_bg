@@ -18,14 +18,14 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku?invInfo.id=${bizInventorySku.invInfo.id}">商品库存详情列表</a></li>
-		<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><li><a href="${ctx}/biz/inventory/bizInventorySku/form?invInfo.id=${bizInventorySku.invInfo.id}">商品库存详情添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情列表</a></li>
+		<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><li><a href="${ctx}/biz/inventory/bizInventorySku/form?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/" method="post" class="breadcrumb form-search">
-		<%--<form:hidden path="skuInfo.id"/>--%>
-		<%--<input type="hidden" value="${skuInfo.id}"/>--%>
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<input id="zt" type="hidden" name="zt" value="${zt}"/>
+		<input id="invInfo.id" type="hidden" name="invInfo.id" value="${bizInventorySku.invInfo.id}"/>
 		<ul class="ul-form">
 			<li><label>商品名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
@@ -36,7 +36,6 @@
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('inv_type')}" itemLabel="label" itemValue="value"
 								  htmlEscape="false"/></form:select>
-				<%--<form:input path="invType" htmlEscape="false" maxlength="4" class="input-medium"/>--%>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -50,11 +49,19 @@
 				<th>仓库名称</th>
 				<th>商品名称</th>
 				<th>库存数量</th>
-				<th>销售订单数量</th>
-				<th>调入数量</th>
-				<th>调出数量</th>
-				<th>专属库存的客户</th>
-				<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><th>操作</th></shiro:hasPermission>
+				<c:if test="${zt eq '1' || zt eq '2'}">
+					<th>销售订单数量</th>
+					<th>调入数量</th>
+					<th>调出数量</th>
+					<th>专属库存的客户</th>
+				</c:if>
+				<c:if test="${zt eq '3'}">
+					<th>修改时间</th>
+					<th>修改人</th>
+				</c:if>
+				<c:if test="${zt eq '2' || zt eq '3'}">
+					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><th>操作</th></shiro:hasPermission>
+				</c:if>
 			</tr>
 		</thead>
 		<tbody>
@@ -73,22 +80,34 @@
 				<td>
 					${bizInventorySku.stockQty}
 				</td>
-				<td>
-					${bizInventorySku.stockOrdQty}
-				</td>
-				<td>
-					${bizInventorySku.transInQty}
-				</td>
-				<td>
-					${bizInventorySku.transOutQty}
-				</td>
-				<td>
-					${bizInventorySku.customer.name}
-				</td>
-				<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><td>
-    				<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}">修改</a>
-					<a href="${ctx}/biz/inventory/bizInventorySku/delete?id=${bizInventorySku.id}" onclick="return confirmx('确认要删除该商品库存详情吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+				<c:if test="${zt eq '1' || zt eq '2'}">
+					<td>
+						${bizInventorySku.stockOrdQty}
+					</td>
+					<td>
+						${bizInventorySku.transInQty}
+					</td>
+					<td>
+						${bizInventorySku.transOutQty}
+					</td>
+					<td>
+						${bizInventorySku.customer.name}
+					</td>
+				</c:if>
+				<c:if test="${zt eq '3'}">
+					<td>
+						<fmt:formatDate value="${bizInventorySku.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					</td>
+					<td>
+						${bizInventorySku.updateBy.name}
+					</td>
+				</c:if>
+				<c:if test="${zt eq '2' || zt eq '3'}">
+					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><td>
+						<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">修改</a>
+						<a href="${ctx}/biz/inventory/bizInventorySku/delete?id=${bizInventorySku.id}&zt=${zt}" onclick="return confirmx('确认要删除该商品库存详情吗？', this.href)">删除</a>
+					</td></shiro:hasPermission>
+				</c:if>
 			</tr>
 		</c:forEach>
 		</tbody>

@@ -17,9 +17,11 @@
 		s.name AS "customer.name",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
+		su.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
+		su.name as "updateBy.name",
 		a.update_time AS "updateDate"
 	</sql>
 	
@@ -27,6 +29,7 @@
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
 		LEFT JOIN biz_inventory_info i ON a.inv_id = i.id
 		LEFT JOIN sys_office s ON a.cust_id = s.id
+		LEFT JOIN sys_user su ON a.create_id=su.id
 	</sql>
     
 	<select id="get" resultType="BizInventorySku">
@@ -87,10 +90,18 @@
 			sku_id,
 			inv_type,
 			stock_qty,
-			s_ord_qty,
-			trans_in_qty,
-			trans_out_qty,
-			cust_id,
+			<if test="stockOrdQty!=null">
+				s_ord_qty,
+			</if>
+			<if test="transInQty!=null">
+				trans_in_qty,
+			</if>
+			<if test="transOutQty!=null">
+				trans_out_qty,
+			</if>
+			<if test="customer!=null and customer.id!=null and customer.id!=''">
+				cust_id,
+			</if>
 			status,
 			create_id,
 			create_time,
@@ -103,10 +114,18 @@
 			#{skuInfo.id},
 			#{invType},
 			#{stockQty},
-			#{stockOrdQty},
-			#{transInQty},
-			#{transOutQty},
-			#{customer.id},
+			<if test="stockOrdQty!=null">
+				#{stockOrdQty},
+			</if>
+			<if test="transInQty!=null">
+				#{transInQty},
+			</if>
+			<if test="transOutQty!=null">
+				#{transOutQty},
+			</if>
+			<if test="customer!=null and customer.id!=null and customer.id!=''">
+				#{customer.id},
+			</if>
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -122,10 +141,18 @@
 			sku_id = #{skuInfo.id},
 			inv_type = #{invType},
 			stock_qty = #{stockQty},
-			s_ord_qty = #{stockOrdQty},
-			trans_in_qty = #{transInQty},
-			trans_out_qty = #{transOutQty},
-			cust_id = #{customer.id},
+			<if test="stockOrdQty!=null">
+				s_ord_qty = #{stockOrdQty},
+			</if>
+			<if test="transInQty!=null">
+				trans_in_qty = #{transInQty},
+			</if>
+			<if test="transOutQty!=null">
+				trans_out_qty = #{transOutQty},
+			</if>
+			<if test="customer!=null and customer.id!=null and customer.id!=''">
+				cust_id = #{customer.id},
+			</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

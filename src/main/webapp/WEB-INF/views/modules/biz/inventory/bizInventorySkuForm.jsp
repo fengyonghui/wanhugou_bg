@@ -27,11 +27,12 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInventorySku/">商品库存详情列表</a></li>
-		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/form">商品库存详情<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">${not empty bizInventorySku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInventorySku:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz/inventory/bizInventorySku?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情列表</a></li>
+		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku/form?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">${not empty bizInventorySku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInventorySku:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input id="zt" name="zt" value="${zt}" type="hidden"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">仓库名称：</label>
@@ -72,37 +73,39 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">销售订单数量：</label>
-			<div class="controls">
-				<form:input path="stockOrdQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+		<c:if test="${zt eq '1' || zt eq '2'}">
+			<div class="control-group">
+				<label class="control-label">销售订单数量：</label>
+				<div class="controls">
+					<form:input path="stockOrdQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">调入数量：</label>
-			<div class="controls">
-				<form:input path="transInQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+			<div class="control-group">
+				<label class="control-label">调入数量：</label>
+				<div class="controls">
+					<form:input path="transInQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">调出数量：</label>
-			<div class="controls">
-				<form:input path="transOutQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+			<div class="control-group">
+				<label class="control-label">调出数量：</label>
+				<div class="controls">
+					<form:input path="transOutQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">库存专属客户名称：</label>
-			<div class="controls">
-				<sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
-								labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="客户"  url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
-								allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+			<div class="control-group">
+				<label class="control-label">库存专属客户名称：</label>
+				<div class="controls">
+					<sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
+									labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+									title="客户"  url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+									allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 			</div>
-		</div>
+		</c:if>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

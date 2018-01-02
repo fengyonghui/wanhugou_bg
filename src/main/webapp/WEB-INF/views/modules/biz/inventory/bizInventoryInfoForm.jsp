@@ -29,11 +29,12 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInventoryInfo/">仓库信息列表</a></li>
-		<li class="active"><a href="${ctx}/biz/inventory/bizInventoryInfo/form?id=${bizInventoryInfo.id}">仓库信息<shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit">${not empty bizInventoryInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInventoryInfo:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz/inventory/bizInventoryInfo?zt=${zt}">仓库信息列表</a></li>
+		<li class="active"><a href="${ctx}/biz/inventory/bizInventoryInfo/form?id=${bizInventoryInfo.id}&zt=${zt}">仓库信息<shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit">${not empty bizInventoryInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInventoryInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInventoryInfo" action="${ctx}/biz/inventory/bizInventoryInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input id="zt" name="zt" value="${zt}" type="hidden"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">仓库名称：</label>
