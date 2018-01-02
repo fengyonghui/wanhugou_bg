@@ -10,10 +10,10 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-				    if($("#address").val()==''){
-				        $("#addError").css("display","inline-block")
-				        return false;
-				    }
+                        if($("#address").val()==''){
+                            $("#addError").css("display","inline-block")
+                            return false;
+                        }
                         form.submit();
 				        loading('正在提交，请稍等...');
 				},
@@ -82,6 +82,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<form:hidden path="platformInfo.id" value="1" />
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">订单编号：</label>
@@ -146,13 +147,6 @@
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
                             htmlEscape="false"/></form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">订单来源；</label>
-			<div class="controls">
-				<form:input path="platformInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.invoice.BizInvoiceDetailDao">
+    
+	<sql id="bizInvoiceDetailColumns">
+		a.id AS "id",
+		a.line_no AS "lineNo",
+		a.order_id AS "orderHead.id",
+		boh.order_num as "orderHead.orderNum",
+		a.inv_amt AS "invAmt",
+		a.remark AS "remarks",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		su.name as "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		su.name as "updateBy.name",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizInvoiceDetailJoins">
+		left join sys_user su on a.create_id=su.id
+		LEFT  join biz_order_header boh on a.order_id=boh.id
+	</sql>
+    
+	<select id="get" resultType="BizInvoiceDetail">
+		SELECT 
+			<include refid="bizInvoiceDetailColumns"/>
+		FROM biz_invoice_detail a
+		<include refid="bizInvoiceDetailJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizInvoiceDetail">
+		SELECT 
+			<include refid="bizInvoiceDetailColumns"/>
+		FROM biz_invoice_detail a
+		<include refid="bizInvoiceDetailJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="lineNo != null and lineNo != ''">
+				AND a.line_no = #{lineNo}
+			</if>
+			<if test="orderHead != null and orderHead.id != null and orderHead.id !=''">
+				AND a.order_id = #{orderHead.id}
+			</if>
+			<if test="invAmt != null and invAmt != ''">
+				AND a.inv_amt = #{invAmt}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
+				AND a.update_id = #{updateBy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizInvoiceDetail">
+		SELECT 
+			<include refid="bizInvoiceDetailColumns"/>
+		FROM biz_invoice_detail a
+		<include refid="bizInvoiceDetailJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_invoice_detail(
+			id,
+			line_no,
+			order_id,
+			inv_amt,
+			remark,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{lineNo},
+			#{orderHead.id},
+			#{invAmt},
+			#{remarks},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_invoice_detail SET 	
+			line_no = #{lineNo},
+			order_id = #{orderHead.id},
+			inv_amt = #{invAmt},
+			remark = #{remarks},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_invoice_detail SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

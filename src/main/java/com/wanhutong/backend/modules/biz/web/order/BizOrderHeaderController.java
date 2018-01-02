@@ -84,6 +84,9 @@ public class BizOrderHeaderController extends BaseController {
 		if(bizOrderHeader.getTotalDetail()==null){
 			bizOrderHeader.setTotalDetail(0.0);
 		}
+		if(bizOrderHeader.getPlatformInfo()==null){
+			bizOrderHeader.getPlatformInfo().setId(1);
+		}
 		bizOrderHeaderService.save(bizOrderHeader);
 		addMessage(redirectAttributes, "保存订单信息成功");
 //		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
