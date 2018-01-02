@@ -7,7 +7,7 @@
 	<%@include file="/WEB-INF/views/include/treeview.jsp" %>
 	<script type="text/javascript">
 		var key, lastValue = "", nodeList = [], type = getQueryString("type", "${url}");
-		var tree, setting = {view:{selectedMulti:false,dblClickExpand:false},check:{enable:"${checked}",nocheckInherit:true},
+		var tree, setting = {view:{selectedMulti:false,dblClickExpand:false,nameIsHTML: true},check:{enable:"${checked}",nocheckInherit:true},
 				async:{enable:(type==3),url:"${ctx}/sys/user/treeData",autoParam:["id=officeId"]},
 				data:{simpleData:{enable:true}},callback:{<%--
 					beforeClick: function(treeId, treeNode){
