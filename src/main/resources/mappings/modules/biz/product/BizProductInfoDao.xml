@@ -6,7 +6,10 @@
 		<id property="id" column="id"/>
 		<result property="name" column="name"/>
 		<result property="prodCode" column="prodCode"/>
+		<result property="prodType" column="prodType"/>
+		<result property="marketingDate" column="marketingDate"/>
 		<result property="brandName" column="brandName"/>
+		<result property="vendorName" column="vendorName"/>
 		<result property="imgUrl" column="imgUrl"/>
 		<result property="description" column="description"/>
 		<result property="minPrice" column="minPrice"/>
@@ -46,6 +49,9 @@
 		so.type AS "office.type",
 		a.description AS "description",
 		a.vendor_id AS "office.id",
+		a.vendor_name AS "vendorName",
+		a.marketing_date AS "marketingDate",
+		a.prod_type AS "prodType",
 		a.min_price AS "minPrice",
 		a.max_price AS "maxPrice",
 		a.status AS "delFlag",
@@ -136,6 +142,9 @@
 			brand_name,
 			description,
 			vendor_id,
+			vendor_name,
+			marketing_date,
+			prod_type,
 			<if test="minPrice!=null">
 				min_price,
 			</if>
@@ -157,6 +166,9 @@
 			#{brandName},
 			#{description},
 			#{office.id},
+			#{office.name},
+			#{marketingDate},
+			#{prodType},
 		<if test="minPrice!=null">
 			#{minPrice},
 		</if>
@@ -196,13 +208,21 @@
 		<if test="office!=null and office.id!=null and office.id!=''">
 			vendor_id = #{office.id},
 		</if>
+		<if test="office!=null and office.name!=null and office.name!=''">
+			vendor_name = #{office.name},
+		</if>
+		<if test="marketingDate!=null and marketingDate!=''">
+			marketing_date = #{marketingDate},
+		</if>
+		<if test="prodType!=null and prodType!=''">
+			prod_type = #{prodType},
+		</if>
 		<if test="minPrice!=null">
 			min_price = #{minPrice},
 		</if>
 		<if test="maxPrice!=null">
 			max_price = #{maxPrice},
 		</if>
-
 			u_version = #{uVersion},
 			update_time = #{updateDate},
 			update_id = #{updateBy.id}

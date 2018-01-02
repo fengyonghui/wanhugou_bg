@@ -28,22 +28,16 @@
 			<li><label>备货单号：</label>
 				<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
-			<li><label>备货类型：</label>
-				<form:select path="reqType" class="input-medium">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('biz_req_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>
-			</li>
 			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
 								labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 			</li>
-			<li><label>期望收货时间：</label>
+			<li><span><label>期望收货时间：</label></span>
 				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li><label>业务状态：</label>
 				<form:select path="bizStatus" class="input-medium">
@@ -51,9 +45,6 @@
 					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
-			<%--<li><label>创建人：</label>--%>
-				<%--<form:input path="createBy.id" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
-			<%--</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>

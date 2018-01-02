@@ -3,6 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.service.request;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
@@ -49,7 +53,22 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	}
 	
 	public Page<BizRequestHeader> findPage(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
-		 	User user= UserUtils.getUser();
+		Date today = bizRequestHeader.getRecvEta();
+		if(today!=null){
+			Format f = new SimpleDateFormat("yyyy-MM-dd");
+			System.out.println("获取是:" + f.format(today));
+			Calendar addCal = Calendar.getInstance();
+			addCal.setTime(today);
+			addCal.add(Calendar.DAY_OF_MONTH, 1);// 今天+1天
+			Date tomorrow = addCal.getTime();
+			bizRequestHeader.setEndDate("'"+f.format(tomorrow)+"'");
+			Calendar subCal = Calendar.getInstance();
+			subCal.setTime(today);
+			subCal.add(Calendar.DAY_OF_MONTH, -1);// 今天+1天
+			Date yesterday = subCal.getTime();
+			bizRequestHeader.setStartDate("'"+f.format(yesterday)+"'");
+		}
+		User user= UserUtils.getUser();
 		DefaultProp defaultProp=new DefaultProp();
 		defaultProp.setPropKey("vendCenter");
 		Integer vendId=0;

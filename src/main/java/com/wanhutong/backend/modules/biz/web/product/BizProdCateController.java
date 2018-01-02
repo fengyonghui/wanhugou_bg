@@ -95,9 +95,11 @@ public class BizProdCateController extends BaseController {
 		if (catIds != null && !"".equals(catIds)){
 			String[] ids = StringUtils.split(catIds, ",");
 			bizProdCate.setCatIds(Lists.newArrayList(ids));
+			Map<String,List<BizCatePropValue>> map=bizProdCateService.findCatePropMap4Page(bizProdCate);
+			return map;
 		}
-		Map<String,List<BizCatePropValue>> map=bizProdCateService.findCatePropMap4Page(bizProdCate);
-		return map;
+		return null;
+
 	}
 
 	@ResponseBody

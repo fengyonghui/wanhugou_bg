@@ -15,6 +15,7 @@ import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,10 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String skuInfos; //多种商品信息
 	private String imgUrl;   //图片地址
 	private String photoDetails;
+	private Integer prodType;   //商品类型（1是专营商品、2是定制商品，3是普通商品）
+	private String vendorName;  //采购商名称
+	private Date marketingDate ; //上市时间
+	private String skuPartNo;  //sku编码，用于查询
 
 	private String cateIds; //多种分类
 
@@ -46,6 +51,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String propOwnValues;
 
 	private String photos; //产品图片
+
+	private String photoLists; //产品列表图
 
 	private SkuProd skuProd;
 
@@ -98,6 +105,21 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	}
 
+	public String getVendorName() {
+		return vendorName;
+	}
+
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
+
+	public Date getMarketingDate() {
+		return marketingDate;
+	}
+
+	public void setMarketingDate(Date marketingDate) {
+		this.marketingDate = marketingDate;
+	}
 
 	public BizProductInfo() {
 		super();
@@ -293,5 +315,29 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setSkuProd(SkuProd skuProd) {
 		this.skuProd = skuProd;
+	}
+
+	public Integer getProdType() {
+		return prodType;
+	}
+
+	public void setProdType(Integer prodType) {
+		this.prodType = prodType;
+	}
+
+	public String getPhotoLists() {
+		return photoLists;
+	}
+
+	public void setPhotoLists(String photoLists) {
+		this.photoLists = photoLists;
+	}
+
+	public String getSkuPartNo() {
+		return skuPartNo;
+	}
+
+	public void setSkuPartNo(String skuPartNo) {
+		this.skuPartNo = skuPartNo;
 	}
 }

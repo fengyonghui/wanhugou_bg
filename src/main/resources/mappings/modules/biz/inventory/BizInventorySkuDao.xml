@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao">
+    
+	<sql id="bizInventorySkuColumns">
+		a.id AS "id",
+		a.inv_id AS "invInfo.id",
+		i.name AS "invInfo.name",
+		a.sku_id AS "skuInfo.id",
+		sku.name AS "skuInfo.name",
+		a.inv_type AS "invType",
+		a.stock_qty AS "stockQty",
+		a.s_ord_qty AS "stockOrdQty",
+		a.trans_in_qty AS "transInQty",
+		a.trans_out_qty AS "transOutQty",
+		a.cust_id AS "customer.id",
+		s.name AS "customer.name",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizInventorySkuJoins">
+		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
+		LEFT JOIN biz_inventory_info i ON a.inv_id = i.id
+		LEFT JOIN sys_office s ON a.cust_id = s.id
+	</sql>
+    
+	<select id="get" resultType="BizInventorySku">
+		SELECT 
+			<include refid="bizInventorySkuColumns"/>
+		FROM biz_inventory_sku a
+		<include refid="bizInventorySkuJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizInventorySku">
+		SELECT 
+			<include refid="bizInventorySkuColumns"/>
+		FROM biz_inventory_sku a
+		<include refid="bizInventorySkuJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
+				AND i.id = #{invInfo.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
+				AND sku.name LIKE concat('%',#{skuInfo.name},'%')
+			</if>
+			<if test="invType != null and invType != ''">
+				AND a.inv_type = #{invType}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizInventorySku">
+		SELECT 
+			<include refid="bizInventorySkuColumns"/>
+		FROM biz_inventory_sku a
+		<include refid="bizInventorySkuJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_inventory_sku(
+			id,
+			inv_id,
+			sku_id,
+			inv_type,
+			stock_qty,
+			s_ord_qty,
+			trans_in_qty,
+			trans_out_qty,
+			cust_id,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{invInfo.id},
+			#{skuInfo.id},
+			#{invType},
+			#{stockQty},
+			#{stockOrdQty},
+			#{transInQty},
+			#{transOutQty},
+			#{customer.id},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_inventory_sku SET 	
+			inv_id = #{invInfo.id},
+			sku_id = #{skuInfo.id},
+			inv_type = #{invType},
+			stock_qty = #{stockQty},
+			s_ord_qty = #{stockOrdQty},
+			trans_in_qty = #{transInQty},
+			trans_out_qty = #{transOutQty},
+			cust_id = #{customer.id},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_inventory_sku SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,3 +1,4 @@
+<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
@@ -31,7 +32,7 @@
 				}
 			});
             var id=$("#id").val();
-            var setting = {check:{enable:true,nocheckInherit:true},view:{selectedMulti:false},
+            var setting = {check:{enable:true,nocheckInherit:true},view:{selectedMulti:false,nameIsHTML: true},
                 data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){
                     tree.checkNode(node, !node.checked, true, true);
                     return false;
@@ -107,6 +108,9 @@
 				$("#prodCodeCopy").val(prodCode);
 				var prodBrandName=$("#prodBrandName").val();
 				$("#prodBrandNameCopy").val(prodBrandName);
+				var skuCode =$("#skuCode").val();
+				console.info(skuCode);
+				$("#skuCodeCopy").val(skuCode);
                 $.ajax({
                		 type:"post",
 					 url:"${ctx}/biz/request/bizRequestHeader/findSkuTreeList",
@@ -148,24 +152,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">备货单号：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-xlarge required"/>--%>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			<%--</div>--%>
-		<%--</div>--%>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">备货单类型：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<form:select path="reqType" class="input-xlarge required">--%>
-					<%--<form:option value="" label="请选择"/>--%>
-					<%--<form:options items="${fns:getDictList('biz_req_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
-				<%--</form:select>--%>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			<%--</div>--%>
-		<%--</div>--%>
+		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
@@ -176,20 +163,10 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">备货中心：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<sys:treeselect id="toOffice" name="toOffice.id" value="${entity.toOffice.id}" labelName="toOffice.name"--%>
-								<%--labelValue="${entity.toOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"--%>
-								<%--title="备货中心"  url="/sys/office/queryTreeList?type=9" cssClass="input-xlarge required" dataMsgRequired="必填信息">--%>
-				<%--</sys:treeselect>--%>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			<%--</div>--%>
-		<%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">期望收货时间：</label>
 			<div class="controls">
-				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-xlarge Wdate required"
 					value="<fmt:formatDate value="${entity.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -218,7 +195,13 @@
 						<th>品牌名称</th>
 						<th>供应商</th>
 						<th>SKU</th>
-						<th>申报数量</th>
+						<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
+							<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+								<th>申报数量</th>
+								<th>购买数量</th>
+							</shiro:hasPermission>
+						</c:if>
+						<th>价钱</th>
 						<th>操作</th>
 					</tr>
 					</thead>
@@ -246,6 +229,15 @@
 									<input type='hidden' name='requestDetailList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
 									<input name='requestDetailList[${reqStatus.index}].reqQty' value="${reqDetail.reqQty}" type='text'/>
 								</td>
+								<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
+								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+								<td>
+									<input>
+								</td>
+								<td>
+
+								</td>
+								</shiro:hasPermission>
 								<td><shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 									<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
 									</shiro:hasPermission>
@@ -298,15 +290,18 @@
 					</div>
 					<div class="modal-body">
 						<div class="control-group">
-							<ul class="ul-form">
+							<ul class="inline ul-form">
 									<li><label>商品名称：</label>
 										<input id="productName"  htmlEscape="false" class="input-medium"/>
 									</li>	
-									<li><label>商品代码：</label>
+									<li><label>商品编码：</label>
 										<input id="prodCode"  htmlEscape="false" maxlength="10" class="input-medium"/>
 									</li>
 									<li><label>品牌名称：</label>
 										<input id="prodBrandName"  htmlEscape="false" maxlength="50" class="input-medium"/>
+									</li>
+									<li><label>SKU编码：</label>
+										<input id="skuCode"  htmlEscape="false" maxlength="10" class="input-medium"/>
 									</li>
 									<li class="btns"><input id="searchData" class="btn btn-primary" type="button" value="查询"/></li>
 									<li class="clearfix"></li>
@@ -338,11 +333,9 @@
 	</form:form>
 	<form:form id="searchForm" modelAttribute="bizRequestHeader" >
 		<form:hidden id="productNameCopy" path="productInfo.name"/>
-		<%--<input id="productNameCopy" type="hidden" name="productInfo.name" />--%>
 		<form:hidden id="prodCodeCopy" path="productInfo.prodCode"/>
-		<%--<input id="prodCodeCopy" type="hidden" name="productInfo.prodCode" />--%>
 		<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>
-		<%--<input id="prodBrandNameCopy" type="hidden" name="productInfo.prodBrandName" />--%>
+		<form:hidden id="skuCodeCopy" path="productInfo.skuPartNo"/>
 	</form:form>
 </body>
 </html>

@@ -98,8 +98,11 @@ public class BizProductInfoController extends BaseController {
 			List<CommonImg> imgList=commonImgService.findList(commonImg);
 			commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
 			List<CommonImg> subImgList=commonImgService.findList(commonImg);
+			commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
+			List<CommonImg> itemImgList=commonImgService.findList(commonImg);
 			String photos="";
 			String photoDetails="";
+			String photoLists="";
 			for(CommonImg img:imgList){
 				photos+="|"+img.getImgPath();
 			}
@@ -111,6 +114,12 @@ public class BizProductInfoController extends BaseController {
 			}
 			if(!"".equals(photoDetails)){
 				bizProductInfo.setPhotoDetails(photoDetails);
+			}
+			for(CommonImg img:itemImgList){
+				photoLists+="|"+img.getImgPath();
+			}
+			if(!"".equals(photoLists)){
+				bizProductInfo.setPhotoLists(photoLists);
 			}
 		}
 			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());

@@ -1,6 +1,8 @@
 <%@ taglib prefix="from" uri="http://www.springframework.org/tags/form" %>
+<%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+
 <html>
 <head>
 	<title>商品信息表管理</title>
@@ -108,16 +110,19 @@
                         $.each(data,function (keys,values) {
                             var propKeys= keys.split(",");
                             var propId= propKeys[0];
+                            if(propId!=$("#brandDefId").val()){
+
+
                             var propName= propKeys[1]
                             $("#cateProp").append('<input class="select_all" id="'+propId+'" name="prodPropertyInfos" type="checkbox" value="'+propId+'" />'+propName+':<span id="span_'+propId+'"/><br/>')
                             for(var p in values){
                                 if(values[p].value!=null){
                                     $("#span_"+propId).append('<input id="value_'+values[p].propertyValueId+'" class="value_'+propId+'" name="propertyMap['+propId+'].prodPropertyValues" type="checkbox" value="'+values[p].propertyValueId+'" />'+values[p].value+'')
                                 }
-                            }
-
+                            }}
 
                         })
+
 
                     })
             }
@@ -256,6 +261,7 @@
 	<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
         <input type="hidden" id="cateValueId" value="${bizProductInfo.catePropValue.id}"/>
+		<input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">商品名称：</label>
@@ -265,10 +271,35 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品图片:</label>
+			<label class="control-label">商品类型：</label>
 			<div class="controls">
-				<form:hidden id="prodImg" path="photos" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-				<sys:ckfinder input="prodImg" type="images" uploadPath="/prod/item" selectMultiple="true" maxWidth="100" maxHeight="100"/>
+				<form:select path="prodType" class="input-xlarge required">
+					<form:options items="${fns:getDictList('prod_type')}" itemLabel="label"  itemValue="value"
+								  htmlEscape="false"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+     	<label class="control-label">上市时间：</label>
+     	<div class="controls">
+         <input name="marketingDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
+                value="<fmt:formatDate value="${entity.marketingDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+    	 </div>
+ 		</div>
+		<div class="control-group">
+			<label class="control-label">商品主图:</label>
+			<div class="controls">
+				<form:hidden id="prodMaxImg" path="photos" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="prodMaxImg" type="images" uploadPath="/prod/main" selectMultiple="true" maxWidth="100" maxHeight="100"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">商品列表图:</label>
+			<div class="controls">
+				<form:hidden id="prodListImg" path="photoLists" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="prodListImg" type="images" uploadPath="/prod/item" selectMultiple="true" maxWidth="100" maxHeight="100"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -416,6 +447,7 @@
 			<th>基础售价</th>
 			<th>采购价格</th>
 			<th>更新人</th>
+				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><th>操作</th></shiro:hasPermission>
 		</tr>
 		</thead>
 		<tbody>

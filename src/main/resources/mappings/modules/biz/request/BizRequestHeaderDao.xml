@@ -44,7 +44,11 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="reqNo != null and reqNo != ''">
-				AND a.req_no = #{reqNo}
+				AND a.req_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
 			</if>
 			<if test="reqType != null and reqType != ''">
 				AND a.req_type = #{reqType}
@@ -53,9 +57,9 @@
 				AND a.from_id = #{fromOffice.id}
 			</if>
 			<if test="recvEta != null and recvEta != ''">
-				AND a.recv_eta = #{recvEta}
+				AND  a.recv_eta BETWEEN ${startDate} AND ${endDate}
 			</if>
-			<if test="bizStatus != null and bizStatus != ''">
+			<if test="bizStatus != null and bizStatus != -1">
 				AND a.biz_status = #{bizStatus}
 			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
@@ -92,7 +96,9 @@
 		INSERT INTO biz_request_header(
 			id,
 			req_no,
-			req_type,
+			<if test="reqType!=null">
+				req_type,
+			</if>
 			from_id,
 			to_id,
 			recv_eta,
@@ -107,7 +113,9 @@
 		) VALUES (
 			#{id},
 			#{reqNo},
+		<if test="reqType!=null">
 			#{reqType},
+		</if>
 			#{fromOffice.id},
 			#{toOffice.id},
 			#{recvEta},
@@ -125,7 +133,10 @@
 	<update id="update">
 		UPDATE biz_request_header SET 	
 			req_no = #{reqNo},
-			req_type = #{reqType},
+			<if test="reqType!=null">
+				req_type = #{reqType},
+			</if>
+
 			from_id = #{fromOffice.id},
 			to_id = #{toOffice.id},
 			recv_eta = #{recvEta},
