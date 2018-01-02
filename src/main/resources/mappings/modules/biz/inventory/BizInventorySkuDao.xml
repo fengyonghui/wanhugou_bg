@@ -4,13 +4,13 @@
     
 	<sql id="bizInventorySkuColumns">
 		a.id AS "id",
-		a.inv_id AS "invId.id",
+		a.inv_id AS "invInfo.id",
 		i.name AS "invInfo.name",
 		a.sku_id AS "skuInfo.id",
 		sku.name AS "skuInfo.name",
 		a.inv_type AS "invType",
 		a.stock_qty AS "stockQty",
-		a.s_ord_qty AS "sOrdQty",
+		a.s_ord_qty AS "stockOrdQty",
 		a.trans_in_qty AS "transInQty",
 		a.trans_out_qty AS "transOutQty",
 		a.cust_id AS "customer.id",
@@ -47,8 +47,8 @@
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				AND i.id = #{invInfo.id}
 			</if>
-			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
-				AND sku.id = #{skuInfo.id}
+			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
+				AND sku.name LIKE concat('%',#{skuInfo.name},'%')
 			</if>
 			<if test="invType != null and invType != ''">
 				AND a.inv_type = #{invType}
@@ -103,7 +103,7 @@
 			#{skuInfo.id},
 			#{invType},
 			#{stockQty},
-			#{sOrdQty},
+			#{stockOrdQty},
 			#{transInQty},
 			#{transOutQty},
 			#{customer.id},
@@ -122,7 +122,7 @@
 			sku_id = #{skuInfo.id},
 			inv_type = #{invType},
 			stock_qty = #{stockQty},
-			s_ord_qty = #{sOrdQty},
+			s_ord_qty = #{stockOrdQty},
 			trans_in_qty = #{transInQty},
 			trans_out_qty = #{transOutQty},
 			cust_id = #{customer.id},

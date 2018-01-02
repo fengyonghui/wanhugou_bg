@@ -36,7 +36,7 @@
 		<div class="control-group">
 			<label class="control-label">仓库名称：</label>
 			<div class="controls">
-				<input value="${entity.invInfo.name}" disabled="true" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<input value="${bizInventorySku.invInfo.name}" disabled="true" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<form:hidden path="invInfo.id"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
@@ -75,7 +75,7 @@
 		<div class="control-group">
 			<label class="control-label">销售订单数量：</label>
 			<div class="controls">
-				<form:input path="sOrdQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="stockOrdQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

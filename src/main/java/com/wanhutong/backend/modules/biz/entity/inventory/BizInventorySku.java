@@ -20,10 +20,11 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	private BizSkuInfo skuInfo;        // biz_sku_info.id
 	private String invType;        // 库存类型：1常规；2残损；3专属
 	private String stockQty;        // 库存数量--入库时数量增加，出库时减少
-	private String sOrdQty;        // 销售订单数量
+	private String stockOrdQty;       // 销售订单数量
 	private String transInQty;        // 调入数量--仓库间商品调拨，调拨单已审批
 	private String transOutQty;        // 调出数量--仓库间商品调拨，调拨单对方已出库
 	private Office customer;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
+//	private String sOrdQty;
 
 	public BizInventorySku() {
 		super();
@@ -76,12 +77,12 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	}
 
 	@Length(min = 1, max = 11, message = "销售订单数量长度必须介于 1 和 11 之间")
-	public String getSOrdQty() {
-		return sOrdQty;
+	public String getStockOrdQty() {
+		return stockOrdQty;
 	}
 
-	public void setSOrdQty(String sOrdQty) {
-		this.sOrdQty = sOrdQty;
+	public void setStockOrdQty(String stockOrdQty) {
+		this.stockOrdQty = stockOrdQty;
 	}
 
 	@Length(min = 1, max = 11, message = "调入数量--仓库间商品调拨，调拨单已审批长度必须介于 1 和 11 之间")

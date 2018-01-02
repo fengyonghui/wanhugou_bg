@@ -46,7 +46,8 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizInventoryInfo">
 			<tr>
-				<td><a href="${ctx}/biz/inventory/bizInventoryInfo/form?id=${bizInventoryInfo.id}">
+				<td>
+					<%--<a href="${ctx}/biz/inventory/bizInventoryInfo/form?id=${bizInventoryInfo.id}">--%>
 					${bizInventoryInfo.name}
 				</a></td>
 				<shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit"><td>

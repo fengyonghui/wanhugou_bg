@@ -59,7 +59,7 @@ public class BizInventorySkuController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInventorySku:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizInventorySku bizInventorySku, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizInventorySku> page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku); 
+		Page<BizInventorySku> page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
 		model.addAttribute("page", page);
 		return "modules/biz/inventory/bizInventorySkuList";
 	}
@@ -67,6 +67,7 @@ public class BizInventorySkuController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInventorySku:view")
 	@RequestMapping(value = "form")
 	public String form(BizInventorySku bizInventorySku, Model model) {
+//		bizInventorySku = bizInventorySkuService.get(bizInventorySku.getId());
 		BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
 		bizInventorySku.setInvInfo(bizInventoryInfo);
 		model.addAttribute("entity", bizInventorySku);
@@ -81,7 +82,7 @@ public class BizInventorySkuController extends BaseController {
 		}
 		bizInventorySkuService.save(bizInventorySku);
 		addMessage(redirectAttributes, "保存商品库存详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage&invInfo.id="+bizInventorySku.getInvInfo().getId();
 	}
 	
 	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
