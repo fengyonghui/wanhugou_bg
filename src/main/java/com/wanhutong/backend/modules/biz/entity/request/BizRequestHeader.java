@@ -37,6 +37,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String skuIds;
 	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
 	private BizProductInfo productInfo;
+	private String source;
 
 	private List<BizRequestDetail> requestDetailList;
 
@@ -192,5 +193,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setVendOfficeIds(String vendOfficeIds) {
 		this.vendOfficeIds = vendOfficeIds;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 }

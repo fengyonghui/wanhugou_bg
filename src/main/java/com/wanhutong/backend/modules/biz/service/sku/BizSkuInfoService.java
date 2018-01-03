@@ -116,7 +116,6 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	
 	@Transactional(readOnly = false)
 	public void save(BizSkuInfo bizSkuInfo) {
-
  	 BizProductInfo bizProductInfo=bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
 	//bizProductInfo.getOffice().getCode()
  	 super.save(bizSkuInfo);

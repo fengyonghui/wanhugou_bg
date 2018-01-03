@@ -67,7 +67,7 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader); 
+		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
 		model.addAttribute("page", page);
 		return "modules/biz/request/bizRequestHeaderList";
 	}
@@ -93,6 +93,9 @@ public class BizRequestHeaderController extends BaseController {
 		}
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
+		if(bizRequestHeader.getSource()!=null && "kc".equals(bizRequestHeader.getSource())){
+			return "modules/biz/request/bizRequestHeaderKcForm";
+		}
 		return "modules/biz/request/bizRequestHeaderForm";
 	}
 	@ResponseBody

@@ -93,7 +93,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			DefaultProp prop=defaultPropList.get(0);
 			 vendId=Integer.parseInt(prop.getPropValue());
 		}
-		 	if(user.getCompany().getId().equals(vendId)){
+		 	if(user.getCompany().getId().equals(vendId)|| "kc".equals(bizRequestHeader.getSource())){
 				bizRequestHeader.setBizStatus(((Integer) ReqHeaderStatusEnum.APPROVE.ordinal()).byteValue());
 			return  super.findPage(page, bizRequestHeader);
 		}

@@ -19,7 +19,9 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
+		<c:if test="${bizRequestHeader.source!='kc'}">
 		<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><li><a href="${ctx}/biz/request/bizRequestHeader/form">备货清单添加</a></li></shiro:hasPermission>
+		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -66,39 +68,41 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizRequestHeader">
+		<c:forEach items="${page.list}" var="requestHeader">
 			<tr>
-				<td><a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizRequestHeader.id}">
-					${bizRequestHeader.reqNo}
+				<td><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&source=${bizRequestHeader.source}">
+					${requestHeader.reqNo}
 				</a></td>
 				<td>
-					${fns:getDictLabel(bizRequestHeader.reqType, 'biz_req_type', '未知类型')}
+					${fns:getDictLabel(requestHeader.reqType, 'biz_req_type', '未知类型')}
 				</td>
 				<td>
-					${bizRequestHeader.fromOffice.name}
+					${requestHeader.fromOffice.name}
 				</td>
 				<td>
-					${bizRequestHeader.toOffice.name}
+					${requestHeader.toOffice.name}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-					${bizRequestHeader.remark}
+					${requestHeader.remark}
 				</td>
 				<td>
-					${fns:getDictLabel(bizRequestHeader.bizStatus, 'biz_req_status', '未知类型')}
+					${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
 				</td>
 				<td>
-					${bizRequestHeader.updateBy.name}
+					${requestHeader.updateBy.name}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizRequestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
-    				<a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizRequestHeader.id}">修改</a>
-					<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${bizRequestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+    				<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&source=${bizRequestHeader.source}">修改</a>
+					<c:if test="${bizRequestHeader.source!='kc'}">
+						<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+					</c:if>
+					</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
 		</tbody>
