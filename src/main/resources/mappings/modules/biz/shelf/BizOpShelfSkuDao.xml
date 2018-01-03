@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.shelf_id AS "opShelfInfo.id",
 		a.sku_id AS "skuInfo.id",
+		a.prod_id as "productInfo.id",
 		a.sku_id AS "skuProd.id",
 		a.center_id AS "centerOffice.id",
 		so.name AS "centerOffice.name",
@@ -136,6 +137,7 @@
 			id,
 			shelf_id,
 			sku_id,
+			prod_id,
 			<if test="centerOffice != null and centerOffice.id != null ">
                 center_id,
             </if>
@@ -159,6 +161,7 @@
 			#{id},
 			#{opShelfInfo.id},
 			#{skuInfo.id},
+			#{productInfo.id},
         <if test="centerOffice != null and centerOffice.id != null ">
 			#{centerOffice.id},
         </if>
@@ -185,6 +188,7 @@
 		UPDATE biz_op_shelf_sku SET 	
 			shelf_id = #{opShelfInfo.id},
 			sku_id = #{skuInfo.id},
+			prod_id = #{productInfo.id},
         <if test="centerOffice != null and centerOffice.id != null ">
 			center_id = #{centerOffice.id},
         </if>

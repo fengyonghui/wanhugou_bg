@@ -5,13 +5,21 @@ package com.wanhutong.backend.modules.biz.service.request;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.PoHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -43,6 +51,14 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private DefaultPropService defaultPropService;
 	@Resource
 	private OfficeService officeService;
+	@Resource
+	private BizPlatformInfoService bizPlatformInfoService;
+	@Resource
+	private BizPoHeaderService bizPoHeaderService;
+	@Resource
+	private BizSkuInfoService bizSkuInfoService;
+	@Resource
+	private BizPoDetailService bizPoDetailService;
 
 	public BizRequestHeader get(Integer id) {
 		return super.get(id);
@@ -115,6 +131,50 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			}
 			requestDetail.setRequestHeader(bizRequestHeader);
 			bizRequestDetailService.save(requestDetail);
+		}
+		if(bizRequestHeader.getPoDetailList()!=null){
+			Map<Integer,List<BizPoDetail>> map=new HashMap<Integer,List<BizPoDetail>>();
+				for(BizPoDetail bizPoDetail:bizRequestHeader.getPoDetailList()){
+					Integer key=bizPoDetail.getPoHeader().getVendOffice().getId();
+					if(map.containsKey(key)){
+						List<BizPoDetail> poDetails = map.get(key);
+						map.remove(key);
+						poDetails.add(bizPoDetail);
+						map.put(key,poDetails);
+					}
+					else {
+						List<BizPoDetail> poDetailList=new ArrayList<BizPoDetail>();
+						poDetailList.add(bizPoDetail);
+						map.put(key,poDetailList);
+					}
+				}
+			BizPoHeader poHeader=new BizPoHeader();
+			for (Map.Entry<Integer, List<BizPoDetail>> entry : map.entrySet()) {
+				System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
+				poHeader.setId(null);
+				String poNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO,entry.getKey());
+				poHeader.setOrderNum(poNo);
+				poHeader.setPlateformInfo(bizPlatformInfoService.get(1));
+				poHeader.setVendOffice(officeService.get(entry.getKey()));
+				bizPoHeaderService.save(poHeader);
+				int a=0;
+				Double totalDetail=0.0;
+					for (BizPoDetail poDetail:entry.getValue()){
+						poDetail.setLineNo(++a);
+						poDetail.setPoHeader(poHeader);
+						BizSkuInfo bizSkuInfo=bizSkuInfoService.get(poDetail.getSkuInfo().getId());
+						poDetail.setSkuName(bizSkuInfo.getName());
+						poDetail.setPartNo(bizSkuInfo.getPartNo());
+						bizPoDetailService.save(poDetail);
+						totalDetail+=poDetail.getOrdQty()*poDetail.getUnitPrice();
+					}
+
+				poHeader.setTotalDetail(totalDetail);
+				bizPoHeaderService.save(poHeader);
+				}
+
+			bizRequestHeader.setBizStatus(((Integer)ReqHeaderStatusEnum.STOCKING.ordinal()).byteValue());
+			super.save(bizRequestHeader);
 		}
 	}
 	

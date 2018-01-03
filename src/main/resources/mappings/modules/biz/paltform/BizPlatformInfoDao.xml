@@ -7,11 +7,11 @@
 		a.name AS "name",
 		a.description AS "description",
 		a.u_version AS "uVersion",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
-		a.status AS "status",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.status AS "delFlag",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizPlatformInfoJoins">
@@ -20,7 +20,7 @@
 	<select id="get" resultType="BizPlatformInfo">
 		SELECT 
 			<include refid="bizPlatformInfoColumns"/>
-		FROM biz_platform_info a
+		FROM biz_cms_platform_info a
 		<include refid="bizPlatformInfoJoins"/>
 		WHERE a.id = #{id}
 	</select>
@@ -28,7 +28,7 @@
 	<select id="findList" resultType="BizPlatformInfo">
 		SELECT 
 			<include refid="bizPlatformInfoColumns"/>
-		FROM biz_platform_info a
+		FROM biz_cms_platform_info a
 		<include refid="bizPlatformInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -57,7 +57,7 @@
 	<select id="findAllList" resultType="BizPlatformInfo">
 		SELECT 
 			<include refid="bizPlatformInfoColumns"/>
-		FROM biz_platform_info a
+		FROM biz_cms_platform_info a
 		<include refid="bizPlatformInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -72,7 +72,7 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO biz_platform_info(
+		INSERT INTO biz_cms_platform_info(
 			id,
 			name,
 			description,
@@ -96,7 +96,7 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_platform_info SET 	
+		UPDATE biz_cms_platform_info SET 	
 			name = #{name},
 			description = #{description},
 			u_version = #{uVersion},
@@ -107,7 +107,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE biz_platform_info SET 
+		UPDATE biz_cms_platform_info SET 
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

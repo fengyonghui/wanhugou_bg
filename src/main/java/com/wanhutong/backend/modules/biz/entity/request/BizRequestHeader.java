@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.request;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -38,6 +39,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private BizProductInfo productInfo;
 
 	private List<BizRequestDetail> requestDetailList;
+
+	private List<BizPoDetail> poDetailList;
+
+	private String vendOfficeIds;
 
 	private String startDate;
 
@@ -171,5 +176,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	public List<BizPoDetail> getPoDetailList() {
+		return poDetailList;
+	}
+
+	public void setPoDetailList(List<BizPoDetail> poDetailList) {
+		this.poDetailList = poDetailList;
+	}
+
+	public String getVendOfficeIds() {
+		return vendOfficeIds;
+	}
+
+	public void setVendOfficeIds(String vendOfficeIds) {
+		this.vendOfficeIds = vendOfficeIds;
 	}
 }

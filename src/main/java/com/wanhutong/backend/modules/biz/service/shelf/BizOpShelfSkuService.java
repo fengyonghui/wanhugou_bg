@@ -64,7 +64,7 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 
 
 		bizProductInfoService.saveProd(bizProductInfo);
-
+		bizOpShelfSku.setProductInfo(bizProductInfo);
 		super.save(bizOpShelfSku);
 	}
 	

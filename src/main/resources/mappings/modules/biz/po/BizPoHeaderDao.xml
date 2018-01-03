@@ -5,19 +5,19 @@
 	<sql id="bizPoHeaderColumns">
 		a.id AS "id",
 		a.order_num AS "orderNum",
-		a.vend_id AS "vendId",
+		a.vend_id AS "vendOffice.id",
 		a.total_detail AS "totalDetail",
 		a.total_exp AS "totalExp",
 		a.freight AS "freight",
 		a.inv_status AS "invStatus",
 		a.biz_status AS "bizStatus",
-		a.plateform_id AS "plateformId",
-		a.status AS "status",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.plateform_id AS "plateformInfo.id",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizPoHeaderJoins">
@@ -38,8 +38,8 @@
 		<include refid="bizPoHeaderJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="vendId != null and vendId != ''">
-				AND a.vend_id = #{vendId}
+			<if test="vendOffice != null and vendOffice.id !=null and vendOffice.id != ''">
+				AND a.vend_id = #{vendOffice.id}
 			</if>
 			<if test="invStatus != null and invStatus != ''">
 				AND a.inv_status = #{invStatus}
@@ -47,8 +47,8 @@
 			<if test="bizStatus != null and bizStatus != ''">
 				AND a.biz_status = #{bizStatus}
 			</if>
-			<if test="plateformId != null and plateformId != ''">
-				AND a.plateform_id = #{plateformId}
+			<if test="plateformInfo != null and plateformInfo.id !=null and  plateformInfo.id != ''">
+				AND a.plateform_id = #{plateformInfo.id}
 			</if>
 		</where>
 		<choose>
@@ -77,16 +77,29 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_po_header(
 			id,
 			order_num,
-			vend_id,
-			total_detail,
-			total_exp,
-			freight,
-			inv_status,
-			biz_status,
+			<if test="vendOffice!=null and vendOffice.id !=null ">
+				vend_id,
+			</if>
+			<if test="totalDetail!=null">
+				total_detail,
+			</if>
+			<if test="totalExp!=null">
+				total_exp,
+			</if>
+
+			<if test="freight!=null and freight!=''">
+				freight,
+			</if>
+			<if test="invStatus!=null">
+				inv_status,
+			</if>
+			<if test="bizStatus!=null">
+				biz_status,
+			</if>
 			plateform_id,
 			status,
 			create_id,
@@ -97,35 +110,59 @@
 		) VALUES (
 			#{id},
 			#{orderNum},
-			#{vendId},
+		<if test="vendOffice!=null and vendOffice.id !=null ">
+			#{vendOffice.id},
+		</if>
+		<if test="totalDetail!=null">
 			#{totalDetail},
+		</if>
+		<if test="totalExp!=null">
 			#{totalExp},
+		</if>
+		<if test="freight!=null and freight!=''">
 			#{freight},
+		</if>
+		<if test="invStatus!=null">
 			#{invStatus},
+		</if>
+		<if test="bizStatus!=null">
 			#{bizStatus},
-			#{plateformId},
-			#{status},
-			#{createId.id},
-			#{createTime},
+		</if>
+			#{plateformInfo.id},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
 			#{uVersion},
-			#{updateId.id},
-			#{updateTime}
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_po_header SET 	
 			order_num = #{orderNum},
-			vend_id = #{vendId},
+		<if test="vendOffice!=null and vendOffice.id !=null ">
+			vend_id = #{vendOffice.id},
+		</if>
+		<if test="totalDetail!=null">
 			total_detail = #{totalDetail},
+		</if>
+		<if test="totalExp">
 			total_exp = #{totalExp},
+		</if>
+		<if test="freight!=null and freight!=''">
 			freight = #{freight},
+		</if>
+		<if test="invStatus!=null">
 			inv_status = #{invStatus},
+		</if>
+		<if test="invStatus!=null">
 			biz_status = #{bizStatus},
-			plateform_id = #{plateformId},
+		</if>
+			plateform_id = #{plateformInfo.id},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

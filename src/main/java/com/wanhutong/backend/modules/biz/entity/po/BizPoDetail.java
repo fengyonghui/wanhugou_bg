@@ -26,7 +26,7 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	private BizSkuInfo skuInfo;		// biz_sku_info.id
 	private String partNo;		// 商品编号
 	private String skuName;		// 商品名称
-	private String unitPrice;		// 商品单价
+	private Double unitPrice;		// 商品单价
 	private Integer ordQty;		// 采购数量
 
 	
@@ -55,12 +55,12 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	public void setSkuName(String skuName) {
 		this.skuName = skuName;
 	}
-	
-	public String getUnitPrice() {
+
+	public Double getUnitPrice() {
 		return unitPrice;
 	}
 
-	public void setUnitPrice(String unitPrice) {
+	public void setUnitPrice(Double unitPrice) {
 		this.unitPrice = unitPrice;
 	}
 

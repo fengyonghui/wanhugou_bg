@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.shelf;
 
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
@@ -26,6 +27,7 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	private static final long serialVersionUID = 1L;
 	private BizOpShelfInfo opShelfInfo;		// 货架ID
 	private BizSkuInfo skuInfo;		// 上架商品ID
+	private BizProductInfo productInfo; //prod_id  上架产品【SPU】ID
 	private Office centerOffice;		// 采购中心ID（sys_office.id） 0:代表平台商品
 	private User shelfUser;		// 上架人
 	private Integer shelfQty;		// 上架数量
@@ -211,5 +213,13 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	public void setSkuProd(SkuProd skuProd) {
 		this.skuProd = skuProd;
+	}
+
+	public BizProductInfo getProductInfo() {
+		return productInfo;
+	}
+
+	public void setProductInfo(BizProductInfo productInfo) {
+		this.productInfo = productInfo;
 	}
 }

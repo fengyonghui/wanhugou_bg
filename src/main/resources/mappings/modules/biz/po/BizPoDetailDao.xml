@@ -4,19 +4,19 @@
     
 	<sql id="bizPoDetailColumns">
 		a.id AS "id",
-		a.order_id AS "orderId",
+		a.order_id AS "poHeader.id",
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
-		a.sku_no AS "skuNo",
+		a.sku_no AS "skuInfo.id",
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
 		a.unit_price AS "unitPrice",
 		a.ord_qty AS "ordQty",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizPoDetailJoins">
@@ -88,35 +88,35 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{orderId},
+			#{poHeader.id},
 			#{lineNo},
 			#{pLineNo},
-			#{skuNo},
+			#{skuInfo.id},
 			#{partNo},
 			#{skuName},
 			#{unitPrice},
 			#{ordQty},
-			#{createId.id},
-			#{createTime},
+			#{createBy.id},
+			#{createDate},
 			#{uVersion},
-			#{updateId.id},
-			#{updateTime}
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_po_detail SET 	
-			order_id = #{orderId},
+			order_id = #{poHeader.id},
 			line_no = #{lineNo},
 			p_line_no = #{pLineNo},
-			sku_no = #{skuNo},
+			sku_no = #{skuInfo.id},
 			part_no = #{partNo},
 			sku_name = #{skuName},
 			unit_price = #{unitPrice},
 			ord_qty = #{ordQty},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

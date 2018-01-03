@@ -195,13 +195,15 @@
 						<th>品牌名称</th>
 						<th>供应商</th>
 						<th>SKU</th>
+						<th>申报数量</th>
 						<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
 							<shiro:hasPermission name="biz:request:selecting:supplier:edit">
-								<th>申报数量</th>
+								<th>供应商</th>
 								<th>购买数量</th>
+								<th>价钱</th>
 							</shiro:hasPermission>
 						</c:if>
-						<th>价钱</th>
+
 						<th>操作</th>
 					</tr>
 					</thead>
@@ -232,12 +234,21 @@
 								<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
 								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
 								<td>
-									<input>
+									<input type='hidden' name='poDetailList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
+									<sys:treeselect id="vendOffice" name="poDetailList[${reqStatus.index}].poHeader.vendOffice.id" value="${reqDetail.skuInfo.productInfo.office.id}" labelName="poDetailList[${reqStatus.index}].poHeader.vendOffice.name"
+													labelValue="${reqDetail.skuInfo.productInfo.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+													title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+									</sys:treeselect>
 								</td>
 								<td>
+									<input name="poDetailList[${reqStatus.index}].ordQty" value=""/>
+								</td>
+								<td>
+									<input name="poDetailList[${reqStatus.index}].unitPrice" value=""/>
 
 								</td>
 								</shiro:hasPermission>
+								</c:if>
 								<td><shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 									<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
 									</shiro:hasPermission>
