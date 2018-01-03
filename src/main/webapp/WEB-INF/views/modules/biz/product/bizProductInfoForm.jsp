@@ -270,16 +270,16 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">商品类型：</label>
-			<div class="controls">
-				<form:select path="prodType" class="input-xlarge required">
-					<form:options items="${fns:getDictList('prod_type')}" itemLabel="label"  itemValue="value"
-								  htmlEscape="false"/>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">商品类型：</label>--%>
+			<%--<div class="controls">--%>
+				<%--<form:select path="prodType" class="input-xlarge required">--%>
+					<%--<form:options items="${fns:getDictList('prod_type')}" itemLabel="label"  itemValue="value"--%>
+								  <%--htmlEscape="false"/>--%>
+				<%--</form:select>--%>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
      	<label class="control-label">上市时间：</label>
      	<div class="controls">

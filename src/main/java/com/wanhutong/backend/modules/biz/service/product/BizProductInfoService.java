@@ -9,18 +9,14 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
-import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
-import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
-import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.ProductTypeEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
@@ -302,13 +298,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 			BizSkuInfo bizSkuInfo=new BizSkuInfo();
 			Integer id=productInfo.getId();
 			String name=productInfo.getName();
-			Integer prodType=productInfo.getProdType();
-			if(ProductTypeEnum.stateOf(prodType)!=null){
-				String prodTypeName=ProductTypeEnum.stateOf(prodType).getName();
-				skuProd.setName(name+"<span style='color: #1aa2d8'>("+prodTypeName+")</span>");
-			}else {
-				skuProd.setName(name);
-			}
+			skuProd.setName(name);
 			skuProd.setId(-id);
 			skuProd.setPid(0);
 

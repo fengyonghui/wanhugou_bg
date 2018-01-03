@@ -2,10 +2,10 @@ package com.wanhutong.backend.modules.enums;
 
 public enum SkuTypeEnum {
 
-    /**主销品*/
-    MAIN_SKU((byte)1,"主销品"),
-    HOT_SKU((byte)2,"热销品"),
-    END_SKU((byte)3,"尾销品");
+    /**专营商品*/
+    OWN_PRODUCT((byte)1,"自选商品"),
+    MADE_PRODUCT((byte)2,"定制商品"),
+    COMMON_PRODUCT((byte)3,"非自选商品");
 
     private int code;
     private String name;

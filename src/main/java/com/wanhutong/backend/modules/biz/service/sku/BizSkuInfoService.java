@@ -117,9 +117,14 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	@Transactional(readOnly = false)
 	public void save(BizSkuInfo bizSkuInfo) {
  	 BizProductInfo bizProductInfo=bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
-	//bizProductInfo.getOffice().getCode()
- 	 super.save(bizSkuInfo);
-		BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();
+		String prodCode=bizProductInfo.getProdCode().length()>4?bizProductInfo.getProdCode().substring(0,4):bizProductInfo.getProdCode();
+		String vendId=autoGenericCode(bizProductInfo.getOffice().getId().toString(),4);
+		logger.info("prodCode======="+prodCode+"======="+vendId);
+ 		 super.save(bizSkuInfo);
+ 		 String partNo=prodCode+vendId+autoGenericCode(bizSkuInfo.getId().toString(),6);
+		bizSkuInfo.setPartNo(partNo);
+		super.save(bizSkuInfo);
+ 		 BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();
 		if (bizSkuInfo.getProdPropMap() != null) {
 			bizSkuInfoDao.deleteSkuPropInfoReal(bizSkuInfo);
 			for (Map.Entry<String, BizProdPropertyInfo> entry : bizSkuInfo.getProdPropMap().entrySet()) {
@@ -148,6 +153,17 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		}
 		//sku图片保存
 		saveCommonImg(bizSkuInfo);
+	}
+
+	private String autoGenericCode(String code, int num) {
+		String result = "";
+		// 保留num的位数
+    // 0 代表前面补充0
+		// num 代表长度为4
+		// d 代表参数为正数型
+		result = String.format("%0" + num + "d", Integer.parseInt(code) + 1);
+
+		return result;
 	}
 
 	@Transactional(readOnly = false)

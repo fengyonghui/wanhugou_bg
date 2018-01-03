@@ -39,7 +39,6 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String skuInfos; //多种商品信息
 	private String imgUrl;   //图片地址
 	private String photoDetails;
-	private Integer prodType;   //商品类型（1是专营商品、2是定制商品，3是普通商品）
 	private String vendorName;  //采购商名称
 	private Date marketingDate ; //上市时间
 	private String skuPartNo;  //sku编码，用于查询
@@ -315,14 +314,6 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setSkuProd(SkuProd skuProd) {
 		this.skuProd = skuProd;
-	}
-
-	public Integer getProdType() {
-		return prodType;
-	}
-
-	public void setProdType(Integer prodType) {
-		this.prodType = prodType;
 	}
 
 	public String getPhotoLists() {
