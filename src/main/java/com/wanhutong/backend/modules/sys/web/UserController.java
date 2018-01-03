@@ -35,6 +35,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
@@ -49,6 +50,9 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private SystemService systemService;
+	
+	@Autowired
+	private OfficeService officeService;
 	
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -84,11 +88,22 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
 	public String form(User user, Model model) {
-		if (user.getCompany()==null || user.getCompany().getId()==null){
-			user.setCompany(UserUtils.getUser().getCompany());
-		}
 		if (user.getOffice()==null || user.getOffice().getId()==null){
+			user.setCompany(UserUtils.getUser().getCompany());
 			user.setOffice(UserUtils.getUser().getOffice());
+		}else{
+			Office off = new Office();
+			off.setParentIds("%"+user.getOffice().getId()+",");
+			List<Office> list = officeService.findList(off);
+			Office office = officeService.get(user.getOffice().getId());
+			if(list == null || list.isEmpty()){
+				Office parentOffice = officeService.get(office.getParentId());
+				user.setCompany(parentOffice);
+				user.setOffice(office);
+			}else{
+				user.setCompany(office);
+				user.setOffice(null);
+			}
 		}
 		model.addAttribute("user", user);
 		model.addAttribute("allRoles", systemService.findAllRole());
