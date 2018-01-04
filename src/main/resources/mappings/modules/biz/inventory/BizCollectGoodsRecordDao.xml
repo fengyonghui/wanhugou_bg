@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao">
+    
+	<sql id="bizCollectGoodsRecordColumns">
+		a.id AS "id",
+		a.inv_id AS "invId",
+		a.sku_id AS "skuId",
+		a.order_id AS "orderId",
+		a.receive_num AS "receiveNum",
+		a.vend_id AS "vendId",
+		a.receive_time AS "receiveTime",
+		a.status AS "status",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateId.id",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="bizCollectGoodsRecordJoins">
+	</sql>
+    
+	<select id="get" resultType="BizCollectGoodsRecord">
+		SELECT 
+			<include refid="bizCollectGoodsRecordColumns"/>
+		FROM biz_collect_goods_record a
+		<include refid="bizCollectGoodsRecordJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizCollectGoodsRecord">
+		SELECT 
+			<include refid="bizCollectGoodsRecordColumns"/>
+		FROM biz_collect_goods_record a
+		<include refid="bizCollectGoodsRecordJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="invId != null and invId != ''">
+				AND a.inv_id = #{invId}
+			</if>
+			<if test="skuId != null and skuId != ''">
+				AND a.sku_id = #{skuId}
+			</if>
+			<if test="orderId != null and orderId != ''">
+				AND a.order_id = #{orderId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizCollectGoodsRecord">
+		SELECT 
+			<include refid="bizCollectGoodsRecordColumns"/>
+		FROM biz_collect_goods_record a
+		<include refid="bizCollectGoodsRecordJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_collect_goods_record(
+			id,
+			inv_id,
+			sku_id,
+			order_id,
+			receive_num,
+			vend_id,
+			receive_time,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{invId},
+			#{skuId},
+			#{orderId},
+			#{receiveNum},
+			#{vendId},
+			#{receiveTime},
+			#{status},
+			#{createId.id},
+			#{createTime},
+			#{uVersion},
+			#{updateId.id},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_collect_goods_record SET 	
+			inv_id = #{invId},
+			sku_id = #{skuId},
+			order_id = #{orderId},
+			receive_num = #{receiveNum},
+			vend_id = #{vendId},
+			receive_time = #{receiveTime},
+			create_time = #{createTime},
+			u_version = #{uVersion},
+			update_id = #{updateId.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_collect_goods_record SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

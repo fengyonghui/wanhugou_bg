@@ -9,11 +9,13 @@ import java.util.*;
 
 import com.sun.xml.internal.bind.v2.TODO;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -59,6 +61,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private BizSkuInfoService bizSkuInfoService;
 	@Resource
 	private BizPoDetailService bizPoDetailService;
+	@Resource
+	private BizInventorySkuService bizInventorySkuService;
 
 	public BizRequestHeader get(Integer id) {
 		return super.get(id);
@@ -177,7 +181,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			super.save(bizRequestHeader);
 		}
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void delete(BizRequestHeader bizRequestHeader) {
 		super.delete(bizRequestHeader);

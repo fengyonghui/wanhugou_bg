@@ -39,7 +39,11 @@ public class BizInventoryInfoService extends CrudService<BizInventoryInfoDao, Bi
 	public Page<BizInventoryInfo> findPage(Page<BizInventoryInfo> page, BizInventoryInfo bizInventoryInfo) {
 		return super.findPage(page, bizInventoryInfo);
 	}
-	
+	public BizInventoryInfo findName(String name){
+		BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+		bizInventoryInfo.setName(name);
+		return super.get(bizInventoryInfo);
+	}
 	@Transactional(readOnly = false)
 	public void save(BizInventoryInfo bizInventoryInfo) {
 		if(bizInventoryInfo.getBizLocation()!=null){

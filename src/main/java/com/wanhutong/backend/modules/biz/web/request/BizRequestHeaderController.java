@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -51,6 +53,8 @@ public class BizRequestHeaderController extends BaseController {
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizInventorySkuService bizInventorySkuService;
 	
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -130,7 +134,7 @@ public class BizRequestHeaderController extends BaseController {
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
 	}
-	
+
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizRequestHeader bizRequestHeader, RedirectAttributes redirectAttributes) {

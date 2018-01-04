@@ -32,13 +32,16 @@
 		<li><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
 		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizRequestHeader.id}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="" action="" method="post" class="form-horizontal">
+	<%--@elvariable id="bizSendGoodsRecord" type="com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord"--%>
+	<form:form id="inputForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord/save" method="post" class="form-horizontal">
 		<%--<form:hidden path="id"/>--%>
 		<sys:message content="${message}"/>
+		<input name="bizRequestDetail.id" value="${entity.id}" type="hidden"/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
 				<input readonly="readonly" value="${entity.fromOffice.name}"/>
+				<input type="hidden" name="customer.id" value="${entity.fromOffice.id}">
 				<%--<sys:treeselect id="fromOffice" name="fromOffice.id"  value="${entity.fromOffice.id}" labelName="fromOffice.name"--%>
 								<%--labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"--%>
 								<%--title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required" dataMsgRequired="必填信息">--%>
@@ -93,20 +96,23 @@
 								</td>
 								<td>${reqDetail.skuInfo.productInfo.prodCode}</td>
 								<td>${reqDetail.skuInfo.productInfo.brandName}</td>
-								<td>${reqDetail.skuInfo.productInfo.office.name}</td>
+								<td>
+									${reqDetail.skuInfo.productInfo.office.name}
+									<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
+								</td>
 								<td>${reqDetail.skuInfo.name}</td>
 								<td>
-									<input type='hidden' name='' value='${reqDetail.id}'/>
-									<input type='hidden' name='' value='${reqDetail.skuInfo.id}'/>
-									<input name='' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
+									<%--<input type='hidden' name='id' value='${reqDetail.id}'/>--%>
+									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
+									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
+									<input name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
+									<input name="bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.id" value="${reqDetail.id}" type="hidden"/>
 								</td>
 								<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input type='hidden' name='' value='${reqDetail.skuInfo.id}'/>
-									<input name=""/>
+									<input name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" value="" type="text"/>
 								</td>
-
 								</shiro:hasPermission>
 								</c:if>
 
@@ -127,7 +133,7 @@
 		</div>
 
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认供货"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 

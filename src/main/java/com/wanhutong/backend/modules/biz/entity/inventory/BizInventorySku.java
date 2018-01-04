@@ -19,10 +19,10 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	private BizInventoryInfo invInfo;        // 仓库ID，biz_inventory_info.id
 	private BizSkuInfo skuInfo;        // biz_sku_info.id
 	private String invType;        // 库存类型：1常规；2残损；3专属
-	private String stockQty;        // 库存数量--入库时数量增加，出库时减少
-	private String stockOrdQty;       // 销售订单数量
-	private String transInQty;        // 调入数量--仓库间商品调拨，调拨单已审批
-	private String transOutQty;        // 调出数量--仓库间商品调拨，调拨单对方已出库
+	private Integer stockQty;        // 库存数量--入库时数量增加，出库时减少
+	private Integer stockOrdQty;       // 销售订单数量
+	private Integer transInQty;        // 调入数量--仓库间商品调拨，调拨单已审批
+	private Integer transOutQty;        // 调出数量--仓库间商品调拨，调拨单对方已出库
 	private Office customer;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
 //	private String sOrdQty;
 
@@ -68,38 +68,38 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	}
 
 	@Length(min = 1, max = 11, message = "库存数量--入库时数量增加，出库时减少长度必须介于 1 和 11 之间")
-	public String getStockQty() {
+	public Integer getStockQty() {
 		return stockQty;
 	}
 
-	public void setStockQty(String stockQty) {
+	public void setStockQty(Integer stockQty) {
 		this.stockQty = stockQty;
 	}
 
 	@Length(min = 1, max = 11, message = "销售订单数量长度必须介于 1 和 11 之间")
-	public String getStockOrdQty() {
+	public Integer getStockOrdQty() {
 		return stockOrdQty;
 	}
 
-	public void setStockOrdQty(String stockOrdQty) {
+	public void setStockOrdQty(Integer stockOrdQty) {
 		this.stockOrdQty = stockOrdQty;
 	}
 
 	@Length(min = 1, max = 11, message = "调入数量--仓库间商品调拨，调拨单已审批长度必须介于 1 和 11 之间")
-	public String getTransInQty() {
+	public Integer getTransInQty() {
 		return transInQty;
 	}
 
-	public void setTransInQty(String transInQty) {
+	public void setTransInQty(Integer transInQty) {
 		this.transInQty = transInQty;
 	}
 
 	@Length(min = 1, max = 11, message = "调出数量--仓库间商品调拨，调拨单对方已出库长度必须介于 1 和 11 之间")
-	public String getTransOutQty() {
+	public Integer getTransOutQty() {
 		return transOutQty;
 	}
 
-	public void setTransOutQty(String transOutQty) {
+	public void setTransOutQty(Integer transOutQty) {
 		this.transOutQty = transOutQty;
 	}
 
