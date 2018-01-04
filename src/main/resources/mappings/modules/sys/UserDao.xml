@@ -296,13 +296,10 @@
 	
 	<!-- 插入用户和角色关联表数据 -->
 	<insert id="insertUserRole">
-		INSERT INTO sys_user_role(user_id, role_id)
-		<foreach collection="roleList" item="role" separator=" union all ">
-			SELECT #{id}, #{role.id}
-			<if test="dbName != 'mssql'">
-			FROM dual
-			</if>
-		</foreach>
+		INSERT INTO sys_user_role(user_id, role_id) values
+		<foreach item="role" index="key" collection="roleList" open="" separator="," close="">
+			(#{id},#{role.id})
+        </foreach>   
 	</insert>
 	
 	<!-- 更新用户信息  -->

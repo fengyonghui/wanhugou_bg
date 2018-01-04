@@ -142,6 +142,11 @@ public class SystemService extends BaseService implements InitializingBean {
 			// 更新用户数据
 			user.preUpdate();
 			userDao.update(user);
+			//更新用户角色数据
+			if(user.getRoleList()!=null && (!user.getRoleIdList().isEmpty())){
+				userDao.deleteUserRole(user);
+				userDao.insertUserRole(user);
+			}
 		}
 		if (user.getId() == null){
 			// 更新用户与角色关联

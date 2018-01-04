@@ -43,7 +43,6 @@
 		
 		var pre_ids = "${selectIds}".split(",");
 		var ids = "${selectIds}".split(",");
-		
 		//点击选择项回调
 		function treeOnClick(event, treeId, treeNode, clickFlag){
 			$.fn.zTree.getZTreeObj(treeId).expandNode(treeNode);
