@@ -3,10 +3,12 @@
  */
 package com.wanhutong.backend.modules.biz.web.shelf;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +17,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
-import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -88,5 +86,13 @@ public class BizOpShelfInfoController extends BaseController {
 		addMessage(redirectAttributes, "删除货架信息成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/?repage";
 	}
-
+	
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
+	@RequestMapping(value = "findShelf")
+	public List<BizOpShelfInfo> findShelf(BizOpShelfInfo bizOpShelfInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+		List<BizOpShelfInfo> list = bizOpShelfInfoService.findList(bizOpShelfInfo);
+		
+		return list;
+	}
 }

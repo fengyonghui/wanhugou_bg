@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,6 +104,14 @@ public class BizOrderHeaderController extends BaseController {
 		bizOrderHeaderService.delete(bizOrderHeader);
 		addMessage(redirectAttributes, "删除订单信息成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("biz:order:bizOrderDetail:view")
+	@RequestMapping(value = "findByOrder")
+	public List<BizOrderHeader> findByOrder(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
+		return list;
 	}
 
 }

@@ -49,6 +49,7 @@
 				<th>biz_order_header.id</th>
 				<th>订单详情行号</th>
 				<th>bom产品 kit</th>
+				<th>货架名称</th>
 				<th>biz_sku_info.id</th>
 				<th>商品编号</th>
 				<th>商品名称</th>
@@ -69,6 +70,9 @@
 				<td>
 					${bizOrderDetail.pLineNo}
 				</td>
+				<td>
+                    ${bizOrderDetail.shelfInfo.name}
+                </td>
 				<td>
 					${bizOrderDetail.skuInfo.id}
 				</td>

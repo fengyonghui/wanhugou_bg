@@ -57,12 +57,26 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		<div class="control-group">
+            <label class="control-label">联系人：</label>
+            <div class="controls">
+                <form:input path="name" htmlEscape="false" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">联系电话：</label>
+            <div class="controls">
+                <form:input path="mobile" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
 		 <biz:selectLocationForm/>
 		<div class="control-group">
 			<label class="control-label">是否默认：</label>
 			<div class="controls">
-			    <label><input name="deFault" type="radio" checked="checked" value="1" />默认</label>
-			    <label><input name="deFault" type="radio" value="0" />非默认</label>
+			    <label><input name="deFaultStatus" type="radio" checked="checked" value="1" />默认</label>
+			    <label><input name="deFaultStatus" type="radio" value="0" />非默认</label>
 			    <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

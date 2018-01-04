@@ -3,9 +3,11 @@
  */
 package com.wanhutong.backend.modules.biz.service.order;
 
-import java.util.List;
-
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
@@ -13,14 +15,8 @@ import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
-
 import javax.annotation.Resource;
-
-import static com.wanhutong.backend.common.utils.GenerateOrderUtils.getOrderNum;
+import java.util.List;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
@@ -62,5 +58,5 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 	public void delete(BizOrderHeader bizOrderHeader) {
 		super.delete(bizOrderHeader);
 	}
-
+	
 }

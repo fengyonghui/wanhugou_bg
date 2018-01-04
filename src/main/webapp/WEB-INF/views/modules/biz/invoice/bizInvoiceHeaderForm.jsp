@@ -23,7 +23,13 @@
 				}
 			});
 		});
-	</script>
+		
+</script>
+<script>
+function dia2(){
+       alert("打开dialog显示选择");
+   }
+</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -36,8 +42,8 @@
 		<div class="control-group">
 			<label class="control-label">采购商名称：</label>
 			<div class="controls">
-				<sys:treeselect id="office" name="office.id" value="${bizInvoiceInfo.office.id}" labelName="office.name" labelValue="${bizInvoiceInfo.office.name}"
-                    title="采购商" url="/sys/office/treeData?type=2" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+				<sys:treeselect id="office" name="office.id" value="${bizInvoiceHeader.office.id}" labelName="office.name" labelValue="${bizInvoiceHeader.office.name}"
+                    title="采购商" url="/sys/office/treeData?type=2" onchange="makeUser();" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
                 <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -61,21 +67,47 @@
 		<div class="control-group">
 			<label class="control-label">发票内容：</label>
 			<div class="controls">
-				<form:input path="invContent" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+				<form:textarea path="invContent" htmlEscape="false" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">发票数额：</label>
 			<div class="controls">
-				<form:input path="invTotal" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="invTotal" htmlEscape="false" class="input-xlarge"/>
 			</div>
 		</div>
+		<div class="control-group">
+            <label class="control-label">选择订单：</label>
+            <div class="controls">
+                <sys:treeselect id="Dialog2" name="office.id" value="${bizInvoiceHeader.office.id}" labelName="office.name" labelValue="${bizInvoiceHeader.office.name}"
+                    title="订单" url="/sys/office/treeData" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+                   
+                    <input type="button" id="dialogDiv" onclick="dia2();" value="选择订单"/>
+                     <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:invoice:bizInvoiceHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+
+
+
+ <%--订单表--%>
+<table id="contentTable" class="table table-striped table-bordered table-condensed">
+    <thead>
+    <tr>
+        <th>采购商</th>
+        <th>订单编号</th>
+        <th>订单总费用</th>
+        <th>运费</th>
+        <th>创建人</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+</table>
 
 </body>
 </html>

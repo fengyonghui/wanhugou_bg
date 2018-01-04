@@ -4,8 +4,8 @@
     
 	<sql id="bizInvoiceHeaderColumns">
 		a.id AS "id",
-		a.cust_id AS "custOff.id",
-		so.name as "custOff.name",
+		a.cust_id AS "office.id",
+		so.name as "office.name",
 		a.inv_title AS "invTitle",
 		a.inv_type AS "invType",
 		a.inv_content AS "invContent",
@@ -44,8 +44,8 @@
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
 			</if>
-			<if test="custOff != null and custOff.id != null and custOff.id != ''">
-				AND a.cust_id = #{custOff.id}
+			<if test="office != null and office.id != null and office.id != ''">
+				AND a.cust_id = #{office.id}
 			</if>
 			<if test="invTitle != null and invTitle != ''">
 				AND a.inv_title = #{invTitle}
@@ -103,7 +103,7 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{custOff.id},
+			#{office.id},
 			#{invTitle},
 			#{invType},
 			#{invContent},
@@ -120,7 +120,7 @@
 	
 	<update id="update">
 		UPDATE biz_invoice_header SET 	
-			cust_id = #{custOff.id},
+			cust_id = #{office.id},
 			inv_title = #{invTitle},
 			inv_type = #{invType},
 			inv_content = #{invContent},

@@ -14,7 +14,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 public class BizInvoiceHeader extends DataEntity<BizInvoiceHeader> {
 	
 	private static final long serialVersionUID = 1L;
-	private Office custOff;		// sys_office.id &amp; type = customer
+	private Office office;		// sys_office.id &amp; type = customer
 	private String invTitle;		// 发票抬头
 	private Integer invType;		// 发票类型 1: 普票 2:专票
 	private String invContent;		// 发票内容
@@ -28,12 +28,12 @@ public class BizInvoiceHeader extends DataEntity<BizInvoiceHeader> {
 		super(id);
 	}
 	
-	public Office getCustOff() {
-		return custOff;
+	public Office getOffice() {
+		return office;
 	}
 	
-	public void setCustOff(Office custOff) {
-		this.custOff = custOff;
+	public void setOffice(Office office) {
+		this.office = office;
 	}
 	
 	public String getInvTitle() {

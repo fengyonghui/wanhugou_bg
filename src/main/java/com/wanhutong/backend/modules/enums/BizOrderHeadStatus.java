@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.enums;
 
 public enum BizOrderHeadStatus {
+    /*用于指定一个采购商下面的订单数，根据下面的条件显示*/
     INVSTATUS(1), BIZSTATUS(30);
     
     private Integer statu;

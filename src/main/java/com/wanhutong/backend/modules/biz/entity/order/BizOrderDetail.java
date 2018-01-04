@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.hibernate.validator.constraints.Length;
 
@@ -18,6 +19,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 	private BizOrderHeader orderHeader;		// biz_order_header.id
 	private Integer lineNo;		// 订单详情行号
 	private Integer pLineNo;		// bom产品 kit
+	private BizOpShelfInfo shelfInfo;  //货架ID shelf_id
 	private BizSkuInfo skuInfo;		// biz_sku_info.id
 	private String partNo;		// 商品编号
 	private String skuName;		// 商品名称
@@ -33,6 +35,14 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 	
 	public void setMaxLineNo(Integer maxLineNo) {
 		this.maxLineNo = maxLineNo;
+	}
+	
+	public BizOpShelfInfo getShelfInfo() {
+		return shelfInfo;
+	}
+	
+	public void setShelfInfo(BizOpShelfInfo shelfInfo) {
+		this.shelfInfo = shelfInfo;
 	}
 	
 	private Integer orderId;	//用于修改跳转地址保存修改信息后跳转

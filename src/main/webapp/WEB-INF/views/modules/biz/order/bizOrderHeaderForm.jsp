@@ -194,6 +194,7 @@
     <thead>
     <tr>
         <th>详情行号</th>
+        <th>货架名称</th>
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品单价</th>
@@ -208,6 +209,9 @@
     <tr>
         <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">
                 ${bizOrderDetail.lineNo}</a>
+        </td>
+        <td>
+                ${bizOrderDetail.shelfInfo.name}
         </td>
         <td>
                 ${bizOrderDetail.skuName}

@@ -67,7 +67,7 @@ public class BizInvoiceHeaderController extends BaseController {
 		}
 		bizInvoiceHeaderService.save(bizInvoiceHeader);
 		addMessage(redirectAttributes, "保存发票抬头成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceHeader/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceHeader/";
 	}
 	
 	@RequiresPermissions("biz:invoice:bizInvoiceHeader:edit")

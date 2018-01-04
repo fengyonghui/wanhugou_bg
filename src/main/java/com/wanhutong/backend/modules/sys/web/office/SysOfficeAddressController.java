@@ -3,10 +3,11 @@
  */
 package com.wanhutong.backend.modules.sys.web.office;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
+import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
-import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -81,14 +77,14 @@ public class SysOfficeAddressController extends BaseController {
 			return form(sysOfficeAddress, model);
 		}
 
-		if(sysOfficeAddress.getDeFault() ==1 ){
+		if(sysOfficeAddress.getDeFaultStatus() ==1 ){
 			SysOfficeAddress address = new SysOfficeAddress();
 			BeanUtils.copyProperties(sysOfficeAddress,address);
 			address.setType(null);
 			List<SysOfficeAddress> list = sysOfficeAddressService.findList(address);
 			if(list.size()>0){
 				SysOfficeAddress officeAddress=list.get(0);
-				officeAddress.setDeFault(0);
+				officeAddress.setDeFaultStatus(0);
 				sysOfficeAddressService.save(officeAddress);
 			}
 		}

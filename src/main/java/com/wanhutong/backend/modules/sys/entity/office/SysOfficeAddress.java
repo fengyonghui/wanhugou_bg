@@ -3,15 +3,9 @@
  */
 package com.wanhutong.backend.modules.sys.entity.office;
 
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
-import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 地址管理(公司+详细地址)Entity
@@ -23,8 +17,10 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	private static final long serialVersionUID = 1L;
 	private Office office;		// sys_office.id
 	private CommonLocation bizLocation;		// common_location.id
+	private String name;		//联系人
+	private String mobile;		//联系电话
 	private Integer type;		// 1: 收货地址；2 公司地址；
-	private Integer deFault;		// 1: 默认； 0：非默认
+	private Integer deFaultStatus;		// 1: 默认； 0：非默认
 	private Integer ohId;		//用于添加地址传参
 	private String flag;		//用于传参标记
 
@@ -76,13 +72,28 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	public void setType(Integer type) {
 		this.type = type;
 	}
-
-	public Integer getDeFault() {
-		return deFault;
+	
+	public Integer getDeFaultStatus() {
+		return deFaultStatus;
 	}
-
-	public void setDeFault(Integer deFault) {
-		this.deFault = deFault;
+	
+	public void setDeFaultStatus(Integer deFaultStatus) {
+		this.deFaultStatus = deFaultStatus;
 	}
-
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getMobile() {
+		return mobile;
+	}
+	
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
 }

@@ -23,29 +23,46 @@
 				}
 			});
 		});
+	
+	
+function makeShelfSelect(){
+    console.log("--111--");
+     var officeId=$('#officeId').val();
+     $.ajax({
+           type:"post", 
+           url:"${ctx}/biz/order/bizOrderHeader/findByOrder?office.id="+officeId,
+           dataType:"json",
+           success:function(data){
+                console.log(data+"--22--");
+                 $.each(data,function(index,off){
+                     console.log(add+"--33--");   
+                     
+                 });
+           }
+     });
+}
 	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/invoice/bizInvoiceDetail/">发票详情列表</a></li>
+		<li><a href="${ctx}/biz/invoice/bizInvoiceHeader/">发票详情列表</a></li>
 		<li class="active"><a href="${ctx}/biz/invoice/bizInvoiceDetail/form?id=${bizInvoiceDetail.id}">发票详情<shiro:hasPermission name="biz:invoice:bizInvoiceDetail:edit">${not empty bizInvoiceDetail.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:invoice:bizInvoiceDetail:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInvoiceDetail" action="${ctx}/biz/invoice/bizInvoiceDetail/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>	
 		<div class="control-group">
-			<label class="control-label">发票行号：</label>
-			<div class="controls">
-				<form:input path="lineNo"  disabled="true" placeholder="${bizInvoiceDetail.maxLineNo}" htmlEscape="false" class="input-xlarge required"/>
-                <input name="lineNo" value="${bizInvoiceDetail.maxLineNo}" htmlEscape="false" type="hidden" class="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+            <label class="control-label">发票行号：</label>
+            <div class="controls">
+                 <form:input path="lineNo" htmlEscape="false" class="input-xlarge required"/>
+            </div>
+        </div>
 		<div class="control-group">
-			<label class="control-label">销售订单.id：</label>
+			<label class="control-label">选择订单编号：</label>
 			<div class="controls">
-				<form:input path="orderHead.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+                 <select id="orderHead" class="input-xlarge required" name="orderHead.id" onclick="makeShelfSelect();" style="text-align: center;">
+                    <option value="1"> ——订单编号1—— </option></select>
+                    <span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -57,7 +74,7 @@
 		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:invoice:bizInvoiceDetail:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
-			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="window.location.href='${ctx}/biz/invoice/bizInvoiceHeader/'"/>
 		</div>
 	</form:form>
 	
@@ -71,9 +88,8 @@
         <th>ID</th>
         <th>订单编号</th>
         <th>采购商</th>
-        <th>商品单价</th>
-        <th>采购数量</th>
-        <th>发货数量</th>
+        <th>订单总费用</th>
+        <th>运费</th>
         <th>创建时间</th>
         <th>操作</th>
     </tr>
@@ -81,8 +97,8 @@
     <tbody>
   <c:forEach items="${bizInvoiceDetail.orderHeaderList}" var="orderHeader">
     <tr>
-        <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">
-                ${orderHeader.id}</a>
+        <td>
+                ${orderHeader.id}
         </td>
         <td>
                 ${orderHeader.orderNum}
@@ -91,19 +107,16 @@
                 ${orderHeader.customer.name}
         </td>
         <td>
-                ${bizOrderDetail.unitPrice}
+                ${orderHeader.totalExp}
         </td>
         <td>
-                ${bizOrderDetail.ordQty}
+                ${orderHeader.freight}
         </td>
         <td>
-                ${bizOrderDetail.sentQty}
-        </td>
-        <td>
-                <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                <fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
         </td>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><td>
-            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>
+           <%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>--%>
             <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1" onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
         </td></shiro:hasPermission>
     </tr>

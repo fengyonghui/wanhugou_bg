@@ -14,8 +14,10 @@
 		c.region_id as "bizLocation.region.id",
 		reg.name as "bizLocation.region.name",
 		c.address as "bizLocation.address",
+		a.name as "name",
+		a.mobile as "mobile",
 		a.type AS "type",
-		a.default AS "deFault",
+		a.default_status AS "deFaultStatus",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		su.name as "createBy.name",
@@ -55,11 +57,17 @@
 			<if test="bizLocation != null and bizLocation.id != null and bizLocation.id != ''">
 				AND a.addr_id = #{bizLocation.id}
 			</if>
+			<if test="name != null and name != ''">
+				AND a.name = #{name}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				AND a.mobile = #{mobile}
+			</if>
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
 			</if>
-			<if test="deFault != null and deFault != ''">
-				AND a.default = #{deFault}
+			<if test="deFaultStatus != null and deFaultStatus != ''">
+				AND a.default_status = #{deFaultStatus}
 			</if>
 			<if test="delFlag != null and delFlag != ''">
 				AND a.status = #{delFlag}
@@ -102,8 +110,10 @@
 			id,
 			office_id,
 			addr_id,
+			`name`,
+			mobile,
 			`type`,
-			`default`,
+			default_status,
 			status,
 			create_id,
 			create_time,
@@ -114,8 +124,10 @@
 			#{id},
 			#{office.id},
 			#{bizLocation.id},
+			#{name},
+			#{mobile},
 			#{type},
-			#{deFault},
+			#{deFaultStatus},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -129,8 +141,10 @@
 		UPDATE sys_office_address SET 	
 			office_id = #{office.id},
 			addr_id = #{bizLocation.id},
+			`name` = #{name},
+			mobile = #{mobile},
 			`type` = #{type},
-			`default` = #{deFault},
+			default_status = #{deFaultStatus},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

@@ -26,7 +26,7 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>采购商名称：</label>
-				<form:input path="custOff.id" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="office.id" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
 			<li><label>发票类型：</label>
 				<form:select path="invType" class="input-medium required">
@@ -57,7 +57,7 @@
 		<c:forEach items="${page.list}" var="bizInvoiceHeader">
 			<tr>
 				<td><a href="${ctx}/biz/invoice/bizInvoiceHeader/form?id=${bizInvoiceHeader.id}">
-					${bizInvoiceHeader.custOff.name}
+					${bizInvoiceHeader.office.name}
 				</a></td>
 				<td>
 					${bizInvoiceHeader.invTitle}

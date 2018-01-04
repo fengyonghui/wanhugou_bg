@@ -44,6 +44,8 @@
 		<thead>
 			<tr>
 				<th>机构名称</th>
+				<th>联系人</th>
+				<th>联系电话</th>
 				<th>详细地址</th>
 				<th>地址类型</th>
 				<th>是否默认</th>
@@ -59,13 +61,19 @@
 					${sysOfficeAddress.office.name}
 				</a></td>
 				<td>
+                    ${sysOfficeAddress.name}
+                </td>
+                <td>
+                    ${sysOfficeAddress.mobile}
+                </td>
+				<td>
 					${sysOfficeAddress.bizLocation.pcrName}${sysOfficeAddress.bizLocation.address}
 				</td>
 				<td>
 					${fns:getDictLabel(sysOfficeAddress.type, 'office_type', '未知类型')}
 				</td>
 				<td>
-					${fns:getDictLabel(sysOfficeAddress.deFault, 'sysadd_deFault', '未知状态')}
+					${fns:getDictLabel(sysOfficeAddress.deFaultStatus, 'sysadd_deFault', '未知状态')}
 				</td>
 				<td>
 					${sysOfficeAddress.createBy.name}

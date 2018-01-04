@@ -66,6 +66,7 @@ public class BizInvoiceDetailController extends BaseController {
 		bizOrderHeader.setInvStatus(BizOrderHeadStatus.INVSTATUS.getStatu());
 		bizOrderHeader.setBizStatus(BizOrderHeadStatus.BIZSTATUS.getStatu());
 		bizInvoiceDetail.setOrderHead(bizOrderHeader);
+		
 		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
 		bizInvoiceDetail.setOrderHeaderList(list);
 		model.addAttribute("bizInvoiceDetail", bizInvoiceDetail);
@@ -78,15 +79,9 @@ public class BizInvoiceDetailController extends BaseController {
 		if (!beanValidator(model, bizInvoiceDetail)){
 			return form(bizInvoiceDetail, model);
 		}
-		if(bizInvoiceDetail.getMaxLineNo()==null){
-			bizInvoiceDetail.setLineNo(1);
-		}else{
-			Integer maxLineNo = bizInvoiceDetail.getMaxLineNo();
-			bizInvoiceDetail.setLineNo(maxLineNo++);
-		}
 		bizInvoiceDetailService.save(bizInvoiceDetail);
 		addMessage(redirectAttributes, "保存发票详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceDetail/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceDetail/form";
 	}
 	
 	@RequiresPermissions("biz:invoice:bizInvoiceDetail:edit")
