@@ -25,17 +25,30 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>供应商ID sys_office.id &amp;  type=vend：</label>
-				<form:input path="vendId" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>供应商</label>
+				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${entity.vendOffice.id}" labelName="vendOffice.name"
+								labelValue="${entity.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-medium" dataMsgRequired="必填信息">
+				</sys:treeselect>
 			</li>
-			<li><label>0 不开发票 1 未开发票 3 已开发票：</label>
-				<form:input path="invStatus" htmlEscape="false" maxlength="4" class="input-medium"/>
+			<li><label>发票状态：</label>
+				<form:select path="invStatus" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</li>
-			<li><label>业务状态 0未支付；1首付款支付 2全部支付3已发货 4已收货 5 已完成：</label>
-				<form:input path="bizStatus" htmlEscape="false" maxlength="4" class="input-medium"/>
+			<li><label>业务状态：</label>
+				<form:select path="bizStatus" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('biz_po_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</li>
-			<li><label>订单来源； biz_platform_info.id：</label>
-				<form:input path="plateformId" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>订单来源：</label>
+
+				<form:select path="plateformInfo.id" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getPlatformInfoList()}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -45,14 +58,14 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>订单编号-由系统生成；唯一</th>
-				<th>供应商ID sys_office.id &amp;  type=vend</th>
+				<th>订单编号</th>
+				<th>供应商</th>
 				<th>订单详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>
-				<th>0 不开发票 1 未开发票 3 已开发票</th>
-				<th>业务状态 0未支付；1首付款支付 2全部支付3已发货 4已收货 5 已完成</th>
-				<th>订单来源； biz_platform_info.id</th>
+				<th>发票状态</th>
+				<th>业务状态</th>
+				<th>订单来源</th>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -63,7 +76,7 @@
 					${bizPoHeader.orderNum}
 				</a></td>
 				<td>
-					${bizPoHeader.vendId}
+					${bizPoHeader.vendOffice.name}
 				</td>
 				<td>
 					${bizPoHeader.totalDetail}
@@ -75,13 +88,16 @@
 					${bizPoHeader.freight}
 				</td>
 				<td>
-					${bizPoHeader.invStatus}
+						${fns:getDictLabel(bizPoHeader.invStatus, 'biz_order_invStatus', '未知类型')}
+
 				</td>
 				<td>
-					${bizPoHeader.bizStatus}
+						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
+
 				</td>
 				<td>
-					${bizPoHeader.plateformId}
+						${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}
+					<%--${bizPoHeader.plateformInfo.id}--%>
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><td>
     				<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>

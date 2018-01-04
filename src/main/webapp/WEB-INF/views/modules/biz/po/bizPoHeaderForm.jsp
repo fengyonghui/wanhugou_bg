@@ -33,17 +33,11 @@
 	<form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
+
 		<div class="control-group">
-			<label class="control-label">订单编号-由系统生成；唯一：</label>
+			<label class="control-label">供应商：</label>
 			<div class="controls">
-				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">供应商ID sys_office.id &amp;  type=vend：</label>
-			<div class="controls">
-				<form:input path="vendId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:input path="vendOffice" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -69,47 +63,20 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">0 不开发票 1 未开发票 3 已开发票：</label>
+			<label class="control-label">发票状态：</label>
 			<div class="controls">
 				<form:input path="invStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">业务状态 0未支付；1首付款支付 2全部支付3已发货 4已收货 5 已完成：</label>
+			<label class="control-label">业务状态：</label>
 			<div class="controls">
 				<form:input path="bizStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">订单来源； biz_platform_info.id：</label>
-			<div class="controls">
-				<form:input path="plateformId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">版本控制：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_id：</label>
-			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_time：</label>
-			<div class="controls">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
-					value="<fmt:formatDate value="${bizPoHeader.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</div>
-		</div>
+
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:po:bizPoHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

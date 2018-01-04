@@ -17,10 +17,12 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		so.name AS "vendOffice.name"
 	</sql>
 	
 	<sql id="bizPoHeaderJoins">
+		LEFT JOIN  sys_office so on so.id=a.vend_id
 	</sql>
     
 	<select id="get" resultType="BizPoHeader">

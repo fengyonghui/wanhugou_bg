@@ -112,7 +112,13 @@
     <function-signature>java.lang.String getDictLabel(java.lang.String, java.lang.String, java.lang.String)</function-signature>
     <example>${fns:getDictLabel(value, type, defaultValue)}</example>  
   </function>
-  
+  <function>
+    <description>获取字典标签</description>
+    <name>getPlatFormName</name>
+    <function-class>com.wanhutong.backend.modules.sys.utils.PlatformUtils</function-class>
+    <function-signature>java.lang.String getPlatFormName(java.lang.Integer,java.lang.String)</function-signature>
+    <example>${fns:getPlatFormName(value, defaultValue)}</example>
+  </function>
   <function>
     <description>获取字典标签(多个)</description>
     <name>getDictLabels</name>
@@ -135,6 +141,14 @@
     <function-class>com.wanhutong.backend.modules.sys.utils.DictUtils</function-class>
     <function-signature>java.util.List getDictList(java.lang.String)</function-signature>
     <example>${fns:getDictList(type)}</example>  
+  </function>
+
+  <function>
+    <description>获取应用对象列表</description>
+    <name>getPlatformInfoList</name>
+    <function-class>com.wanhutong.backend.modules.sys.utils.PlatformUtils</function-class>
+    <function-signature>java.util.List getPlatformInfoList()</function-signature>
+    <example>${fns:getPlatformInfoList()}</example>
   </function>
   
   <function>

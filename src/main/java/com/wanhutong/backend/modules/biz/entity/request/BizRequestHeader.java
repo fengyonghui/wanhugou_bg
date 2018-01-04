@@ -39,6 +39,9 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private BizProductInfo productInfo;
 	private String source;
 
+	private Byte bizStatusStart;
+	private Byte bizStatusEnd; //用于查询业务状态的区间
+
 	private List<BizRequestDetail> requestDetailList;
 
 	private List<BizPoDetail> poDetailList;
@@ -201,5 +204,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public Byte getBizStatusStart() {
+		return bizStatusStart;
+	}
+
+	public void setBizStatusStart(Byte bizStatusStart) {
+		this.bizStatusStart = bizStatusStart;
+	}
+
+	public Byte getBizStatusEnd() {
+		return bizStatusEnd;
+	}
+
+	public void setBizStatusEnd(Byte bizStatusEnd) {
+		this.bizStatusEnd = bizStatusEnd;
 	}
 }

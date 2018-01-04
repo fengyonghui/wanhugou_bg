@@ -72,7 +72,6 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		Date today = bizRequestHeader.getRecvEta();
 		if(today!=null){
 			Format f = new SimpleDateFormat("yyyy-MM-dd");
-			System.out.println("获取是:" + f.format(today));
 			Calendar addCal = Calendar.getInstance();
 			addCal.setTime(today);
 			addCal.add(Calendar.DAY_OF_MONTH, 1);// 今天+1天
@@ -94,7 +93,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			 vendId=Integer.parseInt(prop.getPropValue());
 		}
 		 	if(user.getCompany().getId().equals(vendId)|| "kc".equals(bizRequestHeader.getSource())){
-				bizRequestHeader.setBizStatus(((Integer) ReqHeaderStatusEnum.APPROVE.ordinal()).byteValue());
+				bizRequestHeader.setBizStatusStart(((Integer) ReqHeaderStatusEnum.APPROVE.ordinal()).byteValue());
+				bizRequestHeader.setBizStatusEnd(((Integer) ReqHeaderStatusEnum.STOCKING.ordinal()).byteValue());
 			return  super.findPage(page, bizRequestHeader);
 		}
 		 	logger.info("用户机构----"+user.getCompany().getId());
