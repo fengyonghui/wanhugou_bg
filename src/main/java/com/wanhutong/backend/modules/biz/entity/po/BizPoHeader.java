@@ -9,6 +9,8 @@ import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -29,6 +31,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Byte invStatus;		// 0 不开发票 1 未开发票 3 已开发票
 	private Byte bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付3已发货 4已收货 5 已完成
 	private BizPlatformInfo plateformInfo;		// 订单来源； biz_platform_info.id
+	private List<BizPoDetail> poDetailList;
 
 	
 	public BizPoHeader() {
@@ -102,5 +105,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setPlateformInfo(BizPlatformInfo plateformInfo) {
 		this.plateformInfo = plateformInfo;
+	}
+
+	public List<BizPoDetail> getPoDetailList() {
+		return poDetailList;
+	}
+
+	public void setPoDetailList(List<BizPoDetail> poDetailList) {
+		this.poDetailList = poDetailList;
 	}
 }

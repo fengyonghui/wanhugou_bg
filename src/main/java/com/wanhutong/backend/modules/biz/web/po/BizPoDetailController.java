@@ -69,7 +69,7 @@ public class BizPoDetailController extends BaseController {
 		}
 		bizPoDetailService.save(bizPoDetail);
 		addMessage(redirectAttributes, "保存采购订单详细信息成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoDetail/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/form?id="+bizPoDetail.getPoHeader().getId();
 	}
 	
 	@RequiresPermissions("biz:po:bizPoDetail:edit")
@@ -77,7 +77,7 @@ public class BizPoDetailController extends BaseController {
 	public String delete(BizPoDetail bizPoDetail, RedirectAttributes redirectAttributes) {
 		bizPoDetailService.delete(bizPoDetail);
 		addMessage(redirectAttributes, "删除采购订单详细信息成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoDetail/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/form?id="+bizPoDetail.getPoHeader().getId();
 	}
 
 }

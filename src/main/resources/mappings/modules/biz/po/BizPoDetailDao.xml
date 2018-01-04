@@ -10,6 +10,7 @@
 		a.sku_no AS "skuInfo.id",
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
+		a.sku_name AS "skuInfo.name",
 		a.unit_price AS "unitPrice",
 		a.ord_qty AS "ordQty",
 		a.create_id AS "createBy.id",
@@ -36,7 +37,9 @@
 		FROM biz_po_detail a
 		<include refid="bizPoDetailJoins"/>
 		<where>
-			
+			<if test="poHeader!=null and poHeader.id!=null and poHeader.id!=''">
+				AND a.order_id = #{poHeader.id}
+			</if>
 			<if test="partNo != null and partNo != ''">
 				AND a.part_no = #{partNo}
 			</if>
@@ -93,7 +96,7 @@
 			#{pLineNo},
 			#{skuInfo.id},
 			#{partNo},
-			#{skuName},
+			#{skuInfo.name},
 			#{unitPrice},
 			#{ordQty},
 			#{createBy.id},
@@ -111,7 +114,7 @@
 			p_line_no = #{pLineNo},
 			sku_no = #{skuInfo.id},
 			part_no = #{partNo},
-			sku_name = #{skuName},
+			sku_name = #{skuInfo.name},
 			unit_price = #{unitPrice},
 			ord_qty = #{ordQty},
 			u_version = #{uVersion},
