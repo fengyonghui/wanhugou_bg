@@ -6,7 +6,7 @@
 	<meta name="decorator" content="default"/>
 	<%@include file="/WEB-INF/views/include/treetable.jsp" %>
 	<script type="text/javascript">
-		$(document).ready(function() {
+		 $(document).ready(function() {
 			var tpl = $("#treeTableTpl").html().replace(/(\/\/\<!\-\-)|(\/\/\-\->)/g,"");
 			var data = ${fns:toJson(list)}, rootId = "0";
 			addRow("#treeTableList", tpl, data, rootId, true);
@@ -15,21 +15,20 @@
 		function addRow(list, tpl, data, pid, root){
 			for (var i=0; i<data.length; i++){
 				var row = data[i];
-				if ((${fns:jsGetVal('row.parentId')}) == pid){
+				if ((!row ? '': !row.parentId ? 0: row.parentId) == pid){
 					$(list).append(Mustache.render(tpl, {
-						dict: {
-							type: getDictLabel(${fns:toJson(fns:getDictList('sys_area_type'))}, row.type)
-						}, pid: (root?0:pid), row: row
+						dict: {type: getDictLabel(${fns:toJson(fns:getDictList('sys_area_type'))}, row.type)}, 
+						pid: (root?0:pid), row: row
 					}));
 					addRow(list, tpl, data, row.id);
 				}
 			}
-		}
+		} 
 	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/sys/area/">区域列表</a></li>
+		<li class="active"><a href="${ctx}/sys/area/list">区域列表</a></li>
 		<shiro:hasPermission name="sys:area:edit"><li><a href="${ctx}/sys/area/form">区域添加</a></li></shiro:hasPermission>
 	</ul>
 	<sys:message content="${message}"/>

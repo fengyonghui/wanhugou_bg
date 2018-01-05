@@ -15,7 +15,8 @@
 		function addRow(list, tpl, data, pid, root){
 			for (var i=0; i<data.length; i++){
 				var row = data[i];
-				if ((${fns:jsGetVal('row.parentId')}) == pid){
+				//if ((${fns:jsGetVal('row.parentId')}) == pid){
+				if ((!row ? '': !row.parentId ? 0: row.parentId) == pid){
 					$(list).append(Mustache.render(tpl, {
 						dict: {
 							type: getDictLabel(${fns:toJson(fns:getDictList('sys_office_type'))}, row.type)
