@@ -53,9 +53,7 @@ public class BizRequestHeaderController extends BaseController {
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
-	@Autowired
-	private BizInventorySkuService bizInventorySkuService;
-	
+
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
 		BizRequestHeader entity = null;
@@ -97,9 +95,7 @@ public class BizRequestHeaderController extends BaseController {
 		}
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
-		if(bizRequestHeader.getSource()!=null && "kc".equals(bizRequestHeader.getSource())){
-			return "modules/biz/request/bizRequestHeaderKcForm";
-		}
+
 		return "modules/biz/request/bizRequestHeaderForm";
 	}
 	@ResponseBody

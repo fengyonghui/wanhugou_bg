@@ -5,7 +5,6 @@
 <head>
 	<title>备货清单管理</title>
 	<meta name="decorator" content="default"/>
-	<%@include file="/WEB-INF/views/include/treeview.jsp" %>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -47,16 +46,13 @@
 	<form:form id="inputForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord/save" method="post" class="form-horizontal">
 		<%--<form:hidden path="id"/>--%>
 		<sys:message content="${message}"/>
-		<input name="bizRequestDetail.id" value="${entity.id}" type="hidden"/>
+		<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
+		<input name="bizOrderHeader.id" value="${bizOrderHeader==null?0:bizOrderHeader.id}" type="hidden"/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<input readonly="readonly" value="${entity.fromOffice.name}"/>
-				<input type="hidden" name="customer.id" value="${entity.fromOffice.id}">
-				<%--<sys:treeselect id="fromOffice" name="fromOffice.id"  value="${entity.fromOffice.id}" labelName="fromOffice.name"--%>
-								<%--labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"--%>
-								<%--title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required" dataMsgRequired="必填信息">--%>
-				<%--</sys:treeselect>--%>
+				<input readonly="readonly" value="${bizRequestHeader==null?bizOrderHeader.customer.name:bizRequestHeader.fromOffice.name}"/>
+				<input type="hidden" name="customer.id" value="${bizRequestHeader==null?bizOrderHeader.customer.id:bizRequestHeader.fromOffice.id}">
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -64,7 +60,7 @@
 			<label class="control-label">期望收货时间：</label>
 			<div class="controls">
 				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-xlarge Wdate required"
-					value="<fmt:formatDate value="${entity.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					value="<fmt:formatDate value="${bizRequestHeader==null?'':bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 			/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
@@ -82,6 +78,7 @@
 						<th>品牌名称</th>
 						<th>供应商</th>
 						<th>SKU</th>
+						<th>SKU编号</th>
 						<th>申报数量</th>
 
 
@@ -92,7 +89,7 @@
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
-					<c:if test="${reqDetailList!=null}">
+					<c:if test="${reqDetailList!=null && reqDetailList.size()>0}">
 						<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
 							<tr id="${reqDetail.id}" class="reqDetailList">
 								<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
@@ -113,6 +110,7 @@
 									<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
 								</td>
 								<td>${reqDetail.skuInfo.name}</td>
+								<td>${reqDetail.skuInfo.partNo}</td>
 								<td>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
@@ -125,6 +123,47 @@
 								<td>
 									<input id="sendNum" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty} == 0">readonly="readonly"</c:if> value="0" type="text"/>
 								</td>
+								</shiro:hasPermission>
+
+
+							</tr>
+						</c:forEach>
+					</c:if>
+
+					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
+						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
+							<tr id="${ordDetail.id}" class="ordDetailList">
+								<td><img src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
+								<td>${ordDetail.skuInfo.productInfo.name}</td>
+								<td>
+									<c:forEach items="${ordDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >
+										${cate.name}
+										<c:if test="${!cateIndex.last}">
+											/
+										</c:if>
+
+									</c:forEach>
+								</td>
+								<td>${ordDetail.skuInfo.productInfo.prodCode}</td>
+								<td>${ordDetail.skuInfo.productInfo.brandName}</td>
+								<td>
+										${ordDetail.skuInfo.productInfo.office.name}
+										<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
+								</td>
+								<td>${ordDetail.skuInfo.name}</td>
+								<td>${ordDetail.skuInfo.partNo}</td>
+								<td>
+									<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.id' value='${ordDetail.skuInfo.id}'/>
+									<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.name' value='${ordDetail.skuInfo.name}'/>
+									<input name='bizSendGoodsRecordList[${ordStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${ordDetail.ordQty-ordDetail.sentQty}" type='text'/>
+									<input name="bizSendGoodsRecordList[${ordStatus.index}].bizRequestDetail.id" value="${ordDetail.id}" type="hidden"/>
+
+								</td>
+
+								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+									<td>
+										<input  title="sendNum" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty-ordDetail.sentQty} == 0">readonly="readonly"</c:if> value="0" type="text"/>
+									</td>
 								</shiro:hasPermission>
 
 

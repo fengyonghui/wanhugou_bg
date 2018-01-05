@@ -37,7 +37,6 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String skuIds;
 	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
 	private BizProductInfo productInfo;
-	private String source;
 
 	private Byte bizStatusStart;
 	private Byte bizStatusEnd; //用于查询业务状态的区间
@@ -196,14 +195,6 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setVendOfficeIds(String vendOfficeIds) {
 		this.vendOfficeIds = vendOfficeIds;
-	}
-
-	public String getSource() {
-		return source;
-	}
-
-	public void setSource(String source) {
-		this.source = source;
 	}
 
 	public Byte getBizStatusStart() {

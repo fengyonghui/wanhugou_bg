@@ -71,6 +71,9 @@
 			<if test="bizStatus !=null and bizStatus!=''">
 				AND a.biz_status=#{bizStatus}
 			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
 			<if test="invStatus !=null and invStatus!=''">
 				AND a.inv_status=#{invStatus}
 			</if>

@@ -30,6 +30,9 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private CommonLocation bizLocation;		// 订单收货地址： common_location.id
 	private List<BizOrderDetail> orderDetailList;	//查询有多少订单
 
+	private Integer bizStatusStart;
+	private Integer bizStatusEnd;
+
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
 	}
@@ -124,5 +127,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setBizStatus(Integer bizStatus) {
 		this.bizStatus = bizStatus;
+	}
+
+	public Integer getBizStatusStart() {
+		return bizStatusStart;
+	}
+
+	public void setBizStatusStart(Integer bizStatusStart) {
+		this.bizStatusStart = bizStatusStart;
+	}
+
+	public Integer getBizStatusEnd() {
+		return bizStatusEnd;
+	}
+
+	public void setBizStatusEnd(Integer bizStatusEnd) {
+		this.bizStatusEnd = bizStatusEnd;
 	}
 }

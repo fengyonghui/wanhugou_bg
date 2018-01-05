@@ -87,21 +87,6 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			Date yesterday = subCal.getTime();
 			bizRequestHeader.setStartDate("'"+f.format(yesterday)+"'");
 		}
-		User user= UserUtils.getUser();
-		DefaultProp defaultProp=new DefaultProp();
-		defaultProp.setPropKey("vendCenter");
-		Integer vendId=0;
-		List<DefaultProp> defaultPropList=defaultPropService.findList(defaultProp);
-		if(defaultPropList!=null){
-			DefaultProp prop=defaultPropList.get(0);
-			 vendId=Integer.parseInt(prop.getPropValue());
-		}
-//		 	if(user.getCompany().getId().equals(vendId)|| "kc".equals(bizRequestHeader.getSource())){
-//				bizRequestHeader.setBizStatusStart(((Integer) ReqHeaderStatusEnum.APPROVE.ordinal()).byteValue());
-//				bizRequestHeader.setBizStatusEnd(((Integer) ReqHeaderStatusEnum.STOCKING.ordinal()).byteValue());
-//			return  super.findPage(page, bizRequestHeader);
-//		}
-		 	logger.info("用户机构----"+user.getCompany().getId());
 			return super.findPage(page, bizRequestHeader);
 	}
 	
