@@ -7,6 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供货中）
+ */
+
 @Controller
 @RequestMapping(value = "${adminPath}/biz/request/bizRequestAll")
 public class BizRequestAllController {
