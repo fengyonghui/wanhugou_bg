@@ -61,10 +61,10 @@
 					${sysOfficeAddress.office.name}
 				</a></td>
 				<td>
-                    ${sysOfficeAddress.name}
+                    ${sysOfficeAddress.receiver}
                 </td>
                 <td>
-                    ${sysOfficeAddress.mobile}
+                    ${sysOfficeAddress.phone}
                 </td>
 				<td>
 					${sysOfficeAddress.bizLocation.pcrName}${sysOfficeAddress.bizLocation.address}

@@ -14,8 +14,8 @@
 		c.region_id as "bizLocation.region.id",
 		reg.name as "bizLocation.region.name",
 		c.address as "bizLocation.address",
-		a.name as "name",
-		a.mobile as "mobile",
+		a.receiver as "receiver",
+		a.phone as "phone",
 		a.type AS "type",
 		a.default_status AS "deFaultStatus",
 		a.status AS "delFlag",
@@ -57,11 +57,11 @@
 			<if test="bizLocation != null and bizLocation.id != null and bizLocation.id != ''">
 				AND a.addr_id = #{bizLocation.id}
 			</if>
-			<if test="name != null and name != ''">
-				AND a.name = #{name}
+			<if test="receiver != null and receiver != ''">
+				AND a.receiver = #{receiver}
 			</if>
-			<if test="mobile != null and mobile != ''">
-				AND a.mobile = #{mobile}
+			<if test="phone != null and phone != ''">
+				AND a.phone = #{phone}
 			</if>
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
@@ -110,8 +110,8 @@
 			id,
 			office_id,
 			addr_id,
-			`name`,
-			mobile,
+			receiver,
+			phone,
 			`type`,
 			default_status,
 			status,
@@ -124,8 +124,8 @@
 			#{id},
 			#{office.id},
 			#{bizLocation.id},
-			#{name},
-			#{mobile},
+			#{receiver},
+			#{phone},
 			#{type},
 			#{deFaultStatus},
 			#{delFlag},
@@ -141,8 +141,8 @@
 		UPDATE sys_office_address SET 	
 			office_id = #{office.id},
 			addr_id = #{bizLocation.id},
-			`name` = #{name},
-			mobile = #{mobile},
+			receiver = #{receiver},
+			phone = #{phone},
 			`type` = #{type},
 			default_status = #{deFaultStatus},
 			u_version = #{uVersion},

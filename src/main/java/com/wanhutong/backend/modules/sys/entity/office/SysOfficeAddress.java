@@ -17,8 +17,8 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	private static final long serialVersionUID = 1L;
 	private Office office;		// sys_office.id
 	private CommonLocation bizLocation;		// common_location.id
-	private String name;		//联系人
-	private String mobile;		//联系电话
+	private String receiver;		//联系人
+	private String phone;		//联系电话
 	private Integer type;		// 1: 收货地址；2 公司地址；
 	private Integer deFaultStatus;		// 1: 默认； 0：非默认
 	private Integer ohId;		//用于添加地址传参
@@ -81,19 +81,19 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 		this.deFaultStatus = deFaultStatus;
 	}
 	
-	public String getName() {
-		return name;
+	public String getReceiver() {
+		return receiver;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
 	}
 	
-	public String getMobile() {
-		return mobile;
+	public String getPhone() {
+		return phone;
 	}
 	
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 }

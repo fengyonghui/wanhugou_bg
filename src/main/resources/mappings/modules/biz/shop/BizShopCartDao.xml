@@ -7,16 +7,16 @@
 		a.sku_shelf_id AS "skuShelfinfo.id",
 		osi.name as "skuShelfinfo.name",
 		a.office_id AS "office.id",
+		so.name AS "office.name",
 		a.user_id AS "user.id",
+		su.name AS "user.name",
 		a.sku_qty AS "skuQty",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		su.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate",
-		so.name AS "office.name",
-		su.name AS "user.name"
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizShopCartJoins">

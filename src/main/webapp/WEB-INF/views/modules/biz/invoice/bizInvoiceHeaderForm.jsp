@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ include file="/WEB-INF/views/include/dialog.jsp"%>
 <html>
 <head>
 	<title>发票抬头管理</title>
@@ -22,13 +23,16 @@
 					}
 				}
 			});
-		});
-		
-</script>
-<script>
-function dia2(){
-       alert("打开dialog显示选择");
-   }
+			
+			
+	 });	
+    function dial(){
+    alert(11111)
+          jBox.tip（“正在加载...”，“正在加载”）;
+        
+     }
+     
+
 </script>
 </head>
 <body>
@@ -79,11 +83,8 @@ function dia2(){
 		<div class="control-group">
             <label class="control-label">选择订单：</label>
             <div class="controls">
-                <sys:treeselect id="Dialog2" name="office.id" value="${bizInvoiceHeader.office.id}" labelName="office.name" labelValue="${bizInvoiceHeader.office.name}"
-                    title="订单" url="/sys/office/treeData" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
-                   
-                    <input type="button" id="dialogDiv" onclick="dia2();" value="选择订单"/>
-                     <span class="help-inline"><font color="red">*</font> </span>
+                     <input type="text">
+                    <input type="button" onclick="dial();" value="选择订单"/>
             </div>
         </div>
 		<div class="form-actions">
@@ -92,10 +93,8 @@ function dia2(){
 		</div>
 	</form:form>
 
-
-
  <%--订单表--%>
-<table id="contentTable" class="table table-striped table-bordered table-condensed">
+<table id="contentTable" type="hidden" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
         <th>采购商</th>
@@ -108,6 +107,5 @@ function dia2(){
     </tr>
     </thead>
 </table>
-
 </body>
 </html>

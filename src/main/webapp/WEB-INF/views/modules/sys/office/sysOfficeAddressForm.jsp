@@ -60,14 +60,14 @@
 		<div class="control-group">
             <label class="control-label">联系人：</label>
             <div class="controls">
-                <form:input path="name" htmlEscape="false" class="input-xlarge required"/>
+                <form:input path="receiver" htmlEscape="false" class="input-xlarge required"/>
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">联系电话：</label>
             <div class="controls">
-                <form:input path="mobile" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+                <form:input path="phone" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>

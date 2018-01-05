@@ -12,7 +12,7 @@
 		a.zip_code AS "zipCode",
 		a.longitude AS "longitude",
 		a.latitude AS "latitude",
-		 province.name as "province.name",
+		province.name as "province.name",
         city.name as "city.name",
         reg.name as "region.name"
 		a.status AS "status",
