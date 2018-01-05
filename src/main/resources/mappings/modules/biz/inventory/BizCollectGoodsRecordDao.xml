@@ -4,18 +4,18 @@
     
 	<sql id="bizCollectGoodsRecordColumns">
 		a.id AS "id",
-		a.inv_id AS "invId",
-		a.sku_id AS "skuId",
-		a.order_id AS "orderId",
+		a.inv_id AS "invInfo.id",
+		a.sku_id AS "skuInfo.id",
+		a.order_id AS "orderHeader.id",
 		a.receive_num AS "receiveNum",
-		a.vend_id AS "vendId",
-		a.receive_time AS "receiveTime",
+		a.vend_id AS "vender.id",
+		a.receive_time AS "receiveDate",
 		a.status AS "status",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizCollectGoodsRecordJoins">
@@ -36,14 +36,14 @@
 		<include refid="bizCollectGoodsRecordJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="invId != null and invId != ''">
-				AND a.inv_id = #{invId}
+			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
+				AND a.inv_id = #{invInfo.id}
 			</if>
-			<if test="skuId != null and skuId != ''">
-				AND a.sku_id = #{skuId}
+			<if test="skuInfo != null and skuInfo.id != null skuInfo.id != ''">
+				AND a.sku_id = #{skuInfo.id}
 			</if>
-			<if test="orderId != null and orderId != ''">
-				AND a.order_id = #{orderId}
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				AND a.order_id = #{orderHeader.id}
 			</if>
 		</where>
 		<choose>
@@ -89,33 +89,33 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{invId},
-			#{skuId},
-			#{orderId},
+			#{invInfo.id},
+			#{skuInfo.id},
+			#{orderHeader.id},
 			#{receiveNum},
-			#{vendId},
-			#{receiveTime},
+			#{vender.id},
+			#{receiveDate},
 			#{status},
-			#{createId.id},
-			#{createTime},
+			#{createBy.id},
+			#{createDate},
 			#{uVersion},
-			#{updateId.id},
-			#{updateTime}
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_collect_goods_record SET 	
-			inv_id = #{invId},
-			sku_id = #{skuId},
-			order_id = #{orderId},
+			inv_id = #{invInfo.id},
+			sku_id = #{skuInfo.id},
+			order_id = #{orderHeader.id},
 			receive_num = #{receiveNum},
-			vend_id = #{vendId},
-			receive_time = #{receiveTime},
-			create_time = #{createTime},
+			vend_id = #{vender.id},
+			receive_time = #{receiveDate},
+			create_time = #{createDate},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

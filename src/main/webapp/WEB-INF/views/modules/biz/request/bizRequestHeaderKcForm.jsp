@@ -72,11 +72,12 @@
 						<th>供应商</th>
 						<th>SKU</th>
 						<th>申报数量</th>
-						<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
+
+
 							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<th>供应数量</th>
 							</shiro:hasPermission>
-						</c:if>
+
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
@@ -106,15 +107,16 @@
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
 									<input name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
-									<input name="bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.id" value="${reqDetail.id}" type="hidden"/>
+                                    <input name="bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.id" value="${reqDetail.id}" type="hidden"/>
+
 								</td>
-								<c:if test="${entity.bizStatus==ReqHeaderStatusEnum.APPROVE.ordinal()}">
+
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" value="" type="text"/>
+									<input name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" value="2" type="text"/>
 								</td>
 								</shiro:hasPermission>
-								</c:if>
+
 
 							</tr>
 						</c:forEach>

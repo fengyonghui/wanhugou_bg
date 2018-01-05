@@ -25,11 +25,11 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>商品ID，biz_sku_info.id：</label>
-				<form:input path="skuInfo.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>商品名称：</label>
+				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>order_id：</label>
-				<form:input path="orderHeader.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>订单编号：</label>
+				<form:input path="orderHeader.orderNum" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -39,10 +39,10 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>商品ID，biz_sku_info.id</th>
-				<th>order_id</th>
+				<th>商品名称</th>
+				<th>订单号</th>
 				<th>供货数量</th>
-				<th>采购商ID sys_office.id &amp;  type='customer'</th>
+				<th>客户</th>
 				<th>供货时间</th>
 				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -51,16 +51,16 @@
 		<c:forEach items="${page.list}" var="bizSendGoodsRecord">
 			<tr>
 				<td><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">
-				</a>${bizSendGoodsRecord.skuInfo.id}
+				</a>${bizSendGoodsRecord.skuInfo.name}
 				</td>
 				<td>
-					${bizSendGoodsRecord.orderHeader.id}
+					${bizSendGoodsRecord.orderHeader.orderNum}
 				</td>
 				<td>
 					${bizSendGoodsRecord.sendNum}
 				</td>
 				<td>
-					${bizSendGoodsRecord.customer.id}
+					${bizSendGoodsRecord.customer.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizSendGoodsRecord.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

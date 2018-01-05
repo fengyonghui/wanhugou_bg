@@ -4,24 +4,30 @@
     
 	<sql id="bizSendGoodsRecordColumns">
 		a.id AS "id",
-		a.sku_id AS "skuInfo",
-		a.order_id AS "orderHeader",
+		a.sku_id AS "skuInfo.id",
+		sku.name AS "skuInfo.name",
+		a.order_id AS "orderHeader.id",
+		orheader.order_num AS "orderHeader.orderNum",
 		a.send_num AS "sendNum",
-		a.cust_id AS "customer",
+		a.cust_id AS "customer.id",
+		s.name AS "customer.name",
 		a.send_time AS "sendDate",
 		a.status AS "status",
-		a.create_id AS "createBy",
+		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateBy",
+		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizSendGoodsRecordJoins">
+		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
+		LEFT JOIN biz_order_header orheader ON a.order_id = orderheader.id
+		LEFT JOIN sys_office s ON a.cust_id = s.id
 	</sql>
     
 	<select id="get" resultType="BizSendGoodsRecord">
-		SELECT 
+		SELECT
 			<include refid="bizSendGoodsRecordColumns"/>
 		FROM biz_send_goods_record a
 		<include refid="bizSendGoodsRecordJoins"/>
@@ -35,11 +41,17 @@
 		<include refid="bizSendGoodsRecordJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="skuInfo != null and skuInfo != ''">
-				AND a.sku_id = #{skuInfo}
+			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
+				AND sku.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
-			<if test="orderHeader != null and orderHeader != ''">
-				AND a.order_id = #{orderHeader}
+			<if test="orderHeader != null and orderHeader.orderNum != null and orderHeader.orderNum != ''">
+				AND orheader.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderHeader.orderNum},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -84,30 +96,30 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{skuInfo},
-			#{orderHeader},
+			#{skuInfo.id},
+			#{orderHeader.id},
 			#{sendNum},
-			#{customer},
+			#{customer.id},
 			#{sendDate},
 			#{status},
-			#{createBy},
+			#{createBy.id},
 			#{createDate},
 			#{uVersion},
-			#{updateBy},
+			#{updateBy.id},
 			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_send_goods_record SET 	
-			sku_id = #{skuInfo},
-			order_id = #{orderHeader},
+			sku_id = #{skuInfo.id},
+			order_id = #{orderHeader.id},
 			send_num = #{sendNum},
-			cust_id = #{customer},
+			cust_id = #{customer.id},
 			send_time = #{sendDate},
 			create_time = #{createDate},
 			u_version = #{uVersion},
-			update_id = #{updateBy},
+			update_id = #{updateBy.id},
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>

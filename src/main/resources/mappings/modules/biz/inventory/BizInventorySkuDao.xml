@@ -51,7 +51,10 @@
 				AND i.id = #{invInfo.id}
 			</if>
 			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
-				AND sku.name LIKE concat('%',#{skuInfo.name},'%')
+				AND sku.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
 			<if test="invType != null and invType != ''">
 				AND a.inv_type = #{invType}
