@@ -29,7 +29,7 @@
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>订单编号：</label>
-				<form:input path="orderHeader.orderNum" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="orderNum" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -54,7 +54,7 @@
 				</a>${bizSendGoodsRecord.skuInfo.name}
 				</td>
 				<td>
-					${bizSendGoodsRecord.orderHeader.orderNum}
+						${bizSendGoodsRecord.orderNum}
 				</td>
 				<td>
 					${bizSendGoodsRecord.sendNum}

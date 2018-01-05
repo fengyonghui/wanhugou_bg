@@ -25,6 +25,17 @@
 				}
 			});
         });
+		$("#btnSubmit").onclick(function () {
+			var reqQty = $("#reqQty").val();
+			var sendNum = $("#sendNum").val();
+			if (sendNum > reqQty){
+			    alert("供货数太大，已超过申报数，请重新调整供货数量！");
+				return false;
+			}
+			$(".reqDetailList").find("td").find("input[title='sendNum']").each(function () {
+				console.info($(this).val())
+            });
+        });
 	</script>
 </head>
 <body>
@@ -83,7 +94,7 @@
 					<tbody id="prodInfo">
 					<c:if test="${reqDetailList!=null}">
 						<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
-							<tr id="${reqDetail.id}">
+							<tr id="${reqDetail.id}" class="reqDetailList">
 								<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
 								<td>${reqDetail.skuInfo.productInfo.name}</td>
 								<td>
@@ -103,17 +114,16 @@
 								</td>
 								<td>${reqDetail.skuInfo.name}</td>
 								<td>
-									<%--<input type='hidden' name='id' value='${reqDetail.id}'/>--%>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
-									<input name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
+									<input id="reqQty" name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
                                     <input name="bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.id" value="${reqDetail.id}" type="hidden"/>
 
 								</td>
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" value="2" type="text"/>
+									<input id="sendNum" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty} == 0">readonly="readonly"</c:if> value="0" type="text"/>
 								</td>
 								</shiro:hasPermission>
 

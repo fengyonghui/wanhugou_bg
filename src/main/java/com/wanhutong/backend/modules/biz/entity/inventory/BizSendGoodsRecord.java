@@ -26,13 +26,15 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
-	private BizOrderHeader orderHeader;		// order_id
+	private BizOrderHeader bizOrderHeader;		// order_id
+	private BizRequestHeader bizRequestHeader;	//request_id
+	private String orderNum;
 	private Integer sendNum;		// 供货数量
 	private Office customer;		// 采购商ID sys_office.id &amp;  type='customer'
 	private Date sendDate;		// 供货时间
-	private BizRequestHeader bizRequestHeader;
 	private BizRequestDetail bizRequestDetail;
 	private List<BizSendGoodsRecord> bizSendGoodsRecordList;
+
 	public BizSendGoodsRecord() {
 		super();
 	}
@@ -49,12 +51,20 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 		this.skuInfo = skuInfo;
 	}
 
-	public BizOrderHeader getOrderHeader() {
-		return orderHeader;
+	public BizOrderHeader getBizOrderHeader() {
+		return bizOrderHeader;
 	}
 
-	public void setOrderHeader(BizOrderHeader orderHeader) {
-		this.orderHeader = orderHeader;
+	public void setBizOrderHeader(BizOrderHeader bizOrderHeader) {
+		this.bizOrderHeader = bizOrderHeader;
+	}
+
+	public String getOrderNum() {
+		return orderNum;
+	}
+
+	public void setOrderNum(String orderNum) {
+		this.orderNum = orderNum;
 	}
 
 	public Integer getSendNum() {

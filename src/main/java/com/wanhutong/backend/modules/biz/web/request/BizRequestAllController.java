@@ -17,7 +17,7 @@ public class BizRequestAllController {
 
     @RequestMapping(value = {"list", ""})
     public String list(String source, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader){
-        model.addAttribute(source);
+        model.addAttribute("source",source);
         model.addAttribute("bizRequestHeader",bizRequestHeader);
         model.addAttribute("bizOrderHeader",bizOrderHeader);
         return "modules/biz/request/bizRequestAllList";

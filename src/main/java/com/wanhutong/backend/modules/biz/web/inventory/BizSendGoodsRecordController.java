@@ -7,9 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -28,6 +32,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,6 +52,10 @@ public class BizSendGoodsRecordController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private BizRequestDetailService bizRequestDetailService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizRequestHeaderService bizRequestHeaderService;
 	
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -73,8 +82,7 @@ public class BizSendGoodsRecordController extends BaseController {
 	public String form(BizSendGoodsRecord bizSendGoodsRecord, Model model) {
 
 		model.addAttribute("bizSendGoodsRecord", bizSendGoodsRecord);
-		return "modules/biz/inventory/bizSendGoodsRecordForm";
-//		return "modules/biz/inventory/bizSendGoodsRecordList";
+		return "modules/biz/request/bizRequestHeaderKcForm";
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")
@@ -87,13 +95,17 @@ public class BizSendGoodsRecordController extends BaseController {
 		for (BizSendGoodsRecord bsgr:bizSendGoodsRecord.getBizSendGoodsRecordList()) {
 			int reqQty = bsgr.getBizRequestDetail().getReqQty();//申报数
 			int sendNum = bsgr.getSendNum();//供货数
+			if (sendNum == 0){
+				continue;
+			}
 
 			//准备数据
 			//采购中心
 			Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
 			//商品
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
-			//当供货数 <= 申报数
+
+			//当供货数 <= 申报数,修改申报数 = 申报数 - 供货数
 			if (sendNum <= reqQty){
 				reqQty = reqQty - sendNum;
 				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
@@ -102,14 +114,19 @@ public class BizSendGoodsRecordController extends BaseController {
 				return form(bizSendGoodsRecord, model);
 			}
 			//生成供货记录表
-
-//			bsgr.setOrderHeader(null);
+			//当销售单为空则保存备货单内容，当备货单为空则保存销售单内容
+			if (bsgr.getBizOrderHeader() != null && bsgr.getBizOrderHeader().getId() != null){
+				bsgr.setBizOrderHeader(bizOrderHeaderService.get(bsgr.getBizOrderHeader().getId()));
+			}
+			if (bsgr.getBizRequestHeader() != null && bsgr.getBizRequestHeader().getId() != null){
+				bsgr.setBizRequestHeader(bizRequestHeaderService.get(bsgr.getBizRequestHeader().getId()));
+			}
 			bsgr.setSendNum(sendNum);
 			bsgr.setCustomer(office);
 			bsgr.setSkuInfo(bizSkuInfo);
+			bsgr.setSendDate(new Date());
 			bizSendGoodsRecordService.save(bsgr);
 		}
-//		bizSendGoodsRecordService.save(bizSendGoodsRecord);
 		addMessage(redirectAttributes, "保存供货记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizSendGoodsRecord/?repage";
 	}

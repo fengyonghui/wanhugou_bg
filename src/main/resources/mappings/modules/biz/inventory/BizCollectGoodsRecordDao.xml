@@ -6,7 +6,10 @@
 		a.id AS "id",
 		a.inv_id AS "invInfo.id",
 		a.sku_id AS "skuInfo.id",
-		a.order_id AS "orderHeader.id",
+		a.order_id AS "bizOrderHeader.id",
+		a.request_id AS "bizRequestHeader.id",
+		orheader.order_num AS "bizOrderHeader.orderNum",
+		reheaer.req_no AS "bizRequestHeader.reqNo",
 		a.receive_num AS "receiveNum",
 		a.vend_id AS "vender.id",
 		a.receive_time AS "receiveDate",
@@ -19,6 +22,11 @@
 	</sql>
 	
 	<sql id="bizCollectGoodsRecordJoins">
+		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
+		LEFT JOIN biz_order_header orheader ON a.order_id = orderheader.id
+		LEFT JOIN sys_office s ON a.cust_id = s.id
+		LEFT JOIN biz_request_header reheader ON a.order_id = reheader.id
+		LEFT JOIN biz_inventory_sku invInfo ON a.inv_id = invInfo.id
 	</sql>
     
 	<select id="get" resultType="BizCollectGoodsRecord">
@@ -39,11 +47,23 @@
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				AND a.inv_id = #{invInfo.id}
 			</if>
-			<if test="skuInfo != null and skuInfo.id != null skuInfo.id != ''">
-				AND a.sku_id = #{skuInfo.id}
+			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
+				AND sku.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
-			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
-				AND a.order_id = #{orderHeader.id}
+			<if test="bizOrderHeader != null and bizOrderHeader.orderNum != null and bizOrderHeader.orderNum != ''">
+				AND orheader.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{bizOrderHeader.orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{bizOrderHeader.orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{bizOrderHeader.orderNum},'%')</if>
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.reqNo != null and bizRequestHeader.reqNo != ''">
+				AND orheader.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{bizRequestHeader.reqNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{bizRequestHeader.reqNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{bizRequestHeader.reqNo},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -77,7 +97,12 @@
 			id,
 			inv_id,
 			sku_id,
-			order_id,
+			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
+				order_id,
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
+				request_id,
+			</if>
 			receive_num,
 			vend_id,
 			receive_time,
@@ -91,7 +116,12 @@
 			#{id},
 			#{invInfo.id},
 			#{skuInfo.id},
-			#{orderHeader.id},
+			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
+				#{bizOrderHeader.id},
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
+				#{bizRequestHeader.id},
+			</if>
 			#{receiveNum},
 			#{vender.id},
 			#{receiveDate},
@@ -108,7 +138,12 @@
 		UPDATE biz_collect_goods_record SET 	
 			inv_id = #{invInfo.id},
 			sku_id = #{skuInfo.id},
-			order_id = #{orderHeader.id},
+			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
+				order_id = #{bizOrderHeader.id},
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
+				request_id = #{bizRequestHeader.id},
+			</if>
 			receive_num = #{receiveNum},
 			vend_id = #{vender.id},
 			receive_time = #{receiveDate},

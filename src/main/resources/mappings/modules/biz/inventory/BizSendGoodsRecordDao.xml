@@ -6,8 +6,10 @@
 		a.id AS "id",
 		a.sku_id AS "skuInfo.id",
 		sku.name AS "skuInfo.name",
-		a.order_id AS "orderHeader.id",
-		orheader.order_num AS "orderHeader.orderNum",
+		sku.part_no AS "skuInfo.partNo",
+		a.order_id AS "bizOrderHeader.id",
+		a.request_id AS "bizRequestHeader.id",
+		a.order_num AS "orderNum",
 		a.send_num AS "sendNum",
 		a.cust_id AS "customer.id",
 		s.name AS "customer.name",
@@ -24,6 +26,7 @@
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
 		LEFT JOIN biz_order_header orheader ON a.order_id = orderheader.id
 		LEFT JOIN sys_office s ON a.cust_id = s.id
+		LEFT JOIN biz_request_header reheader ON a.order_id = reheader.id
 	</sql>
     
 	<select id="get" resultType="BizSendGoodsRecord">
@@ -47,11 +50,11 @@
 				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
-			<if test="orderHeader != null and orderHeader.orderNum != null and orderHeader.orderNum != ''">
-				AND orheader.order_num LIKE
-				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{orderHeader.orderNum},'%')</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -84,7 +87,13 @@
 		INSERT INTO biz_send_goods_record(
 			id,
 			sku_id,
-			order_id,
+			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
+				order_id,
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
+				request_id,
+			</if>
+			order_num,
 			send_num,
 			cust_id,
 			send_time,
@@ -97,7 +106,13 @@
 		) VALUES (
 			#{id},
 			#{skuInfo.id},
-			#{orderHeader.id},
+			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
+				#{bizOrderHeader.id},
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
+				#{bizRequestHeader.id},
+			</if>
+			#{orderNum},
 			#{sendNum},
 			#{customer.id},
 			#{sendDate},
@@ -113,7 +128,13 @@
 	<update id="update">
 		UPDATE biz_send_goods_record SET 	
 			sku_id = #{skuInfo.id},
-			order_id = #{orderHeader.id},
+			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
+				order_id = #{bizOrderHeader.id},
+			</if>
+			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
+				request_id = #{bizRequestHeader.id},
+			</if>
+			order_num = #{orderNum},
 			send_num = #{sendNum},
 			cust_id = #{customer.id},
 			send_time = #{sendDate},
