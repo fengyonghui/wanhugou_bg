@@ -96,11 +96,11 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			DefaultProp prop=defaultPropList.get(0);
 			 vendId=Integer.parseInt(prop.getPropValue());
 		}
-		 	if(user.getCompany().getId().equals(vendId)|| "kc".equals(bizRequestHeader.getSource())){
-				bizRequestHeader.setBizStatusStart(((Integer) ReqHeaderStatusEnum.APPROVE.ordinal()).byteValue());
-				bizRequestHeader.setBizStatusEnd(((Integer) ReqHeaderStatusEnum.STOCKING.ordinal()).byteValue());
-			return  super.findPage(page, bizRequestHeader);
-		}
+//		 	if(user.getCompany().getId().equals(vendId)|| "kc".equals(bizRequestHeader.getSource())){
+//				bizRequestHeader.setBizStatusStart(((Integer) ReqHeaderStatusEnum.APPROVE.ordinal()).byteValue());
+//				bizRequestHeader.setBizStatusEnd(((Integer) ReqHeaderStatusEnum.STOCKING.ordinal()).byteValue());
+//			return  super.findPage(page, bizRequestHeader);
+//		}
 		 	logger.info("用户机构----"+user.getCompany().getId());
 			return super.findPage(page, bizRequestHeader);
 	}

@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
-<%@ include file="/WEB-INF/views/include/dialog.jsp"%>
 <html>
 <head>
 	<title>发票抬头管理</title>
@@ -25,10 +24,11 @@
 			});
 			
 			
-	 });	
-    function dial(){
-    alert(11111)
-          jBox.tip（“正在加载...”，“正在加载”）;
+	 });
+
+	function dial(){
+        $.jBox('id:contentTable');
+
         
      }
      
@@ -94,7 +94,8 @@
 	</form:form>
 
  <%--订单表--%>
-<table id="contentTable" type="hidden" class="table table-striped table-bordered table-condensed">
+	<div id="contentTable" style="display: none">
+<table class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
         <th>采购商</th>
@@ -107,5 +108,6 @@
     </tr>
     </thead>
 </table>
+	</div>
 </body>
 </html>
