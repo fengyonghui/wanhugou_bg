@@ -17,6 +17,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -101,23 +102,30 @@ public class BizSendGoodsRecordController extends BaseController {
 			if (sendNum == 0){
 				continue;
 			}
+			//累计供货数量
+			if (bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getId() != 0){
+				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
+				int sum = 0;
+				sum += sendNum;
+				bizRequestDetail.setRecvQty(sum);
+				//当供货数量和申报数量相等时，更改备货单状态
+				bizRequestDetail.getRequestHeader().setBizStatus( ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+			}
+			if (bsgr.getBizOrderDetail() != null && bsgr.getBizOrderDetail().getId() != 0){
+				BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
+				int sum = 0;
+				sum += sendNum;
+				bizOrderDetail.setSentQty(sum);
+				//当供货数量和申报数量相等时，更改销售单状态
+
+			}
 
 			//准备数据
 			//采购中心
 			Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
 			//商品
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
-			//备货单申报数
-			if(bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getReqQty() != 0) {
-				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
-				bizRequestDetail.setSendQty(sendNum);
-			}
-			//销售单申报数
-			if (bsgr.getBizOrderDetail() != null && bsgr.getBizOrderDetail().getOrdQty() != 0){
-				BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
-				bizOrderDetail.setSentQty(sendNum);
-			}
-			//修改订单状态
+
 
 			//生成供货记录表
 			//当销售单为空则保存备货单内容，当备货单为空则保存销售单内容

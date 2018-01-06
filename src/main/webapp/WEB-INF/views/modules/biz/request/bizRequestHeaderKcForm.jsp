@@ -114,7 +114,7 @@
 								<td>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
-									<input id="reqQty" name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty-reqDetail.sendQty}" type='text'/>
+									<input id="reqQty" name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
                                     <input name="bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.id" value="${reqDetail.id}" type="hidden"/>
 									<c:if test="${reqDetail.requestHeader.reqNo != null}">
 										<input name="bizSendGoodsRecordList[${reqStatus.index}].orderNum" value="${reqDetail.requestHeader.reqNo}" type="hidden"/>
@@ -157,7 +157,7 @@
 								<td>
 									<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.id' value='${ordDetail.skuInfo.id}'/>
 									<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.name' value='${ordDetail.skuInfo.name}'/>
-									<input name='bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.reqQty' readonly="readonly" value="${ordDetail.ordQty-ordDetail.sentQty}" type='text'/>
+									<input name='bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.ordQty' readonly="readonly" value="${ordDetail.ordQty}" type='text'/>
 									<input name="bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.id" value="${ordDetail.id}" type="hidden"/>
 									<c:if test="${ordDetail.orderHeader.orderNum != null}">
 										<input name="bizSendGoodsRecordList[${ordStatus.index}].orderNum" value="${ordDetail.orderHeader.orderNum}" type="hidden"/>
