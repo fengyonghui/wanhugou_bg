@@ -5,6 +5,7 @@
 	<sql id="bizRequestDetailColumns">
 		a.id AS "id",
 		a.header_id AS "requestHeader.id",
+		reheader.req_no AS "requestHeader.reqNo",
 		a.line_no AS "lineNo",
 		a.sku_id AS "skuInfo.id",
 		a.req_qty AS "reqQty",
@@ -19,6 +20,7 @@
 	</sql>
 	
 	<sql id="bizRequestDetailJoins">
+		LEFT JOIN biz_request_header reheader ON a.header_id = reheader.id
 	</sql>
     
 	<select id="get" resultType="BizRequestDetail">

@@ -7,10 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -56,6 +58,8 @@ public class BizSendGoodsRecordController extends BaseController {
 	private BizOrderHeaderService bizOrderHeaderService;
 	@Autowired
 	private BizRequestHeaderService bizRequestHeaderService;
+	@Autowired
+	private BizOrderDetailService bizOrderDetailService;
 	
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -88,13 +92,12 @@ public class BizSendGoodsRecordController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")
 	@RequestMapping(value = "save")
 	public String save(BizSendGoodsRecord bizSendGoodsRecord, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizSendGoodsRecord)){
-			return form(bizSendGoodsRecord, model);
-		}
+//		if (!beanValidator(model, bizSendGoodsRecord)){
+//			return form(bizSendGoodsRecord, model);
+//		}
 
 		for (BizSendGoodsRecord bsgr:bizSendGoodsRecord.getBizSendGoodsRecordList()) {
-			int reqQty = bsgr.getBizRequestDetail().getReqQty();//申报数
-			int sendNum = bsgr.getSendNum();//供货数
+			int sendNum = bsgr.getSendNum();	//供货数
 			if (sendNum == 0){
 				continue;
 			}
@@ -104,27 +107,32 @@ public class BizSendGoodsRecordController extends BaseController {
 			Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
 			//商品
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
-
-			//当供货数 <= 申报数,修改申报数 = 申报数 - 供货数
-			if (sendNum <= reqQty){
-				reqQty = reqQty - sendNum;
+			//备货单申报数
+			if(bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getReqQty() != 0) {
 				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
-				bizRequestDetail.setReqQty(reqQty);
-			}else {
-				return form(bizSendGoodsRecord, model);
+				bizRequestDetail.setSendQty(sendNum);
 			}
+			//销售单申报数
+			if (bsgr.getBizOrderDetail() != null && bsgr.getBizOrderDetail().getOrdQty() != 0){
+				BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
+				bizOrderDetail.setSentQty(sendNum);
+			}
+			//修改订单状态
+
 			//生成供货记录表
 			//当销售单为空则保存备货单内容，当备货单为空则保存销售单内容
-			if (bsgr.getBizOrderHeader() != null && bsgr.getBizOrderHeader().getId() != null){
-				bsgr.setBizOrderHeader(bizOrderHeaderService.get(bsgr.getBizOrderHeader().getId()));
-			}
-			if (bsgr.getBizRequestHeader() != null && bsgr.getBizRequestHeader().getId() != null){
-				bsgr.setBizRequestHeader(bizRequestHeaderService.get(bsgr.getBizRequestHeader().getId()));
-			}
+//			if (bsgr.getBizOrderHeader() != null && bsgr.getBizOrderHeader().getId() != null){
+//				bsgr.setBizOrderHeader(bizOrderHeaderService.get(bsgr.getBizOrderHeader().getId()));
+//			}
+//			if (bsgr.getBizRequestHeader() != null && bsgr.getBizRequestHeader().getId() != null){
+//				bsgr.setBizRequestHeader(bizRequestHeaderService.get(bsgr.getBizRequestHeader().getId()));
+//			}
 			bsgr.setSendNum(sendNum);
 			bsgr.setCustomer(office);
 			bsgr.setSkuInfo(bizSkuInfo);
-			bsgr.setSendDate(new Date());
+			bsgr.setOrderNum(bsgr.getOrderNum());
+			Date date = new Date();
+			bsgr.setSendDate(date);
 			bizSendGoodsRecordService.save(bsgr);
 		}
 		addMessage(redirectAttributes, "保存供货记录成功");

@@ -14,7 +14,7 @@
 		a.cust_id AS "customer.id",
 		s.name AS "customer.name",
 		a.send_time AS "sendDate",
-		a.status AS "status",
+		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
@@ -24,7 +24,7 @@
 	
 	<sql id="bizSendGoodsRecordJoins">
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
-		LEFT JOIN biz_order_header orheader ON a.order_id = orderheader.id
+		LEFT JOIN biz_order_header orheader ON a.order_id = orheader.id
 		LEFT JOIN sys_office s ON a.cust_id = s.id
 		LEFT JOIN biz_request_header reheader ON a.order_id = reheader.id
 	</sql>
@@ -116,7 +116,7 @@
 			#{sendNum},
 			#{customer.id},
 			#{sendDate},
-			#{status},
+			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},

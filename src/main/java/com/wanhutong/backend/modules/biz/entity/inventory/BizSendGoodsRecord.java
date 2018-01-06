@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -28,11 +29,12 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
 	private BizOrderHeader bizOrderHeader;		// order_id
 	private BizRequestHeader bizRequestHeader;	//request_id
-	private String orderNum;
+	private String orderNum;		//订单号
 	private Integer sendNum;		// 供货数量
 	private Office customer;		// 采购商ID sys_office.id &amp;  type='customer'
 	private Date sendDate;		// 供货时间
 	private BizRequestDetail bizRequestDetail;
+	private BizOrderDetail bizOrderDetail;
 	private List<BizSendGoodsRecord> bizSendGoodsRecordList;
 
 	public BizSendGoodsRecord() {
@@ -99,6 +101,14 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public void setBizRequestHeader(BizRequestHeader bizRequestHeader) {
 		this.bizRequestHeader = bizRequestHeader;
+	}
+
+	public BizOrderDetail getBizOrderDetail() {
+		return bizOrderDetail;
+	}
+
+	public void setBizOrderDetail(BizOrderDetail bizOrderDetail) {
+		this.bizOrderDetail = bizOrderDetail;
 	}
 
 	public BizRequestDetail getBizRequestDetail() {
