@@ -14,5 +14,5 @@ import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceDetail;
  */
 @MyBatisDao
 public interface BizInvoiceDetailDao extends CrudDao<BizInvoiceDetail> {
-	
+	public Integer setPrivIds(Integer[] privIds);
 }

@@ -131,4 +131,23 @@
 		WHERE id = #{id}
 	</update>
 	
+	<insert id="setPrivIds" parameterType="map">
+		INSERT INTO biz_invoice_detail(
+		id,
+		line_no,
+		order_id,
+		inv_amt,
+		remark,
+		status,
+		create_id,
+		create_time,
+		u_version,
+		update_id,
+		update_time
+		) VALUES
+		<foreach collection="privIds" index="index" item="item" separator=",">
+			(  #{orderHead.id} )
+		</foreach>
+	</insert>
+	
 </mapper>

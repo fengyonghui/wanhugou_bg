@@ -11,6 +11,8 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.invoice.BizInvoiceDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.enums.BizOrderHeadStatus;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,10 +20,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -38,6 +42,9 @@ public class BizInvoiceDetailController extends BaseController {
 	
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
+	
+	@Autowired
+	private OfficeService officeService;
 	
 	@ModelAttribute
 	public BizInvoiceDetail get(@RequestParam(required=false) Integer id) {
@@ -62,13 +69,6 @@ public class BizInvoiceDetailController extends BaseController {
 	@RequiresPermissions("biz:invoice:bizInvoiceDetail:view")
 	@RequestMapping(value = "form")
 	public String form(BizInvoiceDetail bizInvoiceDetail, Model model) {
-		BizOrderHeader bizOrderHeader = new BizOrderHeader();
-		bizOrderHeader.setInvStatus(BizOrderHeadStatus.INVSTATUS.getStatu());
-		bizOrderHeader.setBizStatus(BizOrderHeadStatus.BIZSTATUS.getStatu());
-		bizInvoiceDetail.setOrderHead(bizOrderHeader);
-		
-		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-		bizInvoiceDetail.setOrderHeaderList(list);
 		model.addAttribute("bizInvoiceDetail", bizInvoiceDetail);
 		return "modules/biz/invoice/bizInvoiceDetailForm";
 	}
@@ -91,5 +91,32 @@ public class BizInvoiceDetailController extends BaseController {
 		addMessage(redirectAttributes, "删除发票详情成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceDetail/?repage";
 	}
-
+	
+	@ResponseBody
+	@RequiresPermissions("biz:invoice:bizInvoiceDetail:view")
+	@RequestMapping(value = "invOrderHeader")
+	public List<BizOrderHeader> invoOrderHeader(BizInvoiceDetail bizInvoiceDetail,Integer officeId, Model model) {
+		BizOrderHeader bizOrderHeader = new BizOrderHeader();
+		bizOrderHeader.setInvStatus(BizOrderHeadStatus.INVSTATUS.getStatu());
+		bizOrderHeader.setBizStatus(BizOrderHeadStatus.BIZSTATUS.getStatu());
+		Office office = officeService.get(officeId);
+		bizOrderHeader.setCustomer(office);
+		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
+		bizInvoiceDetail.setOrderHeaderList(list);
+		return list;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("biz:invoice:bizInvoiceDetail:view")
+	@RequestMapping(value = "checkboxAll")
+	public void setCheckboxAll(String privIds,Model model,PrintWriter writer) {
+		System.out.println(privIds);
+		/*Integer integers = bizInvoiceDetailService.setPrivIds(privIds);
+		Map<String, String> map = new HashMap<>();
+		if(integers>0){
+			map.put("integers","ok");
+			map.put("msg","保存成功");
+			writer.write(JSONUtils.toJSONString(map));
+		}*/
+	}
 }

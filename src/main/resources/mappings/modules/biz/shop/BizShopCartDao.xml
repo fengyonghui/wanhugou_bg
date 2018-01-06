@@ -13,7 +13,7 @@
 		a.sku_qty AS "skuQty",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
-		su.name as "createBy.name",
+		suu.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
@@ -22,6 +22,7 @@
 	<sql id="bizShopCartJoins">
 		LEFT JOIN sys_office so ON so.id = a.office_id
 		LEFT JOIN sys_user su ON su.id = a.user_id
+		LEFT JOIN sys_user suu ON suu.id = a.create_id
 		LEFT  JOIN  biz_op_shelf_info osi on osi.id=a.sku_shelf_id
 	</sql>
     

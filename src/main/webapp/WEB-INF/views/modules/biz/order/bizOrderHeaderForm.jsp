@@ -14,8 +14,8 @@
                             $("#addError").css("display","inline-block")
                             return false;
                         }
-                        form.submit();
 				        loading('正在提交，请稍等...');
+                        form.submit();
 				},
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
