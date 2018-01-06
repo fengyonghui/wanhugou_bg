@@ -162,7 +162,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 				bizPoHeaderService.save(poHeader);
 				}
 
-			bizRequestHeader.setBizStatus(((Integer)ReqHeaderStatusEnum.STOCKING.ordinal()).byteValue());
+			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.ordinal());
 			super.save(bizRequestHeader);
 		}
 	}
