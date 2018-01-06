@@ -8,9 +8,9 @@
 		boh.order_num AS "orderHeader.orderNum",
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
-		a.shelf_id as "shelfInfo.id",
-		oi.name as "shelfInfo.name",
-		a.sku_no AS "skuInfo.id",
+		a.sku_shelf_id as "shelfInfo.id",
+-- 		oi.name as "shelfInfo.name",
+		a.sku_id AS "skuInfo.id",
 		bsi.name as "skuInfo.name",
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
@@ -27,9 +27,9 @@
 	
 	<sql id="bizOrderDetailJoins">
 		left join sys_user su on a.create_id=su.id
-		left join biz_sku_info bsi on a.sku_no=bsi.id
+		left join biz_sku_info bsi on a.sku_id=bsi.id
 		left join biz_order_header boh on a.order_id=boh.id
-		LEFT  JOIN biz_op_shelf_info oi on a.shelf_id=oi.id
+		LEFT  JOIN biz_op_shelf_sku oi on a.sku_shelf_id=oi.id
 	</sql>
     
 	<select id="get" resultType="BizOrderDetail">
@@ -57,10 +57,10 @@
 				AND a.p_line_no = #{pLineNo}
 			</if>
 			<if test="shelfInfo != null and shelfInfo.id != null and shelfInfo.id != ''">
-				AND a.shelf_id = #{shelfInfo.id}
+				AND a.sku_shelf_id = #{shelfInfo.id}
 			</if>
 			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
-				AND a.sku_no = #{skuInfo.id}
+				AND a.sku_id = #{skuInfo.id}
 			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_id = #{createBy.id}
@@ -104,8 +104,8 @@
 			order_id,
 			line_no,
 			p_line_no,
-			shelf_id,
-			sku_no,
+			sku_shelf_id,
+			sku_id,
 			part_no,
 			sku_name,
 			unit_price,
@@ -141,8 +141,8 @@
 			order_id = #{orderHeader.id},
 			line_no = #{lineNo},
 			p_line_no = #{pLineNo},
-			shelf_id=#{shelfInfo.id}
-			sku_no = #{skuInfo.id},
+			sku_shelf_id=#{shelfInfo.id}
+			sku_id = #{skuInfo.id},
 			part_no = #{partNo},
 			sku_name = #{skuName},
 			unit_price = #{unitPrice},

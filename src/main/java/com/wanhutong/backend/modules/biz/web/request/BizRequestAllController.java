@@ -63,28 +63,31 @@ public class BizRequestAllController {
             vendId=Integer.parseInt(prop.getPropValue());
         }
         model.addAttribute("source",source);
-		 	if("kc".equals(source)){
-				bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
-				bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+        if(bizOrderHeader==null){
+            bizOrderHeader=new BizOrderHeader();
+        }
+
+
+		 	if("kc".equals(source)) {
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+            }
+             if("gh".equals(source)){
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
+                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
+            }
                 List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
 
                 model.addAttribute("requestHeaderList",requestHeaderList);
-                if(bizOrderHeader==null){
-                    bizOrderHeader=new BizOrderHeader();
-                }
-                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
-                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+
                 List<BizOrderHeader> orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
                 model.addAttribute("orderHeaderList",orderHeaderList);
                 return "modules/biz/request/bizRequestAllList";
         }
-
-//        model.addAttribute(source);
-//        model.addAttribute("bizRequestHeader",bizRequestHeader);
-//        model.addAttribute("bizOrderHeader",bizOrderHeader);
-        return "modules/biz/request/bizRequestAllList2";
-    }
-
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = "form")
     public String form(String source,BizRequestHeader bizRequestHeader,BizOrderHeader bizOrderHeader, Model model) {

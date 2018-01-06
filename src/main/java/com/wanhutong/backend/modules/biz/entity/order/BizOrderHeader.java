@@ -8,6 +8,7 @@ import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +33,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	private Integer bizStatusStart;
 	private Integer bizStatusEnd;
+	private Date deliveryDate; //预计到货日期
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -143,5 +145,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setBizStatusEnd(Integer bizStatusEnd) {
 		this.bizStatusEnd = bizStatusEnd;
+	}
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 }

@@ -6,7 +6,14 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+            $('#select_all').live('click',function(){
+                var choose=$("input[title='orderIds']");
+                if($(this).attr('checked')){
+                    choose.attr('checked',true);
+                }else{
+                    choose.attr('checked',false);
+                }
+            });
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -20,36 +27,13 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestAll/list" method="post" class="breadcrumb form-search">
-		<ul class="ul-form">
-			<li><label>订单号：</label>
-				<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
-			</li>
-			<li><label>采购客户：</label>
-				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-								labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
-				</sys:treeselect>
-			</li>
-			<li><span><label>期望收货时间：</label></span>
-				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-			</li>
-			<li><label>业务状态：</label>
-				<form:select path="bizStatus" class="input-medium">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>
-			</li>
-			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<li class="clearfix"></li>
-		</ul>
-	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<c:if test="${source=='gh'}">
+					<th><input id="select_all" type="checkbox" /></th>
+				</c:if>
 				<th>订单号</th>
 				<th>订单类型</th>
 				<th>采购客户</th>
@@ -64,6 +48,9 @@
 		<tbody>
 		<c:forEach items="${requestHeaderList}" var="requestHeader">
 			<tr>
+				<c:if test="${source=='gh'}">
+				<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
+				</c:if>
 				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">
 					${requestHeader.reqNo}
 				</a></td>
@@ -90,7 +77,15 @@
 					<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
-    				<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">修改</a>
+					<c:choose>
+						<c:when test="${source=='gh'}">
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>
+						</c:when>
+						<c:otherwise>
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">修改</a>
+						</c:otherwise>
+					</c:choose>
+
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
@@ -98,6 +93,9 @@
 
 		<c:forEach items="${orderHeaderList}" var="orderHeader">
 			<tr>
+				<c:if test="${source=='gh'}">
+					<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
+				</c:if>
 				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">
 						${orderHeader.orderNum}
 				</a></td>
@@ -108,7 +106,7 @@
 						${orderHeader.customer.name}
 				</td>
 				<td>
-					<%--<fmt:formatDate value="${orderHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+					<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 						<%--${orderHeader.remark}--%>

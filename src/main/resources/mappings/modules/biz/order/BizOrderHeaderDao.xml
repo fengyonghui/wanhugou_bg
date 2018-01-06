@@ -27,6 +27,7 @@
 		a.create_id AS "createBy.id",
 		su.name as "createBy.name",
 		a.create_time AS "createDate",
+		date_add(a.create_time, interval 7 day) as "deliveryDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		su.name as "updateBy.name",
