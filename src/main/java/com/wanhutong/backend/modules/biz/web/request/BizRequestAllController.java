@@ -2,6 +2,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -124,6 +125,21 @@ public class BizRequestAllController {
         if (source != null && "kc".equals(source)) {
             return "modules/biz/request/bizRequestHeaderKcForm";
         }
-        return null;
+       // if(source!=null && "gh".equals(source)){
+            return "modules/biz/request/bizRequestHeaderGhForm";
+      //  }
+
+    }
+    @RequiresPermissions("biz:request:selecting:supplier:edit")
+    @RequestMapping(value = "save")
+    public String save(String reqIds,String orderIds){
+        if(StringUtils.isNotBlank(reqIds)){
+            StringUtils.split(reqIds,",");
+        }
+        if(StringUtils.isNotBlank(orderIds)){
+            StringUtils.split(orderIds,",");
+        }
+
+        return "";
     }
 }

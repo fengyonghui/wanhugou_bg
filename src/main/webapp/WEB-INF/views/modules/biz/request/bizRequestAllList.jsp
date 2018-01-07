@@ -15,6 +15,13 @@
                 }
             });
 		});
+		function saveOrderIds() {
+            if($("input[title='orderIds']:checked").length <= 0){
+                alert("请选择需要备货的清单！");
+			}else {
+                $("#myForm").submit();
+			}
+        }
 		function page(n,s){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
@@ -46,6 +53,7 @@
 			</tr>
 		</thead>
 		<tbody>
+		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/save">
 		<c:forEach items="${requestHeaderList}" var="requestHeader">
 			<tr>
 				<c:if test="${source=='gh'}">
@@ -121,11 +129,25 @@
 					<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
-					<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">修改</a>
+					<c:choose>
+						<c:when test="${source=='gh'}">
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">详情</a>
+						</c:when>
+						<c:otherwise>
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">修改</a>
+						</c:otherwise>
+					</c:choose>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
+		</form>
 		</tbody>
 	</table>
+	<div class="form-actions">
+
+			<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+				<input type="button" onclick="saveOrderIds();" class="btn btn-primary" value="合单采购"/>
+			</shiro:hasPermission>
+	</div>
 </body>
 </html>

@@ -64,7 +64,6 @@
 					<th>SKU编号</th>
 					<th>申报数量</th>
 					<th>已供货数量</th>
-					<th>操作</th>
 				</tr>
 				</thead>
 				<tbody id="prodInfo">
@@ -120,8 +119,10 @@
 							<td>${ordDetail.skuInfo.name}</td>
 							<td>${ordDetail.skuInfo.partNo}</td>
 							<td>
-								<input name='bizSendGoodsRecordList[${ordStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${ordDetail.ordQty-ordDetail.sentQty}" type='text'/>
-
+								<input  value="${ordDetail.ordQty}" readonly="readonly" class="input-medium" type='text'/>
+							</td>
+							<td>
+								<input  value="${ordDetail.sentQty}" readonly="readonly" class="input-medium" type='text'/>
 							</td>
 
 						</tr>
@@ -136,7 +137,7 @@
 	<div class="control-group">
 		<label class="control-label">备注：</label>
 		<div class="controls">
-			<form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+			<textarea readonly="readonly"  class="input-xlarge ">${remark}</textarea>
 		</div>
 	</div>
 

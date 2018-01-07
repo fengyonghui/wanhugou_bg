@@ -9,7 +9,6 @@
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
 		a.sku_shelf_id as "shelfInfo.id",
--- 		oi.name as "shelfInfo.name",
 		a.sku_id AS "skuInfo.id",
 		bsi.name as "skuInfo.name",
 		a.part_no AS "partNo",
