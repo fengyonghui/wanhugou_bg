@@ -168,6 +168,11 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	}
 
 	@Transactional(readOnly = false)
+	public void saveRequestHeader(BizRequestHeader bizRequestHeader) {
+		super.save(bizRequestHeader);
+	}
+
+	@Transactional(readOnly = false)
 	public void delete(BizRequestHeader bizRequestHeader) {
 		super.delete(bizRequestHeader);
 	}

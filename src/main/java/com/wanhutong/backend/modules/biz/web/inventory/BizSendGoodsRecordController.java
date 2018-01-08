@@ -97,54 +97,80 @@ public class BizSendGoodsRecordController extends BaseController {
 //			return form(bizSendGoodsRecord, model);
 //		}
 
-		for (BizSendGoodsRecord bsgr:bizSendGoodsRecord.getBizSendGoodsRecordList()) {
-			int sendNum = bsgr.getSendNum();	//供货数
-			if (sendNum == 0){
-				continue;
-			}
-			//累计供货数量
-			if (bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getId() != 0){
+		boolean flagRequest = true;		//备货单完成状态
+		boolean flagOrder = true;		//销售单完成状态
+			for (BizSendGoodsRecord bsgr : bizSendGoodsRecord.getBizSendGoodsRecordList()) {
+				int sendNum = bsgr.getSendNum();    //供货数
+			//累计备货单供货数量
+			if (bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getId() != 0) {
+				int sendQty = bsgr.getBizRequestDetail().getSendQty();   //备货单累计供货数量
+				//当供货数量和申报数量不相等时，更改备货单状态
+				if (bsgr.getBizRequestDetail().getReqQty() != (sendQty + sendNum)) {
+					flagRequest = false;
+				}
+				if (sendNum == 0) {
+					continue;
+				}
 				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
-				int sum = 0;
-				sum += sendNum;
-				bizRequestDetail.setRecvQty(sum);
-				//当供货数量和申报数量相等时，更改备货单状态
-				bizRequestDetail.getRequestHeader().setBizStatus( ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+				bizRequestDetail.setSendQty(sendQty + sendNum);
+				bizRequestDetailService.save(bizRequestDetail);
 			}
-			if (bsgr.getBizOrderDetail() != null && bsgr.getBizOrderDetail().getId() != 0){
-				BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
-				int sum = 0;
-				sum += sendNum;
-				bizOrderDetail.setSentQty(sum);
-				//当供货数量和申报数量相等时，更改销售单状态
+			//累计销售单供货数量
+				if (bsgr.getBizOrderDetail() != null && bsgr.getBizOrderDetail().getId() != 0) {
+					int sentQty = bsgr.getBizOrderDetail().getSentQty();	//销售单累计供货数量
+					//当供货数量和申报数量不相等时，更改销售单状态
+					if (bsgr.getBizOrderDetail().getOrdQty() != (sentQty + sendNum)){
+						flagOrder = false;
+					}
+					if (sendNum == 0) {
+						continue;
+					}
+					BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
+					bizOrderDetail.setSentQty(sentQty + sendNum);
+					bizOrderDetailService.save(bizOrderDetail);
 
-			}
+				}
 
-			//准备数据
-			//采购中心
-			Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
-			//商品
-			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
+				//准备数据
+				//采购中心
+				Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
+				//商品
+				BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
+				//生成供货记录表
+				bsgr.setSendNum(sendNum);
+				if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
+					BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
+					bsgr.setBizRequestHeader(bizRequestHeader);
+				}
+				if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
+					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
+					bsgr.setBizOrderHeader(bizOrderHeader);
+				}
+				bsgr.setCustomer(office);
+				bsgr.setSkuInfo(bizSkuInfo);
+				bsgr.setOrderNum(bsgr.getOrderNum());
+				Date date = new Date();
+				bsgr.setSendDate(date);
+				bizSendGoodsRecordService.save(bsgr);
 
-
-			//生成供货记录表
-			//当销售单为空则保存备货单内容，当备货单为空则保存销售单内容
-//			if (bsgr.getBizOrderHeader() != null && bsgr.getBizOrderHeader().getId() != null){
-//				bsgr.setBizOrderHeader(bizOrderHeaderService.get(bsgr.getBizOrderHeader().getId()));
-//			}
-//			if (bsgr.getBizRequestHeader() != null && bsgr.getBizRequestHeader().getId() != null){
-//				bsgr.setBizRequestHeader(bizRequestHeaderService.get(bsgr.getBizRequestHeader().getId()));
-//			}
-			bsgr.setSendNum(sendNum);
-			bsgr.setCustomer(office);
-			bsgr.setSkuInfo(bizSkuInfo);
-			bsgr.setOrderNum(bsgr.getOrderNum());
-			Date date = new Date();
-			bsgr.setSendDate(date);
-			bizSendGoodsRecordService.save(bsgr);
 		}
-		addMessage(redirectAttributes, "保存供货记录成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizSendGoodsRecord/?repage";
+		//更改订单状态
+		if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
+			if (flagRequest) {
+				BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
+				bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+				bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+			}
+		}
+		if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
+			if (flagOrder) {
+				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
+				bizOrderHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+				bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+			}
+		}
+			addMessage(redirectAttributes, "保存供货记录成功");
+			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage";
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")

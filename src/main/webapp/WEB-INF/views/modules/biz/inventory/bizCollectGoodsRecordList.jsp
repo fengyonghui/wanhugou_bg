@@ -25,14 +25,14 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>仓库ID，biz_inventory_info.id：</label>
-				<form:input path="invInfo.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>仓库名称：</label>
+				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>商品ID，biz_sku_info.id：</label>
-				<form:input path="skuInfo.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>商品名称：</label>
+				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>订单ID，：</label>
-				<form:input path="orderInfo.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>订单号：</label>
+				<form:input path="orderNum" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -42,11 +42,10 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>仓库ID，biz_inventory_info.id</th>
-				<th>商品ID，biz_sku_info.id</th>
-				<th>订单ID，</th>
+				<th>仓库名称</th>
+				<th>商品名称</th>
+				<th>订单号</th>
 				<th>收货数量</th>
-				<th>供应商ID sys_office.id &amp;  type=vend</th>
 				<th>收货时间</th>
 				<shiro:hasPermission name="biz:inventory:bizCollectGoodsRecord:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -55,19 +54,16 @@
 		<c:forEach items="${page.list}" var="bizCollectGoodsRecord">
 			<tr>
 				<td><a href="${ctx}/biz/inventory/bizCollectGoodsRecord/form?id=${bizCollectGoodsRecord.id}">
-					${bizCollectGoodsRecord.invInfo.id}
+					${bizCollectGoodsRecord.invInfo.name}
 				</a></td>
 				<td>
-					${bizCollectGoodsRecord.skuInfo.id}
+					${bizCollectGoodsRecord.skuInfo.name}
 				</td>
 				<td>
-					${bizCollectGoodsRecord.orderHeader.id}
+					${bizCollectGoodsRecord.orderNum}
 				</td>
 				<td>
 					${bizCollectGoodsRecord.receiveNum}
-				</td>
-				<td>
-					${bizCollectGoodsRecord.vender.id}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizCollectGoodsRecord.receiveDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

@@ -53,7 +53,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 		bizOrderHeader.setBizLocation(bizLocation);
 		super.save(bizOrderHeader);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public void saveOrderHeader(BizOrderHeader bizOrderHeader) {
+		super.save(bizOrderHeader);
+	}
 	@Transactional(readOnly = false)
 	public void delete(BizOrderHeader bizOrderHeader) {
 		super.delete(bizOrderHeader);

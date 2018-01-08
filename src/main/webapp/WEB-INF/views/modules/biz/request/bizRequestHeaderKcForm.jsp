@@ -24,7 +24,7 @@
 				}
 			});
         });
-		$("#btnSubmit").onclick(function () {
+        /*$("#btnSubmit").click(function () {
 			var reqQty = $("#reqQty").val();
 			var sendNum = $("#sendNum").val();
 			if (sendNum > reqQty){
@@ -34,7 +34,30 @@
 			$(".reqDetailList").find("td").find("input[title='sendNum']").each(function () {
 				console.info($(this).val())
             });
-        });
+        });*/
+
+		function checkout(obj) {
+            var reqQty = $("#reqQty"+obj).val();
+            var sendNum = $("#sendNum"+obj).val();
+            var sendQty = $("#sendQty"+obj).val();
+            var sum = parseInt(sendNum) + parseInt(sendQty);
+            if (sum > reqQty){
+                alert("供货数太大，已超过申报数，请重新调整供货数量！");
+                $("#sendNum"+obj).val(0);
+                return false;
+            }
+        }
+        function checkout2(obj) {
+            var ordQty = $("#ordQty"+obj).val();
+            var sendNum = $("#sendNum"+obj).val();
+            var sentQty = $("#sentQty"+obj).val();
+            var sum = parseInt(sendNum) + parseInt(sentQty);
+            if (sum > ordQty){
+                alert("供货数太大，已超过申报数，请重新调整供货数量！");
+                $("#sendNum"+obj).val(0);
+                return false;
+            }
+        }
 	</script>
 </head>
 <body>
@@ -80,6 +103,7 @@
 						<th>SKU</th>
 						<th>SKU编号</th>
 						<th>申报数量</th>
+						<th>已供数量</th>
 
 
 							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
@@ -114,20 +138,22 @@
 								<td>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
 									<input type='hidden' name='bizSendGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
-									<input id="reqQty" name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
+									<input id="reqQty${reqStatus.index}" name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
                                     <input name="bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.id" value="${reqDetail.id}" type="hidden"/>
+                                    <input name="bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.requestHeader.id" value="${reqDetail.requestHeader.id}" type="hidden"/>
 									<c:if test="${reqDetail.requestHeader.reqNo != null}">
 										<input name="bizSendGoodsRecordList[${reqStatus.index}].orderNum" value="${reqDetail.requestHeader.reqNo}" type="hidden"/>
 									</c:if>
 								</td>
+								<td>
+									<input id="sendQty${reqStatus.index}" name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.sendQty' readonly="readonly" value="${reqDetail.sendQty}" type='text'/>
+								</td>
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input id="sendNum" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty} == 0">readonly="readonly"</c:if> value="0" type="text"/>
+									<input id="sendNum${reqStatus.index}" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout(${reqStatus.index})"/>
 								</td>
 								</shiro:hasPermission>
-
-
 							</tr>
 						</c:forEach>
 					</c:if>
@@ -157,17 +183,21 @@
 								<td>
 									<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.id' value='${ordDetail.skuInfo.id}'/>
 									<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.name' value='${ordDetail.skuInfo.name}'/>
-									<input name='bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.ordQty' readonly="readonly" value="${ordDetail.ordQty}" type='text'/>
+									<input id="ordQty${ordStatus.index}" name='bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.ordQty' readonly="readonly" value="${ordDetail.ordQty}" type='text'/>
 									<input name="bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.id" value="${ordDetail.id}" type="hidden"/>
+                                    <input name="bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.orderHeader.id" value="${ordDetail.orderHeader.id}" type="hidden"/>
 									<c:if test="${ordDetail.orderHeader.orderNum != null}">
 										<input name="bizSendGoodsRecordList[${ordStatus.index}].orderNum" value="${ordDetail.orderHeader.orderNum}" type="hidden"/>
 									</c:if>
 
 								</td>
+								<td>
+									<input id="sentQty${ordDetail.sentQty}" name='bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.sentQty' readonly="readonly" value="${ordDetail.sentQty}" type='text'/>
+								</td>
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 									<td>
-										<input  title="sendNum" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty-ordDetail.sentQty} == 0">readonly="readonly"</c:if> value="0" type="text"/>
+										<input title="sendNum${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
 									</td>
 								</shiro:hasPermission>
 

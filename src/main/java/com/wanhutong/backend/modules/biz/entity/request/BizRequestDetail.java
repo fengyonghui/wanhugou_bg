@@ -26,6 +26,7 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private BizSkuInfo skuInfo;		// biz_sku_info.id
 	private Integer reqQty;		// 请求数量
 	private Integer recvQty;		// 收货数量
+	private Integer sendQty;		//已发货数量
 	private String remark;		// 备注
 
 	
@@ -77,6 +78,14 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setReqQty(Integer reqQty) {
 		this.reqQty = reqQty;
+	}
+
+	public Integer getSendQty() {
+		return sendQty;
+	}
+
+	public void setSendQty(Integer sendQty) {
+		this.sendQty = sendQty;
 	}
 
 	public Integer getRecvQty() {

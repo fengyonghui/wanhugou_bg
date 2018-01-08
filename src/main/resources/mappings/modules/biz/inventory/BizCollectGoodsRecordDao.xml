@@ -5,11 +5,13 @@
 	<sql id="bizCollectGoodsRecordColumns">
 		a.id AS "id",
 		a.inv_id AS "invInfo.id",
+		inv.name AS "invInfo.name",
 		a.sku_id AS "skuInfo.id",
+		sku.part_no AS "skuInfo.partNo",
+		sku.name AS "skuInfo.name",
 		a.order_id AS "bizOrderHeader.id",
 		a.request_id AS "bizRequestHeader.id",
-		orheader.order_num AS "bizOrderHeader.orderNum",
-		reheaer.req_no AS "bizRequestHeader.reqNo",
+		a.order_num AS "orderNum",
 		a.receive_num AS "receiveNum",
 		a.vend_id AS "vender.id",
 		a.receive_time AS "receiveDate",
@@ -23,10 +25,10 @@
 	
 	<sql id="bizCollectGoodsRecordJoins">
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
-		LEFT JOIN biz_order_header orheader ON a.order_id = orderheader.id
-		LEFT JOIN sys_office s ON a.cust_id = s.id
-		LEFT JOIN biz_request_header reheader ON a.order_id = reheader.id
-		LEFT JOIN biz_inventory_sku invInfo ON a.inv_id = invInfo.id
+		LEFT JOIN biz_order_header orheader ON a.order_id = orheader.id
+		LEFT JOIN sys_office s ON a.vend_id = s.id
+		LEFT JOIN biz_request_header reheader ON a.request_id = reheader.id
+		LEFT JOIN biz_inventory_info inv ON a.inv_id = inv.id
 	</sql>
     
 	<select id="get" resultType="BizCollectGoodsRecord">
@@ -44,8 +46,11 @@
 		<include refid="bizCollectGoodsRecordJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
-				AND a.inv_id = #{invInfo.id}
+			<if test="invInfo != null and invInfo.name != null and invInfo.name != ''">
+				AND inv.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{invInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{invInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{invInfo.name},'%')</if>
 			</if>
 			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
 				AND sku.name LIKE
@@ -53,17 +58,11 @@
 				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
-			<if test="bizOrderHeader != null and bizOrderHeader.orderNum != null and bizOrderHeader.orderNum != ''">
-				AND orheader.order_num LIKE
-				<if test="dbName == 'oracle'">'%'||#{bizOrderHeader.orderNum}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{bizOrderHeader.orderNum}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{bizOrderHeader.orderNum},'%')</if>
-			</if>
-			<if test="bizRequestHeader != null and bizRequestHeader.reqNo != null and bizRequestHeader.reqNo != ''">
-				AND orheader.order_num LIKE
-				<if test="dbName == 'oracle'">'%'||#{bizRequestHeader.reqNo}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{bizRequestHeader.reqNo}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{bizRequestHeader.reqNo},'%')</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -103,6 +102,7 @@
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				request_id,
 			</if>
+			order_num,
 			receive_num,
 			vend_id,
 			receive_time,
@@ -122,6 +122,7 @@
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				#{bizRequestHeader.id},
 			</if>
+			#{orderNum},
 			#{receiveNum},
 			#{vender.id},
 			#{receiveDate},
@@ -144,6 +145,7 @@
 			<if test="bizRequestHeader != null and bizRequestHeader.id != null and bizRequestHeader.id != ''">
 				request_id = #{bizRequestHeader.id},
 			</if>
+			order_num = #{orderNum},
 			receive_num = #{receiveNum},
 			vend_id = #{vender.id},
 			receive_time = #{receiveDate},

@@ -7,6 +7,7 @@
 		a.name AS "name",
 		a.description AS "description",
 		a.location_id AS "bizLocation.id",
+		a.cust_id AS "customer.id",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -27,6 +28,7 @@
 		LEFT JOIN sys_region p on p.id = common.province_id
 		LEFT JOIN sys_region city on city.id = common.city_id
 		LEFT JOIN sys_region r on r.id = common.region_id
+		LEFT JOIN sys_office o ON a.cust_id = o.id
 	</sql>
     
 	<select id="get" resultType="BizInventoryInfo">
@@ -52,6 +54,9 @@
 			</if>
 			<if test="bizLocation != null and bizLocation.id != null and bizLocation.id !=''">
 				AND a.location_id = #{bizLocation.id}
+			</if>
+			<if test="customer != null and customer.id != null and customer.id != ''">
+				AND a.cust_id = #{customer.id}
 			</if>
 		</where>
 		<choose>
@@ -86,6 +91,7 @@
 			name,
 			description,
 			location_id,
+			cust_id,
 			status,
 			create_id,
 			create_time,
@@ -97,6 +103,7 @@
 			#{name},
 			#{description},
 			#{bizLocation.id},
+			#{customer.id}
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -111,6 +118,7 @@
 			name = #{name},
 			description = #{description},
 			location_id = #{bizLocation.id},
+			cust_id = #{customer.id},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

@@ -7,6 +7,7 @@
 		a.inv_id AS "invInfo.id",
 		i.name AS "invInfo.name",
 		a.sku_id AS "skuInfo.id",
+		sku.part_no AS "skuInfo.partNo",
 		sku.name AS "skuInfo.name",
 		a.inv_type AS "invType",
 		a.stock_qty AS "stockQty",
