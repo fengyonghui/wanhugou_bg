@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.entity.invoice;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 
+import java.util.List;
+
 /**
  * 发票抬头，发票内容，发票类型Entity
  * @author OuyangXiutian
@@ -19,6 +21,8 @@ public class BizInvoiceHeader extends DataEntity<BizInvoiceHeader> {
 	private Integer invType;		// 发票类型 1: 普票 2:专票
 	private String invContent;		// 发票内容
 	private Double invTotal;		// 发票数额
+
+	private List<BizInvoiceDetail> bizInvoiceDetailList;	//用于计算发票数额
 	
 	public BizInvoiceHeader() {
 		super();
@@ -66,5 +70,13 @@ public class BizInvoiceHeader extends DataEntity<BizInvoiceHeader> {
 	
 	public void setInvTotal(Double invTotal) {
 		this.invTotal = invTotal;
+	}
+
+	public List<BizInvoiceDetail> getBizInvoiceDetailList() {
+		return bizInvoiceDetailList;
+	}
+
+	public void setBizInvoiceDetailList(List<BizInvoiceDetail> bizInvoiceDetailList) {
+		this.bizInvoiceDetailList = bizInvoiceDetailList;
 	}
 }

@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceDetail;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -24,7 +25,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Office customer;		// 客户ID sys_office.id &amp;  type=customer
 	private Double totalDetail;		// 订单详情总价
 	private Double totalExp;		// 订单总费用
-	private Double freight;		// 运费
+	private Double freight;			// 运费
 	private Integer invStatus;		// 0 不开发票 1 未开发票 3 已开发票
 	private Integer bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付 3同意发货 4已发货 5客户已收货 6 已完成
 	private BizPlatformInfo platformInfo;		// 订单来源； biz_platform_info.id
@@ -154,4 +155,5 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
+
 }

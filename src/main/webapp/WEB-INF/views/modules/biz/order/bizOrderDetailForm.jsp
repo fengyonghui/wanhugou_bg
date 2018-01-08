@@ -59,7 +59,7 @@
         <div class="control-group">
             <label class="control-label">订单行号：</label>
             <div class="controls">
-                <form:input path="lineNo"  disabled="true" placeholder="${bizOrderDetail.maxLineNo}" htmlEscape="false" class="input-xlarge required"/>
+                <form:input path="lineNo"  disabled="true" placeholder="1" htmlEscape="false" class="input-xlarge required"/>
                 <input name="lineNo" value="${bizOrderDetail.maxLineNo}" htmlEscape="false" type="hidden" class="required"/>
                 <span class="help-inline"><font color="red">*</font></span>
             </div>
