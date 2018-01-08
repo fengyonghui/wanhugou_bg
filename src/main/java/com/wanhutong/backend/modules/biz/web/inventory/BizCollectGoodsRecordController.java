@@ -64,8 +64,11 @@ public class BizCollectGoodsRecordController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizCollectGoodsRecord:edit")
 	@RequestMapping(value = "save")
 	public String save(BizCollectGoodsRecord bizCollectGoodsRecord, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizCollectGoodsRecord)){
-			return form(bizCollectGoodsRecord, model);
+//		if (!beanValidator(model, bizCollectGoodsRecord)){
+//			return form(bizCollectGoodsRecord, model);
+//		}
+		for (BizCollectGoodsRecord bcgr : bizCollectGoodsRecord.getBizCollectGoodsRecordList()) {
+
 		}
 		bizCollectGoodsRecordService.save(bizCollectGoodsRecord);
 		addMessage(redirectAttributes, "保存收货记录成功");

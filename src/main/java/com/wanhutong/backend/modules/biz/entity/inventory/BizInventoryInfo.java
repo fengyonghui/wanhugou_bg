@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
@@ -23,7 +24,7 @@ public class BizInventoryInfo extends DataEntity<BizInventoryInfo> {
 	private String name;		// 仓库名称
 	private String description;		// 仓库描述
 	private CommonLocation bizLocation;		// common_location.id
-
+	private Office customer;	//采购中心ID，sys_office.id
 	public CommonLocation getBizLocation() {
 		return bizLocation;
 	}
@@ -58,5 +59,11 @@ public class BizInventoryInfo extends DataEntity<BizInventoryInfo> {
 		this.description = description;
 	}
 
-	
+	public Office getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Office customer) {
+		this.customer = customer;
+	}
 }

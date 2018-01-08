@@ -3,17 +3,18 @@
  */
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
-import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.List;
 import javax.validation.constraints.NotNull;
-import com.wanhutong.backend.modules.sys.entity.User;
-
-import com.wanhutong.backend.common.persistence.DataEntity;
+import java.util.Date;
 
 /**
  * 收货记录表Entity
@@ -27,10 +28,13 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
 	private BizOrderHeader bizOrderHeader;		// 销售单ID，biz_order_header.id
 	private BizRequestHeader bizRequestHeader;	//备货单ID, biz_request_header.id
-	private String orderNum;
+	private String orderNum;		//订单号
 	private String receiveNum;		// 收货数量
 	private Office vender;		// 供应商ID sys_office.id &amp;  type=vend
 	private Date receiveDate;		// 收货时间
+	private BizRequestDetail bizRequestDetail;
+	private BizOrderDetail bizOrderDetail;
+	private List<BizCollectGoodsRecord> bizCollectGoodsRecordList;
 	
 	public BizCollectGoodsRecord() {
 		super();
@@ -107,4 +111,27 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 		this.receiveDate = receiveDate;
 	}
 
+	public BizRequestDetail getBizRequestDetail() {
+		return bizRequestDetail;
+	}
+
+	public void setBizRequestDetail(BizRequestDetail bizRequestDetail) {
+		this.bizRequestDetail = bizRequestDetail;
+	}
+
+	public BizOrderDetail getBizOrderDetail() {
+		return bizOrderDetail;
+	}
+
+	public void setBizOrderDetail(BizOrderDetail bizOrderDetail) {
+		this.bizOrderDetail = bizOrderDetail;
+	}
+
+	public List<BizCollectGoodsRecord> getBizCollectGoodsRecordList() {
+		return bizCollectGoodsRecordList;
+	}
+
+	public void setBizCollectGoodsRecordList(List<BizCollectGoodsRecord> bizCollectGoodsRecordList) {
+		this.bizCollectGoodsRecordList = bizCollectGoodsRecordList;
+	}
 }
