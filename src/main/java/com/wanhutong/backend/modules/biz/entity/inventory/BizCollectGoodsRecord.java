@@ -29,7 +29,7 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private BizOrderHeader bizOrderHeader;		// 销售单ID，biz_order_header.id
 	private BizRequestHeader bizRequestHeader;	//备货单ID, biz_request_header.id
 	private String orderNum;		//订单号
-	private String receiveNum;		// 收货数量
+	private Integer receiveNum;		// 收货数量
 	private Office vender;		// 供应商ID sys_office.id &amp;  type=vend
 	private Date receiveDate;		// 收货时间
 	private BizRequestDetail bizRequestDetail;
@@ -85,11 +85,11 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	}
 
 	@Length(min=1, max=11, message="收货数量长度必须介于 1 和 11 之间")
-	public String getReceiveNum() {
+	public Integer getReceiveNum() {
 		return receiveNum;
 	}
 
-	public void setReceiveNum(String receiveNum) {
+	public void setReceiveNum(Integer receiveNum) {
 		this.receiveNum = receiveNum;
 	}
 

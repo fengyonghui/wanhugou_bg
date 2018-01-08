@@ -103,16 +103,16 @@ public class BizSendGoodsRecordController extends BaseController {
 				int sendNum = bsgr.getSendNum();    //供货数
 			//累计备货单供货数量
 			if (bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getId() != 0) {
-				int recvQty = bsgr.getBizRequestDetail().getRecvQty();   //备货单累计供货数量
+				int sendQty = bsgr.getBizRequestDetail().getSendQty();   //备货单累计供货数量
 				//当供货数量和申报数量不相等时，更改备货单状态
-				if (bsgr.getBizRequestDetail().getReqQty() != (recvQty + sendNum)) {
+				if (bsgr.getBizRequestDetail().getReqQty() != (sendQty + sendNum)) {
 					flagRequest = false;
 				}
 				if (sendNum == 0) {
 					continue;
 				}
 				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
-				bizRequestDetail.setRecvQty(recvQty + sendNum);
+				bizRequestDetail.setSendQty(sendQty + sendNum);
 				bizRequestDetailService.save(bizRequestDetail);
 			}
 			//累计销售单供货数量
@@ -138,6 +138,13 @@ public class BizSendGoodsRecordController extends BaseController {
 				BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
 				//生成供货记录表
 				bsgr.setSendNum(sendNum);
+				if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
+					BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
+					bsgr.setBizRequestHeader(bizRequestHeader);
+				}
+				if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
+
+				}
 				bsgr.setCustomer(office);
 				bsgr.setSkuInfo(bizSkuInfo);
 				bsgr.setOrderNum(bsgr.getOrderNum());

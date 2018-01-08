@@ -10,6 +10,7 @@
 		a.sku_id AS "skuInfo.id",
 		a.req_qty AS "reqQty",
 		a.recv_qty AS "recvQty",
+		a.send_qty AS "sendQty",
 		a.remark AS "remark",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -81,7 +82,9 @@
 			<if test="recvQty!=null">
 				recv_qty,
 			</if>
-
+			<if test="sendQty!=null">
+				send_qty,
+			</if>
 			remark,
 			status,
 			create_id,
@@ -95,9 +98,12 @@
 			#{lineNo},
 			#{skuInfo.id},
 			#{reqQty},
-		<if test="recvQty!=null">
-			#{recvQty},
-		</if>
+			<if test="recvQty!=null">
+				#{recvQty},
+			</if>
+			<if test="sendQty!=null">
+				#{sendQty},
+			</if>
 			#{remark},
 			#{delFlag},
 			#{createBy.id},
@@ -122,6 +128,9 @@
 			</if>
 			<if test="recvQty!=null">
 				recv_qty = #{recvQty},
+			</if>
+			<if test="sendQty!=null">
+				send_qty = #{sendQty},
 			</if>
 			<if test="recvQty!=null">
 			remark = #{remark},

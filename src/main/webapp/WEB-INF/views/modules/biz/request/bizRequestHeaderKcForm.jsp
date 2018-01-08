@@ -39,8 +39,8 @@
 		function checkout(obj) {
             var reqQty = $("#reqQty"+obj).val();
             var sendNum = $("#sendNum"+obj).val();
-            var recvQty = $("#recvQty"+obj).val();
-            var sum = parseInt(sendNum) + parseInt(recvQty);
+            var sendQty = $("#sendQty"+obj).val();
+            var sum = parseInt(sendNum) + parseInt(sendQty);
             if (sum > reqQty){
                 alert("供货数太大，已超过申报数，请重新调整供货数量！");
                 $("#sendNum"+obj).val(0);
@@ -146,12 +146,12 @@
 									</c:if>
 								</td>
 								<td>
-									<input id="recvQty${reqStatus.index}" name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.recvQty' readonly="readonly" value="${reqDetail.recvQty}" type='text'/>
+									<input id="sendQty${reqStatus.index}" name='bizSendGoodsRecordList[${reqStatus.index}].bizRequestDetail.sendQty' readonly="readonly" value="${reqDetail.sendQty}" type='text'/>
 								</td>
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input id="sendNum${reqStatus.index}" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty==reqDetail.recvQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout(${reqStatus.index})"/>
+									<input id="sendNum${reqStatus.index}" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout(${reqStatus.index})"/>
 								</td>
 								</shiro:hasPermission>
 							</tr>
