@@ -2,8 +2,6 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>发票抬头管理</title>
-	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -16,7 +14,7 @@
                     choose.attr('checked',false);
                 }
             });
-			
+
 			$("#inputForm").validate({
 				submitHandler: function(form){
                    /*if($("#addErrorInvo").val()==''){
@@ -36,7 +34,9 @@
 					}
 				}
 			});
-			orderoffice();
+			if($("#id").val()!=""){
+				orderoffice();
+			}
 	 });
 /* 选择采购商 */
 function orderoffice(){
@@ -48,7 +48,7 @@ function orderoffice(){
        success:function(data){
             $("#boxTbody").empty();
             var htmlOrder="<tbody>";
-                console.log(JSON.stringify(data)+"-测试 1- appendTo('#images')--");
+                <%--console.log(JSON.stringify(data)+"-测试 1- appendTo('#images')--");--%>
             $.each(data,function(index,order){
                 $("<td/>").attr("src", order.id);
                 htmlOrder+="<tr><td><input type='checkbox'name='boxs' value="+order.id+">"+
@@ -66,33 +66,32 @@ function orderoffice(){
    })
 }
 </script>
+	<title>发票抬头管理</title>
+	<meta name="decorator" content="default"/>
 <script type="text/javascript">
-/* 订单列表 */
+<%--/* 订单列表 */--%>
 function dial(){
-    $.jBox("id:contentTablejBox",{
-               title:"订单列表",
-               width:700,
-               height:300,
-               buttons:{"确定":1,"取消":0},
-               buttonsFocus:1,
-               submit:function(v,h,f){
-                    if(v == 1){
-                        alert("执行确定方法");
-                        var bb="",
-                        var temp="",
-                        var a=$("input[name='boxs']");
-                        for(var i=0;i<a.length;i++){
-                            if(a[i].checked){
-                                temp=a[i].val();
-                                bb=bb+","+temp;
-                            }
-                        }
-                        
-                    }
-                    return true;
-               }
-           })
-    
+	$.jBox("id:contentTablejBox",{
+		   title:"订单列表",
+		   width:700,
+		   height:300,
+		   buttons:{"确定":1,"取消":0},
+		   buttonsFocus:1,
+		   submit:function(v,h,f){
+				if(v == 1){
+					<%--alert("执行确定方法");--%>
+					 var checkID ="";
+					 $("input[name='boxs']:checked").each(function(){
+					 		 checkID+=$(this).val()+",";
+					 });
+					 $.post("${ctx}/biz/invoice/bizInvoiceDetail/save",{boxs:checkID},function(json2){
+					 		console.log(json2);
+
+					 },"json")
+				}
+				return true;
+		   }
+	})
  }
 </script>
 </head>
@@ -170,6 +169,40 @@ function dial(){
             <th>操作</th>
         </tr>
         </thead>
+		<tbody>
+		<c:forEach items="${detailList}" var="bizInvoiceDetail">
+			<tr>
+				<td><a href="${ctx}/biz/invoice/bizInvoiceHeader/form?id=${bizInvoiceHeader.id}">
+						${bizInvoiceDetail.id}
+				</a></td>
+				<td>
+						22
+				</td>
+				<td>
+						${fns:getDictLabel(bizInvoiceHeader.invType, 'invType', '未知状态')}
+				</td>
+				<td>
+						${bizInvoiceHeader.invContent}
+				</td>
+				<td>
+						${bizInvoiceHeader.invTotal}
+				</td>
+				<td>
+						${bizInvoiceHeader.createBy.name}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizInvoiceHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+					<fmt:formatDate value="${bizInvoiceHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<shiro:hasPermission name="biz:invoice:bizInvoiceHeader:edit"><td>
+					<a href="${ctx}/biz/invoice/bizInvoiceHeader/form?id=${bizInvoiceHeader.id}">修改</a>
+					<a href="${ctx}/biz/invoice/bizInvoiceHeader/delete?id=${bizInvoiceHeader.id}" onclick="return confirmx('确认要删除该发票抬头吗？', this.href)">删除</a>
+				</td></shiro:hasPermission>
+			</tr>
+		</c:forEach>
+		</tbody>
     </table>
 </c:if>
 

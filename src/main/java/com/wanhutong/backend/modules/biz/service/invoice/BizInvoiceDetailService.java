@@ -55,10 +55,5 @@ public class BizInvoiceDetailService extends CrudService<BizInvoiceDetailDao, Bi
 	public Integer findMaxLine(BizInvoiceDetail bizInvoiceDetail) {
 		return bizInvoiceInfoDao.findMaxLine(bizInvoiceDetail);
 	}
-	
-	@Transactional(readOnly = false)
-	public Integer setPrivIds(Integer[] privIds){
-		 return bizInvoiceDetailDao.setPrivIds(privIds);
-	}
-	
+
 }

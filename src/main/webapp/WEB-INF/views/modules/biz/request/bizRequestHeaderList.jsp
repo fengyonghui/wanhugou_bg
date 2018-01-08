@@ -19,9 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
-		<c:if test="${bizRequestHeader.source!='kc'}">
 		<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><li><a href="${ctx}/biz/request/bizRequestHeader/form">备货清单添加</a></li></shiro:hasPermission>
-		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -70,7 +68,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="requestHeader">
 			<tr>
-				<td><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&source=${bizRequestHeader.source}">
+				<td><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">
 					${requestHeader.reqNo}
 				</a></td>
 				<td>
@@ -98,10 +96,10 @@
 					<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
-    				<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&source=${bizRequestHeader.source}">修改</a>
-					<c:if test="${bizRequestHeader.source!='kc'}">
+    				<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
+
 						<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
-					</c:if>
+
 					</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

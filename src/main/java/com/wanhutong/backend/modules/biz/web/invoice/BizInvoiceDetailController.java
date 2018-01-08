@@ -75,11 +75,20 @@ public class BizInvoiceDetailController extends BaseController {
 
 	@RequiresPermissions("biz:invoice:bizInvoiceDetail:edit")
 	@RequestMapping(value = "save")
-	public String save(BizInvoiceDetail bizInvoiceDetail, Model model, RedirectAttributes redirectAttributes) {
+	public String save(BizInvoiceDetail bizInvoiceDetail,String boxs, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizInvoiceDetail)){
 			return form(bizInvoiceDetail, model);
 		}
-		bizInvoiceDetailService.save(bizInvoiceDetail);
+		String[] split = boxs.split(",");
+		Integer count=1;
+		for(int i=0;i<split.length;i++){
+			bizInvoiceDetail.setLineNo(count++);/*行号*/
+			Integer integer = new Integer(split[i]);
+			BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(integer);
+			bizInvoiceDetail.setOrderHead(bizOrderHeader);/*orderHeader.id*/
+			bizInvoiceDetail.setInvAmt(8888.0);/*发票金额*/
+			bizInvoiceDetailService.save(bizInvoiceDetail);
+		}
 		addMessage(redirectAttributes, "保存发票详情成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceDetail/form";
 	}
@@ -106,17 +115,20 @@ public class BizInvoiceDetailController extends BaseController {
 		return list;
 	}
 	
-	@ResponseBody
+	/*@ResponseBody
 	@RequiresPermissions("biz:invoice:bizInvoiceDetail:view")
 	@RequestMapping(value = "checkboxAll")
-	public void setCheckboxAll(String privIds,Model model,PrintWriter writer) {
-		System.out.println(privIds);
-		/*Integer integers = bizInvoiceDetailService.setPrivIds(privIds);
-		Map<String, String> map = new HashMap<>();
-		if(integers>0){
-			map.put("integers","ok");
-			map.put("msg","保存成功");
-			writer.write(JSONUtils.toJSONString(map));
-		}*/
-	}
+	public BizInvoiceDetail setCheckboxAll(BizInvoiceDetail bizInvoiceDetail,String boxs,Model model) {
+		String[] split = boxs.split(",");
+		Integer count=1;
+		for(int i=0;i<split.length;i++){
+			bizInvoiceDetail.setLineNo(count++);*//*行号*//*
+			Integer integer = new Integer(split[i]);
+			BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(integer);
+			bizInvoiceDetail.setOrderHead(bizOrderHeader);*//*orderHeader.id*//*
+		}
+			bizInvoiceDetail.setInvAmt(99.0);*//*发票金额*//*
+			bizInvoiceDetailService.save(bizInvoiceDetail);
+		return bizInvoiceDetail;
+	}*/
 }
