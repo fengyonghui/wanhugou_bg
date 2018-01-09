@@ -49,7 +49,10 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
-				AND i.id = #{invInfo.id}
+				AND a.inv_id = #{invInfo.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.inv_id = #{skuInfo.id}
 			</if>
 			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
 				AND sku.name LIKE

@@ -6,16 +6,23 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -64,6 +71,12 @@ public class BizCollectGoodsRecordController extends BaseController {
     private BizSendGoodsRecordService bizSendGoodsRecordService;
 	@Autowired
     private BizInventorySkuService bizInventorySkuService;
+	@Autowired
+	private BizPoOrderReqService bizPoOrderReqService;
+	@Autowired
+	private BizInventoryInfoService bizInventoryInfoService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
 
 	
 	@ModelAttribute
@@ -104,10 +117,10 @@ public class BizCollectGoodsRecordController extends BaseController {
         int recvQtySum = 0;
 		for (BizCollectGoodsRecord bcgr : bizCollectGoodsRecord.getBizCollectGoodsRecordList()) {
 			int receiveNum = bcgr.getReceiveNum();    //收货数
+			int recvQty = bcgr.getBizRequestDetail().getRecvQty();		//已收货数量
 			//累计备货单收货数量和供货数量
 			if (bcgr.getBizRequestDetail() != null && bcgr.getBizRequestDetail().getId() != 0) {
-				int sendQty = bcgr.getBizRequestDetail().getSendQty();   //备货单已供货数量
-				int recvQty = bcgr.getBizRequestDetail().getRecvQty();		//已收货数量
+//				int sendQty = bcgr.getBizRequestDetail().getSendQty();   //备货单已供货数量
 				//当收货数量和申报数量不相等时，更改备货单状态
 				if (bcgr.getBizRequestDetail().getReqQty() != (recvQty + receiveNum)) {
 					flagRequest = false;
@@ -122,7 +135,14 @@ public class BizCollectGoodsRecordController extends BaseController {
 			//生成收货记录表
 			//商品
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bcgr.getSkuInfo().getId());
-//			bcgr.setInvInfo();
+			//仓库
+			BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+			bizInventoryInfo.setCustomer(bcgr.getCustomer());
+			List<BizInventoryInfo> bizInventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+			if (bizInventoryInfoList != null && bizInventoryInfoList.size() > 0){
+				bizInventoryInfo = bizInventoryInfoList.get(0);
+			}
+			bcgr.setInvInfo(bizInventoryInfo);
 			bcgr.setSkuInfo(bizSkuInfo);
 			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bcgr.setBizRequestHeader(bizRequestHeader);
@@ -130,23 +150,44 @@ public class BizCollectGoodsRecordController extends BaseController {
 			bcgr.setReceiveDate(new Date());
 			bcgr.setReceiveNum(bcgr.getReceiveNum());
 			bizCollectGoodsRecordService.save(bcgr);
-			//库存有该商品,增加相应数量
+
+			//获取库存信息
             BizInventorySku bizInventorySku = new BizInventorySku();
             bizInventorySku.setSkuInfo(bcgr.getSkuInfo());
-            bizInventorySku.setCustomer(bcgr.getBizRequestHeader().getFromOffice());
-            bizInventorySku.setInvType("残损");
+            bizInventorySku.setCustomer(bcgr.getCustomer());
+            bizInventorySku.setInvType(2);
+			//库存有该商品,增加相应数量
             if(bizInventorySkuService.findList(bizInventorySku) != null && bizInventorySkuService.findList(bizInventorySku).size() > 0){
                 List<BizInventorySku> bizInventorySkuList = bizInventorySkuService.findList(bizInventorySku);
                 BizInventorySku bizInventorySku1 = bizInventorySkuList.get(0);
                 bizInventorySku1.setStockQty(bizInventorySku1.getStockQty()+receiveNum);
+                bizInventorySkuService.save(bizInventorySku1);
             }
             //库存没有该商品，增加该商品相应库存
+			if(bizInventorySkuService.findList(bizInventorySku) == null || bizInventorySkuService.findList(bizInventorySku).size() == 0){
+            	BizInventorySku bizInventorySku1 = new BizInventorySku();
+            	bizInventorySku1.setInvInfo(bizInventoryInfo);
+				bizInventorySku1.setSkuInfo(bcgr.getSkuInfo());
+				bizInventorySku1.setInvType(1);
+				bizInventorySku1.setStockQty(receiveNum);
+				bizInventorySku1.setCustomer(bcgr.getCustomer());
+				bizInventorySkuService.save(bizInventorySku1);
+
+			}
 
             //当采购数量和(销售单供货记录的累计供货数+采购中心已收货数量)不相等时，更改采购单完成状态
             //销售单供货记录累计供货数
-            BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
-            bizSendGoodsRecord.setSkuInfo(bcgr.getSkuInfo());
-            bizSendGoodsRecord.setBizOrderHeader(bcgr.getBizOrderHeader());
+			//得到同一采购单下销售单信息
+			BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+			bizPoOrderReq.setRequestHeader(bizCollectGoodsRecord.getBizRequestHeader());
+			List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+			if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
+				bizPoOrderReq = bizPoOrderReqList.get(0);
+			}
+			BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getOrderHeader().getId());
+			//得到同一采购单下销售单供货记录
+			BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
+            bizSendGoodsRecord.setOrderNum(bizOrderHeader.getOrderNum());
             List<BizSendGoodsRecord> bizSendGoodsRecordList = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
             int sendNumSum = 0;     //累计供货记录的供货数
             for (BizSendGoodsRecord bizSendGoodsRecord1:bizSendGoodsRecordList) {
@@ -154,13 +195,18 @@ public class BizCollectGoodsRecordController extends BaseController {
                 sendNumSum += sendNum;
             }
             //已采购数
-          /*  int poOrdQty = recvQty + sendNumSum;
-            if(poDetail.ordQty != poOrdQty){
+            int poOrdQty = recvQty + sendNumSum;
+			BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoOrderReq.getPoHeader().getId());
+			BizPoDetail bizPoDetail = new BizPoDetail();
+			bizPoDetail.setPoHeader(bizPoHeader);
+			List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
+			if (bizPoDetailList != null && bizPoDetailList.size() > 0){
+				bizPoDetail = bizPoDetailList.get(0);
+			}
+            if(bizPoDetail.getOrdQty() != poOrdQty){
                 flagPo = false;
-            }*/
+            }
 		}
-
-
 
 		//更改备货单状态
 		if (flagRequest) {
@@ -169,10 +215,19 @@ public class BizCollectGoodsRecordController extends BaseController {
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
 		}
 		//更改采购单状态
-		/*if(flagPo){
-            BizPoHeader bizPoHeader = BizPoHeaderService.get(bizCollectGoodsRecord.getbizPoHeader().getId());
-            bizPoHeader.setBizStatus(ReqHeaderStatusEnum..getState());
-        }*/
+		if(flagPo){
+			BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+			bizPoOrderReq.setRequestHeader(bizCollectGoodsRecord.getBizRequestHeader());
+			List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+			if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
+				bizPoOrderReq = bizPoOrderReqList.get(0);
+			}
+            BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoOrderReq.getPoHeader().getId());
+			int a = ReqHeaderStatusEnum.COMPLETE.getState();
+			byte b = (byte)a;
+            bizPoHeader.setBizStatus(b);
+            bizPoHeaderService.save(bizPoHeader);
+        }
 		addMessage(redirectAttributes, "保存收货记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizCollectGoodsRecord/?repage";
 	}

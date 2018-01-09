@@ -18,7 +18,7 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	private static final long serialVersionUID = 1L;
 	private BizInventoryInfo invInfo;        // 仓库ID，biz_inventory_info.id
 	private BizSkuInfo skuInfo;        // biz_sku_info.id
-	private String invType;        // 库存类型：1常规；2残损；3专属
+	private Integer invType;        // 库存类型：1常规；2残损；3专属
 	private Integer stockQty;        // 库存数量--入库时数量增加，出库时减少
 	private Integer stockOrdQty;       // 销售订单数量
 	private Integer transInQty;        // 调入数量--仓库间商品调拨，调拨单已审批
@@ -59,11 +59,11 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	}
 
 	@Length(min = 1, max = 4, message = "库存类型：1常规；2残损；3专属长度必须介于 1 和 4 之间")
-	public String getInvType() {
+	public Integer getInvType() {
 		return invType;
 	}
 
-	public void setInvType(String invType) {
+	public void setInvType(Integer invType) {
 		this.invType = invType;
 	}
 
