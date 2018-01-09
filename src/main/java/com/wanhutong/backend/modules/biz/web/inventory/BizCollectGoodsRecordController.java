@@ -111,6 +111,7 @@ public class BizCollectGoodsRecordController extends BaseController {
 			bcgr.setReceiveDate(new Date());
 			bcgr.setReceiveNum(bcgr.getReceiveNum());
 			bizCollectGoodsRecordService.save(bcgr);
+			//修改库存，库存有该商品
 		}
 		//修改库存
 
@@ -118,7 +119,7 @@ public class BizCollectGoodsRecordController extends BaseController {
 		//更改订单状态
 		if (flagRequest) {
 			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
-			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.COMPLETE.getState());
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
 		}
 

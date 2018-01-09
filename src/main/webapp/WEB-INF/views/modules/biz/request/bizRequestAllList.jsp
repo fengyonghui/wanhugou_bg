@@ -89,8 +89,11 @@
 						<c:when test="${source=='gh'}">
 							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>
 						</c:when>
+						<c:when test="">
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">收货</a>
+						</c:when>
 						<c:otherwise>
-							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">修改</a>
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">供货</a>
 						</c:otherwise>
 					</c:choose>
 
@@ -134,7 +137,7 @@
 							<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">详情</a>
 						</c:when>
 						<c:otherwise>
-							<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">修改</a>
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">供货</a>
 						</c:otherwise>
 					</c:choose>
 				</td></shiro:hasPermission>
