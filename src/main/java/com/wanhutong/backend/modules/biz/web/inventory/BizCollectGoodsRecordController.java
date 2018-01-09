@@ -6,9 +6,16 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -30,6 +37,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.service.inventory.BizCollectGoodsRecordService;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 收货记录表Controller
@@ -48,6 +56,15 @@ public class BizCollectGoodsRecordController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private BizRequestHeaderService bizRequestHeaderService;
+	@Autowired
+    private BizPoHeaderService bizPoHeaderService;
+	@Autowired
+    private BizPoDetailService bizPoDetailService;
+	@Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
+	@Autowired
+    private BizInventorySkuService bizInventorySkuService;
+
 	
 	@ModelAttribute
 	public BizCollectGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -83,6 +100,8 @@ public class BizCollectGoodsRecordController extends BaseController {
 //			return form(bizCollectGoodsRecord, model);
 //		}
 		boolean flagRequest = true;		//备货单完成状态
+        boolean flagPo = true;      //采购单完成状态
+        int recvQtySum = 0;
 		for (BizCollectGoodsRecord bcgr : bizCollectGoodsRecord.getBizCollectGoodsRecordList()) {
 			int receiveNum = bcgr.getReceiveNum();    //收货数
 			//累计备货单收货数量和供货数量
@@ -111,18 +130,49 @@ public class BizCollectGoodsRecordController extends BaseController {
 			bcgr.setReceiveDate(new Date());
 			bcgr.setReceiveNum(bcgr.getReceiveNum());
 			bizCollectGoodsRecordService.save(bcgr);
-			//修改库存，库存有该商品
+			//库存有该商品,增加相应数量
+            BizInventorySku bizInventorySku = new BizInventorySku();
+            bizInventorySku.setSkuInfo(bcgr.getSkuInfo());
+            bizInventorySku.setCustomer(bcgr.getBizRequestHeader().getFromOffice());
+            bizInventorySku.setInvType("残损");
+            if(bizInventorySkuService.findList(bizInventorySku) != null && bizInventorySkuService.findList(bizInventorySku).size() > 0){
+                List<BizInventorySku> bizInventorySkuList = bizInventorySkuService.findList(bizInventorySku);
+                BizInventorySku bizInventorySku1 = bizInventorySkuList.get(0);
+                bizInventorySku1.setStockQty(bizInventorySku1.getStockQty()+receiveNum);
+            }
+            //库存没有该商品，增加该商品相应库存
+
+            //当采购数量和(销售单供货记录的累计供货数+采购中心已收货数量)不相等时，更改采购单完成状态
+            //销售单供货记录累计供货数
+            BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
+            bizSendGoodsRecord.setSkuInfo(bcgr.getSkuInfo());
+            bizSendGoodsRecord.setBizOrderHeader(bcgr.getBizOrderHeader());
+            List<BizSendGoodsRecord> bizSendGoodsRecordList = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
+            int sendNumSum = 0;     //累计供货记录的供货数
+            for (BizSendGoodsRecord bizSendGoodsRecord1:bizSendGoodsRecordList) {
+                int sendNum = bizSendGoodsRecord1.getSendNum();
+                sendNumSum += sendNum;
+            }
+            //已采购数
+          /*  int poOrdQty = recvQty + sendNumSum;
+            if(poDetail.ordQty != poOrdQty){
+                flagPo = false;
+            }*/
 		}
-		//修改库存
 
 
-		//更改订单状态
+
+		//更改备货单状态
 		if (flagRequest) {
 			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.COMPLETE.getState());
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
 		}
-
+		//更改采购单状态
+		/*if(flagPo){
+            BizPoHeader bizPoHeader = BizPoHeaderService.get(bizCollectGoodsRecord.getbizPoHeader().getId());
+            bizPoHeader.setBizStatus(ReqHeaderStatusEnum..getState());
+        }*/
 		addMessage(redirectAttributes, "保存收货记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizCollectGoodsRecord/?repage";
 	}

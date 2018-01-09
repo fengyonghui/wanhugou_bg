@@ -48,7 +48,7 @@
                 return false;
             }
         }
-        /*function checkout2(obj) {
+        function checkout2(obj) {
             var ordQty = $("#ordQty"+obj).val();
             var sendNum = $("#sendNum"+obj).val();
             var sentQty = $("#sentQty"+obj).val();
@@ -58,7 +58,7 @@
                 $("#sendNum"+obj).val(0);
                 return false;
             }
-        }*/
+        }
 	</script>
 </head>
 <body>
@@ -163,7 +163,7 @@
 						</c:forEach>
 					</c:if>
 
-					<%--<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
+					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
 							<tr id="${ordDetail.id}" class="ordDetailList">
 								<td><img src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
@@ -181,35 +181,35 @@
 								<td>${ordDetail.skuInfo.productInfo.brandName}</td>
 								<td>
 										${ordDetail.skuInfo.productInfo.office.name}
-										&lt;%&ndash;<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>&ndash;%&gt;
+										<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
 								</td>
 								<td>${ordDetail.skuInfo.name}</td>
 								<td>${ordDetail.skuInfo.partNo}</td>
 								<td>
-									<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.id' value='${ordDetail.skuInfo.id}'/>
-									<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.name' value='${ordDetail.skuInfo.name}'/>
-									<input id="ordQty${ordStatus.index}" name='bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.ordQty' readonly="readonly" value="${ordDetail.ordQty}" type='text'/>
-									<input name="bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.id" value="${ordDetail.id}" type="hidden"/>
-                                    <input name="bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.orderHeader.id" value="${ordDetail.orderHeader.id}" type="hidden"/>
+									<input type='hidden' name='bizCollectGoodsRecordList[${ordStatus.index}].skuInfo.id' value='${ordDetail.skuInfo.id}'/>
+									<input type='hidden' name='bizCollectGoodsRecordList[${ordStatus.index}].skuInfo.name' value='${ordDetail.skuInfo.name}'/>
+									<input id="ordQty${ordStatus.index}" name='bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.ordQty' readonly="readonly" value="${ordDetail.ordQty}" type='text'/>
+									<input name="bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.id" value="${ordDetail.id}" type="hidden"/>
+                                    <input name="bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.orderHeader.id" value="${ordDetail.orderHeader.id}" type="hidden"/>
 									<c:if test="${ordDetail.orderHeader.orderNum != null}">
-										<input name="bizSendGoodsRecordList[${ordStatus.index}].orderNum" value="${ordDetail.orderHeader.orderNum}" type="hidden"/>
+										<input name="bizCollectGoodsRecordList[${ordStatus.index}].orderNum" value="${ordDetail.orderHeader.orderNum}" type="hidden"/>
 									</c:if>
 
 								</td>
 								<td>
-									<input id="sentQty${ordDetail.sentQty}" name='bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.sentQty' readonly="readonly" value="${ordDetail.sentQty}" type='text'/>
+									<input id="sentQty${ordDetail.sentQty}" name='bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.sentQty' readonly="readonly" value="${ordDetail.sentQty}" type='text'/>
 								</td>
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 									<td>
-										<input title="sendNum${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
+										<input title="sendNum${ordStatus.index}" name="bizCollectGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
 									</td>
 								</shiro:hasPermission>
 
 
 							</tr>
 						</c:forEach>
-					</c:if>--%>
+					</c:if>
 					</tbody>
 				</table>
 			</div>

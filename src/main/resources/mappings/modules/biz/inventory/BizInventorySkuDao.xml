@@ -58,7 +58,7 @@
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
 			<if test="invType != null and invType != ''">
-				AND a.inv_type = #{invType}
+				AND a.inv_type != #{invType}
 			</if>
 		</where>
 		<choose>
