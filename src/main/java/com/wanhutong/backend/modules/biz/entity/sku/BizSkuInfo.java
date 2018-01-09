@@ -42,6 +42,10 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private Map<String,BizProdPropertyInfo> prodPropMap;
 
 	private List<String> skuIds;
+	private Integer reqQty; //请求的数量，用于展示
+	private Integer sentQty; //已发货的数量，用于展示
+	private String orderIds;
+	private String reqIds;
 
 
 	private int sign;//sku删除返回的标志
@@ -156,5 +160,37 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setSkuIds(List<String> skuIds) {
 		this.skuIds = skuIds;
+	}
+
+	public Integer getReqQty() {
+		return reqQty;
+	}
+
+	public void setReqQty(Integer reqQty) {
+		this.reqQty = reqQty;
+	}
+
+	public Integer getSentQty() {
+		return sentQty;
+	}
+
+	public void setSentQty(Integer sentQty) {
+		this.sentQty = sentQty;
+	}
+
+	public String getOrderIds() {
+		return orderIds;
+	}
+
+	public void setOrderIds(String orderIds) {
+		this.orderIds = orderIds;
+	}
+
+	public String getReqIds() {
+		return reqIds;
+	}
+
+	public void setReqIds(String reqIds) {
+		this.reqIds = reqIds;
 	}
 }

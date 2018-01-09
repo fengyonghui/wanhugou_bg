@@ -3,8 +3,20 @@
  */
 package com.wanhutong.backend.modules.biz.service.po;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +34,7 @@ import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 @Transactional(readOnly = true)
 public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader> {
 
+
 	public BizPoHeader get(Integer id) {
 		return super.get(id);
 	}
@@ -36,6 +49,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 	
 	@Transactional(readOnly = false)
 	public void save(BizPoHeader bizPoHeader) {
+
 		super.save(bizPoHeader);
 	}
 	

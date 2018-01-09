@@ -53,7 +53,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/save">
+		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">
 		<c:forEach items="${requestHeaderList}" var="requestHeader">
 			<tr>
 				<c:if test="${source=='gh'}">

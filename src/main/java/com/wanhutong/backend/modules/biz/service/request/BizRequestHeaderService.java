@@ -54,14 +54,6 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	@Resource
 	private OfficeService officeService;
 	@Resource
-	private BizPlatformInfoService bizPlatformInfoService;
-	@Resource
-	private BizPoHeaderService bizPoHeaderService;
-	@Resource
-	private BizSkuInfoService bizSkuInfoService;
-	@Resource
-	private BizPoDetailService bizPoDetailService;
-	@Resource
 	private BizInventorySkuService bizInventorySkuService;
 
 	public BizRequestHeader get(Integer id) {
@@ -95,7 +87,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId());
 		bizRequestHeader.setReqNo(reqNo);
 		DefaultProp defaultProp=new DefaultProp();
-		defaultProp.setPropKey("vendCenter");
+		defaultProp.setPropKey("vend_center");
 		List<DefaultProp> defaultPropList=defaultPropService.findList(defaultProp);
 		if(defaultPropList!=null){
 			DefaultProp prop=defaultPropList.get(0);
@@ -120,50 +112,6 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			}
 			requestDetail.setRequestHeader(bizRequestHeader);
 			bizRequestDetailService.save(requestDetail);
-		}
-		if(bizRequestHeader.getPoDetailList()!=null){
-			Map<Integer,List<BizPoDetail>> map=new HashMap<Integer,List<BizPoDetail>>();
-				for(BizPoDetail bizPoDetail:bizRequestHeader.getPoDetailList()){
-					Integer key=bizPoDetail.getPoHeader().getVendOffice().getId();
-					if(map.containsKey(key)){
-						List<BizPoDetail> poDetails = map.get(key);
-						map.remove(key);
-						poDetails.add(bizPoDetail);
-						map.put(key,poDetails);
-					}
-					else {
-						List<BizPoDetail> poDetailList=new ArrayList<BizPoDetail>();
-						poDetailList.add(bizPoDetail);
-						map.put(key,poDetailList);
-					}
-				}
-			BizPoHeader poHeader=new BizPoHeader();
-			for (Map.Entry<Integer, List<BizPoDetail>> entry : map.entrySet()) {
-				System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
-				poHeader.setId(null);
-				String poNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO,entry.getKey());
-				poHeader.setOrderNum(poNo);
-				poHeader.setPlateformInfo(bizPlatformInfoService.get(1));
-				poHeader.setVendOffice(officeService.get(entry.getKey()));
-				bizPoHeaderService.save(poHeader);
-				int a=0;
-				Double totalDetail=0.0;
-					for (BizPoDetail poDetail:entry.getValue()){
-						poDetail.setLineNo(++a);
-						poDetail.setPoHeader(poHeader);
-						BizSkuInfo bizSkuInfo=bizSkuInfoService.get(poDetail.getSkuInfo().getId());
-						poDetail.setSkuName(bizSkuInfo.getName());
-						poDetail.setPartNo(bizSkuInfo.getPartNo());
-						bizPoDetailService.save(poDetail);
-						totalDetail+=poDetail.getOrdQty()*poDetail.getUnitPrice();
-					}
-
-				poHeader.setTotalDetail(totalDetail);
-				bizPoHeaderService.save(poHeader);
-				}
-
-			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.ordinal());
-			super.save(bizRequestHeader);
 		}
 	}
 
