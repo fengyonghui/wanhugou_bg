@@ -5,6 +5,7 @@
 	<sql id="bizInvoiceDetailColumns">
 		a.id AS "id",
 		a.line_no AS "lineNo",
+		a.invoice_id as "invoiceHeader.id",
 		a.order_id AS "orderHead.id",
 		boh.order_num as "orderHead.orderNum",
 		a.inv_amt AS "invAmt",
@@ -22,6 +23,7 @@
 	<sql id="bizInvoiceDetailJoins">
 		left join sys_user su on a.create_id=su.id
 		LEFT  join biz_order_header boh on a.order_id=boh.id
+		LEFT  join biz_invoice_header bih on a.invoice_id=bih.id
 	</sql>
     
 	<select id="get" resultType="BizInvoiceDetail">
@@ -44,6 +46,9 @@
 			</if>
 			<if test="lineNo != null and lineNo != ''">
 				AND a.line_no = #{lineNo}
+			</if>
+			<if test="invoiceHeader != null and invoiceHeader.id != null and invoiceHeader.id !=''">
+				AND a.invoice_id = #{invoiceHeader.id}
 			</if>
 			<if test="orderHead != null and orderHead.id != null and orderHead.id !=''">
 				AND a.order_id = #{orderHead.id}
@@ -88,6 +93,7 @@
 		INSERT INTO biz_invoice_detail(
 			id,
 			line_no,
+			invoice_id,
 			order_id,
 			inv_amt,
 			remark,
@@ -100,6 +106,7 @@
 		) VALUES (
 			#{id},
 			#{lineNo},
+			#{invoiceHeader.id},
 			#{orderHead.id},
 			#{invAmt},
 			#{remarks},
@@ -115,6 +122,7 @@
 	<update id="update">
 		UPDATE biz_invoice_detail SET 	
 			line_no = #{lineNo},
+			invoice_id = #{invoiceHeader.id},
 			order_id = #{orderHead.id},
 			inv_amt = #{invAmt},
 			remark = #{remarks},

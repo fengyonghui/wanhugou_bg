@@ -46,19 +46,15 @@ function orderoffice(){
        url:"${ctx}/biz/invoice/bizInvoiceDetail/invOrderHeader?officeId="+officeId,
        dataType:"json",
        success:function(data){
-            $("#boxTbody").empty();
             var htmlOrder="<tbody>";
                 <%--console.log(JSON.stringify(data)+"-测试 1- appendTo('#images')--");--%>
             $.each(data,function(index,order){
+              $("#boxTbody").empty();
                 $("<td/>").attr("src", order.id);
-                htmlOrder+="<tr><td><input type='checkbox'name='boxs' value="+order.id+">"+
-                                "</td><td>"+order.customer.name+"</td>"+
+                htmlOrder+="<tr id='order"+order.id+"'><td><input type='checkbox'name='boxs' value="+order.id+">"+
+                                "</td><td><input name='bizInvoiceDetailList["+index+"].orderHead.id' value='"+order.id+"' type='hidden'/>"+order.customer.name+"</td>"+
                                 "<td>"+order.orderNum+"</td><td>"+order.totalExp+"</td><td>"+order.freight+"</td>"+
-                                "<td>"+order.createBy+"</td><td>"+order.createDate+"</td><td>"+
-                                    "<a href='#'>修改</a>"+
-                                " | "+
-                                    "<a href='#'>删除</a>"+
-                                "</td></tr>";
+                                "<td>"+order.createDate+"</td></tr>";
             });
             htmlOrder+="</tbody>";
             $("#boxTbody").append(htmlOrder);
@@ -66,8 +62,6 @@ function orderoffice(){
    })
 }
 </script>
-	<title>发票抬头管理</title>
-	<meta name="decorator" content="default"/>
 <script type="text/javascript">
 <%--/* 订单列表 */--%>
 function dial(){
@@ -79,21 +73,31 @@ function dial(){
 		   buttonsFocus:1,
 		   submit:function(v,h,f){
 				if(v == 1){
-					<%--alert("执行确定方法");--%>
+					console.log("执行确定方法");
 					 var checkID ="";
-					 $("input[name='boxs']:checked").each(function(){
-					 		 checkID+=$(this).val()+",";
+					 $("input[name='boxs']").each(function(){
+						 if($(this).attr("checked")){
+								var orderId= $(this).val();
+								var trId="order"+orderId;
+								var remov="<td><a href='#' onclick=\"removeItem('"+orderId+"')\">移除</a></td>";
+								checkID+="<tr>"+$("#"+trId).html()+remov+"</tr>";
+						 }
 					 });
-					 $.post("${ctx}/biz/invoice/bizInvoiceDetail/save",{boxs:checkID},function(json2){
-					 		console.log(json2);
-
-					 },"json")
+					 $("#orderHead_table").append(checkID);
 				}
 				return true;
 		   }
 	})
  }
+ <%--移除--%>
+ function removeItem(obj) {
+ 	console.log(obj+"删除吗");
+	$("#"+obj).remove();
+}
 </script>
+
+	<title>发票抬头管理</title>
+	<meta name="decorator" content="default"/>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -138,7 +142,8 @@ function dial(){
 		<div class="control-group">
 			<label class="control-label">发票数额：</label>
 			<div class="controls">
-				<form:input path="invTotal" htmlEscape="false" class="input-xlarge"/>
+				<form:input path="invTotal" htmlEscape="false" placeholder="0.0" readOnly="true" class="input-xlarge"/>
+				<input name="invTotal" value="${entity.invTotal}" htmlEscape="false" type="hidden"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -149,64 +154,33 @@ function dial(){
                     <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
+		<%--勾选订单列表显示隐藏--%>
+		<div class="control-group">
+		<label class="control-label">销售订单：</label>
+		<div class="controls">
+			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+				<thead>
+				<tr>
+					<th>选中</th>
+					<th>采购商</th>
+					<th>订单编号</th>
+					<th>订单总费用</th>
+					<th>运费</th>
+					<th>创建时间</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody id="orderHead_table"></tbody>
+			</table>
+		</div>
+		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:invoice:bizInvoiceHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
 
-<c:if test="${bizInvoiceHeader.id !=null && bizInvoiceHeader.id!='' && bizInvoiceHeader.id!=0 }">
-    <table id="contentTable" class="table table-striped table-bordered table-condensed">
-        <thead>
-        <tr>
-            <th>发票行号</th>
-            <th>订单编号</th>
-            <th>采购商</th>
-            <th>订单总费用</th>
-            <th>运费</th>
-            <th>创建人</th>
-            <th>创建时间</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-		<tbody>
-		<c:forEach items="${detailList}" var="bizInvoiceDetail">
-			<tr>
-				<td><a href="${ctx}/biz/invoice/bizInvoiceHeader/form?id=${bizInvoiceHeader.id}">
-						${bizInvoiceDetail.id}
-				</a></td>
-				<td>
-						22
-				</td>
-				<td>
-						${fns:getDictLabel(bizInvoiceHeader.invType, 'invType', '未知状态')}
-				</td>
-				<td>
-						${bizInvoiceHeader.invContent}
-				</td>
-				<td>
-						${bizInvoiceHeader.invTotal}
-				</td>
-				<td>
-						${bizInvoiceHeader.createBy.name}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizInvoiceHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
-					<fmt:formatDate value="${bizInvoiceHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<shiro:hasPermission name="biz:invoice:bizInvoiceHeader:edit"><td>
-					<a href="${ctx}/biz/invoice/bizInvoiceHeader/form?id=${bizInvoiceHeader.id}">修改</a>
-					<a href="${ctx}/biz/invoice/bizInvoiceHeader/delete?id=${bizInvoiceHeader.id}" onclick="return confirmx('确认要删除该发票抬头吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
-			</tr>
-		</c:forEach>
-		</tbody>
-    </table>
-</c:if>
-
- <%--订单列表--%>
+ <%--订单列表弹窗--%>
 <div id="contentTablejBox" style="display: none">
     <table id="cheall" class="table table-striped table-bordered table-condensed">
         <thead>
@@ -216,9 +190,7 @@ function dial(){
             <th>订单编号</th>
             <th>订单总费用</th>
             <th>运费</th>
-            <th>创建人</th>
             <th>创建时间</th>
-            <th>操作</th>
         </tr>
         </thead>
         <tbody id="boxTbody"></tbody>
@@ -226,5 +198,63 @@ function dial(){
     </table>
 </div>
 
+
+
+<%--多个订单显示列表--%>
+<sys:message content="${message}"/>
+<c:if test="${bizInvoiceHeader.id !=null && bizInvoiceHeader.id!='' }">
+	<table id="contentTable" class="table table-striped table-bordered table-condensed">
+		<thead>
+		<tr>
+			<th>发票行号</th>
+			<th>货架名称</th>
+			<th>商品名称</th>
+			<th>商品编号</th>
+			<th>商品单价</th>
+			<th>采购数量</th>
+			<th>发货数量</th>
+			<th>创建时间</th>
+			<th>操作</th>
+		</tr>
+		</thead>
+		<tbody>
+		<c:forEach items="${bizInvoiceHeader.bizInvoiceDetailList}" var="bizInvoDetail">
+			<tr>
+				<td><a href="#">
+						${bizInvoDetail.lineNo}</a>
+				</td>
+					<td>
+						888
+					</td>
+				<td>
+						${bizOrderDetail.skuName}
+				</td>
+				<td>
+						${bizOrderDetail.partNo}
+				</td>
+				<td>
+						${bizOrderDetail.unitPrice}
+				</td>
+				<td>
+						${bizOrderDetail.ordQty}
+				</td>
+				<td>
+						${bizOrderDetail.sentQty}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+					<td>
+						<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>
+						<a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1"
+						   onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+					</td>
+				</shiro:hasPermission>
+			</tr>
+		</c:forEach>
+		</tbody>
+	</table>
+</c:if>
 </body>
 </html>
