@@ -59,7 +59,7 @@ public class BizRequestAllController {
         defaultProp.setPropKey("vendCenter");
         Integer vendId=0;
         List<DefaultProp> defaultPropList=defaultPropService.findList(defaultProp);
-        if(defaultPropList!=null){
+        if(defaultPropList!=null && defaultPropList.size() > 0){
             DefaultProp prop=defaultPropList.get(0);
             vendId=Integer.parseInt(prop.getPropValue());
         }

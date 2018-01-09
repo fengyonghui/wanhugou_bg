@@ -163,7 +163,7 @@
 						</c:forEach>
 					</c:if>
 
-					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
+					<%--<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
 							<tr id="${ordDetail.id}" class="ordDetailList">
 								<td><img src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
@@ -181,7 +181,7 @@
 								<td>${ordDetail.skuInfo.productInfo.brandName}</td>
 								<td>
 										${ordDetail.skuInfo.productInfo.office.name}
-										<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
+										&lt;%&ndash;<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>&ndash;%&gt;
 								</td>
 								<td>${ordDetail.skuInfo.name}</td>
 								<td>${ordDetail.skuInfo.partNo}</td>
@@ -209,7 +209,7 @@
 
 							</tr>
 						</c:forEach>
-					</c:if>
+					</c:if>--%>
 					</tbody>
 				</table>
 			</div>
@@ -224,7 +224,7 @@
 		</div>
 
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认供货"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认收货"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 

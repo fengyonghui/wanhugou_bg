@@ -31,6 +31,7 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private String orderNum;		//订单号
 	private Integer receiveNum;		// 收货数量
 	private Office vender;		// 供应商ID sys_office.id &amp;  type=vend
+	private Office customer;		//采购商ID sys_office.id &amp;  type=custmer
 	private Date receiveDate;		// 收货时间
 	private BizRequestDetail bizRequestDetail;
 	private BizOrderDetail bizOrderDetail;
@@ -99,6 +100,14 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setVender(Office vender) {
 		this.vender = vender;
+	}
+
+	public Office getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Office customer) {
+		this.customer = customer;
 	}
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

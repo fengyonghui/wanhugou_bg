@@ -46,11 +46,17 @@
 		<include refid="bizCollectGoodsRecordJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
+				AND a.inv_id = #{invInfo.id}
+			</if>
 			<if test="invInfo != null and invInfo.name != null and invInfo.name != ''">
 				AND inv.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{invInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{invInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{invInfo.name},'%')</if>
+			</if>
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.sku_id = #{skuInfo.id}
 			</if>
 			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
 				AND sku.name LIKE
@@ -104,7 +110,9 @@
 			</if>
 			order_num,
 			receive_num,
-			vend_id,
+			<if test="vender != null and vender.id != null and vender.id != ''">
+				vend_id,
+			</if>
 			receive_time,
 			status,
 			create_id,
@@ -124,7 +132,9 @@
 			</if>
 			#{orderNum},
 			#{receiveNum},
-			#{vender.id},
+			<if test="vender != null and vender.id != null and vender.id != ''">
+				#{vender.id},
+			</if>
 			#{receiveDate},
 			#{delFlag},
 			#{createBy.id},
@@ -147,7 +157,9 @@
 			</if>
 			order_num = #{orderNum},
 			receive_num = #{receiveNum},
-			vend_id = #{vender.id},
+			<if test="vender != null and vender.id != null and vender.id != ''">
+				vend_id = #{vender.id},
+			</if>
 			receive_time = #{receiveDate},
 			create_time = #{createDate},
 			u_version = #{uVersion},
