@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.request.BizPoOrderReqDao">
+    
+	<sql id="bizPoOrderReqColumns">
+		a.order_id AS "orderHeader.id",
+		a.request_id AS "requestHeader.id",
+		a.po_id AS "poHeader.id"
+	</sql>
+	
+	<sql id="bizPoOrderReqJoins">
+	</sql>
+    
+	<select id="get" resultType="BizPoOrderReq">
+		SELECT 
+			<include refid="bizPoOrderReqColumns"/>
+		FROM biz_po_order_req a
+		<include refid="bizPoOrderReqJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizPoOrderReq">
+		SELECT 
+			<include refid="bizPoOrderReqColumns"/>
+		FROM biz_po_order_req a
+		<include refid="bizPoOrderReqJoins"/>
+		<where>
+			
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				AND a.order_id = #{orderHeader.id}
+			</if>
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				AND a.request_id = #{requestHeader.id}
+			</if>
+			<if test="poHeader != null and poHeader.id != null poHeader.id != ''">
+				AND a.po_id = #{poHeader.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizPoOrderReq">
+		SELECT 
+			<include refid="bizPoOrderReqColumns"/>
+		FROM biz_po_order_req a
+		<include refid="bizPoOrderReqJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_po_order_req(
+			order_id,
+			request_id,
+			po_id
+		) VALUES (
+			#{orderHeader.id},
+			#{requestHeader.id},
+			#{poHeader.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_po_order_req SET 	
+			order_id = #{orderHeader.id},
+			request_id = #{requestHeader.id},
+			po_id = #{poHeader.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_po_order_req
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
