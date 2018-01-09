@@ -17,6 +17,7 @@ public class BizInvoiceDetail extends DataEntity<BizInvoiceDetail> {
 	
 	private static final long serialVersionUID = 1L;
 	private Integer lineNo;		// 发票行号
+	private BizInvoiceHeader invoiceHeader;	//发票 biz_invoice_header.id
 	private BizOrderHeader orderHead;		// biz_order_header.id
 	private Double invAmt;		// 发票数额；一般等于total_order
 	
@@ -69,5 +70,13 @@ public class BizInvoiceDetail extends DataEntity<BizInvoiceDetail> {
 	
 	public void setInvAmt(Double invAmt) {
 		this.invAmt = invAmt;
+	}
+
+	public BizInvoiceHeader getInvoiceHeader() {
+		return invoiceHeader;
+	}
+
+	public void setInvoiceHeader(BizInvoiceHeader invoiceHeader) {
+		this.invoiceHeader = invoiceHeader;
 	}
 }

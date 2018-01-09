@@ -7,9 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +29,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.service.inventory.BizCollectGoodsRecordService;
 
+import java.util.Date;
+
 /**
  * 收货记录表Controller
  * @author 张腾飞
@@ -41,6 +46,8 @@ public class BizCollectGoodsRecordController extends BaseController {
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizRequestHeaderService bizRequestHeaderService;
 	
 	@ModelAttribute
 	public BizCollectGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -98,10 +105,23 @@ public class BizCollectGoodsRecordController extends BaseController {
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bcgr.getSkuInfo().getId());
 //			bcgr.setInvInfo();
 			bcgr.setSkuInfo(bizSkuInfo);
-//			bcgr.setreq
+			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
+			bcgr.setBizRequestHeader(bizRequestHeader);
+			bcgr.setOrderNum(bcgr.getOrderNum());
+			bcgr.setReceiveDate(new Date());
+			bcgr.setReceiveNum(bcgr.getReceiveNum());
+			bizCollectGoodsRecordService.save(bcgr);
+		}
+		//修改库存
+
+
+		//更改订单状态
+		if (flagRequest) {
+			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
+			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+			bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
 		}
 
-		bizCollectGoodsRecordService.save(bizCollectGoodsRecord);
 		addMessage(redirectAttributes, "保存收货记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizCollectGoodsRecord/?repage";
 	}

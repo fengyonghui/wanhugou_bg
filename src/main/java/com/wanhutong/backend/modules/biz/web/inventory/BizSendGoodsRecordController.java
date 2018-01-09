@@ -143,7 +143,8 @@ public class BizSendGoodsRecordController extends BaseController {
 					bsgr.setBizRequestHeader(bizRequestHeader);
 				}
 				if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
-
+					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
+					bsgr.setBizOrderHeader(bizOrderHeader);
 				}
 				bsgr.setCustomer(office);
 				bsgr.setSkuInfo(bizSkuInfo);

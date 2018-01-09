@@ -6,8 +6,12 @@ package com.wanhutong.backend.modules.biz.web.invoice;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceDetail;
 import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.service.invoice.BizInvoiceDetailService;
 import com.wanhutong.backend.modules.biz.service.invoice.BizInvoiceHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +23,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.parser.Entity;
+import java.util.List;
 
 /**
  * 发票抬头，发票内容，发票类型Controller
@@ -31,13 +37,27 @@ public class BizInvoiceHeaderController extends BaseController {
 
 	@Autowired
 	private BizInvoiceHeaderService bizInvoiceHeaderService;
-	
+
+	@Autowired
+	private BizInvoiceDetailService bizInvoiceDetailService;
+
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
+
 	@ModelAttribute
 	public BizInvoiceHeader get(@RequestParam(required=false) Integer id) {
 		BizInvoiceHeader entity = null;
 		if (id!=null){
 			entity = bizInvoiceHeaderService.get(id);
-        }
+//			根据 invoice_order.id计算有多少订单
+			BizInvoiceDetail bizInvoiceDetail = new BizInvoiceDetail();
+			bizInvoiceDetail.setInvoiceHeader(entity);
+			List<BizInvoiceDetail> list = bizInvoiceDetailService.findList(bizInvoiceDetail);
+			for (BizInvoiceDetail invoiceDetail : list) {
+				System.out.println(invoiceDetail);
+			}
+			entity.setBizInvoiceDetailList(list);
+		}
 		if (entity == null){
 			entity = new BizInvoiceHeader();
 		}
@@ -65,7 +85,33 @@ public class BizInvoiceHeaderController extends BaseController {
 		if (!beanValidator(model, bizInvoiceHeader)){
 			return form(bizInvoiceHeader, model);
 		}
+		if(bizInvoiceHeader.getInvTotal()==null){
+			bizInvoiceHeader.setInvTotal(0.0);
+		}
 		bizInvoiceHeaderService.save(bizInvoiceHeader);
+		List<BizInvoiceDetail> bizInvoiceDetailList = bizInvoiceHeader.getBizInvoiceDetailList();
+		int i=0;
+		if(bizInvoiceDetailList!=null){
+			for(BizInvoiceDetail biz: bizInvoiceDetailList){
+//				计算单个订单的金额
+				biz.setLineNo(++i);
+				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(biz.getOrderHead().getId());
+				Double totalExp = bizOrderHeader.getTotalExp();
+				Double freight = bizOrderHeader.getFreight();
+				Double totalDetail = bizOrderHeader.getTotalDetail();
+				biz.setInvAmt(totalExp+freight+totalDetail);
+				biz.setInvoiceHeader(bizInvoiceHeader);
+				bizInvoiceDetailService.save(biz);
+			}
+			List<BizInvoiceDetail> detailList = bizInvoiceHeader.getBizInvoiceDetailList();
+			Double invAmt= bizInvoiceHeader.getInvTotal();
+			for (BizInvoiceDetail bizInvoiceDetail : detailList) {
+//				计算单个发票详情的金额
+				invAmt += bizInvoiceDetail.getInvAmt();
+			}
+			bizInvoiceHeader.setInvTotal(invAmt);
+			bizInvoiceHeaderService.save(bizInvoiceHeader);
+		}
 		addMessage(redirectAttributes, "保存发票抬头成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceHeader/";
 	}
