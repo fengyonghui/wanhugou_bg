@@ -89,57 +89,61 @@
 						<c:when test="${source=='gh'}">
 							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>
 						</c:when>
-						<c:otherwise>
-							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">修改</a>
-						</c:otherwise>
-					</c:choose>
-
-				</td></shiro:hasPermission>
-			</tr>
-		</c:forEach>
-
-
-		<c:forEach items="${orderHeaderList}" var="orderHeader">
-			<tr>
-				<c:if test="${source=='gh'}">
-					<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
-				</c:if>
-				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">
-						${orderHeader.orderNum}
-				</a></td>
-				<td>
-						销售订单
-				</td>
-				<td>
-						${orderHeader.customer.name}
-				</td>
-				<td>
-					<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
-						<%--${orderHeader.remark}--%>
-				</td>
-				<td>
-						${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知类型')}
-				</td>
-				<td>
-						${orderHeader.updateBy.name}
-				</td>
-				<td>
-					<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
-					<c:choose>
-						<c:when test="${source=='gh'}">
-							<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">详情</a>
+						<c:when test="${source=='sh'}">
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">收货</a>
 						</c:when>
 						<c:otherwise>
-							<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">修改</a>
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">供货</a>
 						</c:otherwise>
 					</c:choose>
+
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
+
+		<c:if test="${source == 'sh'}">
+			<c:forEach items="${orderHeaderList}" var="orderHeader">
+				<tr>
+					<c:if test="${source=='gh'}">
+						<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
+					</c:if>
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">
+							${orderHeader.orderNum}
+					</a></td>
+					<td>
+							销售订单
+					</td>
+					<td>
+							${orderHeader.customer.name}
+					</td>
+					<td>
+						<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					</td>
+					<td>
+							<%--${orderHeader.remark}--%>
+					</td>
+					<td>
+							${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知类型')}
+					</td>
+					<td>
+							${orderHeader.updateBy.name}
+					</td>
+					<td>
+						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					</td>
+					<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
+						<c:choose>
+							<c:when test="${source=='gh'}">
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">详情</a>
+							</c:when>
+							<c:otherwise>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">供货</a>
+							</c:otherwise>
+						</c:choose>
+					</td></shiro:hasPermission>
+				</tr>
+			</c:forEach>
+		</c:if>
 		</form>
 		</tbody>
 	</table>

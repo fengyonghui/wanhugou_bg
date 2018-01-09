@@ -127,6 +127,9 @@ public class BizRequestAllController {
         if (source != null && "kc".equals(source)) {
             return "modules/biz/request/bizRequestHeaderKcForm";
         }
+        if(source != null && "sh".equals(source)){
+            return "modules/biz/request/bizRequestKcForm";
+        }
        // if(source!=null && "gh".equals(source)){
             return "modules/biz/request/bizRequestHeaderGhForm";
       //  }

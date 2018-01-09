@@ -158,14 +158,14 @@ public class BizSendGoodsRecordController extends BaseController {
 		if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
 			if (flagRequest) {
 				BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
-				bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+				bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
 				bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
 			}
 		}
 		if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
 			if (flagOrder) {
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
-				bizOrderHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+				bizOrderHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
 				bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 			}
 		}
