@@ -115,6 +115,26 @@ public class BizCollectGoodsRecordController extends BaseController {
 		boolean flagRequest = true;		//备货单完成状态
         boolean flagPo = true;      //采购单完成状态
         int recvQtySum = 0;
+		//得到同一采购单下销售单信息
+		BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+		bizPoOrderReq.setRequestHeader(bizCollectGoodsRecord.getBizRequestHeader());
+		List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+		if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
+			bizPoOrderReq = bizPoOrderReqList.get(0);
+		}
+		BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getOrderHeader().getId());
+
+		//得到同一采购单下销售单供货记录
+		BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
+		bizSendGoodsRecord.setOrderNum(bizOrderHeader.getOrderNum());
+		List<BizSendGoodsRecord> bizSendGoodsRecordList = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
+		int sendNumSum = 0;     //累计供货记录的供货数
+		for (BizSendGoodsRecord bizSendGoodsRecord1:bizSendGoodsRecordList) {
+			int sendNum = bizSendGoodsRecord1.getSendNum();
+			sendNumSum += sendNum;
+		}
+
+
 		for (BizCollectGoodsRecord bcgr : bizCollectGoodsRecord.getBizCollectGoodsRecordList()) {
 			int receiveNum = bcgr.getReceiveNum();    //收货数
 			int recvQty = bcgr.getBizRequestDetail().getRecvQty();		//已收货数量
@@ -177,23 +197,8 @@ public class BizCollectGoodsRecordController extends BaseController {
 
             //当采购数量和(销售单供货记录的累计供货数+采购中心已收货数量)不相等时，更改采购单完成状态
             //销售单供货记录累计供货数
-			//得到同一采购单下销售单信息
-			BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-			bizPoOrderReq.setRequestHeader(bizCollectGoodsRecord.getBizRequestHeader());
-			List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
-			if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
-				bizPoOrderReq = bizPoOrderReqList.get(0);
-			}
-			BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getOrderHeader().getId());
-			//得到同一采购单下销售单供货记录
-			BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
-            bizSendGoodsRecord.setOrderNum(bizOrderHeader.getOrderNum());
-            List<BizSendGoodsRecord> bizSendGoodsRecordList = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
-            int sendNumSum = 0;     //累计供货记录的供货数
-            for (BizSendGoodsRecord bizSendGoodsRecord1:bizSendGoodsRecordList) {
-                int sendNum = bizSendGoodsRecord1.getSendNum();
-                sendNumSum += sendNum;
-            }
+
+
             //已采购数
             int poOrdQty = recvQty + sendNumSum;
 			BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoOrderReq.getPoHeader().getId());
@@ -216,12 +221,12 @@ public class BizCollectGoodsRecordController extends BaseController {
 		}
 		//更改采购单状态
 		if(flagPo){
-			BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-			bizPoOrderReq.setRequestHeader(bizCollectGoodsRecord.getBizRequestHeader());
-			List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
-			if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
-				bizPoOrderReq = bizPoOrderReqList.get(0);
-			}
+//			BizPoOrderReq bizPoOrderReq1 = new BizPoOrderReq();
+//			bizPoOrderReq1.setRequestHeader(bizCollectGoodsRecord.getBizRequestHeader());
+//			List<BizPoOrderReq> bizPoOrderReqList1 = bizPoOrderReqService.findList(bizPoOrderReq);
+//			if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
+//				bizPoOrderReq1 = bizPoOrderReqList.get(0);
+//			}
             BizPoHeader bizPoHeader = bizPoHeaderService.get(bizPoOrderReq.getPoHeader().getId());
 			int a = ReqHeaderStatusEnum.COMPLETE.getState();
 			byte b = (byte)a;

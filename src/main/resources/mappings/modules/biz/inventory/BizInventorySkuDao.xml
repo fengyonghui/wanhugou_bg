@@ -143,12 +143,12 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_inventory_sku SET 	
+		UPDATE biz_inventory_sku SET
 			inv_id = #{invInfo.id},
 			sku_id = #{skuInfo.id},
 			inv_type = #{invType},
 			stock_qty = #{stockQty},
-			<if test="stockOrdQty!=null">
+			<if test="stockOrdQty != null and stockOrdQty != 0">
 				s_ord_qty = #{stockOrdQty},
 			</if>
 			<if test="transInQty!=null">
