@@ -33,7 +33,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Office toOffice;		// 接受单位：备货中心-目前只有一个
 	private Date recvEta;		// 期望收货时间
 	private String remark;		// 备注
-	private Integer bizStatus;		// 业务状态：0未审核 1审核通过 2备货中 3 完成 4关闭
+	private Integer bizStatus;		// 业务状态：0未审核 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
 	private String skuIds;
 	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
 	private BizProductInfo productInfo;
