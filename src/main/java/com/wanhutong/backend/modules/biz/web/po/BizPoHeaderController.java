@@ -7,11 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
+import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
@@ -54,10 +60,6 @@ public class BizPoHeaderController extends BaseController {
 	@Autowired
 	private BizPlatformInfoService bizPlatformInfoService;
 
-	@Autowired
-	private OfficeService officeService;
-	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
 
 	
 	@ModelAttribute
@@ -108,62 +110,8 @@ public class BizPoHeaderController extends BaseController {
 	@RequiresPermissions("biz:po:bizPoHeader:edit")
 	@RequestMapping(value = "savePoHeaderDetail")
 	public String savePoHeaderDetail(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes){
-		if(bizPoHeader.getPoDetailList()!=null){
-			Map<Integer,List<BizPoDetail>> map=new HashMap<Integer,List<BizPoDetail>>();
-			for(BizPoDetail bizPoDetail:bizPoHeader.getPoDetailList()){
-				if(bizPoDetail.getPoHeader()==null){
-					continue;
-				}
-				Integer key=bizPoDetail.getPoHeader().getVendOffice().getId();
-				if(map.containsKey(key)){
-					List<BizPoDetail> poDetails = map.get(key);
-					map.remove(key);
-					poDetails.add(bizPoDetail);
-					map.put(key,poDetails);
-				}
-				else {
-					List<BizPoDetail> poDetailList=new ArrayList<BizPoDetail>();
-					poDetailList.add(bizPoDetail);
-					map.put(key,poDetailList);
-				}
-			}
-			bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
-			for (Map.Entry<Integer, List<BizPoDetail>> entry : map.entrySet()) {
-				System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
-				bizPoHeader.setVendOffice(officeService.get(entry.getKey()));
-				String poNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO,bizPoHeader.getVendOffice().getId());
-				bizPoHeader.setOrderNum(poNo);
-		//		bizPoHeaderService.save(bizPoHeader);
-				int a=0;
-				Double totalDetail=0.0;
-				for (BizPoDetail poDetail:entry.getValue()){
-					poDetail.setLineNo(++a);
-					poDetail.setPoHeader(bizPoHeader);
-					BizSkuInfo bizSkuInfo=bizSkuInfoService.get(poDetail.getSkuInfo().getId());
-					poDetail.setSkuName(bizSkuInfo.getName());
-					poDetail.setPartNo(bizSkuInfo.getPartNo());
-			//		bizPoDetailService.save(poDetail);
-					totalDetail+=poDetail.getOrdQty()*poDetail.getUnitPrice();
-
-					String orders=poDetail.getSkuInfo().getOrderIds();
-					String[] orderIds=orders.split(",");
-					String reqs=poDetail.getSkuInfo().getReqIds();
-					logger.info(orders+"======"+reqs);
-					for(int i=0;i<orderIds.length;i++){
-						if(!"0".equals(orderIds[i])){
-
-						}
-					}
-				}
-
-				bizPoHeader.setTotalDetail(totalDetail);
-		//		bizPoHeaderService.save(bizPoHeader);
-			}
-
-//			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.ordinal());
-//			super.save(bizRequestHeader);
-		}
-		return "";
+		bizPoHeaderService.savePoHeaderDetail(bizPoHeader);
+		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/?repage";
 	}
 
 	

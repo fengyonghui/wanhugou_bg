@@ -201,7 +201,6 @@ public class BizRequestAllController {
             }
              String strO= strOrderIds.toString();
              String strR=strReqIds.toString();
-       //     strOrderIds=strOrderIds.toString().substring(0,strOrderIds.lastIndexOf(","));
             BizSkuInfo sku=bizSkuInfoService.get(entry.getKey());
             sku.setReqQty(reqQty);
             sku.setSentQty(sendQty);

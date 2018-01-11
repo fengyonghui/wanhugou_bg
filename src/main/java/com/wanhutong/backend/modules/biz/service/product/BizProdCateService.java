@@ -99,7 +99,7 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 	public List<BizCatePropValue> findCatePropMap4Brand(BizProdCate bizProdCate){
 		List<BizCatePropValue> brandList= new ArrayList<BizCatePropValue>();
 		Map<Integer,List<BizCatePropValue>> map=findCatePropMap( bizProdCate);
-		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("propBrand"));
+		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("prop_brand"));
 		if(list!=null && list.size()>0) {
 			DefaultProp defaultProp = list.get(0);
 			for (Integer key :map.keySet()) {

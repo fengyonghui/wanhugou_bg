@@ -101,7 +101,7 @@
 			</tr>
 		</c:forEach>
 
-		<c:if test="${source == 'sh'}">
+		<c:if test="${source == 'sh' || source=='gh'}">
 			<c:forEach items="${orderHeaderList}" var="orderHeader">
 				<tr>
 					<c:if test="${source=='gh'}">

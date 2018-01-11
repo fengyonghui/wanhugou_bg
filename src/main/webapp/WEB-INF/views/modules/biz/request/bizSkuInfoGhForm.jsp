@@ -82,8 +82,9 @@
 							</td>
 							<td>
 								<input type='hidden' name='poDetailList[${skuStatus.index}].skuInfo.id' value='${skuInfo.key.id}'/>
-								<input type='hidden' name='poDetailList[${skuStatus.index}].skuInfo.orderIds' value='${skuInfo.value.orderIds}'/>
-								<input type='hidden' name='poDetailList[${skuStatus.index}].skuInfo.reqIds' value='${skuInfo.value.reqIds}'/>
+								<input type='hidden' name='poDetailList[${skuStatus.index}].skuInfo.name' value='${skuInfo.key.name}'/>
+								<input type='hidden' name='orderIds' value='${skuInfo.value.orderIds}'/>
+								<input type='hidden' name='reqIds' value='${skuInfo.value.reqIds}'/>
 
 									<sys:treeselect id="vendOffice" name="poDetailList[${skuStatus.index}].poHeader.vendOffice.id" value="${skuInfo.key.productInfo.office.id}" labelName="poDetailList[${skuStatus.index}].poHeader.vendOffice.name"
 									labelValue="${skuInfo.key.productInfo.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"

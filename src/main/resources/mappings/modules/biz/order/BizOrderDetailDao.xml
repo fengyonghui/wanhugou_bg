@@ -49,6 +49,9 @@
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
 				AND a.order_id = #{orderHeader.id}
 			</if>
+			<if test="orderHeader!=null and orderHeader.bizStatusStart !=null and orderHeader.bizStatusEnd !=null">
+				AND boh.biz_status BETWEEN #{orderHeader.bizStatusStart} and #{orderHeader.bizStatusEnd}
+			</if>
 			<if test="lineNo != null and lineNo != ''">
 				AND a.line_no = #{lineNo}
 			</if>

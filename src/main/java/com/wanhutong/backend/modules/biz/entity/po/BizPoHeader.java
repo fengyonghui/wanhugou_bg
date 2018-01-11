@@ -32,6 +32,8 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Byte bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付3已发货 4已收货 5 已完成
 	private BizPlatformInfo plateformInfo;		// 订单来源； biz_platform_info.id
 	private List<BizPoDetail> poDetailList;
+	private String orderIds;
+	private String reqIds;
 
 	
 	public BizPoHeader() {
@@ -113,5 +115,21 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setPoDetailList(List<BizPoDetail> poDetailList) {
 		this.poDetailList = poDetailList;
+	}
+
+	public String getOrderIds() {
+		return orderIds;
+	}
+
+	public void setOrderIds(String orderIds) {
+		this.orderIds = orderIds;
+	}
+
+	public String getReqIds() {
+		return reqIds;
+	}
+
+	public void setReqIds(String reqIds) {
+		this.reqIds = reqIds;
 	}
 }
