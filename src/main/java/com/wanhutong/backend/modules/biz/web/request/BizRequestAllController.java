@@ -83,6 +83,13 @@ public class BizRequestAllController {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
             }
+            if("sh".equals(source)){
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
+//                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.STOCKING.getState());
+//                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.COMPLETE.getState());
+            }
+
                 List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
 
                 model.addAttribute("requestHeaderList",requestHeaderList);

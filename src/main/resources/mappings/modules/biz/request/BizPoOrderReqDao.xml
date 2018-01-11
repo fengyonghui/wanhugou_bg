@@ -32,7 +32,7 @@
 			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 				AND a.request_id = #{requestHeader.id}
 			</if>
-			<if test="poHeader != null and poHeader.id != null poHeader.id != ''">
+			<if test="poHeader != null and poHeader.id != null and poHeader.id != ''">
 				AND a.po_id = #{poHeader.id}
 			</if>
 		</where>
