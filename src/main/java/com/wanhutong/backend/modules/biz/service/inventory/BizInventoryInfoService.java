@@ -5,8 +5,11 @@ package com.wanhutong.backend.modules.biz.service.inventory;
 
 import java.util.List;
 
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +40,13 @@ public class BizInventoryInfoService extends CrudService<BizInventoryInfoDao, Bi
 	}
 	
 	public Page<BizInventoryInfo> findPage(Page<BizInventoryInfo> page, BizInventoryInfo bizInventoryInfo) {
-		return super.findPage(page, bizInventoryInfo);
+		User user =UserUtils.getUser();
+		if (user.isAdmin()) {
+			return super.findPage(page, bizInventoryInfo);
+		} else {
+			bizInventoryInfo.getSqlMap().put("inventory", BaseService.dataScopeFilter(user, "o", "su"));
+			return super.findPage(page, bizInventoryInfo);
+		}
 	}
 	public BizInventoryInfo findName(String name){
 		BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();

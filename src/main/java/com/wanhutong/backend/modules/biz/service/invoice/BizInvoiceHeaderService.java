@@ -5,6 +5,9 @@ package com.wanhutong.backend.modules.biz.service.invoice;
 
 import java.util.List;
 
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +34,14 @@ public class BizInvoiceHeaderService extends CrudService<BizInvoiceHeaderDao, Bi
 	}
 	
 	public Page<BizInvoiceHeader> findPage(Page<BizInvoiceHeader> page, BizInvoiceHeader bizInvoiceHeader) {
-		return super.findPage(page, bizInvoiceHeader);
+		User user=UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, bizInvoiceHeader);
+		}else {
+			bizInvoiceHeader.getSqlMap().put("invoiceHeader", BaseService.dataScopeFilter(user, "s", "su"));
+			return super.findPage(page, bizInvoiceHeader);
+		}
+
 	}
 	
 	@Transactional(readOnly = false)

@@ -4,10 +4,13 @@
 package com.wanhutong.backend.modules.biz.service.invoice;
 
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.invoice.BizInvoiceInfoDao;
 import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceInfo;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +38,14 @@ public class BizInvoiceInfoService extends CrudService<BizInvoiceInfoDao, BizInv
 	}
 	
 	public Page<BizInvoiceInfo> findPage(Page<BizInvoiceInfo> page, BizInvoiceInfo bizInvoiceInfo) {
-		return super.findPage(page, bizInvoiceInfo);
+		User user= UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, bizInvoiceInfo);
+		}else {
+			bizInvoiceInfo.getSqlMap().put("invoiceInfo", BaseService.dataScopeFilter(user, "s", "su"));
+			return super.findPage(page, bizInvoiceInfo);
+		}
+
 	}
 	
 	@Transactional(readOnly = false)

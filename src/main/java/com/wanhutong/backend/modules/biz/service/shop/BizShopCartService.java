@@ -4,9 +4,12 @@
 package com.wanhutong.backend.modules.biz.service.shop;
 
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.shop.BizShopCartDao;
 import com.wanhutong.backend.modules.biz.entity.shop.BizShopCart;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +34,15 @@ public class BizShopCartService extends CrudService<BizShopCartDao, BizShopCart>
 	
 	
 	public Page<BizShopCart> findPage(Page<BizShopCart> page, BizShopCart bizShopCart) {
-		return super.findPage(page, bizShopCart);
+		User user= UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, bizShopCart);
+		}else {
+			bizShopCart.getSqlMap().put("shopCart", BaseService.dataScopeFilter(user, "s", "su"));
+			return super.findPage(page, bizShopCart);
+		}
+
+
 	}
 	
 	@Transactional(readOnly = false)

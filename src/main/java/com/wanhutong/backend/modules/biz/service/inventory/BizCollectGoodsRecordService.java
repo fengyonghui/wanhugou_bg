@@ -5,6 +5,9 @@ package com.wanhutong.backend.modules.biz.service.inventory;
 
 import java.util.List;
 
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +30,20 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	}
 	
 	public List<BizCollectGoodsRecord> findList(BizCollectGoodsRecord bizCollectGoodsRecord) {
+
 		return super.findList(bizCollectGoodsRecord);
 	}
 	
 	public Page<BizCollectGoodsRecord> findPage(Page<BizCollectGoodsRecord> page, BizCollectGoodsRecord bizCollectGoodsRecord) {
-		return super.findPage(page, bizCollectGoodsRecord);
+		User user=UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, bizCollectGoodsRecord);
+		}else {
+			bizCollectGoodsRecord.getSqlMap().put("collectGoodsRecord", BaseService.dataScopeFilter(user, "s", "su"));
+			return super.findPage(page, bizCollectGoodsRecord);
+		}
+
+
 	}
 	
 	@Transactional(readOnly = false)

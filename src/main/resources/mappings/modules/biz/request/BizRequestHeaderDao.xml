@@ -25,6 +25,7 @@
 	<sql id="bizRequestHeaderJoins">
 		LEFT JOIN sys_office so ON so.id=a.from_id
 		LEFT JOIN sys_office sot ON sot.id=a.to_id
+		LEFT JOIN sys_user su ON su.id=a.create_id
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
 	</sql>
     
@@ -67,6 +68,9 @@
 			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_id = #{createBy.id}
+			</if>
+			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
+				${sqlMap.request}
 			</if>
 		</where>
 		<choose>

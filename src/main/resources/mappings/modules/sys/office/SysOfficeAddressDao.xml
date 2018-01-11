@@ -34,6 +34,8 @@
 		 LEFT JOIN sys_region province ON c.province_id = province.id
         LEFT JOIN sys_region city ON c.city_id = city.id
         LEFT JOIN sys_region reg ON c.region_id = reg.id
+        LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.office_id
+		LEFT JOIN sys_office s on s.id=ccs.center_id
 	</sql>
     
 	<select id="get" resultType="SysOfficeAddress">
@@ -77,6 +79,10 @@
 			</if>
 			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
 				AND a.update_id = #{updateBy.id}
+			</if>
+
+			<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">
+				${sqlMap.officeAddress}
 			</if>
 		</where>
 		<choose>

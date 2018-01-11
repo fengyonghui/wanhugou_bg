@@ -24,6 +24,8 @@
 	<sql id="bizInvoiceHeaderJoins">
 		left join sys_user su on a.create_id=su.id
 		left join sys_office as so on a.cust_id=so.id
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office s on s.id=ccs.center_id
 	</sql>
     
 	<select id="get" resultType="BizInvoiceHeader">
@@ -58,6 +60,9 @@
 			</if>
 			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
 				AND a.update_id = #{updateBy.id}
+			</if>
+			<if test="sqlMap != null and sqlMap.invoiceHeader != null and sqlMap.invoiceHeader != ''">
+				${sqlMap.invoiceHeader}
 			</if>
 		</where>
 		<choose>

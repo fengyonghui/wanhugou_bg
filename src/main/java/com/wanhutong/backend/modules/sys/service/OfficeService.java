@@ -54,12 +54,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 	public List<Office> filerOffice(List<Office> offices, OfficeTypeEnum officeType){
 		Office office = new Office();
-		//User user = UserUtils.getUser();
-		//boolean boo=flag&&user.getRoleList().size()==1 && user.getRoleList().get(0).getId().toString().equals(DsConfig.getBusinessAgencyId());
-//		if(user.getUserOfficeList().size()!=0&& !boo){
-//			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
-//		}
-
+		User user = UserUtils.getUser();
+		office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 		office.setType(String.valueOf(officeType.ordinal()));
 
 		office.setDelFlag(DEL_FLAG_NORMAL);

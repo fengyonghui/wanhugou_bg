@@ -5,7 +5,10 @@ package com.wanhutong.backend.modules.sys.service.office;
 
 import java.util.List;
 
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +38,13 @@ public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, Sy
 	}
 	
 	public Page<SysOfficeAddress> findPage(Page<SysOfficeAddress> page, SysOfficeAddress sysOfficeAddress) {
-		return super.findPage(page, sysOfficeAddress);
+		User user= UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, sysOfficeAddress);
+		}else {
+			sysOfficeAddress.getSqlMap().put("officeAddress", BaseService.dataScopeFilter(user, "s", "su"));
+			return super.findPage(page, sysOfficeAddress);
+		}
 	}
 	
 	@Transactional(readOnly = false)

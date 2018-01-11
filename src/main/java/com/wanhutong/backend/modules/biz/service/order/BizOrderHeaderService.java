@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.service.order;
 
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
@@ -12,6 +13,8 @@ import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +41,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 	}
 	
 	public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
-		return super.findPage(page, bizOrderHeader);
+		User user= UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, bizOrderHeader);
+		}else {
+			bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+			return super.findPage(page, bizOrderHeader);
+		}
+
 	}
 	
 	@Transactional(readOnly = false)

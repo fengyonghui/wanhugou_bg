@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.sun.xml.internal.bind.v2.TODO;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
@@ -79,7 +80,13 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			Date yesterday = subCal.getTime();
 			bizRequestHeader.setStartDate("'"+f.format(yesterday)+"'");
 		}
+		User user = UserUtils.getUser();
+		if (user.isAdmin()) {
 			return super.findPage(page, bizRequestHeader);
+		} else {
+			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+			return super.findPage(page, bizRequestHeader);
+		}
 	}
 	
 	@Transactional(readOnly = false)

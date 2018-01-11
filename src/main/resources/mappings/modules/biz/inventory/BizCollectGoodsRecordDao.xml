@@ -27,6 +27,7 @@
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
 		LEFT JOIN biz_order_header orheader ON a.order_id = orheader.id
 		LEFT JOIN sys_office s ON a.vend_id = s.id
+		LEFT JOIN sys_user su ON su.id= a.create_id
 		LEFT JOIN biz_request_header reheader ON a.request_id = reheader.id
 		LEFT JOIN biz_inventory_info inv ON a.inv_id = inv.id
 	</sql>
@@ -69,6 +70,9 @@
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="sqlMap != null and sqlMap.collectGoodsRecord != null and sqlMap.collectGoodsRecord != ''">
+				${sqlMap.collectGoodsRecord}
 			</if>
 		</where>
 		<choose>

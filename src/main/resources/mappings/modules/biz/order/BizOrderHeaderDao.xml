@@ -42,7 +42,8 @@
         LEFT JOIN sys_region reg ON c.region_id = reg.id
 		left join sys_user su on a.create_id=su.id
 		left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
-
+    	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office s on s.id=ccs.center_id
 	</sql>
     
 	<select id="get" resultType="BizOrderHeader">
@@ -77,6 +78,9 @@
 			</if>
 			<if test="invStatus !=null and invStatus!=''">
 				AND a.inv_status=#{invStatus}
+			</if>
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
 			</if>
 		</where>
 		<choose>
