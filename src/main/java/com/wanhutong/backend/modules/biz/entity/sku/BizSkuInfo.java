@@ -28,7 +28,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	
 //	private BizSkuInfo bizSkuInfo;
 	private BizProductInfo productInfo;		// 所属产品id
-	private Integer skuType;		// 试销品、主销品、热销品、尾销品
+	private Integer skuType;		// 试销品、主销品、热销品、尾销品 1是专营商品（自选商品）、2是定制商品，3是非专营商品
 	private String name;		// 商品名称
 	private String partNo;    //商品编码
 	private Double basePrice; //基础售价

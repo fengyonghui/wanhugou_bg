@@ -6,9 +6,16 @@ package com.wanhutong.backend.modules.biz.web.order;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,6 +44,12 @@ public class BizOrderDetailController extends BaseController {
 
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
+
+	//用于计算有多少货架
+	@Autowired
+	private BizOpShelfSkuService bizOpShelfSkuService;
+	@Autowired
+	private BizOpShelfInfoService bizOpShelfInfoService;
 
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
@@ -71,6 +84,10 @@ public class BizOrderDetailController extends BaseController {
 	public String form(BizOrderDetail bizOrderDetail, Model model) {
 		Integer maxLine = bizOrderDetailService.findMaxLine(bizOrderDetail);
 		bizOrderDetail.setMaxLineNo(maxLine);
+		//用于往页面传给savg保存
+		bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
+		bizOrderDetail.getOrderHeader().getOneOrder();
+
 		model.addAttribute("bizOrderDetail", bizOrderDetail);
 		return "modules/biz/order/bizOrderDetailForm";
 	}
@@ -88,13 +105,14 @@ public class BizOrderDetailController extends BaseController {
 			maxLineNo++;
 			bizOrderDetail.setLineNo(maxLineNo);
 		}
+
 		bizOrderDetailService.save(bizOrderDetail);
 		addMessage(redirectAttributes, "保存订单详情成功");
 		Integer orderId=bizOrderDetail.getOrderHeader().getId();
-			if(orderId !=null && orderId !=0){
-				return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
-			}
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form";
+//		if(orderId !=null && orderId !=0){
+//			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
+//		}
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderDetail:edit")
@@ -105,4 +123,15 @@ public class BizOrderDetailController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
 	}
 
+	@ResponseBody
+	@RequiresPermissions("biz:order:bizOrderDetail:edit")
+	@RequestMapping(value = "opShelfInfo")
+	public List<BizOpShelfInfo> opShelfInfo(BizOrderDetail bizOrderDetail, RedirectAttributes redirectAttributes) {
+		BizOpShelfInfo bizOpShelfInfo = new BizOpShelfInfo();
+		List<BizOpShelfInfo> list = bizOpShelfInfoService.findList(bizOpShelfInfo);
+		for (BizOpShelfInfo bizOpShelfSku : list) {
+			System.out.println(bizOpShelfSku);
+		}
+		return list;
+	}
 }

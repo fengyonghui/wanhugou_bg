@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.invoice.BizInvoiceDetailService;
 import com.wanhutong.backend.modules.biz.service.invoice.BizInvoiceHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,13 +50,10 @@ public class BizInvoiceHeaderController extends BaseController {
 		BizInvoiceHeader entity = null;
 		if (id!=null){
 			entity = bizInvoiceHeaderService.get(id);
-//			根据 invoice_order.id计算有多少订单
+////			根据 invoice_order.id计算有多少订单
 			BizInvoiceDetail bizInvoiceDetail = new BizInvoiceDetail();
 			bizInvoiceDetail.setInvoiceHeader(entity);
 			List<BizInvoiceDetail> list = bizInvoiceDetailService.findList(bizInvoiceDetail);
-			for (BizInvoiceDetail invoiceDetail : list) {
-				System.out.println(invoiceDetail);
-			}
 			entity.setBizInvoiceDetailList(list);
 		}
 		if (entity == null){
@@ -89,13 +87,14 @@ public class BizInvoiceHeaderController extends BaseController {
 			bizInvoiceHeader.setInvTotal(0.0);
 		}
 		bizInvoiceHeaderService.save(bizInvoiceHeader);
+		BizInvoiceDetail bizInvoiceDetail = new BizInvoiceDetail();
 		List<BizInvoiceDetail> bizInvoiceDetailList = bizInvoiceHeader.getBizInvoiceDetailList();
 		int i=0;
 		if(bizInvoiceDetailList!=null){
 			for(BizInvoiceDetail biz: bizInvoiceDetailList){
 //				计算单个订单的金额
 				biz.setLineNo(++i);
-				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(biz.getOrderHead().getId());
+				BizOrderHeader bizOrderHeader= bizOrderHeaderService.get(biz.getOrderHead().getId());
 				Double totalExp = bizOrderHeader.getTotalExp();
 				Double freight = bizOrderHeader.getFreight();
 				Double totalDetail = bizOrderHeader.getTotalDetail();
@@ -103,11 +102,11 @@ public class BizInvoiceHeaderController extends BaseController {
 				biz.setInvoiceHeader(bizInvoiceHeader);
 				bizInvoiceDetailService.save(biz);
 			}
-			List<BizInvoiceDetail> detailList = bizInvoiceHeader.getBizInvoiceDetailList();
+			List<BizInvoiceDetail> detailList = bizInvoiceDetailService.findList(bizInvoiceDetail);
 			Double invAmt= bizInvoiceHeader.getInvTotal();
-			for (BizInvoiceDetail bizInvoiceDetail : detailList) {
+			for (BizInvoiceDetail bid : detailList) {
 //				计算单个发票详情的金额
-				invAmt += bizInvoiceDetail.getInvAmt();
+				invAmt += bid.getInvAmt();
 			}
 			bizInvoiceHeader.setInvTotal(invAmt);
 			bizInvoiceHeaderService.save(bizInvoiceHeader);

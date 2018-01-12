@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 
+import java.util.List;
+
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)DAO接口
  * @author OuyangXiutian
@@ -14,5 +16,5 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
  */
 @MyBatisDao
 public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
-	
+    public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader);
 }

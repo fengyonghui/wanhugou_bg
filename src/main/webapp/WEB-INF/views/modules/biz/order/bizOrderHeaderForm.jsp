@@ -42,13 +42,14 @@
                      $("#city").empty();
                      $("#region").empty();
                      $("#address").empty();
+                     <%--console.log(JSON.stringify(data)+"---测试1");--%>
                      if(data==''){
-                         console.log("数据为空新增地址");
+                         console.log("数据为空显示 新增地址 ");
                          $("#add1").css("display","none");
                          $("#add2").css("display","block");
                          $("#add3").css("display","none");
                      }else{
-                         console.log("数据不为空显示");
+                         console.log("数据不为空隐藏 新增地址 ");
                         $("#add1").css("display","block");
                         $("#add2").css("display","none");
                         $("#add3").css("display","block");
@@ -61,6 +62,11 @@
                                     var option4=$("<option/>").text(add.bizLocation.region.name).val(add.bizLocation.region.id);
                                     $("#region").append(option4);
                                     $("#address").val(add.bizLocation.address);
+                                 }else{
+                                    console.log("deFaultStatus=0 显示 新增地址 ");
+                                    $("#add1").css("display","none");
+                                    $("#add2").css("display","block");
+                                    $("#add3").css("display","none");
                                  }
                            });
                            //当省份的数据加载完毕之后
@@ -72,6 +78,7 @@
                     }
                 });
             }
+
     </script>
 </head>
 <body>
@@ -85,6 +92,7 @@
 <form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post"
            class="form-horizontal">
     <form:hidden path="id"/>
+    <form:hidden path="oneOrder"/>
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -117,8 +125,9 @@
     <div class="control-group">
         <label class="control-label">订单详情总价：</label>
         <div class="controls">
-            <form:input path="totalDetail" htmlEscape="false" placeholder="0" readOnly="true" class="input-xlarge"/>
+            <form:input path="totalDetail" htmlEscape="false" placeholder="0.0" readOnly="true" class="input-xlarge"/>
             <input name="totalDetail" value="${entity.totalDetail}" htmlEscape="false" type="hidden"/>
+            <span class="help-inline">自动计算</span>
         </div>
     </div>
     <div class="control-group">
@@ -207,6 +216,9 @@
             <th>详情行号</th>
             <th>货架名称</th>
             <th>商品名称</th>
+            <th>材质</th>
+            <th>颜色</th>
+            <th>规格</th>
             <th>商品编号</th>
             <th>商品单价</th>
             <th>采购数量</th>
@@ -218,14 +230,23 @@
         <tbody>
         <c:forEach items="${entity.orderDetailList}" var="bizOrderDetail">
             <tr>
-                <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">
+                <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">
                         ${bizOrderDetail.lineNo}</a>
                 </td>
-                <%--<td>--%>
-                        <%--${bizOrderDetail.shelfInfo.name}--%>
-                <%--</td>--%>
+                <td>
+                        ${bizOrderDetail.shelfInfo.name}
+                </td>
                 <td>
                         ${bizOrderDetail.skuName}
+                </td>
+                <td>
+                        ${bizOrderDetail.quality}
+                </td>
+                <td>
+                        ${bizOrderDetail.color}
+                </td>
+                <td>
+                        ${bizOrderDetail.standard}
                 </td>
                 <td>
                         ${bizOrderDetail.partNo}
@@ -244,7 +265,7 @@
                 </td>
                 <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
                     <td>
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>
+                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">修改</a>
                         <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1"
                            onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
                     </td>

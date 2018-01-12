@@ -1,5 +1,10 @@
 package com.wanhutong.backend.modules.enums;
 
+/**
+ * 用于计算采购商下面的订单数
+ * Ouyang Xiutian
+ * 2017/12/26
+ * */
 public enum BizOrderHeadStatus {
     /*用于指定一个采购商下面的订单数，根据下面的条件显示*/
     INVSTATUS(1), BIZSTATUS(30);

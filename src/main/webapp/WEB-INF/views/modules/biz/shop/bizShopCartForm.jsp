@@ -60,8 +60,8 @@
                     <%--<select id="skuShelfinfo" class="input-xlarge" name="skuShelfinfo.id" onclick="makeShelfSelect();" style="text-align: center;">
                     </select>--%>
                      <input type="text" name="skuShelfinfo.id"/>
-                     <span class="help-inline">1-10</span>
-                     <input type="button"  onclick="show();" value="新增"/>
+                     <span class="help-inline">测试输入1-10</span>
+                     <%--<input type="button"  onclick="show();" value="新增"/>--%>
 			</div>
 		</div>
 		<div class="control-group">

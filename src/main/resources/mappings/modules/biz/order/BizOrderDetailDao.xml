@@ -9,8 +9,12 @@
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
 		a.sku_shelf_id as "shelfInfo.id",
+		oi.name as "shelfInfo.name",
 		a.sku_id AS "skuInfo.id",
 		bsi.name as "skuInfo.name",
+		a.quality as "quality",
+		a.color as "color",
+		a.standard as "standard",
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
 		a.unit_price AS "unitPrice",
@@ -28,7 +32,7 @@
 		left join sys_user su on a.create_id=su.id
 		left join biz_sku_info bsi on a.sku_id=bsi.id
 		left join biz_order_header boh on a.order_id=boh.id
-		LEFT  JOIN biz_op_shelf_sku oi on a.sku_shelf_id=oi.id
+		LEFT  JOIN biz_op_shelf_info oi on a.sku_shelf_id=oi.id
 	</sql>
     
 	<select id="get" resultType="BizOrderDetail">
@@ -108,6 +112,9 @@
 			p_line_no,
 			sku_shelf_id,
 			sku_id,
+			quality,
+			color,
+			standard,
 			part_no,
 			sku_name,
 			unit_price,
@@ -125,6 +132,9 @@
 			#{pLineNo},
 			#{shelfInfo.id},
 			#{skuInfo.id},
+			#{quality},
+			#{color},
+			#{standard},
 			#{partNo},
 			#{skuName},
 			#{unitPrice},
@@ -145,6 +155,9 @@
 			p_line_no = #{pLineNo},
 			sku_shelf_id=#{shelfInfo.id},
 			sku_id = #{skuInfo.id},
+			quality = #{quality},
+			color = #{color},
+			standard = #{standard},
 			part_no = #{partNo},
 			sku_name = #{skuName},
 			unit_price = #{unitPrice},

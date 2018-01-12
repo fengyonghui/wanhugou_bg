@@ -54,6 +54,11 @@
 			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
 				AND a.inv_id = #{skuInfo.id}
 			</if>
+
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.sku_id = #{skuInfo.id}
+			</if>
+
 			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
 				AND sku.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>

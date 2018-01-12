@@ -28,13 +28,16 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Double freight;			// 运费
 	private Integer invStatus;		// 0 不开发票 1 未开发票 3 已开发票
 	private Integer bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付 3同意发货 4已发货 5客户已收货 6 已完成
+	private Integer bizType;		//订单运营类型: 1专营订单 2非专营订单
 	private BizPlatformInfo platformInfo;		// 订单来源； biz_platform_info.id
 	private CommonLocation bizLocation;		// 订单收货地址： common_location.id
+
 	private List<BizOrderDetail> orderDetailList;	//查询有多少订单
 
 	private Integer bizStatusStart;
 	private Integer bizStatusEnd;
-	private Date deliveryDate; //预计到货日期
+	private Date deliveryDate; 		//预计到货日期
+	private String oneOrder;		// 首次下单 firstOrder ，非首次下单 endOrder
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -156,4 +159,19 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.deliveryDate = deliveryDate;
 	}
 
+	public Integer getBizType() {
+		return bizType;
+	}
+
+	public void setBizType(Integer bizType) {
+		this.bizType = bizType;
+	}
+
+	public String getOneOrder() {
+		return oneOrder;
+	}
+
+	public void setOneOrder(String oneOrder) {
+		this.oneOrder = oneOrder;
+	}
 }

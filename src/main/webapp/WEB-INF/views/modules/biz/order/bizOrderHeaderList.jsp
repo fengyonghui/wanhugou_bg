@@ -50,6 +50,7 @@
 			<tr>
 				<th>订单编号</th>
 				<th>订单类型</th>
+				<th>订单商品类型</th>
 				<th>客户名称</th>
 				<th>订单详情总价</th>
 				<th>订单总费用</th>
@@ -73,6 +74,9 @@
 				</a></td>
 				<td>
 					${fns:getDictLabel(bizOrderHeader.orderType, 'biz_order_type', '未知状态')}
+				</td>
+				<td>
+					${bizOrderHeader.bizType}专营/非专营--测试中
 				</td>
 				<td>
 					${bizOrderHeader.customer.name}

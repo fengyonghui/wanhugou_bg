@@ -10,6 +10,8 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +39,11 @@ public class BizOrderHeaderController extends BaseController {
 	private BizOrderHeaderService bizOrderHeaderService;
 	@Autowired
 	private BizOrderDetailService bizOrderDetailService;
-	
+
+//	判断客户是否为首次下单
+	@Autowired
+	private OfficeService officeService;
+
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
 		BizOrderHeader entity = null;
@@ -48,8 +54,8 @@ public class BizOrderHeaderController extends BaseController {
 			bizOrderDetail.setOrderHeader(entity);
 			List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
 			for (BizOrderDetail detail : list) {
-				Double price = detail.getUnitPrice();
-				Integer ordQty = detail.getOrdQty();
+				Double price = detail.getUnitPrice();//商品单价
+				Integer ordQty = detail.getOrdQty();//采购数量
 				sum+=price*ordQty;
 			}
 			entity.setTotalDetail(sum);
@@ -88,14 +94,18 @@ public class BizOrderHeaderController extends BaseController {
 		if(bizOrderHeader.getPlatformInfo()==null){
 			bizOrderHeader.getPlatformInfo().setId(1);
 		}
+		if(bizOrderHeader.getBizType()==null){
+//			0代表默认值，首次创建订单没有选购商品，在选购商品Detail里 update，状态为 1是专营订单，2是非专营订单
+			bizOrderHeader.setBizType(0);
+		}
 		bizOrderHeaderService.save(bizOrderHeader);
 		addMessage(redirectAttributes, "保存订单信息成功");
-//		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
 		Integer orId = bizOrderHeader.getId();
-		if(orId !=null && orId !=0){
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId;
-		}
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form";
+		String oneOrder = bizOrderHeader.getOneOrder();
+//		if(orId !=null && orId !=0){
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
+//		}
+//		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form";
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")

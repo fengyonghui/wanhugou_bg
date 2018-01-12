@@ -44,6 +44,9 @@
 		<include refid="bizSkuInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id =#{id}
+			</if>
             <if test="skuType != null and skuType != ''">
                 AND a.sku_type =#{skuType}
             </if>

@@ -46,7 +46,9 @@ function orderoffice(){
        url:"${ctx}/biz/invoice/bizInvoiceDetail/invOrderHeader?officeId="+officeId,
        dataType:"json",
        success:function(data){
+      			 console.log("已有数据"+data);
             var htmlOrder="<tbody>";
+             $("#boxTbody").empty();
                 <%--console.log(JSON.stringify(data)+"-测试 1- appendTo('#images')--");--%>
             $.each(data,function(index,order){
               $("#boxTbody").empty();
@@ -170,7 +172,43 @@ function dial(){
 					<th>操作</th>
 				</tr>
 				</thead>
-				<tbody id="orderHead_table"></tbody>
+				<tbody id="orderHead_table">
+				<c:if test="${bizInvoiceHeader.id !=null && bizInvoiceHeader.id!='' }">
+						<c:forEach items="${bizInvoiceHeader.bizInvoiceDetailList}" var="bizInvoiceDetail">
+							<tr>
+								<td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">
+										${bizInvoiceDetail.id}</a>
+								</td>
+								<td>
+										${bizOrderDetail.invoiceHeader}
+								</td>
+								<td>
+										${bizOrderDetail.invoiceHeader.invTitle}
+								</td>
+								<td>
+										${bizOrderDetail.unitPrice}
+								</td>
+								<td>
+										${bizOrderDetail.ordQty}
+								</td>
+								<td>
+										${bizOrderDetail.sentQty}
+								</td>
+								<td>
+									<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+								</td>
+								<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+									<td>
+										<%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>--%>
+										<%--<a href="${ctx}/biz/invoice/bizInvoiceDetail/delete?id=${bizOrderDetail.id}&sign=1"--%>
+										   <%--onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>--%>
+											<a href="#">删除</>
+									</td>
+								</shiro:hasPermission>
+							</tr>
+						</c:forEach>
+				</c:if>
+				</tbody>
 			</table>
 		</div>
 		</div>
@@ -198,63 +236,5 @@ function dial(){
     </table>
 </div>
 
-
-
-<%--多个订单显示列表--%>
-<sys:message content="${message}"/>
-<c:if test="${bizInvoiceHeader.id !=null && bizInvoiceHeader.id!='' }">
-	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead>
-		<tr>
-			<th>发票行号</th>
-			<th>货架名称</th>
-			<th>商品名称</th>
-			<th>商品编号</th>
-			<th>商品单价</th>
-			<th>采购数量</th>
-			<th>发货数量</th>
-			<th>创建时间</th>
-			<th>操作</th>
-		</tr>
-		</thead>
-		<tbody>
-		<c:forEach items="${bizInvoiceHeader.bizInvoiceDetailList}" var="bizInvoDetail">
-			<tr>
-				<td><a href="#">
-						${bizInvoDetail.lineNo}</a>
-				</td>
-					<td>
-						888
-					</td>
-				<td>
-						${bizOrderDetail.skuName}
-				</td>
-				<td>
-						${bizOrderDetail.partNo}
-				</td>
-				<td>
-						${bizOrderDetail.unitPrice}
-				</td>
-				<td>
-						${bizOrderDetail.ordQty}
-				</td>
-				<td>
-						${bizOrderDetail.sentQty}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-					<td>
-						<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>
-						<a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1"
-						   onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
-					</td>
-				</shiro:hasPermission>
-			</tr>
-		</c:forEach>
-		</tbody>
-	</table>
-</c:if>
 </body>
 </html>
