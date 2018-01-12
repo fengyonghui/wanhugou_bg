@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSku/">商品上架列表</a></li>
-		<%--<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfSku/form">商品上架添加</a></li></shiro:hasPermission>--%>
+		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfSku/form">商品上架添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSku/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

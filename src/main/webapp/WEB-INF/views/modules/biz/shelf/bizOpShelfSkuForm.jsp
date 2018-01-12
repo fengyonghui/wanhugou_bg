@@ -53,19 +53,19 @@
                 <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">采购中心：</label>
-			<div class="controls">
-					<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
-                     labelValue="${bizOpShelfSku.centerOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-                                    title="采购中心"  url="/sys/office/queryTreeList?type=8" extId="${centerOffice.id}"
-                                    cssClass="input-xlarge "
-                                    allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
-                    </sys:treeselect>
-				<span class="help-inline"> </span>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">采购中心：</label>--%>
+			<%--<div class="controls">--%>
+					<%--<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"--%>
+                     <%--labelValue="${bizOpShelfSku.centerOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"--%>
+                                    <%--title="采购中心"  url="/sys/office/queryTreeList?type=8" extId="${centerOffice.id}"--%>
+                                    <%--cssClass="input-xlarge "--%>
+                                    <%--allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">--%>
+                    <%--</sys:treeselect>--%>
+				<%--<span class="help-inline"> </span>--%>
 
-			</div>
-		</div>
+			<%--</div>--%>
+		<%--</div>--%>
 
 		<c:if test="${bizOpShelfSku.id != null}">
 				<div class="control-group">

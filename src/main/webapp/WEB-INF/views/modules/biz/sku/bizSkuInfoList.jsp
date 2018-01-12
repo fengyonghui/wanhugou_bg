@@ -56,7 +56,9 @@
 				<th>创建时间</th>
 				<th>更新人</th>
 				<%--<th>更新时间</th>--%>
-				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><th>操作</th></shiro:hasPermission>
+				<%--<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">--%>
+					<th>操作</th>
+				<%--</shiro:hasPermission>--%>
 			</tr>
 		</thead>
 		<tbody>
@@ -96,6 +98,11 @@
 					<%--<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>--%>
 					<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
+				<shiro:hasPermission name="biz:sku:bizSkuInfo:view">
+					<td>
+					<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.productInfo.id}">详情</a>
+					</td>
+				</shiro:hasPermission>
 			</tr>
 		</c:forEach>
 		</tbody>
