@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 /**
@@ -62,7 +64,7 @@ public class UserController extends BaseController {
 			return new User();
 		}
 	}
-
+	
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"index"})
 	public String index(User user, Model model) {
@@ -110,6 +112,21 @@ public class UserController extends BaseController {
 		return "modules/sys/userForm";
 	}
 
+	@RequestMapping(value = "getAdvisers")
+	@ResponseBody
+	public List<User> getAdvisers(User user, HttpServletRequest request, HttpServletResponse response, Model model){
+		List<User> list;
+		if(user.getOffice().getId() == null){
+			list = new ArrayList<>();
+		}else{
+			Role role = new Role();
+			role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
+			user.setRole(role);
+			list = systemService.selectUserByOfficeId(user);
+		}
+		return list;
+	}
+	
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "save")
 	public String save(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {

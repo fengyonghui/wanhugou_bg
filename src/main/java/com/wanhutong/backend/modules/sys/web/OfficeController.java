@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +58,164 @@ public class OfficeController extends BaseController {
 		return "modules/sys/officeIndex";
 	}
 
+	@RequiresPermissions("sys:office:view")
+	@RequestMapping(value = "purchasersIndex")
+	public String purchasersIndex(Office office, Model model) {
+		return "modules/sys/purchasersIndex";
+	}
+	
+	@RequiresPermissions("sys:office:view")
+	@RequestMapping(value = "purchasersList")
+	public String purchasersList(Office office, Model model) {
+		if(office.getId() == null || office.getParentIds() == null){
+			String purchasersId = DictUtils.getDictValue("部门", "sys_office_purchaserId","");
+			Office off = officeService.get(Integer.valueOf(purchasersId));
+			office.setParentIds("%,"+purchasersId+",");
+			List<Office> findList = officeService.findList(office);
+			findList.add(off);
+			model.addAttribute("list", findList);
+		}else{
+			model.addAttribute("list", officeService.findList(office));
+		}
+		return "modules/sys/purchasersList";
+	}
+	
+	@RequiresPermissions("sys:office:view")
+	@RequestMapping(value = "purchasersForm")
+	public String purchasersForm(Office office, Model model) {
+		User user = UserUtils.getUser();
+		if (office.getParent()==null || office.getParent().getId()==null){
+			office.setParent(user.getOffice());
+		}
+		office.setParent(officeService.get(office.getParent().getId()));
+		if (office.getArea()==null){
+			office.setArea(user.getOffice().getArea());
+		}
+		// 自动获取排序号
+		if (office.getId()==null&&office.getParent()!=null){
+			int size = 0;
+			List<Office> list = officeService.findAll();
+			for (int i=0; i<list.size(); i++){
+				Office e = list.get(i);
+				if (e.getParent()!=null && e.getParent().getId()!=null
+						&& e.getParent().getId().equals(office.getParent().getId())){
+					size++;
+				}
+			}
+			office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size+1 : 1), 3, "0"));
+		}
+		model.addAttribute("office", office);
+		return "modules/sys/purchasersForm";
+	}
+	
+	@RequiresPermissions("sys:office:view")
+	@RequestMapping(value = "supplierIndex")
+	public String supplierIndex(Office office, Model model) {
+		return "modules/sys/supplierIndex";
+	}
+	
+	@RequiresPermissions("sys:office:view")
+	@RequestMapping(value = "supplierList")
+	public String supplierList(Office office,Model model) {
+		if(office.getId() == null || office.getParentIds() == null){
+			String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
+			Office off = officeService.get(Integer.valueOf(supplierId));
+			office.setParentIds("%,"+supplierId+",");
+			List<Office> findList = officeService.findList(office);
+			findList.add(off);
+			model.addAttribute("list", findList);
+		}else{
+			model.addAttribute("list", officeService.findList(office));
+		}
+		return "modules/sys/supplierList";
+	}
+	
+	@RequiresPermissions("sys:office:view")
+	@RequestMapping(value = "supplierForm")
+	public String supplierForm(Office office, Model model) {
+		User user = UserUtils.getUser();
+		if (office.getParent()==null || office.getParent().getId()==null){
+			office.setParent(user.getOffice());
+		}
+		office.setParent(officeService.get(office.getParent().getId()));
+		if (office.getArea()==null){
+			office.setArea(user.getOffice().getArea());
+		}
+		// 自动获取排序号
+		if (office.getId()==null&&office.getParent()!=null){
+			int size = 0;
+			List<Office> list = officeService.findAll();
+			for (int i=0; i<list.size(); i++){
+				Office e = list.get(i);
+				if (e.getParent()!=null && e.getParent().getId()!=null
+						&& e.getParent().getId().equals(office.getParent().getId())){
+					size++;
+				}
+			}
+			office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size+1 : 1), 3, "0"));
+		}
+		model.addAttribute("office", office);
+		return "modules/sys/supplierForm";
+	}
+	
+	@RequiresPermissions("user")
+	@ResponseBody
+	@RequestMapping(value = "purchaserTreeData")
+	public List<Map<String, Object>> purchaserTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
+			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		String purchasersId = DictUtils.getDictValue("部门", "sys_office_purchaserId","");
+		Office office = new Office();
+		office.setParentIds("%,"+purchasersId+",");
+		List<Office> list = officeService.findList(office);
+		Office off = officeService.get(Integer.valueOf(purchasersId));
+		list.add(off);
+		for (int i=0; i<list.size(); i++){
+			Office e = list.get(i);
+			if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
+					&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
+					&& (grade == null || (grade != null && Integer.parseInt(e.getGrade()) <= grade.intValue()))
+					&& Global.YES.equals(e.getUseable())){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("pIds", e.getParentIds());
+				map.put("name", e.getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
+	}
+	
+	@RequiresPermissions("user")
+	@ResponseBody
+	@RequestMapping(value = "supplierTreeData")
+	public List<Map<String, Object>> supplierTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
+			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
+		Office office = new Office();
+		office.setParentIds("%,"+supplierId+",");
+		List<Office> list = officeService.findList(office);
+		Office off = officeService.get(Integer.valueOf(supplierId));
+		list.add(off);
+		for (int i=0; i<list.size(); i++){
+			Office e = list.get(i);
+			if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
+					&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
+					&& (grade == null || (grade != null && Integer.parseInt(e.getGrade()) <= grade.intValue()))
+					&& Global.YES.equals(e.getUseable())){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("pIds", e.getParentIds());
+				map.put("name", e.getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
+	}
+	
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = {"list"})
 	public String list(Office office, Model model) {

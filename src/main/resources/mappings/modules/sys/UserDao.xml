@@ -205,6 +205,16 @@
 		ORDER BY a.name
 	</select>
 	
+	<!-- 根据OfficeId获取用户,关联采购顾问与采购商使用 -->
+	<select id="selectUserByOfficeId" resultType="User" >
+		SELECT
+			a.id, a.name, a.login_name
+		FROM sys_user a ,sys_user_role ur , sys_role r
+		WHERE a.status = #{DEL_FLAG_NORMAL} AND r.status= #{DEL_FLAG_NORMAL} AND a.office_id = #{office.id} AND a.id=ur.user_id 
+		AND ur.role_id = #{role.id} AND ur.role_id = r.id
+		ORDER BY a.name
+	</select>
+	
 	<!-- 查询全部用户 -->
 	<select id="findAllList" resultType="User">
 		SELECT

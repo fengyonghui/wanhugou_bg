@@ -78,6 +78,15 @@ public class SystemService extends BaseService implements InitializingBean {
 	public User getUser(Integer id) {
 		return UserUtils.get(id);
 	}
+	
+	/**
+	 * 通过部门ID与角色ID获取用户列表
+	 * @param id role.id
+	 * @return
+	 */
+	public List<User> selectUserByOfficeId(User user) {
+		return userDao.selectUserByOfficeId(user);
+	}
 
 	/**
 	 * 根据登录名获取用户
