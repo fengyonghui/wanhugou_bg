@@ -77,11 +77,7 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizRequestHeader bizRequestHeader, Model model) {
-		if(bizRequestHeader.getProductInfo()!=null && bizRequestHeader.getProductInfo().getName()!=null && !"".equals(bizRequestHeader.getProductInfo().getName())){
-			model.addAttribute("skuList", bizProductInfoService.convertList(bizRequestHeader.getProductInfo()));
-		}else {
-			model.addAttribute("skuList", bizProductInfoService.convertList(new BizProductInfo()));
-		}
+
 		List<BizRequestDetail> reqDetailList=Lists.newArrayList();
 		if(bizRequestHeader.getId()!=null){
 			BizRequestDetail bizRequestDetail=new BizRequestDetail();
@@ -95,30 +91,12 @@ public class BizRequestHeaderController extends BaseController {
 		}
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
+		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 
 		return "modules/biz/request/bizRequestHeaderForm";
 	}
-	@ResponseBody
-	@RequestMapping(value = "findSkuTreeList")
-	public List<Map<String, Object>>  findSkuTreeList(BizRequestHeader bizRequestHeader, Model model){
-		List<SkuProd> list=bizProductInfoService.convertList(bizRequestHeader.getProductInfo());
-		return convertList(list);
 
-	}
-	private List<Map<String, Object>> convertList(List<SkuProd> list){
-		List<Map<String, Object>> mapList = Lists.newArrayList();
-		if(list != null && list.size() > 0 ){
-			for (int i = 0; i < list.size(); i++) {
-				SkuProd e = list.get(i);
-				Map<String, Object> map = Maps.newHashMap();
-				map.put("id", e.getId());
-				map.put("pId", e.getPid());
-				map.put("name", e.getName());
-				mapList.add(map);
-			}
-		}
-		return mapList;
-	}
+
 
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "save")

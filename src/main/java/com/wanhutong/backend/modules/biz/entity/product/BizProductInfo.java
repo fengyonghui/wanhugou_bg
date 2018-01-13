@@ -45,6 +45,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String cateIds; //多种分类
 
+	private String cateNames;//多个分类名称
+
 	private String propNames;
 
 	private String propOwnValues;
@@ -330,5 +332,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setSkuPartNo(String skuPartNo) {
 		this.skuPartNo = skuPartNo;
+	}
+
+	public String getCateNames() {
+		return cateNames;
+	}
+
+	public void setCateNames(String cateNames) {
+		this.cateNames = cateNames;
 	}
 }

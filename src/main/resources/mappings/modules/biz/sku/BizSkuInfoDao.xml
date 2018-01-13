@@ -65,6 +65,26 @@
 			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
 				AND a.prod_id =#{productInfo.id}
 			</if>
+			<if test="productInfo != null and productInfo.name !=null and productInfo.name!=''">
+				AND bpi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.prodCode !=null and productInfo.prodCode!=''">
+				AND bpi.prod_code LIKE
+
+				<if test="dbName == 'oracle'">'%'||#{productInfo.prodCode}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.prodCode}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.prodCode},'%')</if>
+			</if>
+
+			<if test="productInfo != null and productInfo.brandName !=null and productInfo.brandName!=''">
+				AND bpi.brand_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.brandName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.brandName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.brandName},'%')</if>
+			</if>
 			<if test="skuIds!=null and skuIds!='' and skuIds.size()!=0">
 				and a.id in
 				<foreach collection="skuIds" item="skuId" index="index"

@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -123,13 +124,13 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuList")
-	public List<BizSkuInfo> findSkuList(BizSkuInfo bizSkuInfo, String skuIds){
+	public Map<String, List<BizSkuInfo>> findSkuList(BizSkuInfo bizSkuInfo, String skuIds){
 		if (skuIds != null && !"".equals(skuIds)){
 			String[] ids =StringUtils.split(skuIds, ",");
 			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
 		}
-		List<BizSkuInfo> list=bizSkuInfoService.findListForProd(bizSkuInfo);
-		return list;
+		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
+		return listMap;
 	}
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")

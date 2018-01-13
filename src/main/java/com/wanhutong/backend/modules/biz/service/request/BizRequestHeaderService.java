@@ -54,8 +54,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private DefaultPropService defaultPropService;
 	@Resource
 	private OfficeService officeService;
-	@Resource
-	private BizInventorySkuService bizInventorySkuService;
+
 
 	public BizRequestHeader get(Integer id) {
 		return super.get(id);

@@ -46,6 +46,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private Integer sentQty; //已发货的数量，用于展示
 	private String orderIds;
 	private String reqIds;
+	private String skuTypeName;
 
 
 	private int sign;//sku删除返回的标志
@@ -192,5 +193,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setReqIds(String reqIds) {
 		this.reqIds = reqIds;
+	}
+
+	public String getSkuTypeName() {
+		return skuTypeName;
+	}
+
+	public void setSkuTypeName(String skuTypeName) {
+		this.skuTypeName = skuTypeName;
 	}
 }

@@ -153,7 +153,7 @@ public class BizProductInfoController extends BaseController {
 	public List<Map<String, Object>> querySkuTreeList(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes) {
 		List<SkuProd> list = null;
 
-		list = bizProductInfoService.convertList(bizProductInfo);
+		//list = bizProductInfoService.convertList(bizProductInfo);
 
 		if(list == null || list.size() == 0){
 			addMessage(redirectAttributes, "列表不存在");

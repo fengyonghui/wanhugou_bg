@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.service.sku;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +22,8 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdCateService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
-import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,15 +73,34 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		return null;
 	}
 
-	public List<BizSkuInfo> findListForProd(BizSkuInfo bizSkuInfo) {
-		List<BizSkuInfo> list=new ArrayList<BizSkuInfo>();
+	public Map<String, List<BizSkuInfo>> findListForProd(BizSkuInfo bizSkuInfo) {
 		List<BizSkuInfo> skuInfoList=super.findList(bizSkuInfo);
+		Map<BizProductInfo,List<BizSkuInfo>> map=new HashMap<BizProductInfo,List<BizSkuInfo>>();
+		Map<String,List<BizSkuInfo>> listMap=new HashMap<String, List<BizSkuInfo>>();
 		for(BizSkuInfo skuInfo:skuInfoList){
 			BizSkuInfo info=findListProd(skuInfo);
-			list.add(info);
+			info.setSkuTypeName(SkuTypeEnum.stateOf(skuInfo.getSkuType()).getName());
+			BizProductInfo bizProductInfo=info.getProductInfo();
+			if(map.containsKey(bizProductInfo)){
+				List<BizSkuInfo> skuInfos = map.get(bizProductInfo);
+				map.remove(bizProductInfo);
+				skuInfos.add(info);
+				map.put(bizProductInfo,skuInfos);
+			}
+			else {
+				List<BizSkuInfo>infoList=new ArrayList<BizSkuInfo>();
+				infoList.add(info);
+				map.put(bizProductInfo,infoList);
+			}
+		}
+		for(BizProductInfo productInfo :map.keySet()) {
+			String sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
+					+productInfo.getProdCode()+","+productInfo.getOffice().getName()+","+productInfo.getBrandName();
+					;
+			listMap.put(sKey,map.get(productInfo));
 		}
 
-		return list;
+		return listMap;
 	}
 
 	/**
@@ -91,16 +111,22 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	public BizSkuInfo findListProd(BizSkuInfo skuInfo){
 		Integer prodId=	skuInfo.getProductInfo().getId();
 		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
-		Office office=officeService.get(bizProductInfo.getOffice().getId());
+		Office office=null;
+		if(bizProductInfo!=null && bizProductInfo.getOffice()!=null){
+			office=officeService.get(bizProductInfo.getOffice().getId());
+		}
+
 		bizProductInfo.setOffice(office);
 		BizProdCate bizProdCate=new BizProdCate();
 		bizProdCate.setProductInfo(bizProductInfo);
-		List<BizCategoryInfo> categoryInfos= Lists.newArrayList();
 		List<BizProdCate> prodCateList=bizProdCateService.findList(bizProdCate);
+		StringBuffer cateName=new StringBuffer("\\/");
 		for(BizProdCate prodCate:prodCateList){
-			categoryInfos.add(prodCate.getCategoryInfo());
+			cateName.append(prodCate.getCategoryInfo().getName());
+
 		}
-		bizProductInfo.setCategoryInfoList(categoryInfos);
+		String cateNames=cateName.toString().substring(2);
+		bizProductInfo.setCateNames(cateNames);
 		skuInfo.setProductInfo(bizProductInfo);
 		return skuInfo;
 

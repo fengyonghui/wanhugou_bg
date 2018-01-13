@@ -287,46 +287,5 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		super.delete(bizProductInfo);
 	}
 
-
-	public List<SkuProd> convertList(BizProductInfo bizProductInfo){
-		List<BizProductInfo> productInfoList=findList(bizProductInfo);
-
-		List<SkuProd> skuProdList=Lists.newArrayList();
-
-		for (BizProductInfo productInfo:productInfoList) {
-			SkuProd skuProd=new SkuProd();
-			BizSkuInfo bizSkuInfo=new BizSkuInfo();
-			Integer id=productInfo.getId();
-			String name=productInfo.getName();
-			skuProd.setName(name);
-			skuProd.setId(-id);
-			skuProd.setPid(0);
-
-			bizSkuInfo.setProductInfo(productInfo);
-			bizSkuInfo.setPartNo(bizProductInfo.getSkuPartNo());
-			List<BizSkuInfo> skuInfoList=bizSkuInfoService.findList(bizSkuInfo);
-			if(bizSkuInfo.getPartNo()!=null && !"".equals(bizSkuInfo.getPartNo())){
-				if(skuInfoList==null || skuInfoList.size()==0){
-					continue;
-				}
-
-			}
-			skuProdList.add(skuProd);
-			for (BizSkuInfo skuInfo:skuInfoList){
-				SkuProd subSkuProd=new SkuProd();
-				Integer skuType=skuInfo.getSkuType();
-				if(SkuTypeEnum.stateOf(skuType)!=null){
-					String typeName=SkuTypeEnum.stateOf(skuType).getName();
-					subSkuProd.setName(skuInfo.getName()+"<span style='color: yellowgreen'>("+typeName+")</span>");
-				}else {
-					subSkuProd.setName(skuInfo.getName());
-				}
-				subSkuProd.setId(skuInfo.getId());
-				subSkuProd.setPid(-id);
-				skuProdList.add(subSkuProd);
-			}
-		}
-		return skuProdList;
-	}
 	
 }
