@@ -155,7 +155,7 @@
 						<input id="skuCode"  htmlEscape="false" maxlength="10" class="input-medium"/>
 					</li>
 					<li><label>商品类型：</label>
-						<select id="skuType">
+						<select id="skuType" class="input-medium">
 							<option value="">请选择</option>
 							<option value="${SkuTypeEnum.OWN_PRODUCT.code}">${SkuTypeEnum.OWN_PRODUCT.name}</option>
 							<option value="${SkuTypeEnum.COMMON_PRODUCT.code}">${SkuTypeEnum.COMMON_PRODUCT.name}</option>
