@@ -25,6 +25,9 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 	private String description;		// 货架描述
 	private List<BizOpShelfSku> opShelfSkusList;
 	private String OpShelfSkus;
+	private List<User> userList;
+	private User user;
+	private String userIds;
 
 	
 	public BizOpShelfInfo() {
@@ -67,4 +70,28 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 	public void setOpShelfSkus(String opShelfSkus) {
 		OpShelfSkus = opShelfSkus;
 	}
+
+	public List<User> getUserList() {
+		return userList;
+	}
+
+	public void setUserList(List<User> userList) {
+		this.userList = userList;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+    public String getUserIds() {
+        return userIds;
+    }
+
+    public void setUserIds(String userIds) {
+        this.userIds = userIds;
+    }
 }

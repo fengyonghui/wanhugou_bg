@@ -5,6 +5,7 @@
 	<sql id="bizOpShelfSkuColumns">
 		a.id AS "id",
 		a.shelf_id AS "opShelfInfo.id",
+		shelf.name AS "opShelfInfo.name",
 		a.sku_id AS "skuInfo.id",
 		a.prod_id as "productInfo.id",
 		a.sku_id AS "skuProd.id",
@@ -41,6 +42,7 @@
 		LEFT JOIN sys_user ushu ON ushu.id=a.unshelf_user
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_office so ON so.id=a.center_id
+		LEFT JOIN biz_op_shelf_info shelf ON a.shelf_id = shelf.id
 	</sql>
     
 	<select id="get" resultType="BizOpShelfSku">
@@ -97,6 +99,12 @@
 
 			<if test="opShelfInfo != null and opShelfInfo.id !=null and opShelfInfo.id != ''">
 				AND a.shelf_id = #{opShelfInfo.id}
+			</if>
+			<if test="opShelfInfo != null and opShelfInfo.name !=null and opShelfInfo.name != ''">
+				AND shelf.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{opShelfInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
 			</if>
 			<!--<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
 				AND a.unshelf_user = #{unshelfUser.id}

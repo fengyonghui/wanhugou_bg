@@ -71,6 +71,7 @@
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
 					<a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">商品上下架管理</a>
+					<a href="${ctx}/biz/shelf/bizOpShelfInfo/shelfManagementList?id=${bizOpShelfInfo.id}">货架管理员</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

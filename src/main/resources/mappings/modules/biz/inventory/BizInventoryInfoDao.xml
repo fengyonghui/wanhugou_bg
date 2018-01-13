@@ -8,6 +8,7 @@
 		a.description AS "description",
 		a.location_id AS "bizLocation.id",
 		a.cust_id AS "customer.id",
+		o.name AS "customer.name",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -62,6 +63,9 @@
 			<if test="sqlMap != null and sqlMap.inventory != null and sqlMap.inventory != ''">
 				${sqlMap.inventory}
 			</if>
+			<if test="customer != null and customer.name != null and customer.name != ''">
+				AND o.name = #{customer.name}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -107,7 +111,7 @@
 			#{name},
 			#{description},
 			#{bizLocation.id},
-			#{customer.id}
+			#{customer.id},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},

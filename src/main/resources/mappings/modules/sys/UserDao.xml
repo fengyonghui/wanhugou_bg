@@ -144,7 +144,20 @@
 		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
 		WHERE a.login_name = #{loginName} AND a.status = #{DEL_FLAG_NORMAL}
 	</select>
-	
+
+	<!--查询某个部门下的所有用户-->
+	<select id="findYzUser" resultType="User" parameterType="Office">
+		SELECT
+			<include refid="userColumns"/>
+		FROM
+			sys_user a
+		<include refid="userJoins"/>
+		WHERE o.parent_ids
+		LIKE
+			<if test="dbName == 'oracle'">('%,'||#{id}||',%')</if>
+			<if test="dbName == 'mssql'">('%,'+#{id}+',%')</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</select>
 	<!-- 分页查询用户信息 -->
 	<select id="findList" resultType="User">
 		SELECT

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
 /**
@@ -24,6 +25,12 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public User getByLoginName(User user);
 
+	/**
+	 * 根据OfficeId获取当前节点下的所有字节点
+	 * @param office
+	 * @return
+	 */
+	public List<User> findYzUser(Office office);
 	/**
 	 * 通过OfficeId获取用户列表，仅返回用户id和name（树查询用户时用）
 	 * @param user

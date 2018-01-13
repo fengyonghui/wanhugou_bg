@@ -3,10 +3,7 @@
  */
 package com.wanhutong.backend.modules.sys.service;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
@@ -117,6 +114,16 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
 		List<User> list = userDao.findList(user);
 		return list;
+	}
+
+	/**
+	 * 查询部门id为officeId的人员列表
+	 * @param office
+	 * @return
+	 */
+	public List<User> findYzUser(Office office){
+		List<User> userList = userDao.findYzUser(office);
+		return userList;
 	}
 
 	/**

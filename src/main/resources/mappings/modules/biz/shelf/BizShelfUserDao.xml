@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.shelf.BizShelfUserDao">
+    
+	<sql id="bizShelfUserColumns">
+		a.id AS "id",
+		a.shelf_id AS "shelfInfo.id",
+		a.user_id AS "user.id",
+		a.status AS "delFlag",
+		u3.name AS "user.name",
+		shelf.name AS "shelfInfo.name"
+	</sql>
+	
+	<sql id="bizShelfUserJoins">
+		LEFT JOIN sys_user u3 ON u3.id = a.user_id
+		LEFT JOIN biz_op_shelf_info shelf ON shelf.id = a.shelf_id
+	</sql>
+    
+	<select id="get" resultType="BizShelfUser">
+		SELECT 
+			<include refid="bizShelfUserColumns"/>
+		FROM biz_shelf_user a
+		<include refid="bizShelfUserJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizShelfUser">
+		SELECT 
+			<include refid="bizShelfUserColumns"/>
+		FROM biz_shelf_user a
+		<include refid="bizShelfUserJoins"/>
+		<where>
+            a.status = #{DEL_FLAG_NORMAL}
+			<if test="shelfInfo != null and shelfInfo.id != null and shelfInfo.id != ''">
+				AND a.shelf_id = #{shelfInfo.id}
+			</if>
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id = #{user.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizShelfUser">
+		SELECT 
+			<include refid="bizShelfUserColumns"/>
+		FROM biz_shelf_user a
+		<include refid="bizShelfUserJoins"/>
+		<where>
+            a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_shelf_user(
+			id,
+			shelf_id,
+			user_id,
+			status
+		) VALUES (
+			#{id},
+			#{shelfInfo.id},
+			#{user.id},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_shelf_user SET 	
+			shelf_id = #{shelfInfo.id},
+			user_id = #{user.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_shelf_user SET
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

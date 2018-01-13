@@ -57,6 +57,9 @@
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
+			<li><label>货架名称：</label>
+				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>

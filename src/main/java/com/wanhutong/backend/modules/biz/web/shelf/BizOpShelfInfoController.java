@@ -5,11 +5,21 @@ package com.wanhutong.backend.modules.biz.web.shelf;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizShelfUser;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizShelfUserService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.SupportCenterStatusEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +48,13 @@ public class BizOpShelfInfoController extends BaseController {
 	private BizOpShelfInfoService bizOpShelfInfoService;
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
+	@Autowired
+	private SystemService systemService;
+	@Autowired
+	private OfficeService officeService;
+	@Autowired
+	private BizShelfUserService bizShelfUserService;
+
 	@ModelAttribute
 	public BizOpShelfInfo get(@RequestParam(required=false) Integer id) {
 		BizOpShelfInfo entity = null;
@@ -95,4 +113,64 @@ public class BizOpShelfInfoController extends BaseController {
 		
 		return list;
 	}
+
+	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
+	@RequestMapping(value = "shelfManagementList")
+	public String shelfManagementList(BizOpShelfInfo bizOpShelfInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Page<BizOpShelfInfo> page = bizOpShelfInfoService.findPage(new Page<BizOpShelfInfo>(request, response), bizOpShelfInfo);
+        BizShelfUser bizShelfUser = new BizShelfUser();
+		BizOpShelfInfo bizOpShelfInfo1 = bizOpShelfInfoService.get(bizOpShelfInfo.getId());
+		bizShelfUser.setShelfInfo(bizOpShelfInfo1);
+		List<BizShelfUser> bizShelfUserList = bizShelfUserService.findList(bizShelfUser);
+
+		model.addAttribute("page", page);
+		model.addAttribute("bizShelfUserList",bizShelfUserList);
+        model.addAttribute("bizOpShelfInfo",bizOpShelfInfo);
+		return "modules/biz/shelf/bizOpShelfManagementList";
+	}
+
+	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
+	@RequestMapping(value = "shelfManagementForm")
+	public String shelfManagementForm(BizOpShelfInfo bizOpShelfInfo, Model model) {
+
+		//查询营销中心下的用户
+		Office office = officeService.get(SupportCenterStatusEnum.MAKER_CENTER.getState());
+		List<User> userList = systemService.findYzUser(office);
+//		bizOpShelfInfo.setUserList(userList);
+        model.addAttribute("bizOpShelfInfo", bizOpShelfInfo);
+		model.addAttribute("userList", userList);
+		return "modules/biz/shelf/bizOpShelfManagementForm";
+	}
+
+	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
+	@RequestMapping(value = "shelfManagementCommit")
+	public String shelfManagementCommit(BizOpShelfInfo bizOpShelfInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+       String userIds= bizOpShelfInfo.getUserIds();
+      String[] userIdStr=  StringUtils.split(userIds,",");
+        BizShelfUser bizShelfUser = new BizShelfUser();
+      for(int i=0;i<userIdStr.length;i++){
+          BizShelfUser bizShelfUser1 = new BizShelfUser();
+          bizShelfUser1.setShelfInfo(bizOpShelfInfo);
+          bizShelfUser1.setUser(systemService.getUser(Integer.parseInt(userIdStr[i].trim())));
+          List<BizShelfUser> list = bizShelfUserService.findList(bizShelfUser1);
+          //不可重复添加
+          if(list == null || list.size()==0) {
+              bizShelfUser.setId(null);
+              bizShelfUser.setShelfInfo(bizOpShelfInfo);
+              User user1 = systemService.getUser(Integer.parseInt(userIdStr[i].trim()));
+              bizShelfUser.setUser(user1);
+              bizShelfUserService.save(bizShelfUser);
+          }
+      }
+
+        return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/shelfManagementList?id="+bizOpShelfInfo.getId();
+	}
+
+    @RequiresPermissions("biz:shelf:bizOpShelfInfo:edit")
+    @RequestMapping(value = "deleteShelfUser")
+    public String deleteShelfUser(BizShelfUser bizShelfUser, RedirectAttributes redirectAttributes) {
+        bizShelfUserService.delete(bizShelfUser);
+        addMessage(redirectAttributes, "删除货架管理员成功");
+        return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/shelfManagementList?repage";
+    }
 }

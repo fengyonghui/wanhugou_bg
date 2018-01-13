@@ -50,6 +50,19 @@
 			</div>
 		</div>
 		<biz:selectLocationForm/>
+		<div class="control-group">
+			<label class="control-label">采购中心：</label>
+			<div class="controls">
+				<sys:treeselect id="centerOffice" name="customer.id" value="${bizInventoryInfo.customer.id}" labelName="customer.name"
+								labelValue="${bizInventoryInfo.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="采购中心"  url="/sys/office/queryTreeList?type=8" extId="${centerOffice.id}"
+								cssClass="input-xlarge "
+								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
+				</sys:treeselect>
+				<span class="help-inline"> </span>
+
+			</div>
+		</div>
 		<%--<div class="control-group">--%>
 			<%--<label class="control-label">仓库地址：</label>--%>
 			<%--<div class="controls">--%>

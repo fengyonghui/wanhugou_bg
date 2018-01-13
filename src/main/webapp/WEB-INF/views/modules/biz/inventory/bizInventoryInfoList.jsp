@@ -32,6 +32,9 @@
 			<%--<li><label>common_location.id：</label>--%>
 				<%--<form:input path="locationId" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
 			<%--</li>--%>
+			<li><label>采购中心</label>
+				<form:input path="customer.name" htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -41,6 +44,7 @@
 		<thead>
 			<tr>
 				<th>仓库名称</th>
+				<th>采购中心</th>
 				<shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -51,6 +55,9 @@
 					<%--<a href="${ctx}/biz/inventory/bizInventoryInfo/form?id=${bizInventoryInfo.id}">--%>
 					${bizInventoryInfo.name}
 				</a></td>
+				<td>
+					${bizInventoryInfo.customer.name}
+				</td>
 				<shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit"><td>
 					<a href="${ctx}/biz/inventory/bizInventorySku/list?invInfo.id=${bizInventoryInfo.id}&zt=${zt}">库存详情</a>
     					<c:if test="${zt eq '2'}">
