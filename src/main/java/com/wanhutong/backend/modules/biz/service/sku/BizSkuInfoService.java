@@ -79,7 +79,10 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		Map<String,List<BizSkuInfo>> listMap=new HashMap<String, List<BizSkuInfo>>();
 		for(BizSkuInfo skuInfo:skuInfoList){
 			BizSkuInfo info=findListProd(skuInfo);
-			info.setSkuTypeName(SkuTypeEnum.stateOf(skuInfo.getSkuType()).getName());
+			if(skuInfo.getSkuType()!=null && SkuTypeEnum.stateOf(skuInfo.getSkuType())!=null){
+				info.setSkuTypeName(SkuTypeEnum.stateOf(skuInfo.getSkuType()).getName());
+			}
+
 			BizProductInfo bizProductInfo=info.getProductInfo();
 			if(map.containsKey(bizProductInfo)){
 				List<BizSkuInfo> skuInfos = map.get(bizProductInfo);
@@ -111,22 +114,21 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	public BizSkuInfo findListProd(BizSkuInfo skuInfo){
 		Integer prodId=	skuInfo.getProductInfo().getId();
 		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
-		Office office=null;
 		if(bizProductInfo!=null && bizProductInfo.getOffice()!=null){
-			office=officeService.get(bizProductInfo.getOffice().getId());
+			Office	office=officeService.get(bizProductInfo.getOffice().getId());
+			bizProductInfo.setOffice(office);
+			BizProdCate bizProdCate=new BizProdCate();
+			bizProdCate.setProductInfo(bizProductInfo);
+			List<BizProdCate> prodCateList=bizProdCateService.findList(bizProdCate);
+			StringBuffer cateName=new StringBuffer("\\/");
+			for(BizProdCate prodCate:prodCateList){
+				cateName.append(prodCate.getCategoryInfo().getName());
+
+			}
+			String cateNames=cateName.toString().substring(2);
+			bizProductInfo.setCateNames(cateNames);
 		}
 
-		bizProductInfo.setOffice(office);
-		BizProdCate bizProdCate=new BizProdCate();
-		bizProdCate.setProductInfo(bizProductInfo);
-		List<BizProdCate> prodCateList=bizProdCateService.findList(bizProdCate);
-		StringBuffer cateName=new StringBuffer("\\/");
-		for(BizProdCate prodCate:prodCateList){
-			cateName.append(prodCate.getCategoryInfo().getName());
-
-		}
-		String cateNames=cateName.toString().substring(2);
-		bizProductInfo.setCateNames(cateNames);
 		skuInfo.setProductInfo(bizProductInfo);
 		return skuInfo;
 
