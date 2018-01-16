@@ -6,8 +6,12 @@ package com.wanhutong.backend.modules.biz.service.invoice;
 import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,12 @@ import com.wanhutong.backend.modules.biz.dao.invoice.BizInvoiceHeaderDao;
 @Service
 @Transactional(readOnly = true)
 public class BizInvoiceHeaderService extends CrudService<BizInvoiceHeaderDao, BizInvoiceHeader> {
+
+	@Autowired
+	private BizInvoiceDetailService bizInvoiceDetailService;
+
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
 
 	public BizInvoiceHeader get(Integer id) {
 		return super.get(id);
@@ -46,6 +56,22 @@ public class BizInvoiceHeaderService extends CrudService<BizInvoiceHeaderDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void save(BizInvoiceHeader bizInvoiceHeader) {
+		BizInvoiceDetail bizInvoiceDetail = new BizInvoiceDetail();
+		List<BizInvoiceDetail> list = bizInvoiceHeader.getBizInvoiceDetailList();
+			for (BizInvoiceDetail biz : list) {
+//				计算单个订单的金额
+				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(biz.getOrderHead().getId());
+				Double totalExp = bizOrderHeader.getTotalExp();//订单总费用
+				Double freight = bizOrderHeader.getFreight();//运费
+				Double totalDetail = bizOrderHeader.getTotalDetail();//订单详情总价
+				bizInvoiceHeader.setInvTotal(totalExp + freight + totalDetail);//发票数额
+				super.save(bizInvoiceHeader);
+				bizInvoiceDetail.setOrderHead(bizOrderHeader);
+			}
+			bizInvoiceDetail.setInvAmt(bizInvoiceHeader.getInvTotal());
+			bizInvoiceDetail.setInvoiceHeader(bizInvoiceHeader);
+			bizInvoiceDetailService.save(bizInvoiceDetail);
+
 		super.save(bizInvoiceHeader);
 	}
 	

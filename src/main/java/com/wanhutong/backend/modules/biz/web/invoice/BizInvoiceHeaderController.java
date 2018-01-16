@@ -87,30 +87,6 @@ public class BizInvoiceHeaderController extends BaseController {
 			bizInvoiceHeader.setInvTotal(0.0);
 		}
 		bizInvoiceHeaderService.save(bizInvoiceHeader);
-		BizInvoiceDetail bizInvoiceDetail = new BizInvoiceDetail();
-		List<BizInvoiceDetail> bizInvoiceDetailList = bizInvoiceHeader.getBizInvoiceDetailList();
-		int i=0;
-		if(bizInvoiceDetailList!=null){
-			for(BizInvoiceDetail biz: bizInvoiceDetailList){
-//				计算单个订单的金额
-				biz.setLineNo(++i);
-				BizOrderHeader bizOrderHeader= bizOrderHeaderService.get(biz.getOrderHead().getId());
-				Double totalExp = bizOrderHeader.getTotalExp();
-				Double freight = bizOrderHeader.getFreight();
-				Double totalDetail = bizOrderHeader.getTotalDetail();
-				biz.setInvAmt(totalExp+freight+totalDetail);
-				biz.setInvoiceHeader(bizInvoiceHeader);
-				bizInvoiceDetailService.save(biz);
-			}
-			List<BizInvoiceDetail> detailList = bizInvoiceDetailService.findList(bizInvoiceDetail);
-			Double invAmt= bizInvoiceHeader.getInvTotal();
-			for (BizInvoiceDetail bid : detailList) {
-//				计算单个发票详情的金额
-				invAmt += bid.getInvAmt();
-			}
-			bizInvoiceHeader.setInvTotal(invAmt);
-			bizInvoiceHeaderService.save(bizInvoiceHeader);
-		}
 		addMessage(redirectAttributes, "保存发票抬头成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceHeader/";
 	}

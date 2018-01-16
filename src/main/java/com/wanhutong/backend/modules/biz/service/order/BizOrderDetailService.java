@@ -14,6 +14,7 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.BizOrderDiscount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,47 +57,51 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
 
 	@Transactional(readOnly = false)
 	public void save(BizOrderDetail bizOrderDetail) {
+		String oneOrder = bizOrderDetail.getOrderHeader().getOneOrder();//首次下单标记
+//		------------------------计算订单详情总价----------------------
+		BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
+		Double sum = 0.0;
+		for (BizOrderHeader order : list) {
+			Double price = bizOrderDetail.getUnitPrice();//商品单价
+			Integer ordQty = bizOrderDetail.getOrdQty();//采购数量
+			sum+=price*ordQty;
+			if(oneOrder==null || oneOrder.isEmpty()){
+				System.out.println("优惠");
+				bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail() + sum);
+				bizOrderHeaderService.save(bizOrderHeader);
+			}else{
+				System.out.println("无优惠");
+				bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail() + sum);
+				bizOrderHeaderService.save(bizOrderHeader);
+			}
+		}
+		BizOrderHeader orderHeader = new BizOrderHeader();
 		Integer skuId = bizOrderDetail.getSkuInfo().getId();//sku_info.id
 		BizSkuInfo bizSkuInfo = bizSkuInfoService.get(skuId);
 		bizOrderDetail.setSkuName(bizSkuInfo.getName());
 //		-----------------------------订单状态 专营与非专营------------------------------
-		BizOrderHeader orderHeader = new BizOrderHeader();
 		BizSkuInfo bizSkuInfo1 = new BizSkuInfo();
 		bizSkuInfo1.setId(skuId);
 		BizSkuInfo skuInfo = bizSkuInfoService.get(bizSkuInfo1);
-		if(skuInfo.getSkuType()==1){//专营商品
+		if(skuInfo.getSkuType()== BizOrderDiscount.TWO_ORDER.getOneOr()){//专营商品 skuType=1
 			System.out.println("--专营商品--");
+//-------------------------------------------------------------------------------------
+		bizOrderDetail.getOrderHeader();
+			bizOrderHeader.getTotalDetail();
+//-------------------------------------------------------------------------------------
 
 			orderHeader.setBizType(skuInfo.getSkuType());
 //			bizOrderHeaderService.save(orderHeader);
-		}else if(skuInfo.getSkuType()==2){
+		}else if(skuInfo.getSkuType()==BizOrderDiscount.THIS_ORDER.getOneOr()){ //定制 skuType=2
 			System.out.println("-- 定制商品 暂时不处理 --");
-		}else if(skuInfo.getSkuType()==3){//非专营商品
-
+		}else if(skuInfo.getSkuType()==BizOrderDiscount.FIRST_ORDER.getOneOr()){//非专营商品 skuType=3
 			System.out.println("非专营");
+
 			orderHeader.setBizType(skuInfo.getSkuType());
 //			bizOrderHeaderService.save(orderHeader);
 		}else{
 			System.out.println("--- 未知商品 暂不处理 ---");
-		}
-		Double sum = 0.0;
-        BizOrderHeader BizOrderHeader = new BizOrderHeader();
-		String oneOrder = bizOrderDetail.getOrderHeader().getOneOrder();//首次下单标记
-        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
-//		------------------------计算订单详情总价----------------------
-		List<BizOrderDetail> list = super.findList(bizOrderDetail);
-		for (BizOrderDetail detail : list) {
-			Double price = detail.getUnitPrice();//商品单价
-			Integer ordQty = detail.getOrdQty();//采购数量
-			sum+=price*ordQty;
-			if(oneOrder.equals("") && oneOrder.equals(null)) {
-                System.out.println("--计算优惠--");
-                bizOrderHeader.setTotalDetail(orderHeader.getTotalDetail() + sum);
-                bizOrderHeaderService.save(bizOrderHeader);
-            }else{
-                bizOrderHeader.setTotalDetail(orderHeader.getTotalDetail() + sum);
-                bizOrderHeaderService.save(bizOrderHeader);
-		    }
 		}
 //		-----------------------------分割一下是订单详情-------------------------------------------
 		Integer ordQtyFront = bizOrderDetail.getOrdQtyUpda();//修改前采购数量
