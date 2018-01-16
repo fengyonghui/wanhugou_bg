@@ -1,3 +1,4 @@
+<%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
@@ -9,7 +10,11 @@
         var skuInfoId="";
 		$(document).ready(function() {
 			//$("#name").focus();
-
+			var str=$("#str").val();
+			if(str=='detail'){
+			   $("#inputForm").find("input[type!='button']").attr("disabled","disabled") ;
+			   $("#fromOfficeButton").hide();
+			}
 			$("#inputForm").validate({
 				submitHandler: function(form){
                     $("input[name='reqQtys']").each(function () {
@@ -139,7 +144,20 @@
                 })
 			}
 
+        }
+        function checkInfo(obj,val) {
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/request/bizRequestHeader/saveInfo",
+                data:{checkStatus:obj,id:$("#id").val()},
+                success:function (data) {
+                    if(data){
+                        alert(val+"成功！");
+                        window.location.href="${ctx}/biz/request/bizRequestHeader";
 
+                    }
+                }
+            })
         }
 	</script>
 </head>
@@ -150,6 +168,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input id="str" type="hidden"  value="${entity.str}"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
@@ -170,6 +189,8 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		<c:if test="${entity.str!='detail'}">
+
 		<div class="control-group">
 			<label class="control-label">选择商品：</label>
 			<div class="controls">
@@ -197,7 +218,9 @@
 
 			</div>
 		</div>
-		<div class="control-group">
+
+		</c:if>
+			<div class="control-group">
 			<label class="control-label">备货商品：</label>
 			<div class="controls">
 			<table id="contentTable" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
@@ -209,8 +232,17 @@
 					<th>商品编码</th>
 					<th>商品属性</th>
 					<th>申报数量</th>
-						<%--<th>已收货数量</th>--%>
-					<th>操作</th>
+					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
+						<th>已收货数量</th>
+					</c:if>
+
+					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
+						<c:if test="${entity.str!='detail'}">
+							<th>操作</th>
+						</c:if>
+
+					</shiro:hasPermission>
+
 				</tr>
 				</thead>
 				<tbody id="prodInfo">
@@ -223,16 +255,22 @@
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
 							<td>
-								<input type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
+								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 								<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
 
 								<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 							</td>
-
-							<td><shiro:hasPermission name="biz:request:bizRequestDetail:edit">
+							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
+								<td>${reqDetail.recvQty}</td>
+							</c:if>
+							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
+								<c:if test="${entity.str!='detail'}">
+								<td>
 								<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
+
+								</td>
+								</c:if>
 							</shiro:hasPermission>
-							</td>
 						</tr>
 						<c:if test="${reqStatus.last}">
 							<c:set var="aa" value="${reqStatus.index}" scope="page"/>
@@ -243,6 +281,7 @@
 				</c:if>
 				</tbody>
 			</table>
+			<c:if test="${entity.str!='detail'}">
 			<table id="contentTable2" style="width:48%;float: right" class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
@@ -264,6 +303,7 @@
 
 					</tbody>
 				</table>
+			</c:if>
 			</div>
 
 		</div>
@@ -274,19 +314,40 @@
 				<form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>
 			</div>
 		</div>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">业务状态：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<form:select path="bizStatus" class="input-xlarge required">--%>
-					<%--<form:option value="" label="请选择"/>--%>
-					<%--<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
-				<%--</form:select>--%>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			<%--</div>--%>
-		<%--</div>--%>
+		<c:if test="${fns:getUser().isAdmin()}">
+			<div class="control-group">
+				<label class="control-label">业务状态：</label>
+				<div class="controls">
+					<form:select path="bizStatus" class="input-xlarge required">
+						<form:option value="" label="请选择"/>
+						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+					</form:select>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
+
 
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+
+			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
+				<c:forEach items="${fns:getUser().roleList}" var="role">
+					<c:if test="${role.enname==RoleEnNameEnum.P_CENTER_MANAGER.state}">
+						<c:set var="flag" value="true"/>
+					</c:if>
+				</c:forEach>
+				<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.APPROVE.state}">
+					<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;
+				</c:if>
+				<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
+					<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;
+					<input id="btnCheck" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.APPROVE.state},this.value)" type="button" value="审核通过"/>&nbsp;
+				</c:if>
+				<c:if test="${entity.str!='detail'}">
+					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
+				</c:if>
+
+			</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 

@@ -145,24 +145,12 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 				bizRequestDetailService.save(bizRequestDetail);
 			}
 		}
-//		int i=0;
-//		boolean flag=false;
-//
-//		for(BizRequestDetail requestDetail:requestDetailList){
-//			if(requestDetail.getId()!=null){
-//				flag=true;
-//			}
-//			if(flag){
-//				i=requestDetailList.size();
-//			}
-//			if(requestDetail.getId()==null){
-//				requestDetail.setLineNo(++i);
-//			}
-//			requestDetail.setRequestHeader(bizRequestHeader);
-//			bizRequestDetailService.save(requestDetail);
-//		}
 	}
 
+	@Transactional(readOnly = false)
+	public void saveInfo(BizRequestHeader bizRequestHeader) {
+		super.save(bizRequestHeader);
+	}
 	@Transactional(readOnly = false)
 	public void saveRequestHeader(BizRequestHeader bizRequestHeader) {
 		super.save(bizRequestHeader);

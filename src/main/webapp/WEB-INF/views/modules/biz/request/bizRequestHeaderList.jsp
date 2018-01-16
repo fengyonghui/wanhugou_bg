@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -13,6 +14,20 @@
 			$("#pageSize").val(s);
 			$("#searchForm").submit();
         	return false;
+        }
+        function checkInfo(obj,val,hid) {
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/request/bizRequestHeader/saveInfo",
+                data:{checkStatus:obj,id:hid},
+                success:function (data) {
+                    if(data){
+                        alert(val+"成功！");
+                        window.location.href="${ctx}/biz/request/bizRequestHeader";
+
+                    }
+                }
+            })
         }
 	</script>
 </head>
@@ -54,35 +69,43 @@
 		<thead>
 			<tr>
 				<th>备货单号</th>
-				<th>备货单类型</th>
 				<th>采购中心</th>
-				<th>备货中心</th>
 				<th>期望收货时间</th>
+				<th>备货商品数量</th>
+				<th>已到货数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
-				<th>更新人</th>
+				<th>申请人</th>
 				<th>更新时间</th>
-				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><th>操作</th></shiro:hasPermission>
+				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="requestHeader">
 			<tr>
-				<td><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">
-					${requestHeader.reqNo}
-				</a></td>
 				<td>
-					${fns:getDictLabel(requestHeader.reqType, 'biz_req_type', '未知类型')}
+					<c:choose>
+						<c:when test="${fns:getUser().isAdmin()}">
+							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">
+						</c:when>
+						<c:when test="${requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state}">
+							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">
+							</c:when>
+							<c:otherwise>
+								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">
+							</c:otherwise>
+					</c:choose>
+					${requestHeader.reqNo}
+					</a>
 				</td>
 				<td>
 					${requestHeader.fromOffice.name}
 				</td>
 				<td>
-					${requestHeader.toOffice.name}
-				</td>
-				<td>
 					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
+				<td>${requestHeader.reqQtys}</td>
+				<td>${requestHeader.recvQtys}</td>
 				<td>
 					${requestHeader.remark}
 				</td>
@@ -90,17 +113,40 @@
 					${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
 				</td>
 				<td>
-					${requestHeader.updateBy.name}
+					${requestHeader.createBy.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>
-    				<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
+				<shiro:hasPermission name="biz:request:bizRequestHeader:view"><td>
 
-						<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+					<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
 
-					</td></shiro:hasPermission>
+				<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
+					<c:choose>
+						<c:when test="${fns:getUser().isAdmin()}">
+							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
+
+							<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+
+						</c:when>
+						<c:when test="${!fns:getUser().isAdmin() && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state}">
+							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
+
+							<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+						</c:when>
+						<c:when test="${requestHeader.bizStatus>=ReqHeaderStatusEnum.APPROVE.state && requestHeader.bizStatus<=ReqHeaderStatusEnum.STOCK_COMPLETE.state}">
+							<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>
+						</c:when>
+						<%--<c:when test="${requestHeader.bizStatus==ReqHeaderStatusEnum.COMPLETE.state}">--%>
+							<%--<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>--%>
+						<%--</c:when>--%>
+					</c:choose>
+
+
+				</shiro:hasPermission>
+
+				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
 		</tbody>

@@ -108,6 +108,22 @@ public class BizRequestHeaderController extends BaseController {
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
 	}
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "saveInfo")
+	public boolean saveInfo(BizRequestHeader bizRequestHeader, String checkStatus) {
+		bizRequestHeader.setBizStatus(Integer.parseInt(checkStatus));
+		boolean boo=false;
+		try {
+			bizRequestHeaderService.save(bizRequestHeader);
+			boo=true;
+		}catch (Exception e){
+			boo=false;
+			logger.error(e.getMessage());
+		}
+			return boo;
+
+	}
 
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "delete")

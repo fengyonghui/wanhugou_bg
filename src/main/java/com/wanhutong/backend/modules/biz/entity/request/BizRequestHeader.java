@@ -53,6 +53,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String startDate;
 
 	private String endDate;
+
+	private String str;
+
+	private String recvQtys;
 	
 	public BizRequestHeader() {
 		super();
@@ -238,5 +242,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setReqDetailIds(String reqDetailIds) {
 		this.reqDetailIds = reqDetailIds;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
+
+	public String getRecvQtys() {
+		return recvQtys;
+	}
+
+	public void setRecvQtys(String recvQtys) {
+		this.recvQtys = recvQtys;
 	}
 }
