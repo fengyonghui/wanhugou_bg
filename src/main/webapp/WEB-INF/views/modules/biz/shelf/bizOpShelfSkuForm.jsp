@@ -148,40 +148,6 @@
                 }
             })
 		});
-		function check() {
-            $.ajax({
-                type:"POST",
-                url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameList?ids=3",
-                dataType:"json",
-                success:function(data){
-                    var htmlInfo = "";
-                    $.each(data,function(index,item) {
-                        alert(item);
-                        htmlInfo+="<tr><td><input name='' value='"+ item.name +"' class='input-medium required' type='text' placeholder='必填！'/></td>"+
-                            "<c:if test='${bizOpShelfSku.id != null}'><td>"+
-                            "<input name='createBy.name' value='${createBy.name}' htmlEscape='false' maxlength='11' class='input-medium' readonly='true' placeholder='必填！'/></td>"+
-                            "</c:if>"+
-                            "<td><input name='shelfQty' value='' htmlEscape='false' maxlength='6' class='input-medium required' type='text' placeholder='必填！'/></td>"+
-                            "<td><input name=\"orgPrice\" value=\""+item.basePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-                            "<td><input name=\"salePrice\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" placeholder=\"必填！\"/></td>"+
-                            "<td><input name=\"minQty\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-                            "<td><input name=\"maxQty\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-                            "<td><input name=\"shelfTime\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
-                            "value=\"<fmt:formatDate value='${bizOpShelfSku.shelfTime}' pattern='yyyy-MM-dd HH:mm:ss'/>\"" +
-                            "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"必填！\"/></td>"+
-                            "<c:if test='${bizOpShelfSku.id != null}'>\n" +
-                            "<td><input name=\"createBy.name\" value=\"${createBy.name}\" htmlEscape=\"false\" maxlength=\"11\" class=\"input-medium\" readonly=\"true\" type=\"text\" placeholder=\"必填！\"/></td>" +
-                            "</c:if>" +
-                            "<td><input name=\"unshelfTime\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
-                            "value=\"<fmt:formatDate value='${bizOpShelfSku.unshelfTime}' pattern='yyyy-MM-dd HH:mm:ss'/>\"" +
-                            "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-                            "<td><input name=\"priority\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td></tr>";
-                        alert(htmlInfo)
-                        $("#tbody").append(htmlInfo);
-                    });
-                }
-            })
-        }
 	</script>
 </head>
 <body>
