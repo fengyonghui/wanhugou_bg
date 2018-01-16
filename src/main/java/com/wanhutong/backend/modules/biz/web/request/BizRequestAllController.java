@@ -29,13 +29,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-//import java.util.stream.Collectors;
-//import java.util.stream.Stream;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供货中）
  */
-/*
+
 @Controller
 @RequestMapping(value = "${adminPath}/biz/request/bizRequestAll")
 public class BizRequestAllController {
@@ -231,4 +231,4 @@ public class BizRequestAllController {
                 }
 
 
-}*/
+}
