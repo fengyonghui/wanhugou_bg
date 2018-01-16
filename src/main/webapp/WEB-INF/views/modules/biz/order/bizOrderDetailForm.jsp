@@ -70,9 +70,9 @@ function shelf(){
             var htmlInfo="<tbody>";
             for(var o in data){
                 htmlInfo+="<tr><td><input type='checkbox' name='boxs' value="+data[o].id+">"+
-                        "</td><td><input name='shelfList["+o+"].shelfInfo.id' value='"+data[o].id+"' type='hidden'/></td>"+
-                        "<td>"+data[o].name+"</td><td>"+data[o].description+"<input type='hidden' name='shelfInfo.id' value='"+data[o].id+"'></td></tr>";
-              }
+                    "</td><td><input name='shelfList["+o+"].shelfInfo.id' value='"+data[o].id+"' type='hidden'/></td>"+
+                    "<td>"+data[o].name+"</td><td>"+data[o].description+"<input type='hidden' name='shelfInfo.id' value='"+data[o].id+"'></td></tr>";
+            }
             htmlInfo+="</tbody>";
             $("#boxTbody").append(htmlInfo);
         }

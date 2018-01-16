@@ -25,7 +25,7 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>sku名称：</label>
+			<li><label>商品名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>上架时间：</label>
@@ -66,7 +66,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>sku名称</th>
+				<th>商品名称</th>
 				<th>采购中心</th>
 				<th>上架数量(个)</th>
 				<th>原价(元)</th>

@@ -51,8 +51,8 @@
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				AND a.inv_id = #{invInfo.id}
 			</if>
-			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
-				AND a.inv_id = #{skuInfo.id}
+			<if test="invInfo != null and invInfo.customer!= null and invInfo.customer.id !=null and invInfo.customer.id != ''">
+				AND i.cust_id = #{invInfo.customer.id}
 			</if>
 
 			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
@@ -61,12 +61,27 @@
 
 			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
 				AND sku.name LIKE
-				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
+			<if test="skuInfo != null and skuInfo.partNo != null and skuInfo.partNo != ''">
+				AND sku.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+			</if>
+			<if test="invInfo != null and invInfo.name != null and invInfo.name != ''">
+				AND i.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{invInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{invInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{invInfo.name},'%')</if>
+			</if>
 			<if test="invType != null and invType != ''">
-				AND a.inv_type != #{invType}
+				AND a.inv_type = #{invType}
+			</if>
+			<if test="sqlMap != null and sqlMap.inventorySku != null and sqlMap.inventorySku != ''">
+				${sqlMap.inventorySku}
 			</if>
 		</where>
 		<choose>

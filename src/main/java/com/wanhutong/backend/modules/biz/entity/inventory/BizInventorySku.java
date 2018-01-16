@@ -8,6 +8,8 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
 /**
  * 商品库存详情Entity
  * @author 张腾飞
@@ -24,6 +26,7 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	private Integer transInQty;        // 调入数量--仓库间商品调拨，调拨单已审批
 	private Integer transOutQty;        // 调出数量--仓库间商品调拨，调拨单对方已出库
 	private Office customer;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
+	private List invInfoList;		//仓库集合
 //	private String sOrdQty;
 
 	public BizInventorySku() {
@@ -103,4 +106,11 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 		this.transOutQty = transOutQty;
 	}
 
+	public List getInvInfoList() {
+		return invInfoList;
+	}
+
+	public void setInvInfoList(List invInfoList) {
+		this.invInfoList = invInfoList;
+	}
 }

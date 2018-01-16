@@ -27,12 +27,14 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
+	private BizInventoryInfo invInfo;		//发货仓库，biz_inventory_info.id
 	private BizOrderHeader bizOrderHeader;		// order_id
 	private BizRequestHeader bizRequestHeader;	//request_id
 	private String orderNum;		//订单号
 	private Integer sendNum;		// 供货数量
 	private Office customer;		// 采购商ID sys_office.id &amp;  type='customer'
 	private Date sendDate;		// 供货时间
+	private Integer bizStatus;		//供货方状态    0：采购中心 ，1：供货中心
 	private BizRequestDetail bizRequestDetail;
 	private BizOrderDetail bizOrderDetail;
 	private List<BizSendGoodsRecord> bizSendGoodsRecordList;
@@ -95,6 +97,14 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 		this.sendDate = sendDate;
 	}
 
+	public Integer getBizStatus() {
+		return bizStatus;
+	}
+
+	public void setBizStatus(Integer bizStatus) {
+		this.bizStatus = bizStatus;
+	}
+
 	public BizRequestHeader getBizRequestHeader() {
 		return bizRequestHeader;
 	}
@@ -126,4 +136,13 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	public void setBizSendGoodsRecordList(List<BizSendGoodsRecord> bizSendGoodsRecordList) {
 		this.bizSendGoodsRecordList = bizSendGoodsRecordList;
 	}
+
+	public BizInventoryInfo getInvInfo() {
+		return invInfo;
+	}
+
+	public void setInvInfo(BizInventoryInfo invInfo) {
+		this.invInfo = invInfo;
+	}
+
 }

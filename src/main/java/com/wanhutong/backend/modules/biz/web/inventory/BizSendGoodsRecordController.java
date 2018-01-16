@@ -7,19 +7,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,6 +66,8 @@ public class BizSendGoodsRecordController extends BaseController {
 	private BizRequestHeaderService bizRequestHeaderService;
 	@Autowired
 	private BizOrderDetailService bizOrderDetailService;
+	@Autowired
+    private BizInventorySkuService bizInventorySkuService;
 	
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -96,79 +103,7 @@ public class BizSendGoodsRecordController extends BaseController {
 //		if (!beanValidator(model, bizSendGoodsRecord)){
 //			return form(bizSendGoodsRecord, model);
 //		}
-
-		boolean flagRequest = true;		//备货单完成状态
-		boolean flagOrder = true;		//销售单完成状态
-			for (BizSendGoodsRecord bsgr : bizSendGoodsRecord.getBizSendGoodsRecordList()) {
-				int sendNum = bsgr.getSendNum();    //供货数
-			//累计备货单供货数量
-			if (bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getId() != 0) {
-				int sendQty = bsgr.getBizRequestDetail().getSendQty();   //备货单累计供货数量
-				//当供货数量和申报数量不相等时，更改备货单状态
-				if (bsgr.getBizRequestDetail().getReqQty() != (sendQty + sendNum)) {
-					flagRequest = false;
-				}
-				if (sendNum == 0) {
-					continue;
-				}
-				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
-				bizRequestDetail.setSendQty(sendQty + sendNum);
-				bizRequestDetailService.save(bizRequestDetail);
-			}
-			//累计销售单供货数量
-				if (bsgr.getBizOrderDetail() != null && bsgr.getBizOrderDetail().getId() != 0) {
-					int sentQty = bsgr.getBizOrderDetail().getSentQty();	//销售单累计供货数量
-					//当供货数量和申报数量不相等时，更改销售单状态
-					if (bsgr.getBizOrderDetail().getOrdQty() != (sentQty + sendNum)){
-						flagOrder = false;
-					}
-					if (sendNum == 0) {
-						continue;
-					}
-					BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
-					bizOrderDetail.setSentQty(sentQty + sendNum);
-					bizOrderDetailService.save(bizOrderDetail);
-
-				}
-
-				//准备数据
-				//采购中心
-				Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
-				//商品
-				BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
-				//生成供货记录表
-				bsgr.setSendNum(sendNum);
-				if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
-					BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
-					bsgr.setBizRequestHeader(bizRequestHeader);
-				}
-				if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
-					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
-					bsgr.setBizOrderHeader(bizOrderHeader);
-				}
-				bsgr.setCustomer(office);
-				bsgr.setSkuInfo(bizSkuInfo);
-				bsgr.setOrderNum(bsgr.getOrderNum());
-				Date date = new Date();
-				bsgr.setSendDate(date);
-				bizSendGoodsRecordService.save(bsgr);
-
-		}
-		//更改订单状态
-		if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
-			if (flagRequest) {
-				BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
-				bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
-				bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-			}
-		}
-		if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
-			if (flagOrder) {
-				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
-				bizOrderHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
-				bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-			}
-		}
+		    bizSendGoodsRecordService.save(bizSendGoodsRecord);
 			addMessage(redirectAttributes, "保存供货记录成功");
 			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage";
 	}

@@ -3,12 +3,14 @@ package com.wanhutong.backend.modules.biz.web.request;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
@@ -17,8 +19,10 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +55,10 @@ public class BizRequestAllController {
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired
     private BizOrderDetailService bizOrderDetailService;
+    @Autowired
+    private BizInventoryInfoService bizInventoryInfoService;
+    @Autowired
+    private SystemService systemService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -101,11 +109,18 @@ public class BizRequestAllController {
         }
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = "form")
-    public String form(String source,BizRequestHeader bizRequestHeader,BizOrderHeader bizOrderHeader, Model model) {
+    public String form(String source,Integer id, Model model) {
         List<BizRequestDetail> reqDetailList = Lists.newArrayList();
         List<BizOrderDetail> ordDetailList=Lists.newArrayList();
         BizOrderHeader orderHeader=null;
         BizRequestHeader requestHeader=null;
+        BizRequestHeader bizRequestHeader = new BizRequestHeader();
+        BizOrderHeader bizOrderHeader= new BizOrderHeader();
+        if ("kc".equals(source)){
+            bizOrderHeader = bizOrderHeaderService.get(id);
+        }else{
+            bizRequestHeader = bizRequestHeaderService.get(id);
+        }
         if (bizRequestHeader.getId() != null) {
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(bizRequestHeader);
@@ -118,6 +133,19 @@ public class BizRequestAllController {
             requestHeader= bizRequestHeaderService.get(bizRequestHeader.getId());
         }
         if (bizOrderHeader.getId() != null) {
+            //取出用户所属采购中心
+            BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+            User user = UserUtils.getUser();
+            if (user.isAdmin()){
+                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+                model.addAttribute("invInfoList",invInfoList);
+            }else {
+                Office company = systemService.getUser(user.getId()).getCompany();
+                BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
+                bizInventoryInfo1.setCustomer(company);
+                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo1);
+                model.addAttribute("invInfoList",invInfoList);
+            }
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
@@ -136,6 +164,18 @@ public class BizRequestAllController {
             return "modules/biz/request/bizRequestHeaderKcForm";
         }
         if(source != null && "sh".equals(source)){
+            BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+            User user = UserUtils.getUser();
+            if (user.isAdmin()){
+                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+                model.addAttribute("invInfoList",invInfoList);
+            }else {
+                Office company = systemService.getUser(user.getId()).getCompany();
+                BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
+                bizInventoryInfo1.setCustomer(company);
+                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo1);
+                model.addAttribute("invInfoList",invInfoList);
+            }
             return "modules/biz/request/bizRequestKcForm";
         }
        // if(source!=null && "gh".equals(source)){

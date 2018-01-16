@@ -33,6 +33,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -140,6 +141,23 @@ public class BizSkuInfoController extends BaseController {
 	public BizSkuInfo findSysBySku(Integer skuId, HttpServletRequest request, HttpServletResponse response, Model model) {
         BizSkuInfo bizSkuInfo = bizSkuInfoService.get(skuId);
 		return bizSkuInfo;
+	}
+
+	//根据多个id选择商品
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findSkuNameList")
+	public List<BizSkuInfo> findSkuNameList(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+
+        List<BizSkuInfo> bizSkuInfoList = new ArrayList<>();
+	    if (ids != null && !"".equals(ids)){
+            String[] id = ids.split(",");
+            for(int i = 0; i < id.length; i++){
+                BizSkuInfo bizSkuInfo1 = bizSkuInfoService.get(Integer.parseInt(id[i].trim()));
+                bizSkuInfoList.add(bizSkuInfo1);
+            }
+        }
+        return bizSkuInfoList;
 	}
 
 

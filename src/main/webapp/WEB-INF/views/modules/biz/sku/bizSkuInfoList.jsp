@@ -25,14 +25,14 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-            <li><label>sku类型：</label>
+            <li><label>商品类型：</label>
                 <form:select path="skuType" class="input-xlarge required">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('skuType')}" itemLabel="label" itemValue="value"
                                   htmlEscape="false"/>
                 </form:select>
             </li>
-            <li><label>sku名称：</label>
+            <li><label>商品名称：</label>
                 <form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
             </li>
 			<li><label>商品编码：</label>
@@ -47,8 +47,8 @@
 		<thead>
 			<tr>
 				<th>商品名称</th>
-				<th>sku类型</th>
-				<th>sku名称</th>
+				<th>商品类型</th>
+				<th>产品名称</th>
 				<th>商品编码</th>
 				<%--<th>创建人</th>--%>
 				<th>基础售价</th>
@@ -65,13 +65,13 @@
 		<c:forEach items="${page.list}" var="bizSkuInfo">
 			<tr>
 				<td>
-					<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizSkuInfo.productInfo.id}">${bizSkuInfo.productInfo.name}</a>
+					<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.productInfo.id}">${bizSkuInfo.name}</a>
 					</td>
 					<td>
                         ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}
 					</td>
 					<td>
-						${bizSkuInfo.name}
+						${bizSkuInfo.productInfo.name}
 					</td>
 				    <td>
 						${bizSkuInfo.partNo}

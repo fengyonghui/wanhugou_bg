@@ -40,10 +40,10 @@
             var reqQty = $("#reqQty"+obj).val();	//申报数量
             var receiveNum = $("#receiveNum"+obj).val();		//收货数量
 			var recvQty = $("#recvQty"+obj).val();		//已收货数量
-            var sendQty = $("#sendQty"+obj).val();		//已供货数量
+            // var sendQty = $("#sendQty"+obj).val();		//已供货数量
             var sum = parseInt(receiveNum) + parseInt(recvQty);
-            if (sum > sendQty){
-                alert("收货数太大，已超过已供货数，请重新调整收货货数量！");
+            if (sum > reqQty){
+                alert("收货数太大，已超过申报数量，请重新调整收货数量！");
                 $("#sendNum"+obj).val(0);
                 return false;
             }
@@ -63,7 +63,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
+		<li><a href="${ctx}/biz/request/bizRequestHeader?source=sh">备货清单列表</a></li>
 		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizRequestHeader.id}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<%--@elvariable id="bizSendGoodsRecord" type="com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord"--%>
@@ -104,12 +104,15 @@
 						<th>SKU</th>
 						<th>SKU编号</th>
 						<th>申报数量</th>
-						<th>已供数量</th>
+						<%--<th>已供数量</th>--%>
 						<th>已收数量</th>
 
 
 							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<th>收货数量</th>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+								<th>收货仓库</th>
 							</shiro:hasPermission>
 
 					</tr>
@@ -147,9 +150,9 @@
 										<input name="bizCollectGoodsRecordList[${reqStatus.index}].orderNum" value="${reqDetail.requestHeader.reqNo}" type="hidden"/>
 									</c:if>
 								</td>
-								<td>
-									<input id="sendQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.sendQty' readonly="readonly" value="${reqDetail.sendQty}" type='text'/>
-								</td>
+								<%--<td>--%>
+									<%--<input id="sendQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.sendQty' readonly="readonly" value="${reqDetail.sendQty}" type='text'/>--%>
+								<%--</td>--%>
 								<td>
 									<input id="recvQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.recvQty' readonly="readonly" value="${reqDetail.recvQty}" type='text'/>
 								</td>
@@ -158,6 +161,16 @@
 								<td>
 									<input id="receiveNum${reqStatus.index}" name="bizCollectGoodsRecordList[${reqStatus.index}].receiveNum" <c:if test="${reqDetail.recvQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout(${reqStatus.index})"/>
 								</td>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+									<td>
+										<select name="invInfo.id" class="input-medium">
+											<c:forEach items="${invInfoList}" var="invInfo">
+													<option value="${invInfo.id}"/>${invInfo.name}
+											</c:forEach>
+										</select>
+										<%--<input id="invInfo.id${reqStatus.index}" name="bizCollectGoodsRecordList[${reqStatus.index}].invInfo.id" <c:if test="${reqDetail.recvQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="" type="text"/>--%>
+									</td>
 								</shiro:hasPermission>
 							</tr>
 						</c:forEach>

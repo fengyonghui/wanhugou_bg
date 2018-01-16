@@ -56,7 +56,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 		<tr>
-			<th>sku名称</th>
+			<th>商品名称</th>
 			<th>采购中心</th>
 			<th>上架数量(个)</th>
 			<th>原价(元)</th>
