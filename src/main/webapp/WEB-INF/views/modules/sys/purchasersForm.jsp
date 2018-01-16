@@ -23,6 +23,12 @@
 				}
 			});
 		});
+		
+		/* $(function(){
+			$("#s2id_levelID").html("");
+			
+		}) */
+		
 	</script>
 </head>
 <body>
@@ -30,7 +36,7 @@
 		<li><a href="${ctx}/sys/office/purchasersList">机构列表</a></li>
 		<li class="active"><a href="${ctx}/sys/office/purchasersForm?id=${office.id}&parent.id=${office.parent.id}">机构<shiro:hasPermission name="sys:office:edit">${not empty office.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:office:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/purchaserSave" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
@@ -60,6 +66,7 @@
 				<form:input path="code" htmlEscape="false" maxlength="50"/>
 			</div>
 		</div>
+		<input type="hidden" name="officeId" value="${office.id}" />
 		<div class="control-group">
 			<label class="control-label">机构类型:</label>
 			<div class="controls">
@@ -83,6 +90,14 @@
 					<form:options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 				<span class="help-inline">“是”代表此账号允许登陆，“否”则表示此账号不允许登陆</span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">钱包账户:</label>
+			<div class="controls">
+				<form:select path="level" style="width: 18%">
+					<form:options items="${fns:getDictList('biz_cust_credit_level')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 			</div>
 		</div>
 		<div class="control-group">

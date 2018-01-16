@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.wanhutong.backend.common.service.TreeService;
+import com.wanhutong.backend.modules.sys.dao.BizCustCreditDao;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
+import com.wanhutong.backend.modules.sys.entity.BizCustCredit;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 
 import static com.wanhutong.backend.common.persistence.BaseEntity.DEL_FLAG_NORMAL;
@@ -30,6 +33,8 @@ import static com.wanhutong.backend.common.persistence.BaseEntity.DEL_FLAG_NORMA
 public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Autowired
 	private OfficeDao officeDao;
+	@Autowired
+	private BizCustCreditDao bizCustCreditDao;
 
 	public List<Office> findAll(){
 		return UserUtils.getOfficeList();
@@ -98,6 +103,25 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void save(Office office) {
 		super.save(office);
+		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
+	}
+	
+	//创建采购商同时创建钱包
+	@Transactional(readOnly = false)
+	public void save(Office office,BizCustCredit bizCustCredit) {
+		super.save(office);
+		if(office.getIsNewRecord() || bizCustCredit.getOfficeId()== null){
+			if(bizCustCredit != null ){
+				bizCustCredit.setCreateBy(office.getCreateBy());
+				bizCustCredit.setOfficeId(office.getId());
+				bizCustCredit.setPayPwd(SystemService.entryptPassword(DictUtils.getDictValue("密码", "payment_password", "")));
+				bizCustCredit.setuVersion(1);
+				bizCustCreditDao.insert(bizCustCredit);
+			}
+		}else{ 
+			bizCustCredit.setUpdateBy(office.getUpdateBy());
+			bizCustCreditDao.update(bizCustCredit);
+		}
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}
 	
