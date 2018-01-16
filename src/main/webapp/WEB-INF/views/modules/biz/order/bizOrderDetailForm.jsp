@@ -183,7 +183,7 @@ $("#"+obj).remove();
                                         <%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>--%>
                                         <%--<a href="${ctx}/biz/invoice/bizInvoiceDetail/delete?id=${bizOrderDetail.id}&sign=1"--%>
                                         <%--onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>--%>
-                                    <a href="#">删除</>
+                                    <a href="#">删除</a>
                                 </td>
                             </shiro:hasPermission>
                         </tr>

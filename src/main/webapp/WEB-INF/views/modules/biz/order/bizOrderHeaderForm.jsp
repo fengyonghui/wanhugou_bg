@@ -107,9 +107,9 @@
         <div class="controls">
             <form:select path="orderType" class="input-medium required">
                 <form:option value="" label="请选择"/>
-                <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
+                <form:options items="${fns:getDictList('biz_order_type')}" selected = "selected" itemLabel="label" itemValue="value"
                               htmlEscape="false"/></form:select>
-            <span class="help-inline"><font color="red">*</font> </span>
+            <span class="help-inline"><font color="red">*</font>j默认选择</span>
         </div>
     </div>
     <div class="control-group">
@@ -151,7 +151,7 @@
                 <form:option value="" label="请选择"/>
                 <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
                               htmlEscape="false"/></form:select>
-            <span class="help-inline"><font color="red">*</font> </span>
+            <span class="help-inline"><font color="red">*</font>默认选择</span>
         </div>
     </div>
     <div class="control-group">
@@ -161,7 +161,7 @@
                 <form:option value="" label="请选择"/>
                 <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
                               htmlEscape="false"/></form:select>
-            <span class="help-inline"><font color="red">*</font> </span>
+            <span class="help-inline"><font color="red">*</font>默认选择</span>
         </div>
     </div>
     <div class="control-group" id="add1">

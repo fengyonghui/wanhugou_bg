@@ -22,7 +22,8 @@ public class BizInvoiceHeader extends DataEntity<BizInvoiceHeader> {
 	private String invContent;		// 发票内容
 	private Double invTotal;		// 发票数额
 
-	private List<BizInvoiceDetail> bizInvoiceDetailList;	//用于计算发票数额
+	private List<BizInvoiceDetail> bizInvoiceDetailList;	//当前发票抬头下有多少发票详情
+
 	
 	public BizInvoiceHeader() {
 		super();

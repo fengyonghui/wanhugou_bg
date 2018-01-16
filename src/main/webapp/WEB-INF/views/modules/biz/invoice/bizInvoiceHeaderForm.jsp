@@ -173,14 +173,14 @@ function dial(){
 				</tr>
 				</thead>
 				<tbody id="orderHead_table">
-				<c:if test="${bizInvoiceHeader.id !=null && bizInvoiceHeader.id!='' }">
+				<c:if test="${bizInvoiceHeader.id !=null && bizInvoiceHeader.id!=''}">
 						<c:forEach items="${bizInvoiceHeader.bizInvoiceDetailList}" var="bizInvoiceDetail">
 							<tr>
 								<td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">
 										${bizInvoiceDetail.id}</a>
 								</td>
 								<td>
-										${bizOrderDetail.invoiceHeader}
+										${bizOrderDetail.orderHead.orderNum}
 								</td>
 								<td>
 										${bizOrderDetail.invoiceHeader.invTitle}
@@ -198,12 +198,11 @@ function dial(){
 									<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 								</td>
 								<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-									<td>
+									<%--<td>--%>
 										<%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>--%>
 										<%--<a href="${ctx}/biz/invoice/bizInvoiceDetail/delete?id=${bizOrderDetail.id}&sign=1"--%>
 										   <%--onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>--%>
-											<a href="#">删除</>
-									</td>
+									<%--</td>--%>
 								</shiro:hasPermission>
 							</tr>
 						</c:forEach>

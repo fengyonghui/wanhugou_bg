@@ -7,8 +7,8 @@ package com.wanhutong.backend.modules.enums;
  */
 public enum BizOrderDiscount {
 
-    //    自营订单(10%)，非自营订单(5%)
-    SELF_SUPPORT(0.1), NON_SELF_SUPPORT(0.05),ONE_ORDER(0);
+    //    自营订单(10%)，非自营订单(5%)------,判断首单未支付----专营商品---定制商品----非专营商品
+    SELF_SUPPORT(0.1), NON_SELF_SUPPORT(0.05),ONE_ORDER(0),TWO_ORDER(1),THIS_ORDER(2),FIRST_ORDER(3);
 
     //计算元素
     private Double calcs;

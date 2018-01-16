@@ -187,8 +187,11 @@
 		<include refid="bizOrderHeaderJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="bizType !=null and bizType!=''">
-				AND a.biz_type=#{bizType}
+			<if test="customer !=null and customer.id!=null and customer.id!=''">
+				AND a.cust_id=#{customer.id}
+			</if>
+			<if test="bizStatus !=null">
+				AND a.biz_status !=#{bizStatus}
 			</if>
 		</where>
 		<choose>

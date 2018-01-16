@@ -10,6 +10,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.enums.BizOrderDiscount;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -57,8 +58,9 @@ public class BizOrderHeaderController extends BaseController {
 				Double price = detail.getUnitPrice();//商品单价
 				Integer ordQty = detail.getOrdQty();//采购数量
 				sum+=price*ordQty;
+				entity.setTotalDetail(sum);
 			}
-			entity.setTotalDetail(sum);
+			bizOrderHeaderService.save(entity);
 			entity.setOrderDetailList(list);
 		}
 		if (entity == null){
