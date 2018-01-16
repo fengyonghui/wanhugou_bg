@@ -10,6 +10,7 @@ import java.util.*;
 import com.sun.xml.internal.bind.v2.TODO;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
@@ -24,8 +25,10 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.PoHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -54,6 +57,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private DefaultPropService defaultPropService;
 	@Resource
 	private OfficeService officeService;
+	@Resource
+	private BizSkuInfoService bizSkuInfoService;
 
 
 	public BizRequestHeader get(Integer id) {
@@ -101,24 +106,61 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			Office office=officeService.get(vendId);
 			bizRequestHeader.setToOffice(office);
 		}
-		List<BizRequestDetail> requestDetailList=bizRequestHeader.getRequestDetailList();
-
-		super.save(bizRequestHeader);
-		int i=0;
+		User user=UserUtils.getUser();
 		boolean flag=false;
-		for(BizRequestDetail requestDetail:requestDetailList){
-			if(requestDetail.getId()!=null){
-				flag=true;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+					break;
+				}
 			}
-			if(flag){
-				i=requestDetailList.size();
-			}
-			if(requestDetail.getId()==null){
-				requestDetail.setLineNo(++i);
-			}
-			requestDetail.setRequestHeader(bizRequestHeader);
-			bizRequestDetailService.save(requestDetail);
 		}
+
+		if(bizRequestHeader.getId()==null&&user.getRoleList()!=null && flag){
+			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
+		}
+		super.save(bizRequestHeader);
+		BizRequestDetail bizRequestDetail=new BizRequestDetail();
+		if(bizRequestHeader.getSkuInfoIds()!=null && bizRequestHeader.getReqQtys()!=null){
+			String [] skuInfoIdArr=StringUtils.split(bizRequestHeader.getSkuInfoIds(),",");
+			String [] reqArr=StringUtils.split(bizRequestHeader.getReqQtys(),",");
+			int t=0;
+			for(int i=0;i<skuInfoIdArr.length;i++){
+				if(reqArr[i].equals("0")){
+					continue;
+				}
+				bizRequestDetail.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
+				bizRequestDetail.setReqQty(Integer.parseInt(reqArr[i].trim()));
+				bizRequestDetail.setLineNo(t);
+				if(bizRequestHeader.getReqDetailIds()!=null){
+					String [] detailIdArr=StringUtils.split(bizRequestHeader.getReqDetailIds(),",");
+					bizRequestDetail.setId(Integer.parseInt(detailIdArr[i].trim()));
+				}else {
+					bizRequestDetail.setId(null);
+					bizRequestDetail.setLineNo(++t);
+				}
+
+				bizRequestDetail.setRequestHeader(bizRequestHeader);
+				bizRequestDetailService.save(bizRequestDetail);
+			}
+		}
+//		int i=0;
+//		boolean flag=false;
+//
+//		for(BizRequestDetail requestDetail:requestDetailList){
+//			if(requestDetail.getId()!=null){
+//				flag=true;
+//			}
+//			if(flag){
+//				i=requestDetailList.size();
+//			}
+//			if(requestDetail.getId()==null){
+//				requestDetail.setLineNo(++i);
+//			}
+//			requestDetail.setRequestHeader(bizRequestHeader);
+//			bizRequestDetailService.save(requestDetail);
+//		}
 	}
 
 	@Transactional(readOnly = false)

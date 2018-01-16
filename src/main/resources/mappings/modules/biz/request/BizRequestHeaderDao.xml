@@ -110,7 +110,9 @@
 			to_id,
 			recv_eta,
 			remark,
+		<if test="bizStatus!=null">
 			biz_status,
+		</if>
 			status,
 			create_id,
 			create_time,
@@ -127,7 +129,9 @@
 			#{toOffice.id},
 			#{recvEta},
 			#{remark},
+		<if test="bizStatus!=null">
 			#{bizStatus},
+		</if>
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -148,7 +152,9 @@
 			to_id = #{toOffice.id},
 			recv_eta = #{recvEta},
 			remark = #{remark},
+		<if test="bizStatus!=null">
 			biz_status = #{bizStatus},
+		</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
