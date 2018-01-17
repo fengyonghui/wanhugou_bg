@@ -36,6 +36,9 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	
 	@Transactional(readOnly = false)
 	public void save(BizInventorySku bizInventorySku) {
+		if (bizInventorySku.getStockQty()<0){
+			return;
+		}
 		super.save(bizInventorySku);
 	}
 	

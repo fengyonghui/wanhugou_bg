@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.sys.dao.BizCustCreditDao">
+    
+    <resultMap id="bizCustCredit" type="BizCustCredit">
+	  <result property="officeId" column="office_id"/>
+	  <result property="payPwd" column="pay_pwd"/>
+	  <result property="level" column="level"/>
+	  <result property="credit" column="credit"/>
+	  <result property="wallet" column="wallet"/>
+	  <result property="money" column="money"/>
+	  <result property="status" column="status"/>
+	  <result property="createBy.id" column="create_id"/>
+	  <result property="createDate" column="create_time"/>
+	  <result property="uVersion" column="u_version"/>
+	  <result property="updateBy.id" column="update_id"/>
+	  <result property="updateDate" column="update_time"/>
+	</resultMap>
+    
+	<select id="get" resultMap="bizCustCredit">
+		SELECT 
+			b.office_id AS office_id,
+			b.pay_pwd AS pay_pwd,
+			b.level AS level,
+			b.credit AS credit,
+			b.wallet AS wallet,
+			b.money AS money,
+			b.status AS status,
+			b.create_id AS create_id,
+			b.create_time AS create_time,
+			b.u_version AS u_version,
+			b.update_id AS update_id,
+			b.update_time AS update_time
+		FROM biz_cust_credit b
+		WHERE office_id = #{officeId} and status = 1
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_cust_credit (
+			office_id,
+			pay_pwd,
+			level,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{officeId}, 
+			#{payPwd}, 
+			#{level}, 
+			#{createBy.id},
+			now(), 
+			#{uVersion},
+			#{createBy.id},
+			now()
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_cust_credit SET 
+			<if test="level != null and level !=''">
+				level = #{level},
+			</if>
+			update_time = now(), 
+			update_id = #{updateBy.id}
+		WHERE office_id = #{officeId}
+	</update>
+	
+</mapper>

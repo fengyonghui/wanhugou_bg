@@ -35,6 +35,9 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String remark;		// 备注
 	private Integer bizStatus;		// 业务状态：0未审核 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
 	private String skuIds;
+	private String reqDetailIds;
+	private String skuInfoIds;
+	private String reqQtys;
 	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
 	private BizProductInfo productInfo;
 
@@ -50,6 +53,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String startDate;
 
 	private String endDate;
+
+	private String str;
+
+	private String recvQtys;
 	
 	public BizRequestHeader() {
 		super();
@@ -211,5 +218,45 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setBizStatusEnd(Byte bizStatusEnd) {
 		this.bizStatusEnd = bizStatusEnd;
+	}
+
+	public String getReqQtys() {
+		return reqQtys;
+	}
+
+	public void setReqQtys(String reqQtys) {
+		this.reqQtys = reqQtys;
+	}
+
+	public String getSkuInfoIds() {
+		return skuInfoIds;
+	}
+
+	public void setSkuInfoIds(String skuInfoIds) {
+		this.skuInfoIds = skuInfoIds;
+	}
+
+	public String getReqDetailIds() {
+		return reqDetailIds;
+	}
+
+	public void setReqDetailIds(String reqDetailIds) {
+		this.reqDetailIds = reqDetailIds;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
+
+	public String getRecvQtys() {
+		return recvQtys;
+	}
+
+	public void setRecvQtys(String recvQtys) {
+		this.recvQtys = recvQtys;
 	}
 }

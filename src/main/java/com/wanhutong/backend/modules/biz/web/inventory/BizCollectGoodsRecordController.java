@@ -26,6 +26,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.InvSkuTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,13 +162,13 @@ public class BizCollectGoodsRecordController extends BaseController {
 			//商品
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bcgr.getSkuInfo().getId());
 			//仓库
-			BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-			bizInventoryInfo.setCustomer(bcgr.getCustomer());
-			List<BizInventoryInfo> bizInventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-			if (bizInventoryInfoList != null && bizInventoryInfoList.size() > 0){
-				bizInventoryInfo = bizInventoryInfoList.get(0);
-			}
-			bcgr.setInvInfo(bizInventoryInfo);
+//			BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+//			bizInventoryInfo.setCustomer(bcgr.getCustomer());
+//			List<BizInventoryInfo> bizInventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+//			if (bizInventoryInfoList != null && bizInventoryInfoList.size() > 0){
+//				bizInventoryInfo = bizInventoryInfoList.get(0);
+//			}
+			bcgr.setInvInfo(bizCollectGoodsRecord.getInvInfo());
 			bcgr.setSkuInfo(bizSkuInfo);
 			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bcgr.setBizRequestHeader(bizRequestHeader);
@@ -180,7 +181,7 @@ public class BizCollectGoodsRecordController extends BaseController {
             BizInventorySku bizInventorySku = new BizInventorySku();
             bizInventorySku.setSkuInfo(bcgr.getSkuInfo());
             bizInventorySku.setCustomer(bcgr.getCustomer());
-            bizInventorySku.setInvType(2);
+            bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
 			//库存有该商品,增加相应数量
             if(bizInventorySkuService.findList(bizInventorySku) != null && bizInventorySkuService.findList(bizInventorySku).size() > 0){
                 List<BizInventorySku> bizInventorySkuList = bizInventorySkuService.findList(bizInventorySku);
@@ -191,9 +192,9 @@ public class BizCollectGoodsRecordController extends BaseController {
             //库存没有该商品，增加该商品相应库存
 			if(bizInventorySkuService.findList(bizInventorySku) == null || bizInventorySkuService.findList(bizInventorySku).size() == 0){
             	BizInventorySku bizInventorySku1 = new BizInventorySku();
-            	bizInventorySku1.setInvInfo(bizInventoryInfo);
+            	bizInventorySku1.setInvInfo(bizCollectGoodsRecord.getInvInfo());
 				bizInventorySku1.setSkuInfo(bcgr.getSkuInfo());
-				bizInventorySku1.setInvType(1);
+				bizInventorySku1.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
 				bizInventorySku1.setStockQty(receiveNum);
 				bizInventorySku1.setCustomer(bcgr.getCustomer());
 				bizInventorySkuService.save(bizInventorySku1);

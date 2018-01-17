@@ -37,7 +37,16 @@ public class Office extends TreeEntity<Office> {
 	private User primaryPerson;//主负责人
 	private User deputyPerson;//副负责人
 	private List<String> childDeptList;//快速添加子部门
+	private String level; //钱包等级
 	
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
 	public Office(){
 		super();
 //		this.sort = 30;

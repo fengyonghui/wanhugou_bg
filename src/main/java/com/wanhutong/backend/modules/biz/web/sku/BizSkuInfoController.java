@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -129,6 +131,7 @@ public class BizSkuInfoController extends BaseController {
 			String[] ids =StringUtils.split(skuIds, ",");
 			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
 		}
+		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
 		return listMap;
 	}
@@ -138,6 +141,23 @@ public class BizSkuInfoController extends BaseController {
 	public BizSkuInfo findSysBySku(Integer skuId, HttpServletRequest request, HttpServletResponse response, Model model) {
         BizSkuInfo bizSkuInfo = bizSkuInfoService.get(skuId);
 		return bizSkuInfo;
+	}
+
+	//根据多个id选择商品
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findSkuNameList")
+	public List<BizSkuInfo> findSkuNameList(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+
+        List<BizSkuInfo> bizSkuInfoList = new ArrayList<>();
+	    if (ids != null && !"".equals(ids)){
+            String[] id = ids.split(",");
+            for(int i = 0; i < id.length; i++){
+                BizSkuInfo bizSkuInfo1 = bizSkuInfoService.get(Integer.parseInt(id[i].trim()));
+                bizSkuInfoList.add(bizSkuInfo1);
+            }
+        }
+        return bizSkuInfoList;
 	}
 
 

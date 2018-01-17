@@ -37,8 +37,13 @@
 		<div class="control-group">
 			<label class="control-label">仓库名称：</label>
 			<div class="controls">
-				<input value="${bizInventorySku.invInfo.name}" disabled="true" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<form:hidden path="invInfo.id"/>
+				<select class="input-medium">
+					<c:forEach items="${invInfoList}" var="invInfo">
+						<option name="invInfo.id" value="${invInfo.id}"/>${invInfo.name}
+					</c:forEach>
+				</select>
+				<%--<input value="${bizInventorySku.invInfo.name}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>--%>
+				<%--<form:hidden path="invInfo.id"/>--%>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

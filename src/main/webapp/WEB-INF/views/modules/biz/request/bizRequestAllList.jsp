@@ -32,7 +32,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
+		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader?source=sh">备货清单列表</a></li>
 	</ul>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">

@@ -112,9 +112,12 @@
 						<th>已供数量</th>
 
 
-							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-								<th>供应数量</th>
-							</shiro:hasPermission>
+						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+							<th>供应数量</th>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+							<th>供货仓库</th>
+						</shiro:hasPermission>
 
 					</tr>
 					</thead>
@@ -166,7 +169,7 @@
 
 					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
-							<tr id="${ordDetail.id}" class="ordDetailList">
+							< id="${ordDetail.id}" class="ordDetailList">
 								<td><img src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
 								<td>${ordDetail.skuInfo.productInfo.name}</td>
 								<td>
@@ -206,8 +209,15 @@
 										<input id="sendNum${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
 									</td>
 								</shiro:hasPermission>
-
-
+								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+									<td>
+										<select class="input-medium">
+											<c:forEach items="${invInfoList}" var="invInfo">
+												<option name="invInfo.id" value="${invInfo.id}"/>${invInfo.name}
+											</c:forEach>
+										</select>
+									</td>
+								</shiro:hasPermission>
 							</tr>
 						</c:forEach>
 					</c:if>

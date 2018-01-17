@@ -97,9 +97,17 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 			}
 		}
 		for(BizProductInfo productInfo :map.keySet()) {
-			String sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
-					+productInfo.getProdCode()+","+productInfo.getOffice().getName()+","+productInfo.getBrandName();
-					;
+			String sKey="";
+			if(productInfo.getOffice()==null){
+				 sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
+						+productInfo.getProdCode()+","+null+","+productInfo.getBrandName();
+
+			}else {
+				 sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
+						+productInfo.getProdCode()+","+productInfo.getOffice().getName()+","+productInfo.getBrandName();
+
+			}
+							;
 			listMap.put(sKey,map.get(productInfo));
 		}
 
@@ -114,19 +122,33 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	public BizSkuInfo findListProd(BizSkuInfo skuInfo){
 		Integer prodId=	skuInfo.getProductInfo().getId();
 		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
+		BizSkuPropValue bizSkuPropValue=new BizSkuPropValue();
+        bizSkuPropValue.setSkuInfo(skuInfo);
+        List<BizSkuPropValue> skuPropValueList=bizSkuPropValueService.findList(bizSkuPropValue);
+        StringBuffer skuPropName=new StringBuffer();
+        for(BizSkuPropValue skuPropValue:skuPropValueList){
+            skuPropName.append("-");
+            skuPropName.append(skuPropValue.getPropValue());
+        }
+        String propNames="";
+        if(skuPropName.toString().length()>1){
+            propNames =skuPropName.toString().substring(1);
+        }
+
+        skuInfo.setSkuPropertyInfos(propNames);
 		if(bizProductInfo!=null && bizProductInfo.getOffice()!=null){
 			Office	office=officeService.get(bizProductInfo.getOffice().getId());
 			bizProductInfo.setOffice(office);
-			BizProdCate bizProdCate=new BizProdCate();
-			bizProdCate.setProductInfo(bizProductInfo);
-			List<BizProdCate> prodCateList=bizProdCateService.findList(bizProdCate);
-			StringBuffer cateName=new StringBuffer("\\/");
-			for(BizProdCate prodCate:prodCateList){
-				cateName.append(prodCate.getCategoryInfo().getName());
-
-			}
-			String cateNames=cateName.toString().substring(2);
-			bizProductInfo.setCateNames(cateNames);
+//			BizProdCate bizProdCate=new BizProdCate();
+//			bizProdCate.setProductInfo(bizProductInfo);
+//			List<BizProdCate> prodCateList=bizProdCateService.findList(bizProdCate);
+//			StringBuffer cateName=new StringBuffer("\\/");
+//			for(BizProdCate prodCate:prodCateList){
+//				cateName.append(prodCate.getCategoryInfo().getName());
+//
+//			}
+//			String cateNames=cateName.toString().substring(2);
+//			bizProductInfo.setCateNames(cateNames);
 		}
 
 		skuInfo.setProductInfo(bizProductInfo);

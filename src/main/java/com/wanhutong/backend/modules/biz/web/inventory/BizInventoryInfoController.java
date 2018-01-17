@@ -51,7 +51,7 @@ public class BizInventoryInfoController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(BizInventoryInfo bizInventoryInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizInventoryInfo> page = bizInventoryInfoService.findPage(new Page<BizInventoryInfo>(request, response), bizInventoryInfo);
-		String zt = request.getParameter("zt");//zt表示请求状态：1、商品库存管理 2、库存盘点 3、收货管理
+		String zt = request.getParameter("zt");//zt表示请求状态：1、商品库存管理 2、库存盘点
 		model.addAttribute("zt",zt);
 		model.addAttribute("page", page);
 		return "modules/biz/inventory/bizInventoryInfoList";

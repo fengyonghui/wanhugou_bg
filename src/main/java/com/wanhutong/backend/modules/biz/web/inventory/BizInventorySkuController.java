@@ -6,10 +6,15 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +31,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 
+import java.util.List;
+
 /**
  * 商品库存详情Controller
  * @author 张腾飞
@@ -37,12 +44,13 @@ public class BizInventorySkuController extends BaseController {
 
 	@Autowired
 	private BizInventorySkuService bizInventorySkuService;
-
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
-
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+    private SystemService systemService;
+
 
 	@ModelAttribute
 	public BizInventorySku get(@RequestParam(required=false) Integer id) {
@@ -59,9 +67,23 @@ public class BizInventorySkuController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInventorySku:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizInventorySku bizInventorySku, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizInventorySku> page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
 		String zt = request.getParameter("zt");
-		model.addAttribute("zt",zt);
+		//取出用户所属采购中心
+        User user = UserUtils.getUser();
+        Page<BizInventorySku> page =null;
+        if (user.isAdmin()) {
+            page= bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+        } else {
+            bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+            Office company = systemService.getUser(user.getId()).getCompany();
+            //根据采购中心取出仓库
+            BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+            bizInventoryInfo.setCustomer(company);
+            bizInventorySku.setInvInfo(bizInventoryInfo);
+             page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+
+        }
+        model.addAttribute("zt",zt);
 		model.addAttribute("page", page);
 		return "modules/biz/inventory/bizInventorySkuList";
 	}
@@ -70,8 +92,23 @@ public class BizInventorySkuController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizInventorySku bizInventorySku,HttpServletRequest request, Model model) {
 //		bizInventorySku = bizInventorySkuService.get(bizInventorySku.getId());
-		BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
-		bizInventorySku.setInvInfo(bizInventoryInfo);
+        //取出用户所属采购中心
+        BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+        User user = UserUtils.getUser();
+        if (user.isAdmin()){
+            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+            model.addAttribute("invInfoList",invInfoList);
+        }else {
+            Office company = systemService.getUser(user.getId()).getCompany();
+            BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
+            bizInventoryInfo1.setCustomer(company);
+            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo1);
+            model.addAttribute("invInfoList",invInfoList);
+        }
+
+
+        BizInventoryInfo bizInventoryInfo2 = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
+		bizInventorySku.setInvInfo(bizInventoryInfo2);
 		String zt = request.getParameter("zt");
 		model.addAttribute("zt",zt);
 		model.addAttribute("entity", bizInventorySku);

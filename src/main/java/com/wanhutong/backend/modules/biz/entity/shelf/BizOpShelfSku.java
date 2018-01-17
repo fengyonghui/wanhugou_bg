@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.shelf;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -49,6 +50,8 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	private int shelfSign; //货架删除返回标志
 
 	private SkuProd skuProd;
+	private String skuIds;
+	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
 
 	
 	public BizOpShelfSku() {
@@ -221,5 +224,21 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	public void setProductInfo(BizProductInfo productInfo) {
 		this.productInfo = productInfo;
+	}
+
+	public String getSkuIds() {
+		return skuIds;
+	}
+
+	public void setSkuIds(String skuIds) {
+		this.skuIds = skuIds;
+	}
+
+	public List<BizSkuInfo> getSkuInfoList() {
+		return skuInfoList;
+	}
+
+	public void setSkuInfoList(List<BizSkuInfo> skuInfoList) {
+		this.skuInfoList = skuInfoList;
 	}
 }

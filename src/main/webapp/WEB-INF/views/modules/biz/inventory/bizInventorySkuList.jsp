@@ -31,12 +31,19 @@
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
                 <input id="skuInfo.id" type="hidden" name="skuInfo.id" value="${skuInfo.id}"/>
 			</li>
-			<li><label>库存类型：</label>
+			<li><label>商品编号：</label>
+				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
+			<li><label>仓库名称：</label>
+				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<input id="invInfo.id" type="hidden" name="invInfo.id" value="${invInfo.id}"/>
+			</li>
+			<%--<li><label>库存类型：</label>
 				<form:select path="invType" class="input-medium">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('inv_type')}" itemLabel="label" itemValue="value"
 								  htmlEscape="false"/></form:select>
-			</li>
+			</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -48,6 +55,7 @@
 				<th>库存类型</th>
 				<th>仓库名称</th>
 				<th>商品名称</th>
+				<th>商品编号</th>
 				<th>库存数量</th>
 				<c:if test="${zt eq '1' || zt eq '2'}">
 					<th>销售订单数量</th>
@@ -76,6 +84,9 @@
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.name}
+				</td>
+				<td>
+					${bizInventorySku.skuInfo.partNo}
 				</td>
 				<td>
 					${bizInventorySku.stockQty}
