@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/inventory/bizSendGoodsRecord/">供货记录列表</a></li>
-		<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><li><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form">供货记录添加</a></li></shiro:hasPermission>
+		 <%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><li><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form">供货记录添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -52,7 +52,7 @@
 				<th>供货数量</th>
 				<th>客户</th>
 				<th>供货时间</th>
-				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th>操作</th></shiro:hasPermission>
+				<%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th>操作</th></shiro:hasPermission>--%>
 			</tr>
 		</thead>
 		<tbody>
@@ -67,8 +67,8 @@
 				<td>
 					${bizSendGoodsRecord.skuInfo.partNo}
 				</td>
-				<td>
-					${bizSendGoodsRecord.orderNum}
+				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${bizSendGoodsRecord.bizOrderHeader.id}&source=ghs">
+					${bizSendGoodsRecord.orderNum}</a>
 				</td>
 				<td>
 					${bizSendGoodsRecord.sendNum}
@@ -79,10 +79,10 @@
 				<td>
 					<fmt:formatDate value="${bizSendGoodsRecord.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><td>
-    				<%--<a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">修改</a>--%>
-					<a href="${ctx}/biz/inventory/bizSendGoodsRecord/delete?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要删除该供货记录吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+				<%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><td>
+    				&lt;%&ndash;<a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">修改</a>&ndash;%&gt;
+					&lt;%&ndash;<a href="${ctx}/biz/inventory/bizSendGoodsRecord/delete?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要删除该供货记录吗？', this.href)">删除</a>&ndash;%&gt;
+				</td></shiro:hasPermission>--%>
 			</tr>
 		</c:forEach>
 		</tbody>

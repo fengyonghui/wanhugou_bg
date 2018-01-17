@@ -63,9 +63,12 @@
 			<if test="sqlMap != null and sqlMap.inventory != null and sqlMap.inventory != ''">
 				${sqlMap.inventory}
 			</if>
-			<if test="customer != null and customer.name != null and customer.name != ''">
-				AND o.name = #{customer.name}
-			</if>
+			<!--<if test="customer != null and customer.name != null and customer.name != ''">
+				AND o.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.name},'%')</if>
+			</if>-->
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

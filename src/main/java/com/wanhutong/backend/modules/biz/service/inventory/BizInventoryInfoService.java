@@ -36,6 +36,13 @@ public class BizInventoryInfoService extends CrudService<BizInventoryInfoDao, Bi
 	}
 	
 	public List<BizInventoryInfo> findList(BizInventoryInfo bizInventoryInfo) {
+//		User user =UserUtils.getUser();
+//		if (user.isAdmin()) {
+//			return super.findList(bizInventoryInfo);
+//		} else {
+//			bizInventoryInfo.getSqlMap().put("inventory", BaseService.dataScopeFilter(user, "o", "su"));
+//			return super.findList(bizInventoryInfo);
+//		}
 		return super.findList(bizInventoryInfo);
 	}
 	

@@ -32,7 +32,12 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader?source=sh">备货清单列表</a></li>
+		<c:if test="${source eq 'sh'}">
+			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}">备货清单列表</a></li>
+		</c:if>
+		<c:if test="${source eq 'kc'}">
+			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}">销售清单列表</a></li>
+		</c:if>
 	</ul>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
@@ -41,7 +46,7 @@
 				<c:if test="${source=='gh'}">
 					<th><input id="select_all" type="checkbox" /></th>
 				</c:if>
-				<th>订单号</th>
+				<th>销售单号</th>
 				<th>订单类型</th>
 				<th>采购客户</th>
 				<th>期望收货时间</th>
@@ -90,9 +95,11 @@
 							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>
 						</c:when>
 						<c:when test="${source=='sh'}">
+							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货单详情</a>
 							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">收货</a>
 						</c:when>
 						<c:otherwise>
+
 							<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">供货</a>
 						</c:otherwise>
 					</c:choose>
@@ -137,6 +144,7 @@
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">详情</a>
 							</c:when>
 							<c:otherwise>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs">销售单详情</a>
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">供货</a>
 							</c:otherwise>
 						</c:choose>
@@ -147,11 +155,11 @@
 		</form>
 		</tbody>
 	</table>
-	<div class="form-actions">
+	<%--<div class="form-actions">
 
 			<shiro:hasPermission name="biz:request:selecting:supplier:edit">
 				<input type="button" onclick="saveOrderIds();" class="btn btn-primary" value="合单采购"/>
 			</shiro:hasPermission>
-	</div>
+	</div>--%>
 </body>
 </html>

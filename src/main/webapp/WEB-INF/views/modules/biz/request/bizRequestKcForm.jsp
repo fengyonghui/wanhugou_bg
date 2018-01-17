@@ -3,26 +3,26 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>备货清单管理</title>
+	<title>备货清单收货</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			//$("#name").focus();
-			$("#inputForm").validate({
-				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
-				},
-				errorContainer: "#messageBox",
-				errorPlacement: function(error, element) {
-					$("#messageBox").text("输入有误，请先更正。");
-					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
-						error.appendTo(element.parent().parent());
-					} else {
-						error.insertAfter(element);
-					}
-				}
-			});
+        $(document).ready(function() {
+            //$("#name").focus();
+            $("#inputForm").validate({
+                submitHandler: function(form){
+                    loading('正在提交，请稍等...');
+                    form.submit();
+                },
+                errorContainer: "#messageBox",
+                errorPlacement: function(error, element) {
+                    $("#messageBox").text("输入有误，请先更正。");
+                    if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+                        error.appendTo(element.parent().parent());
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
         });
         /*$("#btnSubmit").click(function () {
 			var reqQty = $("#reqQty").val();
@@ -36,10 +36,10 @@
             });
         });*/
 
-		function checkout(obj) {
+        function checkout(obj) {
             var reqQty = $("#reqQty"+obj).val();	//申报数量
             var receiveNum = $("#receiveNum"+obj).val();		//收货数量
-			var recvQty = $("#recvQty"+obj).val();		//已收货数量
+            var recvQty = $("#recvQty"+obj).val();		//已收货数量
             // var sendQty = $("#sendQty"+obj).val();		//已供货数量
             var sum = parseInt(receiveNum) + parseInt(recvQty);
             if (sum > reqQty){
@@ -62,119 +62,119 @@
 	</script>
 </head>
 <body>
-	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/request/bizRequestHeader?source=sh">备货清单列表</a></li>
-		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizRequestHeader.id}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
-	</ul><br/>
-	<%--@elvariable id="bizSendGoodsRecord" type="com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord"--%>
-	<form:form id="inputForm" modelAttribute="bizCollectGoodsRecord" action="${ctx}/biz/inventory/bizCollectGoodsRecord/save" method="post" class="form-horizontal">
-		<%--<form:hidden path="id"/>--%>
-		<sys:message content="${message}"/>
-		<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
-		<input name="bizOrderHeader.id" value="${bizOrderHeader==null?0:bizOrderHeader.id}" type="hidden"/>
-		<div class="control-group">
-			<label class="control-label">采购中心：</label>
-			<div class="controls">
-				<input readonly="readonly" value="${bizRequestHeader==null?bizOrderHeader.customer.name:bizRequestHeader.fromOffice.name}"/>
-				<input type="hidden" name="customer.id" value="${bizRequestHeader==null?bizOrderHeader.customer.id:bizRequestHeader.fromOffice.id}">
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+<ul class="nav nav-tabs">
+	<li><a href="${ctx}/biz/request/bizRequestAll?source=${source}">备货清单列表</a></li>
+	<li class="active"><a href="${ctx}/biz/request/bizRequestAll/form?id=${bizRequestHeader.id}&source=${source}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.id?'收货':''}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
+</ul><br/>
+<%--@elvariable id="bizSendGoodsRecord" type="com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord"--%>
+<form:form id="inputForm" modelAttribute="bizCollectGoodsRecord" action="${ctx}/biz/inventory/bizCollectGoodsRecord/save" method="post" class="form-horizontal">
+	<%--<form:hidden path="id"/>--%>
+	<sys:message content="${message}"/>
+	<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
+	<input name="bizOrderHeader.id" value="${bizOrderHeader==null?0:bizOrderHeader.id}" type="hidden"/>
+	<div class="control-group">
+		<label class="control-label">采购中心：</label>
+		<div class="controls">
+			<input readonly="readonly" value="${bizRequestHeader==null?bizOrderHeader.customer.name:bizRequestHeader.fromOffice.name}"/>
+			<input type="hidden" name="customer.id" value="${bizRequestHeader==null?bizOrderHeader.customer.id:bizRequestHeader.fromOffice.id}">
+			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
-		<div class="control-group">
-			<label class="control-label">期望收货时间：</label>
-			<div class="controls">
-				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-xlarge Wdate required"
-					value="<fmt:formatDate value="${bizRequestHeader==null?'':bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+	</div>
+	<div class="control-group">
+		<label class="control-label">期望收货时间：</label>
+		<div class="controls">
+			<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-xlarge Wdate required"
+				   value="<fmt:formatDate value="${bizRequestHeader==null?'':bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 			/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
-		<div class="control-group">
-			<label class="control-label">备货商品：</label>
-			<div class="controls">
-				<table id="contentTable" class="table table-striped table-bordered table-condensed">
-					<thead>
-					<tr>
-						<th>商品图片</th>
-						<th>商品名称</th>
-						<th>商品分类</th>
-						<th>商品代码</th>
-						<th>品牌名称</th>
-						<th>供应商</th>
-						<th>SKU</th>
-						<th>SKU编号</th>
-						<th>申报数量</th>
+	</div>
+	<div class="control-group">
+		<label class="control-label">备货商品：</label>
+		<div class="controls">
+			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+				<thead>
+				<tr>
+					<th>商品图片</th>
+					<th>商品名称</th>
+					<th>商品分类</th>
+					<th>商品代码</th>
+					<th>品牌名称</th>
+					<th>供应商</th>
+					<th>SKU</th>
+					<th>SKU编号</th>
+					<th>申报数量</th>
 						<%--<th>已供数量</th>--%>
-						<th>已收数量</th>
+					<th>已收数量</th>
 
 
-							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-								<th>收货数量</th>
-							</shiro:hasPermission>
-							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-								<th>收货仓库</th>
-							</shiro:hasPermission>
+					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+						<th>收货数量</th>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+						<th>收货仓库</th>
+					</shiro:hasPermission>
 
-					</tr>
-					</thead>
-					<tbody id="prodInfo">
-					<c:if test="${reqDetailList!=null && reqDetailList.size()>0}">
-						<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
-							<tr id="${reqDetail.id}" class="reqDetailList">
-								<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
-								<td>${reqDetail.skuInfo.productInfo.name}</td>
-								<td>
+				</tr>
+				</thead>
+				<tbody id="prodInfo">
+				<c:if test="${reqDetailList!=null && reqDetailList.size()>0}">
+					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
+						<tr id="${reqDetail.id}" class="reqDetailList">
+							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
+							<td>${reqDetail.skuInfo.productInfo.name}</td>
+							<td>
 								<c:forEach items="${reqDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >
-								${cate.name}
+									${cate.name}
 									<c:if test="${!cateIndex.last}">
 										/
 									</c:if>
 
 								</c:forEach>
-								</td>
-								<td>${reqDetail.skuInfo.productInfo.prodCode}</td>
-								<td>${reqDetail.skuInfo.productInfo.brandName}</td>
-								<td>
+							</td>
+							<td>${reqDetail.skuInfo.productInfo.prodCode}</td>
+							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
+							<td>
 									${reqDetail.skuInfo.productInfo.office.name}
 									<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
-								</td>
-								<td>${reqDetail.skuInfo.name}</td>
-								<td>${reqDetail.skuInfo.partNo}</td>
-								<td>
-									<input type='hidden' name='bizCollectGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
-									<input type='hidden' name='bizCollectGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
-									<input id="reqQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
-                                    <input name="bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.id" value="${reqDetail.id}" type="hidden"/>
-                                    <input name="bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.requestHeader.id" value="${reqDetail.requestHeader.id}" type="hidden"/>
-									<c:if test="${reqDetail.requestHeader.reqNo != null}">
-										<input name="bizCollectGoodsRecordList[${reqStatus.index}].orderNum" value="${reqDetail.requestHeader.reqNo}" type="hidden"/>
-									</c:if>
-								</td>
+							</td>
+							<td>${reqDetail.skuInfo.name}</td>
+							<td>${reqDetail.skuInfo.partNo}</td>
+							<td>
+								<input type='hidden' name='bizCollectGoodsRecordList[${reqStatus.index}].skuInfo.id' value='${reqDetail.skuInfo.id}'/>
+								<input type='hidden' name='bizCollectGoodsRecordList[${reqStatus.index}].skuInfo.name' value='${reqDetail.skuInfo.name}'/>
+								<input id="reqQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.reqQty' readonly="readonly" value="${reqDetail.reqQty}" type='text'/>
+								<input name="bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.id" value="${reqDetail.id}" type="hidden"/>
+								<input name="bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.requestHeader.id" value="${reqDetail.requestHeader.id}" type="hidden"/>
+								<c:if test="${reqDetail.requestHeader.reqNo != null}">
+									<input name="bizCollectGoodsRecordList[${reqStatus.index}].orderNum" value="${reqDetail.requestHeader.reqNo}" type="hidden"/>
+								</c:if>
+							</td>
 								<%--<td>--%>
-									<%--<input id="sendQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.sendQty' readonly="readonly" value="${reqDetail.sendQty}" type='text'/>--%>
+								<%--<input id="sendQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.sendQty' readonly="readonly" value="${reqDetail.sendQty}" type='text'/>--%>
 								<%--</td>--%>
-								<td>
-									<input id="recvQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.recvQty' readonly="readonly" value="${reqDetail.recvQty}" type='text'/>
-								</td>
+							<td>
+								<input id="recvQty${reqStatus.index}" name='bizCollectGoodsRecordList[${reqStatus.index}].bizRequestDetail.recvQty' readonly="readonly" value="${reqDetail.recvQty}" type='text'/>
+							</td>
 
-								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input id="receiveNum${reqStatus.index}" name="bizCollectGoodsRecordList[${reqStatus.index}].receiveNum" <c:if test="${reqDetail.recvQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout(${reqStatus.index})"/>
+									<input id="receiveNum${reqStatus.index}" name="bizCollectGoodsRecordList[${reqStatus.index}].receiveNum" <c:if test="${reqDetail.recvQty==reqDetail.reqQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout(${reqStatus.index})"/>
 								</td>
-								</shiro:hasPermission>
-								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-									<td>
-										<select name="invInfo.id" class="input-medium">
-											<c:forEach items="${invInfoList}" var="invInfo">
-													<option value="${invInfo.id}"/>${invInfo.name}
-											</c:forEach>
-										</select>
-										<%--<input id="invInfo.id${reqStatus.index}" name="bizCollectGoodsRecordList[${reqStatus.index}].invInfo.id" <c:if test="${reqDetail.recvQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="" type="text"/>--%>
-									</td>
-								</shiro:hasPermission>
-							</tr>
-						</c:forEach>
-					</c:if>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+								<td>
+									<select name="invInfo.id" class="input-medium">
+										<c:forEach items="${invInfoList}" var="invInfo">
+											<option value="${invInfo.id}"/>${invInfo.name}
+										</c:forEach>
+									</select>
+										<%--<input id="invInfo.id${reqStatus.index}" name="bizCollectGoodsRecordList[${reqStatus.index}].invInfo.id" <c:if test="${reqDetail.recvQty==reqDetail.reqQty}">readonly="readonly"</c:if> value="" type="text"/>--%>
+								</td>
+							</shiro:hasPermission>
+						</tr>
+					</c:forEach>
+				</c:if>
 
 					<%--<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
@@ -223,25 +223,25 @@
 							</tr>
 						</c:forEach>
 					</c:if>--%>
-					</tbody>
-				</table>
-			</div>
+				</tbody>
+			</table>
 		</div>
+	</div>
 
-		<div class="control-group">
-			<label class="control-label">备注：</label>
-			<div class="controls">
+	<div class="control-group">
+		<label class="control-label">备注：</label>
+		<div class="controls">
 
-				<textarea  class="input-xlarge " readonly="readonly">${entity.remark}</textarea>
-			</div>
+			<textarea  class="input-xlarge " readonly="readonly">${entity.remark}</textarea>
 		</div>
+	</div>
 
-		<div class="form-actions">
-			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认收货"/>&nbsp;</shiro:hasPermission>
-			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-		</div>
+	<div class="form-actions">
+		<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="确认收货"/>&nbsp;</shiro:hasPermission>
+		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+	</div>
 
-	</form:form>
+</form:form>
 
 </body>
 </html>

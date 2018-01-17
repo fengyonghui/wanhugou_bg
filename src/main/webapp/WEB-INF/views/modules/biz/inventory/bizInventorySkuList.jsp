@@ -19,7 +19,11 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情列表</a></li>
-		<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><li><a href="${ctx}/biz/inventory/bizInventorySku/form?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情添加</a></li></shiro:hasPermission>
+		<c:if test="${zt eq '2'}">
+			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+				<li><a href="${ctx}/biz/inventory/bizInventorySku/form?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情添加</a></li>
+			</shiro:hasPermission>
+		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -61,7 +65,7 @@
 					<th>销售订单数量</th>
 					<th>调入数量</th>
 					<th>调出数量</th>
-					<th>专属库存的客户</th>
+					<%--<th>专属库存的客户</th>--%>
 				</c:if>
 				<c:if test="${zt eq '3'}">
 					<th>修改时间</th>
@@ -101,9 +105,9 @@
 					<td>
 						${bizInventorySku.transOutQty}
 					</td>
-					<td>
+					<%--<td>
 						${bizInventorySku.customer.name}
-					</td>
+					</td>--%>
 				</c:if>
 				<c:if test="${zt eq '3'}">
 					<td>

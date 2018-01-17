@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供货中）
+ * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供货中, source=sh 备货中）
  */
 
 @Controller
@@ -82,7 +82,7 @@ public class BizRequestAllController {
 		 	if("kc".equals(source)) {
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
-                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
             }
             else if("sh".equals(source)){
@@ -96,6 +96,12 @@ public class BizRequestAllController {
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
+            }
+            if("ghs".equals(source)) {
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
             }
 
 
@@ -116,12 +122,25 @@ public class BizRequestAllController {
         BizRequestHeader requestHeader=null;
         BizRequestHeader bizRequestHeader = new BizRequestHeader();
         BizOrderHeader bizOrderHeader= new BizOrderHeader();
-        if ("kc".equals(source)){
+        if ("kc".equals(source) || "ghs".equals(source)){
             bizOrderHeader = bizOrderHeaderService.get(id);
         }else{
             bizRequestHeader = bizRequestHeaderService.get(id);
         }
         if (bizRequestHeader.getId() != null) {
+            //取出用户所属采购中心
+            BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+            User user = UserUtils.getUser();
+//            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+            if (user.isAdmin()){
+                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+                model.addAttribute("invInfoList",invInfoList);
+            }else {
+                Office company = systemService.getUser(user.getId()).getCompany();
+                bizInventoryInfo.setCustomer(company);
+                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+                model.addAttribute("invInfoList",invInfoList);
+            }
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(bizRequestHeader);
             List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
@@ -162,6 +181,9 @@ public class BizRequestAllController {
         model.addAttribute("ordDetailList", ordDetailList);
         if (source != null && "kc".equals(source)) {
             return "modules/biz/request/bizRequestHeaderKcForm";
+        }
+        if (source != null && "ghs".equals(source)){
+            return "modules/biz/request/bizRequestKcXqForm";
         }
         if(source != null && "sh".equals(source)){
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();

@@ -91,7 +91,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			//商品
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
 			//仓库
-			BizInventoryInfo invInfo = bsgr.getInvInfo();
+			BizInventoryInfo invInfo = bizSendGoodsRecord.getInvInfo();
 			int sendNum = bsgr.getSendNum();    //供货数
 			//累计备货单供货数量
 			if (bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getId() != 0) {
@@ -124,7 +124,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
 				bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
 				bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-				//如果库存不够，则改销售单状态为采购中（17）
+
 				//获取库存数
 				BizInventorySku bizInventorySku = new BizInventorySku();
 				bizInventorySku.setSkuInfo(bizSkuInfo);
@@ -134,18 +134,17 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				int stock = 0;
 				for (BizInventorySku invSku:list) {
 					stock = invSku.getStockQty();
+					//如果库存不够，则改销售单状态为采购中（17）
+					if (stock < bsgr.getBizOrderDetail().getOrdQty()){
+						bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+					}
 					//判断该用户是否是采购中心，如果是采购中心，对应的库存需要扣减
 					if (office1.getType()== OfficeTypeEnum.PURCHASINGCENTER.getType()){
 						invSku.setStockQty(stock-sendNum);
 						bizInventorySkuService.save(invSku);
 					}
 				}
-				if (stock < bsgr.getBizOrderDetail().getOrdQty()){
-					bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
-					bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-				}
-
-
 			}
 
 
@@ -166,7 +165,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			}else{
 				bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
 			}
-			bsgr.setInvInfo(bsgr.getInvInfo());
+			bsgr.setInvInfo(invInfo);
 			bsgr.setCustomer(office);
 			bsgr.setSkuInfo(bizSkuInfo);
 			bsgr.setOrderNum(bsgr.getOrderNum());

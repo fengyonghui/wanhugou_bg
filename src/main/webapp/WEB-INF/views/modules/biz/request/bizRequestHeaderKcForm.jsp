@@ -62,8 +62,13 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
-		<li class="active"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${bizRequestHeader.id}">备货清单<shiro:hasPermission name="biz:request:bizRequestHeader:edit">${not empty bizRequestHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
+		<c:if test="${source eq 'kc'}"></c:if>
+		<li><a href="${ctx}/biz/request/bizRequestAll?source=kc">供货清单列表</a></li>
+		<li class="active">
+			<a href="${ctx}/biz/request/bizRequestAll/form?id=${bizOrderHeader.id}">
+				${not empty bizOrderHeader.id?'销售清单':''}<shiro:hasPermission name="biz:request:bizRequestHeader:edit">供货</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission>
+			</a>
+		</li>
 	</ul><br/>
 	<%--@elvariable id="bizSendGoodsRecord" type="com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord"--%>
 	<form:form id="inputForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord/save" method="post" class="form-horizontal">
@@ -211,9 +216,9 @@
 								</shiro:hasPermission>
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 									<td>
-										<select class="input-medium">
+										<select name="invInfo.id" class="input-medium">
 											<c:forEach items="${invInfoList}" var="invInfo">
-												<option name="invInfo.id" value="${invInfo.id}"/>${invInfo.name}
+												<option value="${invInfo.id}"/>${invInfo.name}
 											</c:forEach>
 										</select>
 									</td>

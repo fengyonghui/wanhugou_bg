@@ -48,10 +48,10 @@
 				<th>仓库名称</th>
 				<th>商品名称</th>
 				<th>商品编号</th>
-				<th>订单号</th>
+				<th>备货单号</th>
 				<th>收货数量</th>
 				<th>收货时间</th>
-				<shiro:hasPermission name="biz:inventory:bizCollectGoodsRecord:edit"><th>操作</th></shiro:hasPermission>
+				<%--<shiro:hasPermission name="biz:inventory:bizCollectGoodsRecord:edit"><th>操作</th></shiro:hasPermission>--%>
 			</tr>
 		</thead>
 		<tbody>
@@ -67,8 +67,8 @@
 				<td>
 					${bizCollectGoodsRecord.skuInfo.partNo}
 				</td>
-				<td>
-					${bizCollectGoodsRecord.orderNum}
+				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${bizCollectGoodsRecord.bizRequestHeader.id}&source=gh">
+					${bizCollectGoodsRecord.orderNum}</a>
 				</td>
 				<td>
 					${bizCollectGoodsRecord.receiveNum}
@@ -76,10 +76,10 @@
 				<td>
 					<fmt:formatDate value="${bizCollectGoodsRecord.receiveDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<shiro:hasPermission name="biz:inventory:bizCollectGoodsRecord:edit"><td>
-    				<%--<a href="${ctx}/biz/inventory/bizCollectGoodsRecord/form?id=${bizCollectGoodsRecord.id}">修改</a>--%>
-					<a href="${ctx}/biz/inventory/bizCollectGoodsRecord/delete?id=${bizCollectGoodsRecord.id}" onclick="return confirmx('确认要删除该收货记录吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+				<%--<shiro:hasPermission name="biz:inventory:bizCollectGoodsRecord:edit"><td>
+    				&lt;%&ndash;<a href="${ctx}/biz/inventory/bizCollectGoodsRecord/form?id=${bizCollectGoodsRecord.id}">修改</a>&ndash;%&gt;
+					&lt;%&ndash;<a href="${ctx}/biz/inventory/bizCollectGoodsRecord/delete?id=${bizCollectGoodsRecord.id}" onclick="return confirmx('确认要删除该收货记录吗？', this.href)">删除</a>&ndash;%&gt;
+				</td></shiro:hasPermission>--%>
 			</tr>
 		</c:forEach>
 		</tbody>

@@ -29,7 +29,7 @@
 	<sql id="bizInventorySkuJoins">
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
 		LEFT JOIN biz_inventory_info i ON a.inv_id = i.id
-		LEFT JOIN sys_office s ON a.cust_id = s.id
+		LEFT JOIN sys_office s ON i.cust_id = s.id
 		LEFT JOIN sys_user su ON a.create_id=su.id
 	</sql>
     

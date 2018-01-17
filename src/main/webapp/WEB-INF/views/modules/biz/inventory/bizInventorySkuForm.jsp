@@ -100,7 +100,7 @@
 					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 			</div>
-			<div class="control-group">
+			<%--<div class="control-group">需要改成采购商
 				<label class="control-label">库存专属客户名称：</label>
 				<div class="controls">
 					<sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
@@ -109,7 +109,7 @@
 									allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
 					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
-			</div>
+			</div>--%>
 		</c:if>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>

@@ -66,7 +66,13 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	}
 	
 	public List<BizRequestHeader> findList(BizRequestHeader bizRequestHeader) {
-		return super.findList(bizRequestHeader);
+		User user = UserUtils.getUser();
+		if (user.isAdmin()) {
+			return super.findList(bizRequestHeader);
+		} else {
+			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+			return super.findList(bizRequestHeader);
+		}
 	}
 	
 	public Page<BizRequestHeader> findPage(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
