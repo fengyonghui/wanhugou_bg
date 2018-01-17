@@ -30,7 +30,7 @@ import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultan
 import java.util.List;
 
 /**
- * 客户专员管理Controller
+ * 客户专员管理Controller 采购商客户专营关联
  * @author Ouyang Xiutian
  * @version 2018-01-13
  */
@@ -68,9 +68,9 @@ public class BizCustomCenterConsultantController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizCustomCenterConsultant bizCustomCenterConsultant, Model model) {
 //		查询该采购专员下的采购商
-		String type=OfficeTypeEnum.CUSTOMER.getType();//"6"
-		List<Office> list = officeService.filerOffice(null, OfficeTypeEnum.stateOf(type));
-		bizCustomCenterConsultant.setOfficeList(list);
+//		String type=OfficeTypeEnum.CUSTOMER.getType();//"6"
+//		List<Office> list = officeService.filerOffice(null, OfficeTypeEnum.stateOf(type));
+//		bizCustomCenterConsultant.setOfficeList(list);
 		model.addAttribute("entity", bizCustomCenterConsultant);
 		return "modules/biz/custom/bizCustomCenterConsultantForm";
 	}
@@ -103,4 +103,12 @@ public class BizCustomCenterConsultantController extends BaseController {
 		model.addAttribute("entity", bizCustomCenterConsultant);
 		return "modules/biz/custom/bizCustomMembershipVolumeDATE";
 	}
+
+//	关联
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
+    @RequestMapping(value = "CustomUserForm")
+    public String CustomUserForm(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
+        System.out.println(user.getId());
+        return "modules/biz/custom/bizCustomMembershipVolumeDATE";
+    }
 }

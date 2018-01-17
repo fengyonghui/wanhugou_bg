@@ -74,6 +74,7 @@
 				<td>${user.mobile}</td><%--
 				<td>${user.roleNames}</td> --%>
 				<shiro:hasPermission name="sys:user:edit"><td>
+					<a href="${ctx}/biz/custom/bizCustomMembershipVolumeDATE?id=${user.id}">关联采购商</a>
     				<a href="${ctx}/sys/user/form?id=${user.id}">修改</a>
 					<a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>

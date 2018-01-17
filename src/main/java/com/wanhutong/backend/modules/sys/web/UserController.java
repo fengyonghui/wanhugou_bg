@@ -176,6 +176,7 @@ public class UserController extends BaseController {
 		}
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
 		return "redirect:" + adminPath + "/sys/user/list?repage";
+//		conIndex
 	}
 	
 	@RequiresPermissions("sys:user:edit")
@@ -411,4 +412,10 @@ public class UserController extends BaseController {
 //			}
 //		});
 //	}
+
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"conIndex"})
+	public String conIndex(User user, Model model) {
+		return "modules/sys/conIndex";
+	}
 }

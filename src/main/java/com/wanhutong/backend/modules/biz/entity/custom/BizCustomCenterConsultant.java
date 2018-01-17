@@ -26,9 +26,6 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	private Office centers;		// 采购中心ID
 	private User consultants;		// 采购顾问ID sys_user.id
 
-	private List<Office>  officeList;	//用于存储所有采购商
-	private String officeIds;		//全选的数据接收
-
 	public BizCustomCenterConsultant() {
 		super();
 	}
@@ -61,19 +58,4 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 		this.consultants = consultants;
 	}
 
-	public List<Office> getOfficeList() {
-		return officeList;
-	}
-
-	public void setOfficeList(List<Office> officeList) {
-		this.officeList = officeList;
-	}
-
-	public String getOfficeIds() {
-		return officeIds;
-	}
-
-	public void setOfficeIds(String officeIds) {
-		this.officeIds = officeIds;
-	}
 }

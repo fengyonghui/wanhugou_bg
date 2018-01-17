@@ -106,9 +106,11 @@
         <label class="control-label">订单类型：</label>
         <div class="controls">
             <form:select path="orderType" class="input-medium required">
-                <form:option value="" label="请选择"/>
-                <form:options items="${fns:getDictList('biz_order_type')}" selected = "selected" itemLabel="label" itemValue="value"
-                              htmlEscape="false"/></form:select>
+                <%--默认选中--%>
+                <form:option value="1" label="普通订单" itemLabel="label" itemValue="value" htmlEscape="false"/>
+                <%--<form:option value="" label="请选择"/>--%>
+                <%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
+                              <%--htmlEscape="false"/>--%></form:select>
             <span class="help-inline"><font color="red">*</font>j默认选择</span>
         </div>
     </div>
@@ -149,6 +151,8 @@
         <div class="controls">
             <form:select path="invStatus" class="input-medium required">
                 <form:option value="" label="请选择"/>
+                <%--<c:if test="${bizOrderHeader.id==null}"><form:option value="1" label="未开发票"/></c:if>--%>
+                <%--默认选中--%>
                 <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
                               htmlEscape="false"/></form:select>
 
@@ -160,6 +164,8 @@
         <div class="controls">
             <form:select path="bizStatus" class="input-medium required">
                 <form:option value="" label="请选择"/>
+                <%--默认选中--%>
+                <%--<c:if test="${bizOrderHeader.id==null}"><form:option value="0" label="未支付"/></c:if>--%>
                 <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
                               htmlEscape="false"/></form:select>
             <span class="help-inline"><font color="red">*</font>默认选择</span>
