@@ -151,6 +151,7 @@
                 <form:option value="" label="请选择"/>
                 <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
                               htmlEscape="false"/></form:select>
+
             <span class="help-inline"><font color="red">*</font>默认选择</span>
         </div>
     </div>
@@ -230,35 +231,35 @@
         <tbody>
         <c:forEach items="${entity.orderDetailList}" var="bizOrderDetail">
             <tr>
+                <td>
+                    ${bizOrderDetail.lineNo}
+                </td>
+                <td>
+                    ${bizOrderDetail.shelfInfo.name}
+                </td>
                 <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">
-                        ${bizOrderDetail.lineNo}</a>
+                    ${bizOrderDetail.skuName}
+                </a></td>
+                <td>
+                    ${bizOrderDetail.quality}
                 </td>
                 <td>
-                        ${bizOrderDetail.shelfInfo.name}
+                    ${bizOrderDetail.color}
                 </td>
                 <td>
-                        ${bizOrderDetail.skuName}
+                    ${bizOrderDetail.standard}
                 </td>
                 <td>
-                        ${bizOrderDetail.quality}
+                    ${bizOrderDetail.partNo}
                 </td>
                 <td>
-                        ${bizOrderDetail.color}
+                    ${bizOrderDetail.unitPrice}
                 </td>
                 <td>
-                        ${bizOrderDetail.standard}
+                    ${bizOrderDetail.ordQty}
                 </td>
                 <td>
-                        ${bizOrderDetail.partNo}
-                </td>
-                <td>
-                        ${bizOrderDetail.unitPrice}
-                </td>
-                <td>
-                        ${bizOrderDetail.ordQty}
-                </td>
-                <td>
-                        ${bizOrderDetail.sentQty}
+                    ${bizOrderDetail.sentQty}
                 </td>
                 <td>
                     <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

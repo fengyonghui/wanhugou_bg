@@ -38,6 +38,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Integer bizStatusEnd;
 	private Date deliveryDate; 		//预计到货日期
 	private String oneOrder;		// 首次下单 firstOrder ，非首次下单 endOrder
+	private Double DiscountPrice;		//优惠价格页面显示
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -173,5 +174,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setOneOrder(String oneOrder) {
 		this.oneOrder = oneOrder;
+	}
+
+	public Double getDiscountPrice() {
+		return DiscountPrice;
+	}
+
+	public void setDiscountPrice(Double discountPrice) {
+		DiscountPrice = discountPrice;
 	}
 }

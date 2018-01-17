@@ -104,10 +104,9 @@ function shelf(){
 }
 <%--移除--%>
 function removeItem(obj) {
-console.log(obj+"删除吗");
-$("#"+obj).remove();
+    console.log(obj+"删除吗");
+    $("#"+obj).remove();
 }
-
     </script>
 </head>
 <body>
@@ -128,7 +127,7 @@ $("#"+obj).remove();
     <div class="control-group">
         <label class="control-label">订单行号：</label>
         <div class="controls">
-            <form:input path="lineNo" disabled="true" placeholder="1" htmlEscape="false" class="input-xlarge required"/>
+            <form:input path="lineNo" disabled="true" placeholder="${bizOrderDetail.maxLineNo}" htmlEscape="false" class="input-xlarge required"/>
             <input name="lineNo" value="${bizOrderDetail.maxLineNo}" htmlEscape="false" type="hidden" class="required"/>
             <span class="help-inline">自动生成</span>
         </div>
@@ -196,13 +195,15 @@ $("#"+obj).remove();
     <div class="control-group">
         <label class="control-label">sku商品名称：</label>
         <div class="controls">
-            <sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOrderDetail.skuInfo.id}" labelName="skuInfo.id"
-                            labelValue="${bizOrderDetail.skuInfo.name}" notAllowSelectRoot="true"
-                            notAllowSelectParent="true"
-                            title="sku名称" url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"
-                            cssClass="input-xlarge required" onchange="clickSku();"
-                            allowClear="${skuInfo.currentUser.admin}" dataMsgRequired="必填信息">
-            </sys:treeselect>
+            <%--<sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizOrderDetail.skuInfo.id}" labelName="skuInfo.id"--%>
+                            <%--labelValue="${bizOrderDetail.skuInfo.name}" notAllowSelectRoot="true"--%>
+                            <%--notAllowSelectParent="true"--%>
+                            <%--title="sku名称" url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"--%>
+                            <%--cssClass="input-xlarge required" onchange="clickSku();"--%>
+                            <%--allowClear="${skuInfo.currentUser.admin}" dataMsgRequired="必填信息">--%>
+            <%--</sys:treeselect>--%>
+            <%--<input type="text" name="skuInfo.id" id="skuInfo">//商品ID测试--%>
+            <input type="text" name="orderDetaIds" id="orderDetaIds">//多选商品 "，"隔开 测试
         </div>
     </div>
     <div class="control-group">

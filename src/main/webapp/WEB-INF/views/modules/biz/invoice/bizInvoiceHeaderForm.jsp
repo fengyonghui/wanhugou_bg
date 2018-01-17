@@ -6,8 +6,8 @@
 		$(document).ready(function() {
 			//$("#name").focus();
 			/* 全选 全不选 */
-            $('#chAll').live('click',function(){
-                var choose=$("input[name='boxs']");
+			$('.chAll').live('click',function(){
+                var choose=$(".boxs");
                 if($(this).attr('checked')){
                     choose.attr('checked',true);
                 }else{
@@ -53,7 +53,7 @@ function orderoffice(){
             $.each(data,function(index,order){
               $("#boxTbody").empty();
                 $("<td/>").attr("src", order.id);
-                htmlOrder+="<tr id='order"+order.id+"'><td><input type='checkbox'name='boxs' value="+order.id+">"+
+                htmlOrder+="<tr id='order"+order.id+"'><td><input type='checkbox' class='boxs' value="+order.id+">"+
                                 "</td><td><input name='bizInvoiceDetailList["+index+"].orderHead.id' value='"+order.id+"' type='hidden'/>"+order.customer.name+"</td>"+
                                 "<td>"+order.orderNum+"</td><td>"+order.totalExp+"</td><td>"+order.freight+"</td>"+
                                 "<td>"+order.createDate+"</td></tr>";
@@ -77,10 +77,10 @@ function dial(){
 				if(v == 1){
 					console.log("执行确定方法");
 					 var checkID ="";
-					 $("input[name='boxs']").each(function(){
+					 $(".boxs").each(function(){
 						 if($(this).attr("checked")){
 								var orderId= $(this).val();
-								var trId="order"+orderId;
+								var trId="order"+$(this).val();
 								var remov="<td><a href='#' onclick=\"removeItem('"+orderId+"')\">移除</a></td>";
 								checkID+="<tr>"+$("#"+trId).html()+remov+"</tr>";
 						 }
@@ -222,7 +222,7 @@ function dial(){
     <table id="cheall" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
-            <th><input type="checkbox" id="chAll"/></th>
+            <th><input type="checkbox" class="chAll"/></th>
             <th>采购商</th>
             <th>订单编号</th>
             <th>订单总费用</th>

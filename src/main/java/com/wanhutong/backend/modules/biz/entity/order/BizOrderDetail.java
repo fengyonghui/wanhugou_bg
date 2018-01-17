@@ -37,6 +37,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Integer ordQtyUpda;        //用于存储修改时的采购数量
     private Integer maxLineNo;        //最大的行号
     private List<BizOpShelfSku> shelfList;    //用于计算有多少货架
+    private String orderDetaIds;        //用于多选商品时传递数据
 
     public Integer getMaxLineNo() {
         return maxLineNo;
@@ -186,5 +187,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setOrdQtyUpda(Integer ordQtyUpda) {
         this.ordQtyUpda = ordQtyUpda;
+    }
+
+    public String getOrderDetaIds() {
+        return orderDetaIds;
+    }
+
+    public void setOrderDetaIds(String orderDetaIds) {
+        this.orderDetaIds = orderDetaIds;
     }
 }

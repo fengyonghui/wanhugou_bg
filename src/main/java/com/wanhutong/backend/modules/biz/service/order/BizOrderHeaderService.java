@@ -57,20 +57,24 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             return super.findPage(page, bizOrderHeader);
         }
-
-
     }
 
     @Transactional(readOnly = false)
     public void save(BizOrderHeader bizOrderHeader) {
-        System.out.println(bizOrderHeader);
+        if(bizOrderHeader.getBizType()==null){
+            bizOrderHeader.setBizType(2);//默认 2非专营      ----1专营
+        }
         CommonLocation bizLocation = bizOrderHeader.getBizLocation();
         if (bizLocation.getRegion() == null) {
             bizLocation.setRegion(new SysRegion());
         }
         commonLocationService.updateCommonLocation(bizLocation);
         String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), bizOrderHeader.getCustomer().getId());
-        bizOrderHeader.setOrderNum(orderNum);
+        if(bizOrderHeader.getId()==null){
+            bizOrderHeader.setOrderNum(orderNum);
+        }else{
+            bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());
+        }
         bizOrderHeader.setBizLocation(bizLocation);
 //		----------------------------查询是否首次下单--------------------------------------
         BizOrderHeader boh = new BizOrderHeader();
@@ -78,12 +82,25 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         boh.setCustomer(custid);
         boh.setBizStatus(BizOrderDiscount.ONE_ORDER.getOneOr());//条件为0
         List<BizOrderHeader> list = bizOrderHeaderDao.findListFirstOrder(boh);
-        if(list.size()==0 ){
-            System.out.println("-是首单-");
-//            boh.setOneOrder("firstOrder");
+        Double t1 = bizOrderHeader.getTotalDetail();//订单总详情费用
+        if(list.size()==0){
+            System.out.println("--是首单--");
+            bizOrderHeader.setOneOrder("firstOrder");
+            if(t1<=10000){//限额 10000
+                if(bizOrderHeader.getBizType()==BizOrderDiscount.TWO_ORDER.getOneOr()){//专营 1
+                    System.out.println(" 优惠10% ");
+                    Double a1=t1*BizOrderDiscount.SELF_SUPPORT.getCalcs();//0.1
+                    bizOrderHeader.setTotalDetail(t1-a1);
+                }else if(bizOrderHeader.getBizType()==BizOrderDiscount.THIS_ORDER.getOneOr()){//非专营 2
+                    System.out.println(" 优惠5% ");
+                    Double a2=t1*BizOrderDiscount.NON_SELF_SUPPORT.getCalcs();//0.05
+                    bizOrderHeader.setTotalDetail(t1-a2);
+                }else{
+                    System.out.println(" 未知 ");
+                }
+            }
         }else{
-            System.out.println("-不是首单-");
-            boh.setOneOrder("firstOrder");
+            System.out.println("--不是首单--");
         }
         super.save(bizOrderHeader);
 

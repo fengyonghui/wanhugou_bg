@@ -41,7 +41,6 @@ public class BizOrderHeaderController extends BaseController {
 	@Autowired
 	private BizOrderDetailService bizOrderDetailService;
 
-//	判断客户是否为首次下单
 	@Autowired
 	private OfficeService officeService;
 
@@ -96,18 +95,11 @@ public class BizOrderHeaderController extends BaseController {
 		if(bizOrderHeader.getPlatformInfo()==null){
 			bizOrderHeader.getPlatformInfo().setId(1);
 		}
-		if(bizOrderHeader.getBizType()==null){
-//			0代表默认值，首次创建订单没有选购商品，在选购商品Detail里 update，状态为 1是专营订单，2是非专营订单
-			bizOrderHeader.setBizType(0);
-		}
 		bizOrderHeaderService.save(bizOrderHeader);
 		addMessage(redirectAttributes, "保存订单信息成功");
 		Integer orId = bizOrderHeader.getId();
 		String oneOrder = bizOrderHeader.getOneOrder();
-//		if(orId !=null && orId !=0){
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
-//		}
-//		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")
