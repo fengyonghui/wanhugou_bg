@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -99,9 +100,18 @@ public class UserController extends BaseController {
 			List<Office> list = officeService.findList(off);
 			Office office = officeService.get(user.getOffice().getId());
 			if(list == null || list.isEmpty()){
-				Office parentOffice = officeService.get(office.getParentId());
-				user.setCompany(parentOffice);
-				user.setOffice(office);
+				if(OfficeTypeEnum.PURCHASINGCENTER.getType().equals(office.getType())){
+					user.setCompany(office);
+					user.setOffice(office);
+				}else if(OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+					user.setCompany(office);
+					user.setOffice(office);
+				}else {
+					Office parentOffice = officeService.get(office.getParentId());
+					user.setCompany(parentOffice);
+					user.setOffice(office);
+				}
+
 			}else{
 				user.setCompany(office);
 				user.setOffice(null);

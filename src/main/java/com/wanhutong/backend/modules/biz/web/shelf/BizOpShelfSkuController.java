@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -66,28 +67,38 @@ public class BizOpShelfSkuController extends BaseController {
 
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
 	@RequestMapping(value = "form")
-	public String form(BizOpShelfSku bizOpShelfSku, Model model) {
+	public String form(BizOpShelfSkus bizOpShelfSku, Model model) {
 		model.addAttribute("bizOpShelfSku", bizOpShelfSku);
+		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		return "modules/biz/shelf/bizOpShelfSkuForm";
 	}
 
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "save")
-	public String save(String skuIds,BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizOpShelfSku)){
-			return form(bizOpShelfSku, model);
+	public String save(BizOpShelfSkus bizOpShelfSkus, Model model, RedirectAttributes redirectAttributes) {
+		if (!beanValidator(model, bizOpShelfSkus)){
+			return form(bizOpShelfSkus, model);
 		}
-		if (skuIds!=null && !"".equals(skuIds)){
-			String[] ids = skuIds.split(",".trim());
-			for(int i = 0; i < ids.length; i++){
-                BizSkuInfo bizSkuInfo = new BizSkuInfo();
-                bizSkuInfo.setId(Integer.parseInt(ids[i]));
-                bizOpShelfSku.setSkuInfo(bizSkuInfo);
-                bizOpShelfSkuService.save(bizOpShelfSku);
-            }
-        }
+		String skuIds=bizOpShelfSkus.getSkuInfoIds();
+		BizSkuInfo bizSkuInfo = new BizSkuInfo();
+		for(int i=0;i<skuIds.length();i++){
+			bizSkuInfo.setId(null);
+		//	bizSkuInfo.setSkuType(bizOpShelfSkus.);
+		}
+//		if (skuIds!=null && !"".equals(skuIds)){
+//			String[] ids = skuIds.split(",".trim());
+//			for(int i = 0; i < ids.length; i++){
+//                BizSkuInfo bizSkuInfo = new BizSkuInfo();
+//                bizSkuInfo.setId(Integer.parseInt(ids[i]));
+//                bizOpShelfSku.setSkuInfo(bizSkuInfo);
+//                bizOpShelfSkuService.save(bizOpShelfSku);
+//            }
+//        }
 		addMessage(redirectAttributes, "保存商品上架成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/form?id=" + bizOpShelfSku.getOpShelfInfo().getId() ;
+		if(bizOpShelfSkus.getShelfSign()==0){
+			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
+		}
+		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/form?id=" + bizOpShelfSkus.getOpShelfInfo().getId() ;
 	}
 	
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
