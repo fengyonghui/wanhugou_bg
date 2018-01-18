@@ -42,10 +42,18 @@
 				<form:input path="shelfUser.id" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>--%>
 		<ul class="ul-form">
-
-			<li><label>采购中心：</label>
-				<form:input path="centerOffice.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<c:if test="${fns:getUser().isAdmin()}">
+				<li><label>采购中心：</label>
+					<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
+									labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
+									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
+					</sys:treeselect>
+				</li>
+			</c:if>
+			<li><label>货架名称：</label>
+				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
+
 			<li><label>下架时间：</label>
 				<input name="unShelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					value="<fmt:formatDate value="${bizOpShelfSku.unShelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
@@ -57,9 +65,7 @@
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
-			<li><label>货架名称：</label>
-				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
+
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>

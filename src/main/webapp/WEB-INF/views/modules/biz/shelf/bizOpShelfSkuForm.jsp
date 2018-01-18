@@ -150,7 +150,7 @@
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${entity.centerOffice.id}" labelName="fromOffice.name"
+				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${entity.centerOffice.id}" labelName="centerOffice.name"
 								labelValue="${entity.centerOffice.name}"  notAllowSelectParent="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 				</sys:treeselect>
