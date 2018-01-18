@@ -7,11 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,8 @@ public class BizOpShelfSkuController extends BaseController {
 	private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
 	private BizProductInfoService bizProductInfoService;
+	@Autowired
+	private BizSkuInfoService bizSkuInfoService;
 	
 	@ModelAttribute
 	public BizOpShelfSku get(@RequestParam(required=false) Integer id) {
@@ -80,10 +84,33 @@ public class BizOpShelfSkuController extends BaseController {
 			return form(bizOpShelfSkus, model);
 		}
 		String skuIds=bizOpShelfSkus.getSkuInfoIds();
-		BizSkuInfo bizSkuInfo = new BizSkuInfo();
-		for(int i=0;i<skuIds.length();i++){
-			bizSkuInfo.setId(null);
-		//	bizSkuInfo.setSkuType(bizOpShelfSkus.);
+		String[] skuIdArr=skuIds.split(",");
+		String[] maxQtyArr=bizOpShelfSkus.getMaxQtys().split(",");
+		String[] minQtyArr=bizOpShelfSkus.getMinQtys().split(",");
+		String[] orgPriceArr=bizOpShelfSkus.getOrgPrices().split(",");
+		String[] priorityArr=bizOpShelfSkus.getPrioritys().split(",");
+		String[] salePriceArr=bizOpShelfSkus.getSalePrices().split(",");
+		String[] shelfQtyArr=bizOpShelfSkus.getShelfQtys().split(",");
+		String[] shelfTimeArr=bizOpShelfSkus.getShelfTimes().split(",");
+		String[] unShelfTimeArr=bizOpShelfSkus.getUnshelfTimes().split(",");
+		BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+		for(int i=0;i<skuIdArr.length;i++){
+			bizOpShelfSku.setId(null);
+			BizSkuInfo bizSkuInfo=bizSkuInfoService.get(Integer.parseInt(skuIdArr[i].trim()));
+			bizOpShelfSku.setSkuInfo(bizSkuInfo);
+			bizOpShelfSku.setProductInfo(bizSkuInfo.getProductInfo());
+			bizOpShelfSku.setCenterOffice(bizOpShelfSkus.getCenterOffice());
+			bizOpShelfSku.setOpShelfInfo(bizOpShelfSkus.getOpShelfInfo());
+			bizOpShelfSku.setMaxQty(Integer.parseInt(maxQtyArr[i].trim()));
+			bizOpShelfSku.setMinQty(Integer.parseInt(minQtyArr[i].trim()));
+			bizOpShelfSku.setOrgPrice(Double.parseDouble(orgPriceArr[i].trim()));
+			bizOpShelfSku.setPriority(Integer.parseInt(priorityArr[i].trim()));
+			bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
+			bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
+			bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
+			bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+			bizOpShelfSkuService.save(bizOpShelfSku);
+
 		}
 //		if (skuIds!=null && !"".equals(skuIds)){
 //			String[] ids = skuIds.split(",".trim());
