@@ -58,7 +58,7 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 	public void setOpShelfInfo(BizOpShelfInfo opShelfInfo) {
 		this.opShelfInfo = opShelfInfo;
 	}
-	@NotNull(message="产品ID不能为空")
+
 	public String getProductIds() {
 		return productIds;
 	}
@@ -82,11 +82,11 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 	public void setShelfUser(User shelfUser) {
 		this.shelfUser = shelfUser;
 	}
-
+	@NotNull(message="上架数量不能为空")
 	public String getShelfQtys() {
 		return shelfQtys;
 	}
-	@NotNull(message="上架数量不能为空")
+
 	public void setShelfQtys(String shelfQtys) {
 		this.shelfQtys = shelfQtys;
 	}

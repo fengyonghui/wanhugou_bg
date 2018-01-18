@@ -113,9 +113,9 @@
                     success:function(data){
                         var htmlInfo = "";
                         $.each(data,function(index,item) {
-                            htmlInfo+="<tr><td>"+ item.name +"</td>"+
-                                "<td><input name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-medium required' type='text' placeholder='必填！'/></td>"+
-                                "<td>"+item.basePrice+"</td>"+
+                            htmlInfo+="<tr><td><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
+                                "<td><input name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！'/></td>"+
+                                "<td><input name='orgPrices' readonly='readonly' value='"+item.basePrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！' /></td>"+
                                 "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" placeholder=\"必填！\"/></td>"+
                                 "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
                                 "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
@@ -150,8 +150,8 @@
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-								labelValue="${entity.fromOffice.name}"  notAllowSelectParent="true"
+				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${entity.centerOffice.id}" labelName="fromOffice.name"
+								labelValue="${entity.centerOffice.name}"  notAllowSelectParent="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 				<span class="help-inline"><font color="red">*</font> </span>
