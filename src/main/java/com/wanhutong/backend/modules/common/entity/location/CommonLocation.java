@@ -27,8 +27,8 @@ public class CommonLocation extends DataEntity<CommonLocation> {
 	private String pcrName;		// 省市区对应名称
 	private String address;		// 详细地址
 	private String zipCode;		// 邮编
-	private String longitude;		// 经度
-	private String latitude;		// 纬度
+	private Double longitude;		// 经度
+	private Double latitude;		// 纬度
 
 	private Integer selectedRegionId;
 
@@ -98,23 +98,22 @@ public class CommonLocation extends DataEntity<CommonLocation> {
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
-	
-	public String getLongitude() {
+
+	public Double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(String longitude) {
+	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
-	
-	public String getLatitude() {
+
+	public Double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(String latitude) {
+	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
 	}
-
 
 	public String getFullAddress(){
 		StringBuilder sb = new StringBuilder();

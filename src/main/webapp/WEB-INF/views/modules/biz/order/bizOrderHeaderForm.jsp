@@ -95,31 +95,31 @@
     <form:hidden path="oneOrder"/>
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">订单编号：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"--%>
+                        <%--class="input-xlarge required"/>--%>
+        <%--</div>--%>
+    <%--</div>--%>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">订单类型：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:select path="orderType" class="input-medium required">--%>
+                <%--&lt;%&ndash;默认选中&ndash;%&gt;--%>
+                <%--<form:option value="1" label="普通订单" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
+                <%--&lt;%&ndash;<form:option value="" label="请选择"/>&ndash;%&gt;--%>
+                <%--&lt;%&ndash;<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"&ndash;%&gt;--%>
+                              <%--&lt;%&ndash;htmlEscape="false"/>&ndash;%&gt;</form:select>--%>
+            <%--<span class="help-inline"><font color="red">*</font>j默认选择</span>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <div class="control-group">
-        <label class="control-label">订单编号：</label>
-        <div class="controls">
-            <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"
-                        class="input-xlarge required"/>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">订单类型：</label>
-        <div class="controls">
-            <form:select path="orderType" class="input-medium required">
-                <%--默认选中--%>
-                <form:option value="1" label="普通订单" itemLabel="label" itemValue="value" htmlEscape="false"/>
-                <%--<form:option value="" label="请选择"/>--%>
-                <%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
-                              <%--htmlEscape="false"/>--%></form:select>
-            <span class="help-inline"><font color="red">*</font>j默认选择</span>
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label">客户名称：</label>
+        <label class="control-label">采购商名称：</label>
         <div class="controls">
             <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}" labelName="customer.name"
                             labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-                            title="客户" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+                            title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                             allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
@@ -164,8 +164,6 @@
         <div class="controls">
             <form:select path="bizStatus" class="input-medium required">
                 <form:option value="" label="请选择"/>
-                <%--默认选中--%>
-                <%--<c:if test="${bizOrderHeader.id==null}"><form:option value="0" label="未支付"/></c:if>--%>
                 <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
                               htmlEscape="false"/></form:select>
             <span class="help-inline"><font color="red">*</font>默认选择</span>
@@ -208,7 +206,7 @@
     <div class="form-actions">
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                          type="submit"
-                                                                         value="选购商品"/>&nbsp;</shiro:hasPermission>
+                                                                         value="保存"/>&nbsp;</shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 </form:form>
@@ -216,7 +214,6 @@
 
 <%--详情列表--%>
 <sys:message content="${message}"/>
-<c:if test="${entity.id !=null && entity.id!='' }">
     <table id="contentTable" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
@@ -281,6 +278,14 @@
         </c:forEach>
         </tbody>
     </table>
-</c:if>
+
+    <div class="form-actions">
+        <c:if test="${bizOrderHeader.id !=null && bizOrderHeader.id!='' }">
+            <shiro:hasPermission name="biz:order:bizOrderDetail:edit"><input type="button"
+                                                                       onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}';"
+                                                                       class="btn btn-primary"
+                                                                       value="订单商品信息添加"/></shiro:hasPermission>
+        </c:if>
+    </div>
 </body>
 </html>
