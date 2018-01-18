@@ -51,7 +51,16 @@ public class User extends DataEntity<User> {
 	private Date oldLoginDate;	// 上次登陆日期
 	
 	private Role role;	// 根据角色查询用户条件
-	
+	private String conn;//用于标识客户专员
+
+	public String getConn() {
+		return conn;
+	}
+
+	public void setConn(String conn) {
+		this.conn = conn;
+	}
+
 	private List<Role> roleList = Lists.newArrayList(); // 拥有角色列表
 
 	public User() {

@@ -175,8 +175,12 @@ public class UserController extends BaseController {
 			//UserUtils.getCacheMap().clear();
 		}
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
-		return "redirect:" + adminPath + "/sys/user/list?repage";
-//		conIndex
+		System.out.println(user.getConn());
+		if(user.getConn().equals("conn")){
+			return "redirect:" + adminPath + "/sys/user/conIndex?repage";
+		}else{
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
 	}
 	
 	@RequiresPermissions("sys:user:edit")
@@ -413,6 +417,7 @@ public class UserController extends BaseController {
 //		});
 //	}
 
+//	客户专员管理
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"conIndex"})
 	public String conIndex(User user, Model model) {

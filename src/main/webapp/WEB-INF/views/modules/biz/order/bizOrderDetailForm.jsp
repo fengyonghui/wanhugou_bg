@@ -140,58 +140,58 @@ function removeItem(obj) {
             <span class="help-inline"><font color="red">*</font>测试输入1-10</span>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">已选择货架：</label>
-        <div class="controls">
-            <table id="contentTable" class="table table-striped table-bordered table-condensed">
-                <thead>
-                <tr>
-                    <th>货架名称</th>
-                    <th>货架描述</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody id="shelfInfo_table">
-                <c:if test="${bizOrderDetail.id !=null && bizOrderDetail.id!='' }">
-                    <c:forEach items="${bizOrderDetail.shelfList}" var="bizOrderDetail">
-                        <tr>
-                            <td>
-                                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">
-                                        ${bizInvoiceDetail.id}</a>
-                            </td>
-                            <td>
-                                    ${bizOrderDetail.invoiceHeader}
-                            </td>
-                            <td>
-                                    ${bizOrderDetail.invoiceHeader.invTitle}
-                            </td>
-                            <td>
-                                    ${bizOrderDetail.unitPrice}
-                            </td>
-                            <td>
-                                    ${bizOrderDetail.ordQty}
-                            </td>
-                            <td>
-                                    ${bizOrderDetail.sentQty}
-                            </td>
-                            <td>
-                                <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-                            </td>
-                            <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-                                <td>
-                                        <%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>--%>
-                                        <%--<a href="${ctx}/biz/invoice/bizInvoiceDetail/delete?id=${bizOrderDetail.id}&sign=1"--%>
-                                        <%--onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>--%>
-                                    <a href="#">删除</a>
-                                </td>
-                            </shiro:hasPermission>
-                        </tr>
-                    </c:forEach>
-                </c:if>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">已选择货架：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<table id="contentTable" class="table table-striped table-bordered table-condensed">--%>
+                <%--<thead>--%>
+                <%--<tr>--%>
+                    <%--<th>货架名称</th>--%>
+                    <%--<th>货架描述</th>--%>
+                    <%--<th>操作</th>--%>
+                <%--</tr>--%>
+                <%--</thead>--%>
+                <%--<tbody id="shelfInfo_table">--%>
+                <%--<c:if test="${bizOrderDetail.id !=null && bizOrderDetail.id!='' }">--%>
+                    <%--<c:forEach items="${bizOrderDetail.shelfList}" var="bizOrderDetail">--%>
+                        <%--<tr>--%>
+                            <%--<td>--%>
+                                <%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">--%>
+                                        <%--${bizInvoiceDetail.id}</a>--%>
+                            <%--</td>--%>
+                            <%--<td>--%>
+                                    <%--${bizOrderDetail.invoiceHeader}--%>
+                            <%--</td>--%>
+                            <%--<td>--%>
+                                    <%--${bizOrderDetail.invoiceHeader.invTitle}--%>
+                            <%--</td>--%>
+                            <%--<td>--%>
+                                    <%--${bizOrderDetail.unitPrice}--%>
+                            <%--</td>--%>
+                            <%--<td>--%>
+                                    <%--${bizOrderDetail.ordQty}--%>
+                            <%--</td>--%>
+                            <%--<td>--%>
+                                    <%--${bizOrderDetail.sentQty}--%>
+                            <%--</td>--%>
+                            <%--<td>--%>
+                                <%--<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+                            <%--</td>--%>
+                            <%--<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">--%>
+                                <%--<td>--%>
+                                        <%--&lt;%&ndash;<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>&ndash;%&gt;--%>
+                                        <%--&lt;%&ndash;<a href="${ctx}/biz/invoice/bizInvoiceDetail/delete?id=${bizOrderDetail.id}&sign=1"&ndash;%&gt;--%>
+                                        <%--&lt;%&ndash;onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>&ndash;%&gt;--%>
+                                    <%--<a href="#">删除</a>--%>
+                                <%--</td>--%>
+                            <%--</shiro:hasPermission>--%>
+                        <%--</tr>--%>
+                    <%--</c:forEach>--%>
+                <%--</c:if>--%>
+                <%--</tbody>--%>
+            <%--</table>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <div class="control-group">
         <label class="control-label">sku商品名称：</label>
         <div class="controls">
@@ -258,6 +258,29 @@ function removeItem(obj) {
             <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <table class="table table-striped table-bordered table-condensed">
+                <thead>
+                <tr>
+                    <th>订单行号</th>
+                    <th>货架名称</th>
+                    <th>sku商品名称</th>
+                    <th>商品编码</th>
+                    <th>材质</th>
+                    <th>颜色</th>
+                    <th>规格</th>
+                    <th>商品单价</th>
+                    <th>采购数量</th>
+                    <th>发货数量</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
     <div class="form-actions">
         <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
             <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;</shiro:hasPermission>
@@ -266,17 +289,17 @@ function removeItem(obj) {
 </form:form>
 
 <%--货架名称列表弹窗--%>
-<div id="orderDetailTablejBox" style="display: none">
-    <table id="cheall" class="table table-striped table-bordered table-condensed">
-        <thead>
-        <tr>
-            <th><input type="checkbox" id="chAll"/></th>
-            <th>货架名称</th>
-            <th>货架描述</th>
-        </tr>
-        </thead>
-        <tbody id="boxTbody"></tbody>
-    </table>
-</div>
+<%--<div id="orderDetailTablejBox" style="display: none">--%>
+    <%--<table id="cheall" class="table table-striped table-bordered table-condensed">--%>
+        <%--<thead>--%>
+        <%--<tr>--%>
+            <%--<th><input type="checkbox" id="chAll"/></th>--%>
+            <%--<th>货架名称</th>--%>
+            <%--<th>货架描述</th>--%>
+        <%--</tr>--%>
+        <%--</thead>--%>
+        <%--<tbody id="boxTbody"></tbody>--%>
+    <%--</table>--%>
+<%--</div>--%>
 </body>
 </html>

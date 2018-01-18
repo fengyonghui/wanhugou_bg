@@ -7,8 +7,8 @@
 	<script type="text/javascript">
 		function changeSelect(id){
 			 $("#adviserId").html("");
-			 $("#adviserId").append("<option value='' selected = 'selected'>==请选择采购顾问==</option>");
-			 $("#s2id_adviserId span:eq(0)").html("==请选择采购顾问==");
+			 $("#adviserId").append("<option value='' selected = 'selected'>==请选择客户专员==</option>");
+			 $("#s2id_adviserId span:eq(0)").html("==请选择客户专员==");
 			if(id != null && id !=undefined && id.trim() != ""){
 				 $.ajax({
 					url:"${ctx}/sys/user/getAdvisers",
@@ -35,7 +35,7 @@
 				return false;
 			}
 			if(adviserid == null || adviserid ==undefined || adviserid.trim() == ""){
-				alert("请选择采购顾问")
+				alert("请选择客户专员")
 				return false;
 			}
 			$.ajax({
@@ -60,55 +60,36 @@
 	<li class="active"><a href="${ctx}/sys/office/purchasersForm?id=${office.id}&parent.id=${office.parent.id}">机构<shiro:hasPermission name="sys:office:edit">${not empty office.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:office:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
 <form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/buyerAdviser/save" method="post" class="form-horizontal">
-	<form:hidden path="id"/>
+	<%--<form:hidden path="id"/>--%>
 	<sys:message content="${message}"/>
 	<div class="control-group">
-		<label class="control-label">上级机构:</label>
+		<label class="control-label">采购中心:</label>
 		<div class="controls">
-			<input type="text" value="${office.parent.name}" disabled="disabled" />
-			<input  type="hidden" name="custId" value="${office.id}" />
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">归属区域:</label>
-		<div class="controls">
-			<input type="text" value="${office.area.name}" disabled="disabled" />
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">机构名称:</label>
-		<div class="controls">
-			<input type="text" value="${office.name}" disabled="disabled" />
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">机构编码:</label>
-		<div class="controls">
-			<input type="text" value="${office.code}" disabled="disabled" />
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">归属采购中心:</label>
-		<div class="controls">
-			<select name="centerId" id="bcID" style="width: 18%" onchange="changeSelect(this.value)">
+			<select name="centers.id" id="bcID" style="width: 18%" onchange="changeSelect(this.value)">
 				<option value="">==请选择采购中心==</option>
 				<c:forEach items="${officeList}" var="item" varStatus="vs">
-					<option value="${item.id}" <c:if test="${item.id == buyerAdviser.centerId}">selected</c:if> > ${item.name}</option>
+					<option value="${item.id}" <c:if test="${item.id == bcc.centers}">selected</c:if> > ${item.name}</option>
 				</c:forEach>
 			</select>
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label">归属采购顾问:</label>
+		<label class="control-label">客户专员:</label>
 		<div class="controls">
-			<select name="consultantId" id="adviserId" style="width: 18%">
-				<c:if test="${buyerAdviser.consultantName != null }">
-					<option value="${buyerAdviser.consultantId}" selected = 'selected'>${buyerAdviser.consultantName}</option>
+			<select name="consultants.id" id="adviserId" style="width: 18%">
+				<c:if test="${bcc.consultants != null }">
+					<option value="${bcc.consultants}" selected = 'selected'>${bcc.consultants}</option>
 				</c:if>
-				<c:if test="${buyerAdviser == null || buyerAdviser.consultantName==null}">
-					<option value="">==请选择采购顾问==</option>
+				<c:if test="${bcc == null || bcc.consultants==null}">
+					<option value="">==请选择客户专员==</option>
 				</c:if>
 			</select>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">采购商:</label>
+		<div class="controls">
+			<input type="text" value="${office.id}" disabled="disabled" />
 		</div>
 	</div>
 

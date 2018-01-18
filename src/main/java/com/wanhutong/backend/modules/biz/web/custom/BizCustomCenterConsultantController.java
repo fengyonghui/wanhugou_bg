@@ -7,10 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,8 @@ public class BizCustomCenterConsultantController extends BaseController {
 
 	@Autowired
 	private OfficeService officeService;
+    @Autowired
+    private SystemService systemService;
 
 	@ModelAttribute
 	public BizCustomCenterConsultant get(@RequestParam(required=false) Integer id) {
@@ -96,19 +100,34 @@ public class BizCustomCenterConsultantController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/custom/bizCustomCenterConsultant/?repage";
 	}
 
-//	新增会员量 Method
-	@RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
-	@RequestMapping(value = "memberForm")
-	public String memberForm(BizCustomCenterConsultant bizCustomCenterConsultant, Model model) {
-		model.addAttribute("entity", bizCustomCenterConsultant);
-		return "modules/biz/custom/bizCustomMembershipVolumeDATE";
-	}
-
 //	关联
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = "CustomUserForm")
     public String CustomUserForm(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
         System.out.println(user.getId());
         return "modules/biz/custom/bizCustomMembershipVolumeDATE";
+    }
+
+    @RequiresPermissions("sys:office:view")
+    @RequestMapping(value = "interrelatedForm")
+    public String interrelatedForm(Office office, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Office off = new Office();
+        Office parentOff = new Office();
+        String socID = DictUtils.getDictValue("部门", "sys_office_centerId","");
+        String center = DictUtils.getDictValue("采购中心", "sys_office_type","");
+        parentOff.setId(Integer.valueOf(socID));
+        off.setParent(parentOff);
+        off.setType(center);
+        List<Office> officeList = officeService.queryList(off);
+        office = officeService.get(office.getId());
+        officeService.get(office);
+        BizCustomCenterConsultant bcc = bizCustomCenterConsultantService.get(office.getId());
+        if(bcc != null){
+            bcc.setConsultants(systemService.getUser(bcc.getConsultants().getId()));
+        }
+        model.addAttribute("office", office);
+        model.addAttribute("bcc", bcc);
+        model.addAttribute("officeList", officeList);
+        return "modules/sys/interrelatedForm";
     }
 }

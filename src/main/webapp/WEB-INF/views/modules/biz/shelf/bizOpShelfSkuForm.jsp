@@ -192,7 +192,6 @@
 			<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
 				<thead>
 				<tr>
-
 					<th><input id="select_all" type="checkbox" /></th>
 					<th>商品名称</th>
 					<th>商品编码</th>
