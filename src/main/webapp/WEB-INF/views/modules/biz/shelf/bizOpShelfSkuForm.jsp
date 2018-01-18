@@ -9,6 +9,11 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    $("input[name='unshelfTimes']").each(function () {
+                        if($(this).val()==''){
+                            $(this).val(0)
+                        }
+                    })
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
