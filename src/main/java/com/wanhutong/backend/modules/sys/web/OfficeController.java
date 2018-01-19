@@ -91,8 +91,8 @@ public class OfficeController extends BaseController {
 //		System.out.println(consultants);//必填
 //			return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
 //		}
-//		return "modules/sys/purchasersList";
-		return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
+	return "modules/sys/purchasersList";
+		//return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
 	}
 	
 	@RequiresPermissions("sys:office:view")
