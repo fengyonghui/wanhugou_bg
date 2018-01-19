@@ -18,7 +18,7 @@
 	<sql id="bizOpShelfInfoJoins">
 		LEFT JOIN sys_user suu ON suu.id = a.update_id
 		LEFT JOIN sys_user suc on suc.id=a.create_id
-		LEFT JOIN biz_shelf_user su on  su.shelf_id=a.id
+		LEFT JOIN biz_shelf_user su on  su.shelf_id=a.id AND su.status = 1
 		LEFT JOIN sys_user s on s.id= su.user_id
 		LEFT JOIN sys_office so ON so.id=s.company_id
 	</sql>
@@ -28,7 +28,7 @@
 			<include refid="bizOpShelfInfoColumns"/>
 		FROM biz_op_shelf_info a
 		<include refid="bizOpShelfInfoJoins"/>
-		WHERE a.id = #{id}
+		WHERE a.id = #{id} GROUP BY a.id
 	</select>
 	
 	<select id="findList" resultType="BizOpShelfInfo">
@@ -48,6 +48,7 @@
 				${sqlMap.shelfInfo}
 			</if>
 		</where>
+		GROUP BY a.id
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -65,7 +66,8 @@
 		<include refid="bizOpShelfInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-		</where>		
+		</where>
+		GROUP BY a.id
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}

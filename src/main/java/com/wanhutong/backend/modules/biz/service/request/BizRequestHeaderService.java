@@ -141,11 +141,15 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 				bizRequestDetail.setLineNo(t);
 				if(bizRequestHeader.getReqDetailIds()!=null){
 					String [] detailIdArr=StringUtils.split(bizRequestHeader.getReqDetailIds(),",");
-					bizRequestDetail.setId(Integer.parseInt(detailIdArr[i].trim()));
-				}else {
-					bizRequestDetail.setId(null);
-					bizRequestDetail.setLineNo(++t);
+					if (detailIdArr.length > i){
+						bizRequestDetail.setId(Integer.parseInt(detailIdArr[i].trim()));
+					}else {
+						bizRequestDetail.setId(null);
+						bizRequestDetail.setLineNo(++t);
+					}
+
 				}
+
 
 				bizRequestDetail.setRequestHeader(bizRequestHeader);
 				bizRequestDetailService.save(bizRequestDetail);

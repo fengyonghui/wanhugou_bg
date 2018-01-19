@@ -41,15 +41,18 @@
 				<th>创建时间</th>
 				<th>更新人</th>
 				<th>更新时间</th>
-				<%--<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit">--%>
+				<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit">
 					<th>操作</th>
-				<%--</shiro:hasPermission>--%>
+				</shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizOpShelfInfo">
 			<tr>
-				<td><a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">
+				<td>
+					<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit">
+						<a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">
+					</shiro:hasPermission>
 					${bizOpShelfInfo.name}
 				</a></td>
 				<%--<td>
@@ -67,12 +70,11 @@
 				<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit"><td>
     				<a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">修改</a>
 					<a href="${ctx}/biz/shelf/bizOpShelfInfo/delete?id=${bizOpShelfInfo.id}" onclick="return confirmx('确认要删除该货架信息吗？', this.href)">删除</a>
-				</td>
-				</shiro:hasPermission>
-				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
 					<a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">商品上下架管理</a>
 					<a href="${ctx}/biz/shelf/bizOpShelfInfo/shelfManagementList?id=${bizOpShelfInfo.id}">货架管理员</a>
-				</td></shiro:hasPermission>
+				</td>
+				</shiro:hasPermission>
+
 			</tr>
 		</c:forEach>
 		</tbody>

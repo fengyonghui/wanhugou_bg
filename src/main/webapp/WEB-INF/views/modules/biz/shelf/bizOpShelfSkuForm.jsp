@@ -28,7 +28,6 @@
 				}
 			});
 			var opShelfId=$("#opShelfId").val();
-			alert(opShelfId);
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findShelf",
