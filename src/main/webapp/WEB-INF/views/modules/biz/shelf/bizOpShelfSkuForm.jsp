@@ -27,13 +27,20 @@
 					}
 				}
 			});
-
+			var opShelfId=$("#opShelfId").val();
+			alert(opShelfId);
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findShelf",
                 success:function (data) {
                     $.each(data,function(index,shelfInfo) {
-                        $("#shelfInfoId").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
+                        if(opShelfId==shelfInfo.id){
+                            $("#s2id_shelfInfoId").find("span").eq(0).text(shelfInfo.name);
+                            $("#shelfInfoId").append("<option selected='selected' value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
+						}else {
+                            $("#shelfInfoId").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
+						}
+
 					})
 
                 }
@@ -152,14 +159,15 @@
 	<form:form id="inputForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSku/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<form:hidden path="shelfSign"/>
+		<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>
 		<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 		<sys:message content="${message}"/>
 
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
-				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${entity.centerOffice.id}" labelName="centerOffice.name"
-								labelValue="${entity.centerOffice.name}"  notAllowSelectParent="true"
+				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
+								labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -224,18 +232,18 @@
 					<thead>
 						<tr>
 							<th>商品名称：</th>
-							<c:if test="${bizOpShelfSku.id != null}">
-									<th>上架人：</th>
-							</c:if>
+							<%--<c:if test="${bizOpShelfSku.id != null}">--%>
+									<%--<th>上架人：</th>--%>
+							<%--</c:if>--%>
 							<th>上架数量(个)：</th>
 							<th>原价(元)：</th>
 							<th>销售单价(元)</th>
 							<th>最低销售数量(个)：</th>
 							<th>最高销售数量(个,0:不限制)：</th>
 							<th>上架时间：</th>
-							<c:if test="${bizOpShelfSku.id != null}">
-									<th>下架人：</th>
-							</c:if>
+							<%--<c:if test="${bizOpShelfSku.id != null}">--%>
+									<%--<th>下架人：</th>--%>
+							<%--</c:if>--%>
 							<th>下架时间：</th>
 							<th>显示次序：</th>
 							<th>操作</th>
@@ -245,9 +253,10 @@
 						<c:if test="${bizOpShelfSku.id != null}">
 							<tr>
 								<td>
-									<input name="skuInfoIds" value="${bizOpShelfSku.id}" class="input-medium required" type="hidden"/>${bizOpShelfSku.skuInfo.name}
+									<input name="id" value="${bizOpShelfSku.id}" class="input-medium required" type="hidden"/>
+									<input name="skuInfoIds" value="${bizOpShelfSku.skuInfo.id}" class="input-medium required" type="hidden"/>${bizOpShelfSku.skuInfo.name}
 									</td>
-								<td><input name="createBy.name" value="${bizOpShelfSku.shelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="text" placeholder="必填！"/></td>
+								<%--<td><input name="createBy.name" value="${bizOpShelfSku.shelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="text" placeholder="必填！"/></td>--%>
 								<td><input name="shelfQtys" value="${bizOpShelfSku.shelfQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="text" placeholder="必填！"/></td>
 								<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="text" placeholder="必填！"/></td>
 								<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false" maxlength="6" class="input-medium required" placeholder="必填！"/></td>
@@ -256,7 +265,7 @@
 								<td><input name="shelfTimes" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
 										   value="<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 										   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/></td>
-								<td><input name="createBy.name" value="${bizOpShelfSku.unshelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="text" placeholder="必填！"/></td>
+								<%--<td><input name="createBy.name" value="${bizOpShelfSku.unshelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="text" placeholder="必填！"/></td>--%>
 								<td><input name="unshelfTimes" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
 										   value="<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 										   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="选填！"/></td>

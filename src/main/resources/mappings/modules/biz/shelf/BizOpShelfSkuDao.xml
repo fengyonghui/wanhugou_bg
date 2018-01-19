@@ -205,14 +205,18 @@
         <if test="centerOffice != null and centerOffice.id != null ">
 			center_id = #{centerOffice.id},
         </if>
+		<if test="shelfUser != null and shelfUser.id != null ">
 			shelf_user = #{shelfUser.id},
+		</if>
 			shelf_qty = #{shelfQty},
 			org_price = #{orgPrice},
 			sale_price = #{salePrice},
 			min_qty = #{minQty},
 			max_qty = #{maxQty},
 			shelf_time = #{shelfTime},
-			unshelf_user = #{unshelfUser.name},
+		<if test="unshelfUser != null and unshelfUser.id != null ">
+			unshelf_user = #{unshelfUser.id},
+		</if>
 			unshelf_time = #{unshelfTime},
 			priority = #{priority},
 			u_version = #{uVersion},
