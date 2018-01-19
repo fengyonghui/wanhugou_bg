@@ -5,6 +5,9 @@ package com.wanhutong.backend.modules.biz.service.shelf;
 
 import java.util.List;
 
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +34,14 @@ public class BizOpShelfInfoService extends CrudService<BizOpShelfInfoDao, BizOpS
 	}
 	
 	public Page<BizOpShelfInfo> findPage(Page<BizOpShelfInfo> page, BizOpShelfInfo bizOpShelfInfo) {
-		return super.findPage(page, bizOpShelfInfo);
+		User user= UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, bizOpShelfInfo);
+		}else {
+			bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "suc"));
+			return super.findPage(page, bizOpShelfInfo);
+		}
+
 	}
 	
 	@Transactional(readOnly = false)

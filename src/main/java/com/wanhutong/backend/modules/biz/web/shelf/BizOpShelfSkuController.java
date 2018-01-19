@@ -79,6 +79,7 @@ public class BizOpShelfSkuController extends BaseController {
         }else {
             model.addAttribute("bizOpShelfSku", bizOpShelfSku);
         }
+        model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		return "modules/biz/shelf/bizOpShelfSkuForm";
 	}
 

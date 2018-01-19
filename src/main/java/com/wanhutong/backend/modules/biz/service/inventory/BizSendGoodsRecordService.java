@@ -151,6 +151,9 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 										invSku.setStockQty(stock-sendNum);
 										bizInventorySkuService.save(invSku);
 			//					}
+						}else {
+							invSku.setStockQty(stock-sendNum);
+							bizInventorySkuService.save(invSku);
 						}
 
 						//累计已供数量

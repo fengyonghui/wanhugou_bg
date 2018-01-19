@@ -60,13 +60,18 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 
 		Integer skuId=bizOpShelfSku.getSkuInfo().getId();//skuId 为key
 		BizSkuInfo skuInfo=bizSkuInfoService.get(skuId);
-		BizProductInfo bizProductInfo=bizProductInfoService.get(skuInfo.getId());
+		BizProductInfo bizProductInfo=bizProductInfoService.get(skuInfo.getProductInfo().getId());
 			if(bizProductInfo.getMinPrice()>bizOpShelfSku.getSalePrice()){
 				bizProductInfo.setMinPrice(bizOpShelfSku.getSalePrice());
 			}
-			if(bizProductInfo.getMaxPrice()<bizOpShelfSku.getSalePrice()){
-				bizProductInfo.setMaxPrice(bizOpShelfSku.getSalePrice());
+			if(bizProductInfo.getMaxPrice()==null){
+				bizProductInfo.setMaxPrice(0.0);
+			}else {
+				if(bizProductInfo.getMaxPrice()<bizOpShelfSku.getSalePrice()){
+					bizProductInfo.setMaxPrice(bizOpShelfSku.getSalePrice());
+				}
 			}
+
 			if(bizProductInfo.getMinPrice()==0.0){
 				bizProductInfo.setMinPrice(bizOpShelfSku.getSalePrice());
 			}
