@@ -43,8 +43,7 @@
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_office so ON so.id=a.center_id
 		LEFT JOIN biz_op_shelf_info shelf ON a.shelf_id = shelf.id
--- 		LEFT JOIN biz_shelf_user bsu on bsu.shelf_id=a.id
--- 		LEFT JOIN sys_user sus ON sus.id=bsu.user_id AND sus.company_id=center_id
+
 
 	</sql>
     

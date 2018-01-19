@@ -65,7 +65,7 @@
 		<c:forEach items="${page.list}" var="bizSkuInfo">
 			<tr>
 				<td>
-					<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.productInfo.id}">${bizSkuInfo.name}</a>
+					<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">${bizSkuInfo.name}</a>
 					</td>
 					<td>
                         ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}
@@ -74,12 +74,15 @@
 						${bizSkuInfo.productInfo.name}
 					</td>
 				    <td>
+						<input name="partNo" value="${bizSkuInfo.partNo}" type="hidden"/>
 						${bizSkuInfo.partNo}
 					</td>
 					<td>
+						<input name="basePrice" value="${bizSkuInfo.basePrice}" type="hidden"/>
 						${bizSkuInfo.basePrice}
 					</td>
 					<td>
+						<input name="buyPrice" value="${bizSkuInfo.buyPrice}" type="hidden"/>
 						${bizSkuInfo.buyPrice}
 					</td>
 					<%--<td>--%>
@@ -94,15 +97,14 @@
 					<%--<td>--%>
 						<%--<fmt:formatDate value="${bizSkuInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
 					<%--</td>--%>
-				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><td>
+				<shiro:hasPermission name="biz:sku:bizSkuInfo:view"><td>
 					<%--<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>--%>
-					<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
+							<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">详情</a>
+						<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+							<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
+						</shiro:hasPermission>
 				</td></shiro:hasPermission>
-				<shiro:hasPermission name="biz:sku:bizSkuInfo:view">
-					<td>
-					<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.productInfo.id}">详情</a>
-					</td>
-				</shiro:hasPermission>
+
 			</tr>
 		</c:forEach>
 		</tbody>

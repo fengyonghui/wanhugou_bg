@@ -46,7 +46,13 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
-        return super.findList(bizOrderHeader);
+        User user= UserUtils.getUser();
+        if(user.isAdmin()){
+            return super.findList(bizOrderHeader);
+        }else {
+            bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            return super.findList(bizOrderHeader);
+        }
     }
 
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {

@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.shelf;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
@@ -109,9 +110,24 @@ public class BizOpShelfInfoController extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
 	@RequestMapping(value = "findShelf")
 	public List<BizOpShelfInfo> findShelf(BizOpShelfInfo bizOpShelfInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-		List<BizOpShelfInfo> list = bizOpShelfInfoService.findList(bizOpShelfInfo);
+        User user= UserUtils.getUser();
+        if(user.isAdmin()){
+            return bizOpShelfInfoService.findList(bizOpShelfInfo);
+        }else {
+            bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "suc"));
+            return bizOpShelfInfoService.findList(bizOpShelfInfo);
+        }
+       /* User user = UserUtils.getUser();
+        BizShelfUser bizShelfUser = new BizShelfUser();
+        bizShelfUser.setUser(user);
+        List<BizShelfUser> bizShelfUserList = bizShelfUserService.findList(bizShelfUser);
+        List<BizOpShelfInfo> list = new ArrayList<>();
+        for (BizShelfUser bizShelfUser1:bizShelfUserList) {
+               list.add(bizShelfUser1.getShelfInfo());
+        }*/
+//        List<BizOpShelfInfo> list = bizOpShelfInfoService.findList(bizOpShelfInfo);
 		
-		return list;
+//		return list;
 	}
 
 	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
