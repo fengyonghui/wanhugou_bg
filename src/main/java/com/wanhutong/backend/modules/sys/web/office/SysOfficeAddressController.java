@@ -66,6 +66,7 @@ public class SysOfficeAddressController extends BaseController {
 	@RequiresPermissions("sys:office:sysOfficeAddress:view")
 	@RequestMapping(value = "form")
 	public String form(SysOfficeAddress sysOfficeAddress, Model model) {
+		sysOfficeAddress.getDeFaultStatus();
 		model.addAttribute("entity", sysOfficeAddress);
 		return "modules/sys/office/sysOfficeAddressForm";
 	}
@@ -76,13 +77,12 @@ public class SysOfficeAddressController extends BaseController {
 		if (!beanValidator(model, sysOfficeAddress)){
 			return form(sysOfficeAddress, model);
 		}
-
 		if(sysOfficeAddress.getDeFaultStatus() ==1 ){
 			SysOfficeAddress address = new SysOfficeAddress();
 			BeanUtils.copyProperties(sysOfficeAddress,address);
 			address.setType(null);
 			List<SysOfficeAddress> list = sysOfficeAddressService.findList(address);
-			if(list.size()>0){
+			if(list.size()!=0){
 				SysOfficeAddress officeAddress=list.get(0);
 				officeAddress.setDeFaultStatus(0);
 				sysOfficeAddressService.save(officeAddress);

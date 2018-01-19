@@ -20,21 +20,21 @@
 		</div>
 		<div id="openClose" class="close">&nbsp;</div>
 		<div id="right">
-			<iframe id="officeContent" src="${ctx}/sys/user/list?company.type=8&conn=conn" width="100%" height="91%" frameborder="0"></iframe>
+			<iframe id="officeContent" src="${ctx}/sys/user/list?company.type=8&conn=connIndex" width="100%" height="91%" frameborder="0"></iframe>
 		</div>
 	</div>
 	<script type="text/javascript">
 		var setting = {data:{simpleData:{enable:true,idKey:"id",pIdKey:"pId",rootPId:'0'}},
 			callback:{onClick:function(event, treeId, treeNode){
 					var id = treeNode.id == '0' ? '' :treeNode.id;
-					$('#officeContent').attr("src","${ctx}/sys/user/list?company.id="+id+"&company.type=8"
-												+"&office.id="+id+"&office.name="+treeNode.name+"&conn=conn");
+					$('#officeContent').attr("src","${ctx}/sys/user/list?company.id="+id+"&company.name="+treeNode.name+"&company.type=8"
+												+"&office.id="+id+"&office.name="+treeNode.name+"&conn=connIndex");
 				}
 			}
 		};
 		
 		function refreshTree(){
-			$.getJSON("${ctx}/sys/office/queryTreeList?type=8&conn=conn",function(data){
+			$.getJSON("${ctx}/sys/office/queryTreeList?type=8&conn=connIndex",function(data){
 				$.fn.zTree.init($("#ztree"), setting, data).expandAll(true);
 			});
 		}

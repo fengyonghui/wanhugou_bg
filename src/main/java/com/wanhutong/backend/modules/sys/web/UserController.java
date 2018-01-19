@@ -119,6 +119,10 @@ public class UserController extends BaseController {
 		}
 		model.addAttribute("user", user);
 		model.addAttribute("allRoles", systemService.findAllRole());
+//		if(user.getConn().equals("connIndex")){
+////			修改 跳回客户专员管理
+//			return "redirect:" + adminPath + "/sys/user/list?company.id="+user.getCompany().getId()+"&company.type="+user.getCompany().getType();
+//		}
 		return "modules/sys/userForm";
 	}
 
@@ -175,12 +179,12 @@ public class UserController extends BaseController {
 			//UserUtils.getCacheMap().clear();
 		}
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
-		System.out.println(user.getConn());
-		if(user.getConn().equals("conn")){
-			return "redirect:" + adminPath + "/sys/user/conIndex?repage";
-		}else{
-			return "redirect:" + adminPath + "/sys/user/list?repage";
+
+		if(user.getConn().equals("connIndex")){
+//			添加 跳回客户专员管理
+			return "redirect:" + adminPath + "/sys/user/list?company.id="+user.getCompany().getId()+"&company.type="+user.getCompany().getType();
 		}
+		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
 	
 	@RequiresPermissions("sys:user:edit")
@@ -197,6 +201,10 @@ public class UserController extends BaseController {
 		}else{
 			systemService.deleteUser(user);
 			addMessage(redirectAttributes, "删除用户成功");
+		}
+		if(user.getConn().equals("connIndex")){
+//			跳回客户专员管理
+			return "redirect:" + adminPath + "/sys/user/list?company.id="+user.getCompany().getId()+"&company.type="+user.getCompany().getType();
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class OfficeController extends BaseController {
 	
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "purchasersList")
-	public String purchasersList(Office office, Model model) {
+	public String purchasersList(Office office, String conn,Integer centers,Integer consultants, Model model) {
 		if(office.getId() == null || office.getParentIds() == null){
 			String purchasersId = DictUtils.getDictValue("部门", "sys_office_purchaserId","");
 			Office off = officeService.get(Integer.valueOf(purchasersId));
@@ -82,7 +83,16 @@ public class OfficeController extends BaseController {
 		}else{
 			model.addAttribute("list", officeService.findList(office));
 		}
-		return "modules/sys/purchasersList";
+//		System.out.println(conn);
+//		if(conn.equals("connIndex")){
+//			//TODO 客户专员管理页面跳转没解决：添加客户专员跳转，关联采购商跳转，修改跳转
+////			跳回客户专员管理
+//		System.out.println(centers);//必填
+//		System.out.println(consultants);//必填
+//			return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
+//		}
+//		return "modules/sys/purchasersList";
+		return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
 	}
 	
 	@RequiresPermissions("sys:office:view")

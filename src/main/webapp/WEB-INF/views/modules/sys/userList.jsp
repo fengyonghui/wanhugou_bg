@@ -64,19 +64,21 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead><tr><th>归属公司</th><th>归属部门</th><th class="sort-column login_name">登录名</th><th class="sort-column name">姓名</th><th>电话</th><th>手机</th><%--<th>角色</th> --%><shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="user">
+		<c:forEach items="${page.list}" var="bizUser">
 			<tr>
-				<td>${user.company.name}</td>
-				<td>${user.office.name}</td>
-				<td><a href="${ctx}/sys/user/form?id=${user.id}&conn=${user.conn}">${user.loginName}</a></td>
-				<td>${user.name}</td>
-				<td>${user.phone}</td>
-				<td>${user.mobile}</td><%--
+				<td>${bizUser.company.name}</td>
+				<td>${bizUser.office.name}</td>
+				<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}">${bizUser.loginName}</a></td>
+				<td>${bizUser.name}</td>
+				<td>${bizUser.phone}</td>
+				<td>${bizUser.mobile}</td><%--
 				<td>${user.roleNames}</td> --%>
 				<shiro:hasPermission name="sys:user:edit"><td>
-					<a href="${ctx}/biz/custom/bizCustomCenterConsultant/CustomUserForm?id=${user.id}">关联采购商</a>
-    				<a href="${ctx}/sys/user/form?id=${user.id}&conn=${user.conn}">修改</a>
-					<a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+					<c:if test="${user.conn!=null}">
+						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${bizUser.id}&conn=${user.conn}">关联采购商</a>
+					</c:if>
+    				<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}">修改</a>
+					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

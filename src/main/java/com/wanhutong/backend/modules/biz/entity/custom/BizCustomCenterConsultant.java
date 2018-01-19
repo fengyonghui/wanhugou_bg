@@ -26,6 +26,10 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	private Office centers;		// 采购中心ID
 	private User consultants;		// 采购顾问ID sys_user.id
 
+	private String status;
+
+	private List<BizCustomCenterConsultant> bccList;	//用于存放采购中心和采购顾问下的采购商
+
 	public BizCustomCenterConsultant() {
 		super();
 	}
@@ -58,4 +62,19 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 		this.consultants = consultants;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public List<BizCustomCenterConsultant> getBccList() {
+		return bccList;
+	}
+
+	public void setBccList(List<BizCustomCenterConsultant> bccList) {
+		this.bccList = bccList;
+	}
 }

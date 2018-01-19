@@ -1,10 +1,104 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao">
-    
+
+	<!--<sql id="bizCustomCenterConsultantColumns">-->
+		<!--a.cust_id AS "customs.id",-->
+		<!--a.center_id AS "centers.id",-->
+		<!--a.consultant_id AS "consultants.id",-->
+		<!--a.create_time AS "createDate",-->
+		<!--a.create_id AS "createBy.id",-->
+		<!--a.update_time AS "updateDate",-->
+		<!--a.update_id AS "updateBy.id",-->
+		<!--suc.name as "updateBy.name",-->
+		<!--a.status AS "delFlag"-->
+	<!--</sql>-->
+
+	<!--<sql id="bizCustomCenterConsultantJoins">-->
+<!--&#45;&#45; 		LEFT JOIN sys_office soc on soc.id=a.cust_id-->
+<!--&#45;&#45; 		LEFT JOIN sys_office sox on sox.id=a.center_id-->
+<!--&#45;&#45; 		LEFT JOIN sys_user suc on suc.id=a.create_id-->
+<!--&#45;&#45; 		LEFT JOIN sys_user sug on sug.id=a.consultant_id-->
+	<!--</sql>-->
+
+	<!--<select id="get" resultType="BizCustomCenterConsultant">-->
+		<!--SELECT-->
+			<!--<include refid="bizCustomCenterConsultantColumns"/>-->
+		<!--FROM biz_custom_center_consultant a-->
+		<!--<include refid="bizCustomCenterConsultantJoins"/>-->
+		<!--WHERE a.cust_id = #{id}-->
+	<!--</select>-->
+
+	<!--<select id="findList" resultType="BizCustomCenterConsultant">-->
+		<!--SELECT-->
+			<!--<include refid="bizCustomCenterConsultantColumns"/>-->
+		<!--FROM biz_custom_center_consultant a-->
+		<!--&lt;!&ndash;<include refid="bizCustomCenterConsultantJoins"/>&ndash;&gt;-->
+		<!--<where>-->
+			<!--a.status = #{DEL_FLAG_NORMAL}-->
+			<!--<if test="centers != null and centers.id != null and centers.id != ''">-->
+				<!--AND a.center_id = #{centers.id}-->
+			<!--</if>-->
+			<!--<if test="consultants != null and consultants.id != null and consultants.id != ''">-->
+				<!--AND a.consultant_id = #{consultants.id}-->
+			<!--</if>-->
+		<!--</where>-->
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	<!--</select>-->
+
+	<!--<select id="findAllList" resultType="BizCustomCenterConsultant">-->
+		<!--SELECT-->
+			<!--<include refid="bizCustomCenterConsultantColumns"/>-->
+		<!--FROM biz_custom_center_consultant a-->
+		<!--<include refid="bizCustomCenterConsultantJoins"/>-->
+		<!--<where>-->
+			<!--a.status = #{DEL_FLAG_NORMAL}-->
+		<!--</where>-->
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	<!--</select>-->
+
+	<!--<insert id="insert">-->
+		<!--INSERT INTO biz_custom_center_consultant(-->
+			<!--cust_id,-->
+			<!--center_id,-->
+			<!--consultant_id,-->
+			<!--create_time,-->
+			<!--create_id,-->
+			<!--update_id,-->
+		<!--) VALUES (-->
+			<!--#{customs.id},-->
+			<!--#{centers.id},-->
+			<!--#{consultants.id},-->
+			<!--#{createDate},-->
+			<!--#{createBy.id},-->
+			<!--#{updateBy.id},-->
+		<!--)-->
+	<!--</insert>-->
+
+	<!--<update id="update">-->
+		<!--UPDATE biz_custom_center_consultant SET-->
+			<!--center_id = #{centers.id},-->
+			<!--consultant_id = #{consultants.id},-->
+			<!--update_time = #{updateDate},-->
+			<!--update_id = #{updateBy.id}-->
+		<!--WHERE cust_id = #{customs.id}-->
+	<!--</update>-->
+
 	<sql id="bizCustomCenterConsultantColumns">
 		a.cust_id AS "customs.id",
-		soc.name as "customs.name",
+		soc.name as"customs.name",
 		a.center_id AS "centers.id",
 		sox.name as "centers.name",
 		a.consultant_id AS "consultants.id",
@@ -13,44 +107,36 @@
 		a.create_id AS "createBy.id",
 		suc.name as "createBy.name",
 		a.update_time AS "updateDate",
-		a.update_id AS "updateBy.id",
-		suc.name as "updateBy.name",
-		a.status AS "delFlag"
+		a.update_id AS "updateBy.id"
 	</sql>
-	
+
 	<sql id="bizCustomCenterConsultantJoins">
-		LEFT JOIN sys_office soc on soc.id=a.cust_id
-		LEFT JOIN sys_office sox on sox.id=a.center_id
-		LEFT JOIN sys_user suc on suc.id=a.create_id
-		LEFT JOIN sys_user sug on sug.id=a.consultant_id
+			LEFT JOIN sys_office soc on soc.id=a.cust_id
+			LEFT JOIN sys_office sox on sox.id=a.center_id
+			LEFT JOIN sys_user suc on suc.id=a.create_id
+			LEFT JOIN sys_user sug on sug.id=a.consultant_id
 	</sql>
-    
+
 	<select id="get" resultType="BizCustomCenterConsultant">
-		SELECT 
-			<include refid="bizCustomCenterConsultantColumns"/>
+		SELECT
+		<include refid="bizCustomCenterConsultantColumns"/>
 		FROM biz_custom_center_consultant a
 		<include refid="bizCustomCenterConsultantJoins"/>
-		WHERE a.cust_id = #{id}
+		WHERE a.cust_id = #{id} limit 1;
 	</select>
-	
+
 	<select id="findList" resultType="BizCustomCenterConsultant">
-		SELECT 
-			<include refid="bizCustomCenterConsultantColumns"/>
+		SELECT
+		<include refid="bizCustomCenterConsultantColumns"/>
 		FROM biz_custom_center_consultant a
 		<include refid="bizCustomCenterConsultantJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="customs != null and customs.id != null and customs.id != ''">
-				AND a.cust_id = #{customs.id}
-			</if>
 			<if test="centers != null and centers.id != null and centers.id != ''">
 				AND a.center_id = #{centers.id}
 			</if>
 			<if test="consultants != null and consultants.id != null and consultants.id != ''">
 				AND a.consultant_id = #{consultants.id}
-			</if>
-			<if test="createBy != null and createBy.id != null and createBy.id != ''">
-				AND a.create_id = #{createBy.id}
 			</if>
 		</where>
 		<choose>
@@ -61,61 +147,31 @@
 			</otherwise>
 		</choose>
 	</select>
-	
-	<select id="findAllList" resultType="BizCustomCenterConsultant">
-		SELECT 
-			<include refid="bizCustomCenterConsultantColumns"/>
-		FROM biz_custom_center_consultant a
-		<include refid="bizCustomCenterConsultantJoins"/>
-		<where>
-			a.status = #{DEL_FLAG_NORMAL}
-		</where>		
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-			</otherwise>
-		</choose>
-	</select>
-	
+
 	<insert id="insert">
 		INSERT INTO biz_custom_center_consultant(
-			cust_id,
-			center_id,
-			consultant_id,
-			create_time,
-			create_id,
-			update_time,
-			update_id,
-			status
+		cust_id,
+		center_id,
+		consultant_id,
+		create_time,
+		create_id,
+		update_id
 		) VALUES (
-			#{customs.id},
-			#{centers.id},
-			#{consultants.id},
-			#{createDate},
-			#{createBy.id},
-			#{updateDate},
-			#{updateBy.id},
-			#{delFlag}
+		#{customs.id},
+		#{centers.id},
+		#{consultants.id},
+		now(),
+		#{createBy.id},
+		#{updateBy.id}
 		)
 	</insert>
-	
+
 	<update id="update">
-		UPDATE biz_custom_center_consultant SET 	
-			cust_id = #{customs.id},
-			center_id = #{centers.id},
-			consultant_id = #{consultants.id},
-			create_time = #{createDate},
-			update_time = #{updateDate},
-			update_id = #{updateBy.id}
-		WHERE id = #{id}
+		UPDATE biz_custom_center_consultant SET
+		center_id = #{centers.id},
+		consultant_id = #{consultants.id},
+		update_time = #{updateDate},
+		update_id = #{updateBy.id}
+		WHERE cust_id = #{customs.id}
 	</update>
-	
-	<update id="delete">
-		UPDATE biz_custom_center_consultant SET 
-			status = #{DEL_FLAG_DELETE}
-		WHERE id=#{id}
-	</update>
-	
 </mapper>
