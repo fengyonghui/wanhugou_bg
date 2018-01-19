@@ -127,7 +127,7 @@
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
-					<c:if test="${reqDetailList!=null && reqDetailList.size()>0}">
+					<%--<c:if test="${reqDetailList!=null && reqDetailList.size()>0}">
 						<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
 							<tr id="${reqDetail.id}" class="reqDetailList">
 								<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
@@ -145,7 +145,7 @@
 								<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 								<td>
 									${reqDetail.skuInfo.productInfo.office.name}
-									<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
+									&lt;%&ndash;<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>&ndash;%&gt;
 								</td>
 								<td>${reqDetail.skuInfo.name}</td>
 								<td>${reqDetail.skuInfo.partNo}</td>
@@ -170,11 +170,11 @@
 								</shiro:hasPermission>
 							</tr>
 						</c:forEach>
-					</c:if>
+					</c:if>--%>
 
 					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
-							< id="${ordDetail.id}" class="ordDetailList">
+							<tr id="${ordDetail.id}" class="ordDetailList">
 								<td><img src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
 								<td>${ordDetail.skuInfo.productInfo.name}</td>
 								<td>

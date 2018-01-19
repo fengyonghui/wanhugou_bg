@@ -43,8 +43,7 @@
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_office so ON so.id=a.center_id
 		LEFT JOIN biz_op_shelf_info shelf ON a.shelf_id = shelf.id
-		LEFT JOIN biz_shelf_user bsu on bsu.shelf_id=a.id
-		LEFT JOIN sys_user sus ON sus.id=bsu.user_id AND sus.company_id=center_id
+
 
 	</sql>
     
@@ -115,6 +114,9 @@
 			<!--<if test="unshelfTime != null and unshelfTime != ''">
 				AND a.unshelf_time = #{unshelfTime}
 			</if>-->
+			<if test="sqlMap != null and sqlMap.shelfSku != null and sqlMap.shelfSku != ''">
+				${sqlMap.shelfSku}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -203,14 +205,18 @@
         <if test="centerOffice != null and centerOffice.id != null ">
 			center_id = #{centerOffice.id},
         </if>
+		<if test="shelfUser != null and shelfUser.id != null ">
 			shelf_user = #{shelfUser.id},
+		</if>
 			shelf_qty = #{shelfQty},
 			org_price = #{orgPrice},
 			sale_price = #{salePrice},
 			min_qty = #{minQty},
 			max_qty = #{maxQty},
 			shelf_time = #{shelfTime},
-			unshelf_user = #{unshelfUser.name},
+		<if test="unshelfUser != null and unshelfUser.id != null ">
+			unshelf_user = #{unshelfUser.id},
+		</if>
 			unshelf_time = #{unshelfTime},
 			priority = #{priority},
 			u_version = #{uVersion},

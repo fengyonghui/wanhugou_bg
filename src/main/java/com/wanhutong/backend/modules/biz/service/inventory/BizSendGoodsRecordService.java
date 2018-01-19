@@ -117,9 +117,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				if (sendNum == 0) {
 					continue;
 				}
-				BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
-				bizOrderDetail.setSentQty(sentQty + sendNum);
-				bizOrderDetailService.save(bizOrderDetail);
+
 				//销售单状态改为同意供货（供货中）（15）
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
 				bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
@@ -132,46 +130,64 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
 				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
 				int stock = 0;
-				for (BizInventorySku invSku:list) {
-					stock = invSku.getStockQty();
-					//如果库存不够，则改销售单状态为采购中（17）
-					if (stock < bsgr.getBizOrderDetail().getOrdQty()){
-						bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
-						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+				//没有库存，改销售单状态为采购中（17）
+				if (list == null || list.size() == 0 || list.get(0).getStockQty() == 0){
+					bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+					bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+				}else {
+
+					//有库存
+					for (BizInventorySku invSku:list) {
+						stock = invSku.getStockQty();
+						//如果库存不够，则改销售单状态为采购中（17）
+						if (stock < bsgr.getBizOrderDetail().getOrdQty()){
+							bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+							bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+							if(sendNum > stock){
+								sendNum = stock;
+							}
+								//判断该用户是否是采购中心，如果是采购中心，对应的库存需要扣减
+			//					if (office1.getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())){
+										invSku.setStockQty(stock-sendNum);
+										bizInventorySkuService.save(invSku);
+			//					}
+						}
+
+						//累计已供数量
+						BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
+						bizOrderDetail.setSentQty(sentQty + sendNum);
+						bizOrderDetailService.saveStatus(bizOrderDetail);
+						//生成供货记录表
+						bsgr.setSendNum(sendNum);
+						if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
+							BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
+							bsgr.setBizRequestHeader(bizRequestHeader);
+						}
+						if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
+							BizOrderHeader bizOrderHeader1 = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
+							bsgr.setBizOrderHeader(bizOrderHeader1);
+						}
+						//判断是采购中心还是供应中心
+
+			//			if (office1.getType()== OfficeTypeEnum.PURCHASINGCENTER.getType()){
+								bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
+			//			}else{
+			//				bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
+			//			}
+						bsgr.setInvInfo(invInfo);
+						bsgr.setCustomer(office);
+						bsgr.setSkuInfo(bizSkuInfo);
+						bsgr.setOrderNum(bsgr.getOrderNum());
+						Date date = new Date();
+						bsgr.setSendDate(date);
+						super.save(bsgr);
 					}
-					//判断该用户是否是采购中心，如果是采购中心，对应的库存需要扣减
-					if (office1.getType()== OfficeTypeEnum.PURCHASINGCENTER.getType()){
-						invSku.setStockQty(stock-sendNum);
-						bizInventorySkuService.save(invSku);
-					}
+
 				}
 			}
 
 
-			//生成供货记录表
-			bsgr.setSendNum(sendNum);
-			if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
-				BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
-				bsgr.setBizRequestHeader(bizRequestHeader);
-			}
-			if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
-				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
-				bsgr.setBizOrderHeader(bizOrderHeader);
-			}
-			//判断是采购中心还是供应中心
 
-			if (office1.getType()== OfficeTypeEnum.PURCHASINGCENTER.getType()){
-				bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
-			}else{
-				bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
-			}
-			bsgr.setInvInfo(invInfo);
-			bsgr.setCustomer(office);
-			bsgr.setSkuInfo(bizSkuInfo);
-			bsgr.setOrderNum(bsgr.getOrderNum());
-			Date date = new Date();
-			bsgr.setSendDate(date);
-			super.save(bsgr);
 
 		}
 		//更改订单状态

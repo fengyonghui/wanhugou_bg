@@ -41,9 +41,6 @@ public class BizOrderHeaderController extends BaseController {
 	@Autowired
 	private BizOrderDetailService bizOrderDetailService;
 
-	@Autowired
-	private OfficeService officeService;
-
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
 		BizOrderHeader entity = null;

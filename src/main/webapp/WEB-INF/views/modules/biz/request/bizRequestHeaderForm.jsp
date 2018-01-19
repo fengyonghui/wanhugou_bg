@@ -1,5 +1,6 @@
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.SkuTypeEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
@@ -358,6 +359,7 @@
 		<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>
 		<form:hidden id="skuNameCopy" path="name"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
+		<input type="hidden" name="skuType" value="${SkuTypeEnum.OWN_PRODUCT.code}"/>
 		<%--<form:hidden id="skuTypeCopy" path="skuType"/>--%>
 	</form:form>
 </body>

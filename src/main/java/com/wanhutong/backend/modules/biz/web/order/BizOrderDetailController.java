@@ -52,15 +52,6 @@ public class BizOrderDetailController extends BaseController {
 
 	@Autowired
 	private BizOrderDetailService bizOrderDetailService;
-
-	@Autowired
-	private BizOrderHeaderService bizOrderHeaderService;
-
-	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
-
-	@Autowired
-	private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
 	private BizOpShelfInfoService bizOpShelfInfoService;
 	@Autowired

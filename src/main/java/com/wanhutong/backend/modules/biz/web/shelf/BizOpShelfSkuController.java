@@ -72,7 +72,12 @@ public class BizOpShelfSkuController extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
 	@RequestMapping(value = "form")
 	public String form(BizOpShelfSkus bizOpShelfSku, Model model) {
-		model.addAttribute("bizOpShelfSku", bizOpShelfSku);
+		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null){
+            BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuService.get(bizOpShelfSku.getId());
+            model.addAttribute("bizOpShelfSku",bizOpShelfSku1);
+        }else {
+            model.addAttribute("bizOpShelfSku", bizOpShelfSku);
+        }
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		return "modules/biz/shelf/bizOpShelfSkuForm";
 	}
@@ -95,7 +100,12 @@ public class BizOpShelfSkuController extends BaseController {
 		String[] unShelfTimeArr=bizOpShelfSkus.getUnshelfTimes().split(",");
 		BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
 		for(int i=0;i<skuIdArr.length;i++){
-			bizOpShelfSku.setId(null);
+		    if(bizOpShelfSkus.getId()!=null){
+                bizOpShelfSku.setId(bizOpShelfSkus.getId());
+            }else {
+                bizOpShelfSku.setId(null);
+            }
+
 			BizSkuInfo bizSkuInfo=bizSkuInfoService.get(Integer.parseInt(skuIdArr[i].trim()));
 			bizOpShelfSku.setSkuInfo(bizSkuInfo);
 			bizOpShelfSku.setProductInfo(bizSkuInfo.getProductInfo());

@@ -197,6 +197,10 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
     }
 
     @Transactional(readOnly = false)
+    public void saveStatus(BizOrderDetail bizOrderDetail) {
+        super.save(bizOrderDetail);
+    }
+    @Transactional(readOnly = false)
     public void delete(BizOrderDetail bizOrderDetail) {
         //删除执行库存表相应的加减数量
         Integer ordQty = bizOrderDetail.getOrdQty();

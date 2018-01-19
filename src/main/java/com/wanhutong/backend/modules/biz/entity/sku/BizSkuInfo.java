@@ -48,6 +48,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String reqIds;
 	private String skuTypeName;
 
+	private String str;
+
 
 	private int sign;//sku删除返回的标志
 	public BizSkuInfo() {
@@ -201,5 +203,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setSkuTypeName(String skuTypeName) {
 		this.skuTypeName = skuTypeName;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
 	}
 }

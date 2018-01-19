@@ -25,4 +25,17 @@
     </div>
 </div>
 
+<div class="control-group">
+    <label class="control-label">经度：</label>
+    <div class="controls">
+        <form:input path="bizLocation.longitude" value="${entity.bizLocation.longitude }" htmlEscape="false" class="input-xlarge  number"/>
+    </div>
+</div>
+<div class="control-group">
+    <label class="control-label">纬度：</label>
+    <div class="controls">
+        <form:input path="bizLocation.latitude" value="${entity.bizLocation.latitude }" htmlEscape="false" class="input-xlarge  number"/>
+    </div>
+</div>
+
 </div>

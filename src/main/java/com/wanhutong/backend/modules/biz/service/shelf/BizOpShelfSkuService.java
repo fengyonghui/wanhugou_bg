@@ -7,10 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +46,13 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 	}
 	
 	public Page<BizOpShelfSku> findPage(Page<BizOpShelfSku> page, BizOpShelfSku bizOpShelfSku) {
-		return super.findPage(page, bizOpShelfSku);
+		User user= UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, bizOpShelfSku);
+		}else {
+			bizOpShelfSku.getSqlMap().put("shelfSku", BaseService.dataScopeFilter(user, "so", "suc"));
+			return super.findPage(page, bizOpShelfSku);
+		}
 	}
 	
 	@Transactional(readOnly = false)

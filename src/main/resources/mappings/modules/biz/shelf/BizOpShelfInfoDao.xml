@@ -16,7 +16,11 @@
 	</sql>
 	
 	<sql id="bizOpShelfInfoJoins">
-		LEFT JOIN sys_user suu on suu.id  = a.update_id
+		LEFT JOIN sys_user suu ON suu.id = a.update_id
+		LEFT JOIN sys_user suc on suc.id=a.create_id
+		LEFT JOIN biz_shelf_user su on  su.shelf_id=a.id
+		LEFT JOIN sys_user s on s.id= su.user_id
+		LEFT JOIN sys_office so ON so.id=s.company_id
 	</sql>
     
 	<select id="get" resultType="BizOpShelfInfo">
@@ -39,6 +43,9 @@
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="sqlMap != null and sqlMap.shelfInfo != null and sqlMap.shelfInfo != ''">
+				${sqlMap.shelfInfo}
 			</if>
 		</where>
 		<choose>

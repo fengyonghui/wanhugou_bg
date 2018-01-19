@@ -40,6 +40,9 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			return;
 		}
 		super.save(bizInventorySku);
+		/*if (bizInventorySku.getStockQty() == 0){
+			this.delete(bizInventorySku);
+		}*/
 	}
 	
 	@Transactional(readOnly = false)
