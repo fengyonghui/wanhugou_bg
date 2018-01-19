@@ -82,6 +82,7 @@
                 $.post("${ctx}/biz/product/bizProdCate/findCatePropMap4Brand",
                     {catIds:ids.toString()},
                     function(data) {
+                        $("#catePropValueId").empty();
                         $.each(data,function (index,catePropValue) {
                             if(cateValueId==catePropValue.id){
                                 $("#s2id_catePropValueId").find("span").eq(0).text(catePropValue.value);

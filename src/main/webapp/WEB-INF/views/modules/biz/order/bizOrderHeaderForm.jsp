@@ -30,6 +30,11 @@
             if($("#id").val()!=""){
                 clickBut();
             }
+            $("#addAddressHref").click(function () {
+                var officeId=$("#officeId").val();
+                var officeName =$("#officeName").val();
+                window.location.href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id="+officeId+"&office.name="+officeName+"&flag=order"
+            });
 		});
       function clickBut(){
          var officeId=$("#officeId").val();
@@ -139,6 +144,7 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
+    <c:if test="${fns:getUser().isAdmin()}">
     <div class="control-group">
         <label class="control-label">发票状态：</label>
         <div class="controls">
@@ -152,16 +158,19 @@
             <span class="help-inline"><font color="red">*</font>默认选择</span>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">业务状态：</label>
-        <div class="controls">
-            <form:select path="bizStatus" class="input-medium required">
-                <form:option value="" label="请选择"/>
-                <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
-                              htmlEscape="false"/></form:select>
-            <span class="help-inline"><font color="red">*</font>默认选择</span>
+    </c:if>
+    <c:if test="${fns:getUser().isAdmin()}">
+        <div class="control-group">
+            <label class="control-label">业务状态：</label>
+            <div class="controls">
+                <form:select path="bizStatus" class="input-medium required">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/></form:select>
+                <span class="help-inline"><font color="red">*</font>默认选择</span>
+            </div>
         </div>
-    </div>
+    </c:if>
     <div class="control-group" id="add1">
         <label class="control-label">收货地址；</label>
         <div class="controls">
@@ -182,8 +191,9 @@
     <div class="control-group" id="add2" style="display:none">
         <label class="control-label">收货地址；</label>
         <div class="controls">
-            <a href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&flag=order">
-                <input type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/></a>
+            <%--<a id="addAddressHref" href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id=${customer.id}&flag=order">--%>
+                <input id="addAddressHref" type="button" value="新增地址"  htmlEscape="false" class="input-xlarge required"/>
+                <%--</a>--%>
             <label class="error" id="addError" style="display:none;">必填信息</label>
             <span class="help-inline"><font color="red">*</font></span>
         </div>

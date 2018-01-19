@@ -40,6 +40,8 @@ public class BizOrderHeaderController extends BaseController {
 	private BizOrderHeaderService bizOrderHeaderService;
 	@Autowired
 	private BizOrderDetailService bizOrderDetailService;
+	@Autowired
+	private OfficeService officeService;
 
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
@@ -76,6 +78,10 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizOrderHeader bizOrderHeader, Model model) {
+		if(bizOrderHeader.getCustomer()!=null && bizOrderHeader.getCustomer().getId()!=null){
+			Office office=officeService.get(bizOrderHeader.getCustomer().getId());
+			bizOrderHeader.setCustomer(office);
+		}
 		model.addAttribute("entity", bizOrderHeader);
 		return "modules/biz/order/bizOrderHeaderForm";
 	}
@@ -96,7 +102,8 @@ public class BizOrderHeaderController extends BaseController {
 		addMessage(redirectAttributes, "保存订单信息成功");
 		Integer orId = bizOrderHeader.getId();
 		String oneOrder = bizOrderHeader.getOneOrder();
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
+	//	return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")

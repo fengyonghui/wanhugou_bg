@@ -28,11 +28,11 @@
 			<li><label>订单编号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-			 <li><label>订单类型：</label>
-                <form:select path="orderType" class="input-medium required">
-                    <form:option value="" label="请选择"/>
-                    <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
-                            htmlEscape="false"/></form:select></li>
+			 <%--<li><label>订单类型：</label>--%>
+                <%--<form:select path="orderType" class="input-medium required">--%>
+                    <%--<form:option value="" label="请选择"/>--%>
+                    <%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
+                            <%--htmlEscape="false"/></form:select></li>--%>
 			<li><label>客户名称：</label>
 			     <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
                                                 labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"

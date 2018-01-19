@@ -82,7 +82,7 @@
                 <th>显示次序</th>
                 <th>上架人</th>
 				<th>上架时间</th>
-				<th>下架人</th>
+				<%--<th>下架人</th>--%>
 				<th>下架时间</th>
 				<th>创建人</th>
 				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><th>操作</th></shiro:hasPermission>
@@ -128,9 +128,9 @@
 				<td>
 					<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<td>
-					${bizOpShelfSku.unshelfUser.name}
-				</td>
+				<%--<td>--%>
+					<%--${bizOpShelfSku.unshelfUser.name}--%>
+				<%--</td>--%>
 				<td>
 					<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

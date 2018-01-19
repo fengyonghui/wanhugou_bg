@@ -40,12 +40,13 @@ public class SysOfficeAddressController extends BaseController {
 	@RequiresPermissions("sys:office:sysOfficeAddress:view")
 	@RequestMapping(value = "findAddrByOffice")
 	public SysOfficeAddress findAddrByOffice(SysOfficeAddress sysOfficeAddress, HttpServletRequest request, HttpServletResponse response, Model model) {
-		SysOfficeAddress add = new SysOfficeAddress();
-		BeanUtils.copyProperties(sysOfficeAddress,add);
-		add.setType(null);
-		add.setOffice(sysOfficeAddress.getOffice());
-		List<SysOfficeAddress> list = sysOfficeAddressService.findList(add);
-		if(list!=null){
+		SysOfficeAddress add = null;
+	//	BeanUtils.copyProperties(sysOfficeAddress,add);
+		sysOfficeAddress.setType(null);
+	//	add.setType(null);
+	//	add.setOffice(sysOfficeAddress.getOffice());
+		List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
+		if(list!=null && list.size()>0){
 			for (SysOfficeAddress a : list) {
 				if(a.getDeFaultStatus()==OrderHeaderBizStatusEnum.ORDER_DEFAULTSTATUS.getState()){//1
 					add = list.get(0);
@@ -97,7 +98,7 @@ public class SysOfficeAddressController extends BaseController {
 			if(ohId==null){
 				ohId=0;
 			}
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+ohId;
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+ohId+"&customer.id="+sysOfficeAddress.getOffice().getId();
 		}
 		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
 	}

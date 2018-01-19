@@ -95,13 +95,15 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">SKU商品编码：</label>
-			<div class="controls">
-				<form:input path="partNo"  htmlEscape="false" maxlength="30" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+		<c:if test="${bizSkuInfo.id!=null}">
+			<div class="control-group">
+				<label class="control-label">SKU商品编码：</label>
+				<div class="controls">
+					<form:input path="partNo" disabled="true"  htmlEscape="false" maxlength="30" class="input-xlarge"/>
+				</div>
 			</div>
-		</div>
+		</c:if>
+
 		<div class="control-group">
 			<label class="control-label">SKU商品图片:</label>
 			<div class="controls">
@@ -128,9 +130,9 @@
 			<label class="control-label">选择SKU属性：</label>
 			<div class="controls">
 				<c:forEach items="${prodPropInfoList}" var="propertyInfo">
-					<input  disabled="disabled" class="select_all" id="${propertyInfo.id}" type="checkbox" name="prodPropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.propName}：
+					<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="prodPropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.propName}：
 					<c:forEach items="${map[propertyInfo.id]}" var="propValue">
-						<input disabled="disabled" class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${propertyInfo.id}].prodPropertyValues" value="${propValue.id}"/> ${propValue.propValue}
+						<input  class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${propertyInfo.id}].prodPropertyValues" value="${propValue.id}"/> ${propValue.propValue}
 					</c:forEach>
 					<br/>
 				</c:forEach>

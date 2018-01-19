@@ -75,6 +75,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizLocation.setRegion(new SysRegion());
         }
         commonLocationService.updateCommonLocation(bizLocation);
+        bizOrderHeader.setOrderType(1);
         String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), bizOrderHeader.getCustomer().getId());
         if(bizOrderHeader.getId()==null){
             bizOrderHeader.setOrderNum(orderNum);
