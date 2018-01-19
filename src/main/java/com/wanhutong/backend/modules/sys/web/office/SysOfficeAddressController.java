@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.sys.web.office;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -38,9 +39,21 @@ public class SysOfficeAddressController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("sys:office:sysOfficeAddress:view")
 	@RequestMapping(value = "findAddrByOffice")
-	public List<SysOfficeAddress> findAddrByOffice(SysOfficeAddress sysOfficeAddress, HttpServletRequest request, HttpServletResponse response, Model model) {
-		List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
-		return list;
+	public SysOfficeAddress findAddrByOffice(SysOfficeAddress sysOfficeAddress, HttpServletRequest request, HttpServletResponse response, Model model) {
+		SysOfficeAddress add = new SysOfficeAddress();
+		BeanUtils.copyProperties(sysOfficeAddress,add);
+		add.setType(null);
+		add.setOffice(sysOfficeAddress.getOffice());
+		List<SysOfficeAddress> list = sysOfficeAddressService.findList(add);
+		if(list!=null){
+			for (SysOfficeAddress a : list) {
+				if(a.getDeFaultStatus()==OrderHeaderBizStatusEnum.ORDER_DEFAULTSTATUS.getState()){//1
+					add = list.get(0);
+					break;
+				}
+			}
+		}
+		return add;
 	}
 
 	@ModelAttribute
@@ -77,26 +90,15 @@ public class SysOfficeAddressController extends BaseController {
 		if (!beanValidator(model, sysOfficeAddress)){
 			return form(sysOfficeAddress, model);
 		}
-		if(sysOfficeAddress.getDeFaultStatus() ==1 ){
-			SysOfficeAddress address = new SysOfficeAddress();
-			BeanUtils.copyProperties(sysOfficeAddress,address);
-			address.setType(null);
-			List<SysOfficeAddress> list = sysOfficeAddressService.findList(address);
-			if(list.size()!=0){
-				SysOfficeAddress officeAddress=list.get(0);
-				officeAddress.setDeFaultStatus(0);
-				sysOfficeAddressService.save(officeAddress);
-			}
-		}
 		sysOfficeAddressService.save(sysOfficeAddress);
 		addMessage(redirectAttributes, "保存地址信息成功");
 		if(sysOfficeAddress.getFlag()!=null && sysOfficeAddress.getFlag().equals("order")){
-					Integer ohId=sysOfficeAddress.getOhId();
-					if(ohId==null){
-						ohId=0;
-					}
-					return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+ohId;
-				}
+			Integer ohId=sysOfficeAddress.getOhId();
+			if(ohId==null){
+				ohId=0;
+			}
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+ohId;
+		}
 		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
 	}
 	

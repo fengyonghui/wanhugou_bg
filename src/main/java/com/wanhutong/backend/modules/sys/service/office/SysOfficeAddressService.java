@@ -7,8 +7,10 @@ import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +53,21 @@ public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, Sy
 	public void save(SysOfficeAddress sysOfficeAddress) {
 		if(sysOfficeAddress.getBizLocation()!=null){
 			commonLocationService.updateCommonLocation(sysOfficeAddress.getBizLocation());
+		}
+		Integer statu=sysOfficeAddress.getDeFaultStatus();
+		if(statu == OrderHeaderBizStatusEnum.ORDER_DEFAULTSTATUS.getState()){//1
+			SysOfficeAddress address = new SysOfficeAddress();
+//			BeanUtils.copyProperties(sysOfficeAddress,address);
+			address.setType(null);
+			address.setOffice(sysOfficeAddress.getOffice());
+			List<SysOfficeAddress> list = super.findList(address);
+			if(list.size()!=0){
+				for (SysOfficeAddress add : list) {
+					address = super.get(add);
+					address.setDeFaultStatus(0);
+					super.save(address);
+				}
+			}
 		}
 		super.save(sysOfficeAddress);
 	}
