@@ -131,7 +131,7 @@ public class BizSkuInfoController extends BaseController {
 			String[] ids =StringUtils.split(skuIds, ",");
 			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
 		}
-		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
+	//	bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
 		return listMap;
 	}
