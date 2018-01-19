@@ -32,6 +32,7 @@
 		a.update_time AS "updateDate",
 		su.name AS "updateBy.name",
 		bsi.name AS "skuInfo.name",
+		bsi.part_no AS "skuInfo.partNo",
 		bsi.prod_id AS "skuInfo.productInfo.id"
 	</sql>
 	
@@ -62,14 +63,20 @@
 		<include refid="bizOpShelfSkuJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">-->
-			<if test="skuInfo != null and skuInfo.id != '' and skuInfo != '' ">
+
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != '' ">
+					AND a.sku_id = #{skuInfo.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != '' ">
 				AND bsi.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
-			<if test="centerOffice != null and centerOffice != ''and centerOffice.name != null and centerOffice.name != ''">
+			<if test="skuInfo != null and skuInfo.partNo != null and skuInfo.partNo != '' ">
+				AND bsi.part_no = #{skuInfo.partNo}
+			</if>
+			<if test="centerOffice != null and centerOffice.name != null and centerOffice.name != ''">
 				AND so.name = #{centerOffice.name}
 			</if>
 			<!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">

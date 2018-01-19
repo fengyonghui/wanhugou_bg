@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -78,7 +79,6 @@ public class BizOpShelfSkuController extends BaseController {
         }else {
             model.addAttribute("bizOpShelfSku", bizOpShelfSku);
         }
-		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		return "modules/biz/shelf/bizOpShelfSkuForm";
 	}
 
@@ -122,20 +122,19 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSkuService.save(bizOpShelfSku);
 
 		}
-//		if (skuIds!=null && !"".equals(skuIds)){
-//			String[] ids = skuIds.split(",".trim());
-//			for(int i = 0; i < ids.length; i++){
-//                BizSkuInfo bizSkuInfo = new BizSkuInfo();
-//                bizSkuInfo.setId(Integer.parseInt(ids[i]));
-//                bizOpShelfSku.setSkuInfo(bizSkuInfo);
-//                bizOpShelfSkuService.save(bizOpShelfSku);
-//            }
-//        }
+
 		addMessage(redirectAttributes, "保存商品上架成功");
 		if(bizOpShelfSkus.getShelfSign()==0){
 			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
 		}
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/form?id=" + bizOpShelfSkus.getOpShelfInfo().getId() ;
+	}
+
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@ResponseBody
+	@RequestMapping(value = "findOpShelfSku")
+	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku){
+		return 	bizOpShelfSkuService.findList(bizOpShelfSku);
 	}
 	
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")

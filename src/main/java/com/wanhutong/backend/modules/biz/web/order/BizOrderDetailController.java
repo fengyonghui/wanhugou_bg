@@ -94,6 +94,7 @@ public class BizOrderDetailController extends BaseController {
 		bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
 		bizOrderDetail.getOrderHeader().getOneOrder();
 		model.addAttribute("bizOrderDetail", bizOrderDetail);
+		model.addAttribute("bizOpShelfSku",new BizOpShelfSku());
 		return "modules/biz/order/bizOrderDetailForm";
 	}
 
