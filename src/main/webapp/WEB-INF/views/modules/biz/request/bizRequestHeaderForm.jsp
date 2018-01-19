@@ -69,14 +69,10 @@
 //                            var prodOfficeName= prodKeys[5];
                             var  brandName=prodKeys[6];
                             var flag=true;
-
                             var tr_tds="";
-
                             var t=0;
                             $.each(skuInfoList,function (index,skuInfo) {
-
                                 skuInfoId+=","+skuInfo.id;
-                                console.info("1111111==="+skuInfoId);
                                 tr_tds+= "<tr class='"+prodId+"'>";
 								if(flag){
                                     tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"'></td>" +
@@ -95,7 +91,6 @@
                            		    flag=false;
 								}
                             });
-
                             t++;
                             $("#prodInfo2").append(tr_tds);
 
@@ -283,7 +278,7 @@
 				</tbody>
 			</table>
 			<c:if test="${entity.str!='detail'}">
-			<table id="contentTable2" style="width:48%;float: right" class="table table-striped table-bordered table-condensed">
+			<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered table-condensed">
 					<thead>
 					<tr>
 						<th>产品图片</th>

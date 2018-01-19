@@ -23,7 +23,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private BizOrderHeader orderHeader;        // biz_order_header.id
     private Integer lineNo;        // 订单详情行号
     private Integer pLineNo;        // bom产品 kit
-    private BizOpShelfInfo shelfInfo;  //货架ID biz_op_shelf_info.id
+    private BizOpShelfSku shelfInfo;  //货架ID biz_op_shelf_info.id
     private BizSkuInfo skuInfo;        // 产品biz_sku_info.id
     private String partNo;        // 商品编号
     private String skuName;        // 商品名称
@@ -38,6 +38,8 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Integer maxLineNo;        //最大的行号
     private List<BizOpShelfSku> shelfList;    //用于计算有多少货架
     private String orderDetaIds;        //用于多选商品时传递数据
+    private String saleQtys;          //用于多选商品时传递数量
+    private String shelfSkus;
 
     public Integer getMaxLineNo() {
         return maxLineNo;
@@ -47,11 +49,11 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
         this.maxLineNo = maxLineNo;
     }
 
-    public BizOpShelfInfo getShelfInfo() {
+    public BizOpShelfSku getShelfInfo() {
         return shelfInfo;
     }
 
-    public void setShelfInfo(BizOpShelfInfo shelfInfo) {
+    public void setShelfInfo(BizOpShelfSku shelfInfo) {
         this.shelfInfo = shelfInfo;
     }
 
@@ -195,5 +197,21 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setOrderDetaIds(String orderDetaIds) {
         this.orderDetaIds = orderDetaIds;
+    }
+
+    public String getSaleQtys() {
+        return saleQtys;
+    }
+
+    public void setSaleQtys(String saleQtys) {
+        this.saleQtys = saleQtys;
+    }
+
+    public String getShelfSkus() {
+        return shelfSkus;
+    }
+
+    public void setShelfSkus(String shelfSkus) {
+        this.shelfSkus = shelfSkus;
     }
 }

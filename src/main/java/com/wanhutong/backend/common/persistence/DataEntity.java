@@ -65,7 +65,7 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 			this.updateBy = user;
 		}
 		this.updateDate = new Date();
-		this.uVersion = uVersion==null?1: (uVersion+1)%255;
+		this.uVersion = uVersion==null?1: (uVersion+1)%127;
 	}
 
 	public Integer getuVersion() {
