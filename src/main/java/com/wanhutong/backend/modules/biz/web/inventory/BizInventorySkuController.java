@@ -118,9 +118,9 @@ public class BizInventorySkuController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
 	@RequestMapping(value = "save")
 	public String save(BizInventorySku bizInventorySku, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizInventorySku)){
-			return form(bizInventorySku,request,model);
-		}
+//		if (!beanValidator(model, bizInventorySku)){
+//			return form(bizInventorySku,request,model);
+//		}
 		bizInventorySkuService.save(bizInventorySku);
 		String zt = request.getParameter("zt");
 		addMessage(redirectAttributes, "保存商品库存详情成功");
@@ -130,10 +130,11 @@ public class BizInventorySkuController extends BaseController {
 	
 	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
 	@RequestMapping(value = "delete")
-	public String delete(BizInventorySku bizInventorySku, RedirectAttributes redirectAttributes) {
+	public String delete(BizInventorySku bizInventorySku,HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		bizInventorySkuService.delete(bizInventorySku);
+		String zt = request.getParameter("zt");
 		addMessage(redirectAttributes, "删除商品库存详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage&zt="+zt;
 	}
 
 }

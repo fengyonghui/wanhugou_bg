@@ -179,6 +179,7 @@ public class BizRequestAllController {
         model.addAttribute("bizOrderHeader", orderHeader);
         model.addAttribute("reqDetailList", reqDetailList);
         model.addAttribute("ordDetailList", ordDetailList);
+        model.addAttribute("source",source);
         if (source != null && "kc".equals(source)) {
             return "modules/biz/request/bizRequestHeaderKcForm";
         }

@@ -65,7 +65,7 @@
 		<c:if test="${source eq 'kc'}"></c:if>
 		<li><a href="${ctx}/biz/request/bizRequestAll?source=kc">供货清单列表</a></li>
 		<li class="active">
-			<a href="${ctx}/biz/request/bizRequestAll/form?id=${bizOrderHeader.id}">
+			<a href="${ctx}/biz/request/bizRequestAll/form?id=${bizOrderHeader.id}&source=kc">
 				${not empty bizOrderHeader.id?'销售清单':''}<shiro:hasPermission name="biz:request:bizRequestHeader:edit">供货</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission>
 			</a>
 		</li>

@@ -193,7 +193,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 
 
 		}
-		//更改订单状态
+		//更改备货单状态
 		if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
 			if (flagRequest) {
 				BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());

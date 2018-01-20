@@ -29,7 +29,9 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li><a href="${ctx}/biz/request/bizRequestHeader/">备货清单列表</a></li>
+	<li>
+		备货清单详情
+	</li>
 </ul><br/>
 <form:form id="inputForm"  method="post" class="form-horizontal">
 	<div class="control-group">
