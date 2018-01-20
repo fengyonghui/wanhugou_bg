@@ -3,9 +3,12 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
+import java.io.File;
 import java.util.*;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
@@ -20,8 +23,11 @@ import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import org.springframework.stereotype.Service;
@@ -80,9 +86,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 				bizProductInfo.setBrandName(bizCatePropValue.getValue());
 			}
 		}
-
 		super.save(bizProductInfo);
-
 		if (bizProductInfo.getCategoryInfoList()!=null && bizProductInfo.getCategoryInfoList().size() > 0){
 			bizProductInfoDao.deleteProdCate(bizProductInfo);
 			bizProductInfoDao.insertProdCate(bizProductInfo);
@@ -97,9 +101,6 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		saveOwnProp(bizProductInfo);
 		//保存产品图片
 		saveCommonImg(bizProductInfo);
-
-
-
 	}
 
 	@Transactional(readOnly = false)
@@ -122,16 +123,17 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 			commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
 			saveProdImg(commonImg,bizProductInfo,photoLists);
 		}
-
 		if(photoDetails!=null && !"".equals(photoDetails)){
 			photoDetails=photoDetails.substring(1);
 			commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
 			saveProdImg(commonImg,bizProductInfo,photoDetails);
-
 		}
 	}
 
 		public  void saveProdImg(CommonImg commonImg,BizProductInfo bizProductInfo,String photos){
+			User user = UserUtils.getUser();
+			String pahtPrefix = AliOssClientUtil.getPahtPrefix();
+			String s = DateUtils.formatDate(new Date()).replaceAll("-", "");
 				String[]photoArr=photos.split("\\|");
 				if(photoArr.length>=1){
 					commonImg.setObjectId(bizProductInfo.getId());
@@ -141,16 +143,26 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 						commonImg.setImgPath(photoArr[i]);
 						commonImg.setImgSort(i);
 						commonImg.setImgServer(DsConfig.getImgServer());
+						String photoNames = photoArr[i];
+						String photoName = photos.substring(photoNames.lastIndexOf("/")+1);
+                        String folder = AliOssClientUtil.getFolder();
+                        String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
+                        String pathPhotoName=photoName;
+
+                        String  pathFile=Global.getUserfilesBaseDir()+photoArr[i];
+						File file = new File(pathFile);
+
+						AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
+						aliOssClientUtil.uploadObject2OSS(file,path);
+						commonImg.setImgPath("\\"+path+pathPhotoName);
 						commonImgService.save(commonImg);
 						if(i==0 && commonImg.getImgType()==ImgEnum.MAIN_PRODUCT_TYPE.getCode()){
-							bizProductInfo.setImgUrl(commonImg.getImgServer()+commonImg.getImgPath());
+							bizProductInfo.setImgUrl(commonImg.getImgServer()+path);
 							super.save(bizProductInfo);
 						}
 					}
 				}
-
-
-	}
+	    }
 
 	private void  saveOwnProp(BizProductInfo bizProductInfo){
 		if(bizProductInfo.getPropOwnValues()!=null&&!"".equals(bizProductInfo.getPropOwnValues())){
