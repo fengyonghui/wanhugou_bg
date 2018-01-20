@@ -285,7 +285,7 @@
     <div class="form-actions">
         <c:if test="${bizOrderHeader.id !=null && bizOrderHeader.id!='' }">
             <shiro:hasPermission name="biz:order:bizOrderDetail:edit"><input type="button"
-                                                                       onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}';"
+                                                                       onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${bizOrderHeader.oneOrder}';"
                                                                        class="btn btn-primary"
                                                                        value="订单商品信息添加"/></shiro:hasPermission>
         </c:if>

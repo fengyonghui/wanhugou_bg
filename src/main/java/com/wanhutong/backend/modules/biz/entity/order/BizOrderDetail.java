@@ -41,6 +41,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String saleQtys;          //用于采购数量时传递数量
     private String shelfSkus;          //用于多选货架是传递数量
 
+
 //    public Integer getMaxLineNo() {
 //        return maxLineNo;
 //    }

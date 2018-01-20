@@ -68,7 +68,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     @Transactional(readOnly = false)
     public void save(BizOrderHeader bizOrderHeader) {
         if(bizOrderHeader.getBizType()==null){
-            bizOrderHeader.setBizType(1);//默认 2非专营      ----1专营
+            bizOrderHeader.setBizType(1);//订单商品类型默认 2非专营      ----1专营
         }
         CommonLocation bizLocation = bizOrderHeader.getBizLocation();
         if (bizLocation.getRegion() == null) {
@@ -86,6 +86,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());
         }
         bizOrderHeader.setBizLocation(bizLocation);
+        super.save(bizOrderHeader);
 //		----------------------------查询是否首次下单--------------------------------------
         BizOrderHeader boh = new BizOrderHeader();
         Office custid = bizOrderHeader.getCustomer();
@@ -112,7 +113,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }else{
             System.out.println("--不是首单--");
         }
-        super.save(bizOrderHeader);
+
 
     }
 

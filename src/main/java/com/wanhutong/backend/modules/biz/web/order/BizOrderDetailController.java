@@ -91,7 +91,6 @@ public class BizOrderDetailController extends BaseController {
 //		用于往页面传给savg保存 首单标记 OneOrder
         bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
         BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
-        System.out.println(orderHeader);
 		bizOrderDetail.getOrderHeader().getOneOrder();
 		model.addAttribute("bizOrderDetail", bizOrderDetail);
 		model.addAttribute("bizOpShelfSku",new BizOpShelfSku());
