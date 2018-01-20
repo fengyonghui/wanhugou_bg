@@ -241,7 +241,7 @@
                     ${bizOrderDetail.lineNo}
                 </td>
                 <td>
-                    ${bizOrderDetail.shelfInfo.id}
+                    ${bizOrderDetail.shelfInfo.opShelfInfo.name}
                 </td>
                 <td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">
                     ${bizOrderDetail.skuName}
