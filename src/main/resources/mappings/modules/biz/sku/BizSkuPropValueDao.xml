@@ -39,6 +39,14 @@
 			<if test="skuInfo!=null and skuInfo.id != null and skuInfo.id != ''">
 				AND a.sku_id = #{skuInfo.id}
 			</if>
+
+			<if test="prodPropertyInfo!=null and prodPropertyInfo.id != null and prodPropertyInfo.id != ''">
+				AND a.prod_prop_id = #{prodPropertyInfo.id}
+			</if>
+			<if test="source != null and source != ''">
+				AND a.source = #{source}
+			</if>
+
 			<if test="propName != null and propName != ''">
 				AND a.prop_name = #{propName}
 			</if>

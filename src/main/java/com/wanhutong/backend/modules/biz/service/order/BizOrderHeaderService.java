@@ -68,11 +68,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     @Transactional(readOnly = false)
     public void save(BizOrderHeader bizOrderHeader) {
         if(bizOrderHeader.getBizType()==null){
-            bizOrderHeader.setBizType(2);//默认 2非专营      ----1专营
+            bizOrderHeader.setBizType(1);//默认 2非专营      ----1专营
         }
         CommonLocation bizLocation = bizOrderHeader.getBizLocation();
         if (bizLocation.getRegion() == null) {
             bizLocation.setRegion(new SysRegion());
+        }
+        if(bizOrderHeader.getOrderType()==null){
+            bizOrderHeader.setOrderType(1);//订单类型，默认选中  1普通订单
         }
         commonLocationService.updateCommonLocation(bizLocation);
         bizOrderHeader.setOrderType(1);

@@ -115,7 +115,7 @@
     <form:hidden path="id"/>
     <form:hidden path="orderHeader.id"/>
     <%--<form:hidden path="maxLineNo"/>--%>
-    <%--<form:hidden path="orderHeader.oneOrder"/>--%>
+    <form:hidden path="orderHeader.oneOrder"/>
     <sys:message content="${message}"/>
     <div class="control-group">
         <label class="control-label">选择商品：</label>

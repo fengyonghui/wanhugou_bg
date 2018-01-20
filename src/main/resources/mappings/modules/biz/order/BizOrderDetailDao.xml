@@ -9,7 +9,7 @@
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
 		a.sku_shelf_id as "shelfInfo.id",
-		oi.name as "shelfInfo.name",
+		ois.name as "shelfInfo.name",
 		a.sku_id AS "skuInfo.id",
 		bsi.name as "skuInfo.name",
 		a.quality as "quality",
@@ -29,10 +29,10 @@
 	</sql>
 	
 	<sql id="bizOrderDetailJoins">
-		left join sys_user su on a.create_id=su.id
+		LEFT join sys_user su on a.create_id=su.id
 		left join biz_sku_info bsi on a.sku_id=bsi.id
 		left join biz_order_header boh on a.order_id=boh.id
-		LEFT  JOIN biz_op_shelf_info oi on a.sku_shelf_id=oi.id
+		LEFT  JOIN biz_op_shelf_sku ois on a.sku_shelf_id=ois.id
 	</sql>
     
 	<select id="get" resultType="BizOrderDetail">

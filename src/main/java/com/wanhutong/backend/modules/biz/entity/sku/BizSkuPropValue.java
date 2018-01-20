@@ -27,6 +27,8 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 	private BizProdPropValue prodPropValue;		// biz_prod_prop_value.id
 	private String propValue;		// biz_prod_prop_value
 	private String source;
+
+	private Integer prodPropId;		//用于查询属性值
 	
 	public BizSkuPropValue() {
 		super();
@@ -84,5 +86,13 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public Integer getProdPropId() {
+		return prodPropId;
+	}
+
+	public void setProdPropId(Integer prodPropId) {
+		this.prodPropId = prodPropId;
 	}
 }

@@ -88,10 +88,10 @@ public class BizOrderDetailController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
 	@RequestMapping(value = "form")
 	public String form(BizOrderDetail bizOrderDetail, Model model) {
-		Integer maxLine = bizOrderDetailDao.findMaxLine(bizOrderDetail);
-		bizOrderDetail.setMaxLineNo(maxLine);
-//		用于往页面传给savg保存
-		bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
+//		用于往页面传给savg保存 首单标记 OneOrder
+        bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
+        BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
+        System.out.println(orderHeader);
 		bizOrderDetail.getOrderHeader().getOneOrder();
 		model.addAttribute("bizOrderDetail", bizOrderDetail);
 		model.addAttribute("bizOpShelfSku",new BizOpShelfSku());
@@ -103,13 +103,6 @@ public class BizOrderDetailController extends BaseController {
 	public String save(BizOrderDetail bizOrderDetail, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizOrderDetail)){
 			return form(bizOrderDetail, model);
-		}
-		if(bizOrderDetail.getMaxLineNo()==null){
-			bizOrderDetail.setLineNo(1);
-		}else {
-			Integer maxLineNo = bizOrderDetail.getMaxLineNo();
-			maxLineNo++;
-			bizOrderDetail.setLineNo(maxLineNo);
 		}
 		bizOrderDetailService.save(bizOrderDetail);
 		addMessage(redirectAttributes, "保存订单详情成功");
