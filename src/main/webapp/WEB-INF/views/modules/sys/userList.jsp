@@ -76,6 +76,7 @@
 				<shiro:hasPermission name="sys:user:edit"><td>
 					<c:if test="${user.conn!=null}">
 						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${bizUser.id}&conn=${user.conn}">关联采购商</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending">订单管理</a>
 					</c:if>
     				<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}">修改</a>
 					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>

@@ -206,6 +206,9 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
+   <c:choose>
+       <c:when test="${}"></c:when>
+   </c:choose>
     <div class="form-actions">
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                          type="submit"

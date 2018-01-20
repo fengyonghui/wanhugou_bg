@@ -49,7 +49,7 @@
 		<thead>
 			<tr>
 				<th>订单编号</th>
-				<th>订单类型</th>
+				<%--<th>订单类型</th>--%>
 				<th>商品类型</th>
 				<th>客户名称</th>
 				<th>订单详情总价</th>
@@ -58,7 +58,7 @@
 				<th>发票状态</th>
 				<th>业务状态</th>
 				<th>订单来源</th>
-				<th>订单收货地址</th>
+				<%--<th>订单收货地址</th>--%>
 				<th>创建人</th>
 				<th>订单创建时间</th>
 				<th>更新人</th>
@@ -123,8 +123,13 @@
 					<fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
-    				<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>
-					<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+					<c:when test="${bizOrderHeader.flag=='check_pending'}">
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&bizOrderHeader.flag=${bizOrderHeader.flag}">待审核</a>
+					</c:when>
+					<c:choose>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+					</c:choose>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

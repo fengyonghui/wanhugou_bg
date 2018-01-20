@@ -40,6 +40,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private String oneOrder;		// 首次下单 firstOrder ，非首次下单 endOrder
 	private Double DiscountPrice;		//优惠价格页面显示
 
+	private String flag;       //标志位
+
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
 	}
@@ -182,5 +184,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setDiscountPrice(Double discountPrice) {
 		DiscountPrice = discountPrice;
+	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
 	}
 }
