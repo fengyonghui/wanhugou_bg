@@ -123,12 +123,16 @@
 					<fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
+					<c:choose>
+
+
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&bizOrderHeader.flag=${bizOrderHeader.flag}">待审核</a>
 					</c:when>
-					<c:choose>
+					<c:otherwise>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+					</c:otherwise>
 					</c:choose>
 				</td></shiro:hasPermission>
 			</tr>
