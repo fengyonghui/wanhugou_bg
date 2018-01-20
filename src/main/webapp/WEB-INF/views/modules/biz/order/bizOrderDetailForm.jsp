@@ -75,7 +75,7 @@
                   alert("请输入数量");
                   return;
               }
-              if(saleQty>maxQty){
+              if(parseInt(saleQty)>parseInt(maxQty)){
                   alert("购买的数量与当前价格不符");
                   return;
               }
@@ -90,7 +90,13 @@
 
         }
         function removeItem(obj) {
-
+            $("#td_"+obj).html("<a href='#' onclick=\"addItem('"+obj+"')\">增加</a>");
+            var trHtml=$("#"+obj);
+            $("#prodInfo2").append(trHtml);
+            $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name")
+            $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("readonly");
+            $("#prodInfo2").find("#orderDetaIds_"+obj).removeAttr("name");
+            $("#prodInfo2").find("#shelfSkuId_"+obj).removeAttr("name");
         }
     </script>
 
