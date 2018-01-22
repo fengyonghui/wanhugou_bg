@@ -24,6 +24,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Integer orderType;		// 1: 普通订单 ; 2:帐期采购 3:配资采购
 	private Office customer;		// 客户ID sys_office.id &amp;  type=customer
 	private Double totalDetail;		// 订单详情总价
+	private Double receiveTotal;	//订单已收货款
 	private Double totalExp;		// 订单总费用
 	private Double freight;			// 运费
 	private Integer invStatus;		// 0 不开发票 1 未开发票 3 已开发票
@@ -39,6 +40,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Date deliveryDate; 		//预计到货日期
 	private String oneOrder;		// 首次下单 firstOrder ，非首次下单 endOrder
 	private Double DiscountPrice;		//优惠价格页面显示
+	private Double tobePaid;		//待支付金额
 
 	private String flag;       //标志位
 
@@ -192,5 +194,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setFlag(String flag) {
 		this.flag = flag;
+	}
+
+	public Double getTobePaid() {
+		return tobePaid;
+	}
+
+	public void setTobePaid(Double tobePaid) {
+		this.tobePaid = tobePaid;
+	}
+
+	public Double getReceiveTotal() {
+		return receiveTotal;
+	}
+
+	public void setReceiveTotal(Double receiveTotal) {
+		this.receiveTotal = receiveTotal;
 	}
 }

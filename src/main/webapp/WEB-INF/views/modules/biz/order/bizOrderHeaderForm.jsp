@@ -76,7 +76,20 @@
                 }
             });
         }
-
+    function btnOrder(){
+        $.ajax({
+            type:"post",
+            url:"${ctx}/biz/order/bizOrderHeader/saveOrderHeader?payMentOne="+$("#payMentOne").val()+"&tobePaid="+${entity.tobePaid},
+            data:{id:$("#id").val()},
+            success:function(data){
+                if(data=="ok"){
+                    alert("支付成功！");
+                }else{
+                    alert(" 余额不足，支付失败！");
+                }
+            }
+        });
+    }
     </script>
 </head>
 <body>
@@ -210,10 +223,13 @@
        <c:when test="${}"></c:when>
    </c:choose>
     <div class="form-actions">
-        <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary"
-                                                                         type="submit"
-                                                                         value="保存"/>&nbsp;</shiro:hasPermission>
-        <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+        <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+            <input type="text" id="payMentOne" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+            <input class="btn btn-primary" type="button" onclick="btnOrder();" value="支付"/>
+            <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;</shiro:hasPermission>
+            <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+            <span class="help-inline">待支付费用为:<font color="red">${entity.tobePaid}</font></span>
     </div>
 </form:form>
 

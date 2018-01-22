@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.pay.BizPayRecordDao">
+    
+	<sql id="bizPayRecordColumns">
+		a.id AS "id",
+		a.pay_num AS "payNum",
+		a.out_trade_no AS "outTradeNo",
+		a.pay_money AS "payMoney",
+		a.payer AS "payer",
+		a.cust_id AS "customer.id",
+		so.name as "customer.name",
+		a.biz_status AS "bizStatus",
+		a.account AS "account",
+		a.to_account AS "toAccount",
+		a.record_type AS "recordType",
+		a.record_type_name AS "recordTypeName",
+		a.pay_type AS "payType",
+		a.pay_type_name AS "payTypeName",
+		a.trade_reason AS "tradeReason",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		su.name as "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizPayRecordJoins">
+		left join sys_user su on a.create_id=su.id
+		LEFT JOIN sys_office so on so.id=a.cust_id
+	</sql>
+    
+	<select id="get" resultType="BizPayRecord">
+		SELECT 
+			<include refid="bizPayRecordColumns"/>
+		FROM biz_pay_record a
+		<include refid="bizPayRecordJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizPayRecord">
+		SELECT 
+			<include refid="bizPayRecordColumns"/>
+		FROM biz_pay_record a
+		<include refid="bizPayRecordJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="payNum != null and payNum != ''">
+				AND a.pay_num = #{payNum}
+			</if>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				AND a.out_trade_no = #{outTradeNo}
+			</if>
+			<if test="payMoney != null and payMoney != ''">
+				AND a.pay_money = #{payMoney}
+			</if>
+			<if test="payer != null and payer != ''">
+				AND a.payer = #{payer}
+			</if>
+			<if test="customer != null and customer.id != null and customer.id != ''">
+				AND a.cust_id = #{customer.id}
+			</if>
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="account != null and account != ''">
+				AND a.account = #{account}
+			</if>
+			<if test="toAccount != null and toAccount != ''">
+				AND a.to_account = #{toAccount}
+			</if>
+			<if test="recordType != null and recordType != ''">
+				AND a.record_type = #{recordType}
+			</if>
+			<if test="recordTypeName != null and recordTypeName != ''">
+				AND a.record_type_name = #{recordTypeName}
+			</if>
+			<if test="payType != null and payType != ''">
+				AND a.pay_type = #{payType}
+			</if>
+			<if test="payTypeName != null and payTypeName != ''">
+				AND a.pay_type_name = #{payTypeName}
+			</if>
+			<if test="tradeReason != null and tradeReason != ''">
+				AND a.trade_reason = #{tradeReason}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizPayRecord">
+		SELECT 
+			<include refid="bizPayRecordColumns"/>
+		FROM biz_pay_record a
+		<include refid="bizPayRecordJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_pay_record(
+			id,
+			pay_num,
+			out_trade_no,
+			pay_money,
+			payer,
+			cust_id,
+			biz_status,
+			account,
+		<if test="toAccount !=null and toAccount!=''">
+			to_account,
+		</if>
+			record_type,
+			record_type_name,
+			pay_type,
+			pay_type_name,
+			trade_reason,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{payNum},
+			#{outTradeNo},
+			#{payMoney},
+			#{payer},
+			#{customer.id},
+			#{bizStatus},
+			#{account},
+		<if test="toAccount !=null and toAccount!=''">
+			#{toAccount},
+		</if>
+			#{recordType},
+			#{recordTypeName},
+			#{payType},
+			#{payTypeName},
+			#{tradeReason},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_pay_record SET 	
+			pay_num = #{payNum},
+			out_trade_no = #{outTradeNo},
+		<if test="payMoney != null and payMoney!=''">
+			pay_money = #{payMoney},
+		</if>
+			payer = #{payer},
+			cust_id = #{customer.id},
+			biz_status = #{bizStatus},
+			account = #{account},
+		<if test="toAccount !=null and toAccount!=''">
+			to_account = #{toAccount},
+		</if>>
+			record_type = #{recordType},
+			record_type_name = #{recordTypeName},
+			pay_type = #{payType},
+			pay_type_name = #{payTypeName},
+			trade_reason = #{tradeReason},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_pay_record SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

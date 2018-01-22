@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.sys.dao.SysPlatWalletDao">
+    
+	<sql id="sysPlatWalletColumns">
+		a.id AS "id",
+		a.amount AS "amount",
+		a.u_version AS "uVersion",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="sysPlatWalletJoins">
+	</sql>
+    
+	<select id="get" resultType="SysPlatWallet">
+		SELECT 
+			<include refid="sysPlatWalletColumns"/>
+		FROM sys_plat_wallet a
+		<include refid="sysPlatWalletJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysPlatWallet">
+		SELECT 
+			<include refid="sysPlatWalletColumns"/>
+		FROM sys_plat_wallet a
+		<include refid="sysPlatWalletJoins"/>
+		<where>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysPlatWallet">
+		SELECT 
+			<include refid="sysPlatWalletColumns"/>
+		FROM sys_plat_wallet a
+		<include refid="sysPlatWalletJoins"/>
+		<where>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_plat_wallet(
+			id,
+			amount,
+			u_version,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{amount},
+			#{uVersion},
+			#{createDate.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_plat_wallet SET 	
+			amount = #{amount},
+			u_version = #{uVersion},
+			create_time = #{createDate},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_plat_wallet
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
