@@ -46,7 +46,7 @@
 			update_id,
 			update_time
 		) VALUES (
-			#{officeId}, 
+			#{id},
 			#{payPwd}, 
 			#{level}, 
 			#{createBy.id},
@@ -62,9 +62,10 @@
 			<if test="level != null and level !=''">
 				level = #{level},
 			</if>
-			update_time = now(), 
+			update_time = now(),
+			wallet = #{wallet},
 			update_id = #{updateBy.id}
-		WHERE office_id = #{officeId}
+		WHERE office_id = #{id}
 	</update>
 	
 </mapper>

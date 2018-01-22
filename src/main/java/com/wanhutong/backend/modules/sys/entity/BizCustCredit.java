@@ -33,7 +33,7 @@ public class BizCustCredit extends DataEntity<BizCustCredit> {
 	}
 
 	public void setOfficeId(Integer officeId) {
-		this.officeId = officeId;
+		super.setId(officeId);
 	}
 
 	public String getPayPwd() {

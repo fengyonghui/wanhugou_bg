@@ -1,4 +1,3 @@
-<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
@@ -30,20 +29,15 @@
 				}
 			});
             if($("#id").val()!=""){
-              //  clickBut();
+                clickBut();
             }
             $("#addAddressHref").click(function () {
                 var officeId=$("#officeId").val();
                 var officeName =$("#officeName").val();
                 window.location.href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id="+officeId+"&office.name="+officeName+"&flag=order"
             });
-            $("#addJhAddressHref").click(function () {
-                var officeId=$("#officeId").val();
-                var officeName =$("#officeName").val();
-                window.location.href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id="+officeId+"&office.name="+officeName+"&flag=order"
-            });
 		});
-        function clickBut(){
+      function clickBut(){
          var officeId=$("#officeId").val();
              $("#province").empty();
              $("#city").empty();
@@ -83,6 +77,20 @@
                 }
             });
         }
+    function btnOrder(){
+        $.ajax({
+            type:"post",
+            url:"${ctx}/biz/order/bizOrderHeader/saveOrderHeader?payMentOne="+$("#payMentOne").val()+"&tobePaid="+${entity.tobePaid},
+            data:{id:$("#id").val()},
+            success:function(data){
+                if(data=="ok"){
+                    alert("支付成功！");
+                }else{
+                    alert(" 余额不足，支付失败！");
+                }
+            }
+        });
+    }
 
         function deliveryAddress(){
             var officeId=$("#officeId").val();
@@ -252,7 +260,15 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
-   <c:choose>
+     <div class="form-actions">
+        <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+            <input type="text" id="payMentOne" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+            <input class="btn btn-primary" type="button" onclick="btnOrder();" value="支付"/>
+            <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;</shiro:hasPermission>
+            <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+            <span class="help-inline">待支付费用为:<font color="red">${entity.tobePaid}</font></span>
+    </div>
        <c:when test="${entity.flag=='check_pending'}">
            <div class="control-group" id="jhadd1">
                <label class="control-label">交货地址；</label>

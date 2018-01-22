@@ -72,9 +72,9 @@
 				<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">
 					${bizOrderHeader.orderNum}
 				</a></td>
-				<td>
-					${fns:getDictLabel(bizOrderHeader.orderType, 'biz_order_type', '未知状态')}
-				</td>
+				<%--<td>--%>
+					<%--${fns:getDictLabel(bizOrderHeader.orderType, 'biz_order_type', '未知状态')}--%>
+				<%--</td>--%>
 				<%---start----%>
 				<td><c:if test="${bizOrderHeader.bizType ==1}">
 						专营
@@ -107,9 +107,9 @@
 				<td>
 					${bizOrderHeader.platformInfo.name}
 				</td>
-				<td>
-					${bizOrderHeader.bizLocation.pcrName}${bizOrderHeader.bizLocation.address}
-				</td>
+				<%--<td>--%>
+					<%--${bizOrderHeader.bizLocation.pcrName}${bizOrderHeader.bizLocation.address}--%>
+				<%--</td>--%>
 				<td>
 					${bizOrderHeader.createBy.name}
 				</td>
@@ -124,12 +124,16 @@
 				</td>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
 					<c:choose>
-
-
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&bizOrderHeader.flag=${bizOrderHeader.flag}">待审核</a>
 					</c:when>
 					<c:otherwise>
+						<c:if test="${bizOrderHeader.bizStatus==0}">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">待支付</a>
+						</c:if>
+						<c:if test="${bizOrderHeader.bizStatus==5}">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">首付款待支付</a>
+						</c:if>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 					</c:otherwise>
