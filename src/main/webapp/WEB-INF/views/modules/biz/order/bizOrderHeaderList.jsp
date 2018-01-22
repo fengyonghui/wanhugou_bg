@@ -128,12 +128,12 @@
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&bizOrderHeader.flag=${bizOrderHeader.flag}">待审核</a>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${bizOrderHeader.bizStatus==0}">
+						<c:if test="${bizOrderHeader.bizStatus==0 || bizOrderHeader.bizStatus==5}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">待支付</a>
 						</c:if>
-						<c:if test="${bizOrderHeader.bizStatus==5}">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">首付款待支付</a>
-						</c:if>
+						<%--<c:if test="${bizOrderHeader.bizStatus==5}">--%>
+							<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">首付款待支付</a>--%>
+						<%--</c:if>--%>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 					</c:otherwise>

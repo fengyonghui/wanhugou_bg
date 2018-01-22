@@ -78,6 +78,13 @@
             });
         }
     function btnOrder(){
+        var button=$("#btnOrderButton").disabled=true;
+        var buttonText=$("#payMentOne").val();
+        if(buttonText==""){
+            alert("内容不能为空");
+            button=$("#btnOrderButton").disabled=false;
+            return false;
+        }
         $.ajax({
             type:"post",
             url:"${ctx}/biz/order/bizOrderHeader/saveOrderHeader?payMentOne="+$("#payMentOne").val()+"&tobePaid="+${entity.tobePaid},
@@ -262,12 +269,15 @@
     </div>
      <div class="form-actions">
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+            <%--总费用：<font color="red">${entity.totalDetail+entity.totalExp+entity.freight}</font>--%>
+            待支付费用为:<font color="red">${entity.tobePaid}</font>
             <input type="text" id="payMentOne" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
                    onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
-            <input class="btn btn-primary" type="button" onclick="btnOrder();" value="支付"/>
+            <input class="btn btn-primary" id="btnOrderButton" type="button" onclick="btnOrder();" value="支付"/>
             <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;</shiro:hasPermission>
             <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-            <span class="help-inline">待支付费用为:<font color="red">${entity.tobePaid}</font></span>
+            <span class="help-inline">已经支付：<font color="red">${entity.receiveTotal}</font></span>
+
     </div>
        <c:when test="${entity.flag=='check_pending'}">
            <div class="control-group" id="jhadd1">

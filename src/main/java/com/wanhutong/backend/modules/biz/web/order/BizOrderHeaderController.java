@@ -110,7 +110,8 @@ public class BizOrderHeaderController extends BaseController {
 			Double totalExp = bizOrderHeader.getTotalExp();//订单总费用
 			Double freight = bizOrderHeader.getFreight();//运费
 			Double orderHeaderTotal=totalDetail+totalExp+freight;
-			bizOrderHeader.setTobePaid(orderHeaderTotal);//页面显示待支付总价
+			bizOrderHeader.setTobePaid(orderHeaderTotal-bizOrderHeader.getReceiveTotal());//页面显示待支付总价
+			Double aa=orderHeaderTotal-bizOrderHeader.getReceiveTotal();
 		}
         model.addAttribute("entity", bizOrderHeader);
 		return "modules/biz/order/bizOrderHeaderForm";
@@ -176,7 +177,7 @@ public class BizOrderHeaderController extends BaseController {
                BigDecimal payMentTwo = new BigDecimal(payMentOne);//输入支付的值
                subtract = wallet.subtract(payMentTwo);//计算后结果
 			   System.out.println(subtract.compareTo(new BigDecimal(0)));
-			   //   结果是：-1小于、0等于、1大于
+			   //   以上输出结果是：-1小于、0等于、1大于
 			   if(subtract.compareTo(new BigDecimal(0))==1){
 				   bizCustCredit.setWallet(subtract);
 				   bizCustCreditService.save(bizCustCredit);
