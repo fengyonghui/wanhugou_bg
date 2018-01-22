@@ -31,10 +31,9 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Integer bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付 3同意发货 4已发货 5客户已收货 6 已完成
 	private Integer bizType;		//订单运营类型: 1专营订单 2非专营订单
 	private BizPlatformInfo platformInfo;		// 订单来源； biz_platform_info.id
-	private CommonLocation bizLocation;		// 订单收货地址： common_location.id
+	private BizOrderAddress bizLocation;		// 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
 
 	private CommonLocation location;          //订单交货地址
-
 	private List<BizOrderDetail> orderDetailList;	//查询有多少订单
 
 	private Integer bizStatusStart;
@@ -45,6 +44,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Double tobePaid;		//待支付金额
 
 	private String flag;       //标志位
+	private String orderNoEditable;		//页面不可编辑标识符
+	private String orderDetails;		//页面不可编辑标识符2
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -110,15 +111,15 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.platformInfo = platformInfo;
     }
 
-    public CommonLocation getBizLocation() {
-        return bizLocation;
-    }
+	public BizOrderAddress getBizLocation() {
+		return bizLocation;
+	}
 
-    public void setBizLocation(CommonLocation bizLocation) {
-        this.bizLocation = bizLocation;
-    }
+	public void setBizLocation(BizOrderAddress bizLocation) {
+		this.bizLocation = bizLocation;
+	}
 
-    public Integer getOrderType() {
+	public Integer getOrderType() {
 		return orderType;
 	}
 
@@ -220,5 +221,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setLocation(CommonLocation location) {
 		this.location = location;
+	}
+
+	public String getOrderNoEditable() {
+		return orderNoEditable;
+	}
+
+	public void setOrderNoEditable(String orderNoEditable) {
+		this.orderNoEditable = orderNoEditable;
+	}
+
+	public String getOrderDetails() {
+		return orderDetails;
+	}
+
+	public void setOrderDetails(String orderDetails) {
+		this.orderDetails = orderDetails;
 	}
 }

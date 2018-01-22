@@ -113,9 +113,15 @@
 			p_line_no,
 			sku_shelf_id,
 			sku_id,
+		<if test="quality!=null and quality!=''">
 			quality,
+		</if>
+		<if test="color!=null and color!=''">
 			color,
+		</if>
+		<if test="standard!=null and standard!=''">
 			standard,
+		</if>
 			part_no,
 			sku_name,
 			unit_price,
@@ -133,9 +139,15 @@
 			#{pLineNo},
 			#{shelfInfo.id},
 			#{skuInfo.id},
+		<if test="quality!=null and quality!=''">
 			#{quality},
+		</if>
+		<if test="color!=null and color!=''">
 			#{color},
+		</if>
+		<if test="standard!=null and standard!=''">
 			#{standard},
+		</if>
 			#{partNo},
 			#{skuName},
 			#{unitPrice},
@@ -156,9 +168,15 @@
 			p_line_no = #{pLineNo},
 			sku_shelf_id=#{shelfInfo.id},
 			sku_id = #{skuInfo.id},
-			quality = #{quality},
+		<if test="quality!=null and quality!=''">
+			quality=#{quality},
+		</if>
+		<if test="color!=null and color!=''">
 			color = #{color},
+		</if>
+		<if test="standard!=null and standard!=''">
 			standard = #{standard},
+		</if>
 			part_no = #{partNo},
 			sku_name = #{skuName},
 			unit_price = #{unitPrice},

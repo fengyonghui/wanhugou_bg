@@ -128,14 +128,18 @@
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&bizOrderHeader.flag=${bizOrderHeader.flag}">待审核</a>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${bizOrderHeader.bizStatus==0 || bizOrderHeader.bizStatus==5}">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">待支付</a>
+						<c:if test="${bizOrderHeader.bizStatus==0 || bizOrderHeader.bizStatus==5 ||
+									bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight!=bizOrderHeader.receiveTotal}">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>
-						<%--<c:if test="${bizOrderHeader.bizStatus==5}">--%>
-							<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">首付款待支付</a>--%>
-						<%--</c:if>--%>
-						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>
-						<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=editable">查看详情</a>
+						<c:if test="${bizOrderHeader.bizStatus==18 || bizOrderHeader.bizStatus==19 || bizOrderHeader.bizStatus==17|| bizOrderHeader.bizStatus==16 ||
+						  bizOrderHeader.bizStatus==15 || bizOrderHeader.bizStatus==10 || bizOrderHeader.bizStatus==5 || bizOrderHeader.bizStatus==0}">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>
+							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+						</c:if>
+						<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>--%>
+						<%--<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>--%>
 					</c:otherwise>
 					</c:choose>
 				</td></shiro:hasPermission>

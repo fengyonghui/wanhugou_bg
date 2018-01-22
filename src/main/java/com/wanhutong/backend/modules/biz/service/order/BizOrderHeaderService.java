@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
@@ -17,6 +18,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +33,10 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrderHeader> {
-    @Resource
-    private CommonLocationService commonLocationService;
+//    @Resource
+//    private CommonLocationService commonLocationService;
+    @Autowired
+    private BizOrderAddressService bizOrderAddressService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
 
@@ -70,14 +74,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         if(bizOrderHeader.getBizType()==null){
             bizOrderHeader.setBizType(1);//订单商品类型默认 2非专营      ----1专营
         }
-        CommonLocation bizLocation = bizOrderHeader.getBizLocation();
+        BizOrderAddress bizLocation = bizOrderHeader.getBizLocation();
         if (bizLocation.getRegion() == null) {
             bizLocation.setRegion(new SysRegion());
         }
         if(bizOrderHeader.getOrderType()==null){
             bizOrderHeader.setOrderType(1);//订单类型，默认选中  1普通订单
         }
-        commonLocationService.updateCommonLocation(bizLocation);
+        bizOrderAddressService.updateBizOrderAddress(bizLocation);
         bizOrderHeader.setOrderType(1);
         String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), bizOrderHeader.getCustomer().getId());
         if(bizOrderHeader.getId()==null){
@@ -127,5 +131,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         super.delete(bizOrderHeader);
     }
 
+
+    @Transactional(readOnly = false)
+    public void saveOrderHea(BizOrderHeader bizOrderHeader) {
+
+    }
 
 }

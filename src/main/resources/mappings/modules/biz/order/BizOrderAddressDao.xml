@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderAddressDao">
+    
+	<sql id="bizOrderAddressColumns">
+		a.id AS "id",
+		a.province_id AS "province.id",
+		a.city_id AS "city.id",
+		a.region_id AS "region.id",
+		a.pcr_name AS "pcrName",
+		a.address AS "address",
+		a.receiver AS "receiver",
+		a.phone AS "phone",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		province.name as "province.name",
+        city.name as "city.name",
+        reg.name as "region.name"
+	</sql>
+	
+	<sql id="bizOrderAddressJoins">
+		LEFT JOIN sys_region province ON province.id = a.province_id
+		LEFT JOIN sys_region city ON city.id = a.city_id
+		LEFT JOIN sys_region reg ON reg.id = a.region_id
+	</sql>
+    
+	<select id="get" resultType="BizOrderAddress">
+		SELECT 
+			<include refid="bizOrderAddressColumns"/>
+		FROM biz_order_address a
+		<include refid="bizOrderAddressJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizOrderAddress">
+		SELECT 
+			<include refid="bizOrderAddressColumns"/>
+		FROM biz_order_address a
+		<include refid="bizOrderAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="province != null and province.id != null and province.id != ''">
+				AND a.province_id = #{province.id}
+			</if>
+			<if test="city != null and city.id != null and city.id != ''">
+				AND a.city_id = #{city.id}
+			</if>
+			<if test="region != null and region.id != null and region.id != ''">
+				AND a.region_id = #{region.id}
+			</if>
+			<if test="pcrName != null and pcrName != ''">
+				AND a.pcr_name = #{pcrName}
+			</if>
+			<if test="address != null and address != ''">
+				AND a.address = #{address}
+			</if>
+			<if test="receiver != null and receiver != ''">
+				AND a.receiver = #{receiver}
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone = #{phone}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizOrderAddress">
+		SELECT 
+			<include refid="bizOrderAddressColumns"/>
+		FROM biz_order_address a
+		<include refid="bizOrderAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_order_address(
+			id,
+			province_id,
+			city_id,
+			region_id,
+			pcr_name,
+			address,
+			receiver,
+			phone,
+			status,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{province.id},
+			#{city.id},
+			#{region.id},
+			#{pcrName},
+			#{address},
+			#{receiver},
+			#{phone},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_order_address SET 	
+			province_id = #{province.id},
+			city_id = #{city.id},
+			region_id = #{region.id},
+			pcr_name = #{pcrName},
+			address = #{address},
+			receiver = #{receiver},
+			phone = #{phone},
+			create_time = #{createDate},
+			update_id = #{createBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_order_address SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

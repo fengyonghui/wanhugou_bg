@@ -76,8 +76,8 @@ public class BizOrderHeaderController extends BaseController {
 				sum+=price*ordQty;
 				entity.setTotalDetail(sum);
 			}
-			bizOrderHeaderService.save(entity);
 			entity.setOrderDetailList(list);
+			bizOrderHeaderService.save(entity);
 		}
 		if (entity == null){
 			entity = new BizOrderHeader();
@@ -99,7 +99,7 @@ public class BizOrderHeaderController extends BaseController {
 
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
-	public String form(BizOrderHeader bizOrderHeader, Model model) {
+	public String form(BizOrderHeader bizOrderHeader, Model model,String orderNoEditable) {
 		if(bizOrderHeader.getCustomer()!=null && bizOrderHeader.getCustomer().getId()!=null){
 			Office office=officeService.get(bizOrderHeader.getCustomer().getId());
 			bizOrderHeader.setCustomer(office);
@@ -111,7 +111,11 @@ public class BizOrderHeaderController extends BaseController {
 			Double freight = bizOrderHeader.getFreight();//运费
 			Double orderHeaderTotal=totalDetail+totalExp+freight;
 			bizOrderHeader.setTobePaid(orderHeaderTotal-bizOrderHeader.getReceiveTotal());//页面显示待支付总价
-			Double aa=orderHeaderTotal-bizOrderHeader.getReceiveTotal();
+			if(orderNoEditable!=null && orderNoEditable.equals("editable")){//不可编辑标识符
+				System.out.println(" 页面不可编辑 ");
+				bizOrderHeader.setOrderNoEditable("editable");//待支付
+//				bizOrderHeader.setOrderDetails("details");//查看详情
+			}
 		}
         model.addAttribute("entity", bizOrderHeader);
 		return "modules/biz/order/bizOrderHeaderForm";
@@ -121,7 +125,7 @@ public class BizOrderHeaderController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizOrderHeader)){
-			return form(bizOrderHeader, model);
+			return form(bizOrderHeader, model,null);
 		}
 		if(bizOrderHeader.getTotalDetail()==null){
 			bizOrderHeader.setTotalDetail(0.0);
@@ -162,60 +166,63 @@ public class BizOrderHeaderController extends BaseController {
 		Double Totail=bizOrderHeader.getTobePaid();//获取From方法的计算总价
 		BizPayRecord bizPayRecordCredit = new BizPayRecord();//保存客户钱包交易记录
 		BizPayRecord bizPayRecordWallet = new BizPayRecord();//保存平台总钱包交易记录
+		Integer customId = orderHeaderMent.getCustomer().getId();//采购商ID
+		BizCustCredit bizCustCredit = bizCustCreditService.get(customId);//客户钱包
 		BigDecimal subtract=null;
 		Integer recordBiz=0;//0失败 1成功 支付记录表，支付状态
 		String payMent="error";
        try {
-           Integer customId = orderHeaderMent.getCustomer().getId();//采购商ID
-           BizCustCredit bizCustCredit = bizCustCreditService.get(customId);//客户钱包
-           BigDecimal wallet = bizCustCredit.getWallet();//钱包总余额
-           if(wallet==null){
-               System.out.println(" 余额不足 ");
-			   recordBiz=0;
-           }else {
-			   recordBiz=1;
-               BigDecimal payMentTwo = new BigDecimal(payMentOne);//输入支付的值
-               subtract = wallet.subtract(payMentTwo);//计算后结果
-			   System.out.println(subtract.compareTo(new BigDecimal(0)));
-			   //   以上输出结果是：-1小于、0等于、1大于
-			   if(subtract.compareTo(new BigDecimal(0))==1){
-				   bizCustCredit.setWallet(subtract);
-				   bizCustCreditService.save(bizCustCredit);
-				   SysPlatWallet sysPlatWallet = sysPlatWalletService.get(OrderTransaction.TOTAL_PURSE.getOrderId());//平台总钱包 1
-				   sysPlatWallet.setAmount(sysPlatWallet.getAmount()+payMentOne);
-				   sysPlatWalletService.save(sysPlatWallet);//保存到平台总钱包
-				   if(payMentOne.equals(Totail)){
-					   orderHeaderMent.setReceiveTotal(receiveTotal+payMentOne);//订单已收货款
-					   orderHeaderMent.setBizStatus(OrderTransaction.WHOLE_PAYMENT.getOrderId());//订单状态 10全部支付
-					   bizOrderHeaderService.saveOrderHeader(orderHeaderMent);
-				   }else{
-					   orderHeaderMent.setReceiveTotal(receiveTotal+payMentOne);//订单已收货款
-					   orderHeaderMent.setBizStatus(OrderTransaction.FIRST_PAYMENT.getOrderId());//首付款支付5
-					   bizOrderHeaderService.saveOrderHeader(orderHeaderMent);
+		   if(bizCustCredit!=null){
+			   BigDecimal wallet = bizCustCredit.getWallet();//钱包总余额
+			   if(wallet==null){
+				   System.out.println(" 余额不足 ");
+				   recordBiz=0;
+			   }else {
+				   recordBiz=1;
+				   BigDecimal payMentTwo = new BigDecimal(payMentOne);//输入支付的值
+				   subtract = wallet.subtract(payMentTwo);//计算后结果
+				   System.out.println(subtract.compareTo(new BigDecimal(0)));
+				   //   以上输出结果是：-1小于、0等于、1大于
+				   if(subtract.compareTo(new BigDecimal(0))==1){
+					   bizCustCredit.setWallet(subtract);
+					   bizCustCreditService.save(bizCustCredit);
+					   SysPlatWallet sysPlatWallet = sysPlatWalletService.get(OrderTransaction.TOTAL_PURSE.getOrderId());//平台总钱包 1
+					   sysPlatWallet.setAmount(sysPlatWallet.getAmount()+payMentOne);
+					   sysPlatWalletService.save(sysPlatWallet);//保存到平台总钱包
+					   if(payMentOne.equals(Totail)){
+						   orderHeaderMent.setReceiveTotal(receiveTotal+payMentOne);//订单已收货款
+						   orderHeaderMent.setBizStatus(OrderTransaction.WHOLE_PAYMENT.getOrderId());//订单状态 10全部支付
+						   bizOrderHeaderService.saveOrderHeader(orderHeaderMent);
+					   }else{
+						   orderHeaderMent.setReceiveTotal(receiveTotal+payMentOne);//订单已收货款
+						   orderHeaderMent.setBizStatus(OrderTransaction.FIRST_PAYMENT.getOrderId());//首付款支付5
+						   bizOrderHeaderService.saveOrderHeader(orderHeaderMent);
+					   }
+					   payMent="ok";
 				   }
-				   payMent="ok";
 			   }
-           }
+		   }
        }catch(Exception e){
            e.printStackTrace();
            payMent="error";
-           return payMent;
        }finally {
-       		if(subtract.compareTo(new BigDecimal(0))==1){
-			   bizPayRecordCredit.setPayer(UserUtils.getUser().getId());//支付人
-			   bizPayRecordCredit.setPayMoney(payMentOne);//支付金额
-			   bizPayRecordCredit.setPayNum(orderHeaderMent.getOrderNum());//订单编号
-			   bizPayRecordCredit.setCustomer(orderHeaderMent.getCustomer());//采购商
-			   if(recordBiz==1){
-				   bizPayRecordCredit.setBizStatus(OrderTransaction.SUCCESS.getOrderId());//成功1
-			   }else{
-				   bizPayRecordCredit.setBizStatus(OrderTransaction.FAIL.getOrderId());//失败0
-			   }
-			   bizPayRecordCredit.setRecordType(OrderTransaction.PAYMENT.getOrderId());//交易类型
-			   bizPayRecordCredit.setRecordTypeName(OrderTransaction.PAYMENT.getOrderName());//交易名称
-			   bizPayRecordCredit.setPayType(OrderTransaction.PLATFORM_PAYMENT.getOrderId());//支付类型
-			   bizPayRecordCredit.setPayTypeName(OrderTransaction.PLATFORM_PAYMENT.getOrderName());//类型名称
-			   bizPayRecordService.save(bizPayRecordCredit);
+       		if(bizCustCredit!=null){
+				if(subtract.compareTo(new BigDecimal(0))==1){
+				   bizPayRecordCredit.setPayer(UserUtils.getUser().getId());//支付人
+				   bizPayRecordCredit.setPayMoney(payMentOne);//支付金额
+				   bizPayRecordCredit.setPayNum(orderHeaderMent.getOrderNum());//订单编号
+				   bizPayRecordCredit.setCustomer(orderHeaderMent.getCustomer());//采购商
+				   if(recordBiz==1){
+					   bizPayRecordCredit.setBizStatus(OrderTransaction.SUCCESS.getOrderId());//成功1
+				   }else{
+					   bizPayRecordCredit.setBizStatus(OrderTransaction.FAIL.getOrderId());//失败0
+				   }
+				   bizPayRecordCredit.setRecordType(OrderTransaction.PAYMENT.getOrderId());//交易类型
+				   bizPayRecordCredit.setRecordTypeName(OrderTransaction.PAYMENT.getOrderName());//交易名称
+				   bizPayRecordCredit.setPayType(OrderTransaction.PLATFORM_PAYMENT.getOrderId());//支付类型
+				   bizPayRecordCredit.setPayTypeName(OrderTransaction.PLATFORM_PAYMENT.getOrderName());//类型名称
+				   bizPayRecordService.save(bizPayRecordCredit);
+				}
 			}
 	   }
 	   return payMent;

@@ -38,7 +38,7 @@
 	
 	<sql id="bizOrderHeaderJoins">
 		left join sys_office as so on a.cust_id=so.id
-		LEFT JOIN common_location c ON c.id = a.ship_to_addr
+		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
         LEFT JOIN sys_region province ON c.province_id = province.id
         LEFT JOIN sys_region city ON c.city_id = city.id
         LEFT JOIN sys_region reg ON c.region_id = reg.id
@@ -124,7 +124,9 @@
 			order_type,
 			cust_id,
 			total_detail,
+		<if test="receiveTotal !=null and receiveTotal !=''">
 			receive_total,
+		</if>
 			total_exp,
 			freight,
 			inv_status,
@@ -144,7 +146,9 @@
 			#{orderType},
 			#{customer.id},
 			#{totalDetail},
+		<if test="receiveTotal !=null and receiveTotal !=''">
 			#{receiveTotal},
+		</if>
 			#{totalExp},
 			#{freight},
 			#{invStatus},
@@ -167,7 +171,9 @@
 			order_type = #{orderType},
 			cust_id = #{customer.id},
 			total_detail = #{totalDetail},
+		<if test="receiveTotal !=null and receiveTotal !=''">
 			receive_total = #{receiveTotal},
+		</if>
 			total_exp = #{totalExp},
 			freight = #{freight},
 			inv_status = #{invStatus},
