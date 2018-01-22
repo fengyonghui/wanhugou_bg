@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.sku.BizSearchDao">
+    
+	<sql id="bizSearchColumns">
+		a.id AS "id",
+		a.part_no AS "partNo",
+		a.cate_id AS "cateId",
+		a.cate_name AS "cateName",
+		a.quality_id AS "qualityId",
+		a.color AS "color",
+		a.standard AS "standard",
+		a.business_status AS "businessStatus",
+		a.send_time AS "sendTime",
+		a.user_id AS "user.id",
+		a.min_price AS "minPrice",
+		a.max_price AS "maxPrice",
+		a.amount AS "amount",
+		a.comment AS "comment",
+		a.status AS "status",
+		a.create_id AS "createId.id",
+		a.create_time AS "createTime",
+		a.update_id AS "updateId.id",
+		a.update_time AS "updateTime",
+		u10.name AS "user.name"
+	</sql>
+	
+	<sql id="bizSearchJoins">
+		LEFT JOIN sys_user u10 ON u10.id = a.user_id
+	</sql>
+    
+	<select id="get" resultType="BizSearch">
+		SELECT 
+			<include refid="bizSearchColumns"/>
+		FROM biz_search_sku a
+		<include refid="bizSearchJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizSearch">
+		SELECT 
+			<include refid="bizSearchColumns"/>
+		FROM biz_search_sku a
+		<include refid="bizSearchJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="partNo != null and partNo != ''">
+				AND a.part_no = #{partNo}
+			</if>
+			<if test="cateId != null and cateId != ''">
+				AND a.cate_id = #{cateId}
+			</if>
+			<if test="cateName != null and cateName != ''">
+				AND a.cate_name = #{cateName}
+			</if>
+			<if test="qualityId != null and qualityId != ''">
+				AND a.quality_id = #{qualityId}
+			</if>
+			<if test="color != null and color != ''">
+				AND a.color = #{color}
+			</if>
+			<if test="standard != null and standard != ''">
+				AND a.standard = #{standard}
+			</if>
+			<if test="businessStatus != null and businessStatus != ''">
+				AND a.business_status = #{businessStatus}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizSearch">
+		SELECT 
+			<include refid="bizSearchColumns"/>
+		FROM biz_search_sku a
+		<include refid="bizSearchJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_search_sku(
+			id,
+			part_no,
+			cate_id,
+			cate_name,
+			quality_id,
+			color,
+			standard,
+			business_status,
+			send_time,
+			user_id,
+			min_price,
+			max_price,
+			amount,
+			comment,
+			status,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{partNo},
+			#{cateId},
+			#{cateName},
+			#{qualityId},
+			#{color},
+			#{standard},
+			#{businessStatus},
+			#{sendTime},
+			#{user.id},
+			#{minPrice},
+			#{maxPrice},
+			#{amount},
+			#{comment},
+			#{status},
+			#{createId.id},
+			#{createTime},
+			#{updateId.id},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_search_sku SET 	
+			part_no = #{partNo},
+			cate_id = #{cateId},
+			cate_name = #{cateName},
+			quality_id = #{qualityId},
+			color = #{color},
+			standard = #{standard},
+			business_status = #{businessStatus},
+			send_time = #{sendTime},
+			user_id = #{user.id},
+			min_price = #{minPrice},
+			max_price = #{maxPrice},
+			amount = #{amount},
+			comment = #{comment},
+			create_time = #{createTime},
+			update_id = #{updateId.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_search_sku SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
