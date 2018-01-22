@@ -114,27 +114,34 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 		String photoLists=bizProductInfo.getPhotoLists();
 		CommonImg commonImg=new CommonImg();
 		if(photos!=null && !"".equals(photos)) {
+			commonImg.setId(null);
 			photos = photos.substring(1);
 			commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
-			saveProdImg(commonImg,bizProductInfo,photos);
+			saveProdImg(commonImg,bizProductInfo,photos,photoLists,photoDetails);
 		}
 		if(photoLists!=null && !"".equals(photoLists)) {
+			commonImg.setId(null);
 			photoLists = photoLists.substring(1);
 			commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
-			saveProdImg(commonImg,bizProductInfo,photoLists);
+			saveProdImg(commonImg,bizProductInfo,photos,photoLists,photoDetails);
 		}
 		if(photoDetails!=null && !"".equals(photoDetails)){
+			commonImg.setId(null);
 			photoDetails=photoDetails.substring(1);
 			commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
-			saveProdImg(commonImg,bizProductInfo,photoDetails);
+			saveProdImg(commonImg,bizProductInfo,photos,photoLists,photoDetails);
 		}
+
 	}
 
-		public  void saveProdImg(CommonImg commonImg,BizProductInfo bizProductInfo,String photos){
+		public  void saveProdImg(CommonImg commonImg,BizProductInfo bizProductInfo,String photos,String photoLists,String photoDetails){
 			User user = UserUtils.getUser();
 			String pahtPrefix = AliOssClientUtil.getPahtPrefix();
 			String s = DateUtils.formatDate(new Date()).replaceAll("-", "");
 				String[]photoArr=photos.split("\\|");
+				String[]photoDetailArr=photoDetails.split("\\|");
+				String[]photoListArr=photoLists.split("\\|");
+				//主图的处理
 				if(photoArr.length>=1){
 					commonImg.setObjectId(bizProductInfo.getId());
 					commonImg.setObjectName("biz_product_info");
@@ -157,9 +164,67 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 						commonImg.setImgPath("\\"+path+pathPhotoName);
 						commonImgService.save(commonImg);
 						if(i==0 && commonImg.getImgType()==ImgEnum.MAIN_PRODUCT_TYPE.getCode()){
-							bizProductInfo.setImgUrl(commonImg.getImgServer()+path);
+							bizProductInfo.setImgUrl(commonImg.getImgServer()+"/"+path+photoName);
 							super.save(bizProductInfo);
 						}
+					}
+				}
+
+				//列表图片的处理
+				if(photoListArr.length>=1){
+					commonImg.setObjectId(bizProductInfo.getId());
+					commonImg.setObjectName("biz_product_info");
+					commonImgService.deleteCommonImg(commonImg);
+					for (int i=0;i<photoListArr.length;i++){
+						commonImg.setImgPath(photoListArr[i]);
+						commonImg.setImgSort(i);
+						commonImg.setImgServer(DsConfig.getImgServer());
+						String photoNames = photoListArr[i];
+						String photoName = photoLists.substring(photoNames.lastIndexOf("/")+1);
+						String folder = AliOssClientUtil.getFolder();
+						String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
+						String pathPhotoName=photoName;
+
+						String  pathFile=Global.getUserfilesBaseDir()+photoListArr[i];
+						File file = new File(pathFile);
+
+						AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
+						aliOssClientUtil.uploadObject2OSS(file,path);
+						commonImg.setImgPath("\\"+path+pathPhotoName);
+						commonImgService.save(commonImg);
+						/*if(i==0 && commonImg.getImgType()==ImgEnum.MAIN_PRODUCT_TYPE.getCode()){
+							bizProductInfo.setImgUrl(commonImg.getImgServer()+"/"+path+photoName);
+							super.save(bizProductInfo);
+						}*/
+					}
+				}
+
+				//详情图片的处理
+				if(photoDetailArr.length>=1){
+					commonImg.setObjectId(bizProductInfo.getId());
+					commonImg.setObjectName("biz_product_info");
+					commonImgService.deleteCommonImg(commonImg);
+					for (int i=0;i<photoDetailArr.length;i++){
+						commonImg.setImgPath(photoDetailArr[i]);
+						commonImg.setImgSort(i);
+						commonImg.setImgServer(DsConfig.getImgServer());
+						String photoNames = photoDetailArr[i];
+						String photoName = photoDetails.substring(photoNames.lastIndexOf("/")+1);
+						String folder = AliOssClientUtil.getFolder();
+						String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
+						String pathPhotoName=photoName;
+
+						String  pathFile=Global.getUserfilesBaseDir()+photoDetailArr[i];
+						File file = new File(pathFile);
+
+						AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
+						aliOssClientUtil.uploadObject2OSS(file,path);
+						commonImg.setImgPath("\\"+path+pathPhotoName);
+						commonImgService.save(commonImg);
+						/*if(i==0 && commonImg.getImgType()==ImgEnum.MAIN_PRODUCT_TYPE.getCode()){
+							bizProductInfo.setImgUrl(commonImg.getImgServer()+"/"+path+photoName);
+							super.save(bizProductInfo);
+						}*/
 					}
 				}
 	    }
