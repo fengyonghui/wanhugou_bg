@@ -126,7 +126,9 @@
 			prod_id,
 			sku_type,
 			`name`,
-			part_no,
+			<if test="partNo != null">
+				part_no,
+			</if>
 			base_price,
 			buy_price,
 			status,
@@ -140,7 +142,9 @@
 			#{productInfo.id},
 			#{skuType},
 			#{name},
-			#{partNo},
+			<if test="partNo != null">
+				#{partNo},
+			</if>
 			#{basePrice},
 			#{buyPrice},
 			#{delFlag},

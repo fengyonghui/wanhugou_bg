@@ -143,11 +143,11 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 					commonImg.setObjectName("biz_product_info");
 					commonImgService.deleteCommonImg(commonImg);
 					for (int i=0;i<photoArr.length;i++){
-						commonImg.setImgPath(photoArr[i]);
+					//	commonImg.setImgPath(photoArr[i]);
 						commonImg.setImgSort(i);
 						commonImg.setImgServer(DsConfig.getImgServer());
 						//	String photoNames = photoArr[i];
-						String photoName = photos.substring(photoArr[i].lastIndexOf("/")+1);
+						String photoName = photoArr[i].substring(photoArr[i].lastIndexOf("/")+1);
 						String folder = AliOssClientUtil.getFolder();
 						String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
 						//      String pathPhotoName=photoName;
@@ -178,7 +178,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 						commonImg.setImgSort(i);
 						commonImg.setImgServer(DsConfig.getImgServer());
 						String photoNames = photoListArr[i];
-						String photoName = photoLists.substring(photoNames.lastIndexOf("/")+1);
+						String photoName = photoListArr[i].substring(photoNames.lastIndexOf("/")+1);
 						String folder = AliOssClientUtil.getFolder();
 						String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
 						String pathPhotoName=photoName;
@@ -205,7 +205,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 						commonImg.setImgSort(i);
 						commonImg.setImgServer(DsConfig.getImgServer());
 						String photoNames = photoDetailArr[i];
-						String photoName = photoDetails.substring(photoNames.lastIndexOf("/")+1);
+						String photoName = photoDetailArr[i].substring(photoNames.lastIndexOf("/")+1);
 						String folder = AliOssClientUtil.getFolder();
 						String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
 						String pathPhotoName=photoName;
@@ -220,13 +220,6 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 					}
 				}
 			}
-
-
-
-
-
-
-
 	    }
 
 	private void  saveOwnProp(BizProductInfo bizProductInfo){

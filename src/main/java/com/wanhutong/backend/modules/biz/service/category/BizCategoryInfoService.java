@@ -3,8 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.service.category;
 
+import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.TreeService;
+import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
@@ -16,8 +18,10 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.File;
+import java.util.*;
 
 /**
  * 垂直商品类目表Service
@@ -135,6 +137,9 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 
 			}
 		}
+		User user = UserUtils.getUser();
+		String pahtPrefix = AliOssClientUtil.getPahtPrefix();
+		String s = DateUtils.formatDate(new Date()).replaceAll("-", "");
 		CommonImg commonImg=null;
 		if(bizCategoryInfo.getImgId()==null){
 			commonImg=new CommonImg();
@@ -142,12 +147,24 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			commonImg=commonImgService.get(bizCategoryInfo.getImgId());
 		}
 		commonImg.setImgType(ImgEnum.CATEGORY_TYPE.getCode());
-		commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
-		commonImg.setObjectName("biz_category_info");
-		commonImg.setObjectId(bizCategoryInfo.getId());
-		commonImg.setImgServer(DsConfig.getImgServer());
-		commonImg.setImgSort(10);
-		commonImgService.save(commonImg);
+		if (bizCategoryInfo.getCatePhoto() != null){
+			commonImg.setObjectName("biz_category_info");
+			commonImg.setObjectId(bizCategoryInfo.getId());
+			commonImgService.delete(commonImg);
+			commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
+			commonImg.setImgServer(DsConfig.getImgServer());
+			commonImg.setImgSort(10);
+			String photoName = bizCategoryInfo.getCatePhoto().substring(bizCategoryInfo.getCatePhoto().lastIndexOf("/")+1);
+			String folder = AliOssClientUtil.getFolder();
+			String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
+			String  pathFile= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto();
+			File file = new File(pathFile);
+			AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
+			aliOssClientUtil.uploadObject2OSS(file,path);
+			commonImg.setImgPath("\\"+path+photoName);
+			commonImgService.save(commonImg);
+
+		}
 
 		UserUtils.removeCache(UserUtils.CACHE_CATEGORYINFO_LIST);
 	}

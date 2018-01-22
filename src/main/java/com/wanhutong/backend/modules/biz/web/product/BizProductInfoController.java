@@ -106,19 +106,19 @@ public class BizProductInfoController extends BaseController {
 			String photoDetails="";
 			String photoLists="";
             for(CommonImg img:imgList){
-				photos+="|"+img.getImgPath();
+				photos+="|"+img.getImgServer()+img.getImgPath();
 			}
 			if(!"".equals(photos)){
 				bizProductInfo.setPhotos(photos);
 			}
 			for(CommonImg img:subImgList){
-				photoDetails+="|"+img.getImgPath();
+				photoDetails+="|"+img.getImgServer()+img.getImgPath();
 			}
 			if(!"".equals(photoDetails)){
 				bizProductInfo.setPhotoDetails(photoDetails);
 			}
 			for(CommonImg img:itemImgList){
-				photoLists+="|"+img.getImgPath();
+				photoLists+="|"+img.getImgServer()+img.getImgPath();
 			}
 			if(!"".equals(photoLists)){
 				bizProductInfo.setPhotoLists(photoLists);

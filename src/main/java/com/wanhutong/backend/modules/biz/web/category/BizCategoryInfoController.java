@@ -110,7 +110,7 @@ public class BizCategoryInfoController extends BaseController {
 		if(bizCategoryInfo.getId()!=null){
 			List<CommonImg> imgList=commonImgService.findList(commonImg);
 			if(imgList!=null && imgList.size()>0){
-				bizCategoryInfo.setCatePhoto(imgList.get(0).getImgPath());
+				bizCategoryInfo.setCatePhoto(imgList.get(0).getImgServer()+imgList.get(0).getImgPath());
 				bizCategoryInfo.setImgId(imgList.get(0).getId());
 			}
 		}

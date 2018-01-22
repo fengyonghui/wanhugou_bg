@@ -140,12 +140,17 @@ public class AliOssClientUtil {
      * @return String 返回的唯一MD5数字签名
      */
     public String uploadObject2OSS(File file,String path) {
+        /*// 图片格式
+        String suffix = "";*/
         String resultStr = null;
         try {
             //以输入流的形式上传文件
             InputStream is = new FileInputStream(file);
+
             //文件名
             String fileName = file.getName();
+            /*String uuid = UUID.randomUUID().toString().replace("-", "");
+            String newFileName = new StringBuffer(uuid).append(".").append(suffix).toString();*/
             //文件大小
             Long fileSize = file.length();
             //创建上传Object的Metadata

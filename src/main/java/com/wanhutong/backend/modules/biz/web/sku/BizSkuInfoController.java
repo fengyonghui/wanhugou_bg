@@ -91,7 +91,7 @@ public class BizSkuInfoController extends BaseController {
 			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
 			String photos="";
 			for(CommonImg img:imgList){
-				photos+="|"+img.getImgPath();
+				photos+="|"+img.getImgServer()+img.getImgPath();
 			}
 			if(!"".equals(photos)){
 				bizSkuInfo.setPhotos(photos);

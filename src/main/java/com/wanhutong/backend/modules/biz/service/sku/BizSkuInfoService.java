@@ -3,12 +3,12 @@
  */
 package com.wanhutong.backend.modules.biz.service.sku;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.*;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
@@ -25,7 +25,10 @@ import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoServ
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -220,6 +223,9 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	public void saveCommonImg(BizSkuInfo bizSkuInfo) {
 		String photos=bizSkuInfo.getPhotos();
 		CommonImg commonImg=new CommonImg();
+		User user = UserUtils.getUser();
+		String pahtPrefix = AliOssClientUtil.getPahtPrefix();
+		String s = DateUtils.formatDate(new Date()).replaceAll("-", "");
 		if(photos!=null && !"".equals(photos)) {
 			photos = photos.substring(1);
 			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
@@ -232,6 +238,16 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 					commonImg.setImgPath(photoArr[i]);
 					commonImg.setImgSort(i);
 					commonImg.setImgServer(DsConfig.getImgServer());
+
+					String photoName = photos.substring(photoArr[i].lastIndexOf("/")+1);
+					String folder = AliOssClientUtil.getFolder();
+					String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
+					String  pathFile= Global.getUserfilesBaseDir()+photoArr[i];
+					File file = new File(pathFile);
+
+					AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
+					aliOssClientUtil.uploadObject2OSS(file,path);
+					commonImg.setImgPath("\\"+path+photoName);
 					commonImgService.save(commonImg);
 				}
 			}
