@@ -65,7 +65,7 @@ public class AliOssClientUtil {
      *
      * @return ossClient
      */
-    private OSSClient getOSSClient() {
+    public OSSClient getOSSClient() {
         String endpoint = getConfig("endpoint");
         return new OSSClient(endpoint, getAccessKeyId(), getAccessKeySecret());
     }
@@ -129,8 +129,8 @@ public class AliOssClientUtil {
      * @param key        Bucket下的文件的路径名+文件名 如："upload/cake.jpg"
      */
     public void deleteFile(OSSClient ossClient, String bucketName, String folder, String key) {
-        ossClient.deleteObject(bucketName, folder + key);
-        log.info("删除" + bucketName + "下的文件" + folder + key + "成功");
+        ossClient.deleteObject(getBucketName(), getFolder() + key);
+        log.info("删除" + getBucketName() + "下的文件" + getFolder() + key + "成功");
     }
 
     /**

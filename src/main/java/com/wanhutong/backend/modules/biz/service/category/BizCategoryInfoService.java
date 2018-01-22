@@ -151,19 +151,20 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			commonImg.setObjectName("biz_category_info");
 			commonImg.setObjectId(bizCategoryInfo.getId());
 			commonImgService.delete(commonImg);
+            String photoName = bizCategoryInfo.getCatePhoto().substring(bizCategoryInfo.getCatePhoto().lastIndexOf("/")+1);
+            String folder = AliOssClientUtil.getFolder();
+            String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
+            String  pathFile= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto();
+            File file = new File(pathFile);
+            AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
+            if (!bizCategoryInfo.getCatePhoto().contains(DsConfig.getImgServer())) {
+                aliOssClientUtil.uploadObject2OSS(file, path);
+            }
 			commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
 			commonImg.setImgServer(DsConfig.getImgServer());
 			commonImg.setImgSort(10);
-			String photoName = bizCategoryInfo.getCatePhoto().substring(bizCategoryInfo.getCatePhoto().lastIndexOf("/")+1);
-			String folder = AliOssClientUtil.getFolder();
-			String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
-			String  pathFile= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto();
-			File file = new File(pathFile);
-			AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
-			aliOssClientUtil.uploadObject2OSS(file,path);
 			commonImg.setImgPath("\\"+path+photoName);
 			commonImgService.save(commonImg);
-
 		}
 
 		UserUtils.removeCache(UserUtils.CACHE_CATEGORYINFO_LIST);

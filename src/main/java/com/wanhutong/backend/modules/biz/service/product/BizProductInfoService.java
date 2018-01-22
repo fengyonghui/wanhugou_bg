@@ -144,20 +144,18 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 					commonImgService.deleteCommonImg(commonImg);
 					for (int i=0;i<photoArr.length;i++){
 					//	commonImg.setImgPath(photoArr[i]);
-						commonImg.setImgSort(i);
-						commonImg.setImgServer(DsConfig.getImgServer());
-						//	String photoNames = photoArr[i];
+						String  pathFile=Global.getUserfilesBaseDir()+photoArr[i];
+						File file = new File(pathFile);
+						AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
 						String photoName = photoArr[i].substring(photoArr[i].lastIndexOf("/")+1);
 						String folder = AliOssClientUtil.getFolder();
 						String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
-						//      String pathPhotoName=photoName;
-
-						String  pathFile=Global.getUserfilesBaseDir()+photoArr[i];
-						File file = new File(pathFile);
-
-						AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
-						aliOssClientUtil.uploadObject2OSS(file,path);
-						commonImg.setImgPath("\\"+path+photoName);
+						if (!photoArr[i].contains(DsConfig.getImgServer())) {
+							aliOssClientUtil.uploadObject2OSS(file, path);
+						}
+						commonImg.setImgSort(i);
+						commonImg.setImgServer(DsConfig.getImgServer());
+						commonImg.setImgPath(File.separator+path+photoName);
 						commonImgService.save(commonImg);
 						if(i==0 && commonImg.getImgType()==ImgEnum.MAIN_PRODUCT_TYPE.getCode()){
 							bizProductInfo.setImgUrl(commonImg.getImgServer()+"/"+path+photoName);
@@ -174,22 +172,20 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 					commonImg.setObjectName("biz_product_info");
 					commonImgService.deleteCommonImg(commonImg);
 					for (int i=0;i<photoListArr.length;i++){
-						commonImg.setImgPath(photoListArr[i]);
-						commonImg.setImgSort(i);
-						commonImg.setImgServer(DsConfig.getImgServer());
-						String photoNames = photoListArr[i];
-						String photoName = photoListArr[i].substring(photoNames.lastIndexOf("/")+1);
+						String photoName = photoListArr[i].substring(photoListArr[i].lastIndexOf("/")+1);
 						String folder = AliOssClientUtil.getFolder();
 						String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
-						String pathPhotoName=photoName;
-
 						String  pathFile=Global.getUserfilesBaseDir()+photoListArr[i];
 						File file = new File(pathFile);
-
 						AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
-						aliOssClientUtil.uploadObject2OSS(file,path);
-						commonImg.setImgPath("\\"+path+pathPhotoName);
+						if (!photoListArr[i].contains(DsConfig.getImgServer())) {
+							aliOssClientUtil.uploadObject2OSS(file, path);
+						}
+						commonImg.setImgSort(i);
+						commonImg.setImgServer(DsConfig.getImgServer());
+						commonImg.setImgPath("\\"+path+photoName);
 						commonImgService.save(commonImg);
+
 					}
 				}
 			}
@@ -201,21 +197,18 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 					commonImg.setObjectName("biz_product_info");
 					commonImgService.deleteCommonImg(commonImg);
 					for (int i=0;i<photoDetailArr.length;i++){
-						commonImg.setImgPath(photoDetailArr[i]);
-						commonImg.setImgSort(i);
-						commonImg.setImgServer(DsConfig.getImgServer());
-						String photoNames = photoDetailArr[i];
-						String photoName = photoDetailArr[i].substring(photoNames.lastIndexOf("/")+1);
+						String photoName = photoDetailArr[i].substring(photoDetailArr[i].lastIndexOf("/")+1);
 						String folder = AliOssClientUtil.getFolder();
 						String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
-						String pathPhotoName=photoName;
-
 						String  pathFile=Global.getUserfilesBaseDir()+photoDetailArr[i];
 						File file = new File(pathFile);
-
 						AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
-						aliOssClientUtil.uploadObject2OSS(file,path);
-						commonImg.setImgPath("\\"+path+pathPhotoName);
+						if (!photoDetailArr[i].contains(DsConfig.getImgServer())) {
+							aliOssClientUtil.uploadObject2OSS(file, path);
+						}
+						commonImg.setImgSort(i);
+						commonImg.setImgServer(DsConfig.getImgServer());
+						commonImg.setImgPath("\\"+path+photoName);
 						commonImgService.save(commonImg);
 					}
 				}
