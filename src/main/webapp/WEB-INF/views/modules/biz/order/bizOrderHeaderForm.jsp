@@ -274,11 +274,18 @@
             <input type="text" id="payMentOne" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
                    onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
             <input class="btn btn-primary" id="btnOrderButton" type="button" onclick="btnOrder();" value="支付"/>
-            <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;</shiro:hasPermission>
-            <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+            <%--<input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;--%>
+
+        </shiro:hasPermission>
+            <%--<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>--%>
             <span class="help-inline">已经支付：<font color="red">${entity.receiveTotal}</font></span>
 
+            <input class="btn btn-primary" type="button" onclick="btnOrder();" value="支付"/>
+
+
+            <span class="help-inline">待支付费用为:<font color="red">${entity.tobePaid}</font></span>
     </div>
+    <c:choose>
        <c:when test="${entity.flag=='check_pending'}">
            <div class="control-group" id="jhadd1">
                <label class="control-label">交货地址；</label>
