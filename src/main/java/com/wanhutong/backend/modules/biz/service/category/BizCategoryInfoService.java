@@ -166,24 +166,14 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			File file2 = new File(pathFile2+"/"+photoNewName);
 
 				file.renameTo(file2);
-
-
-			AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
-			aliOssClientUtil.uploadObject2OSS(file2,path);
-			commonImg.setImgPath("\\"+path+photoNewName);
-            String photoName = bizCategoryInfo.getCatePhoto().substring(bizCategoryInfo.getCatePhoto().lastIndexOf("/")+1);
-            String folder = AliOssClientUtil.getFolder();
-            String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
-            String  pathFile= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto();
-            File file = new File(pathFile);
             AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
             if (!bizCategoryInfo.getCatePhoto().contains(DsConfig.getImgServer())) {
-                aliOssClientUtil.uploadObject2OSS(file, path);
+                aliOssClientUtil.uploadObject2OSS(file2, path);
             }
 			commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
 			commonImg.setImgServer(DsConfig.getImgServer());
 			commonImg.setImgSort(10);
-			commonImg.setImgPath("\\"+path+photoName);
+            commonImg.setImgPath("\\"+path+photoNewName);
 			commonImgService.save(commonImg);
 		}
 

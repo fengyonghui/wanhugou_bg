@@ -26,7 +26,10 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>商品名称：</label>
-				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.name" htmlEscape="false"  class="input-medium"/>
+			</li>
+			<li><label>商品编号：</label>
+				<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>
 			</li>
 			<li><label>上架时间：</label>
 				<input name="shelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
@@ -91,7 +94,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizOpShelfSku">
 			<tr>
-				<td><a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfSku.opShelfInfo.id}">
+				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
 					${bizOpShelfSku.skuInfo.name}
 				</a></td>
 				<td>

@@ -87,6 +87,9 @@
 			<if test="invStatus !=null and invStatus!=''">
 				AND a.inv_status=#{invStatus}
 			</if>
+			<if test="consultantId!=null">
+				and ccs.consultant_id = #{consultantId}
+			</if>
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
 			</if>

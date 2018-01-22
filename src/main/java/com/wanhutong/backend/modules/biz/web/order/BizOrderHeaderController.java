@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.BizCustCredit;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.SysPlatWallet;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.BizCustCreditService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SysPlatWalletService;
@@ -88,9 +89,14 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-		if("check_pending".equals(bizOrderHeader.getFlag())){
+			User user=UserUtils.getUser();
+			if("check_pending".equals(bizOrderHeader.getFlag())){
 			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.UNPAY.getState());
 			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.ALL_PAY.getState());
+			if(user.getId()==bizOrderHeader.getConsultantId()){
+				bizOrderHeader.setConsultantId(null);
+			}
+//			bizOrderHeader.set
 		}
 		Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
 		model.addAttribute("page", page);
@@ -113,7 +119,7 @@ public class BizOrderHeaderController extends BaseController {
 			bizOrderHeader.setTobePaid(orderHeaderTotal-bizOrderHeader.getReceiveTotal());//页面显示待支付总价
 			if(orderNoEditable!=null && orderNoEditable.equals("editable")){//不可编辑标识符
 				System.out.println(" 页面不可编辑 ");
-				bizOrderHeader.setOrderNoEditable("editable");//待支付
+			//	bizOrderHeader.setOrderNoEditable("editable");//待支付
 //				bizOrderHeader.setOrderDetails("details");//查看详情
 			}
 		}

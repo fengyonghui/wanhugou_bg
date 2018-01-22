@@ -38,6 +38,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	private Integer bizStatusStart;
 	private Integer bizStatusEnd;
+	private Integer consultantId ;    //采购顾问ID，用于查询
 	private Date deliveryDate; 		//预计到货日期
 	private String oneOrder;		// 首次下单 firstOrder ，非首次下单 endOrder
 	private Double DiscountPrice;		//优惠价格页面显示
@@ -223,19 +224,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.location = location;
 	}
 
-	public String getOrderNoEditable() {
-		return orderNoEditable;
+	public Integer getConsultantId() {
+		return consultantId;
 	}
 
-	public void setOrderNoEditable(String orderNoEditable) {
-		this.orderNoEditable = orderNoEditable;
-	}
-
-	public String getOrderDetails() {
-		return orderDetails;
-	}
-
-	public void setOrderDetails(String orderDetails) {
-		this.orderDetails = orderDetails;
+	public void setConsultantId(Integer consultantId) {
+		this.consultantId = consultantId;
 	}
 }
