@@ -1,6 +1,8 @@
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
+
 <html>
 <head>
     <title>订单信息管理</title>
@@ -28,15 +30,20 @@
 				}
 			});
             if($("#id").val()!=""){
-                clickBut();
+              //  clickBut();
             }
             $("#addAddressHref").click(function () {
                 var officeId=$("#officeId").val();
                 var officeName =$("#officeName").val();
                 window.location.href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id="+officeId+"&office.name="+officeName+"&flag=order"
             });
+            $("#addJhAddressHref").click(function () {
+                var officeId=$("#officeId").val();
+                var officeName =$("#officeName").val();
+                window.location.href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id="+officeId+"&office.name="+officeName+"&flag=order"
+            });
 		});
-      function clickBut(){
+        function clickBut(){
          var officeId=$("#officeId").val();
              $("#province").empty();
              $("#city").empty();
@@ -77,6 +84,45 @@
             });
         }
 
+        function deliveryAddress(){
+            var officeId=$("#officeId").val();
+            $("#jhprovince").empty();
+            $("#jhcity").empty();
+            $("#jhregion").empty();
+            $("#jhaddress").empty();
+            $.ajax({
+                type:"post",
+                url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
+                success:function(data){
+                    if(data==''){
+                        $("#jhadd1").css("display","none");
+                        $("#jhadd2").css("display","block");
+                        $("#jhadd3").css("display","none");
+                    }else{
+                        $("#jhadd1").css("display","block");
+                        $("#jhadd2").css("display","none");
+                        $("#jhadd3").css("display","block");
+                        var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);
+                        $("#jhprovince").append(option2);
+                        var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);
+                        $("#jhcity").append(option3);
+                        var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
+                        $("#jhregion").append(option4);
+                        $("#jhaddress").val(data.bizLocation.address);
+                        <%--}--%>
+                        //当省份的数据加载完毕之后
+                        $("#jhprovince").change();
+                        $("#jhcity").change();
+                        $("#jhregion").change();
+                        $("#jhaddress").change();
+                    }
+                }
+            });
+        }
+
+        function checkPending(obj) {
+            $("#id").val();
+        }
     </script>
 </head>
 <body>
@@ -207,14 +253,60 @@
         </div>
     </div>
    <c:choose>
-       <c:when test="${}"></c:when>
+       <c:when test="${entity.flag=='check_pending'}">
+           <div class="control-group" id="jhadd1">
+               <label class="control-label">交货地址；</label>
+               <div class="controls">
+                   <select id="jhprovince" class="input-medium" name="bizLocation.province.id"
+                           style="width:150px;text-align: center;">
+                       <option value="-1">—— 省 ——</option>
+                   </select>
+                   <select id="jhcity" class="input-medium" name="bizLocation.city.id" style="width:150px;text-align: center;">
+                       <option value="-1">—— 市 ——</option>
+                   </select>
+                   <select id="jhregion" class="input-medium" name="bizLocation.region.id"
+                           style="width:150px;text-align: center;">
+                       <option value="-1">—— 区 ——</option>
+                   </select>
+                   <span class="help-inline"><font color="red">*</font> </span>
+               </div>
+           </div>
+           <div class="control-group" id="jhadd2" style="display:none">
+               <label class="control-label">收货地址；</label>
+               <div class="controls">
+                       <%--<a id="addAddressHref" href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id=${customer.id}&flag=order">--%>
+                   <input id="addJhAddressHref" type="button" value="新增地址"  htmlEscape="false" class="input-xlarge required"/>
+                       <%--</a>--%>
+                   <label class="error" id="addError" style="display:none;">必填信息</label>
+                   <span class="help-inline"><font color="red">*</font></span>
+               </div>
+           </div>
+           <div class="control-group" id="jhadd3">
+               <label class="control-label">详细地址；</label>
+               <div class="controls">
+                   <input type="text" id="jhaddress" name="bizLocation.address" htmlEscape="false"
+                          class="input-xlarge required"/>
+                   <span class="help-inline"><font color="red">*</font> </span>
+               </div>
+           </div>
+
+        <div class="form-actions">
+           <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+               <input  class="btn btn-primary" type="button" onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
+               <input  class="btn btn-primary" type="button" onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;
+           </shiro:hasPermission>
+        </div>
+       </c:when>
+       <c:otherwise>
+           <div class="form-actions">
+               <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary"
+                                                                                type="submit"
+                                                                                value="保存"/>&nbsp;</shiro:hasPermission>
+               <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+           </div>
+       </c:otherwise>
    </c:choose>
-    <div class="form-actions">
-        <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit" class="btn btn-primary"
-                                                                         type="submit"
-                                                                         value="保存"/>&nbsp;</shiro:hasPermission>
-        <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-    </div>
+
 </form:form>
 
 

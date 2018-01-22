@@ -32,6 +32,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private BizPlatformInfo platformInfo;		// 订单来源； biz_platform_info.id
 	private CommonLocation bizLocation;		// 订单收货地址： common_location.id
 
+	private CommonLocation location;          //订单交货地址
+
 	private List<BizOrderDetail> orderDetailList;	//查询有多少订单
 
 	private Integer bizStatusStart;
@@ -192,5 +194,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setFlag(String flag) {
 		this.flag = flag;
+	}
+
+	public CommonLocation getLocation() {
+		return location;
+	}
+
+	public void setLocation(CommonLocation location) {
+		this.location = location;
 	}
 }
