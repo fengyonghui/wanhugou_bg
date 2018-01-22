@@ -7,7 +7,6 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 
 public class DsConfig {
     private static Configuration config = null;
-
     private static Configuration getConfig() {
         try {
                 if (config == null) {
@@ -16,15 +15,10 @@ public class DsConfig {
                 }
         } catch (ConfigurationException e) {
                     e.printStackTrace();
-
             }
-
-
         return config;
     }
-
     public static String getImgServer(){return getConfig().getString("imgServer");}
-
     public static void main(String[] args) {
         System.out.println(getImgServer());
     }

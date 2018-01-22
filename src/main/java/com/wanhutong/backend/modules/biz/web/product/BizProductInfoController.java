@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.UploadUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
@@ -24,7 +26,10 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,6 +42,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -61,23 +68,18 @@ public class BizProductInfoController extends BaseController {
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
 		BizProductInfo entity = null;
-
 		if (id!=null){
 			entity = bizProductInfoService.get(id);
 			BizSkuInfo bizSkuInfo=new BizSkuInfo();
 			bizSkuInfo.setProductInfo(entity);
 			List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
 			entity.setSkuInfosList(skuInfosList);
-
-
 		}
 		if (entity == null){
 			entity = new BizProductInfo();
 		}
-
 		return entity;
 	}
-
 
 	@RequiresPermissions("biz:product:bizProductInfo:view")
 	@RequestMapping(value = {"list", ""})
@@ -103,7 +105,7 @@ public class BizProductInfoController extends BaseController {
 			String photos="";
 			String photoDetails="";
 			String photoLists="";
-			for(CommonImg img:imgList){
+            for(CommonImg img:imgList){
 				photos+="|"+img.getImgPath();
 			}
 			if(!"".equals(photos)){
@@ -139,7 +141,6 @@ public class BizProductInfoController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/?repage";
 	}
 
-	
 	@RequiresPermissions("biz:product:bizProductInfo:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes) {
@@ -152,16 +153,12 @@ public class BizProductInfoController extends BaseController {
 	@RequestMapping(value = "querySkuTreeList")
 	public List<Map<String, Object>> querySkuTreeList(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes) {
 		List<SkuProd> list = null;
-
 		//list = bizProductInfoService.convertList(bizProductInfo);
-
 		if(list == null || list.size() == 0){
 			addMessage(redirectAttributes, "列表不存在");
 		}
 		return convertList(list);
 	}
-
-
 
 	private List<Map<String, Object>> convertList(List<SkuProd> list){
 		List<Map<String, Object>> mapList = Lists.newArrayList();
