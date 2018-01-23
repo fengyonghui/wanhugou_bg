@@ -59,6 +59,14 @@ public class BizCustomCenterConsultantController extends BaseController {
         return "modules/biz/common/commonImgForm";
     }
 
+    @RequiresPermissions("biz:order:bizOrderDetail:view")
+    @RequestMapping(value = {"list", ""})
+    public String list(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Page<BizCustomCenterConsultant> page = bizCustomCenterConsultantService.findPage(new Page<BizCustomCenterConsultant>(request, response), bizCustomCenterConsultant);
+        model.addAttribute("page", page);
+        return "modules/biz/custom/bizCustomCenterConsultant/bizCustomCenterConsultantList";
+    }
+
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "returnConnIndex")
     public String returnConnIndex(BizCustomCenterConsultant bizCustomCenterConsultant,HttpServletRequest request, HttpServletResponse response, Model model){

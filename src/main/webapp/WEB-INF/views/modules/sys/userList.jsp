@@ -75,7 +75,7 @@
 				<td>${user.roleNames}</td> --%>
 				<shiro:hasPermission name="sys:user:edit"><td>
 					<c:if test="${user.conn!=null}">
-						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${bizUser.id}&conn=${user.conn}">关联采购商</a>
+						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?id=${bizUser.id}&conn=${user.conn}">关联采购商</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>
 					</c:if>
     				<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}">修改</a>

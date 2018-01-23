@@ -132,8 +132,12 @@
 		</if>
 			total_exp,
 			freight,
+		<if test="invStatus !=null and invStatus !=''">
 			inv_status,
+		</if>
+		<if test="bizStatus !=null and bizStatus !=''">
 			biz_status,
+		</if>
 			biz_type,
 			plateform_id,
 			ship_to_addr,
@@ -154,8 +158,12 @@
 		</if>
 			#{totalExp},
 			#{freight},
+		<if test="invStatus !=null and invStatus !=''">
 			#{invStatus},
+		</if>
+		<if test="bizStatus !=null and bizStatus !=''">
 			#{bizStatus},
+		</if>
 			#{bizType},
 			#{platformInfo.id},
 			#{bizLocation.id},
@@ -179,8 +187,12 @@
 		</if>
 			total_exp = #{totalExp},
 			freight = #{freight},
+		<if test="invStatus !=null and invStatus !=''">
 			inv_status = #{invStatus},
+		</if>
+		<if test="bizStatus !=null and bizStatus !=''">
 			biz_status = #{bizStatus},
+		</if>
 			biz_type = #{bizType},
 			plateform_id = #{platformInfo.id},
 			ship_to_addr = #{bizLocation.id},
