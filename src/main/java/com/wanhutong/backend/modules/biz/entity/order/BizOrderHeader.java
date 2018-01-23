@@ -231,4 +231,20 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	public void setConsultantId(Integer consultantId) {
 		this.consultantId = consultantId;
 	}
+
+    public String getOrderNoEditable() {
+        return orderNoEditable;
+    }
+
+    public void setOrderNoEditable(String orderNoEditable) {
+        this.orderNoEditable = orderNoEditable;
+    }
+
+    public String getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(String orderDetails) {
+        this.orderDetails = orderDetails;
+    }
 }
