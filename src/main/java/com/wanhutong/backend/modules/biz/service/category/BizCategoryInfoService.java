@@ -151,19 +151,29 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			commonImg.setObjectName("biz_category_info");
 			commonImg.setObjectId(bizCategoryInfo.getId());
 			commonImgService.delete(commonImg);
-            String photoName = bizCategoryInfo.getCatePhoto().substring(bizCategoryInfo.getCatePhoto().lastIndexOf("/")+1);
-            String folder = AliOssClientUtil.getFolder();
-            String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
-            String  pathFile= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto();
-            File file = new File(pathFile);
+		//	commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
+			commonImg.setImgServer(DsConfig.getImgServer());
+			commonImg.setImgSort(10);
+			int a=bizCategoryInfo.getCatePhoto().lastIndexOf("/")+1;
+			String photoName = bizCategoryInfo.getCatePhoto().substring(a);
+			String imgType=photoName.substring(photoName.indexOf("."));
+			String folder = AliOssClientUtil.getFolder();
+			String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
+			String  pathFile= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto();
+			String  pathFile2= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto().substring(0,a-1);
+			File file = new File(pathFile);
+			String photoNewName=new Date().getTime()+""+imgType;
+			File file2 = new File(pathFile2+"/"+photoNewName);
+
+				file.renameTo(file2);
             AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
             if (!bizCategoryInfo.getCatePhoto().contains(DsConfig.getImgServer())) {
-                aliOssClientUtil.uploadObject2OSS(file, path);
+                aliOssClientUtil.uploadObject2OSS(file2, path);
             }
 			commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
 			commonImg.setImgServer(DsConfig.getImgServer());
 			commonImg.setImgSort(10);
-			commonImg.setImgPath("\\"+path+photoName);
+            commonImg.setImgPath("\\"+path+photoNewName);
 			commonImgService.save(commonImg);
 		}
 
