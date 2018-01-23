@@ -41,6 +41,10 @@
                                                 allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<c:if test="${bizOrderHeader.flag=='check_pending'}">
+				<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
+
+			</c:if>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -67,76 +71,76 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizOrderHeader">
+		<c:forEach items="${page.list}" var="orderHeader">
 			<tr>
-				<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">
-					${bizOrderHeader.orderNum}
+				<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">
+					${orderHeader.orderNum}
 				</a></td>
 				<%--<td>--%>
 					<%--${fns:getDictLabel(bizOrderHeader.orderType, 'biz_order_type', '未知状态')}--%>
 				<%--</td>--%>
 				<%---start----%>
-				<td><c:if test="${bizOrderHeader.bizType ==1}">
+				<td><c:if test="${orderHeader.bizType ==1}">
 						专营
 					</c:if>
-					<c:if test="${bizOrderHeader.bizType ==2}">
+					<c:if test="${orderHeader.bizType ==2}">
 						非专营
-					</c:if><c:if test="${bizOrderHeader.bizType ==0 || bizOrderHeader.bizType ==null || bizOrderHeader.bizType =='' || bizOrderHeader.bizType >3}">
+					</c:if><c:if test="${orderHeader.bizType ==0 || orderHeader.bizType ==null || orderHeader.bizType =='' || orderHeader.bizType >3}">
 						未知
 					</c:if>
 				</td>
 				<%----end---%>
 				<td>
-					${bizOrderHeader.customer.name}
+					${orderHeader.customer.name}
 				</td>
 				<td>
-					${bizOrderHeader.totalDetail}
+					${orderHeader.totalDetail}
 				</td>
 				<td>
-					${bizOrderHeader.totalExp}
+					${orderHeader.totalExp}
 				</td>
 				<td>
-					${bizOrderHeader.freight}
+					${orderHeader.freight}
 				</td>
 				<td>
-					${fns:getDictLabel(bizOrderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
+					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 				</td>
 				<td>
-					${fns:getDictLabel(bizOrderHeader.bizStatus, 'biz_order_status', '未知状态')}
+					${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 				</td>
 				<td>
-					${bizOrderHeader.platformInfo.name}
+					${orderHeader.platformInfo.name}
 				</td>
 				<%--<td>--%>
 					<%--${bizOrderHeader.bizLocation.pcrName}${bizOrderHeader.bizLocation.address}--%>
 				<%--</td>--%>
 				<td>
-					${bizOrderHeader.createBy.name}
+					${orderHeader.createBy.name}
 				</td>
 				<td>
-                    <fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                    <fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                 </td>
 				<td>
-					${bizOrderHeader.updateBy.name}
+					${orderHeader.updateBy.name}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
 					<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
-						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&bizOrderHeader.flag=${bizOrderHeader.flag}">待审核</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}">待审核</a>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${bizOrderHeader.bizStatus==0 || bizOrderHeader.bizStatus==5 ||
-									bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight!=bizOrderHeader.receiveTotal}">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=editable">待支付</a>
+						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||
+									orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight!=orderHeader.receiveTotal}">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>
-						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=editable">查看详情</a>
-						<c:if test="${bizOrderHeader.bizStatus==18 || bizOrderHeader.bizStatus==19 || bizOrderHeader.bizStatus==17|| bizOrderHeader.bizStatus==16 ||
-						  bizOrderHeader.bizStatus==15 || bizOrderHeader.bizStatus==10 || bizOrderHeader.bizStatus==5 || bizOrderHeader.bizStatus==0}">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>
-							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">查看详情</a>
+						<c:if test="${orderHeader.bizStatus==18 || orderHeader.bizStatus==19 || orderHeader.bizStatus==17|| orderHeader.bizStatus==16 ||
+						  orderHeader.bizStatus==15 || orderHeader.bizStatus==10 || orderHeader.bizStatus==5 || orderHeader.bizStatus==0}">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
+							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 						</c:if>
 						<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>--%>
 						<%--<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>--%>

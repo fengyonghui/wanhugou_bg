@@ -119,7 +119,7 @@ public class BizOrderHeaderController extends BaseController {
 			bizOrderHeader.setTobePaid(orderHeaderTotal-bizOrderHeader.getReceiveTotal());//页面显示待支付总价
 			if(orderNoEditable!=null && orderNoEditable.equals("editable")){//不可编辑标识符
 				System.out.println(" 页面不可编辑 ");
-			//	bizOrderHeader.setOrderNoEditable("editable");//待支付
+				bizOrderHeader.setOrderNoEditable("editable");//待支付
 //				bizOrderHeader.setOrderDetails("details");//查看详情
 			}
 		}

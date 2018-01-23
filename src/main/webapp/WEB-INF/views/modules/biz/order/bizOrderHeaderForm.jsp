@@ -374,7 +374,7 @@
         <%--</div>--%>
     <%--</c:if>--%>
     <c:choose>
-        <c:when test="${entity.flag=='check_pending'}">
+        <c:when test="${bizOrderHeader.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
                 <label class="control-label">交货地址；</label>
                 <div class="controls">
