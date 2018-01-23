@@ -40,7 +40,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String orderDetaIds;        //用于多选商品时传递数据
     private String saleQtys;          //用于采购数量时传递数量
     private String shelfSkus;          //用于多选货架是传递数量
-
+    private List<BizOrderDetail> orderHeaderList;   //用于查询该订单下有多少商品
 
 //    public Integer getMaxLineNo() {
 //        return maxLineNo;
@@ -49,6 +49,15 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 //    public void setMaxLineNo(Integer maxLineNo) {
 //        this.maxLineNo = maxLineNo;
 //    }
+
+
+    public List<BizOrderDetail> getOrderHeaderList() {
+        return orderHeaderList;
+    }
+
+    public void setOrderHeaderList(List<BizOrderDetail> orderHeaderList) {
+        this.orderHeaderList = orderHeaderList;
+    }
 
     public BizOpShelfSku getShelfInfo() {
         return shelfInfo;

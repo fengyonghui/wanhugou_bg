@@ -144,10 +144,16 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                     orderDetailNew.setSentQty(0);//发货数量默认0
                     if(skuValueList!=null && skuValueList.size()>0){
                         orderDetailNew.setQuality(skuValueList.get(0).getPropValue());//材质
+                    }else{
+                        orderDetailNew.setQuality("无");
                     }if(skuValueListTwo!=null && skuValueListTwo.size()>0){
                         orderDetailNew.setColor(skuValueListTwo.get(0).getPropValue());//颜色
+                    }else{
+                        orderDetailNew.setColor("无");
                     }if(skuValueListThis!=null && skuValueListThis.size()>0){
                         orderDetailNew.setStandard(skuValueListThis.get(0).getPropValue());//规格
+                    }else{
+                        orderDetailNew.setStandard("无");
                     }
                     super.save(orderDetailNew);//把商品放入新建订单中
                 }else if (type == BizOrderDiscount.TWO_ORDER.getOneOr() || type == BizOrderDiscount.THIS_ORDER.getOneOr()) {//1 专营 2 定制商品
@@ -167,10 +173,16 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                     bizOrderDetail.setSentQty(0);//发货数量默认0
                     if(skuValueList!=null && skuValueList.size()>0){
                         bizOrderDetail.setQuality(skuValueList.get(0).getPropValue());//材质
+                    }else{
+                        bizOrderDetail.setQuality("无");
                     }if(skuValueListTwo!=null && skuValueListTwo.size()>0){
                         bizOrderDetail.setColor(skuValueListTwo.get(0).getPropValue());//颜色
+                    }else{
+                        bizOrderDetail.setColor("无");
                     }if(skuValueListThis!=null && skuValueListThis.size()>0){
                         bizOrderDetail.setStandard(skuValueListThis.get(0).getPropValue());//规格
+                    }else{
+                        bizOrderDetail.setStandard("无");
                     }
                     super.save(bizOrderDetail);
                 } else {
@@ -186,7 +198,13 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
         Double Money005 = orderHeaderMoney * BizOrderDiscount.NON_SELF_SUPPORT.getCalcs();//0.05
         for (BizOrderHeader order : list) {
             Double price = bizOrderDetail.getUnitPrice();//商品单价
+            if(price!=null){
+                bizOrderDetail.setUnitPrice(0.0);
+            }
             Integer ordQty = bizOrderDetail.getOrdQty();//采购数量
+            if(ordQty!=null){
+                bizOrderDetail.setOrdQty(0);
+            }
             sum += price * ordQty;
             if (oneOrder == "firstOrder") {//首单标记判断
                 if (orderHeaderMoney <= 10000) {//限额 10000
@@ -208,6 +226,16 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
             bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail() + sum);
             bizOrderHeaderService.save(bizOrderHeader);
         }
+        //删除执行库存表相应的加减数量
+        Integer ordQty = bizOrderDetail.getOrdQty();
+        BizInventorySku bizInventorySku = new BizInventorySku();
+        bizInventorySku.setSkuInfo(bizOrderDetail.getSkuInfo());
+        List<BizInventorySku> inventorySku = bizInventorySkuService.findList(bizInventorySku);
+        for (BizInventorySku is : inventorySku) {
+            Integer stockOrdQty = is.getStockOrdQty();
+            is.setStockOrdQty(++stockOrdQty);//加上相应的销售订单数量
+            bizInventorySkuService.save(is);
+        }
     }
 
     public Integer findMaxLine(BizOrderDetail bizOrderDetail) {
@@ -227,10 +255,8 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
         bizInventorySku.setSkuInfo(bizOrderDetail.getSkuInfo());
         List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
         for (BizInventorySku inventorySku : list) {
-            Integer stockQty = inventorySku.getStockQty();
-            inventorySku.setStockQty(stockQty + ordQty);
             Integer stockOrdQty = inventorySku.getStockOrdQty();
-            inventorySku.setStockOrdQty(--stockOrdQty);
+            inventorySku.setStockOrdQty(--stockOrdQty);//减去相应的销售订单数量
             bizInventorySkuService.save(inventorySku);
         }
         super.delete(bizOrderDetail);

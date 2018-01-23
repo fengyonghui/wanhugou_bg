@@ -144,14 +144,39 @@
                     <th>货架名称</th>
                     <th>商品名称</th>
                     <th>商品编码</th>
-                    <th>销售数量区间</th>
-                    <th>现价</th>
+                    <c:if test="${orderH.bizStatus==15}">
+                        <th>已发货数量</th>
+                    </c:if>
+                    <c:if test="${bizOrderDetail.id==null}">
+                        <th>销售数量区间</th>
+                        <th>现价</th>
+                    </c:if>
                     <th>采购数量</th>
                     <%--<th>发货数量</th>--%>
                     <th>操作</th>
                 </tr>
                 </thead>
                 <tbody id="prodInfo">
+                    <c:if test="${bizOrderDetail.id!=null}">
+                        <c:forEach items="${entity.orderHeaderList}" var="orderList">
+                            <tr>
+                                <td>${orderList.shelfInfo.opShelfInfo.name}</td>
+                                <td>${orderList.skuName}</td>
+                                <td>${orderList.partNo}</td>
+                                <c:if test="${orderH.bizStatus==15}">
+                                    <td>${orderList.sentQty}</td>
+                                </c:if>
+                                <c:if test="${bizOrderDetail.id==null}">
+                                    <td></td>
+                                    <td>${orderList.shelfInfo.salePrice}</td>
+                                </c:if>
+                                <td>${orderList.ordQty}</td>
+                                <td><a href="${ctx}/biz/order/bizOrderDetail/delete?id=${orderList.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">
+                                    删除
+                                </a></td>
+                            </tr>
+                        </c:forEach>
+                    </c:if>
                 </tbody>
             </table>
             <%--<c:if test="${entity.str!='detail'}">--%>

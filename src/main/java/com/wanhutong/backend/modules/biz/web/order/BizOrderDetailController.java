@@ -56,6 +56,11 @@ public class BizOrderDetailController extends BaseController {
 	private BizOpShelfInfoService bizOpShelfInfoService;
 	@Autowired
 	private BizOrderDetailDao bizOrderDetailDao;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
+
+	@Autowired
+    private BizOpShelfSkuService bizOpShelfSkuService;
 
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
@@ -70,6 +75,17 @@ public class BizOrderDetailController extends BaseController {
 		BizOrderDetail entity = null;
 		if (id!=null){
 			entity = bizOrderDetailService.get(id);
+			BizOrderDetail orderDetail = new BizOrderDetail();
+			orderDetail.setOrderHeader(entity.getOrderHeader());
+			List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
+			for (BizOrderDetail od : list) {
+				BizOpShelfSku bizOpShelfSku = bizOpShelfSkuService.get(od.getShelfInfo());//查询商品货架
+				bizOpShelfSku.getMinQty();
+				bizOpShelfSku.getMaxQty();
+				bizOpShelfSku.getSalePrice();
+				entity.setShelfInfo(bizOpShelfSku);
+			}
+			entity.setOrderHeaderList(list);//用于修改商品查询有多少商品
 		}
 		if (entity == null){
 			entity = new BizOrderDetail();
@@ -91,8 +107,9 @@ public class BizOrderDetailController extends BaseController {
 //		用于往页面传给savg保存 首单标记 OneOrder
         bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
         BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
-		bizOrderDetail.getOrderHeader().getOneOrder();
-		model.addAttribute("bizOrderDetail", bizOrderDetail);
+		BizOrderHeader ord = bizOrderHeaderService.get(orderHeader.getId());
+		model.addAttribute("orderH", ord);//用于页面订单供货中显示供货数量
+        model.addAttribute("entity", bizOrderDetail);
 		model.addAttribute("bizOpShelfSku",new BizOpShelfSku());
 		return "modules/biz/order/bizOrderDetailForm";
 	}
@@ -114,9 +131,14 @@ public class BizOrderDetailController extends BaseController {
 	
 	@RequiresPermissions("biz:order:bizOrderDetail:edit")
 	@RequestMapping(value = "delete")
-	public String delete(BizOrderDetail bizOrderDetail, RedirectAttributes redirectAttributes) {
+	public String delete(BizOrderDetail bizOrderDetail,String orderDetailDetele, RedirectAttributes redirectAttributes) {
 		bizOrderDetailService.delete(bizOrderDetail);
 		addMessage(redirectAttributes, "删除订单详情成功");
+		if(orderDetailDetele !=null && orderDetailDetele.equals("details")){
+			//跳回添加商品orderDetail页面
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
+		}
+		//调到订单orderHeader页面
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
 	}
 

@@ -100,7 +100,8 @@
             }
         });
     }
-
+</script>
+<script type="text/javascript">
         function deliveryAddress(){
             var officeId=$("#officeId").val();
             $("#jhprovince").empty();
@@ -111,6 +112,7 @@
                 type:"post",
                 url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
                 success:function(data){
+                console.log(data+"-----777");
                     if(data==''){
                         $("#jhadd1").css("display","none");
                         $("#jhadd2").css("display","block");
@@ -140,6 +142,7 @@
         function checkPending(obj) {
             $("#id").val();
         }
+
     </script>
 </head>
 <body>
@@ -224,18 +227,6 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
-
-    <div class="control-group">
-        <label class="control-label">发票状态：</label>
-        <div class="controls">
-            <c:choose>
-                <c:when test="${fns:getUser().isAdmin()}">
-                    <form:select path="invStatus" class="input-medium required">
-                        <form:option value="" label="请选择"/>
-                        <%--<c:if test="${bizOrderHeader.id==null}"><form:option value="1" label="未开发票"/></c:if>--%>
-                        <%--默认选中--%>
-                        <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
-                                      htmlEscape="false"/></form:select>
     <c:if test="${fns:getUser().isAdmin()}">
         <div class="control-group">
             <label class="control-label">发票状态：</label>
@@ -275,37 +266,6 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
-                    <span class="help-inline"><font color="red">*</font>默认选择</span>
-                </c:when>
-                <c:otherwise>
-                    <input disabled="disabled" type="text" value="${fns:getDictLabel(entity.invStatus, 'biz_order_invStatus', 0)}"/>
-                </c:otherwise>
-            </c:choose>
-
-
-        </div>
-    </div>
-
-
-            <div class="control-group">
-                <label class="control-label">业务状态：</label>
-                <div class="controls">
-                <c:choose>
-                    <c:when test="${fns:getUser().isAdmin()}">
-                                <form:select path="bizStatus" class="input-medium required">
-                                    <form:option value="" label="请选择"/>
-                                    <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
-                                                  htmlEscape="false"/></form:select>
-                                <span class="help-inline"><font color="red">*</font>默认选择</span>
-
-                    </c:when>
-                    <c:otherwise>
-                            <input disabled="disabled" type="text" value="${fns:getDictLabel(entity.bizStatus, 'biz_order_status', 0)}"/>
-                    </c:otherwise>
-                </c:choose>
-                </div>
-            </div>
-
     <div class="control-group" id="add1">
         <label class="control-label">收货地址；</label>
         <div class="controls">
@@ -343,8 +303,8 @@
     <div class="control-group" id="add2" style="display:none">
         <label class="control-label">收货地址；</label>
         <div class="controls">
-            <%--<a id="addAddressHref" href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id=${customer.id}&flag=order">--%>
-                <input id="addAddressHref" type="button" value="新增地址"  htmlEscape="false" class="input-xlarge required"/>
+                <%--<a id="addAddressHref" href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id=${customer.id}&flag=order">--%>
+            <input id="addAddressHref" type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/>
                 <%--</a>--%>
             <label class="error" id="addError" style="display:none;">必填信息</label>
             <span class="help-inline"><font color="red">*</font></span>
@@ -374,7 +334,7 @@
         <%--</div>--%>
     <%--</c:if>--%>
     <c:choose>
-        <c:when test="${bizOrderHeader.flag=='check_pending'}">
+        <c:when test="${entity.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
                 <label class="control-label">交货地址；</label>
                 <div class="controls">
@@ -450,16 +410,16 @@
         <th>商品编号</th>
         <th>商品单价</th>
         <th>采购数量</th>
-        <th>发货数量</th>
+        <%--<th>发货数量</th>--%>
         <th>创建时间</th>
         <th>操作</th>
     </tr>
     </thead>
     <tbody>
-    <c:forEach items="${entity.orderDetailList}" var="bizOrderDetail">
+    <c:forEach items="${bizOrderHeader.orderDetailList}" var="bizOrderDetail">
         <tr>
             <td>
-                    ${bizOrderDetail.lineNo}
+                   ${bizOrderDetail.lineNo}
             </td>
             <td>
                     ${bizOrderDetail.shelfInfo.opShelfInfo.name}
@@ -486,9 +446,9 @@
             <td>
                     ${bizOrderDetail.ordQty}
             </td>
-            <td>
-                    ${bizOrderDetail.sentQty}
-            </td>
+            <%--<td>--%>
+                    <%--${bizOrderDetail.sentQty}--%>
+            <%--</td>--%>
             <td>
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </td>
