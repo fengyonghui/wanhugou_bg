@@ -60,7 +60,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizProductInfo">
 			<tr>
-				<td><img src="${bizProductInfo.imgUrl}"/></td>
+				<td><img src="${bizProductInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">
 					${bizProductInfo.name}
 				</a></td>

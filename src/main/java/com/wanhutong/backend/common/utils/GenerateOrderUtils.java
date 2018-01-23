@@ -24,7 +24,7 @@ public class GenerateOrderUtils {
     }
 
     //随机生成四位随机数
-    private static String getRandomNum(){
+    public static String getRandomNum(){
         Integer mark = (int)(Math.random()*10000);
         if(sizeOfInt(mark) < DIGIT){
             return df.format(mark);

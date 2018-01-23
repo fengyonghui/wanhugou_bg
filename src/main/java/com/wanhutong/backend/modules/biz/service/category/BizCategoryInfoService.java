@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.TreeService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
@@ -152,8 +153,8 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			commonImg.setObjectId(bizCategoryInfo.getId());
 			commonImgService.delete(commonImg);
 		//	commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
-			commonImg.setImgServer(DsConfig.getImgServer());
-			commonImg.setImgSort(10);
+//			commonImg.setImgServer(DsConfig.getImgServer());
+//			commonImg.setImgSort(10);
 			int a=bizCategoryInfo.getCatePhoto().lastIndexOf("/")+1;
 			String photoName = bizCategoryInfo.getCatePhoto().substring(a);
 			String imgType=photoName.substring(photoName.indexOf("."));
@@ -162,18 +163,19 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			String  pathFile= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto();
 			String  pathFile2= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto().substring(0,a-1);
 			File file = new File(pathFile);
-			String photoNewName=new Date().getTime()+""+imgType;
+			String photoNewName=System.currentTimeMillis()+""+(GenerateOrderUtils.getRandomNum())+imgType;
 			File file2 = new File(pathFile2+"/"+photoNewName);
-
-				file.renameTo(file2);
             AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
             if (!bizCategoryInfo.getCatePhoto().contains(DsConfig.getImgServer())) {
+				file.renameTo(file2);
                 aliOssClientUtil.uploadObject2OSS(file2, path);
-            }
-			commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
+				commonImg.setImgPath("\\"+path+photoNewName);
+            }else {
+				commonImg.setImgPath("\\"+path+photoName);
+			}
+//			commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
 			commonImg.setImgServer(DsConfig.getImgServer());
 			commonImg.setImgSort(10);
-            commonImg.setImgPath("\\"+path+photoNewName);
 			commonImgService.save(commonImg);
 		}
 
