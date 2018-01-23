@@ -9,13 +9,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -34,6 +39,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +58,8 @@ public class BizSkuInfoController extends BaseController {
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	@Autowired
 	private CommonImgService commonImgService;
+	@Autowired
+	private BizInventoryInfoService bizInventoryInfoService;
 
 	@ModelAttribute
 	public BizSkuInfo get(@RequestParam(required=false) Integer id) {
@@ -160,5 +168,17 @@ public class BizSkuInfoController extends BaseController {
         return bizSkuInfoList;
 	}
 
-
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findSkuInfoList")
+	public Map<String,Object> findSkuInfoList(BizSkuInfo bizSkuInfo,Model model){
+        Map<String,Object> map=new HashMap<String, Object>();
+		List<BizSkuInfo> list=bizSkuInfoService.findList(bizSkuInfo);
+        map.put("skuInfoList",list);
+		List<BizInventoryInfo> inventoryInfoList=bizInventoryInfoService.findList(new BizInventoryInfo());
+        map.put("inventoryInfoList",inventoryInfoList);
+        List<Dict> dictList=DictUtils.getDictList("inv_type");
+        map.put("dictList",dictList);
+			return map;
+	}
 }

@@ -22,6 +22,46 @@
 					}
 				}
 			});
+            $("#searchData").click(function () {
+                var skuName=$("#skuName").val();
+                $("#skuNameCopy").val(skuName);
+                var skuCode =$("#skuCode").val();
+                $("#skuCodeCopy").val(skuCode);
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/biz/sku/bizSkuInfo/findSkuInfoList",
+                    data:$('#searchForm').serialize(),
+                    success:function (data) {
+						var selecttd="<select ><option value=''>请选择</option>";
+                        $.each(data.inventoryInfoList,function (index,inventory) {
+                            selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
+						});
+                        selecttd+="</select>";
+                        var selectInvTypetd="<select ><option value=''>请选择</option>";
+                        $.each(data.dictList,function (index,dict) {
+                            selectInvTypetd+="<option value='"+dict.value+"'>"+dict.label+"</option>"
+                        });
+                        selectInvTypetd+="</select>";
+						var trdatas='';
+                            var t=0;
+                            $.each(data.skuInfoList,function (index,skuInfo) {
+                                trdatas+= "<tr id='"+skuInfo.id+"'>";
+                                trdatas+="<td>"+selecttd+"</td>";
+                                trdatas+="<td>"+skuInfo.name+"</td>";
+                                trdatas+="<td>"+skuInfo.partNo+"</td>";
+                                trdatas+="<td>"+selectInvTypetd+"</td>";
+                                trdatas+="<td><input type='text' class='input-mini' id='saleQty_"+skuInfo.id+"'/></td>";
+                                trdatas+="<td id='td_"+skuInfo.id+"'> <a href='#' onclick=\"addItem('"+skuInfo.id+"')\">增加</a></td>";
+                                trdatas+= "</tr>";
+                            });
+
+
+                        	$("#prodInfo2").html(trdatas)
+
+
+                    }
+                })
+            });
 		});
 	</script>
 </head>
@@ -33,88 +73,70 @@
 	<form:form id="inputForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<input id="zt" name="zt" value="${zt}" type="hidden"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">仓库名称：</label>
+			<label class="control-label">选择商品：</label>
 			<div class="controls">
-				<select class="input-medium">
-					<c:forEach items="${invInfoList}" var="invInfo">
-						<option name="invInfo.id" value="${invInfo.id}"/>${invInfo.name}
-					</c:forEach>
-				</select>
-				<%--<input value="${bizInventorySku.invInfo.name}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>--%>
-				<%--<form:hidden path="invInfo.id"/>--%>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<ul class="inline ul-form">
+
+					<li><label>商品名称：</label>
+						<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="10" class="input-medium"/>
+					</li>
+					<li><label>商品编码：</label>
+						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="10" class="input-medium"/>
+					</li>
+
+					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
+					<li class="clearfix"></li>
+				</ul>
+
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">sku商品名称：</label>
+			<label class="control-label">盘点商品：</label>
 			<div class="controls">
-				<sys:treeselect id="skuInfo" name="skuInfo.id" value="${bizInventorySku.skuInfo.id}" labelName="skuInfo.id"
-								labelValue="${bizInventorySku.skuInfo.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="sku名称"  url="/biz/product/bizProductInfo/querySkuTreeList" extId="${skuInfo.id}"
-								cssClass="input-xlarge required" onchange="clickSku();"
-								allowClear="${skuInfo.currentUser.admin}"  dataMsgRequired="必填信息">
-				</sys:treeselect>
-				<%--<form:input path="skuId.name" htmlEscape="false" maxlength="11" class="input-xlarge required"/>--%>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<table id="contentTable" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
+					<thead>
+					<tr>
+						<th>仓库名称</th>
+						<th>商品名称</th>
+						<th>商品编码</th>
+						<th>库存类型</th>
+						<th>库存数量</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody id="prodInfo">
+					</tbody>
+				</table>
+				<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered table-condensed">
+					<thead>
+					<tr>
+						<th>仓库名称</th>
+						<th>商品名称</th>
+						<th>商品编码</th>
+						<th>库存类型</th>
+						<th>库存数量</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody id="prodInfo2">
+
+					</tbody>
+				</table>
 			</div>
+
 		</div>
-		<div class="control-group">
-			<label class="control-label">库存类型：</label>
-			<div class="controls">
-				<form:select path="invType" class="input-medium required">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('inv_type')}" itemLabel="label" itemValue="value"
-								  htmlEscape="false"/></form:select>
-				<%--<form:input path="invType" htmlEscape="false" maxlength="4" class="input-xlarge required"/>--%>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">库存数量：</label>
-			<div class="controls">
-				<form:input path="stockQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<c:if test="${zt eq '1' || zt eq '2'}">
-			<div class="control-group">
-				<label class="control-label">销售订单数量：</label>
-				<div class="controls">
-					<form:input path="stockOrdQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">调入数量：</label>
-				<div class="controls">
-					<form:input path="transInQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">调出数量：</label>
-				<div class="controls">
-					<form:input path="transOutQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
-			</div>
-			<%--<div class="control-group">需要改成采购商
-				<label class="control-label">库存专属客户名称：</label>
-				<div class="controls">
-					<sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
-									labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-									title="客户"  url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
-									allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
-					<span class="help-inline"><font color="red">*</font> </span>
-				</div>
-			</div>--%>
-		</c:if>
+
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
+	</form:form>
+
+	<form:form id="searchForm" modelAttribute="bizSkuInfo" >
+		<form:hidden id="skuNameCopy" path="name"/>
+		<form:hidden id="skuCodeCopy" path="partNo"/>
 	</form:form>
 </body>
 </html>

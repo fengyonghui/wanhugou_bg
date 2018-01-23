@@ -91,27 +91,13 @@ public class BizInventorySkuController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInventorySku:view")
 	@RequestMapping(value = "form")
 	public String form(BizInventorySku bizInventorySku,HttpServletRequest request, Model model) {
-//		bizInventorySku = bizInventorySkuService.get(bizInventorySku.getId());
-        //取出用户所属采购中心
-        BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-        User user = UserUtils.getUser();
-        if (user.isAdmin()){
-            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-            model.addAttribute("invInfoList",invInfoList);
-        }else {
-            Office company = systemService.getUser(user.getId()).getCompany();
-            BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
-            bizInventoryInfo1.setCustomer(company);
-            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo1);
-            model.addAttribute("invInfoList",invInfoList);
-        }
-
-
+	    model.addAttribute("invInfoList",bizInventoryInfoService.findList(new BizInventoryInfo()));
         BizInventoryInfo bizInventoryInfo2 = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
 		bizInventorySku.setInvInfo(bizInventoryInfo2);
 		String zt = request.getParameter("zt");
 		model.addAttribute("zt",zt);
 		model.addAttribute("entity", bizInventorySku);
+		model.addAttribute("bizSkuInfo",new BizSkuInfo());
 		return "modules/biz/inventory/bizInventorySkuForm";
 	}
 

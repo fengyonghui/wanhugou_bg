@@ -60,7 +60,7 @@
                         trdatas+="<input type='hidden' id='shelfSkuId_"+opShelfSku.id+"' value='"+opShelfSku.id+"'>"
                         trdatas+= "</tr>";
 
-                    })
+                    });
                     $("#prodInfo2").html(trdatas)
 
 
