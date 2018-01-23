@@ -18,8 +18,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="#">采购商列表</a></li>
-		<%--<li class="active"><a href="${ctx}/biz/custom/bizCustomCenterConsultant/returnConnIndex">采购商列表</a></li>--%>
+		<li class="active"><a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bcUser.consultants.id}">采购商列表</a></li>
+		<li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${bcUser.consultants.id}">采购商添加</a></li>
 		<%--?centers.id=${page.centers.id}&consultants.id=${page.consultants.id} <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit"><li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/form">客户专员添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<%--<form:form id="searchForm" modelAttribute="bizCustomCenterConsultant" action="${ctx}/biz/custom/bizCustomCenterConsultant/" method="post" class="breadcrumb form-search">--%>
@@ -61,7 +61,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${entity.bccList}" var="bizCustomCenterConsultant">
+		<c:forEach items="${page.bccList}" var="bizCustomCenterConsultant">
 			<tr>
 				<td>
 					${bizCustomCenterConsultant.customs.name}
@@ -86,7 +86,8 @@
 				<%--</td>--%>
 				<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit"><td>
 					<%--<a href="${ctx}/biz/custom/bizCustomCenterConsultant/delete?customs.id=${bizCustomCenterConsultant.id}" onclick="return confirmx('确认要删除该客户专员吗？', this.href)">移除</a>--%>
-					<a href="#">移除</a>
+					<a href="${ctx}/biz/custom/bizCustomCenterConsultant/delete?customs.id=${bizCustomCenterConsultant.customs.id}&consultants.id=${bizCustomCenterConsultant.consultants.id}"
+					   onclick="return confirmx('确认要移除该关联信息吗？', this.href)">移除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

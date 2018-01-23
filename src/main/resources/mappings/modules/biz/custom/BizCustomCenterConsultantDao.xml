@@ -155,7 +155,8 @@
 		consultant_id,
 		create_time,
 		create_id,
-		update_id
+		update_id,
+		status
 		) VALUES (
 		#{customs.id},
 		#{centers.id},
@@ -172,6 +173,11 @@
 		consultant_id = #{consultants.id},
 		update_time = #{updateDate},
 		update_id = #{updateBy.id}
+		WHERE cust_id = #{customs.id}
+	</update>
+	<update id="delete">
+		UPDATE biz_custom_center_consultant SET
+		status = #{DEL_FLAG_DELETE}
 		WHERE cust_id = #{customs.id}
 	</update>
 </mapper>

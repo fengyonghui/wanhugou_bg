@@ -52,39 +52,50 @@ public class BizCustomCenterConsultantController extends BaseController {
     @Autowired
     private SystemService systemService;
 
-    @RequiresPermissions("biz:common:commonImg:view")
+    @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "form")
     public String form(BizCustomCenterConsultant bizCustomCenterConsultant, Model model) {
         model.addAttribute("entity", bizCustomCenterConsultant);
         return "modules/biz/common/commonImgForm";
     }
 
-    @RequiresPermissions("biz:order:bizOrderDetail:view")
+    @RequiresPermissions("sys:office:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
-        Page<BizCustomCenterConsultant> page = bizCustomCenterConsultantService.findPage(new Page<BizCustomCenterConsultant>(request, response), bizCustomCenterConsultant);
-        model.addAttribute("page", page);
-        return "modules/biz/custom/bizCustomCenterConsultant/bizCustomCenterConsultantList";
-    }
-
-    @RequiresPermissions("sys:office:view")
-    @RequestMapping(value = "returnConnIndex")
-    public String returnConnIndex(BizCustomCenterConsultant bizCustomCenterConsultant,HttpServletRequest request, HttpServletResponse response, Model model){
-//        Page<BizCustomCenterConsultant> page = bizCustomCenterConsultantService.findPage(new Page<BizCustomCenterConsultant>(request, response), bizCustomCenterConsultant);
-        if(bizCustomCenterConsultant.getCenters()==null || bizCustomCenterConsultant.getConsultants()==null){
-            model.addAttribute("entity", bizCustomCenterConsultant);
-        }else {
-            BizCustomCenterConsultant BCC = new BizCustomCenterConsultant();
-            Office Centers = officeService.get(bizCustomCenterConsultant.getCenters());
-            User Consultants = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
-            BCC.setCenters(Centers);//采购中心
-            BCC.setConsultants(Consultants);//客户专员
+        BizCustomCenterConsultant BCC = new BizCustomCenterConsultant();
+        if(bizCustomCenterConsultant.getConsultants()!=null){
+            User user = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
+            Office office = officeService.get(user.getOffice());
+            BCC.setCenters(office);//采购中心
+            BCC.setConsultants(user);//客户专员
+            model.addAttribute("bcUser", BCC);
             List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(BCC);
-            bizCustomCenterConsultant.setBccList(list);
-            model.addAttribute("entity", bizCustomCenterConsultant);
+            if(list.size()!=0){
+                bizCustomCenterConsultant.setBccList(list);
+            }
         }
+        model.addAttribute("page", bizCustomCenterConsultant);
         return "modules/biz/custom/bizCustomCenterConsultantList";
     }
+
+//    @RequiresPermissions("sys:office:view")
+//    @RequestMapping(value = "returnConnIndex")
+//    public String returnConnIndex(BizCustomCenterConsultant bizCustomCenterConsultant,HttpServletRequest request, HttpServletResponse response, Model model){
+////        Page<BizCustomCenterConsultant> page = bizCustomCenterConsultantService.findPage(new Page<BizCustomCenterConsultant>(request, response), bizCustomCenterConsultant);
+//        if(bizCustomCenterConsultant.getCenters()==null || bizCustomCenterConsultant.getConsultants()==null){
+//            model.addAttribute("entity", bizCustomCenterConsultant);
+//        }else {
+//            BizCustomCenterConsultant BCC = new BizCustomCenterConsultant();
+//            Office Centers = officeService.get(bizCustomCenterConsultant.getCenters());
+//            User Consultants = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
+//            BCC.setCenters(Centers);//采购中心
+//            BCC.setConsultants(Consultants);//客户专员
+//            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(BCC);
+//            bizCustomCenterConsultant.setBccList(list);
+//            model.addAttribute("entity", bizCustomCenterConsultant);
+//        }
+//        return "modules/biz/custom/bizCustomCenterConsultantList";
+//    }
 
 //    关联采购商
     @RequiresPermissions("sys:office:view")
@@ -99,13 +110,17 @@ public class BizCustomCenterConsultantController extends BaseController {
         off.setType(center);
         List<Office> officeList = officeService.queryList(off);
         user = systemService.getUser(user.getId());
-        Integer aaa=user.getOffice().getId();
-        BizCustomCenterConsultant bcc = bizCustomCenterConsultantService.get(aaa);
-        if(bcc != null){
-            bcc.setConsultants(systemService.getUser(user.getId()));
+//      Integer aaa=user.getOffice().getId();
+        BizCustomCenterConsultant bc = new BizCustomCenterConsultant();
+        bc.setCenters(user.getOffice());//采购中心
+        bc.setConsultants(user);
+        List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(bc);
+        if(list.size() != 0){
+            bc.setConsultants(systemService.getUser(user.getId()));
+            bc.setCenters(officeService.get(user.getOffice()));
         }
         model.addAttribute("office", user);
-        model.addAttribute("bcc", bcc);
+        model.addAttribute("bcc", bc);
         model.addAttribute("officeList", officeList);
         return "modules/biz/custom/bizCustomMembershipVolumeDATE";
     }
@@ -128,12 +143,12 @@ public class BizCustomCenterConsultantController extends BaseController {
 		return "1";
 	}
 
-//    @RequiresPermissions("biz:order:bizOrderDetail:edit")
-//    @RequestMapping(value = "delete")
-//    public String delete(BizCustomCenterConsultant bizCustomCenterConsultant, RedirectAttributes redirectAttributes) {
-//        bizCustomCenterConsultant.getCustoms().getId();
-//        addMessage(redirectAttributes, "删除订单详情成功");
-//        return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
-//    }
+    @RequiresPermissions("biz:order:bizOrderDetail:edit")
+    @RequestMapping(value = "delete")
+    public String delete(BizCustomCenterConsultant bizCustomCenterConsultant, RedirectAttributes redirectAttributes) {
+        bizCustomCenterConsultantService.delete(bizCustomCenterConsultant);
+        addMessage(redirectAttributes, "删除订单详情成功");
+        return "redirect:"+Global.getAdminPath()+"/biz/custom/bizCustomCenterConsultant/list?consultants.id="+bizCustomCenterConsultant.getConsultants().getId();
+    }
 
 }

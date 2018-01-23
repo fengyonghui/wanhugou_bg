@@ -48,7 +48,9 @@
 		<sys:tableSort id="orderBy" name="orderBy" value="${page.orderBy}" callback="page();"/>
 		<ul class="ul-form">
 			<li><label>归属公司：</label><sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}" 
-				title="公司" url="/sys/office/treeData?type=1" cssClass="input-small" allowClear="true"/></li>
+				title="公司" url="/sys/office/treeData?type=1" cssClass="input-small" allowClear="true"/>
+				<input type="hidden" name="company.type" value="8">
+				<input type="hidden" name="conn" value="${user.conn}"></li>
 			<li><label>登录名：</label><form:input path="loginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 			<li class="clearfix"></li>
 			<li><label>归属部门：</label><sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}" 
@@ -75,7 +77,7 @@
 				<td>${user.roleNames}</td> --%>
 				<shiro:hasPermission name="sys:user:edit"><td>
 					<c:if test="${user.conn!=null}">
-						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?id=${bizUser.id}&conn=${user.conn}">关联采购商</a>
+						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}">关联采购商</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>
 					</c:if>
     				<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}">修改</a>

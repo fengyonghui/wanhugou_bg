@@ -56,10 +56,10 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li><a href="#">采购商列表</a></li>
+	<li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${office.id}">采购商列表</a></li>
 	<%--<li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/returnConnIndex">采购商列表</a></li>--%>
 	<%--<li class="active"><a href="${ctx}/sys/office/purchasersForm?id=${user.id}&parent.id=${office.parent.id}">采购商<shiro:hasPermission name="sys:office:edit">${not empty office.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:office:edit">查看</shiro:lacksPermission></a></li>--%>
-    <li class="active"><a href="${ctx}/sys/office/purchasersForm?id=${user.id}&office.id=${office.id}">采购商</a></li>
+    <li class="active"><a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${office.id}">采购商添加</a></li>
 </ul><br/>
 <form:form id="inputForm" modelAttribute="office" action="${ctx}/biz/custom/bizCustomCenterConsultant/save" method="post" class="form-horizontal">
 	<%--<form:hidden path="id"/>--%>
@@ -80,7 +80,7 @@
 			<select name="centers.id" id="bcID" style="width: 18%" onchange="changeSelect(this.value)">
 				<option value="">==请选择采购中心==</option>
 				<c:forEach items="${officeList}" var="item" varStatus="vs">
-					<option value="${item.id}" <c:if test="${item.id == bcc.centers.id}">selected</c:if> > ${item.name}</option>
+					<option value="${item.id}" <c:if test="${bcc.centers.id!=null}">selected</c:if> > ${item.name}</option>
 				</c:forEach>
 			</select>
 		</div>

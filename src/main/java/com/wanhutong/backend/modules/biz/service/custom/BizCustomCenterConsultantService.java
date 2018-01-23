@@ -54,6 +54,9 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 	
 	@Transactional(readOnly = false)
 	public void delete(BizCustomCenterConsultant bizCustomCenterConsultant) {
+//		BizCustomCenterConsultant bizCustomCenterConsultant1 = super.get(bizCustomCenterConsultant.getCustoms().getId());
+//		bizCustomCenterConsultant1.setStatuss(0);
+//		super.save(bizCustomCenterConsultant1);
 		super.delete(bizCustomCenterConsultant);
 	}
 
