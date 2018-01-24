@@ -88,6 +88,7 @@ public class BizRequestDetailController extends BaseController {
 		try {
 			bizRequestDetailService.delete(bizRequestDetail);
 		}catch (Exception e){
+			logger.error(e.getMessage());
 			data="error"; }
 		return data;
 

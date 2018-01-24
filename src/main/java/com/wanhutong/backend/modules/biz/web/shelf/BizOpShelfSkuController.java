@@ -100,9 +100,14 @@ public class BizOpShelfSkuController extends BaseController {
 		String[] shelfTimeArr=bizOpShelfSkus.getShelfTimes().split(",");
 		String[] unShelfTimeArr=bizOpShelfSkus.getUnshelfTimes().split(",");
 		BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+		boolean flag = false;
 		for(int i=0;i<skuIdArr.length;i++){
 		    if(bizOpShelfSkus.getId()!=null){
                 bizOpShelfSku.setId(bizOpShelfSkus.getId());
+				if (flag) {
+					bizOpShelfSku.setId(null);
+				}
+				flag = true;
             }else {
                 bizOpShelfSku.setId(null);
             }

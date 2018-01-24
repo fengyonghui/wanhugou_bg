@@ -20,9 +20,7 @@
 		a.update_id AS "updateBy.id",
 		suu.name AS "updateBy.name",
 		su.name AS "createBy.name",
-		a.update_time AS "updateDate",
-		sum(rd.req_qty) AS "reqQtys",
-	sum(rd.recv_qty) AS "recvQtys"
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizRequestHeaderJoins">
@@ -30,7 +28,7 @@
 		LEFT JOIN sys_office sot ON sot.id=a.to_id
 		LEFT JOIN sys_user su ON su.id=a.create_id
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
-		Left Join biz_request_detail rd on a.id=rd.header_id
+
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">

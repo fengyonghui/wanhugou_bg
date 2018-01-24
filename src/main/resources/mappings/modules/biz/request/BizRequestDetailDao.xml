@@ -29,7 +29,7 @@
 			<include refid="bizRequestDetailColumns"/>
 		FROM biz_request_detail a
 		<include refid="bizRequestDetailJoins"/>
-		WHERE a.id = #{id}
+		WHERE a.id = #{id} AND a.status = #{DEL_FLAG_NORMAL}
 	</select>
 	
 	<select id="findList" resultType="BizRequestDetail">
@@ -142,7 +142,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE biz_request_detail SET 
+		UPDATE biz_request_detail SET
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>

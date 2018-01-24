@@ -191,11 +191,11 @@
 		<if test="parent != null and parent.id != null">
 			AND a.parent_id = #{parent.id}
 		</if>
-		<if test="id != null">
+		<!--<if test="id != null">-->
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
 		OR a.id = #{currentUser.office.id}
-		</if>
+		<!--</if>-->
 		<!--<if test="currentUser != null and currentUser.UserOfficeList != null and currentUser.UserOfficeList.size() != 0">-->
 
 -- 			OR a.id IN

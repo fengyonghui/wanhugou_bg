@@ -70,7 +70,22 @@ public class BizRequestHeaderController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
-		model.addAttribute("page", page);
+        List<BizRequestHeader> list = page.getList();
+        for (BizRequestHeader bizRequestHeader1:list) {
+            BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
+            bizRequestDetail1.setRequestHeader(bizRequestHeader1);
+            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
+            Integer reqQtys = 0;
+            Integer recvQtys = 0;
+            for (BizRequestDetail bizRequestDetail:requestDetailList) {
+                reqQtys += bizRequestDetail.getReqQty();
+                recvQtys += bizRequestDetail.getRecvQty();
+            }
+            bizRequestHeader1.setReqQtys(reqQtys.toString());
+            bizRequestHeader1.setRecvQtys(recvQtys.toString());
+        }
+        page.setList(list);
+        model.addAttribute("page", page);
 		return "modules/biz/request/bizRequestHeaderList";
 	}
 

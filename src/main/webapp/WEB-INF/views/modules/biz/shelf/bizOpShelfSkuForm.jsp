@@ -94,7 +94,7 @@
 
                                 if(flag){
                                     tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"'></td>"
+                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"' maxWidth='100' maxHeight='100'></td>"
                                 }
 
                                 tr_tds+="</tr>";
