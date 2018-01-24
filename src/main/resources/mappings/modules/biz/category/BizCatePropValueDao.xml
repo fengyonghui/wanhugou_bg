@@ -85,7 +85,7 @@
 				and pc.cat_id=#{categoryInfo.id}
 			</if>
 			<if test="catIds!=null and catIds!='' and catIds.size()!=0">
-				and pc.cat_id in
+				and cpi.cat_id in
 				<foreach collection="catIds" item="catId" index="index"
 				open="(" close=")" separator=",">
 				#{catId}

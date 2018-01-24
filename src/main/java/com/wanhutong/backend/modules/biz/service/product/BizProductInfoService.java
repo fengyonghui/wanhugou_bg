@@ -160,6 +160,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 						if (!flag) {
 							file.renameTo(file2);
 							aliOssClientUtil.uploadObject2OSS(file2, path);
+							if(file2.exists()){
+								file2.delete();
+							}
 							commonImg.setImgPath(File.separator+path+photoNewName);
 						}else {
 							commonImg.setImgPath(File.separator+path+photoName);
@@ -202,6 +205,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 							file.renameTo(file2);
 							aliOssClientUtil.uploadObject2OSS(file2, path);
 							commonImg.setImgPath(File.separator+path+photoNewName);
+							if(file2.exists()){
+								file2.delete();
+							}
 						}else {
 							commonImg.setImgPath(File.separator+path+photoName);
 						}
@@ -235,6 +241,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 							file.renameTo(file2);
 							aliOssClientUtil.uploadObject2OSS(file2, path);
 							commonImg.setImgPath(File.separator+path+photoNewName);
+							if(file2.exists()){
+								file2.delete();
+							}
 						}else {
 							commonImg.setImgPath(File.separator+path+photoName);
 						}

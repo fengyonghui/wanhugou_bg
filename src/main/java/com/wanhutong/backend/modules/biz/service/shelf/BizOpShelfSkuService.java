@@ -66,11 +66,12 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 			}
 			if(bizProductInfo.getMaxPrice()==null){
 				bizProductInfo.setMaxPrice(0.0);
-			}else {
+
+			}
 				if(bizProductInfo.getMaxPrice()<bizOpShelfSku.getSalePrice()){
 					bizProductInfo.setMaxPrice(bizOpShelfSku.getSalePrice());
 				}
-			}
+
 
 			if(bizProductInfo.getMinPrice()==0.0){
 				bizProductInfo.setMinPrice(bizOpShelfSku.getSalePrice());

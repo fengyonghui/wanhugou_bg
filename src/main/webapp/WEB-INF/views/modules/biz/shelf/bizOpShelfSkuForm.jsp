@@ -167,9 +167,9 @@
 			<div class="controls">
 				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
 								labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge " dataMsgRequired="必填信息">
 				</sys:treeselect>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 			</div>
 		</div>
 		<div class="control-group">

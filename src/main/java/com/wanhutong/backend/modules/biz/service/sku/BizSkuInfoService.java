@@ -250,6 +250,9 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 						file.renameTo(file2);
 						aliOssClientUtil.uploadObject2OSS(file2, path);
 						commonImg.setImgPath("\\"+path+photoNewName);
+						if(file2.exists()){
+							file2.delete();
+						}
 					}else {
 						commonImg.setImgPath("\\"+path+photoName);
 					}

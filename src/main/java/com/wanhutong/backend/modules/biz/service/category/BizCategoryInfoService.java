@@ -169,10 +169,14 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
             if (!bizCategoryInfo.getCatePhoto().contains(DsConfig.getImgServer())) {
 				file.renameTo(file2);
                 aliOssClientUtil.uploadObject2OSS(file2, path);
+				if(file2.exists()){
+					file2.delete();
+				}
 				commonImg.setImgPath("\\"+path+photoNewName);
             }else {
 				commonImg.setImgPath("\\"+path+photoName);
 			}
+
 //			commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
 			commonImg.setImgServer(DsConfig.getImgServer());
 			commonImg.setImgSort(10);
