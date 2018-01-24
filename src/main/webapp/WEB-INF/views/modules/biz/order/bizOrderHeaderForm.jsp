@@ -250,14 +250,15 @@
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <sys:treeselect id="office" name="customer.id" disabled="disabled" value="${entity.customer.id}"
                                 labelName="customer.name"
-                                labelValue="${entity.customer.name}" notAllowSelectRoot="true"
+                                labelValue="${entity.customer.name}"
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
+                <%--notAllowSelectRoot="true"--%>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}" labelName="customer.name"
-                                labelValue="${entity.customer.name}" notAllowSelectRoot="true"
+                                labelValue="${entity.customer.name}"
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
