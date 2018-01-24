@@ -25,7 +25,7 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	private Office customs;		// 采购商.id ; sys_office.id = sys_user.company_id
 	private Office centers;		// 采购中心ID
 	private User consultants;		// 采购顾问ID sys_user.id
-	private Integer statuss;		//用于修改状态为0
+//	private Integer statuss;		//用于修改状态为0
 
 	private String status;
 
@@ -79,11 +79,11 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 		this.bccList = bccList;
 	}
 
-	public Integer getStatuss() {
-		return statuss;
-	}
-
-	public void setStatuss(Integer statuss) {
-		this.statuss = statuss;
-	}
+//	public Integer getStatuss() {
+//		return statuss;
+//	}
+//
+//	public void setStatuss(Integer statuss) {
+//		this.statuss = statuss;
+//	}
 }

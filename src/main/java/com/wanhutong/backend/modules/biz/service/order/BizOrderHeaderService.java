@@ -33,8 +33,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrderHeader> {
-//    @Resource
-//    private CommonLocationService commonLocationService;
+
     @Autowired
     private BizOrderAddressService bizOrderAddressService;
     @Resource
@@ -81,7 +80,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         if(bizOrderHeader.getOrderType()==null){
             bizOrderHeader.setOrderType(1);//订单类型，默认选中  1普通订单
         }
-        bizOrderAddressService.updateBizOrderAddress(bizLocation);
+        bizOrderAddressService.save(bizLocation);
         bizOrderHeader.setOrderType(1);
         String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), bizOrderHeader.getCustomer().getId());
         if(bizOrderHeader.getId()==null){

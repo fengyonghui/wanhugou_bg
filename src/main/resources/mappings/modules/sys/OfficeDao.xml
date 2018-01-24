@@ -39,6 +39,10 @@
 		LEFT JOIN sys_area ar ON ar.id = a.area_id
 		LEFT JOIN sys_user pp ON pp.id = a.primary_person
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.id
+		LEFT JOIN sys_office so on so.id =ccs.center_id
+
+
     </sql>
 	
 	<select id="get" resultType="Office">
@@ -182,9 +186,7 @@
 		<include refid="officeJoins"/>
 		WHERE
 		a.status = #{DEL_FLAG_NORMAL}
-		<if test="type != null and type != ''">
-			AND a.type = #{type}
-		</if>
+
 		<if test="name != null and name != ''">
 			AND a.name = #{name}
 		</if>
@@ -194,7 +196,11 @@
 		<!--<if test="id != null">-->
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
-		OR a.id = #{currentUser.office.id}
+  		OR a.id = #{currentUser.office.id}
+		<if test="type != null and type != ''">
+			AND a.type = #{type}
+		</if>
+
 		<!--</if>-->
 		<!--<if test="currentUser != null and currentUser.UserOfficeList != null and currentUser.UserOfficeList.size() != 0">-->
 

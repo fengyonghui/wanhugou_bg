@@ -78,7 +78,7 @@ public class BizOrderHeaderController extends BaseController {
 				entity.setTotalDetail(sum);
 			}
 			entity.setOrderDetailList(list);
-			bizOrderHeaderService.save(entity);
+//			bizOrderHeaderService.save(entity);
 		}
 		if (entity == null){
 			entity = new BizOrderHeader();
@@ -91,12 +91,11 @@ public class BizOrderHeaderController extends BaseController {
 	public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
 			User user=UserUtils.getUser();
 			if("check_pending".equals(bizOrderHeader.getFlag())){
-			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.UNPAY.getState());
-			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.ALL_PAY.getState());
+//			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.UNPAY.getState());
+//			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.ALL_PAY.getState());
 			if(user.getId()==bizOrderHeader.getConsultantId()){
 				bizOrderHeader.setConsultantId(null);
 			}
-//			bizOrderHeader.set
 		}
 		Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
 		model.addAttribute("page", page);
@@ -105,7 +104,7 @@ public class BizOrderHeaderController extends BaseController {
 
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
-	public String form(BizOrderHeader bizOrderHeader, Model model,String orderNoEditable) {
+	public String form(BizOrderHeader bizOrderHeader, Model model,String orderNoEditable,String orderDetails) {
 		if(bizOrderHeader.getCustomer()!=null && bizOrderHeader.getCustomer().getId()!=null){
 			Office office=officeService.get(bizOrderHeader.getCustomer().getId());
 			bizOrderHeader.setCustomer(office);
@@ -117,10 +116,11 @@ public class BizOrderHeaderController extends BaseController {
 			Double freight = bizOrderHeader.getFreight();//运费
 			Double orderHeaderTotal=totalDetail+totalExp+freight;
 			bizOrderHeader.setTobePaid(orderHeaderTotal-bizOrderHeader.getReceiveTotal());//页面显示待支付总价
-			if(orderNoEditable!=null && orderNoEditable.equals("editable")){//不可编辑标识符
-				System.out.println(" 页面不可编辑 ");
-				bizOrderHeader.setOrderNoEditable("editable");//待支付
-//				bizOrderHeader.setOrderDetails("details");//查看详情
+			if(orderNoEditable!=null && orderNoEditable.equals("editable") ){//不可编辑标识符
+				bizOrderHeader.setOrderNoEditable("editable");//待支付页面不能修改
+			}
+			if(orderDetails!=null && orderDetails.equals("details")){
+				bizOrderHeader.setOrderDetails("details");//查看详情页面不能修改
 			}
 		}
         model.addAttribute("entity", bizOrderHeader);
@@ -131,7 +131,7 @@ public class BizOrderHeaderController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizOrderHeader)){
-			return form(bizOrderHeader, model,null);
+			return form(bizOrderHeader, model,null,null);
 		}
 		if(bizOrderHeader.getTotalDetail()==null){
 			bizOrderHeader.setTotalDetail(0.0);
@@ -233,4 +233,33 @@ public class BizOrderHeaderController extends BaseController {
 	   }
 	   return payMent;
     }
+
+//    用于客户专员页面-订单管理列表中的待审核验证
+	@ResponseBody
+	@RequiresPermissions("biz:order:bizOrderHeader:edit")
+	@RequestMapping(value = "Commissioner")
+	public String Commissioner(BizOrderHeader bizOrderHeader, Integer objJsp, Model model, RedirectAttributes redirectAttributes) {
+		String commis="comError";
+		try {
+			if(bizOrderHeader.getId()!=null){
+				BizOrderHeader bh = bizOrderHeaderService.get(bizOrderHeader);
+				if(bh!=null){
+					if(objJsp==OrderHeaderBizStatusEnum.SUPPLYING.getState()){
+						bh.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());//15供货中
+						bizOrderHeaderService.saveOrderHeader(bh);//保存状态
+						commis="ok";
+					}else if(objJsp==OrderHeaderBizStatusEnum.UNAPPROVE.getState()){
+						bh.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());//45审核失败
+						bizOrderHeaderService.saveOrderHeader(bh);//保存状态
+						commis="ok";
+					}
+				}
+			}
+		}catch (Exception e){
+			commis="comError";
+			e.printStackTrace();
+		}
+		return commis;
+	}
+
 }

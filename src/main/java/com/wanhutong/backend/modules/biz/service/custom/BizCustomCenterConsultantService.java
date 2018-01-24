@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,8 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private SystemService systemService;
 
 	public BizCustomCenterConsultant get(Integer id) {
 		return super.get(id);
@@ -48,6 +51,11 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 			if(bcc!=null){
 //				System.out.println("  数据库已有相同采购商—不做操作 ");
 			}else{
+				Office customs = bizCustomCenterConsultant.getCustoms();
+				Office centers = bizCustomCenterConsultant.getCenters();
+				bizCustomCenterConsultant.setCustoms(officeService.get(customs));
+				bizCustomCenterConsultant.setCenters(officeService.get(centers));
+				bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
 				super.save(bizCustomCenterConsultant);
 			}
 	}

@@ -8,6 +8,8 @@
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
 		so.name as "customer.name",
+		c.receiver as "bizLocation.receiver",
+		c.phone as "bizLocation.phone",
 		c.province_id as "bizLocation.province.id",
 		province.name as "bizLocation.province.name",
 		c.city_id as "bizLocation.city.id",
@@ -101,6 +103,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		ORDER BY updateDate DESC
 	</select>
 	
 	<select id="findAllList" resultType="BizOrderHeader">
@@ -118,6 +121,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		ORDER BY updateDate DESC
 	</select>
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">

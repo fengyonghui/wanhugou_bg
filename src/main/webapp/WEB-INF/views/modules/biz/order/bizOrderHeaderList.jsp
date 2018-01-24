@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -18,12 +19,18 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
+		<c:if test="${bizOrderHeader.flag=='check_pending'}">
+			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a></li>
+		</c:if>
+		<c:if test="${empty bizOrderHeader.flag}">
 		<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
+		</c:if>
 		<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<form:hidden path="consultantId"/>
 		<ul class="ul-form">
 			<li><label>订单编号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -73,9 +80,16 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="orderHeader">
 			<tr>
-				<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">
-					${orderHeader.orderNum}
-				</a></td>
+				<td>
+					<c:if test="${bizOrderHeader.flag=='check_pending'}">
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
+								${orderHeader.orderNum}</a>
+					</c:if>
+					<c:if test="${empty bizOrderHeader.flag}">
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">
+								${orderHeader.orderNum}</a>
+					</c:if>
+				</td>
 				<%--<td>--%>
 					<%--${fns:getDictLabel(bizOrderHeader.orderType, 'biz_order_type', '未知状态')}--%>
 				<%--</td>--%>
@@ -129,14 +143,24 @@
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
 					<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
-						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}">待审核</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
+							<c:if test="${orderHeader.bizStatus!=OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus!=OrderHeaderBizStatusEnum.UNAPPROVE.state}">
+								待审核
+							</c:if>
+							<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
+								审核成功
+							</c:if>
+							<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.UNAPPROVE.state}">
+								审核失败
+							</c:if>
+						</a>
 					</c:when>
 					<c:otherwise>
 						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||
 									orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight!=orderHeader.receiveTotal}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>
-						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">查看详情</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
 						<c:if test="${orderHeader.bizStatus==18 || orderHeader.bizStatus==19 || orderHeader.bizStatus==17|| orderHeader.bizStatus==16 ||
 						  orderHeader.bizStatus==15 || orderHeader.bizStatus==10 || orderHeader.bizStatus==5 || orderHeader.bizStatus==0}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>

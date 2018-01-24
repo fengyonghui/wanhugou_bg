@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 
@@ -43,6 +44,11 @@
              $("#city").empty();
              $("#region").empty();
              $("#address").empty();
+             <%--交货地址--%>
+            $("#jhprovince").empty();
+            $("#jhcity").empty();
+            $("#jhregion").empty();
+            $("#jhaddress").empty();
             $.ajax({
                 type:"post",
                 url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
@@ -67,12 +73,25 @@
                                 var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
                                 $("#region").append(option4);
                                 $("#address").val(data.bizLocation.address);
+                                <%--交货地址--%>
+                                var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);
+                                $("#jhprovince").append(option2);
+                                var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);
+                                $("#jhcity").append(option3);
+                                var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
+                                $("#jhregion").append(option4);
+                                $("#jhaddress").val(data.bizLocation.address);
                              <%--}--%>
                        //当省份的数据加载完毕之后
                        $("#province").change();
                        $("#city").change();
                        $("#region").change();
                        $("#address").change();
+                       <%--交货地址--%>
+                        $("#jhprovince").change();
+                        $("#jhcity").change();
+                        $("#jhregion").change();
+                        $("#jhaddress").change();
                     }
                 }
             });
@@ -138,19 +157,65 @@
                 }
             });
         }
-
-        function checkPending(obj) {
+ </script>
+<script type="text/javascript">
+    function checkPending(obj) {
+        if(obj==${OrderHeaderBizStatusEnum.SUPPLYING.state}){ <%--15同意发货--%>
             $("#id").val();
-        }
+            $.ajax({
+               type:"post",
+               url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
+               data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}",
+               success:function(commis){
+                    if(commis=="ok"){
+                        alert(" 同意发货 ");
+                         window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                    }else{
+                        alert(" 发货失败 ");
+                    }
+               }
+            });
+        }else if(obj==${OrderHeaderBizStatusEnum.UNAPPROVE.state}){ <%--45不同意发货--%>
+            $.ajax({
+               type:"post",
+               url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
+               data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.UNAPPROVE.state}",
+               success:function(commis){
+                    if(commis=="ok"){
+                        alert(" 不同意发货 ");
+                         window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                    }
+               }
+            });
 
+        }
+    }
     </script>
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
-    <li class="active"><a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">订单信息<shiro:hasPermission
-            name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
-            name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a></li>
+    <c:if test="${bizOrderHeader.flag=='check_pending'}">
+        <li><a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a></li>
+    </c:if>
+    <c:if test="${empty bizOrderHeader.flag}">
+        <li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
+    </c:if>
+    <li class="active">
+        <c:if test="${entity.orderNoEditable eq 'editable'}">
+            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=${entity.orderNoEditable}">订单信息支付</a>
+        </c:if>
+        <c:if test="${entity.orderDetails eq 'details'}">
+            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderDetails=${entity.orderDetails}">订单信息详情</a>
+        </c:if>
+        <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息审核</a>
+        </c:if>
+        <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">订单信息<shiro:hasPermission
+                    name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
+                    name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>
+        </c:if>
+    </li>
 </ul>
 <br/>
 <form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post"
@@ -182,7 +247,7 @@
     <div class="control-group">
         <label class="control-label">采购商名称：</label>
         <div class="controls">
-            <c:if test="${not empty entity.orderNoEditable && entity.orderNoEditable eq 'editable'}">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <sys:treeselect id="office" name="customer.id" disabled="disabled" value="${entity.customer.id}"
                                 labelName="customer.name"
                                 labelValue="${entity.customer.name}" notAllowSelectRoot="true"
@@ -190,7 +255,7 @@
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
             </c:if>
-            <c:if test="${empty entity.orderNoEditable}">
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}" labelName="customer.name"
                                 labelValue="${entity.customer.name}" notAllowSelectRoot="true"
                                 notAllowSelectParent="true"
@@ -218,10 +283,10 @@
     <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">
-            <c:if test="${not empty entity.orderNoEditable && entity.orderNoEditable eq 'editable'}">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <form:input path="freight" htmlEscape="false" readOnly="true" class="input-xlarge required"/>
             </c:if>
-            <c:if test="${empty entity.orderNoEditable}">
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
             </c:if>
             <span class="help-inline"><font color="red">*</font> </span>
@@ -269,7 +334,7 @@
     <div class="control-group" id="add1">
         <label class="control-label">收货地址；</label>
         <div class="controls">
-            <c:if test="${not empty entity.orderNoEditable && entity.orderNoEditable eq 'editable'}">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <select id="province" class="input-medium" name="bizLocation.province.id" disabled="disabled"
                         style="width:150px;text-align: center;">
                     <option value="-1">—— 省 ——</option>
@@ -283,7 +348,7 @@
                     <option value="-1">—— 区 ——</option>
                 </select>
             </c:if>
-            <c:if test="${empty entity.orderNoEditable}">
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <select id="province" class="input-medium" name="bizLocation.province.id"
                         style="width:150px;text-align: center;">
                     <option value="-1">—— 省 ——</option>
@@ -310,43 +375,51 @@
             <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
-    <div class="control-group" id="add3">
-        <label class="control-label">详细地址；</label>
-        <div class="controls">
-            <input type="text" id="address" name="bizLocation.address" htmlEscape="false"
-                   class="input-xlarge required"/>
-            <span class="help-inline"><font color="red">*</font> </span>
+    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+        <div class="control-group" id="add3">
+            <label class="control-label">详细地址；</label>
+            <div class="controls">
+                <input type="text" id="address" name="bizLocation.address" htmlEscape="false" readOnly="true"
+                       class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
         </div>
-    </div>
-    <c:if test="${not empty entity.orderNoEditable && entity.orderNoEditable eq 'editable'}">
+    </c:if>
+    <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+        <div class="control-group" id="add3">
+            <label class="control-label">详细地址；</label>
+            <div class="controls">
+                <input type="text" id="address" name="bizLocation.address" htmlEscape="false"
+                       class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font> </span>
+            </div>
+        </div>
+    </c:if>
+
+    <c:if test="${entity.orderNoEditable eq 'editable' && empty bizOrderHeader.flag && empty entity.orderDetails}">
         <div class="form-actions">
             <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                 <input type="text" id="payMentOne" placeholder="请输入支付金额">
                 <input class="btn btn-primary" id="btnOrderButton" onclick="btnOrder();" type="button" value="支付"/>
                 待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>，
             </shiro:hasPermission>
-                <span class="help-inline">已经支付：<font color="red">${entity.receiveTotal}</font></span>
+            <span class="help-inline">已经支付：<font color="red">${entity.receiveTotal}</font></span>
         </div>
     </c:if>
-    <%--<c:if test="${empty entity.orderNoEditable}">--%>
-        <%--<div class="form-actions">--%>
-            <%--<span class="help-inline">已经支付：<font color="red">${entity.receiveTotal}</font></span>--%>
-        <%--</div>--%>
-    <%--</c:if>--%>
     <c:choose>
-        <c:when test="${entity.flag=='check_pending'}">
+        <c:when test="${bizOrderHeader.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
                 <label class="control-label">交货地址；</label>
                 <div class="controls">
-                    <select id="jhprovince" class="input-medium" name="bizLocation.province.id"
+                    <select id="jhprovince" class="input-medium" name="bizLocation.province.id" disabled="disabled"
                             style="width:150px;text-align: center;">
                         <option value="-1">—— 省 ——</option>
                     </select>
-                    <select id="jhcity" class="input-medium" name="bizLocation.city.id"
+                    <select id="jhcity" class="input-medium" name="bizLocation.city.id" disabled="disabled"
                             style="width:150px;text-align: center;">
                         <option value="-1">—— 市 ——</option>
                     </select>
-                    <select id="jhregion" class="input-medium" name="bizLocation.region.id"
+                    <select id="jhregion" class="input-medium" name="bizLocation.region.id" disabled="disabled"
                             style="width:150px;text-align: center;">
                         <option value="-1">—— 区 ——</option>
                     </select>
@@ -372,6 +445,7 @@
                     <span class="help-inline"><font color="red">*</font></span>
                 </div>
             </div>
+
             <div class="form-actions">
                 <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                     <input class="btn btn-primary" type="button"
@@ -382,7 +456,7 @@
             </div>
         </c:when>
         <c:otherwise>
-            <c:if test="${empty entity.orderNoEditable}">
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <div class="form-actions">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit"
                                                                                      class="btn btn-primary"
@@ -465,7 +539,7 @@
 </table>
 <c:if test="${empty entity.orderNoEditable}">
     <div class="form-actions">
-        <c:if test="${bizOrderHeader.id !=null && bizOrderHeader.id!='' }">
+        <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
             <shiro:hasPermission name="biz:order:bizOrderDetail:edit"><input type="button"
                                                                              onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${bizOrderHeader.oneOrder}';"
                                                                              class="btn btn-primary"

@@ -247,4 +247,5 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     public void setOrderDetails(String orderDetails) {
         this.orderDetails = orderDetails;
     }
+
 }

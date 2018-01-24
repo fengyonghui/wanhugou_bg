@@ -22,14 +22,15 @@
 		<li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${bcUser.consultants.id}">采购商添加</a></li>
 		<%--?centers.id=${page.centers.id}&consultants.id=${page.consultants.id} <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit"><li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/form">客户专员添加</a></li></shiro:hasPermission>--%>
 	</ul>
-	<%--<form:form id="searchForm" modelAttribute="bizCustomCenterConsultant" action="${ctx}/biz/custom/bizCustomCenterConsultant/" method="post" class="breadcrumb form-search">--%>
-		<%--<ul class="ul-form">--%>
-			<%--<li><label>采购商名称：</label>--%>
-				<%--<sys:treeselect id="customs" name="customs.id" value="${entity.customs.id}" labelName="customs.name"--%>
-								<%--labelValue="${entity.customs.name}" notAllowSelectRoot="true" notAllowSelectParent="true"--%>
-								<%--title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-medium required"--%>
-								<%--allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>--%>
-			<%--</li>--%>
+	<form:form id="searchForm" modelAttribute="bizCustomCenterConsultant" action="${ctx}/biz/custom/bizCustomCenterConsultant/" method="post" class="breadcrumb form-search">
+		<ul class="ul-form">
+			<li><label>采购商名称：</label>
+				<sys:treeselect id="customs" name="customs.id" value="${entity.customs.id}" labelName="customs.name"
+								labelValue="${entity.customs.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-medium required"
+								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
+					<input type="hidden" name="consultants.id" value="${bcUser.consultants.id}">
+			</li>
 			<%--<li><label>采购中心：</label>--%>
 				<%--<sys:treeselect id="centers" name="centers.id" value="${entity.centers.id}" labelName="centers.name"--%>
 								<%--labelValue="${entity.centers.name}" notAllowSelectRoot="true" notAllowSelectParent="true"--%>
@@ -42,10 +43,10 @@
 								<%--&lt;%&ndash;title="客户专员" url="/sys/office/queryTreeList?type=1" cssClass="input-medium required"&ndash;%&gt;--%>
 								<%--&lt;%&ndash;allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>&ndash;%&gt;--%>
 			<%--&lt;%&ndash;</li>&ndash;%&gt;--%>
-			<%--<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>--%>
-			<%--<li class="clearfix"></li>--%>
-		<%--</ul>--%>
-	<%--</form:form>--%>
+			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="clearfix"></li>
+		</ul>
+	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
