@@ -41,8 +41,6 @@
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
 		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.id
 		LEFT JOIN sys_office so on so.id =ccs.center_id
-
-
     </sql>
 	
 	<select id="get" resultType="Office">

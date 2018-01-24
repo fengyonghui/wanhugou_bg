@@ -102,6 +102,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	}
 
 	public List<Office> queryList(Office office){
+		User user = UserUtils.getUser();
+		office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 		return officeDao.queryList(office);
 	}
 
