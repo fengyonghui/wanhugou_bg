@@ -175,6 +175,7 @@
 					<if test="dbName == 'mysql'">CONCAT('%,', #{company.id}, ',%'))</if>
 		</if>
 
+		<!-- 是否是客户专员 -->
 		<if test="company != null and company.type != null and company.type != ''">
 			AND c.type = #{company.type}
 		</if>

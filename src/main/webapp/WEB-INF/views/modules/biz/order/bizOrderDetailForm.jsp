@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
@@ -144,7 +145,8 @@
                     <th>货架名称</th>
                     <th>商品名称</th>
                     <th>商品编码</th>
-                    <c:if test="${orderH.bizStatus==15}">
+                    <th>商品属性</th>
+                    <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <th>已发货数量</th>
                     </c:if>
                     <c:if test="${bizOrderDetail.id==null}">
@@ -163,7 +165,8 @@
                                 <td>${orderList.shelfInfo.opShelfInfo.name}</td>
                                 <td>${orderList.skuName}</td>
                                 <td>${orderList.partNo}</td>
-                                <c:if test="${orderH.bizStatus==15}">
+                                <td></td>
+                                <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
                                     <td>${orderList.sentQty}</td>
                                 </c:if>
                                 <c:if test="${bizOrderDetail.id==null}">
@@ -171,7 +174,8 @@
                                     <td>${orderList.shelfInfo.salePrice}</td>
                                 </c:if>
                                 <td>${orderList.ordQty}</td>
-                                <td><a href="${ctx}/biz/order/bizOrderDetail/delete?id=${orderList.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">
+                                <td>
+                                    <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${orderList.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">
                                     删除
                                 </a></td>
                             </tr>

@@ -25,9 +25,12 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>机构名称：</label>
-				<sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}" labelName="office.name" labelValue="${sysOfficeAddress.office.name}"
-					title="名称" url="/sys/office/treeData?type=2" cssClass="input-xlarge" allowClear="true" notAllowSelectParent="true"/>
+			<li><label>采购商名称：</label>
+				<sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}"  labelName="office.name"
+								labelValue="${sysOfficeAddress.office.name}" notAllowSelectParent="true"
+								title="采购商"  url="/sys/office/queryTreeList?type=6"
+								cssClass="input-xlarge required"
+								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 			</li>
 			<%--<li><label>地址类型：</label>
                  <form:select path="type" class="input-medium required">

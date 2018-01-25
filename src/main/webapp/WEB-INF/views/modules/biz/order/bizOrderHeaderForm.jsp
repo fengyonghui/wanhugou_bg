@@ -113,8 +113,10 @@
             success:function(data){
                 if(data=="ok"){
                     alert("支付成功！");
+                    window.location.href="${ctx}/biz/order/bizOrderHeader/";
                 }else{
                     alert(" 余额不足，支付失败！");
+                    window.location.reload();
                 }
             }
         });
@@ -396,7 +398,6 @@
             </div>
         </div>
     </c:if>
-
     <c:if test="${entity.orderNoEditable eq 'editable' && empty bizOrderHeader.flag && empty entity.orderDetails}">
         <div class="form-actions">
             <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
@@ -479,15 +480,20 @@
         <th>详情行号</th>
         <th>货架名称</th>
         <th>商品名称</th>
-        <th>材质</th>
-        <th>颜色</th>
-        <th>规格</th>
+        <th>商品属性</th>
+        <%--<th>材质</th>--%>
+        <%--<th>颜色</th>--%>
+        <%--<th>规格</th>--%>
         <th>商品编号</th>
         <th>商品单价</th>
         <th>采购数量</th>
         <%--<th>发货数量</th>--%>
         <th>创建时间</th>
-        <th>操作</th>
+        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <th>操作</th>
+            </c:if>
+        </shiro:hasPermission>
     </tr>
     </thead>
     <tbody>
@@ -500,18 +506,21 @@
                     ${bizOrderDetail.shelfInfo.opShelfInfo.name}
             </td>
             <td>
-                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">
-                        ${bizOrderDetail.skuName}
-                </a></td>
-            <td>
-                    ${bizOrderDetail.quality}
+                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">
+                </c:if>
+                    ${bizOrderDetail.skuName}</a>
             </td>
-            <td>
-                    ${bizOrderDetail.color}
-            </td>
-            <td>
-                    ${bizOrderDetail.standard}
-            </td>
+            <%--<td>--%>
+                    <%--${bizOrderDetail.quality}--%>
+            <%--</td>--%>
+            <%--<td>--%>
+                    <%--${bizOrderDetail.color}--%>
+            <%--</td>--%>
+            <%--<td>--%>
+                    <%--${bizOrderDetail.standard}--%>
+            <%--</td>--%>
+            <td></td>
             <td>
                     ${bizOrderDetail.partNo}
             </td>
@@ -528,11 +537,13 @@
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </td>
             <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-                <td>
-                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">修改</a>
-                    <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1"
-                       onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
-                </td>
+                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                    <td>
+                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">修改</a>
+                        <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1"
+                           onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                    </td>
+                </c:if>
             </shiro:hasPermission>
         </tr>
     </c:forEach>

@@ -167,18 +167,18 @@
 						</a>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||
+						<c:if test="${orderHeader.bizStatus==0 && orderHeader.bizStatus==5 ||
 									orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight!=orderHeader.receiveTotal}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
-						<c:if test="${orderHeader.bizStatus==18 || orderHeader.bizStatus==19 || orderHeader.bizStatus==17|| orderHeader.bizStatus==16 ||
-						  orderHeader.bizStatus==15 || orderHeader.bizStatus==10 || orderHeader.bizStatus==5 || orderHeader.bizStatus==0}">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
-							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
-						</c:if>
-						<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">修改</a>--%>
-						<%--<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${bizOrderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>--%>
+						<%--<c:if test="${orderHeader.bizStatus==18 || orderHeader.bizStatus==19 || orderHeader.bizStatus==17|| orderHeader.bizStatus==16 ||--%>
+						  <%--orderHeader.bizStatus==15 || orderHeader.bizStatus==10 || orderHeader.bizStatus==5 || orderHeader.bizStatus==0}">--%>
+							<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>--%>
+							<%--<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>--%>
+						<%--</c:if>--%>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 					</c:otherwise>
 					</c:choose>
 				</td></shiro:hasPermission>
