@@ -150,10 +150,10 @@ public class BizOrderHeaderController extends BaseController {
 	
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")
 	@RequestMapping(value = "delete")
-	public String delete(BizOrderHeader bizOrderHeader, RedirectAttributes redirectAttributes) {
+	public String delete(BizOrderHeader bizOrderHeader,Model model ,RedirectAttributes redirectAttributes) {
 		bizOrderHeaderService.delete(bizOrderHeader);
 		addMessage(redirectAttributes, "删除订单信息成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage&orderNum="+bizOrderHeader.getOrderNum();
 	}
 	
 	@ResponseBody
