@@ -127,6 +127,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Transactional(readOnly = false)
     public void delete(BizOrderHeader bizOrderHeader) {
+
         super.delete(bizOrderHeader);
     }
 

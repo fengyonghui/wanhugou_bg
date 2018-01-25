@@ -48,6 +48,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private String orderNoEditable;		//页面不可编辑标识符
 	private String orderDetails;		//页面不可编辑标识符2
 
+	private String orderNum2;		//用于删除订单页面传值
+
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
 	}
@@ -248,4 +250,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.orderDetails = orderDetails;
     }
 
+	public String getOrderNum2() {
+		return orderNum2;
+	}
+
+	public void setOrderNum2(String orderNum2) {
+		this.orderNum2 = orderNum2;
+	}
 }

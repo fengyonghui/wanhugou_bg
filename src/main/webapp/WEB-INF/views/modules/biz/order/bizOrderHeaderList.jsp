@@ -30,7 +30,7 @@
 	<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<input id="orderNum" name="bizOrderHeader.orderNum" type="text" value="${bizOrderHeader.orderNum}"/>
+		<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 		<form:hidden path="consultantId"/>
 		<ul class="ul-form">
 			<li><label>订单编号：</label>
