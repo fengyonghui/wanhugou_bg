@@ -78,6 +78,8 @@
 		FROM sys_office a
 		<include refid="officeJoins"/>
 		WHERE a.status = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
 		ORDER BY a.code
 	</select>
 	
