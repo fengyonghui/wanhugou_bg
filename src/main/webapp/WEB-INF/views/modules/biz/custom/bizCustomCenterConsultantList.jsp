@@ -26,7 +26,7 @@
 		<ul class="ul-form">
 			<li><label>采购商名称：</label>
 				<sys:treeselect id="customs" name="customs.id" value="${entity.customs.id}" labelName="customs.name"
-								labelValue="${entity.customs.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								labelValue="${entity.customs.name}" notAllowSelectParent="true"
 								title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-medium required"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 					<input type="hidden" name="consultants.id" value="${bcUser.consultants.id}">

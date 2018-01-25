@@ -19,13 +19,13 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<c:if test="${bizOrderHeader.flag=='check_pending'}">
+		<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
 			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a></li>
 		</c:if>
-		<c:if test="${empty bizOrderHeader.flag}">
-		<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
+		<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
+			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>
 		</c:if>
-		<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -40,12 +40,23 @@
                     <%--<form:option value="" label="请选择"/>--%>
                     <%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
                             <%--htmlEscape="false"/></form:select></li>--%>
-			<li><label>客户名称：</label>
-			     <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
-                                                labelValue="${entity.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-                                                title="客户"  url="/sys/office/queryTreeList?type=6"
-                                                cssClass="input-medium required"
-                                                allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+			<li><label>采购商名称：</label>
+				<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+					 <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
+										labelValue="${entity.customer.name}" notAllowSelectParent="true"
+										title="采购商"  url="/sys/office/queryTreeList?type=6"
+										cssClass="input-medium required"
+										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+					<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
+					<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
+				</c:if>
+				<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+					<sys:treeselect id="office" name="customer.id" value="${entity.customer.id}"  labelName="customer.name"
+									labelValue="${entity.customer.name}" notAllowSelectParent="true"
+									title="采购商"  url="/sys/office/queryTreeList?type=6"
+									cssClass="input-medium required"
+									allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+				</c:if>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<c:if test="${bizOrderHeader.flag=='check_pending'}">
@@ -62,7 +73,7 @@
 				<th>订单编号</th>
 				<%--<th>订单类型</th>--%>
 				<th>商品类型</th>
-				<th>客户名称</th>
+				<th>采购商名称</th>
 				<th>订单详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>

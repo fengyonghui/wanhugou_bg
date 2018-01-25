@@ -89,14 +89,15 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-			User user=UserUtils.getUser();
-			if("check_pending".equals(bizOrderHeader.getFlag())){
-//			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.UNPAY.getState());
-//			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-			if(user.getId()==bizOrderHeader.getConsultantId()){
-				bizOrderHeader.setConsultantId(null);
-			}
-		}
+//			客户专员跳转需要参数
+// 			User user=UserUtils.getUser();
+//			if("check_pending".equals(bizOrderHeader.getFlag())){
+////			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.UNPAY.getState());
+////			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.ALL_PAY.getState());
+//			if(user.getId()==bizOrderHeader.getConsultantId()){
+//				bizOrderHeader.setConsultantId(null);
+//			}
+//		}
 		Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
 		model.addAttribute("page", page);
 		return "modules/biz/order/bizOrderHeaderList";

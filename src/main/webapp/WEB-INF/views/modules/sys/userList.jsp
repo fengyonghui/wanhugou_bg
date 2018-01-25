@@ -39,8 +39,14 @@
 		</form>
 	</div>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/sys/user/list">用户列表</a></li>
-		<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户添加</a></li></shiro:hasPermission>
+		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
+			<li class="active"><a href="${ctx}/sys/user/list?office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户列表</a></li>
+			<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户添加</a></li></shiro:hasPermission>
+		</c:if>
+		<c:if test="${empty user.conn}">
+			<li class="active"><a href="${ctx}/sys/user/list">用户列表</a></li>
+			<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}">用户添加</a></li></shiro:hasPermission>
+		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/list" method="post" class="breadcrumb form-search ">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -49,8 +55,10 @@
 		<ul class="ul-form">
 			<li><label>归属公司：</label><sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}" 
 				title="公司" url="/sys/office/treeData?type=1" cssClass="input-small" allowClear="true"/>
-				<input type="hidden" name="company.type" value="8">
-				<input type="hidden" name="conn" value="${user.conn}"></li>
+				<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
+					<input type="hidden" name="company.type" value="8">
+					<input type="hidden" name="conn" value="${user.conn}"></li>
+				</c:if>
 			<li><label>登录名：</label><form:input path="loginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 			<li class="clearfix"></li>
 			<li><label>归属部门：</label><sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}" 

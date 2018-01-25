@@ -68,7 +68,7 @@
         <label class="control-label">采购商名称:</label>
         <div class="controls">
             <sys:treeselect id="customs" name="customs.id" value="${page.customs.id}" labelName="customs.name"
-                            labelValue="${page.customs.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+                            labelValue="${page.customs.name}" notAllowSelectParent="true"
                             title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-medium required"
                             allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
             <input type="text" name="conn" value="${user.conn}" style="display:none">
