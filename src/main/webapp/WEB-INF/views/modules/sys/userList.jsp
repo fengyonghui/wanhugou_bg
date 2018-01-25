@@ -53,12 +53,15 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<sys:tableSort id="orderBy" name="orderBy" value="${page.orderBy}" callback="page();"/>
 		<ul class="ul-form">
-			<li><label>归属公司：</label><sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}" 
+			<li><label>归属公司：</label><sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
 				title="公司" url="/sys/office/treeData?type=1" cssClass="input-small" allowClear="true"/>
 				<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 					<input type="hidden" name="company.type" value="8">
 					<input type="hidden" name="conn" value="${user.conn}"></li>
 				</c:if>
+                <c:if test="${empty user.conn}">
+                    <input type="hidden" name="company.type" value="">
+                </c:if>
 			<li><label>登录名：</label><form:input path="loginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 			<li class="clearfix"></li>
 			<li><label>归属部门：</label><sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}" 
