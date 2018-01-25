@@ -40,10 +40,13 @@
 		<form:hidden path="flag"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">机构名称：</label>
+			<label class="control-label">采购商名称：</label>
 			<div class="controls">
-                 <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.name" labelValue="${entity.office.name}"
-                        title="名称" url="/sys/office/treeData?type=2" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+				<sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
+								labelValue="${entity.office.name}" notAllowSelectParent="true"
+								title="采购商"  url="/sys/office/queryTreeList?type=6"
+								cssClass="input-xlarge required"
+								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
