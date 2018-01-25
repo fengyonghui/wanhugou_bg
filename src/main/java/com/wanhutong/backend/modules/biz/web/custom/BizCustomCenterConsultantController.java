@@ -108,7 +108,7 @@ public class BizCustomCenterConsultantController extends BaseController {
         parentOff.setId(Integer.parseInt(socID));
         off.setParent(parentOff);
         off.setType(center);
-        List<Office> officeList = officeService.queryList(off);
+        List<Office> officeList = officeService.queryCenterList(off);
         user = systemService.getUser(user.getId());
 //      Integer aaa=user.getOffice().getId();
         BizCustomCenterConsultant bc = new BizCustomCenterConsultant();

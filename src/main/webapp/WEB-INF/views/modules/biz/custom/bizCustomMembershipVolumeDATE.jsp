@@ -78,7 +78,7 @@
 		<label class="control-label">采购中心:</label>
 		<div class="controls">
 			<select name="centers.id" id="bcID" style="width: 18%" onchange="changeSelect(this.value)">
-				<option value="">==请选择采购中心==</option>
+				<option value="">请选择采购中心</option>
 				<c:forEach items="${officeList}" var="item" varStatus="vs">
 					<option value="${item.id}" <c:if test="${bcc.centers.id!=null}">selected</c:if> > ${item.name}</option>
 				</c:forEach>
@@ -93,7 +93,7 @@
 					<option value="${bcc.consultants.id}" selected = 'selected'>${bcc.consultants.name}</option>
 				</c:if>
 				<c:if test="${bcc == null || bcc.consultants.id==null}">
-					<option value="">==请选择客户专员==</option>
+					<option value="">请选择客户专员</option>
 				</c:if>
 			</select>
 		</div>

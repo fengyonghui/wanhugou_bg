@@ -65,7 +65,7 @@ public class BuyerAdviserController extends BaseController {
 		parentOff.setId(Integer.valueOf(socID));
 		off.setParent(parentOff);
 		off.setType(center);
-		List<Office> officeList = officeService.queryList(off);
+		List<Office> officeList = officeService.queryCenterList(off);
 		office = officeService.get(office.getId());
 		officeService.get(office);
 		BuyerAdviser buyerAdviser = buyerAdviserService.get(office.getId());

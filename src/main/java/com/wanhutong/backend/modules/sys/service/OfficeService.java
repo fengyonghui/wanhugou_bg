@@ -59,13 +59,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 	public List<Office> filerOffice(List<Office> offices, OfficeTypeEnum officeType){
 		Office office = new Office();
-		User user = UserUtils.getUser();
-		if(officeType.getType().equals(OfficeTypeEnum.CUSTOMER.getType())){
-			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "so", "pp"));
+			User user = UserUtils.getUser();
+			if (officeType.getType().equals(OfficeTypeEnum.CUSTOMER.getType())) {
+				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "so", "pp"));
 
-		}else {
-			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
-		}
+			} else {
+				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
+			}
 
 		office.setType(String.valueOf(officeType.ordinal()));
 
@@ -102,13 +102,17 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	}
 
 	public List<Office> queryList(Office office){
+		return officeDao.queryList(office);
+	}
+
+	public List<Office> queryCenterList(Office office) {
 		User user = UserUtils.getUser();
 		office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 		return officeDao.queryList(office);
 	}
 
 
-	@Transactional(readOnly = false)
+		@Transactional(readOnly = false)
 	public void save(Office office) {
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);

@@ -386,7 +386,7 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "queryTreeList")
-	public List<Map<String, Object>> queryTreeList(@RequestParam(required = false) String type,RedirectAttributes redirectAttributes) {
+	public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type,RedirectAttributes redirectAttributes) {
 		List<Office> list = null;
 		if(StringUtils.isNotBlank(type)){
 			list = officeService.filerOffice(null,OfficeTypeEnum.stateOf(type));
