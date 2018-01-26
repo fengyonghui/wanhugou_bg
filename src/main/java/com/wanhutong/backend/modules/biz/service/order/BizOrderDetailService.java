@@ -12,12 +12,15 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderSkuPropValue;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
@@ -54,6 +57,10 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
     private BizOpShelfSkuService bizOpShelfSkuService;
     @Autowired
     private BizSkuPropValueService bizSkuPropValueService;
+    @Autowired
+    private BizOrderSkuPropValueService bizOrderSkuPropValueService;
+    @Autowired
+    private BizProdPropValueService bizProdPropValueService;
 
     public BizOrderDetail get(Integer id) {
         return super.get(id);
@@ -97,32 +104,31 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
             BizSkuInfo sku = bizSkuInfoService.get(skuId);
 //            -------------------------------------查询材质/颜色/尺寸--------------------------------------------
             BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();//sku商品属性表
-            BizProdPropertyInfo bizProdPropertyInfo = new BizProdPropertyInfo();//属性表
-            bizProdPropertyInfo.setId(1);
+//            BizProdPropertyInfo bizProdPropertyInfo = new BizProdPropertyInfo();//属性表
+//            bizProdPropertyInfo.setId(1);
             bizSkuPropValue.setSkuInfo(sku);//sku_Id
             bizSkuPropValue.setSource("sys");// 系统属性级别，4层级别：系统属性/分类属性/产品属性spu/商品属性sku。
-            bizSkuPropValue.setProdPropertyInfo(bizProdPropertyInfo);//属性名 1材质Quality，2颜色Color，3尺寸Standard
+//            bizSkuPropValue.setProdPropertyInfo(bizProdPropertyInfo);//属性名 1材质Quality，2颜色Color，3尺寸Standard
             List<BizSkuPropValue> skuValueList = bizSkuPropValueService.findList(bizSkuPropValue);
 
-            BizSkuPropValue bizSkuPropValueTwo = new BizSkuPropValue();//sku商品属性表
-            BizProdPropertyInfo bizProdPropertyInfoTwo = new BizProdPropertyInfo();//属性表
-            bizProdPropertyInfoTwo.setId(2);
-            bizSkuPropValueTwo.setSkuInfo(sku);//sku_Id
-            bizSkuPropValueTwo.setSource("sys");// 系统属性级别，4层级别：系统属性/分类属性/产品属性spu/商品属性sku。
-            bizSkuPropValueTwo.setProdPropertyInfo(bizProdPropertyInfoTwo);//属性名 1材质Quality，2颜色Color，3尺寸Standard
-            List<BizSkuPropValue> skuValueListTwo = bizSkuPropValueService.findList(bizSkuPropValueTwo);
-
-            BizSkuPropValue bizSkuPropValueThis = new BizSkuPropValue();//sku商品属性表
-            BizProdPropertyInfo bizProdPropertyInfoThis = new BizProdPropertyInfo();//属性表
-            bizProdPropertyInfoThis.setId(3);
-            bizSkuPropValueThis.setSkuInfo(sku);//sku_Id
-            bizSkuPropValueThis.setSource("sys");// 系统属性级别，4层级别：系统属性/分类属性/产品属性spu/商品属性sku。
-            bizSkuPropValueThis.setProdPropertyInfo(bizProdPropertyInfoThis);//属性名 1材质Quality，2颜色Color，3尺寸Standard
-            List<BizSkuPropValue> skuValueListThis = bizSkuPropValueService.findList(bizSkuPropValueThis);
-
+//            BizSkuPropValue bizSkuPropValueTwo = new BizSkuPropValue();//sku商品属性表
+//            BizProdPropertyInfo bizProdPropertyInfoTwo = new BizProdPropertyInfo();//属性表
+//            bizProdPropertyInfoTwo.setId(2);
+//            bizSkuPropValueTwo.setSkuInfo(sku);//sku_Id
+//            bizSkuPropValueTwo.setSource("sys");// 系统属性级别，4层级别：系统属性/分类属性/产品属性spu/商品属性sku。
+//            bizSkuPropValueTwo.setProdPropertyInfo(bizProdPropertyInfoTwo);//属性名 1材质Quality，2颜色Color，3尺寸Standard
+//            List<BizSkuPropValue> skuValueListTwo = bizSkuPropValueService.findList(bizSkuPropValueTwo);
+//
+//            BizSkuPropValue bizSkuPropValueThis = new BizSkuPropValue();//sku商品属性表
+//            BizProdPropertyInfo bizProdPropertyInfoThis = new BizProdPropertyInfo();//属性表
+//            bizProdPropertyInfoThis.setId(3);
+//            bizSkuPropValueThis.setSkuInfo(sku);//sku_Id
+//            bizSkuPropValueThis.setSource("sys");// 系统属性级别，4层级别：系统属性/分类属性/产品属性spu/商品属性sku。
+//            bizSkuPropValueThis.setProdPropertyInfo(bizProdPropertyInfoThis);//属性名 1材质Quality，2颜色Color，3尺寸Standard
+//            List<BizSkuPropValue> skuValueListThis = bizSkuPropValueService.findList(bizSkuPropValueThis);
             BizOpShelfSku opShelfSku =bizOpShelfSkuService.get(shelfSkuId);
             Integer type = sku.getSkuType();
-            if (bizOrderDetail.getId() == null) {//点击修改时不新增订单
+            if(bizOrderDetail.getId()==null){
                 if (type == BizOrderDiscount.FIRST_ORDER.getOneOr() ) {//3 非专营
                     System.out.println(" --进了非专营订单-- ");
                     orderHeaderNew.setOrderNum(orderNum);//新建订单编号
@@ -142,20 +148,32 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                     orderDetailNew.setUnitPrice(sku.getBasePrice());//单价
                     orderDetailNew.setOrdQty(ordQty);//采购数量
                     orderDetailNew.setSentQty(0);//发货数量默认0
-                    if(skuValueList!=null && skuValueList.size()>0){
-                        orderDetailNew.setQuality(skuValueList.get(0).getPropValue());//材质
-                    }else{
-                        orderDetailNew.setQuality("无");
-                    }if(skuValueListTwo!=null && skuValueListTwo.size()>0){
-                        orderDetailNew.setColor(skuValueListTwo.get(0).getPropValue());//颜色
-                    }else{
-                        orderDetailNew.setColor("无");
-                    }if(skuValueListThis!=null && skuValueListThis.size()>0){
-                        orderDetailNew.setStandard(skuValueListThis.get(0).getPropValue());//规格
-                    }else{
-                        orderDetailNew.setStandard("无");
-                    }
                     super.save(orderDetailNew);//把商品放入新建订单中
+                    if(bizOrderDetail.getId()!=null){
+                        BizOrderSkuPropValue bizOrderSkuPropValue = new BizOrderSkuPropValue();//订单商品属性表
+    //                    BizProdPropValue bizProdPropValue = new BizProdPropValue();//spu商品属性
+                        BizOrderDetail detailProp = new BizOrderDetail();
+                        detailProp.setId(bizOrderDetail.getId());
+                        bizOrderSkuPropValue.setOrderDetails(detailProp);
+    //                    bizProdPropValue.setId(skuValueList.get(0).getProdPropValue().getId());
+                        bizOrderSkuPropValue.setPropInfos(skuValueList.get(0).getProdPropValue());//spu属性
+                        bizOrderSkuPropValue.setPropName(skuValueList.get(0).getPropName());//sku属性
+                        bizOrderSkuPropValue.setPropValue(skuValueList.get(0).getPropValue());//sku属性值
+                        bizOrderSkuPropValueService.save(bizOrderSkuPropValue);//保存到订单详情商品属性表
+                    }
+    //                    if(skuValueList!=null && skuValueList.size()>0){
+    //                        orderDetailNew.setQuality(skuValueList.get(0).getPropValue());//材质
+    //                    }else{
+    //                        orderDetailNew.setQuality("无");
+    //                    }if(skuValueListTwo!=null && skuValueListTwo.size()>0){
+    //                        orderDetailNew.setColor(skuValueListTwo.get(0).getPropValue());//颜色
+    //                    }else{
+    //                        orderDetailNew.setColor("无");
+    //                    }if(skuValueListThis!=null && skuValueListThis.size()>0){
+    //                        orderDetailNew.setStandard(skuValueListThis.get(0).getPropValue());//规格
+    //                    }else{
+    //                        orderDetailNew.setStandard("无");
+    //                    }
                 }else if (type == BizOrderDiscount.TWO_ORDER.getOneOr() || type == BizOrderDiscount.THIS_ORDER.getOneOr()) {//1 专营 2 定制商品
                     System.out.println(" --进了专营订单-- ");
                     bb.setOrderNum(bb.getOrderNum());//不新建
@@ -171,23 +189,34 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                     bizOrderDetail.setUnitPrice(sku.getBasePrice());//单价
                     bizOrderDetail.setOrdQty(ordQty);//采购数量
                     bizOrderDetail.setSentQty(0);//发货数量默认0
-                    if(skuValueList!=null && skuValueList.size()>0){
-                        bizOrderDetail.setQuality(skuValueList.get(0).getPropValue());//材质
-                    }else{
-                        bizOrderDetail.setQuality("无");
-                    }if(skuValueListTwo!=null && skuValueListTwo.size()>0){
-                        bizOrderDetail.setColor(skuValueListTwo.get(0).getPropValue());//颜色
-                    }else{
-                        bizOrderDetail.setColor("无");
-                    }if(skuValueListThis!=null && skuValueListThis.size()>0){
-                        bizOrderDetail.setStandard(skuValueListThis.get(0).getPropValue());//规格
-                    }else{
-                        bizOrderDetail.setStandard("无");
-                    }
                     super.save(bizOrderDetail);
+                    if(bizOrderDetail.getId()!=null) {
+                        BizOrderSkuPropValue bizOrderSkuPropValueTwo = new BizOrderSkuPropValue();//订单商品属性表
+//                    BizProdPropValue bizProdPropValueTwo = new BizProdPropValue();//spu商品属性
+                        BizOrderDetail detailPropTwo = new BizOrderDetail();
+                        detailPropTwo.setId(bizOrderDetail.getId());
+                        bizOrderSkuPropValueTwo.setOrderDetails(detailPropTwo);
+//                    bizProdPropValueTwo.setId(skuValueList.get(0).getProdPropValue().getId());
+                        bizOrderSkuPropValueTwo.setPropInfos(skuValueList.get(0).getProdPropValue());//spu属性
+                        bizOrderSkuPropValueTwo.setPropName(skuValueList.get(0).getPropName());//sku属性
+                        bizOrderSkuPropValueTwo.setPropValue(skuValueList.get(0).getPropValue());//sku属性值
+                        bizOrderSkuPropValueService.save(bizOrderSkuPropValueTwo);//保存到订单详情商品属性表
+                    }
                 } else {
                     System.out.println(" 未知 ");
                 }
+            }else{
+                BizOrderSkuPropValue bizOrderSkuPropValueThis = new BizOrderSkuPropValue();//订单商品属性表
+//                BizProdPropValue bizProdPropValueThis = new BizProdPropValue();//spu商品属性
+                BizOrderDetail detailPropThis = new BizOrderDetail();
+                detailPropThis.setId(bizOrderDetail.getId());
+                bizOrderSkuPropValueThis.setOrderDetails(detailPropThis);
+//                bizProdPropValueThis.setId(skuValueList.get(0).getProdPropValue().getId());
+                bizOrderSkuPropValueThis.setPropInfos(skuValueList.get(0).getProdPropValue());//spu属性
+                bizOrderSkuPropValueThis.setPropName(skuValueList.get(0).getPropName());//sku属性
+                bizOrderSkuPropValueThis.setPropValue(skuValueList.get(0).getPropValue());//sku属性值
+                bizOrderSkuPropValueService.save(bizOrderSkuPropValueThis);//保存到订单详情商品属性表
+                super.save(bizOrderDetail);
             }
         }
 //		------------------------计算订单详情总价----------------------
@@ -198,12 +227,12 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
         Double Money005 = orderHeaderMoney * BizOrderDiscount.NON_SELF_SUPPORT.getCalcs();//0.05
         for (BizOrderHeader order : list) {
             Double price = bizOrderDetail.getUnitPrice();//商品单价
-            if(price!=null){
-                bizOrderDetail.setUnitPrice(0.0);
-            }
             Integer ordQty = bizOrderDetail.getOrdQty();//采购数量
-            if(ordQty!=null){
-                bizOrderDetail.setOrdQty(0);
+            if(price==null){
+                price=0.0;
+            }
+            if(ordQty==null){
+                ordQty=0;
             }
             sum += price * ordQty;
             if (oneOrder == "firstOrder") {//首单标记判断

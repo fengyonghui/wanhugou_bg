@@ -74,11 +74,16 @@ public class BizOrderHeaderController extends BaseController {
 			for (BizOrderDetail detail : list) {
 				Double price = detail.getUnitPrice();//商品单价
 				Integer ordQty = detail.getOrdQty();//采购数量
+				if(price==null){
+					price=0.0;
+				}
+				if(ordQty==null){
+					ordQty=0;
+				}
 				sum+=price*ordQty;
-				entity.setTotalDetail(sum);
 			}
+			entity.setTotalDetail(sum);
 			entity.setOrderDetailList(list);
-//			bizOrderHeaderService.save(entity);
 		}
 		if (entity == null){
 			entity = new BizOrderHeader();
@@ -140,6 +145,22 @@ public class BizOrderHeaderController extends BaseController {
 		if(bizOrderHeader.getPlatformInfo()==null){
 			bizOrderHeader.getPlatformInfo().setId(1);
 		}
+		Double sum = 0.0;
+		BizOrderDetail bizOrderDetail = new BizOrderDetail();
+		bizOrderDetail.setOrderHeader(bizOrderHeader);
+		List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
+		for (BizOrderDetail detail : list) {
+			Double price = detail.getUnitPrice();//商品单价
+			Integer ordQty = detail.getOrdQty();//采购数量
+			if(price==null){
+				price=0.0;
+			}
+			if(ordQty==null){
+				ordQty=0;
+			}
+			sum+=price*ordQty;
+		}
+		bizOrderHeader.setTotalDetail(sum);
 		bizOrderHeaderService.save(bizOrderHeader);
 		addMessage(redirectAttributes, "保存订单信息成功");
 		Integer orId = bizOrderHeader.getId();
@@ -151,7 +172,6 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizOrderHeader bizOrderHeader,Model model ,RedirectAttributes redirectAttributes) {
-		System.out.println(bizOrderHeader+"----");
 		bizOrderHeaderService.delete(bizOrderHeader);
 		addMessage(redirectAttributes, "删除订单信息成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage&orderNum="+bizOrderHeader.getOrderNum();

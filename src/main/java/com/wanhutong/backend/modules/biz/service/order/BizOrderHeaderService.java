@@ -73,14 +73,24 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         if(bizOrderHeader.getBizType()==null){
             bizOrderHeader.setBizType(1);//订单商品类型默认 2非专营      ----1专营
         }
-        BizOrderAddress bizLocation = bizOrderHeader.getBizLocation();
-        if (bizLocation.getRegion() == null) {
-            bizLocation.setRegion(new SysRegion());
-        }
         if(bizOrderHeader.getOrderType()==null){
             bizOrderHeader.setOrderType(1);//订单类型，默认选中  1普通订单
         }
-        bizOrderAddressService.save(bizLocation);
+        BizOrderAddress bizLocation = bizOrderHeader.getBizLocation();
+//        BizOrderAddress bizOrderAddress = new BizOrderAddress();//加这个条件，每修改一次insert一个地址
+          if(bizLocation.getId() !=null){
+//              bizLocation.setProvince(bizLocation.getProvince());
+//              bizLocation.setCity(bizLocation.getCity());
+            if (bizLocation.getRegion() == null) {
+                bizLocation.setRegion(new SysRegion());
+            }
+//              bizLocation.setRegion(bizLocation.getRegion());
+//              bizLocation.setAddress(bizLocation.getAddress());
+//              bizLocation.setReceiver(bizLocation.getReceiver());
+//              bizLocation.setPhone(bizLocation.getPhone());
+//              bizLocation.setId(bizLocation.getId());
+            bizOrderAddressService.save(bizLocation);
+        }
         bizOrderHeader.setOrderType(1);
         String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), bizOrderHeader.getCustomer().getId());
         if(bizOrderHeader.getId()==null){
@@ -116,8 +126,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }else{
             System.out.println("--不是首单--");
         }
-
-
     }
 
     @Transactional(readOnly = false)

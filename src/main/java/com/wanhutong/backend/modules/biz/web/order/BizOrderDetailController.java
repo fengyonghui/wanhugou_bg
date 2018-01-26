@@ -13,12 +13,14 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderSkuPropValue;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderSkuPropValueService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -61,6 +63,8 @@ public class BizOrderDetailController extends BaseController {
 
 	@Autowired
     private BizOpShelfSkuService bizOpShelfSkuService;
+	@Autowired
+	private BizOrderSkuPropValueService bizOrderSkuPropValueService;
 
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
@@ -75,10 +79,13 @@ public class BizOrderDetailController extends BaseController {
 		BizOrderDetail entity = null;
 		if (id!=null){
 			entity = bizOrderDetailService.get(id);
+
+
 			BizOrderDetail orderDetail = new BizOrderDetail();
 			orderDetail.setOrderHeader(entity.getOrderHeader());
 			List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
 			for (BizOrderDetail od : list) {
+//				BizOrderSkuPropValue bizOrderSkuPropValue = bizOrderSkuPropValueService.findList(od.);//订单商品属性表
 				BizOpShelfSku bizOpShelfSku = bizOpShelfSkuService.get(od.getShelfInfo());//查询商品货架
 				bizOpShelfSku.getMinQty();
 				bizOpShelfSku.getMaxQty();

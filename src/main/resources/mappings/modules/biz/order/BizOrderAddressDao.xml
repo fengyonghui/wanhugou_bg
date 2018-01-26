@@ -13,6 +13,7 @@
 		a.phone AS "phone",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
+		su.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
@@ -25,6 +26,7 @@
 		LEFT JOIN sys_region province ON province.id = a.province_id
 		LEFT JOIN sys_region city ON city.id = a.city_id
 		LEFT JOIN sys_region reg ON reg.id = a.region_id
+		left join sys_user su on a.create_id=su.id
 	</sql>
     
 	<select id="get" resultType="BizOrderAddress">
@@ -137,8 +139,6 @@
 			address = #{address},
 			receiver = #{receiver},
 			phone = #{phone},
-			create_time = #{createDate},
-			update_id = #{createBy.id},
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>

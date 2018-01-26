@@ -70,6 +70,7 @@
         });
 		});
 		function addItem(obj) {
+ var aa=$("#contentTable").append("<th>商品属性</th>").index()+4;//第4列位置
           var saleQty= $("#saleQty_"+obj).val();
           var maxQty=$("#maxQty_"+obj).val();
               if(saleQty==''){
@@ -87,7 +88,6 @@
             $("#prodInfo").find($("#saleQty_"+obj)).attr("readonly","readonly");
             $("#prodInfo").find("#orderDetaIds_"+obj).attr("name","orderDetaIds");
             $("#prodInfo").find("#shelfSkuId_"+obj).attr("name","shelfSkus");
-
 
         }
         function removeItem(obj) {
@@ -145,7 +145,7 @@
                     <th>货架名称</th>
                     <th>商品名称</th>
                     <th>商品编码</th>
-                    <th>商品属性</th>
+                    <%--<th>商品属性</th>--%>
                     <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <th>已发货数量</th>
                     </c:if>
@@ -165,12 +165,10 @@
                                 <td>${orderList.shelfInfo.opShelfInfo.name}</td>
                                 <td>${orderList.skuName}</td>
                                 <td>${orderList.partNo}</td>
-                                <td></td>
                                 <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
                                     <td>${orderList.sentQty}</td>
                                 </c:if>
                                 <c:if test="${bizOrderDetail.id==null}">
-                                    <td></td>
                                     <td>${orderList.shelfInfo.salePrice}</td>
                                 </c:if>
                                 <td>${orderList.ordQty}</td>

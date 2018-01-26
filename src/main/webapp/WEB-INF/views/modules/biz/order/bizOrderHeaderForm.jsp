@@ -480,7 +480,6 @@
         <th>详情行号</th>
         <th>货架名称</th>
         <th>商品名称</th>
-        <th>商品属性</th>
         <%--<th>材质</th>--%>
         <%--<th>颜色</th>--%>
         <%--<th>规格</th>--%>
@@ -520,7 +519,6 @@
             <%--<td>--%>
                     <%--${bizOrderDetail.standard}--%>
             <%--</td>--%>
-            <td></td>
             <td>
                     ${bizOrderDetail.partNo}
             </td>
