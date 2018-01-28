@@ -36,6 +36,7 @@ public class Role extends DataEntity<Role> {
 //	private List<User> userList = Lists.newArrayList(); // 拥有用户列表
 	private List<Menu> menuList = Lists.newArrayList(); // 拥有菜单列表
 	private List<Office> officeList = Lists.newArrayList(); // 按明细设置数据范围
+	private List<Office> officeRoleList= Lists.newArrayList();//设置当前角色归属的机构
 
 	// 数据范围（1：所有数据；2：所在公司及以下数据；3：所在公司数据；4：所在部门及以下数据；5：所在部门数据；8：仅本人数据；9：按明细设置）
 	public static final String DATA_SCOPE_ALL = "1";
@@ -209,6 +210,14 @@ public class Role extends DataEntity<Role> {
 		return officeIdList;
 	}
 
+	public List<Integer> getOfficeRoleIdList() {
+		List<Integer> officeRoleIdList = Lists.newArrayList();
+		for (Office office : officeRoleList) {
+			officeRoleIdList.add(office.getId());
+		}
+		return officeRoleIdList;
+	}
+
 	public void setOfficeIdList(List<String> officeIdList) {
 		officeList = Lists.newArrayList();
 		for (String officeId : officeIdList) {
@@ -218,10 +227,19 @@ public class Role extends DataEntity<Role> {
 		}
 	}
 
+	public void setOfficeRoleIdList(List<String> officeRoleIdList) {
+		officeRoleList = Lists.newArrayList();
+		for (String officeId : officeRoleIdList) {
+			Office office = new Office();
+			office.setId(Integer.valueOf(officeId));
+			officeRoleList.add(office);
+		}
+	}
+
 	public String getOfficeIds() {
 		return StringUtils.join(getOfficeIdList(), ",");
 	}
-	
+
 	public void setOfficeIds(String officeIds) {
 		officeList = Lists.newArrayList();
 		if (officeIds != null){
@@ -229,6 +247,19 @@ public class Role extends DataEntity<Role> {
 			setOfficeIdList(Lists.newArrayList(ids));
 		}
 	}
+
+	public String getOfficeRoleIds() {
+		return StringUtils.join(getOfficeRoleIdList(), ",");
+	}
+
+	public void setOfficeRoleIds(String officeIds) {
+		officeRoleList = Lists.newArrayList();
+		if (officeIds != null){
+			String[] ids = StringUtils.split(officeIds, ",");
+			setOfficeRoleIdList(Lists.newArrayList(ids));
+		}
+	}
+
 	
 	/**
 	 * 获取权限字符串列表
@@ -267,4 +298,13 @@ public class Role extends DataEntity<Role> {
 //		}
 //		return StringUtils.join(menuNameList, ",");
 //	}
+
+
+	public List<Office> getOfficeRoleList() {
+		return officeRoleList;
+	}
+
+	public void setOfficeRoleList(List<Office> officeRoleList) {
+		this.officeRoleList = officeRoleList;
+	}
 }

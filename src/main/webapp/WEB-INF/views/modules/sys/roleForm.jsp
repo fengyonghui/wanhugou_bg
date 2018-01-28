@@ -24,10 +24,20 @@
 					}
 					$("#menuIds").val(ids);
 					var ids2 = [], nodes2 = tree2.getCheckedNodes(true);
-					for(var i=0; i<nodes2.length; i++) {
-						ids2.push(nodes2[i].id);
-					}
-					$("#officeIds").val(ids2);
+                    for(var i=0; i<nodes2.length; i++) {
+                        ids2.push(nodes2[i].id);
+                    }
+                    $("#officeIds").val(ids2);
+
+
+                    var ids3 = [], nodes3 = tree3.getCheckedNodes(true);
+                    for(var i=0; i<nodes3.length; i++) {
+                        if(!nodes3[i].isParent){
+                            ids3.push(nodes3[i].id);
+                        }
+                    }
+                    $("#officeRoleIds").val(ids3);
+
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -64,7 +74,7 @@
 			}
 			// 默认展开全部节点
 			tree.expandAll(true);
-			
+
 			// 用户-机构
 			var zNodes2=[
 					<c:forEach items="${officeList}" var="office">{id:"${office.id}", pId:"${not empty office.parent?office.parent.id:0}", name:"${office.name}"},
@@ -86,7 +96,30 @@
 			$("#dataScope").change(function(){
 				refreshOfficeTree();
 			});
+
+            //采购中心与角色
+            // 用户-机构
+
+            var zNodes3=[
+                    <c:forEach items="${officeRoleList}" var="office">{id:"${office.id}", pId:"${not empty office.parent?office.parent.id:0}", name:"${office.name}"},
+                </c:forEach>];
+            // 初始化树结构
+            var tree3 = $.fn.zTree.init($("#officeRoleTree"), setting, zNodes3);
+            // 不选择父节点
+            tree3.setting.check.chkboxType = { "Y" : "ps", "N" : "s" };
+            // 默认选择节点
+            var ids3 = "${role.officeRoleIds}".split(",");
+            for(var i=0; i<ids3.length; i++) {
+                var node = tree3.getNodeByParam("id", ids3[i]);
+                try{tree3.checkNode(node, true, false);}catch(e){}
+            }
+            // 默认展开全部节点
+            tree3.expandAll(true);
+
+
 		});
+
+
 		function refreshOfficeTree(){
 			if($("#dataScope").val()==9){
 				$("#officeTree").show();
@@ -94,6 +127,8 @@
 				$("#officeTree").hide();
 			}
 		}
+
+
 	</script>
 </head>
 <body>
@@ -104,13 +139,13 @@
 	<form:form id="inputForm" modelAttribute="role" action="${ctx}/sys/role/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
-		<div class="control-group">
-			<label class="control-label">归属机构:</label>
-			<div class="controls">
-                <sys:treeselect id="office" name="office.id" value="${role.office.id}" allowClear="true" labelName="office.name" labelValue="${role.office.name}"
-					title="机构" url="/sys/office/treeData" />
-			</div>
-		</div>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">归属机构:</label>--%>
+			<%--<div class="controls">--%>
+                <%--<sys:treeselect id="office" name="office.id" value="${role.office.id}" allowClear="true" labelName="office.name" labelValue="${role.office.name}"--%>
+					<%--title="机构" url="/sys/office/treeData" />--%>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">角色名称:</label>
 			<div class="controls">
@@ -161,6 +196,14 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">归属机构:</label>
+			<div class="controls">
+				<div id="officeRoleTree" class="ztree" style="margin-top:3px;float:left;"></div>
+				<form:hidden path="officeRoleIds"/>
+
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">数据范围:</label>
 			<div class="controls">
 				<form:select path="dataScope" class="input-medium">
@@ -169,6 +212,9 @@
 				<span class="help-inline">特殊情况下，设置为“按明细设置”，可进行跨机构授权</span>
 			</div>
 		</div>
+
+
+
 		<div class="control-group">
 			<label class="control-label">角色授权:</label>
 			<div class="controls">

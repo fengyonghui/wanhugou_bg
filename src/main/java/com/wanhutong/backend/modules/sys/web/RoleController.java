@@ -73,6 +73,7 @@ public class RoleController extends BaseController {
 		model.addAttribute("role", role);
 		model.addAttribute("menuList", systemService.findAllMenu());
 		model.addAttribute("officeList", officeService.findAll());
+		model.addAttribute("officeRoleList", officeService.findAll());
 		return "modules/sys/roleForm";
 	}
 	

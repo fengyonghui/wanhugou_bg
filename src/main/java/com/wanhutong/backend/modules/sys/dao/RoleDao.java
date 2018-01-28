@@ -37,4 +37,6 @@ public interface RoleDao extends CrudDao<Role> {
 
 	public int insertRoleOffice(Role role);
 
+	int insertRoleOfficeCore(Role role);
+
 }
