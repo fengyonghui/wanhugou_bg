@@ -32,12 +32,12 @@
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuInfoList",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
-						var selecttd="<select ><option value=''>请选择</option>";
+						var selecttd="<select title='invInfoId'><option value=''>请选择</option>";
                         $.each(data.inventoryInfoList,function (index,inventory) {
                             selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
 						});
                         selecttd+="</select>";
-                        var selectInvTypetd="<select ><option value=''>请选择</option>";
+                        var selectInvTypetd="<select title='invType' class='input-medium'><option value=''>请选择</option>";
                         $.each(data.dictList,function (index,dict) {
                             selectInvTypetd+="<option value='"+dict.value+"'>"+dict.label+"</option>"
                         });
@@ -62,6 +62,27 @@
                     }
                 })
             });
+            function addItem(obj) {
+                var invInfoId= $("select[title='invInfoId']").val();
+                var invType=$("select[title='invType']").val();
+                if(invInfoId==''){
+                    alert("请选择仓库");
+                    return;
+                }
+                if(invType==''){
+                    alert("请选择库存类型");
+                    return;
+                }
+                $("#td_"+obj).html("<a href='#' onclick=\"removeItem('"+obj+"')\">移除</a>");
+                var trHtml=$("#"+obj);
+                $("#prodInfo").append(trHtml);
+                $("#prodInfo").find($("select[title='invInfoId']")).attr("name","invInfoIds")
+                $("#prodInfo").find($("select[title='invInfoId']")).attr("readonly","readonly");
+                $("#prodInfo").find($("select[title='invType']")).attr("name","invTypes");
+                $("#prodInfo").find($("select[title='invType']")).attr("readonly","readonly");
+
+
+            }
 		});
 	</script>
 </head>

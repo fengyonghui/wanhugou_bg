@@ -74,9 +74,10 @@ public class OfficeController extends BaseController {
 	@RequestMapping(value = "purchasersList")
 	public String purchasersList(Office office, String conn,Integer centers,Integer consultants, Model model) {
 		if(office.getId() == null || office.getParentIds() == null){
-			String purchasersId = DictUtils.getDictValue("部门", "sys_office_purchaserId","");
+			String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId","");
 			Office off = officeService.get(Integer.valueOf(purchasersId));
 			office.setParentIds("%,"+purchasersId+",");
+			office.setType(OfficeTypeEnum.CUSTOMER.getType());
 			List<Office> findList = officeService.findList(office);
 			findList.add(off);
 			model.addAttribute("list", findList);
@@ -182,27 +183,26 @@ public class OfficeController extends BaseController {
 	@RequestMapping(value = "purchaserTreeData")
 	public List<Map<String, Object>> purchaserTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
 			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
-		List<Map<String, Object>> mapList = Lists.newArrayList();
-		String purchasersId = DictUtils.getDictValue("部门", "sys_office_purchaserId","");
-		Office office = new Office();
-		office.setParentIds("%,"+purchasersId+",");
-		List<Office> list = officeService.findList(office);
-		Office off = officeService.get(Integer.valueOf(purchasersId));
-		list.add(off);
-		for (int i=0; i<list.size(); i++){
-			Office e = list.get(i);
-			if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
-					&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
-					&& (grade == null || (grade != null && Integer.parseInt(e.getGrade()) <= grade.intValue()))
-					&& Global.YES.equals(e.getUseable())){
-				Map<String, Object> map = Maps.newHashMap();
-				map.put("id", e.getId());
-				map.put("pId", e.getParentId());
-				map.put("pIds", e.getParentIds());
-				map.put("name", e.getName());
-				mapList.add(map);
+
+			List<Map<String, Object>> mapList = Lists.newArrayList();
+
+			List<Office>list = officeService.filerOffice(null,OfficeTypeEnum.CUSTOMER);
+			for (int i=0; i<list.size(); i++){
+				Office e = list.get(i);
+				if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
+						&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
+						&& (grade == null || (grade != null && Integer.parseInt(e.getGrade()) <= grade.intValue()))
+						&& Global.YES.equals(e.getUseable())){
+					Map<String, Object> map = Maps.newHashMap();
+					map.put("id", e.getId());
+					map.put("pId", e.getParentId());
+					map.put("pIds", e.getParentIds());
+					map.put("name", e.getName());
+					mapList.add(map);
+				}
 			}
-		}
+
+
 		return mapList;
 	}
 	
@@ -247,7 +247,6 @@ public class OfficeController extends BaseController {
 		}
 		BizCustCredit bizCustCredit = new BizCustCredit();
 		bizCustCredit.setLevel(office.getLevel());
-		bizCustCredit.setOfficeId(office.getId());
 		officeService.save(office,bizCustCredit);
 		if(office.getChildDeptList()!=null){
 			Office childOffice = null;
@@ -367,7 +366,7 @@ public class OfficeController extends BaseController {
 		for (int i=0; i<list.size(); i++){
 			Office e = list.get(i);
 			if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
-					&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true))||(type != null && (type.equals("8") ? type.equals(e.getType()) : true)))
+					&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
 					&& (grade == null || (grade != null && Integer.parseInt(e.getGrade()) <= grade.intValue()))
 					&& Global.YES.equals(e.getUseable())){
 				Map<String, Object> map = Maps.newHashMap();

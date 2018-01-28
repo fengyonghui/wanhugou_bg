@@ -21,7 +21,7 @@
 		SELECT 
 			b.office_id AS office_id,
 			b.pay_pwd AS pay_pwd,
-			b.level AS level,
+			b.level AS `level`,
 			b.credit AS credit,
 			b.wallet AS wallet,
 			b.money AS money,
@@ -39,7 +39,7 @@
 		INSERT INTO biz_cust_credit (
 			office_id,
 			pay_pwd,
-			level,
+			`level`,
 			create_id,
 			create_time,
 			u_version,
@@ -50,19 +50,19 @@
 			#{payPwd}, 
 			#{level}, 
 			#{createBy.id},
-			now(), 
+			#{createDate}
 			#{uVersion},
 			#{createBy.id},
-			now()
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_cust_credit SET 
 			<if test="level != null and level !=''">
-				level = #{level},
+				`level` = #{level},
 			</if>
-			update_time = now(),
+			update_time =#{updateDate},
 			wallet = #{wallet},
 			update_id = #{updateBy.id}
 		WHERE office_id = #{id}

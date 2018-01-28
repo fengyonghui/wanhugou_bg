@@ -24,6 +24,8 @@ public abstract class TreeEntity<T> extends DataEntity<T> {
 	protected String parentIds; // 所有父级编号
 	protected String name; 	// 机构名称
 	protected Integer sort;		// 排序
+
+	protected Integer parentId;
 	
 	public TreeEntity() {
 		super();
@@ -75,11 +77,19 @@ public abstract class TreeEntity<T> extends DataEntity<T> {
 	}
 	
 	public Integer getParentId() {
+
+		if(parentId!=null){
+			return parentId;
+		}
+
 		Integer id = null;
 		if (parent != null){
 			id = (Integer) Reflections.getFieldValue(parent, "id");
 		}
 		return id != null ? id : 0;
 	}
-	
+
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
+	}
 }

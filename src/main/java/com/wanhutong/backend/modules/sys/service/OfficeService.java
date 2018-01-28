@@ -6,8 +6,13 @@ package com.wanhutong.backend.modules.sys.service;
 import java.util.*;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.fieldtype.OfficeType;
+import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +39,9 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Autowired
 	private OfficeDao officeDao;
 	@Autowired
-	private BizCustCreditDao bizCustCreditDao;
+	private BizCustCreditService bizCustCreditService;
+	@Autowired
+	private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
 
 	public List<Office> findAll(){
 		return UserUtils.getOfficeList();
@@ -51,10 +58,38 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = true)
 	public List<Office> findList(Office office){
 		if(office != null){
-			User user = UserUtils.getUser();
-			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "so", "pp"));
-//			office.getSqlMap().put("dsf",BaseService.dataScopeFilter(user, "so",""));
+
 			office.setParentIds(office.getParentIds()+"%");
+			User user = UserUtils.getUser();
+			if(!user.isAdmin()&& !OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
+				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
+			}
+			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
+				boolean flag=false;
+				boolean flagb=false;
+				if(user.getRoleList()!=null){
+					for(Role role:user.getRoleList()){
+						if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+							flag=true;
+							break;
+						}else if(RoleEnNameEnum.BUYER.getState().equals(role.getName())){
+							flagb=true;
+							break;
+						}
+					}
+				}
+				BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
+				if(flag){
+					customCenterConsultant.setCenters(user.getCompany());
+				}else if(flagb){
+					customCenterConsultant.setConsultants(user);
+				}
+				customCenterConsultant.setParentIds(office.getParentIds());
+				List<Office> officeList=officeDao.findOfficeByIdToParent(customCenterConsultant);
+
+				return  officeList;
+			}
+
 			return dao.findByParentIdsLike(office);
 		}
 		return  new ArrayList<Office>();
@@ -63,11 +98,32 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public List<Office> filerOffice(List<Office> offices, OfficeTypeEnum officeType){
 		Office office = new Office();
 			User user = UserUtils.getUser();
-			if (officeType.getType().equals(OfficeTypeEnum.CUSTOMER.getType())) {
-				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "so", "pp"));
-
-			} else {
+			if(!user.isAdmin()&& !OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
+				}
+			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){
+				boolean flag=false;
+				boolean flagb=false;
+				if(user.getRoleList()!=null){
+					for(Role role:user.getRoleList()){
+						if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+							flag=true;
+							break;
+						}else if(RoleEnNameEnum.BUYER.getState().equals(role.getName())){
+							flagb=true;
+							break;
+						}
+					}
+				}
+				BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
+				if(flag){
+					customCenterConsultant.setCenters(user.getCompany());
+				}else if(flagb){
+					customCenterConsultant.setConsultants(user);
+				}
+				List<Office> officeList=officeDao.findOfficeByIdToParent(customCenterConsultant);
+
+				return  officeList;
 			}
 
 		office.setType(String.valueOf(officeType.ordinal()));
@@ -77,26 +133,27 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		List<Office> list = queryList(office);
 		//get all parents
 		Set<Integer> parentSet = new HashSet<>();
-		for (Office office1 : list){
+		for (Office office1 : list) {
 			String[] parentIds = office1.getParentIds().split(",");
-			for (String id : parentIds){
+			for (String id : parentIds) {
 				parentSet.add(Integer.valueOf(id));
 			}
 		}
 
-		if(offices == null || offices.size() == 0){
+		if (offices == null || offices.size() == 0) {
 			office.setType(null);
+			//	office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "so", ""));
 			offices = queryList(office);
 		}
 
 		Iterator<Office> iterator = offices.iterator();
+		while (iterator.hasNext()) {
+			Office office1 = iterator.next();
+			Integer id = office1.getId();
+			if (!parentSet.contains(id) && !String.valueOf(officeType.ordinal()).equals(office1.getType()))
+				iterator.remove();   //注意这个地方
+		}
 
-			while(iterator.hasNext()){
-				Office office1 = iterator.next();
-				Integer id = office1.getId();
-				if(!parentSet.contains(id) && !String.valueOf(officeType.ordinal()).equals(office1.getType()))
-					iterator.remove();   //注意这个地方
-			}
 
 
 
@@ -125,17 +182,15 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void save(Office office,BizCustCredit bizCustCredit) {
 		super.save(office);
-		if(office.getIsNewRecord() || bizCustCredit.getOfficeId()== null){
+		if(bizCustCredit.getId()== null){
 			if(bizCustCredit != null ){
-				bizCustCredit.setCreateBy(office.getCreateBy());
-				bizCustCredit.setOfficeId(office.getId());
+				bizCustCredit.setId(office.getId());
 				bizCustCredit.setPayPwd(SystemService.entryptPassword(DictUtils.getDictValue("密码", "payment_password", "")));
 				bizCustCredit.setuVersion(1);
-				bizCustCreditDao.insert(bizCustCredit);
+				bizCustCreditService.save(bizCustCredit);
 			}
-		}else{ 
-			bizCustCredit.setUpdateBy(office.getUpdateBy());
-			bizCustCreditDao.update(bizCustCredit);
+		}else{
+			bizCustCreditService.save(bizCustCredit);
 		}
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}

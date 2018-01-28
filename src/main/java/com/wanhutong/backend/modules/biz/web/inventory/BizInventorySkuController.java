@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
@@ -103,10 +104,16 @@ public class BizInventorySkuController extends BaseController {
 
 	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
 	@RequestMapping(value = "save")
-	public String save(BizInventorySku bizInventorySku, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes) {
+	public String save(BizInventorySkus bizInventorySkus, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 //		if (!beanValidator(model, bizInventorySku)){
 //			return form(bizInventorySku,request,model);
 //		}
+		if(bizInventorySkus!=null && bizInventorySkus.getSkuInfoIds()!=null ){
+
+		}
+		BizInventorySku bizInventorySku=new BizInventorySku();
+
+
 		bizInventorySkuService.save(bizInventorySku);
 		String zt = request.getParameter("zt");
 		addMessage(redirectAttributes, "保存商品库存详情成功");

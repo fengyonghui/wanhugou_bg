@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.sys.dao;
 
 import com.wanhutong.backend.common.persistence.TreeDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.sys.entity.Office;
 
 import java.util.List;
@@ -20,5 +21,7 @@ public interface OfficeDao extends TreeDao<Office> {
     List<Office> selectInfo(Office office);
 
     List<Office> queryList(Office office);
+
+    List<Office> findOfficeByIdToParent(BizCustomCenterConsultant bizCustomCenterConsultant);
 	
 }

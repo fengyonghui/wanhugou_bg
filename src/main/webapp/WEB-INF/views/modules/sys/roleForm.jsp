@@ -107,8 +107,8 @@
 		<div class="control-group">
 			<label class="control-label">归属机构:</label>
 			<div class="controls">
-                <sys:treeselect id="office" name="office.id" value="${role.office.id}" labelName="office.name" labelValue="${role.office.name}"
-					title="机构" url="/sys/office/treeData" cssClass="required"/>
+                <sys:treeselect id="office" name="office.id" value="${role.office.id}" allowClear="true" labelName="office.name" labelValue="${role.office.name}"
+					title="机构" url="/sys/office/treeData" />
 			</div>
 		</div>
 		<div class="control-group">

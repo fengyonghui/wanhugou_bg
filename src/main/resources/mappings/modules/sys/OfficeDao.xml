@@ -39,8 +39,6 @@
 		LEFT JOIN sys_area ar ON ar.id = a.area_id
 		LEFT JOIN sys_user pp ON pp.id = a.primary_person
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
-		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.id
-		LEFT JOIN sys_office so on so.id =ccs.center_id
     </sql>
 	
 	<select id="get" resultType="Office">
@@ -79,8 +77,43 @@
 		<include refid="officeJoins"/>
 		WHERE a.status = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
 		<!-- 数据范围过滤 -->
-		${sqlMap.dsf}
+-- 		${sqlMap.dsf}
 		ORDER BY a.code
+	</select>
+
+	<select id="findOfficeByIdToParent" resultType="Office">
+		select *
+		from sys_office a
+		where FIND_IN_SET(id,
+		(select GROUP_CONCAT(parent_ids,'0')
+		from biz_custom_center_consultant ccc, sys_office so
+		where ccc.cust_id = so.id
+		<if test="customs != null and customs.id != null and customs.id != ''">
+			AND ccc.cust_id = #{customs.id}) )
+		</if>
+		<if test="centers != null and centers.id != null and centers.id != ''">
+			AND ccc.center_id = #{centers.id}) )
+		</if>
+		<if test="consultants != null and consultants.id != null and consultants.id != ''">
+			AND ccc.consultant_id = #{consultants.id}) )
+		</if>
+		union all
+		select so.*
+		from biz_custom_center_consultant ccc, sys_office so
+		where ccc.cust_id = so.id and so.status=1
+		<if test="customs != null and customs.id != null and customs.id != ''">
+			AND ccc.cust_id = #{customs.id}
+		</if>
+		<if test="centers != null and centers.id != null and centers.id != ''">
+			AND ccc.center_id = #{centers.id}
+		</if>
+		<if test="consultants != null and consultants.id != null and consultants.id != ''">
+			AND ccc.consultant_id = #{consultants.id}
+		</if>
+		<if test="parentIds!=null and parentIds !=''">
+			AND so.parent_ids LIKE #{parentIds}
+		</if>
+
 	</select>
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
@@ -186,7 +219,9 @@
 		<include refid="officeJoins"/>
 		WHERE
 		a.status = #{DEL_FLAG_NORMAL}
-
+		<if test="type != null and type != ''">
+			AND a.type = #{type}
+		</if>
 		<if test="name != null and name != ''">
 			AND a.name = #{name}
 		</if>
@@ -195,11 +230,12 @@
 		</if>
 		<!--<if test="id != null">-->
 		<!-- 数据范围过滤 -->
-		${sqlMap.dsf}
-  		OR a.id = #{currentUser.office.id}
-		<if test="type != null and type != ''">
-			AND a.type = #{type}
+		<if test="sqlMap!=null and sqlMap.dsf!=null and sqlMap.dsf!=''">
+			${sqlMap.dsf}
+			OR a.id = #{currentUser.office.id}
 		</if>
+
+
 
 		<!--</if>-->
 		<!--<if test="currentUser != null and currentUser.UserOfficeList != null and currentUser.UserOfficeList.size() != 0">-->

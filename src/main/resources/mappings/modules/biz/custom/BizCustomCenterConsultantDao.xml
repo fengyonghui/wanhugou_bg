@@ -99,6 +99,7 @@
 	<sql id="bizCustomCenterConsultantColumns">
 		a.cust_id AS "customs.id",
 		soc.name as"customs.name",
+		soc.parent_ids AS "customs.parentIds",
 		a.center_id AS "centers.id",
 		sox.name as "centers.name",
 		a.consultant_id AS "consultants.id",
