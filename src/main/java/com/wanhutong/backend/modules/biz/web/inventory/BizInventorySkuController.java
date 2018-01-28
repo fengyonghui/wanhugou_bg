@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -23,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -109,16 +111,26 @@ public class BizInventorySkuController extends BaseController {
 //			return form(bizInventorySku,request,model);
 //		}
 		if(bizInventorySkus!=null && bizInventorySkus.getSkuInfoIds()!=null ){
-
+			String[] invInfoIdArr =bizInventorySkus.getInvInfoIds().split(",");
+			String[] invTypeArr=bizInventorySkus.getInvTypes().split(",");
+			String[] skuInfoIdArr=bizInventorySkus.getSkuInfoIds().split(",");
+			String[] stockQtyArr=bizInventorySkus.getStockQtys().split(",");
+			BizInventorySku bizInventorySku=new BizInventorySku();
+			for(int i=0;i<skuInfoIdArr.length;i++){
+				bizInventorySku.setId(null);
+				bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
+				bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
+				bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
+				bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
+				bizInventorySkuService.save(bizInventorySku);
+			}
 		}
-		BizInventorySku bizInventorySku=new BizInventorySku();
 
 
-		bizInventorySkuService.save(bizInventorySku);
+
 		String zt = request.getParameter("zt");
 		addMessage(redirectAttributes, "保存商品库存详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage&invInfo.id="
-				+bizInventorySku.getInvInfo().getId()+"&zt="+zt;
+		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage&zt="+zt;
 	}
 	
 	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
@@ -128,6 +140,21 @@ public class BizInventorySkuController extends BaseController {
 		String zt = request.getParameter("zt");
 		addMessage(redirectAttributes, "删除商品库存详情成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage&zt="+zt;
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
+	@RequestMapping(value = "delItem")
+	public String delItem(BizInventorySku bizInventorySku, RedirectAttributes redirectAttributes) {
+		String data="ok";
+		try {
+			bizInventorySkuService.delete(bizInventorySku);
+		}catch (Exception e){
+			logger.error(e.getMessage());
+			data="error"; }
+		return data;
+
+
 	}
 
 }

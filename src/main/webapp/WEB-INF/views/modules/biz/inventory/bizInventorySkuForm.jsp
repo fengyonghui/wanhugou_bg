@@ -9,6 +9,8 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    $("select[title='invInfoId']").removeAttr("disabled");
+                    $("select[title='invType']").removeAttr("disabled");
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -32,12 +34,15 @@
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuInfoList",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
-						var selecttd="<select title='invInfoId'><option value=''>请选择</option>";
+                        if($("#id").val()==''){
+                            $("#prodInfo2").empty();
+                        }
+						var selecttd="<select class='input-mini' title='invInfoId'><option value=''>请选择</option>";
                         $.each(data.inventoryInfoList,function (index,inventory) {
                             selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
 						});
                         selecttd+="</select>";
-                        var selectInvTypetd="<select title='invType' class='input-medium'><option value=''>请选择</option>";
+                        var selectInvTypetd="<select class='input-mini' title='invType' class='input-medium'><option value=''>请选择</option>";
                         $.each(data.dictList,function (index,dict) {
                             selectInvTypetd+="<option value='"+dict.value+"'>"+dict.label+"</option>"
                         });
@@ -45,12 +50,15 @@
 						var trdatas='';
                             var t=0;
                             $.each(data.skuInfoList,function (index,skuInfo) {
-                                trdatas+= "<tr id='"+skuInfo.id+"'>";
-                                trdatas+="<td>"+selecttd+"</td>";
-                                trdatas+="<td>"+skuInfo.name+"</td>";
+                                if($("#prodInfo").children("."+skuInfo.id).length>0){
+                                    return;
+                                }
+                                trdatas+= "<tr class='"+skuInfo.id+"' id='"+skuInfo.id+"'>";
+                                trdatas+="<td id='invInfoId_"+skuInfo.id+"'>"+selecttd+"</td>";
+                                trdatas+="<td><input type='hidden' id='skuInfoIds_"+skuInfo.id+"' value='"+skuInfo.id+"'/>"+skuInfo.name+"</td>";
                                 trdatas+="<td>"+skuInfo.partNo+"</td>";
-                                trdatas+="<td>"+selectInvTypetd+"</td>";
-                                trdatas+="<td><input type='text' class='input-mini' id='saleQty_"+skuInfo.id+"'/></td>";
+                                trdatas+="<td id='invType_"+skuInfo.id+"'>"+selectInvTypetd+"</td>";
+                                trdatas+="<td><input  type='text' class='input-mini' id='saleQty_"+skuInfo.id+"'/></td>";
                                 trdatas+="<td id='td_"+skuInfo.id+"'> <a href='#' onclick=\"addItem('"+skuInfo.id+"')\">增加</a></td>";
                                 trdatas+= "</tr>";
                             });
@@ -62,28 +70,68 @@
                     }
                 })
             });
-            function addItem(obj) {
-                var invInfoId= $("select[title='invInfoId']").val();
-                var invType=$("select[title='invType']").val();
-                if(invInfoId==''){
-                    alert("请选择仓库");
-                    return;
-                }
-                if(invType==''){
-                    alert("请选择库存类型");
-                    return;
-                }
-                $("#td_"+obj).html("<a href='#' onclick=\"removeItem('"+obj+"')\">移除</a>");
-                var trHtml=$("#"+obj);
-                $("#prodInfo").append(trHtml);
-                $("#prodInfo").find($("select[title='invInfoId']")).attr("name","invInfoIds")
-                $("#prodInfo").find($("select[title='invInfoId']")).attr("readonly","readonly");
-                $("#prodInfo").find($("select[title='invType']")).attr("name","invTypes");
-                $("#prodInfo").find($("select[title='invType']")).attr("readonly","readonly");
 
-
-            }
 		});
+
+		function removeItem(obj) {
+		    alert(obj);
+            $("#td_"+obj).html("<a href='#' onclick=\"addItem('"+obj+"')\">增加</a>");
+            var trHtml=$("#"+obj);
+            $("#prodInfo2").append(trHtml);
+            $("#prodInfo2").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).removeAttr("name");
+            $("#prodInfo2").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).removeAttr("disabled");
+            $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("name");
+            $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("disabled");
+            $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
+            $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("readonly");
+            $("#prodInfo2").find($("#skuInfoIds_"+obj)).removeAttr("name");
+
+        }
+
+        function addItem(obj) {
+            var invInfoId= $("#invInfoId_"+obj).find("select[title='invInfoId']").val();
+            var invType=$("#invType_"+obj).find("select[title='invType']").val();
+            var saleQty=$("#saleQty_"+obj).val();
+            if(invInfoId==''){
+                alert("请选择仓库");
+                return;
+            }
+            if(invType==''){
+                alert("请选择库存类型");
+                return;
+            }
+            if(saleQty==''){
+                alert("请输入数量");
+                return;
+			}
+            $("#td_"+obj).html("<a href='#' onclick=\"removeItem('"+obj+"')\">移除</a>");
+            var trHtml=$("#"+obj);
+            $("#prodInfo").append(trHtml);
+            $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("name","invInfoIds")
+            $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("disabled","disabled");
+            $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("name","invTypes");
+            $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("disabled","disabled");
+            $("#prodInfo").find($("#saleQty_"+obj)).attr("name","stockQtys");
+            $("#prodInfo").find($("#saleQty_"+obj)).attr("readonly","readonly");
+            $("#prodInfo").find($("#skuInfoIds_"+obj)).attr("name","skuInfoIds");
+
+
+        }
+        function delItem(obj) {
+            if(confirm("您确认删除此条信息吗？")){
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/biz/inventory/bizInventorySku/delItem",
+                    data:{id:obj},
+                    success:function (data) {
+                        if(data=='ok'){
+                            alert("删除成功！");
+                            $("#"+obj).remove();
+                        }
+                    }
+                })
+            }
+        }
 	</script>
 </head>
 <body>
@@ -101,10 +149,10 @@
 				<ul class="inline ul-form">
 
 					<li><label>商品名称：</label>
-						<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="10" class="input-medium"/>
+						<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
 					</li>
 					<li><label>商品编码：</label>
-						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="10" class="input-medium"/>
+						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
 
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
@@ -128,6 +176,16 @@
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
+					<c:if test="${entity.skuInfo!=null}">
+						<tr class="${entity.skuInfo.id}" id="${entity.id}">
+						<td>${entity.invInfo.name}</td>
+						<td>${entity.skuInfo.name}</td>
+						<td>${entity.skuInfo.partNo}</td>
+						<td>${entity.invType}</td>
+						<td>${entity.stockQty}</td>
+							<td><a href='#' onclick="delItem('${entity.id}')">删除</a></td>
+						</tr>
+					</c:if>
 					</tbody>
 				</table>
 				<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered table-condensed">

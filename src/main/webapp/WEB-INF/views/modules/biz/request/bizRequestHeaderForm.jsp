@@ -132,9 +132,9 @@
                 url:"${ctx}/biz/request/bizRequestDetail/delItem",
                 data:{id:obj},
                 success:function (data) {
-                if(data=='ok'){
-                    alert("删除成功！");
-                $("#"+obj).remove();
+					if(data=='ok'){
+						alert("删除成功！");
+					$("#"+obj).remove();
                 	}
                 }
                 })
