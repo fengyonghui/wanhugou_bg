@@ -29,7 +29,7 @@
 					}
 				}
 			});
-            if($("#id").val()!=""){
+            if($("#officeId").val()!=""){
                 clickBut();
             }
             $("#addAddressHref").click(function () {
@@ -250,17 +250,17 @@
         <label class="control-label">采购商名称：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-                <sys:treeselect id="office" name="customer.id" disabled="disabled" value="${entity.customer.id}"
+                <sys:treeselect id="office" name="customer.id" disabled="disabled" value="${entity2.customer.id}"
                                 labelName="customer.name"
-                                labelValue="${entity.customer.name}"
+                                labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
                 <%--notAllowSelectRoot="true"--%>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}" labelName="customer.name"
-                                labelValue="${entity.customer.name}"
+                <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
+                                labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
@@ -458,15 +458,16 @@
             </div>
         </c:when>
         <c:otherwise>
-            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <div class="form-actions">
+            <div class="form-actions">
+                    <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit"
                                                                                      class="btn btn-primary"
                                                                                      type="submit"
                                                                                      value="保存"/>&nbsp;</shiro:hasPermission>
-                    <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-                </div>
-            </c:if>
+                    </c:if>
+                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+            </div>
+
         </c:otherwise>
     </c:choose>
 
@@ -480,6 +481,7 @@
         <th>详情行号</th>
         <th>货架名称</th>
         <th>商品名称</th>
+        <th>商品属性</th>
         <%--<th>材质</th>--%>
         <%--<th>颜色</th>--%>
         <%--<th>规格</th>--%>
@@ -519,6 +521,7 @@
             <%--<td>--%>
                     <%--${bizOrderDetail.standard}--%>
             <%--</td>--%>
+            <td></td>
             <td>
                     ${bizOrderDetail.partNo}
             </td>

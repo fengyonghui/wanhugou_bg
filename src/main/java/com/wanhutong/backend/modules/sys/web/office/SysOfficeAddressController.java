@@ -94,11 +94,12 @@ public class SysOfficeAddressController extends BaseController {
 		sysOfficeAddressService.save(sysOfficeAddress);
 		addMessage(redirectAttributes, "保存地址信息成功");
 		if(sysOfficeAddress.getFlag()!=null && sysOfficeAddress.getFlag().equals("order")){
-			Integer ohId=sysOfficeAddress.getOhId();
-			if(ohId==null){
-				ohId=0;
-			}
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+ohId+"&customer.id="+sysOfficeAddress.getOffice().getId();
+//			Integer ohId=sysOfficeAddress.getOhId();
+//			if(ohId==null){
+//				ohId=0;
+//			}
+//			id="+ohId+"&
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id=&customer.id="+sysOfficeAddress.getOffice().getId();
 		}
 		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
 	}

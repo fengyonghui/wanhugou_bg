@@ -94,6 +94,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		ORDER BY updateDate DESC
 	</select>
 	
 	<select id="findAllList" resultType="SysOfficeAddress">

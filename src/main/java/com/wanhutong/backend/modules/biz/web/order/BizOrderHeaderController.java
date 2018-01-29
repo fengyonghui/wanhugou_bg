@@ -113,18 +113,19 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizOrderHeader bizOrderHeader, Model model,String orderNoEditable,String orderDetails) {
-		if(bizOrderHeader.getOrderDetailList()!=null){
-			bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
-		}else{
-			bizOrderHeader.setTotalDetail(0.0);
-//			bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-		}
+//		if(bizOrderHeader.getOrderDetailList()!=null){
+//			bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
+//		}else{
+//			bizOrderHeader.setTotalDetail(0.0);
+////			bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+//		}
 		if(bizOrderHeader.getCustomer()!=null && bizOrderHeader.getCustomer().getId()!=null){
 			Office office=officeService.get(bizOrderHeader.getCustomer().getId());
 			bizOrderHeader.setCustomer(office);
+			model.addAttribute("entity2", bizOrderHeader);
 		}
-		if(bizOrderHeader.getId()!=null){
-			bizOrderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+		bizOrderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+		if(bizOrderHeader!=null){
 			Double totalDetail = bizOrderHeader.getTotalDetail();//订单详情总价
 			Double totalExp = bizOrderHeader.getTotalExp();//订单总费用
 			Double freight = bizOrderHeader.getFreight();//运费
@@ -137,6 +138,7 @@ public class BizOrderHeaderController extends BaseController {
 				bizOrderHeader.setOrderDetails("details");//查看详情页面不能修改
 			}
 		}
+
         model.addAttribute("entity", bizOrderHeader);
 		return "modules/biz/order/bizOrderHeaderForm";
 	}

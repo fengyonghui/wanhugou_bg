@@ -85,7 +85,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
         bizOrderAddressService.save(bizLocation);
         String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), bizOrderHeader.getCustomer().getId());
-        if(bizOrderHeader.getId()==null){
+        if(bizOrderHeader.getId()==null || bizOrderHeader.getId()==0){
             bizOrderHeader.setOrderNum(orderNum);
         }else{
             bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());

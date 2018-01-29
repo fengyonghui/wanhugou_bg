@@ -154,10 +154,10 @@ public class BizOrderDetailController extends BaseController {
 	public String delete(BizOrderDetail bizOrderDetail,String orderDetailDetele, RedirectAttributes redirectAttributes) {
 		bizOrderDetailService.delete(bizOrderDetail);
 		addMessage(redirectAttributes, "删除订单详情成功");
-		if(orderDetailDetele !=null && orderDetailDetele.equals("details")){
-			//跳回添加商品orderDetail页面
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
-		}
+//		if(orderDetailDetele !=null && orderDetailDetele.equals("details")){
+//			//跳回添加商品orderDetail页面
+//			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
+//		}
 		//调到订单orderHeader页面
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
 	}

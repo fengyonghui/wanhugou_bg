@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="utf-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
