@@ -71,16 +71,18 @@ public class BizOrderHeaderController extends BaseController {
 			BizOrderDetail bizOrderDetail = new BizOrderDetail();
 			bizOrderDetail.setOrderHeader(entity);
 			List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
-			for (BizOrderDetail detail : list) {
-				Double price = detail.getUnitPrice();//商品单价
-				Integer ordQty = detail.getOrdQty();//采购数量
-				if(price==null){
-					price=0.0;
+			if(list.size()!=0){
+				for (BizOrderDetail detail : list) {
+					Double price = detail.getUnitPrice();//商品单价
+					Integer ordQty = detail.getOrdQty();//采购数量
+					if(price==null){
+						price=0.0;
+					}
+					if(ordQty==null){
+						ordQty=0;
+					}
+					sum+=price*ordQty;
 				}
-				if(ordQty==null){
-					ordQty=0;
-				}
-				sum+=price*ordQty;
 			}
 			entity.setTotalDetail(sum);
 			entity.setOrderDetailList(list);
@@ -111,6 +113,12 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizOrderHeader bizOrderHeader, Model model,String orderNoEditable,String orderDetails) {
+		if(bizOrderHeader.getOrderDetailList()!=null){
+			bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
+		}else{
+			bizOrderHeader.setTotalDetail(0.0);
+//			bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+		}
 		if(bizOrderHeader.getCustomer()!=null && bizOrderHeader.getCustomer().getId()!=null){
 			Office office=officeService.get(bizOrderHeader.getCustomer().getId());
 			bizOrderHeader.setCustomer(office);
@@ -145,22 +153,6 @@ public class BizOrderHeaderController extends BaseController {
 		if(bizOrderHeader.getPlatformInfo()==null){
 			bizOrderHeader.getPlatformInfo().setId(1);
 		}
-		Double sum = 0.0;
-		BizOrderDetail bizOrderDetail = new BizOrderDetail();
-		bizOrderDetail.setOrderHeader(bizOrderHeader);
-		List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
-		for (BizOrderDetail detail : list) {
-			Double price = detail.getUnitPrice();//商品单价
-			Integer ordQty = detail.getOrdQty();//采购数量
-			if(price==null){
-				price=0.0;
-			}
-			if(ordQty==null){
-				ordQty=0;
-			}
-			sum+=price*ordQty;
-		}
-		bizOrderHeader.setTotalDetail(sum);
 		bizOrderHeaderService.save(bizOrderHeader);
 		addMessage(redirectAttributes, "保存订单信息成功");
 		Integer orId = bizOrderHeader.getId();

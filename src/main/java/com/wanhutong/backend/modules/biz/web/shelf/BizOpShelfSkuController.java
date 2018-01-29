@@ -12,8 +12,10 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +52,8 @@ public class BizOpShelfSkuController extends BaseController {
 	private BizProductInfoService bizProductInfoService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizSkuPropValueService bizSkuPropValueService;
 	
 	@ModelAttribute
 	public BizOpShelfSku get(@RequestParam(required=false) Integer id) {
@@ -140,7 +145,16 @@ public class BizOpShelfSkuController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "findOpShelfSku")
 	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku){
-		return 	bizOpShelfSkuService.findList(bizOpShelfSku);
+		BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();//sku商品属性表
+		List<BizOpShelfSku> list = bizOpShelfSkuService.findList(bizOpShelfSku);
+		for (BizOpShelfSku skuValue : list) {
+			bizSkuPropValue.setSkuInfo(skuValue.getSkuInfo());//sku_Id
+			List<BizSkuPropValue> skuValueList = bizSkuPropValueService.findList(bizSkuPropValue);
+			if(skuValueList.size()!=0){
+				skuValue.setSkuValueList(skuValueList);
+			}
+		}
+		return 	list;
 	}
 	
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")

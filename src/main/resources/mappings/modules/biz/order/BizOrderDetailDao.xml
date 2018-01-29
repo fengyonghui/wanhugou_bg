@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderDetailDao">
-    
+
+	<resultMap id="BizOrderDetailResult" type="BizOrderDetail">
+		<id property="id" column="id" />
+		<association property="orderHeader" javaType="BizOrderHeader" column="orderHeader.id">
+			<id property="id" column="orderHeader.id"/>
+		</association>
+		<association property="shelfInfo" javaType="BizOpShelfSku" column="shelfInfo.id">
+			<id property="id" column="shelfInfo.id"/>
+		</association>
+		<association property="skuInfo" javaType="BizSkuInfo" column="skuInfo.id">
+			<id property="id" column="skuInfo.id"/>
+		</association>
+		<!-- 关联属性 多的一方 -->
+		<collection property="orderSkuValueList" ofType="BizOrderSkuPropValue">
+			<id property="id" column="orderSkuValueList.id" />
+			<result property="propName" column="propName"/>
+			<result property="propValue" column="propValue"/>
+		</collection>
+	</resultMap>
+
 	<sql id="bizOrderDetailColumns">
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
@@ -26,15 +45,17 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
+		<!--ospv.prop_name as "propName",
+		ospv.prop_value as "propValue"-->
 	</sql>
 	
 	<sql id="bizOrderDetailJoins">
 		LEFT join sys_user su on a.create_id=su.id
 		left join biz_sku_info bsi on a.sku_id=bsi.id
 		left join biz_order_header boh on a.order_id=boh.id
-		LEFT  JOIN biz_op_shelf_sku ois on a.sku_shelf_id=ois.id
+		LEFT JOIN biz_op_shelf_sku ois on a.sku_shelf_id=ois.id
 		Left Join biz_op_shelf_info si on si.id = ois.shelf_id
-		LEFT join biz_order_sku_prop_value ospv on ospv.order_detail_id=a.id
+		<!--LEFT join biz_order_sku_prop_value ospv on ospv.order_detail_id=a.id-->
 	</sql>
     
 	<select id="get" resultType="BizOrderDetail">
@@ -51,7 +72,7 @@
 		FROM biz_order_detail a
 		<include refid="bizOrderDetailJoins"/>
 		<where>
-			
+
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
 				AND a.order_id = #{orderHeader.id}
 			</if>
@@ -106,7 +127,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_order_detail(
 			id,
 			order_id,

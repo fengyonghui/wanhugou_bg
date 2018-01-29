@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
@@ -36,6 +37,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Autowired
     private BizOrderAddressService bizOrderAddressService;
+//    @Autowired
+//    private BizOrderDetailService bizOrderDetailService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
 
@@ -77,21 +80,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderHeader.setOrderType(1);//订单类型，默认选中  1普通订单
         }
         BizOrderAddress bizLocation = bizOrderHeader.getBizLocation();
-//        BizOrderAddress bizOrderAddress = new BizOrderAddress();//加这个条件，每修改一次insert一个地址
-          if(bizLocation.getId() !=null){
-//              bizLocation.setProvince(bizLocation.getProvince());
-//              bizLocation.setCity(bizLocation.getCity());
-            if (bizLocation.getRegion() == null) {
-                bizLocation.setRegion(new SysRegion());
-            }
-//              bizLocation.setRegion(bizLocation.getRegion());
-//              bizLocation.setAddress(bizLocation.getAddress());
-//              bizLocation.setReceiver(bizLocation.getReceiver());
-//              bizLocation.setPhone(bizLocation.getPhone());
-//              bizLocation.setId(bizLocation.getId());
-            bizOrderAddressService.save(bizLocation);
+        if (bizLocation.getRegion() == null) {
+            bizLocation.setRegion(new SysRegion());
         }
-        bizOrderHeader.setOrderType(1);
+        bizOrderAddressService.save(bizLocation);
         String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), bizOrderHeader.getCustomer().getId());
         if(bizOrderHeader.getId()==null){
             bizOrderHeader.setOrderNum(orderNum);
@@ -99,6 +91,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());
         }
         bizOrderHeader.setBizLocation(bizLocation);
+        if(bizOrderHeader.getTotalDetail()==null){
+            bizOrderHeader.setTotalDetail(0.0);
+        }else{
+            bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
+        }
         super.save(bizOrderHeader);
 //		----------------------------查询是否首次下单--------------------------------------
         BizOrderHeader boh = new BizOrderHeader();
@@ -135,7 +132,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Transactional(readOnly = false)
     public void delete(BizOrderHeader bizOrderHeader) {
-
         super.delete(bizOrderHeader);
     }
 

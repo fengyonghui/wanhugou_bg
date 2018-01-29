@@ -17,6 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderSkuPropValue;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -56,15 +57,14 @@ public class BizOrderDetailController extends BaseController {
 	private BizOrderDetailService bizOrderDetailService;
 	@Autowired
 	private BizOpShelfInfoService bizOpShelfInfoService;
-	@Autowired
-	private BizOrderDetailDao bizOrderDetailDao;
+//	@Autowired
+//	private BizOrderDetailDao bizOrderDetailDao;
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
-
-	@Autowired
-    private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
 	private BizOrderSkuPropValueService bizOrderSkuPropValueService;
+	@Autowired
+	private BizOpShelfSkuService bizOpShelfSkuService;
 
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
@@ -79,19 +79,17 @@ public class BizOrderDetailController extends BaseController {
 		BizOrderDetail entity = null;
 		if (id!=null){
 			entity = bizOrderDetailService.get(id);
-
-
 			BizOrderDetail orderDetail = new BizOrderDetail();
 			orderDetail.setOrderHeader(entity.getOrderHeader());
 			List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
-			for (BizOrderDetail od : list) {
-//				BizOrderSkuPropValue bizOrderSkuPropValue = bizOrderSkuPropValueService.findList(od.);//订单商品属性表
-				BizOpShelfSku bizOpShelfSku = bizOpShelfSkuService.get(od.getShelfInfo());//查询商品货架
-				bizOpShelfSku.getMinQty();
-				bizOpShelfSku.getMaxQty();
-				bizOpShelfSku.getSalePrice();
-				entity.setShelfInfo(bizOpShelfSku);
-			}
+//			for (BizOrderDetail od : list) {
+////				BizOrderSkuPropValue bizOrderSkuPropValue = bizOrderSkuPropValueService.findList(od.);//订单商品属性表
+//				BizOpShelfSku bizOpShelfSku = bizOpShelfSkuService.get(od.getShelfInfo());//查询商品货架
+//				bizOpShelfSku.getMinQty();
+//				bizOpShelfSku.getMaxQty();
+//				bizOpShelfSku.getSalePrice();
+//				entity.setShelfInfo(bizOpShelfSku);
+//			}
 			entity.setOrderHeaderList(list);//用于修改商品查询有多少商品
 		}
 		if (entity == null){
@@ -118,6 +116,21 @@ public class BizOrderDetailController extends BaseController {
 		model.addAttribute("orderH", ord);//用于页面订单供货中显示供货数量
         model.addAttribute("entity", bizOrderDetail);
 		model.addAttribute("bizOpShelfSku",new BizOpShelfSku());
+//		订单详情修改按钮显示品规色
+		BizOrderDetail detailOrder = bizOrderDetailService.get(bizOrderDetail);
+		if(detailOrder!=null){
+			BizOrderSkuPropValue bizOrderSkuPropValue = new BizOrderSkuPropValue();
+			bizOrderSkuPropValue.setOrderDetails(detailOrder);
+			List<BizOrderSkuPropValue> list = bizOrderSkuPropValueService.findList(bizOrderSkuPropValue);
+			detailOrder.setOrderSkuValueList(list);
+		}
+		model.addAttribute("detail", detailOrder);
+//		现价，销售区间
+		if(bizOrderDetail.getShelfInfo()!=null){
+			BizOpShelfSku bizOpShelfSku = bizOpShelfSkuService.get(bizOrderDetail.getShelfInfo());
+			model.addAttribute("shelfSku", bizOpShelfSku);
+		}
+
 		return "modules/biz/order/bizOrderDetailForm";
 	}
 

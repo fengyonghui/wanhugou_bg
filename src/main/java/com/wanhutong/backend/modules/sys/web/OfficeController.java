@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,6 +48,8 @@ public class OfficeController extends BaseController {
 	
 	@Autowired
 	private BizCustCreditService bizCustCreditService;
+	@Autowired
+	private SystemService systemService;
 	
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) Integer id) {
@@ -296,6 +299,14 @@ public class OfficeController extends BaseController {
 				}
 			}
 			office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size+1 : 1), 3, "0"));
+		}
+		if(office.getPrimaryPerson()!=null){
+			Office primaryPerson = officeService.get(office.getPrimaryPerson().getId());
+			primaryPerson.setPrimaryPerson(primaryPerson.getPrimaryPerson());
+			model.addAttribute("office1", primaryPerson);//页面显示主要负责人
+		}
+		if(office.getPrimaryPerson()!=null){
+			office.setPrimaryPerson(systemService.getUser(office.getPrimaryPerson().getId()));
 		}
 		model.addAttribute("office", office);
 		return "modules/sys/officeForm";
