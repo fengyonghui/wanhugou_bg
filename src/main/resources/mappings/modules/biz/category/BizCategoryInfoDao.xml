@@ -70,12 +70,12 @@
 		<include refid="bizCategoryInfoColumns"/>
 		FROM biz_category_info a
 		<include refid="bizCategoryInfoJoins"/>
-		WHERE a.status = #{DEL_FLAG_NORMAL} AND a.p_ids LIKE #{parentIds}
-		<if test="name != null and name != ''">
-			AND a.name LIKE
-			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
-			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
-			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		WHERE a.status = #{DEL_FLAG_NORMAL}
+		<if test="parentIds != null and parentIds != ''">
+			AND a.p_ids LIKE
+			<if test="dbName == 'oracle'">'%'||#{id}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{id}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{parentIds},'%')</if>
 		</if>
 	</select>
 
