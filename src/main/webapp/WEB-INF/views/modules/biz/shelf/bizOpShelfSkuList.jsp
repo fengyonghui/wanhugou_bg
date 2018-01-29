@@ -76,6 +76,7 @@
 		<thead>
 			<tr>
 				<th>商品名称</th>
+				<th>货架名称</th>
 				<th>采购中心</th>
 				<th>上架数量(个)</th>
 				<th>原价(元)</th>
@@ -97,6 +98,9 @@
 				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
 					${bizOpShelfSku.skuInfo.name}
 				</a></td>
+				<td>
+					${bizOpShelfSku.opShelfInfo.name}
+				</td>
 				<td>
 				<c:choose >
 					<c:when test="${bizOpShelfSku.centerOffice.id == 0 }">

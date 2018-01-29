@@ -24,6 +24,7 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	private Integer ohId;		//用于添加地址传参
 	private String flag;		//用于传参标记
 
+
 	public String getFlag() {
 		return flag;
 	}

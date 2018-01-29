@@ -14,6 +14,8 @@
 		c.region_id as "bizLocation.region.id",
 		reg.name as "bizLocation.region.name",
 		c.address as "bizLocation.address",
+		c.longitude as "bizLocation.longitude",
+		c.latitude as "bizLocation.latitude",
 		a.receiver as "receiver",
 		a.phone as "phone",
 		a.type AS "type",
