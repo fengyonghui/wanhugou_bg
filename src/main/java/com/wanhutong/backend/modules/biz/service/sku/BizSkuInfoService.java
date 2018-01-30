@@ -26,8 +26,10 @@ import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoServ
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +67,8 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	private BizProdCateService bizProdCateService;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private PropertyInfoService propertyInfoService;
 
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
@@ -184,7 +188,11 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 			for (Map.Entry<String, BizProdPropertyInfo> entry : bizSkuInfo.getProdPropMap().entrySet()) {
 				Integer propId = Integer.parseInt(entry.getKey());
 				BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
-				BizProdPropertyInfo propertyInfo = bizProdPropertyInfoService.get(propId);
+				BizProdPropertyInfo prodPropertyInfo = bizProdPropertyInfoService.get(propId);
+                PropertyInfo propertyInfo =null;
+				if (prodPropertyInfo == null){
+                    propertyInfo = propertyInfoService.get(propId);
+                }
 				String prodPropertyValueStr = bizProdPropertyInfo.getProdPropertyValues();
 				if (prodPropertyValueStr != null && !"".equals(prodPropertyValueStr)) {
 					String[] prodPropertyValues = prodPropertyValueStr.split(",");
@@ -192,8 +200,16 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 						bizSkuPropValue.setId(null);
 						Integer propValueId = Integer.parseInt(prodPropertyValues[j].trim());
 						BizProdPropValue propValue = bizProdPropValueService.get(propValueId);
-						bizSkuPropValue.setProdPropertyInfo(propertyInfo);
-						bizSkuPropValue.setPropName(propertyInfo.getPropName());
+						if(prodPropertyInfo==null){
+                            bizSkuPropValue.setPropertyInfo(propertyInfo);
+                            bizSkuPropValue.setPropName(propertyInfo.getName());
+                        }else {
+
+                            bizSkuPropValue.setProdPropertyInfo(prodPropertyInfo);
+                            bizSkuPropValue.setPropName(prodPropertyInfo.getPropName());
+
+                        }
+
 						bizSkuPropValue.setPropValue(propValue.getPropValue());
 						bizSkuPropValue.setProdPropValue(propValue);
 						bizSkuPropValue.setSource(propValue.getSource());

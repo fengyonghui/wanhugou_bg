@@ -52,6 +52,7 @@
                     {skuId:skuId,ranNum:Math.random()},
                     function(data,status) {
                         $.each(data, function (index, skuPropValue) {
+                            console.log(skuPropValue);
                             $("#"+skuPropValue.prodPropertyInfo.id).attr('checked',true);
                             $("#value_"+skuPropValue.prodPropValue.id).attr('checked',true);
                         });
@@ -129,10 +130,19 @@
 		<div class="control-group">
 			<label class="control-label">选择SKU属性：</label>
 			<div class="controls">
-				<c:forEach items="${prodPropInfoList}" var="propertyInfo">
-					<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="prodPropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.propName}：
-					<c:forEach items="${map[propertyInfo.id]}" var="propValue">
-						<input  class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${propertyInfo.id}].prodPropertyValues" value="${propValue.id}"/> ${propValue.propValue}
+				<c:forEach items="${map}" var="propertyInfo">
+					<c:set value="${ fn:split(propertyInfo.key, ',') }" var="info" />
+
+					<input  class="select_all" id="${info[0]}" type="checkbox" name="prodPropertyInfos" value="${info[0]}"/> ${info[1]}：
+					<c:forEach items="${propertyInfo.value}" var="propValue">
+						<c:choose>
+							<c:when test="${propValue.sysPropValue.id==0}">
+								<input  class="value_${info[0]}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.id}"/> ${propValue.propValue}
+							</c:when>
+						<c:otherwise>
+							<input  class="value_${info[0]}" id="value_${propValue.sysPropValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.sysPropValue.id}"/> ${propValue.propValue}
+						</c:otherwise>
+						</c:choose>
 					</c:forEach>
 					<br/>
 				</c:forEach>

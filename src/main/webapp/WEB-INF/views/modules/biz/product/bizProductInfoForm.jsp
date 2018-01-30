@@ -51,10 +51,10 @@
 
 
 
-                t = setTimeout(function() {
-                    ajaxGetProdPropInfo($("#id").val());
-
-                }, 150);
+                // t = setTimeout(function() {
+                //     ajaxGetProdPropInfo($("#id").val());
+                //
+                // }, 100);
                 t = setTimeout(function() {
                     ajaxGetProdOwnPropInfo($("#id").val());
                 }, 100);
@@ -106,14 +106,12 @@
 
                 $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
                     {catIds:ids.toString()},
-                    function(data) {
+                    function(data,status) {
                         $("#cateProp").empty();
                         $.each(data,function (keys,values) {
                             var propKeys= keys.split(",");
                             var propId= propKeys[0];
                             if(propId!=$("#brandDefId").val()){
-
-
                             var propName= propKeys[1]
                             $("#cateProp").append('<input class="select_all" id="'+propId+'" name="prodPropertyInfos" type="checkbox" value="'+propId+'" />'+propName+':<span id="span_'+propId+'"/><br/>')
                             for(var p in values){
@@ -122,7 +120,10 @@
                                 }
                             }}
 
-                        })
+                        });
+                        if($("#id").val()!=''&& status=='success'){
+                            ajaxGetProdPropInfo($("#id").val());
+						}
 
 
                     })
@@ -133,6 +134,7 @@
                     function(data,status) {
                         $.each(data, function (index, prodPropertyInfo) {
                             $.each(prodPropertyInfo.prodPropValueList, function (index, prodPropValue) {
+                                console.log("prodPropValue==="+prodPropValue);
 								$("#"+prodPropValue.propertyInfoId).attr('checked',true)
                                 $("#value_"+prodPropValue.propertyValueId).attr('checked',true)
                             });

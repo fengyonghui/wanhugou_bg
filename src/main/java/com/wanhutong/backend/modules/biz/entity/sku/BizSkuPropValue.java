@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.entity.sku;
 
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,7 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 	private BizProdPropValue prodPropValue;		// biz_prod_prop_value.id
 	private String propValue;		// biz_prod_prop_value
 	private String source;
+	private PropertyInfo propertyInfo;
 
 	private Integer prodPropId;		//用于查询属性值
 	
@@ -94,5 +96,13 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 
 	public void setProdPropId(Integer prodPropId) {
 		this.prodPropId = prodPropId;
+	}
+
+	public PropertyInfo getPropertyInfo() {
+		return propertyInfo;
+	}
+
+	public void setPropertyInfo(PropertyInfo propertyInfo) {
+		this.propertyInfo = propertyInfo;
 	}
 }

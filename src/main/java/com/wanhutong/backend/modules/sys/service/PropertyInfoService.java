@@ -32,6 +32,7 @@ public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyIn
 	@Resource
 	private PropValueService propValueService;
 
+
 	public PropertyInfo get(Integer id) {
 		return super.get(id);
 	}

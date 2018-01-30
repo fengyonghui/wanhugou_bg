@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,16 +44,45 @@ public class BizProdPropertyInfoService extends CrudService<BizProdPropertyInfoD
 		return super.findPage(page, bizProdPropertyInfo);
 	}
 
-	public Map<Integer,List<BizProdPropValue>> findMapList(BizProdPropertyInfo bizProdPropertyInfo){
+	public Map<String,List<BizProdPropValue>> findMapList(BizProdPropertyInfo bizProdPropertyInfo){
 		BizProdPropValue prodPropValue=new BizProdPropValue();
-		List<BizProdPropertyInfo> list=findList(bizProdPropertyInfo);
-		Map<Integer,List<BizProdPropValue>> map=new HashMap<Integer,List<BizProdPropValue>>();
-		for(BizProdPropertyInfo info:list){
-			prodPropValue.setId(null);
-			prodPropValue.setProdPropertyInfo(info);
+//		List<BizProdPropertyInfo> list=findList(bizProdPropertyInfo);
+		Map<String,List<BizProdPropValue>> map=new HashMap<String,List<BizProdPropValue>>();
+//		for(BizProdPropertyInfo info:list){
+//			prodPropValue.setId(null);
+			prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
 			List<BizProdPropValue> valueList=bizProdPropValueService.findList(prodPropValue);
-			map.put(info.getId(),valueList);
+		for (BizProdPropValue bizProdPropValue: valueList) {
+			if (bizProdPropValue.getPropertyInfo().getId() != null && bizProdPropValue.getPropertyInfo().getId()==0){
+				String key = bizProdPropValue.getProdPropertyInfo().getId()+","+bizProdPropValue.getPropName();
+				if (map.containsKey(key)){
+                    List<BizProdPropValue> bizProdPropValues = map.get(key);
+                    map.remove(key);
+                    bizProdPropValues.add(bizProdPropValue);
+                    map.put(key,bizProdPropValues);
+                }else {
+				    List<BizProdPropValue> bizProdPropValues = new ArrayList<>();
+                    bizProdPropValues.add(bizProdPropValue);
+                    map.put(key,bizProdPropValues);
+                }
+//				map.put(bizProdPropValue.getProdPropertyInfo().getId()+","+bizProdPropValue.getPropName(),valueList);
+			}else {
+               String key = bizProdPropValue.getPropertyInfo().getId()+","+bizProdPropValue.getPropName();
+			    if (map.containsKey(key)){
+                    List<BizProdPropValue> bizProdPropValues = map.get(key);
+                    map.remove(key);
+                    bizProdPropValues.add(bizProdPropValue);
+                    map.put(key,bizProdPropValues);
+                }else {
+                    List<BizProdPropValue> bizProdPropValues = new ArrayList<>();
+                    bizProdPropValues.add(bizProdPropValue);
+                    map.put(key,bizProdPropValues);
+                }
+//				map.put(bizProdPropValue.getPropertyInfo().getId()+","+bizProdPropValue.getPropName(),valueList);
+			}
 		}
+//			map.put(info.getId(),valueList);
+//		}
 
 		return map;
 	}

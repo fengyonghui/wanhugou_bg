@@ -87,8 +87,9 @@ public class BizSkuInfoController extends BaseController {
 		model.addAttribute("bizSkuInfo", bizSkuInfo);
 		BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
 		bizProdPropertyInfo.setProductInfo(bizSkuInfo.getProductInfo());
-		List<BizProdPropertyInfo> prodPropertyInfoList= bizProdPropertyInfoService.findList(bizProdPropertyInfo);
-		Map<Integer,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
+	//	List<BizProdPropertyInfo> prodPropertyInfoList= bizProdPropertyInfoService.findList(bizProdPropertyInfo);
+
+		Map<String,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
 
 		CommonImg commonImg=new CommonImg();
 		commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
@@ -105,7 +106,7 @@ public class BizSkuInfoController extends BaseController {
 				bizSkuInfo.setPhotos(photos);
 			}
 		}
-		model.addAttribute("prodPropInfoList", prodPropertyInfoList);
+	//	model.addAttribute("prodPropInfoList", prodPropertyInfoList);
 		model.addAttribute("map", map);
 		return "modules/biz/sku/bizSkuInfoForm";
 	}

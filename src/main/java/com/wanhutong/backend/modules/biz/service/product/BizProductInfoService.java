@@ -321,35 +321,35 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
 	private void saveCatePropAndValue(BizProductInfo bizProductInfo){
 		BizProdPropValue prodPropValue = new BizProdPropValue();
-		BizProdPropertyInfo prodPropertyInfo = new BizProdPropertyInfo();
+		//BizProdPropertyInfo prodPropertyInfo = new BizProdPropertyInfo();
 		/**
 		 * 产品选择分类属性（只选择属性，没有值）
 		 */
-		String catePropertyInfoStr = bizProductInfo.getProdPropertyInfos();
+//		String catePropertyInfoStr = bizProductInfo.getProdPropertyInfos();
 		bizProductInfoDao.deleteProdPropInfoReal(bizProductInfo);
-		if (catePropertyInfoStr != null && !catePropertyInfoStr.isEmpty()) {
-			String[] catePropertyInfos = catePropertyInfoStr.split(",");
-			for (int i = 0; i < catePropertyInfos.length; i++) {
-				Set<String> keySet = bizProductInfo.getPropertyMap().keySet();
-				if (!keySet.contains(catePropertyInfos[i])) {
-					Integer propId = Integer.parseInt(catePropertyInfos[i]);
-					PropertyInfo propertyInfo = propertyInfoService.get(propId);
-					prodPropertyInfo.setPropName(propertyInfo.getName());
-					prodPropertyInfo.setPropDescription(propertyInfo.getDescription());
-					prodPropValue.setPropertyInfo(propertyInfo);
-
-					prodPropertyInfo.setProductInfo(bizProductInfo);
-					bizProdPropertyInfoService.save(prodPropertyInfo);
-					prodPropValue.setId(null);
-					prodPropValue.setProdPropertyInfo(prodPropertyInfo);
-					prodPropValue.setSource("sys");
-					prodPropValue.setPropName(prodPropertyInfo.getPropName());
-					bizProdPropValueService.save(prodPropValue);
-
-				}
-			}
-
-		}
+//		if (catePropertyInfoStr != null && !catePropertyInfoStr.isEmpty()) {
+//			String[] catePropertyInfos = catePropertyInfoStr.split(",");
+//			for (int i = 0; i < catePropertyInfos.length; i++) {
+//				Set<String> keySet = bizProductInfo.getPropertyMap().keySet();
+//				if (!keySet.contains(catePropertyInfos[i])) {
+//					Integer propId = Integer.parseInt(catePropertyInfos[i]);
+//					PropertyInfo propertyInfo = propertyInfoService.get(propId);
+//					prodPropertyInfo.setPropName(propertyInfo.getName());
+//					prodPropertyInfo.setPropDescription(propertyInfo.getDescription());
+//					prodPropValue.setPropertyInfo(propertyInfo);
+//
+//					prodPropertyInfo.setProductInfo(bizProductInfo);
+//					bizProdPropertyInfoService.save(prodPropertyInfo);
+//					prodPropValue.setId(null);
+//					prodPropValue.setProdPropertyInfo(prodPropertyInfo);
+//					prodPropValue.setSource("sys");
+//					prodPropValue.setPropName(prodPropertyInfo.getPropName());
+//					bizProdPropValueService.save(prodPropValue);
+//
+//				}
+//			}
+//
+//		}
 		/**
 		 * 选择分类属性（属性和值）
 		 */

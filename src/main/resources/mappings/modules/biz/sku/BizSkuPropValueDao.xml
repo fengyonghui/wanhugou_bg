@@ -96,7 +96,12 @@
 		) VALUES (
 			#{id},
 			#{skuInfo.id},
-			#{prodPropertyInfo.id},
+			<if test="prodPropertyInfo != null and prodPropertyInfo.id != null">
+				#{prodPropertyInfo.id},
+			</if>
+			<if test="propertyInfo != null and propertyInfo.id != null">
+				#{propertyInfo.id},
+			</if>
 			#{propName},
 			#{prodPropValue.id},
 			#{propValue},
