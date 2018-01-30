@@ -26,8 +26,6 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
-		<!--ospv.prop_name as "propName",
-		ospv.prop_value as "propValue"-->
 	</sql>
 	
 	<sql id="bizOrderDetailJoins">

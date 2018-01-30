@@ -94,7 +94,6 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
         String[] saleQtyArr = StringUtils.split(bizOrderDetail.getSaleQtys(), ",");//多个采购数量
         String[] shelfSkuArr = StringUtils.split(bizOrderDetail.getShelfSkus(), ",");//多个货架ID
         int a=0;
-        Double sum2 = 0.0;//价格初始值
         if(skuIdArr!=null && saleQtyArr!=null && shelfSkuArr!=null){
             for (int i = 0; i < skuIdArr.length; i++) {
                 Integer skuId= Integer.parseInt(skuIdArr[i].trim());//多个Sku商品ID
@@ -119,20 +118,6 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                     System.out.println(" --进了非专营订单-- ");
                     orderHeaderNew.setOrderNum(orderNum);//新建订单编号
                     orderHeaderNew.setBizType(BizOrderDiscount.THIS_ORDER.getOneOr());//2
-//                    Double skuPrice=sku.getBasePrice();
-//                    if(skuPrice==null){
-//                        skuPrice=0.0;
-//                    }
-//                    if(ordQty==null){
-//                        ordQty=0;
-//                    }
-//                    if(orderHeaderNew.getTotalDetail()!=null){
-//                        sum2 += skuPrice * ordQty;
-//                        orderHeaderNew.setTotalDetail(orderHeaderNew.getTotalDetail()+sum2);
-//                    }else{
-//                        sum2 += skuPrice * ordQty;
-//                        orderHeaderNew.setTotalDetail(sum2);
-//                    }
                     bizOrderHeaderService.save(orderHeaderNew);
                     orderDetailNew=new BizOrderDetail();
                     orderDetailNew.setOrderHeader(orderHeaderNew);//order_header.id
@@ -222,12 +207,12 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                     if(bizOrder.getBizType() == BizOrderDiscount.TWO_ORDER.getOneOr()) {//专营订单 1
                         System.out.println(" 优惠1 ");
                         bb.setTotalDetail(sum - Money01);//0.1
-                        bb.setTotalExp(Money01);
+                        bb.setTotalExp(-Money01);
                         bizOrderHeaderService.updateMoney(bb);
                     }else if(bizOrder.getBizType() == BizOrderDiscount.THIS_ORDER.getOneOr()) {//非专营订单 2
                         System.out.println(" 优惠2 ");
                         bb.setTotalDetail(sum - Money005);//0.05
-                        bb.setTotalExp(Money005);
+                        bb.setTotalExp(-Money005);
                         bizOrderHeaderService.updateMoney(bb);
                     }else{
                         System.out.println(" 未知 ");

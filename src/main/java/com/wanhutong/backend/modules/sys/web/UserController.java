@@ -204,6 +204,7 @@ public class UserController extends BaseController {
 		}
 		if(user.getConn().equals("connIndex")){
 //			跳回客户专员管理
+			user.getCompany().getId();
 			return "redirect:" + adminPath + "/sys/user/list?company.id="+user.getCompany().getId()+"&company.type="+user.getCompany().getType();
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";

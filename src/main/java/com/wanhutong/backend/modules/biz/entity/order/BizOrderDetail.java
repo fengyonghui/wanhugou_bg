@@ -45,24 +45,18 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
 
-
     private String  detailIds;
     private Integer totalReqQty;
     private Integer totalSendQty;
     private Integer vendorId;
     private String vendorName;
 
-    @Override
-    public void preInsert() {
-    }
     //    public Integer getMaxLineNo() {
 //        return maxLineNo;
 //    }
-//
 //    public void setMaxLineNo(Integer maxLineNo) {
 //        this.maxLineNo = maxLineNo;
 //    }
-
 
     public List<BizOrderDetail> getOrderHeaderList() {
         return orderHeaderList;
