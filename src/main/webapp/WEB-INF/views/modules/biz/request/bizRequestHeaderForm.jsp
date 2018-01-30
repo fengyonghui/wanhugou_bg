@@ -253,7 +253,7 @@
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 								<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
-
+								<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
 								<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 							</td>
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">

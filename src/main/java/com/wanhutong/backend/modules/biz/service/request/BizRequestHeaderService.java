@@ -131,26 +131,34 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		if(bizRequestHeader.getSkuInfoIds()!=null && bizRequestHeader.getReqQtys()!=null){
 			String [] skuInfoIdArr=StringUtils.split(bizRequestHeader.getSkuInfoIds(),",");
 			String [] reqArr=StringUtils.split(bizRequestHeader.getReqQtys(),",");
+			String [] lineNoArr=StringUtils.split(bizRequestHeader.getLineNos(),",");
 			int t=0;
+			int p=0;
 			for(int i=0;i<skuInfoIdArr.length;i++){
 				if(reqArr[i].equals("0")){
 					continue;
 				}
 				bizRequestDetail.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
 				bizRequestDetail.setReqQty(Integer.parseInt(reqArr[i].trim()));
-				bizRequestDetail.setLineNo(t);
+
 				if(bizRequestHeader.getReqDetailIds()!=null){
 					String [] detailIdArr=StringUtils.split(bizRequestHeader.getReqDetailIds(),",");
 					if (detailIdArr.length > i){
 						bizRequestDetail.setId(Integer.parseInt(detailIdArr[i].trim()));
+						if(p<Integer.parseInt(lineNoArr[i])){
+							t=Integer.parseInt(lineNoArr[i]);
+						}else {
+							t=p;
+						}
 					}else {
 						bizRequestDetail.setId(null);
 						bizRequestDetail.setLineNo(++t);
 					}
 
 				}
-
-
+				if(bizRequestHeader.getReqDetailIds()==null) {
+					bizRequestDetail.setLineNo(++t);
+				}
 				bizRequestDetail.setRequestHeader(bizRequestHeader);
 				bizRequestDetailService.save(bizRequestDetail);
 			}

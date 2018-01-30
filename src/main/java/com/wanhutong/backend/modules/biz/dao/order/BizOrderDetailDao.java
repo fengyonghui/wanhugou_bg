@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.biz.dao.order;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+
+import java.util.List;
 
 /**
  * 订单详情(销售订单)DAO接口
@@ -15,4 +18,6 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 @MyBatisDao
 public interface BizOrderDetailDao extends CrudDao<BizOrderDetail> {
 	public Integer findMaxLine(BizOrderDetail bizOrderDetail);
+
+	List<BizOrderDetail>findOrderTotalByVendor(BizOrderHeader bizOrderHeader);
 }

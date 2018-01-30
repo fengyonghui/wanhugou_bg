@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.biz.service.request;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ import com.wanhutong.backend.modules.biz.dao.request.BizRequestDetailDao;
 @Service
 @Transactional(readOnly = true)
 public class BizRequestDetailService extends CrudService<BizRequestDetailDao, BizRequestDetail> {
+	@Autowired
+	private BizRequestDetailDao bizRequestDetailDao;
 
 	public BizRequestDetail get(Integer id) {
 		return super.get(id);
@@ -33,7 +37,12 @@ public class BizRequestDetailService extends CrudService<BizRequestDetailDao, Bi
 	public Page<BizRequestDetail> findPage(Page<BizRequestDetail> page, BizRequestDetail bizRequestDetail) {
 		return super.findPage(page, bizRequestDetail);
 	}
-	
+
+	public  List<BizRequestDetail>findReqTotalByVendor(BizRequestHeader bizRequestHeader){
+		return bizRequestDetailDao.findReqTotalByVendor(bizRequestHeader);
+	}
+
+
 	@Transactional(readOnly = false)
 	public void save(BizRequestDetail bizRequestDetail) {
 		super.save(bizRequestDetail);

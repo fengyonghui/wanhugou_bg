@@ -29,6 +29,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private Integer sendQty;		//已发货数量
 	private String remark;		// 备注
 
+	private String  reqDetailIds;
+	private Integer totalReqQty;
+	private Integer totalSendQty;
+	private Integer totalRecvQty;
+	private Integer vendorId;
+	private String vendorName;
+
 	
 	public BizRequestDetail() {
 		super();
@@ -94,5 +101,53 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setRecvQty(Integer recvQty) {
 		this.recvQty = recvQty;
+	}
+
+	public String getReqDetailIds() {
+		return reqDetailIds;
+	}
+
+	public void setReqDetailIds(String reqDetailIds) {
+		this.reqDetailIds = reqDetailIds;
+	}
+
+	public Integer getTotalReqQty() {
+		return totalReqQty;
+	}
+
+	public void setTotalReqQty(Integer totalReqQty) {
+		this.totalReqQty = totalReqQty;
+	}
+
+	public Integer getTotalSendQty() {
+		return totalSendQty;
+	}
+
+	public void setTotalSendQty(Integer totalSendQty) {
+		this.totalSendQty = totalSendQty;
+	}
+
+	public Integer getTotalRecvQty() {
+		return totalRecvQty;
+	}
+
+	public void setTotalRecvQty(Integer totalRecvQty) {
+		this.totalRecvQty = totalRecvQty;
+	}
+
+	public Integer getVendorId() {
+		return vendorId;
+	}
+
+	public void setVendorId(Integer vendorId) {
+		this.vendorId = vendorId;
+	}
+
+	public String getVendorName() {
+		return vendorName;
+	}
+
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
 	}
 }

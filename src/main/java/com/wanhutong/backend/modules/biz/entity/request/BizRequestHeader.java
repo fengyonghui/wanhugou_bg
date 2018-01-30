@@ -38,6 +38,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String reqDetailIds;
 	private String skuInfoIds;
 	private String reqQtys;
+	private String lineNos;
 	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
 	private BizProductInfo productInfo;
 
@@ -258,5 +259,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setRecvQtys(String recvQtys) {
 		this.recvQtys = recvQtys;
+	}
+
+	public String getLineNos() {
+		return lineNos;
+	}
+
+	public void setLineNos(String lineNos) {
+		this.lineNos = lineNos;
 	}
 }

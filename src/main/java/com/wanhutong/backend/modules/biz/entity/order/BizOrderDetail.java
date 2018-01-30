@@ -45,7 +45,17 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
 
-//    public Integer getMaxLineNo() {
+
+    private String  detailIds;
+    private Integer totalReqQty;
+    private Integer totalSendQty;
+    private Integer vendorId;
+    private String vendorName;
+
+    @Override
+    public void preInsert() {
+    }
+    //    public Integer getMaxLineNo() {
 //        return maxLineNo;
 //    }
 //
@@ -234,5 +244,45 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setOrderSkuValueList(List<BizOrderSkuPropValue> orderSkuValueList) {
         this.orderSkuValueList = orderSkuValueList;
+    }
+
+    public String getDetailIds() {
+        return detailIds;
+    }
+
+    public void setDetailIds(String detailIds) {
+        this.detailIds = detailIds;
+    }
+
+    public Integer getTotalReqQty() {
+        return totalReqQty;
+    }
+
+    public void setTotalReqQty(Integer totalReqQty) {
+        this.totalReqQty = totalReqQty;
+    }
+
+    public Integer getTotalSendQty() {
+        return totalSendQty;
+    }
+
+    public void setTotalSendQty(Integer totalSendQty) {
+        this.totalSendQty = totalSendQty;
+    }
+
+    public Integer getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(Integer vendorId) {
+        this.vendorId = vendorId;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 }

@@ -128,6 +128,9 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	 * @return
 	 */
 	public BizSkuInfo findListProd(BizSkuInfo skuInfo){
+		if(skuInfo.getProductInfo()==null){
+			return null;
+		}
 		Integer prodId=	skuInfo.getProductInfo().getId();
 		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
 		BizSkuPropValue bizSkuPropValue=new BizSkuPropValue();

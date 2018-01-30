@@ -109,6 +109,26 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<select id="findOrderTotalByVendor" resultType="BizOrderDetail">
+		SELECT
+		GROUP_CONCAT( od.id ) AS "detailIds",
+		sum( od.ord_qty ) AS "totalReqQty",
+		sum( od.sent_qty ) AS "totalSendQty",
+		pi.vendor_id AS "vendorId",
+		pi.vendor_name AS "vendorName"
+		FROM
+		biz_order_detail od
+		LEFT JOIN biz_order_header oh ON od.order_id = oh.id
+		JOIN biz_sku_info si ON si.id = od.sku_id
+		JOIN biz_product_info pi ON pi.id = si.prod_id
+		WHERE oh.STATUS = 1
+		<if test="bizStatusStart !=null and bizStatusEnd !=null">
+			AND oh.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+		</if>
+		GROUP BY
+		pi.vendor_id
+	</select>
 	
 	<select id="findAllList" resultType="BizOrderDetail">
 		SELECT 

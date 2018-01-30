@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.biz.dao.request;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+
+import java.util.List;
 
 /**
  * 备货清单详细信息DAO接口
@@ -14,5 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
  */
 @MyBatisDao
 public interface BizRequestDetailDao extends CrudDao<BizRequestDetail> {
+
+    List<BizRequestDetail>findReqTotalByVendor(BizRequestHeader bizRequestHeader);
 	
 }

@@ -273,4 +273,8 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
         super.delete(bizOrderDetail);
     }
 
+
+    public List<BizOrderDetail>findOrderTotalByVendor(BizOrderHeader bizOrderHeader){
+        return bizOrderDetailDao.findOrderTotalByVendor(bizOrderHeader);
+    }
 }

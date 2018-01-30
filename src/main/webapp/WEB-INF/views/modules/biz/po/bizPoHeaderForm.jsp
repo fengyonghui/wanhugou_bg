@@ -32,56 +32,47 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
 
-		<div class="control-group">
-			<label class="control-label">供应商：</label>
-			<div class="controls">
-				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${bizPoHeader.vendOffice.id}" labelName="vendOffice.name"
-								labelValue="${bizPoHeader.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-xlarge required" dataMsgRequired="必填信息">
-				</sys:treeselect>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">订单详情总价：</label>
-			<div class="controls">
-				<form:input readonly="true" path="totalDetail" htmlEscape="false" class="input-xlarge"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">订单总费用：</label>
-			<div class="controls">
-				<form:input path="totalExp"  htmlEscape="false"  class="input-xlarge"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">运费：</label>
-			<div class="controls">
-				<form:input path="freight" htmlEscape="false" class="input-xlarge"/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">发票状态：</label>
-			<div class="controls">
-				<form:select path="invStatus" class="input-xlarge required">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">业务状态：</label>
-			<div class="controls">
-				<form:select path="bizStatus" class="input-xlarge required">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('biz_po_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+		<table id="contentTable"  class="table table-striped table-bordered table-condensed">
+			<thead>
+			<tr>
+				<th>产品图片</th>
+				<th>品牌名称</th>
+				<th>商品名称</th>
+				<th>商品编码</th>
+				<th>商品属性</th>
+				<th>申报数量</th>
+				<th>已收货数量</th>
+
+
+			</tr>
+			</thead>
+			<tbody id="prodInfo">
+			<c:if test="${reqDetailList!=null}">
+				<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
+					<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
+						<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
+						<td>${reqDetail.skuInfo.productInfo.brandName}</td>
+						<td>${reqDetail.skuInfo.name}</td>
+						<td>${reqDetail.skuInfo.partNo}</td>
+						<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
+						<td>
+							<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
+							<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
+							<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
+							<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
+						</td>
+							<td>${reqDetail.recvQty}</td>
+
+
+					</tr>
+				</c:forEach>
+
+			</c:if>
+			</tbody>
+		</table>
+
 
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:po:bizPoHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
@@ -89,53 +80,5 @@
 		</div>
 	</form:form>
 
-	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead>
-		<tr>
-			<th>详情行号</th>
-			<th>商品编号</th>
-			<th>商品名称</th>
-			<th>商品单价</th>
-			<th>采购数量</th>
-			<shiro:hasPermission name="biz:po:bizPoDetail:edit"><th>操作</th></shiro:hasPermission>
-		</tr>
-		</thead>
-		<tbody>
-		<c:forEach items="${bizPoHeader.poDetailList}" var="bizPoDetail">
-			<tr>
-				<td><a href="${ctx}/biz/po/bizPoDetail/form?id=${bizPoDetail.id}">
-						${bizPoDetail.lineNo}
-				</a></td>
-				<td>
-						${bizPoDetail.partNo}
-				</td>
-				<td>
-						${bizPoDetail.skuName}
-				</td>
-				<td>
-						${bizPoDetail.unitPrice}
-				</td>
-				<td>
-						${bizPoDetail.ordQty}
-				</td>
-				<shiro:hasPermission name="biz:po:bizPoDetail:edit"><td>
-					<a href="${ctx}/biz/po/bizPoDetail/form?id=${bizPoDetail.id}">修改</a>
-					<a href="${ctx}/biz/po/bizPoDetail/delete?id=${bizPoDetail.id}" onclick="return confirmx('确认要删除该采购订单详细信息吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
-			</tr>
-		</c:forEach>
-		</tbody>
-	</table>
-	<div class="form-actions">
-		<c:if test="${bizPoHeader.id !=null && bizPoHeader.id!='' }">
-			<c:if test="${bizPoHeader!=null && bizPoHeader.poDetailList!=null&&bizPoHeader.poDetailList.size()!=0}">
-				<c:set value="${bizPoHeader.poDetailList[bizPoHeader.poDetailList.size()-1].lineNo}" var="lineNo"></c:set>
-			</c:if>
-			<shiro:hasPermission name="biz:po:bizPoDetail:edit"><input type="button"
-																	   onclick="javascript:window.location.href='${ctx}/biz/po/bizPoDetail/form?&poHeader.id=${bizPoHeader.id}&lineNo=${lineNo==null?1:lineNo+1}';"
-																	   class="btn btn-primary"
-																	   value="增加采购订单详情"/></shiro:hasPermission>
-		</c:if>
-	</div>
 </body>
 </html>

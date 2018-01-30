@@ -29,7 +29,7 @@
 			<include refid="bizRequestDetailColumns"/>
 		FROM biz_request_detail a
 		<include refid="bizRequestDetailJoins"/>
-		WHERE a.id = #{id} AND a.status = #{DEL_FLAG_NORMAL}
+		WHERE a.id = #{id} AND a.status = 1
 	</select>
 	
 	<select id="findList" resultType="BizRequestDetail">
@@ -70,6 +70,28 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+	</select>
+
+
+	<select id="findReqTotalByVendor" resultType="BizRequestDetail">
+		SELECT
+		GROUP_CONCAT( rd.id ) AS "reqDetailIds",
+		sum( rd.req_qty ) AS "totalReqQty",
+		sum( rd.send_qty ) AS "totalSendQty",
+		sum( rd.recv_qty ) AS "totalRecvQty",
+		pi.vendor_id AS "vendorId",
+		pi.vendor_name AS "vendorName"
+		FROM
+		biz_request_detail rd
+		LEFT JOIN biz_request_header rh ON rd.header_id = rh.id
+		JOIN biz_sku_info si ON si.id = rd.sku_id
+		JOIN biz_product_info pi ON pi.id = si.prod_id
+		WHERE rh.STATUS = 1
+		<if test="bizStatusStart !=null and bizStatusEnd !=null">
+			AND rh.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+		</if>
+		GROUP BY
+		pi.vendor_id
 	</select>
 	
 	<insert id="insert">
