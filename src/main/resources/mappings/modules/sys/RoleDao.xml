@@ -67,7 +67,8 @@
 			ro.office_id AS "officeRoleList.id"
 		FROM sys_role a
 		LEFT JOIN sys_role_office ro ON ro.role_id = a.id
-		JOIN sys_office o ON o.id =ro.office_id<!--
+		LEFT JOIN sys_office o ON o.id =ro.office_id
+		<!--
 		LEFT JOIN sys_user_role ur ON ur.role_id = a.id
 		LEFT JOIN sys_user u ON u.id = ur.user_id
 		LEFT JOIN sys_office uc ON uc.id = u.company_id

@@ -103,7 +103,6 @@
              * @param ids
              */
             function ajaxGetPropInfo(ids) {
-
                 $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
                     {catIds:ids.toString()},
                     function(data,status) {

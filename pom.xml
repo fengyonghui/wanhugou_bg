@@ -57,26 +57,26 @@
     </properties>
 
     <!-- 设定主仓库，按设定顺序进行查找。 -->
-    <!--<repositories>-->
+    <repositories>
 
-    <!--<repository>-->
-    <!--<id>jeesite-repos</id>-->
-    <!--<name>Jeesite Repository</name>-->
-    <!--<url>http://123.206.60.71:8081/nexus/content/groups/public</url>-->
-    <!--</repository>-->
+    <repository>
+    <id>jeesite-repos</id>
+    <name>Jeesite Repository</name>
+    <url>http://192.168.1.252:8081/nexus/content/groups/public</url>
+    </repository>
 
-    <!--</repositories>-->
+    </repositories>
 
-    <!-- 设定插件仓库 -->
-    <!--<pluginRepositories>-->
+     <!--设定插件仓库-->
+    <pluginRepositories>
 
-    <!--<pluginRepository>-->
-    <!--<id>jeesite-repos</id>-->
-    <!--<name>Jeesite Repository</name>-->
-    <!--<url>http://123.206.60.71:8081/nexus/content/groups/public</url>-->
-    <!--</pluginRepository>-->
+    <pluginRepository>
+    <id>jeesite-repos</id>
+    <name>Jeesite Repository</name>
+    <url>http://192.168.1.252:8081/nexus/content/groups/public</url>
+    </pluginRepository>
 
-    <!--</pluginRepositories>-->
+    </pluginRepositories>
 
     <!-- 依赖项定义 -->
     <dependencies>
