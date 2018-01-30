@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.cms.BizCmsColumInfoDao">
+    
+	<sql id="bizCmsColumInfoColumns">
+		a.id AS "id",
+		a.page_id AS "pageInfo.id",
+		a.type AS "type",
+		a.title AS "title",
+		a.shelf_id AS "shelfInfo.id",
+		a.set_order AS "setOrder",
+		a.description AS "description",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		suc.name as "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizCmsColumInfoJoins">
+		LEFT JOIN sys_user suc on suc.id = a.create_id
+	</sql>
+    
+	<select id="get" resultType="BizCmsColumInfo">
+		SELECT 
+			<include refid="bizCmsColumInfoColumns"/>
+		FROM biz_cms_colum_info a
+		<include refid="bizCmsColumInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizCmsColumInfo">
+		SELECT 
+			<include refid="bizCmsColumInfoColumns"/>
+		FROM biz_cms_colum_info a
+		<include refid="bizCmsColumInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="pageInfo != null and pageInfo.id != null and pageInfo.id != ''">
+				AND a.page_id = #{pageInfo.id}
+			</if>
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+			<if test="shelfInfo != null and shelfInfo.id != null and shelfInfo.id != ''">
+				AND a.shelf_id = #{shelfInfo.id}
+			</if>
+			<if test="setOrder != null and setOrder != ''">
+				AND a.set_order = #{setOrder}
+			</if>
+			<if test="description != null and description != ''">
+				AND a.description = #{description}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+			<if test="createDate != null and createDate != ''">
+				AND a.create_time = #{createDate}
+			</if>
+			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
+				AND a.update_id = #{updateBy.id}
+			</if>
+			<if test="updateDate != null and updateDate != ''">
+				AND a.update_time = #{updateDate}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizCmsColumInfo">
+		SELECT 
+			<include refid="bizCmsColumInfoColumns"/>
+		FROM biz_cms_colum_info a
+		<include refid="bizCmsColumInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_cms_colum_info(
+			id,
+			page_id,
+			`type`,
+			title,
+			shelf_id,
+			set_order,
+			description,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{pageInfo.id},
+			#{type},
+			#{title},
+			#{shelfInfo.id},
+			#{setOrder},
+			#{description},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_cms_colum_info SET 	
+			page_id = #{pageInfo.id},
+			`type` = #{type},
+			title = #{title},
+			shelf_id = #{shelfInfo.id},
+			set_order = #{setOrder},
+			description = #{description},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_cms_colum_info SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

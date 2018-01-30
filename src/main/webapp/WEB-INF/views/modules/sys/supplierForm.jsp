@@ -115,7 +115,7 @@
 			<label class="control-label">负责人:</label>
 			<div class="controls">
 				<form:input path="master" htmlEscape="false" class="required" maxlength="50"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">

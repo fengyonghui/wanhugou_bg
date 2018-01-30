@@ -168,7 +168,7 @@
 						</a>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${orderHeader.bizStatus==0 && orderHeader.bizStatus==5 ||
+						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||
 									orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight!=orderHeader.receiveTotal}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>

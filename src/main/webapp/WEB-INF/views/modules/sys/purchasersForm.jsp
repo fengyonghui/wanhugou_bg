@@ -9,6 +9,10 @@
 			$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+					if($("#primaryPersonId").val()==""){
+						alert("请选择主负责人");
+						return false;
+					}
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -23,7 +27,7 @@
 				}
 			});
 		});
-		
+
 		/* $(function(){
 			$("#s2id_levelID").html("");
 			
@@ -104,8 +108,8 @@
 			<label class="control-label">主负责人:</label>
 			<div class="controls">
 				 <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office1.primaryPerson.id}" labelName="office1.primaryPerson.name" labelValue="${office1.primaryPerson.name}"
-					title="用户" url="/sys/office/treeData?type=3" cssClass="required" allowClear="true" />
-				<span class="help-inline"><font color="red">*</font> </span>
+					title="用户" url="/sys/office/treeData?type=3" allowClear="true" />
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">

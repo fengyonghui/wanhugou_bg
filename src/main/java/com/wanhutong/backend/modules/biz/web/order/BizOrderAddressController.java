@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -80,4 +81,11 @@ public class BizOrderAddressController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderAddress/?repage";
 	}
 
+	@ResponseBody
+	@RequiresPermissions("biz:order:bizOrderHeader:view")
+	@RequestMapping(value = "orderForm")
+	public BizOrderAddress orderForm(BizOrderAddress bizOrderAddress, Model model) {
+		BizOrderAddress orderAddress = bizOrderAddressService.get(bizOrderAddress.getId());
+		return orderAddress;
+	}
 }

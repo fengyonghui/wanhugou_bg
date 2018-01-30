@@ -185,7 +185,7 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_order_header SET 	
+		UPDATE biz_order_header SET
 			order_num = #{orderNum},
 			order_type = #{orderType},
 			cust_id = #{customer.id},
@@ -238,4 +238,16 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<update id="updateMoney">
+		UPDATE biz_order_header SET
+			total_detail = #{totalDetail}
+		<if test="totalExp !=null and totalExp !=''">
+			,total_exp = #{totalExp}
+		</if>
+		<if test="freight !=null and freight !=''">
+			,freight = #{freight}
+		</if>
+		WHERE id = #{id}
+	</update>
 </mapper>

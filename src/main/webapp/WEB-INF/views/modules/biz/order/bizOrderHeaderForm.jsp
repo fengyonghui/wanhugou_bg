@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8"  pageEncoding="UTF-8"%>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
@@ -29,15 +29,23 @@
 					}
 				}
 			});
-            if($("#officeId").val()!=""){
-                clickBut();
-            }
+			<%--if($("#id").val()==""){--%>
+                if($("#officeId").val()!=""){
+                    clickBut();
+                }
+			<%--}else{--%>
+			    <%--if($("#officeId").val()!=""){--%>
+                    <%--clickBut2();--%>
+                <%--}--%>
+			<%--}--%>
             $("#addAddressHref").click(function () {
                 var officeId=$("#officeId").val();
                 var officeName =$("#officeName").val();
                 window.location.href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id="+officeId+"&office.name="+officeName+"&flag=order"
             });
 		});
+
+    <%--if($("#id").val()==""){--%>
       function clickBut(){
          var officeId=$("#officeId").val();
              $("#province").empty();
@@ -65,7 +73,6 @@
                     $("#add2").css("display","none");
                     $("#add3").css("display","block");
                     <%--alert(data.bizLocation.province.name+"------");--%>
-                            <%--if(data.deFaultStatus ==1){--%>
                                 var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);
                                 $("#province").append(option2);
                                 var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);
@@ -81,8 +88,6 @@
                                 var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
                                 $("#jhregion").append(option4);
                                 $("#jhaddress").val(data.bizLocation.address);
-                             <%--}--%>
-                       //当省份的数据加载完毕之后
                        $("#province").change();
                        $("#city").change();
                        $("#region").change();
@@ -95,7 +100,18 @@
                     }
                 }
             });
-        }
+     }
+    <%--}else{--%>
+        <%--function clickBut2(){--%>
+            <%--$.ajax({--%>
+                <%--type:"post",--%>
+                <%--url:"${ctx}/biz/order/bizOrderAddress/orderForm?id=${bizOrderHeader.bizLocation.id}",--%>
+                <%--success:function(data){--%>
+                    <%--console.log("-测试--"+data);--%>
+                <%--}--%>
+            <%--});--%>
+        <%--}--%>
+    <%--}--%>
 </script>
  <script type="text/javascript">
     function btnOrder(){
@@ -223,7 +239,7 @@
 <form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post"
            class="form-horizontal">
     <form:hidden path="id"/>
-    <form:hidden path="oneOrder"/>
+    <input type="hidden" name="oneOrder" value="${entity.oneOrder}" >
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>
     <%--<div class="control-group">--%>
@@ -259,13 +275,22 @@
                 <%--notAllowSelectRoot="true"--%>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
+                <c:if test="${bizOrderHeader.id==null }">
+                    <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
+                </c:if>
+                <c:if test="${bizOrderHeader.id!=null }">
+                    <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
+                                    labelValue="${entity2.customer.name}"
+                                    notAllowSelectParent="true"
+                                    title="采购商2" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+                                    allowClear="${office.currentUser.admin}" onchange="clickBut2();" dataMsgRequired="必填信息"/>
+                </c:if>
             </c:if>
-            <span class="help-inline"><font color="red">*</font></span>
+            <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
     <div class="control-group">
@@ -280,7 +305,11 @@
         <label class="control-label">订单总费用：</label>
         <div class="controls">
             <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
-            <span class="help-inline"><font color="red">*</font> </span>
+            <span class="help-inline"><font color="red">*</font>
+                <c:if test="${entity.oneOrder eq 'firstOrder' && entity.totalDetail>10000}">
+                    首次下单不能大于10000元
+                </c:if>
+            </span>
         </div>
     </div>
     <div class="control-group">
@@ -508,7 +537,7 @@
             </td>
             <td>
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">
+                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">
                 </c:if>
                     ${bizOrderDetail.skuName}</a>
             </td>
@@ -540,8 +569,8 @@
             <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <td>
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&oneOrder=${bizOrderHeader.oneOrder}">修改</a>
-                        <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1"
+                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">修改</a>
+                        <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}"
                            onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
                     </td>
                 </c:if>
@@ -554,7 +583,7 @@
     <div class="form-actions">
         <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
             <shiro:hasPermission name="biz:order:bizOrderDetail:edit"><input type="button"
-                                                                             onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${bizOrderHeader.oneOrder}';"
+                                                                             onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}';"
                                                                              class="btn btn-primary"
                                                                              value="订单商品信息添加"/></shiro:hasPermission>
         </c:if>

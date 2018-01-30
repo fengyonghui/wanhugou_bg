@@ -112,10 +112,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                     System.out.println(" 优惠10% ");
                     Double a1=t1*BizOrderDiscount.SELF_SUPPORT.getCalcs();//0.1
                     bizOrderHeader.setTotalDetail(t1-a1);
+                    super.save(bizOrderHeader);
                 }else if(bizOrderHeader.getBizType()==BizOrderDiscount.THIS_ORDER.getOneOr()){//非专营 2
                     System.out.println(" 优惠5% ");
                     Double a2=t1*BizOrderDiscount.NON_SELF_SUPPORT.getCalcs();//0.05
                     bizOrderHeader.setTotalDetail(t1-a2);
+                    super.save(bizOrderHeader);
                 }else{
                     System.out.println(" 未知 ");
                 }
@@ -135,6 +137,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         super.delete(bizOrderHeader);
     }
 
+    @Transactional(readOnly = false)
+    public void updateMoney(BizOrderHeader bizOrderHeader) {
+        bizOrderHeaderDao.updateMoney(bizOrderHeader);
+    }
 
     @Transactional(readOnly = false)
     public void saveOrderHea(BizOrderHeader bizOrderHeader) {

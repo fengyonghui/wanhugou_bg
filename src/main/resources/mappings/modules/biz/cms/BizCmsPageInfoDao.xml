@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.cms.BizCmsPageInfoDao">
+    
+	<sql id="bizCmsPageInfoColumns">
+		a.id AS "id",
+		a.plat_id AS "platInfo.id",
+		a.name AS "name",
+		a.description AS "description",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		suc.name as "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizCmsPageInfoJoins">
+		LEFT JOIN sys_user suc on suc.id = a.create_id
+	</sql>
+    
+	<select id="get" resultType="BizCmsPageInfo">
+		SELECT 
+			<include refid="bizCmsPageInfoColumns"/>
+		FROM biz_cms_page_info a
+		<include refid="bizCmsPageInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizCmsPageInfo">
+		SELECT 
+			<include refid="bizCmsPageInfoColumns"/>
+		FROM biz_cms_page_info a
+		<include refid="bizCmsPageInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="platInfo != null and platInfo.id != null and platInfo.id != ''">
+				AND a.plat_id = #{platInfo.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="description != null and description != ''">
+				AND a.description = #{description}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+			<if test="createDate != null and createDate != ''">
+				AND a.create_time = #{createDate}
+			</if>
+			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
+				AND a.update_id = #{updateBy.id}
+			</if>
+			<if test="updateDate != null and updateDate != ''">
+				AND a.update_time = #{updateDate}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizCmsPageInfo">
+		SELECT 
+			<include refid="bizCmsPageInfoColumns"/>
+		FROM biz_cms_page_info a
+		<include refid="bizCmsPageInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_cms_page_info(
+			id,
+			plat_id,
+			`name`,
+			description,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{platInfo.id},
+			#{name},
+			#{description},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_cms_page_info SET 	
+			plat_id = #{platInfo.id},
+			`name` = #{name},
+			description = #{description},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_cms_page_info SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

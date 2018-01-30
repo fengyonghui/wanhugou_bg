@@ -99,7 +99,8 @@ public class SysOfficeAddressController extends BaseController {
 //				ohId=0;
 //			}
 //			id="+ohId+"&
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id=&customer.id="+sysOfficeAddress.getOffice().getId();
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id=&customer.id="+sysOfficeAddress.getOffice().getId()
+					+"&bizLocation.receiver="+sysOfficeAddress.getReceiver()+"&bizLocation.phone="+sysOfficeAddress.getPhone();
 		}
 		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
 	}

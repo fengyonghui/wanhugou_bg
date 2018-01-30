@@ -2,25 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderDetailDao">
 
-	<resultMap id="BizOrderDetailResult" type="BizOrderDetail">
-		<id property="id" column="id" />
-		<association property="orderHeader" javaType="BizOrderHeader" column="orderHeader.id">
-			<id property="id" column="orderHeader.id"/>
-		</association>
-		<association property="shelfInfo" javaType="BizOpShelfSku" column="shelfInfo.id">
-			<id property="id" column="shelfInfo.id"/>
-		</association>
-		<association property="skuInfo" javaType="BizSkuInfo" column="skuInfo.id">
-			<id property="id" column="skuInfo.id"/>
-		</association>
-		<!-- 关联属性 多的一方 -->
-		<collection property="orderSkuValueList" ofType="BizOrderSkuPropValue">
-			<id property="id" column="orderSkuValueList.id" />
-			<result property="propName" column="propName"/>
-			<result property="propValue" column="propValue"/>
-		</collection>
-	</resultMap>
-
 	<sql id="bizOrderDetailColumns">
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
@@ -236,7 +217,7 @@
 		WHERE id = #{id}
 	</update>
 	
-	<select id="findMaxLine" resultType="Integer"   parameterType="BizOrderDetail">
+	<select id="findMaxLine" resultType="Integer" parameterType="BizOrderDetail">
 		select max(a.line_no) from biz_order_detail a where a.order_id=#{orderHeader.id}
 	</select>
 </mapper>

@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
@@ -54,6 +56,8 @@ public class BizOrderHeaderController extends BaseController {
 	private BizOrderDetailService bizOrderDetailService;
 	@Autowired
 	private OfficeService officeService;
+	@Resource
+	private BizOrderHeaderDao bizOrderHeaderDao;
 	@Autowired
     private BizCustCreditService bizCustCreditService;
 
@@ -71,20 +75,20 @@ public class BizOrderHeaderController extends BaseController {
 			BizOrderDetail bizOrderDetail = new BizOrderDetail();
 			bizOrderDetail.setOrderHeader(entity);
 			List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
-			if(list.size()!=0){
-				for (BizOrderDetail detail : list) {
-					Double price = detail.getUnitPrice();//商品单价
-					Integer ordQty = detail.getOrdQty();//采购数量
-					if(price==null){
-						price=0.0;
-					}
-					if(ordQty==null){
-						ordQty=0;
-					}
-					sum+=price*ordQty;
-				}
-			}
-			entity.setTotalDetail(sum);
+//			if(list.size()!=0){
+//				for (BizOrderDetail detail : list) {
+//					Double price = detail.getUnitPrice();//商品单价
+//					Integer ordQty = detail.getOrdQty();//采购数量
+//					if(price==null){
+//						price=0.0;
+//					}
+//					if(ordQty==null){
+//						ordQty=0;
+//					}
+//					sum+=price*ordQty;
+//				}
+//			}
+			entity.setTotalDetail(entity.getTotalDetail());
 			entity.setOrderDetailList(list);
 		}
 		if (entity == null){
@@ -113,12 +117,6 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizOrderHeader bizOrderHeader, Model model,String orderNoEditable,String orderDetails) {
-//		if(bizOrderHeader.getOrderDetailList()!=null){
-//			bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
-//		}else{
-//			bizOrderHeader.setTotalDetail(0.0);
-////			bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-//		}
 		if(bizOrderHeader.getCustomer()!=null && bizOrderHeader.getCustomer().getId()!=null){
 			Office office=officeService.get(bizOrderHeader.getCustomer().getId());
 			bizOrderHeader.setCustomer(office);
@@ -138,7 +136,16 @@ public class BizOrderHeaderController extends BaseController {
 				bizOrderHeader.setOrderDetails("details");//查看详情页面不能修改
 			}
 		}
-
+		BizOrderHeader boh = new BizOrderHeader();
+		if(bizOrderHeader!=null){
+			boh.setCustomer(bizOrderHeader.getCustomer());
+			boh.setBizStatus(BizOrderDiscount.ONE_ORDER.getOneOr());//条件为0
+			List<BizOrderHeader> list = bizOrderHeaderDao.findListFirstOrder(boh);
+			if(list.size()==0){
+				System.out.println("--是首单--");
+				bizOrderHeader.setOneOrder("firstOrder");
+			}
+		}
         model.addAttribute("entity", bizOrderHeader);
 		return "modules/biz/order/bizOrderHeaderForm";
 	}
@@ -149,9 +156,6 @@ public class BizOrderHeaderController extends BaseController {
 		if (!beanValidator(model, bizOrderHeader)){
 			return form(bizOrderHeader, model,null,null);
 		}
-		if(bizOrderHeader.getTotalDetail()==null){
-			bizOrderHeader.setTotalDetail(0.0);
-		}
 		if(bizOrderHeader.getPlatformInfo()==null){
 			bizOrderHeader.getPlatformInfo().setId(1);
 		}
@@ -159,7 +163,7 @@ public class BizOrderHeaderController extends BaseController {
 		addMessage(redirectAttributes, "保存订单信息成功");
 		Integer orId = bizOrderHeader.getId();
 		String oneOrder = bizOrderHeader.getOneOrder();
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?oneOrder="+oneOrder;
 	//	return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
 	}
 	

@@ -3,7 +3,6 @@
 <html>
 <head>
 	<title>商品上架管理</title>
-	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -43,7 +42,17 @@
 					})
 
                 }
-            })
+            });
+		<%-- 以下ajax属于栏目类型 --%>
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/cms/bizCmsColumInfo/shelfForm",
+                success:function(data){
+                    $.each(data,function(index,colum) {
+                    	$("#columInfo").append("<option value='"+colum.type+"'>"+colum.title+"</option>");
+					})
+                }
+            });
 
             $('#select_all').live('click',function(){
                 var choose=$("input[title='shelfIds']");
@@ -149,6 +158,17 @@
 
         }
 	</script>
+	<script type="text/javascript">
+		function selectedColum(){
+			<%--属于选中栏目--%>
+			if($("#columInfo").val()==3){
+				$("#PurchaseID").css("display","block");
+			}else{
+				$("#PurchaseID").css("display","none");
+			}
+		}
+	</script>
+	<meta name="decorator" content="default"/>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -163,6 +183,15 @@
 		<sys:message content="${message}"/>
 
 		<div class="control-group">
+			<label class="control-label">栏目类型：</label>
+			<div class="controls">
+				<select id="columInfo" class="input-xlarge required" onchange="selectedColum();">
+					<option value="">请选择</option>
+				</select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group" id="PurchaseID" style="display:none">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
 				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
