@@ -275,20 +275,11 @@
                 <%--notAllowSelectRoot="true"--%>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <c:if test="${bizOrderHeader.id==null }">
                     <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
-                </c:if>
-                <c:if test="${bizOrderHeader.id!=null }">
-                    <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
-                                    labelValue="${entity2.customer.name}"
-                                    notAllowSelectParent="true"
-                                    title="采购商2" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
-                                    allowClear="${office.currentUser.admin}" onchange="clickBut2();" dataMsgRequired="必填信息"/>
-                </c:if>
             </c:if>
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
