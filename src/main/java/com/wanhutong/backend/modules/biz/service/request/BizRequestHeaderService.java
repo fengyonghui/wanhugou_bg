@@ -67,10 +67,22 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	
 	public List<BizRequestHeader> findList(BizRequestHeader bizRequestHeader) {
 		User user = UserUtils.getUser();
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+					break;
+				}
+			}
+		}
 		if (user.isAdmin()) {
 			return super.findList(bizRequestHeader);
 		} else {
-			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+			if(flag){
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+
+			}
 			return super.findList(bizRequestHeader);
 		}
 	}
@@ -91,10 +103,22 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			bizRequestHeader.setStartDate("'"+f.format(yesterday)+"'");
 		}
 		User user = UserUtils.getUser();
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+					break;
+				}
+			}
+		}
 		if (user.isAdmin()) {
 			return super.findPage(page, bizRequestHeader);
 		} else {
-			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+			if(flag){
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+
+			}
 			return super.findPage(page, bizRequestHeader);
 		}
 	}

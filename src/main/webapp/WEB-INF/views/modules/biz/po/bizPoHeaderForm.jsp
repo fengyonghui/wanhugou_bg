@@ -43,39 +43,62 @@
 				<th>商品编码</th>
 				<th>商品属性</th>
 				<th>申报数量</th>
-				<th>已收货数量</th>
+				<th>商品单价</th>
 
 
 			</tr>
 			</thead>
 			<tbody id="prodInfo">
-			<c:if test="${reqDetailList!=null}">
-				<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
-					<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
-						<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
-						<td>${reqDetail.skuInfo.productInfo.brandName}</td>
-						<td>${reqDetail.skuInfo.name}</td>
-						<td>${reqDetail.skuInfo.partNo}</td>
-						<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
-						<td>
-							<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
-							<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
-							<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
-							<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
-						</td>
-							<td>${reqDetail.recvQty}</td>
+			<c:if test="${requestDetailList!=null}">
+                <c:forEach items="${requestDetailList}" var="reqDetail" varStatus="reqStatus">
+                    <tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
+                        <td><img style="width: 160px;height: 160px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
+                        <td>${reqDetail.skuInfo.productInfo.brandName}</td>
+                        <td>${reqDetail.skuInfo.name}</td>
+                        <td>${reqDetail.skuInfo.partNo}</td>
+                        <td>${reqDetail.skuInfo.skuPropertyInfos}</td>
+                        <td>${reqDetail.reqQty}
+                                <input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
+                                <input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
+                                <%--<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>--%>
+                                <%--<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>--%>
+                        </td>
+                        <%--<td>${reqDetail.recvQty}</td>--%>
+                        <td><input  name="" value="${reqDetail.reqQty}" class="input-mini" type='text'/></td>
 
+                    </tr>
+                </c:forEach>
 
-					</tr>
-				</c:forEach>
+            </c:if>
 
-			</c:if>
+            <c:if test="${orderDetailList!=null}">
+                <c:forEach items="${orderDetailList}" var="reqDetail" varStatus="reqStatus">
+                    <tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
+                        <td><img style="width: 160px;height: 160px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
+                        <td>${reqDetail.skuInfo.productInfo.brandName}</td>
+                        <td>${reqDetail.skuInfo.name}</td>
+                        <td>${reqDetail.skuInfo.partNo}</td>
+                        <td>${reqDetail.skuInfo.skuPropertyInfos}</td>
+                        <td>${reqDetail.ordQty}
+                                <input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
+                                <input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
+                                <%--<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>--%>
+                                <%--<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>--%>
+                        </td>
+                        <%--<td>${reqDetail.sentQty}</td>--%>
+                        <td><input  value="${reqDetail.ordQty}" class="input-mini" type='text'/></td>
+
+                    </tr>
+                </c:forEach>
+
+            </c:if>
+
 			</tbody>
 		</table>
 
 
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:po:bizPoHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:po:bizPoHeader:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="生成采购单"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

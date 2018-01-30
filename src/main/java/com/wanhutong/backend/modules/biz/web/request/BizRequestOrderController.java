@@ -160,7 +160,7 @@ public class BizRequestOrderController extends BaseController {
 		}
 		if(ordIds!=null){
 			 orderDetailList=Lists.newArrayList();
-			String[] ordDetailArr= reqIds.split(",");
+			String[] ordDetailArr= ordIds.split(",");
 			for(int i=0;i<ordDetailArr.length;i++){
 				BizOrderDetail bizOrderDetail=bizOrderDetailService.get(Integer.parseInt(ordDetailArr[i].trim()));
 				BizSkuInfo bizSkuInfo=bizOrderDetail.getSkuInfo();
