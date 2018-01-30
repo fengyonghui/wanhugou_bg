@@ -4,6 +4,35 @@
 <head>
 	<title>商品类别管理</title>
 	<meta name="decorator" content="default"/>
+	<style type="text/css">
+		#menu {
+			font-size: 12px;
+			font-weight: bolder;
+		}
+		#menu li{
+			list-style-image: none;
+			list-style-type: none;
+			background-color: #ffffff;
+			border-right-width: 0px;
+			border-right-style: solid;
+			border-right-color: #000000;
+			float: left;
+		}
+		#menu li a{
+			color: #000000;
+			text-decoration: none;
+			margin: 0px;
+			padding-top: 8px;
+			display: block; /* 作为一个块 */
+			padding-right: 50px; /* 设置块的属性 */
+			padding-bottom: 8px;
+			padding-left: 0px;
+		}
+		#menu li a:hover{
+			background-color: #0099CC;
+		}
+
+	</style>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -80,7 +109,37 @@
         })
     })
 
+
 	});
+
+        function selectedPropertyInfo(obj) {
+            alert(obj);
+            $("#propertyValueList").html("");
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/category/bizCategoryInfo/propertyForm?id="+obj,
+				dataType:"json",
+                success:function (data) {
+                    $.each(data,function (index,list) {
+                       console.log(list)
+						$.each(list, function (index,proValue) {
+							alert(proValue.value);
+							var htmlInfo = "";
+							htmlInfo += "<a href='#' onclick='addItem("+proValue+")'><li role='option' id='"+proValue.id+"' class='cc-cbox-item cc-hasChild-item'>"+proValue.value+"</li></a>";
+							$("#propertyValueList").append(htmlInfo);
+                        })
+
+                    })
+
+                }
+            })
+        }
+
+        function addItem(obj) {
+			var htmlInfo = "";
+			htmlInfo += "<li role=\"option\" id='"+obj.id+"' class='cc-cbox-item cc-hasChild-item'>"+obj.value+"</li>";
+			$("#proValue").append(htmlInfo);
+        }
 
 
 
@@ -131,13 +190,66 @@
 			<div class="control-group">
 				<label class="control-label">分类属性：</label>
 				<div class="controls">
-					<c:forEach items="${propertyInfoList}" var="propertyInfo">
-						<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="catePropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.name}：
-						<c:forEach items="${map[propertyInfo.id]}" var="propValue">
-							<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}
+					<%--<table id="CategoryTable0" style="width: 30%;float: left" class="table table-striped table-bordered table-condensed">
+						<c:forEach items="${propertyInfoList}" var="propertyInfo">
+							<tr>
+							<td>
+							<a name="catePropertyInfos" id="${propertyInfo.id}" value="${propertyInfo.id}" onclick="selectedPropertyInfo(${propertyInfo.id})">${propertyInfo.name}</a>
+							</td>
+							</tr>
 						</c:forEach>
-						<br/>
-					</c:forEach>
+					</table>
+					<table id="CategoryTable1" style="width: 35%;float: left" class="table table-striped table-bordered table-condensed">
+
+					</table>
+					<table id="CategoryTable2" style="width: 35%;float: left" class="table table-striped table-bordered table-condensed">
+
+					</table>--%>
+				<div class="cate-main">
+					<div id="cate-cascading">
+							<a href="#" class="cc-prev cc-nav" title="上一级" id="J_LinkPrev" style="visibility: hidden;">
+								<span>上一级</span>
+							</a>
+							<div class="cc-listwrap">
+								<ol id="menu" class="cc-list">
+									<li id="propertyList" style="width: 20%" class="cc-list-item" tabindex="-1">
+										<div id="propertyInfo">
+											<ul id="menu1" role="group">
+												<c:forEach items="${propertyInfoList}" var="propertyInfo">
+
+													<a href="#" onclick="selectedPropertyInfo(${propertyInfo.id})"><li id="${propertyInfo.id}" value="${propertyInfo.id}" >
+																${propertyInfo.name}</li><br/></a>
+													<%--<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="catePropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.name}：--%>
+													<%--<c:forEach items="${map[propertyInfo.id]}" var="propValue">
+                                                        <li id="value_${propValue.id}" value="${propValue.id}">${propValue.value}</li>
+                                                        &lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;
+                                                    </c:forEach>--%>
+
+												</c:forEach>
+											</ul>
+										</div>
+									</li>
+
+									<li id="propertyValueList" style="width: 40%" class="cc-list-item" tabindex="-1">
+										<input placeholder="搜索" role="textbox" autocomplete="off" style="width: 176px;"/>
+										<div role="tree" class="cc-tree" id="propValueList">
+											<ul role="listbox" id="pValueList" tabindex="-1" hidefocus="-1" unselectable="on" class="cc-cont">
+												<li role="option" id="cc-cbox-item" class="cc-cbox-item cc-hasChild-item">qqqq</li>
+											</ul>
+										</div>
+									</li>
+
+									<li id="propertyValue" style="width: 40%" class="cc-list-item" tabindex="-1">
+										<div id="propValue">
+											<ul id="proValue" tabindex="-1" hidefocus="-1">
+												<li role="option">qqq</li>
+											</ul>
+										</div>
+									</li >
+								</ol>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="control-group">

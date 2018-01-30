@@ -21,6 +21,7 @@ import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,14 @@ public class BizCategoryInfoController extends BaseController {
 		model.addAttribute("propertyInfoList", propertyInfoList);
 		model.addAttribute("map", map);
 		return "modules/biz/category/bizCategoryInfoForm";
+	}
+
+	@ResponseBody
+	@RequestMapping("propertyForm")
+	public Map<Integer, List<PropValue>> propertyForm(Integer id) {
+		PropertyInfo propertyInfo=propertyInfoService.get(id);
+		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
+		return map;
 	}
 
 	@RequiresPermissions("biz:category:bizCategoryInfo:edit")

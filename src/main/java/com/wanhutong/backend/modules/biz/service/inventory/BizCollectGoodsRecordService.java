@@ -21,6 +21,8 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.InvSkuTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
@@ -68,10 +70,22 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	
 	public Page<BizCollectGoodsRecord> findPage(Page<BizCollectGoodsRecord> page, BizCollectGoodsRecord bizCollectGoodsRecord) {
 		User user=UserUtils.getUser();
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+					break;
+				}
+			}
+		}
 		if(user.isAdmin()){
 			return super.findPage(page, bizCollectGoodsRecord);
 		}else {
-			bizCollectGoodsRecord.getSqlMap().put("collectGoodsRecord", BaseService.dataScopeFilter(user, "s", "su"));
+			if(flag){
+				bizCollectGoodsRecord.getSqlMap().put("collectGoodsRecord", BaseService.dataScopeFilter(user, "s", "su"));
+			}
+
 			return super.findPage(page, bizCollectGoodsRecord);
 		}
 

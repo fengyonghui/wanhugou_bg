@@ -13,7 +13,9 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -73,16 +75,28 @@ public class BizInventorySkuController extends BaseController {
 		String zt = request.getParameter("zt");
 		//取出用户所属采购中心
         User user = UserUtils.getUser();
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+					break;
+				}
+			}
+		}
         Page<BizInventorySku> page =null;
         if (user.isAdmin()) {
             page= bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         } else {
-            bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
-            Office company = systemService.getUser(user.getId()).getCompany();
-            //根据采购中心取出仓库
-            BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-            bizInventoryInfo.setCustomer(company);
-            bizInventorySku.setInvInfo(bizInventoryInfo);
+        	if(flag){
+				bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+				Office company = systemService.getUser(user.getId()).getCompany();
+				//根据采购中心取出仓库
+				BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+				bizInventoryInfo.setCustomer(company);
+				bizInventorySku.setInvInfo(bizInventoryInfo);
+			}
+
              page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
 
         }
