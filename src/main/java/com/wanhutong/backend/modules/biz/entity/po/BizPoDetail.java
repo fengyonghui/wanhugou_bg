@@ -28,6 +28,7 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	private String skuName;		// 商品名称
 	private Double unitPrice;		// 商品单价
 	private Integer ordQty;		// 采购数量
+	private Integer sendQty;		//采购单供货数量
 
 	
 	public BizPoDetail() {
@@ -102,5 +103,13 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 
 	public void setOrdQty(Integer ordQty) {
 		this.ordQty = ordQty;
+	}
+
+	public Integer getSendQty() {
+		return sendQty;
+	}
+
+	public void setSendQty(Integer sendQty) {
+		this.sendQty = sendQty;
 	}
 }

@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供货中, source=sh 备货中）
+ * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供应中心供货, source=sh 备货中）
  */
 
 @Controller
@@ -95,7 +95,7 @@ public class BizRequestAllController {
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
-                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
             }
             if("ghs".equals(source)) {
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());

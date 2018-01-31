@@ -12,12 +12,16 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -61,6 +65,10 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	private BizOrderHeaderService bizOrderHeaderService;
 	@Resource
 	private BizPoDetailService bizPoDetailService;
+	@Resource
+    private BizPoOrderReqService bizPoOrderReqService;
+	@Resource
+    private BizPoHeaderService bizPoHeaderService;
 
 	public BizSendGoodsRecord get(Integer id) {
 		return super.get(id);
@@ -85,6 +93,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	public void save(BizSendGoodsRecord bizSendGoodsRecord) {
 		boolean flagRequest = true;		//备货单完成状态
 		boolean flagOrder = true;		//销售单完成状态
+        boolean flagPo = true;     //采购单完成状态
 		// 取出当前用户所在机构，
 		User user = UserUtils.getUser();
 		Office office1 = officeService.get(user.getCompany().getId());
@@ -94,9 +103,6 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
 			//商品
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
-            BizPoDetail bizPoDetail = new BizPoDetail();
-            bizPoDetail.setSkuInfo(bizSkuInfo);
-            List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
 
             //仓库
 			BizInventoryInfo invInfo = bizSendGoodsRecord.getInvInfo();
@@ -111,8 +117,28 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				if (sendNum == 0) {
 					continue;
 				}
-
-				//累计备货单供货数量
+                //获取备货单相应的采购单详情,累计采购单单个商品的供货数
+                BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                BizPoHeader poHeader = null;
+                BizPoDetail bizPoDetail = new BizPoDetail();
+                BizPoDetail poDetail = null;
+                bizPoOrderReq.setRequestHeader(bizSendGoodsRecord.getBizRequestHeader());
+                List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0){
+                    poHeader = bizPoOrderReqList.get(0).getPoHeader();
+                }
+                bizPoDetail.setPoHeader(poHeader);
+                bizPoDetail.setSkuInfo(bizSkuInfo);
+                List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
+                if (bizPoDetailList != null && bizPoDetailList.size() > 0){
+                    poDetail = bizPoDetailList.get(0);
+                }
+                if (poDetail.getSendQty()+sendNum != poDetail.getOrdQty()){
+                    flagPo = false;
+                }
+                poDetail.setSendQty(poDetail.getSendQty()+sendNum);
+                bizPoDetailService.save(poDetail);
+                //累计备货单供货数量
 				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
 				bizRequestDetail.setSendQty(sendQty + sendNum);
 				bizRequestDetailService.save(bizRequestDetail);
@@ -213,6 +239,25 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 							super.save(bsgr);
 					}
 				}else {//该用户是供应中心
+                    //获取销售单相应的采购单详情,累计采购单单个商品的供货数
+                    BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                    BizPoHeader poHeader = null;
+                    BizPoDetail bizPoDetail = new BizPoDetail();
+                    BizPoDetail poDetail = null;
+                    bizPoOrderReq.setOrderHeader(bizSendGoodsRecord.getBizOrderHeader());
+                    List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                    if (bizPoOrderReqList != null && bizPoOrderReqList.size()>0){
+                        poHeader = bizPoOrderReqList.get(0).getPoHeader();
+                    }
+                    bizPoDetail.setPoHeader(poHeader);
+                    bizPoDetail.setSkuInfo(bizSkuInfo);
+                    List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
+                    if (bizPoDetailList != null && bizPoDetailList.size() > 0){
+                        poDetail = bizPoDetailList.get(0);
+                    }
+                    if (poDetail.getSendQty()+sendNum != poDetail.getOrdQty()){
+                        flagPo = false;
+                    }
 					//累计已供数量
 					BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
 					bizOrderDetail.setSentQty(sentQty + sendNum);
@@ -245,6 +290,20 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
 				bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
 			}
+			//更改采购单状态,已完成（5）
+			if (flagPo){
+                BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                BizPoOrderReq por = null;
+                bizPoOrderReq.setRequestHeader(bizSendGoodsRecord.getBizRequestHeader());
+                List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (porList != null && porList.size() > 0 ){
+                    por = porList.get(0);
+                }
+                BizPoHeader poHeader = por.getPoHeader();
+                int status = PoHeaderStatusEnum.COMPLETE.getCode();
+                poHeader.setBizStatus((byte)status);
+                bizPoHeaderService.save(poHeader);
+            }
 		}
 		//销售单完成时，更该销售单状态为已供货（20）
 		if (bizSendGoodsRecord.getBizOrderHeader() != null && bizSendGoodsRecord.getBizOrderHeader().getId() != 0) {
@@ -253,6 +312,20 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SEND.getState());
 				bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 			}
+            //更改采购单状态,已完成（5）
+            if (flagPo){
+                BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                BizPoOrderReq por = null;
+                bizPoOrderReq.setOrderHeader(bizSendGoodsRecord.getBizOrderHeader());
+                List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (porList != null && porList.size() > 0 ){
+                    por = porList.get(0);
+                }
+                BizPoHeader poHeader = por.getPoHeader();
+                int status = PoHeaderStatusEnum.COMPLETE.getCode();
+                poHeader.setBizStatus((byte)status);
+                bizPoHeaderService.save(poHeader);
+            }
 		}
 		//
 //			super.save(bizSendGoodsRecord);
