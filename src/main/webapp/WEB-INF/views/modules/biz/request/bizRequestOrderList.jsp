@@ -218,7 +218,7 @@
 					<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">
 									${orderHeader.orderNum}</a>
 					</td>
-					<td>${fns:getDictLabel(bizOrderHeader.bizType, 'order_biz_type', '未知状态')}</td>
+					<td>${fns:getDictLabel(orderHeader.bizType, 'order_biz_type', '未知状态')}</td>
 							<td>
 									${orderHeader.customer.name}
 							</td>
