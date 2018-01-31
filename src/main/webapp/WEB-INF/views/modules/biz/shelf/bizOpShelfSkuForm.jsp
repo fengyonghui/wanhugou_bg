@@ -103,7 +103,7 @@
 
                                 if(flag){
                                     tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"' maxWidth='100' maxHeight='100'></td>"
+                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img style='width: 160px;height: 160px' src='"+prodUrl+"' maxWidth='100' maxHeight='100'></td>"
                                 }
 
                                 tr_tds+="</tr>";
@@ -219,10 +219,10 @@
 						<input id="prodBrandName" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
 					</li>
 					<li><label>商品名称：</label>
-						<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="10" class="input-medium"/>
+						<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
 					</li>
 					<li><label>商品编码：</label>
-						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="10" class="input-medium"/>
+						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
 					<li class="clearfix"></li>

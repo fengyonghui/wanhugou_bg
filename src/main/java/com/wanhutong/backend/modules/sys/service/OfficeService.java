@@ -61,7 +61,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 			office.setParentIds(office.getParentIds()+"%");
 			User user = UserUtils.getUser();
-			if(!user.isAdmin()&& !OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
+			if(!user.isAdmin()&&!OfficeTypeEnum.VENDOR.getType().equals(office.getType())&&!OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 			}
 			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
@@ -98,7 +98,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public List<Office> filerOffice(List<Office> offices, OfficeTypeEnum officeType){
 		Office office = new Office();
 			User user = UserUtils.getUser();
-			if(!user.isAdmin()&& !OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){
+			if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 				}
 			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){

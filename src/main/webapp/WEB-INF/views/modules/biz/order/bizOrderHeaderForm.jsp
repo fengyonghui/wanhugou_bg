@@ -103,11 +103,13 @@
      }
     <%--}else{--%>
         <%--function clickBut2(){--%>
+            <%--var officeId2=$("#officeId").val();--%>
             <%--$.ajax({--%>
                 <%--type:"post",--%>
                 <%--url:"${ctx}/biz/order/bizOrderAddress/orderForm?id=${bizOrderHeader.bizLocation.id}",--%>
                 <%--success:function(data){--%>
                     <%--console.log("-测试--"+data);--%>
+                    <%--console.log(JSON.stringify(data)+"---测试1");--%>
                 <%--}--%>
             <%--});--%>
         <%--}--%>
@@ -275,11 +277,20 @@
                 <%--notAllowSelectRoot="true"--%>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <%--<c:if test="${bizOrderHeader.id==null }">--%>
                     <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
+                <%--</c:if>--%>
+                <%--<c:if test="${bizOrderHeader.id!=null }">--%>
+                    <%--<sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"--%>
+                                    <%--labelValue="${entity2.customer.name}"--%>
+                                    <%--notAllowSelectParent="true"--%>
+                                    <%--title="采购商2" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"--%>
+                                    <%--allowClear="${office.currentUser.admin}" onchange="clickBut2();" dataMsgRequired="必填信息"/>--%>
+                <%--</c:if>--%>
             </c:if>
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
@@ -295,7 +306,7 @@
     <div class="control-group">
         <label class="control-label">订单总费用：</label>
         <div class="controls">
-            <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
+            <form:input path="totalExp" htmlEscape="false" placeholder="无费用可填 0" class="input-xlarge required"/>
             <span class="help-inline"><font color="red">*</font>
                 <c:if test="${entity.oneOrder eq 'firstOrder' && entity.totalDetail>10000}">
                     首次下单不能大于10000元
@@ -501,7 +512,7 @@
         <th>详情行号</th>
         <th>货架名称</th>
         <th>商品名称</th>
-        <th>商品属性</th>
+        <%--<th>商品属性</th>--%>
         <%--<th>材质</th>--%>
         <%--<th>颜色</th>--%>
         <%--<th>规格</th>--%>
@@ -541,7 +552,7 @@
             <%--<td>--%>
                     <%--${bizOrderDetail.standard}--%>
             <%--</td>--%>
-            <td></td>
+            <%--<td></td>--%>
             <td>
                     ${bizOrderDetail.partNo}
             </td>
