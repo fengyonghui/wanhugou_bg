@@ -3,9 +3,12 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
-import java.io.File;
+import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
 
+import com.aliyun.oss.model.ObjectMetadata;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -29,6 +32,8 @@ import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import org.springframework.stereotype.Service;
@@ -37,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.annotation.Resource;
 
@@ -65,6 +71,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	private CommonImgService commonImgService;
 	@Resource
 	private BizSkuInfoService bizSkuInfoService;
+
+	protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
 
 	public BizProductInfo get(Integer id) {
@@ -110,9 +118,27 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 	}
 	@Transactional(readOnly = false)
 	public void saveCommonImg(BizProductInfo bizProductInfo) {
-		String photos=bizProductInfo.getPhotos();
-		String photoDetails=bizProductInfo.getPhotoDetails();
-		String photoLists=bizProductInfo.getPhotoLists();
+		String photos=null;
+		try {
+			photos= URLDecoder.decode(bizProductInfo.getPhotos(), "utf-8");//主图转换编码
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			log.error("主图转换编码异常." + e.getMessage(), e);
+		}
+		String photoDetails=null;
+		try {
+			photoDetails= URLDecoder.decode(bizProductInfo.getPhotoDetails(), "utf-8");//列表图转换编码
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			log.error("列表图转换编码异常." + e.getMessage(), e);
+		}
+		String photoLists=null;
+		try {
+			photoLists= URLDecoder.decode(bizProductInfo.getPhotoLists(), "utf-8");//详情图转换编码
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			log.error("详情图转换编码异常." + e.getMessage(), e);
+		}
 		CommonImg commonImg=new CommonImg();
 		if(photos!=null && !"".equals(photos)) {
 			photos = photos.substring(1);

@@ -2,7 +2,6 @@
 <%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
-
 <html>
 <head>
 	<title>商品信息表管理</title>
@@ -251,7 +250,6 @@
 			}
 
         }
-
 	</script>
 </head>
 <body>
@@ -311,9 +309,6 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-
-
-
 		<div class="control-group">
 			<label class="control-label">商品描述：</label>
 			<div class="controls">
@@ -327,7 +322,6 @@
 				<sys:ckfinder input="prodDetailImg" type="images" uploadPath="/prod/detail" selectMultiple="true" maxWidth="100" maxHeight="100"/>
 			</div>
 		</div>
-
 		<div class="control-group">
 			<label class="control-label">请选择供应商：</label>
 			<div class="controls">
@@ -339,7 +333,6 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-
 		<div class="control-group">
 			<label class="control-label">请选择商品分类：</label>
 			<div class="controls">
@@ -353,13 +346,10 @@
             <div class="controls">
                 <select id="catePropValueId" name="catePropValue.id" autofocus="autofocus" class="input-xlarge required" >
                 <option value="">请选择</option>
-            </select>
-
-
+            	</select>
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
-
 		<div class="control-group">
 			<label class="control-label">商品属性：</label>
 			<div  id ="cateProp" class="controls">
@@ -369,9 +359,7 @@
 			<label class="control-label">增加特有属性：</label>
 			<div  class="controls">
 					<span id="ownPropInfo" style="margin-bottom: 10px">
-
 					</span>
-
 				<button  data-toggle="modal" data-target="#myModal" type="button" class="btn btn-default">
 					<span class="icon-plus"></span>
 				</button>

@@ -57,7 +57,6 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 	
 	@Transactional(readOnly = false)
 	public void save(BizOpShelfSku bizOpShelfSku) {
-
 		Integer skuId=bizOpShelfSku.getSkuInfo().getId();//skuId 为key
 		BizSkuInfo skuInfo=bizSkuInfoService.get(skuId);
 		BizProductInfo bizProductInfo=bizProductInfoService.get(skuInfo.getProductInfo().getId());
@@ -72,11 +71,9 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 					bizProductInfo.setMaxPrice(bizOpShelfSku.getSalePrice());
 				}
 
-
 			if(bizProductInfo.getMinPrice()==0.0){
 				bizProductInfo.setMinPrice(bizOpShelfSku.getSalePrice());
 			}
-
 
 		bizProductInfoService.saveProd(bizProductInfo);
 		bizOpShelfSku.setProductInfo(bizProductInfo);

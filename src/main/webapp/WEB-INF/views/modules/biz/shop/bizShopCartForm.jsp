@@ -22,29 +22,24 @@
 					}
 				}
 			});
-           makeShelfSelect();
+		<%--选择货架--%>
+		var opShelfId=$("#skuShelfinfo").val();
+		$.ajax({
+			type:"post",
+			url:"${ctx}/biz/shelf/bizOpShelfInfo/findShelf",
+			success:function (data) {
+				$.each(data,function(index,shelfInfo) {
+					if(opShelfId==shelfInfo.id){
+						$("#s2id_shelfInfoId").find("span").eq(0).text(shelfInfo.name);
+						$("#skuShelfinfo").append("<option selected='selected' value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
+					}else {
+						$("#skuShelfinfo").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
+					}
+				})
+			}
 		});
-		
-   function makeShelfSelect(){ 
-        $.ajax({ 
-            type:"post",
-            url : "${ctx}/biz/shelf/bizOpShelfInfo/findShelf", 
-            dataType:"json",
-            success:function(data){ 
-                 $.each(data,function(index,shelf){
-                      var option=$("<option/>").text(shelf.name).val(shelf.id);
-                      $("#skuShelfinfo").append(option); 
-                 });
-                  $("#skuShelfinfo").change();
-            } 
-        }); 
-    }
-    
-  function show(){
-        console.log("----333----");
-  }
-  
-    </script> 
+    });
+    </script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -55,13 +50,12 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">商品货架：</label>
+			<label class="control-label">货架名称：</label>
 			<div class="controls">
-                    <%--<select id="skuShelfinfo" class="input-xlarge" name="skuShelfinfo.id" onclick="makeShelfSelect();" style="text-align: center;">
-                    </select>--%>
-                     <input type="text" name="skuShelfinfo.id"/>
-                     <span class="help-inline">测试输入1-10</span>
-                     <%--<input type="button"  onclick="show();" value="新增"/>--%>
+				<select id="skuShelfinfo" name="skuShelfinfo.id" class="input-xlarge required" style="text-align: center;">
+					<option value="">请选择</option>
+				</select>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
