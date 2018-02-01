@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.entity.shop;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
@@ -16,7 +17,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 public class BizShopCart extends DataEntity<BizShopCart> {
 	
 	private static final long serialVersionUID = 1L;
-	private BizOpShelfInfo skuShelfinfo;		// 商品货架ID
+	private BizOpShelfSku skuShelfinfo;		// 货架商品ID
 	private Office office;		// 采购商ID
 	private User user;		// 采购商或采购顾问ID
 	private Integer skuQty;		// sku数量
@@ -28,16 +29,15 @@ public class BizShopCart extends DataEntity<BizShopCart> {
 	public BizShopCart(Integer id){
 		super(id);
 	}
-	
-	
-	public BizOpShelfInfo getSkuShelfinfo() {
+
+	public BizOpShelfSku getSkuShelfinfo() {
 		return skuShelfinfo;
 	}
-	
-	public void setSkuShelfinfo(BizOpShelfInfo skuShelfinfo) {
+
+	public void setSkuShelfinfo(BizOpShelfSku skuShelfinfo) {
 		this.skuShelfinfo = skuShelfinfo;
 	}
-	
+
 	public Office getOffice() {
 		return office;
 	}

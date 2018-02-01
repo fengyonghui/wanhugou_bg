@@ -62,12 +62,12 @@
 			<label class="control-label">采购商名称：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"
-					title="采购商" url="/sys/office/treeData?type=2" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+					title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
 			    <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">采购顾问：</label>
+			<label class="control-label">客户专员：</label>
 			<div class="controls">
 				<sys:treeselect id="user" name="user.id" value="${bizShopCart.user.id}" labelName="user.name" labelValue="${bizShopCart.user.name}"
 					title="顾问" url="/sys/office/treeData?type=3" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
