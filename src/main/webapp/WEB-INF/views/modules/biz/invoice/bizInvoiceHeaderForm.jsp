@@ -80,8 +80,11 @@ function dial(){
 					 $(".boxs").each(function(){
 						 if($(this).attr("checked")){
 								var orderId= $(this).val();
+									console.log(orderId+"  测试1");
 								var trId="order"+$(this).val();
-								var remov="<td><a href='#' onclick=\"removeItem('"+orderId+"')\">移除</a></td>";
+									console.log(trId+"  测试2");
+								var remov="<td><a href='#' onclick='removeItem(\""+orderId+"\")'>移除</a></td>";
+									console.log(remov+"  测试3");
 								checkID+="<tr>"+$("#"+trId).html()+remov+"</tr>";
 						 }
 					 });
@@ -93,8 +96,8 @@ function dial(){
  }
  <%--移除--%>
  function removeItem(obj) {
- 	console.log(obj+"删除吗");
-	$("#"+obj).remove();
+ 	$("#"+obj).remove();
+ 	console.log(obj+" 点击了移除");
 }
 </script>
 
@@ -113,7 +116,8 @@ function dial(){
 			<label class="control-label">采购商名称：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizInvoiceHeader.office.id}" labelName="office.name" labelValue="${bizInvoiceHeader.office.name}"
-                    title="采购商" url="/sys/office/treeData?type=2" onchange="orderoffice();" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+                    title="采购商" url="/sys/office/queryTreeList?type=6" onchange="orderoffice();"
+								cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
                 <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -163,7 +167,7 @@ function dial(){
 			<table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 				<tr>
-					<th>选中</th>
+					<th>选择</th>
 					<th>采购商</th>
 					<th>订单编号</th>
 					<th>订单总费用</th>
@@ -180,13 +184,13 @@ function dial(){
 										${bizInvoiceDetail.id}</a>
 								</td>
 								<td>
-										${bizOrderDetail.orderHead.orderNum}
+										${bizInvoiceDetail.invoiceHeader.orderNum}
 								</td>
 								<td>
-										${bizOrderDetail.invoiceHeader.invTitle}
+										${bizInvoiceDetail.invoiceHeader.invTitle}
 								</td>
 								<td>
-										${bizOrderDetail.unitPrice}
+										${bizInvoiceDetail.invoiceHeader.unitPrice}
 								</td>
 								<td>
 										${bizOrderDetail.ordQty}
@@ -197,13 +201,6 @@ function dial(){
 								<td>
 									<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 								</td>
-								<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-									<%--<td>--%>
-										<%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">修改</a>--%>
-										<%--<a href="${ctx}/biz/invoice/bizInvoiceDetail/delete?id=${bizOrderDetail.id}&sign=1"--%>
-										   <%--onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>--%>
-									<%--</td>--%>
-								</shiro:hasPermission>
 							</tr>
 						</c:forEach>
 				</c:if>
@@ -222,7 +219,8 @@ function dial(){
     <table id="cheall" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
-            <th><input type="checkbox" class="chAll"/></th>
+            <%--<th><input type="checkbox" class="chAll"/></th>--%>
+			<th>选择</th>
             <th>采购商</th>
             <th>订单编号</th>
             <th>订单总费用</th>

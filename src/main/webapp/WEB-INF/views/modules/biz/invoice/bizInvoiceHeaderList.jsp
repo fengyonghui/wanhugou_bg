@@ -26,7 +26,9 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>采购商名称：</label>
-				<form:input path="office.id" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<sys:treeselect id="office" name="office.id" value="" labelName="office.name" labelValue=""
+								title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-medium required"
+								allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label>发票类型：</label>
 				<form:select path="invType" class="input-medium required">

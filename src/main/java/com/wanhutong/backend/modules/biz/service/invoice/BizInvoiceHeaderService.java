@@ -58,6 +58,7 @@ public class BizInvoiceHeaderService extends CrudService<BizInvoiceHeaderDao, Bi
 	public void save(BizInvoiceHeader bizInvoiceHeader) {
 		BizInvoiceDetail bizInvoiceDetail = new BizInvoiceDetail();
 		List<BizInvoiceDetail> list = bizInvoiceHeader.getBizInvoiceDetailList();
+		if(list!=null){
 			for (BizInvoiceDetail biz : list) {
 //				计算单个订单的金额
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(biz.getOrderHead().getId());
@@ -71,7 +72,7 @@ public class BizInvoiceHeaderService extends CrudService<BizInvoiceHeaderDao, Bi
 			bizInvoiceDetail.setInvAmt(bizInvoiceHeader.getInvTotal());
 			bizInvoiceDetail.setInvoiceHeader(bizInvoiceHeader);
 			bizInvoiceDetailService.save(bizInvoiceDetail);
-
+		}
 		super.save(bizInvoiceHeader);
 	}
 	

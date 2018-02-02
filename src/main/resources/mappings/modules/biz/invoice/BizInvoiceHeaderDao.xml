@@ -72,6 +72,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		order by updateDate Desc
 	</select>
 	
 	<select id="findAllList" resultType="BizInvoiceHeader">

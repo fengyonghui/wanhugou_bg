@@ -7,6 +7,8 @@
 <head>
     <title>订单信息管理</title>
     <meta name="decorator" content="default"/>
+    <%--<script type="text/javascript" src="D:\IDEA_BatisJect\wanhugou_bg\src\main\webapp\static\ckeditor\_source\core\keyboard.js">
+    </script>&lt;%&ndash;用于键盘Bcackspace回退BUG问题&ndash;%&gt;--%>
     <script type="text/javascript">
         <%--用于页面按下键盘Backspace键回退页面的问题--%>
         <%--处理键盘事件 禁止后退键（Backspace）密码或单行、多行文本框除外   --%>
@@ -39,7 +41,7 @@
         document.onkeypress=banBackSpace;
         <%--禁止后退键 作用于IE、Chrome--%>
         document.onkeydown=banBackSpace;
-    </script><%--用于键盘Bcackspace回退BUG问题--%>
+    </script>
     <script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -537,7 +539,7 @@
                                                                                      type="submit"
                                                                                      value="保存"/>&nbsp;</shiro:hasPermission>
                 </c:if>
-                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
+                <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
 
         </c:otherwise>

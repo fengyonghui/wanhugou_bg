@@ -50,10 +50,13 @@ public class BizInvoiceHeaderController extends BaseController {
 		BizInvoiceHeader entity = null;
 		if (id!=null){
 			entity = bizInvoiceHeaderService.get(id);
-////			根据 invoice_order.id计算有多少订单
+//			根据 invoice_order.id计算有多少订单
 			BizInvoiceDetail bizInvoiceDetail = new BizInvoiceDetail();
 			bizInvoiceDetail.setInvoiceHeader(entity);
 			List<BizInvoiceDetail> list = bizInvoiceDetailService.findList(bizInvoiceDetail);
+			for (BizInvoiceDetail invoiceDetail : list) {
+				System.out.println(invoiceDetail+"  --- 测试");
+			}
 			entity.setBizInvoiceDetailList(list);
 		}
 		if (entity == null){
