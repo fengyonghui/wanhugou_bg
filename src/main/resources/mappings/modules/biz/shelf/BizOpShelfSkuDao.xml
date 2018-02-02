@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.shelf_id AS "opShelfInfo.id",
 		shelf.name AS "opShelfInfo.name",
+		shelf.type as "opShelfInfo.type",
 		a.sku_id AS "skuInfo.id",
 		a.prod_id as "productInfo.id",
 		a.sku_id AS "skuProd.id",

@@ -552,7 +552,7 @@
             <%--<td>--%>
                     <%--${bizOrderDetail.standard}--%>
             <%--</td>--%>
-            <%--<td></td>--%>
+            <td></td>
             <td>
                     ${bizOrderDetail.partNo}
             </td>

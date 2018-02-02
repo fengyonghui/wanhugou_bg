@@ -23,11 +23,13 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 货架名称
 	private String description;		// 货架描述
+	private Integer type;	//1. banner 2，货架；3:本地备货-对应采购中心
 	private List<BizOpShelfSku> opShelfSkusList;
 	private String OpShelfSkus;
 	private List<User> userList;
 	private User user;
 	private String userIds;
+	private Integer columID;	//用于根据货架ID查询type
 
 	
 	public BizOpShelfInfo() {
@@ -94,4 +96,20 @@ public class BizOpShelfInfo extends DataEntity<BizOpShelfInfo> {
     public void setUserIds(String userIds) {
         this.userIds = userIds;
     }
+
+	public Integer getColumID() {
+		return columID;
+	}
+
+	public void setColumID(Integer columID) {
+		this.columID = columID;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
 }

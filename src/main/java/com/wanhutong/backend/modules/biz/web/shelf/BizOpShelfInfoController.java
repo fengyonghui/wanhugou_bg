@@ -112,7 +112,7 @@ public class BizOpShelfInfoController extends BaseController {
 	public List<BizOpShelfInfo> findShelf(BizOpShelfInfo bizOpShelfInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
-            return bizOpShelfInfoService.findList(bizOpShelfInfo);
+			return bizOpShelfInfoService.findList(bizOpShelfInfo);
         }else {
             bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "suc"));
             return bizOpShelfInfoService.findList(bizOpShelfInfo);
@@ -189,4 +189,18 @@ public class BizOpShelfInfoController extends BaseController {
         addMessage(redirectAttributes, "删除货架管理员成功");
         return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/shelfManagementList?repage";
     }
+
+//	用于选择货架显示采购中心
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
+	@RequestMapping(value = "findColum")
+	public BizOpShelfInfo findColum(BizOpShelfInfo bizOpShelfInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+		if(bizOpShelfInfo.getId()!=null){
+			BizOpShelfInfo bizOpShelfInfo1 = bizOpShelfInfoService.get(bizOpShelfInfo.getId());
+			return bizOpShelfInfo1;
+		}else{
+			return null;
+		}
+
+	}
 }

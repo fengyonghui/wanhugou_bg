@@ -157,14 +157,17 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuNameList")
 	public List<BizSkuInfo> findSkuNameList(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-
         List<BizSkuInfo> bizSkuInfoList = new ArrayList<>();
 	    if (ids != null && !"".equals(ids)){
             String[] id = ids.split(",");
-            for(int i = 0; i < id.length; i++){
-                BizSkuInfo bizSkuInfo1 = bizSkuInfoService.get(Integer.parseInt(id[i].trim()));
-                bizSkuInfoList.add(bizSkuInfo1);
-            }
+			for (int i = 0; i < id.length; i++) {
+				if(id[i].trim().equals("on")){
+					System.out.println(id[i].trim()+" 不是skuID值不操作");
+				}else {
+					BizSkuInfo bizSkuInfo1 = bizSkuInfoService.get(Integer.parseInt(id[i].trim()));
+					bizSkuInfoList.add(bizSkuInfo1);
+				}
+			}
         }
         return bizSkuInfoList;
 	}

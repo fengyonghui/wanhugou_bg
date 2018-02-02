@@ -26,6 +26,7 @@
 					}
 				}
 			});
+			<%--属于选择货架名称--%>
 			var opShelfId=$("#opShelfId").val();
             $.ajax({
                 type:"post",
@@ -33,27 +34,19 @@
                 success:function (data) {
                     $.each(data,function(index,shelfInfo) {
                         if(opShelfId==shelfInfo.id){
+							if(shelfInfo.type==3){
+								$("#PurchaseID").css("display","block");
+							}else{
+								$("#PurchaseID").css("display","none");
+							}
                             $("#s2id_shelfInfoId").find("span").eq(0).text(shelfInfo.name);
                             $("#shelfInfoId").append("<option selected='selected' value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
 						}else {
                             $("#shelfInfoId").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
 						}
-
-					})
-
-                }
-            });
-		<%-- 以下ajax属于栏目类型 --%>
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/cms/bizCmsColumInfo/shelfForm",
-                success:function(data){
-                    $.each(data,function(index,colum) {
-                    	$("#columInfo").append("<option value='"+colum.type+"'>"+colum.title+"</option>");
 					})
                 }
             });
-
             $('#select_all').live('click',function(){
                 var choose=$("input[title='shelfIds']");
                 if($(this).attr('checked')){
@@ -98,7 +91,7 @@
                             $.each(skuInfoList,function (index,skuInfo) {
 
                                 tr_tds+= "<tr class='"+prodId+"'>";
-                                tr_tds+="<td><input type='checkbox' value='"+skuInfo.id+"'  title='shelfIds'/></td>";
+                                tr_tds+="<td><input type='checkbox' value='"+skuInfo.id+"' title='shelfIds'/></td>";
                                 tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td>" ;
 
                                 if(flag){
@@ -120,12 +113,14 @@
                     }
                 })
             });
+            <%--点击确定时填写商品数量--%>
             $("#ensureData").click(function () {
                 var skuIds="";
                 $('input:checkbox:checked').each(function(i){
                     skuIds+=$(this).val()+",";
 				});
                 skuIds=skuIds.substring(0,skuIds.length-1);
+				$("#tbody").empty();
                 $.ajax({
                     type:"POST",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameList?ids="+skuIds,
@@ -133,19 +128,28 @@
                     success:function(data){
                         var htmlInfo = "";
                         $.each(data,function(index,item) {
-                            htmlInfo+="<tr id='"+item.id+"'><td><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
-                                "<td><input name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！'/></td>"+
-                                "<td><input name='orgPrices' readonly='readonly' value='"+item.basePrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！' /></td>"+
-                                "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" placeholder=\"必填！\"/></td>"+
-                                "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-                                "<td><input name=\"shelfTimes\" value=\"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
-                                "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"必填！\"/></td>"+
+							var td1=$("#tbody tr td").eq(index).find("input").text();
+							<%--var tr = $("#tbody").children("tr");--%>
+							var tr=$("#tbody").children();
+							var history_income_type = tr.eq("+item.id+").find("input").val();
 
-                                "<td><input name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
-                                "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-                                "<td><input name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-								"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+							if(history_income_type!=undefined){
+								console.log(" 相同的id ");
+							}else{
+								htmlInfo+="<tr id='"+item.id+"'><td><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
+									"<td><input name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！'/></td>"+
+									"<td><input name='orgPrices' readonly='readonly' value='"+item.basePrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！' /></td>"+
+									"<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" placeholder=\"必填！\"/></td>"+
+									"<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
+									"<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
+									"<td><input name=\"shelfTimes\" value=\"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"必填！\"/></td>"+
+
+									"<td><input name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
+									"<td><input name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
+									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+							}
                         });
                         $("#tbody").append(htmlInfo);
                     }
@@ -160,12 +164,19 @@
 	</script>
 	<script type="text/javascript">
 		function selectedColum(){
-			<%--属于选中栏目--%>
-			if($("#columInfo").val()==3){
-				$("#PurchaseID").css("display","block");
-			}else{
-				$("#PurchaseID").css("display","none");
-			}
+			<%--属于选中货架名称下的 本地备货--%>
+			var opShelfId=$("#shelfInfoId").val();
+			$.ajax({
+                type:"post",
+                url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
+                success:function (data) {
+					if(data.type==3){
+						$("#PurchaseID").css("display","block");
+					}else{
+						$("#PurchaseID").css("display","none");
+					}
+                }
+            });
 		}
 	</script>
 	<meta name="decorator" content="default"/>
@@ -182,10 +193,22 @@
 		<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 		<sys:message content="${message}"/>
 
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">栏目类型：</label>--%>
+			<%--<div class="controls">--%>
+					<%--<select class="input-xlarge required" onchange="selectedColum();" id="columInfoShelf">--%>
+							<%--<option value="">请选择</option>--%>
+						<%--<c:forEach items="${fns:getDictList('biz_cms_colum')}" var="colu">--%>
+							<%--<option value="${colu.value}" >${colu.label}</option>--%>
+						<%--</c:forEach>--%>
+					<%--</select>--%>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
-			<label class="control-label">栏目类型：</label>
+			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<select id="columInfo" class="input-xlarge required" onchange="selectedColum();">
+				<select id="shelfInfoId" name="opShelfInfo.id" onchange="selectedColum();" class="input-xlarge required">
 					<option value="">请选择</option>
 				</select>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -198,16 +221,6 @@
 								labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge " dataMsgRequired="必填信息">
 				</sys:treeselect>
-				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">货架名称：</label>
-			<div class="controls">
-				<select id="shelfInfoId" name="opShelfInfo.id" class="input-xlarge required">
-					<option value="">请选择</option>
-				</select>
-				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<%--<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">--%>
@@ -242,7 +255,6 @@
 					<th>商品属性</th>
 					<th>品牌名称</th>
 					<th>产品图片</th>
-
 					<%--<th>操作</th>--%>
 				</tr>
 				</thead>

@@ -37,15 +37,15 @@
 			<li><label>订单编号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-			 <%--<li><label>订单类型：</label>--%>
-                <%--<form:select path="orderType" class="input-medium required">--%>
-                    <%--<form:option value="" label="请选择"/>--%>
-                    <%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
-                            <%--htmlEscape="false"/></form:select></li>--%>
+			<%--<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"--%>
+					<%--labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"--%>
+					<%--title="采购商"  url="/sys/office/queryTreeList?type=6"--%>
+					<%--cssClass="input-medium required"--%>
+					<%--allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>--%>
 			<li><label>采购商名称：</label>
 				<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
-					 <sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
-										labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
+					 <sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
+										labelValue="" notAllowSelectParent="true"
 										title="采购商"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
 										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
@@ -53,8 +53,8 @@
 					<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
 				</c:if>
 				<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-					<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
-									labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
+					<sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
+									labelValue="" notAllowSelectParent="true"
 									title="采购商"  url="/sys/office/queryTreeList?type=6"
 									cssClass="input-medium required"
 									allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
@@ -75,17 +75,16 @@
 				<th>订单编号</th>
 				<th>订单类型</th>
 				<th>采购商名称</th>
-				<th>订单详情总价</th>
+				<th>商品详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>
+				<th>订单总费用</th>
 				<th>发票状态</th>
 				<th>业务状态</th>
 				<th>订单来源</th>
 				<%--<th>订单收货地址</th>--%>
 				<th>创建人</th>
 				<th>订单创建时间</th>
-				<th>更新人</th>
-				<th>订单更新时间</th>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -120,14 +119,17 @@
 					${orderHeader.customer.name}
 				</td>
 				<td>
-					${orderHeader.totalDetail}
+					<fmt:formatNumber type="number" value="${orderHeader.totalDetail}" pattern="0.00"/>
 				</td>
 				<td>
-					${orderHeader.totalExp}
+					<fmt:formatNumber type="number" value="${orderHeader.totalExp}" pattern="0.00"/>
 				</td>
 				<td>
-					${orderHeader.freight}
+					<fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
 				</td>
+				<td><font color="red">
+					<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
+				</font></td>
 				<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 				</td>
@@ -146,12 +148,6 @@
 				<td>
                     <fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                 </td>
-				<td>
-					${orderHeader.updateBy.name}
-				</td>
-				<td>
-					<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
 					<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
@@ -173,13 +169,11 @@
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
-						<%--<c:if test="${orderHeader.bizStatus==18 || orderHeader.bizStatus==19 || orderHeader.bizStatus==17|| orderHeader.bizStatus==16 ||--%>
-						  <%--orderHeader.bizStatus==15 || orderHeader.bizStatus==10 || orderHeader.bizStatus==5 || orderHeader.bizStatus==0}">--%>
-							<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>--%>
-							<%--<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>--%>
-						<%--</c:if>--%>
-						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
-						<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
+						<c:if test="${fns:getUser().isAdmin()}">
+							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+						</c:if>
 					</c:otherwise>
 					</c:choose>
 				</td></shiro:hasPermission>
