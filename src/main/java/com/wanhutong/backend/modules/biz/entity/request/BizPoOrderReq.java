@@ -15,11 +15,18 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  * @version 2018-01-09
  */
 public class BizPoOrderReq extends DataEntity<BizPoOrderReq> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private BizOrderHeader orderHeader;		// 销售订单
 	private BizRequestHeader requestHeader;		// 备货单
 	private BizPoHeader poHeader;		// 采购单
+	private Integer poLineNo;
+	private Integer soLineNo;
+	private Integer soQty;
+	private Byte soType;
+
+	private Integer soId;
+
 	
 	public BizPoOrderReq() {
 		super();
@@ -51,5 +58,45 @@ public class BizPoOrderReq extends DataEntity<BizPoOrderReq> {
 
 	public void setPoHeader(BizPoHeader poHeader) {
 		this.poHeader = poHeader;
+	}
+
+	public Byte getSoType() {
+		return soType;
+	}
+
+	public void setSoType(Byte soType) {
+		this.soType = soType;
+	}
+
+	public Integer getPoLineNo() {
+		return poLineNo;
+	}
+
+	public void setPoLineNo(Integer poLineNo) {
+		this.poLineNo = poLineNo;
+	}
+
+	public Integer getSoLineNo() {
+		return soLineNo;
+	}
+
+	public void setSoLineNo(Integer soLineNo) {
+		this.soLineNo = soLineNo;
+	}
+
+	public Integer getSoQty() {
+		return soQty;
+	}
+
+	public void setSoQty(Integer soQty) {
+		this.soQty = soQty;
+	}
+
+	public Integer getSoId() {
+		return soId;
+	}
+
+	public void setSoId(Integer soId) {
+		this.soId = soId;
 	}
 }

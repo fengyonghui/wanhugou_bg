@@ -3,9 +3,20 @@
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.request.BizPoOrderReqDao">
     
 	<sql id="bizPoOrderReqColumns">
-		a.order_id AS "orderHeader.id",
-		a.request_id AS "requestHeader.id",
-		a.po_id AS "poHeader.id"
+		a.so_id AS "orderHeader.id",
+		a.so_id AS "requestHeader.id",
+		a.so_id AS "soId",
+		a.po_id AS "poHeader.id",
+		a.so_line_no AS "soLineNo",
+		so_qty AS "soQty",
+		so_type AS "soType",
+		po_line_no AS "poLineNo",
+		status AS "delFalg",
+		create_id AS "createBy.id",
+		create_time AS "createDate",
+		u_version AS "uVersion",
+		update_id AS "updateBy.id",
+		update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizPoOrderReqJoins">
@@ -27,10 +38,10 @@
 		<where>
 			
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
-				AND a.order_id = #{orderHeader.id}
+				AND a.so_id = #{orderHeader.id}
 			</if>
 			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
-				AND a.request_id = #{requestHeader.id}
+				AND a.so_id = #{requestHeader.id}
 			</if>
 			<if test="poHeader != null and poHeader.id != null and poHeader.id != ''">
 				AND a.po_id = #{poHeader.id}
@@ -64,13 +75,18 @@
 	
 	<insert id="insert">
 		INSERT INTO biz_po_order_req(
-		<if test="orderHeader!=null and orderHeader.id !=null and orderHeader.id!=''">
-			order_id,
-		</if>
-		<if test="requestHeader!=null and requestHeader.id!=null and requestHeader.id!=''">
-			request_id,
-		</if>
-			po_id
+		so_id,
+		so_line_no,
+		so_qty,
+		so_type,
+		po_id,
+		po_line_no,
+		status,
+		create_id,
+		create_time,
+		u_version,
+		update_id,
+		update_time
 		) VALUES (
 			<if test="orderHeader!=null and orderHeader.id !=null and orderHeader.id!=''">
 				#{orderHeader.id},
@@ -78,16 +94,36 @@
 			<if test="requestHeader!=null and requestHeader.id!=null and requestHeader.id!=''">
 				#{requestHeader.id},
 			</if>
-
-			#{poHeader.id}
+			#{soLineNo},
+			#{soQty},
+			#{soType},
+			#{poHeader.id},
+			#{poLineNo},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_po_order_req SET 	
-			order_id = #{orderHeader.id},
-			request_id = #{requestHeader.id},
-			po_id = #{poHeader.id}
+		UPDATE biz_po_order_req SET
+		<if test="orderHeader!=null and orderHeader.id !=null and orderHeader.id!=''">
+			so_id=#{orderHeader.id},
+		</if>
+		<if test="requestHeader!=null and requestHeader.id!=null and requestHeader.id!=''">
+			so_id=#{requestHeader.id},
+		</if>
+		so_line_no=#{soLineNo},
+		so_qty=#{soQty},
+		so_type=#{soType},
+		po_lineNo=#{poLineNo},
+		po_id = #{poHeader.id},
+		u_version=#{uVersion},
+		update_id=#{updateBy.id},
+		update_time=#{updateDate}
 		WHERE id = #{id}
 	</update>
 	

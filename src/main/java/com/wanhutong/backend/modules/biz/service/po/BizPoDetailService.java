@@ -45,7 +45,7 @@ public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail>
 		super.save(bizPoDetail);
 		calculateTotalOrderPrice(bizPoDetail);
 	}
-	private void calculateTotalOrderPrice(BizPoDetail bizPoDetail) {
+	public void calculateTotalOrderPrice(BizPoDetail bizPoDetail) {
 		BizPoDetail queryParam = new BizPoDetail();
 		queryParam.setPoHeader(bizPoDetail.getPoHeader());
 		List<BizPoDetail> list = findList(queryParam);

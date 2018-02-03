@@ -33,7 +33,7 @@
 	<form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
-
+		<input type="hidden" name="vendOffice.id" value="${vendorId}">
 		<table id="contentTable"  class="table table-striped table-bordered table-condensed">
 			<thead>
 			<tr>
@@ -43,56 +43,35 @@
 				<th>商品编码</th>
 				<th>商品属性</th>
 				<th>申报数量</th>
+				<th>采购数量</th>
 				<th>商品单价</th>
 
 
 			</tr>
 			</thead>
 			<tbody id="prodInfo">
-			<c:if test="${requestDetailList!=null}">
-                <c:forEach items="${requestDetailList}" var="reqDetail" varStatus="reqStatus">
-                    <tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
-                        <td><img style="width: 160px;height: 160px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
-                        <td>${reqDetail.skuInfo.productInfo.brandName}</td>
-                        <td>${reqDetail.skuInfo.name}</td>
-                        <td>${reqDetail.skuInfo.partNo}</td>
-                        <td>${reqDetail.skuInfo.skuPropertyInfos}</td>
-                        <td>${reqDetail.reqQty}
-                                <input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
-                                <input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
-                                <%--<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>--%>
-                                <%--<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>--%>
-                        </td>
-                        <%--<td>${reqDetail.recvQty}</td>--%>
-                        <td><input  name="" value="${reqDetail.reqQty}" class="input-mini" type='text'/></td>
+					<c:forEach items="${skuInfoMap}" var="map">
+						<tr>
+					<td><img style="width: 160px;height: 160px" src="${map.key.productInfo.imgUrl}"/></td>
+					<td>${map.key.productInfo.brandName}</td>
+					<td>${map.key.name}</td>
+					<td>${map.key.partNo}</td>
+					<td>${map.key.skuPropertyInfos}</td>
+					<td>${map.value.reqQty}
+						<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>
+						<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>
+						<input type='hidden' name='orderDetailIds' value='${map.value.orderDetailIds}'/>
+					<%--<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>--%>
+					<%--<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>--%>
+					</td>
+					<%--<td>${reqDetail.recvQty}</td>--%>
+					<td><input  name="ordQtys" readonly="readonly"  value="${map.value.reqQty}" class="input-mini" type='text'/></td>
+					<td>
+					<input type="text" name="unitPrices" class="input-mini">
+					</td>
 
-                    </tr>
-                </c:forEach>
-
-            </c:if>
-
-            <c:if test="${orderDetailList!=null}">
-                <c:forEach items="${orderDetailList}" var="reqDetail" varStatus="reqStatus">
-                    <tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
-                        <td><img style="width: 160px;height: 160px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
-                        <td>${reqDetail.skuInfo.productInfo.brandName}</td>
-                        <td>${reqDetail.skuInfo.name}</td>
-                        <td>${reqDetail.skuInfo.partNo}</td>
-                        <td>${reqDetail.skuInfo.skuPropertyInfos}</td>
-                        <td>${reqDetail.ordQty}
-                                <input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
-                                <input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
-                                <%--<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>--%>
-                                <%--<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>--%>
-                        </td>
-                        <%--<td>${reqDetail.sentQty}</td>--%>
-                        <td><input  value="${reqDetail.ordQty}" class="input-mini" type='text'/></td>
-
-                    </tr>
-                </c:forEach>
-
-            </c:if>
-
+					</tr>
+					</c:forEach>
 			</tbody>
 		</table>
 

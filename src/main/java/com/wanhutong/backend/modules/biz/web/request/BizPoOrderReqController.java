@@ -53,7 +53,6 @@ public class BizPoOrderReqController extends BaseController {
 		model.addAttribute("page", page);
 		return "modules/biz/request/bizPoOrderReqList";
 	}
-
 	@RequiresPermissions("biz:request:bizPoOrderReq:view")
 	@RequestMapping(value = "form")
 	public String form(BizPoOrderReq bizPoOrderReq, Model model) {

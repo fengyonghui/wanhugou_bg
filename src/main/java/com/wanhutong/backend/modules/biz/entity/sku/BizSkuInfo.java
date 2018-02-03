@@ -44,8 +44,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private List<String> skuIds;
 	private Integer reqQty; //请求的数量，用于展示
 	private Integer sentQty; //已发货的数量，用于展示
-	private String orderIds;
-	private String reqIds;
+	private String orderDetailIds;
+	private String reqDetailIds;
 	private String skuTypeName;
 
 	private String str;
@@ -181,20 +181,20 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 		this.sentQty = sentQty;
 	}
 
-	public String getOrderIds() {
-		return orderIds;
+	public String getOrderDetailIds() {
+		return orderDetailIds;
 	}
 
-	public void setOrderIds(String orderIds) {
-		this.orderIds = orderIds;
+	public void setOrderDetailIds(String orderDetailIds) {
+		this.orderDetailIds = orderDetailIds;
 	}
 
-	public String getReqIds() {
-		return reqIds;
+	public String getReqDetailIds() {
+		return reqDetailIds;
 	}
 
-	public void setReqIds(String reqIds) {
-		this.reqIds = reqIds;
+	public void setReqDetailIds(String reqDetailIds) {
+		this.reqDetailIds = reqDetailIds;
 	}
 
 	public String getSkuTypeName() {

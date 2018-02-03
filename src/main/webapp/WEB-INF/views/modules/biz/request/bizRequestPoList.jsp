@@ -79,9 +79,9 @@
 
 			<c:forEach items="${map}" var="orderMap">
 				<tr>
-					<c:set value="${fn:split(orderMap.key, ',') }" var="vendorName" />
+					<c:set value="${fn:split(orderMap.key, ',') }" var="vendor" />
 					<td>
-						${vendorName[1]}
+						${vendor[1]}
 					</td>
 					<c:set value="${fn:split(orderMap.value, '|')}" var="orderReq"></c:set>
 					<c:set value="${fn:split(orderReq[0],'-' )}" var="req"></c:set>
@@ -96,7 +96,7 @@
 						${ord[0]}
 					</td>
 					<td>
-						<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${req[1]}&ordIds=${ord[1]}">供货</a>
+						<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${req[1]}&ordIds=${ord[1]}&vendorId=${vendor[0]}">供货</a>
 
 					</td>
 				</tr>

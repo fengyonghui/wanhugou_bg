@@ -74,7 +74,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_po_detail(
 			id,
 			order_id,
@@ -84,7 +84,10 @@
 			part_no,
 			sku_name,
 			unit_price,
-			send_qty,
+			<if test="sendQty!=null">
+				send_qty,
+			</if>
+
 			ord_qty,
 			create_id,
 			create_time,
@@ -100,7 +103,9 @@
 			#{partNo},
 			#{skuInfo.name},
 			#{unitPrice},
+		<if test="sendQty!=null">
 			#{sendQty},
+		</if>
 			#{ordQty},
 			#{createBy.id},
 			#{createDate},

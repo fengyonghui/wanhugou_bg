@@ -107,12 +107,12 @@ public class BizPoHeaderController extends BaseController {
 		addMessage(redirectAttributes, "保存采购订单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/?repage";
 	}
-	@RequiresPermissions("biz:po:bizPoHeader:edit")
-	@RequestMapping(value = "savePoHeaderDetail")
-	public String savePoHeaderDetail(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes){
-		bizPoHeaderService.savePoHeaderDetail(bizPoHeader);
-		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/?repage";
-	}
+//	@RequiresPermissions("biz:po:bizPoHeader:edit")
+//	@RequestMapping(value = "savePoHeaderDetail")
+//	public String savePoHeaderDetail(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes){
+//		bizPoHeaderService.savePoHeaderDetail(bizPoHeader);
+//		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/?repage";
+//	}
 
 	
 	@RequiresPermissions("biz:po:bizPoHeader:edit")

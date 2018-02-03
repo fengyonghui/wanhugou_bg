@@ -32,8 +32,11 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Byte bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付3已发货 4已收货 5 已完成
 	private BizPlatformInfo plateformInfo;		// 订单来源； biz_platform_info.id
 	private List<BizPoDetail> poDetailList;
-	private String orderIds;
-	private String reqIds;
+	private String orderDetailIds;
+	private String skuInfoIds;
+	private String reqDetailIds;
+	private String unitPrices;
+	private String ordQtys;
 
 	
 	public BizPoHeader() {
@@ -117,19 +120,43 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		this.poDetailList = poDetailList;
 	}
 
-	public String getOrderIds() {
-		return orderIds;
+	public String getOrderDetailIds() {
+		return orderDetailIds;
 	}
 
-	public void setOrderIds(String orderIds) {
-		this.orderIds = orderIds;
+	public void setOrderDetailIds(String orderDetailIds) {
+		this.orderDetailIds = orderDetailIds;
 	}
 
-	public String getReqIds() {
-		return reqIds;
+	public String getReqDetailIds() {
+		return reqDetailIds;
 	}
 
-	public void setReqIds(String reqIds) {
-		this.reqIds = reqIds;
+	public void setReqDetailIds(String reqDetailIds) {
+		this.reqDetailIds = reqDetailIds;
+	}
+
+	public String getUnitPrices() {
+		return unitPrices;
+	}
+
+	public void setUnitPrices(String unitPrices) {
+		this.unitPrices = unitPrices;
+	}
+
+	public String getSkuInfoIds() {
+		return skuInfoIds;
+	}
+
+	public void setSkuInfoIds(String skuInfoIds) {
+		this.skuInfoIds = skuInfoIds;
+	}
+
+	public String getOrdQtys() {
+		return ordQtys;
+	}
+
+	public void setOrdQtys(String ordQtys) {
+		this.ordQtys = ordQtys;
 	}
 }

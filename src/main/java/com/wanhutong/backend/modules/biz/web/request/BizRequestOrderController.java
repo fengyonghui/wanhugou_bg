@@ -141,110 +141,73 @@ public class BizRequestOrderController extends BaseController {
 	}
 
 	@RequestMapping(value = "goList")
-	public String goList(String reqIds,String ordIds,Model model){
-		List<BizRequestDetail> requestDetailList=null;
-		List<BizOrderDetail> orderDetailList=null;
-		if(reqIds!=null){
-			 requestDetailList=Lists.newArrayList();
+	public String goList(String reqIds,Integer vendorId,String ordIds,Model model){
+		Map<Integer,List<BizSkuInfo>> skuInfoMap=null;
+		Map<Integer,List<BizSkuInfo>> map=new HashMap<>();
+		Map<BizSkuInfo,BizSkuInfo> skuMap=new HashMap<>();
+		if(StringUtils.isNotBlank(reqIds)){
 			String[] reqDetailArr= reqIds.split(",");
 			for(int i=0;i<reqDetailArr.length;i++){
 				BizRequestDetail bizRequestDetail=bizRequestDetailService.get(Integer.parseInt(reqDetailArr[i].trim()));
 				BizSkuInfo bizSkuInfo=bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
-				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfo);
-				if(skuInfo==null){
-					continue;
-				}
-				bizRequestDetail.setSkuInfo(skuInfo);
-				requestDetailList.add(bizRequestDetail);
+
+				bizSkuInfo.setReqQty(bizRequestDetail.getReqQty());
+				bizSkuInfo.setSentQty(bizRequestDetail.getRecvQty());
+				bizSkuInfo.setReqDetailIds(reqDetailArr[i].trim());
+				skuInfoMap=getSkuInfoData(map,bizSkuInfo.getId(),bizSkuInfo);
+//				bizRequestDetail.setSkuInfo(skuInfo);
+//				requestDetailList.add(bizRequestDetail);
 			}
 		}
-		if(ordIds!=null){
-			 orderDetailList=Lists.newArrayList();
+		if(StringUtils.isNotBlank(ordIds)){
+	// orderDetailList=Lists.newArrayList();
 			String[] ordDetailArr= ordIds.split(",");
 			for(int i=0;i<ordDetailArr.length;i++){
 				BizOrderDetail bizOrderDetail=bizOrderDetailService.get(Integer.parseInt(ordDetailArr[i].trim()));
 				BizSkuInfo bizSkuInfo=bizOrderDetail.getSkuInfo();
-				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfo);
-				bizOrderDetail.setSkuInfo(skuInfo);
-				orderDetailList.add(bizOrderDetail);
-			}
-		}
-		model.addAttribute("requestDetailList",requestDetailList);
-		model.addAttribute("orderDetailList",orderDetailList);
-		model.addAttribute("bizPoHeader",new BizPoHeader());
+				bizSkuInfo.setReqQty(bizOrderDetail.getOrdQty());
+				bizSkuInfo.setSentQty(bizOrderDetail.getSentQty());
+				bizSkuInfo.setOrderDetailIds(ordDetailArr[i].trim());
+				skuInfoMap=getSkuInfoData(map,bizSkuInfo.getId(),bizSkuInfo);
 
-		return "modules/biz/po/bizPoHeaderForm";
-	}
-	@RequiresPermissions("biz:request:selecting:supplier:edit")
-	@RequestMapping(value = "genSkuOrder")
-	public String genSkuOrder(String reqIds,String orderIds,Model model){
-		Map<Integer,List<BizSkuInfo>> map=new HashMap<>();
-		Map<Integer,List<BizSkuInfo>> skuInfoMap=null;
-
-		Map<BizSkuInfo,BizSkuInfo> skuMap=new HashMap<>();
-
-		if(StringUtils.isNotBlank(reqIds)){
-			String [] str=StringUtils.split(reqIds,",");
-			for(int i=0;i<str.length;i++){
-				BizRequestDetail bizRequestDetail=new BizRequestDetail();
-				bizRequestDetail.setRequestHeader(bizRequestHeaderService.get(Integer.parseInt(str[i].trim())));
-				List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
-				for(BizRequestDetail requestDetail:requestDetailList) {
-					BizSkuInfo bizSkuInfo=new BizSkuInfo();
-
-					Integer key = requestDetail.getSkuInfo().getId();
-
-					bizSkuInfo.setReqQty(requestDetail.getReqQty());
-					bizSkuInfo.setSentQty(requestDetail.getRecvQty());
-					bizSkuInfo.setReqIds(str[i].trim());
-					skuInfoMap=getSkuInfoData(map,key,bizSkuInfo);
-				}
-			}
-
-		}
-		if(StringUtils.isNotBlank(orderIds)){
-			String[] str= StringUtils.split(orderIds,",");
-			for(int i=0;i<str.length;i++){
-				BizOrderDetail bizOrderDetail=new BizOrderDetail();
-				bizOrderDetail.setOrderHeader(bizOrderHeaderService.get(Integer.parseInt(str[i].trim())));
-				List<BizOrderDetail> orderDetailList=bizOrderDetailService.findList(bizOrderDetail);
-				for(BizOrderDetail orderDetail:orderDetailList) {
-					BizSkuInfo bizSkuInfo=new BizSkuInfo();
-					Integer key = orderDetail.getSkuInfo().getId();
-					bizSkuInfo.setReqQty(orderDetail.getOrdQty());
-					bizSkuInfo.setSentQty(orderDetail.getSentQty());
-					bizSkuInfo.setOrderIds(str[i].trim());
-					skuInfoMap= getSkuInfoData(map,key,bizSkuInfo);
-				}
+//				bizOrderDetail.setSkuInfo(skuInfo);
+//				orderDetailList.add(bizOrderDetail);
 			}
 		}
 
 		for (Map.Entry<Integer, List<BizSkuInfo>> entry : skuInfoMap.entrySet()) {
-			BizSkuInfo skuInfo= bizSkuInfoService.findListProd(bizSkuInfoService.get(entry.getKey()));
 			List<BizSkuInfo> bizSkuInfoList=entry.getValue();
 			Integer reqQty=bizSkuInfoList.stream().mapToInt(item -> item.getReqQty()==null?0:item.getReqQty()).sum();
 			Integer sendQty=bizSkuInfoList.stream().mapToInt(item -> item.getSentQty()==null?0:item.getSentQty()).sum();
-			StringBuilder strOrderIds = new StringBuilder();
-			StringBuilder strReqIds = new StringBuilder();
+			StringBuilder strOrderDetailIds = new StringBuilder();
+			StringBuilder strReqDetailIds = new StringBuilder();
 			for (BizSkuInfo sku:bizSkuInfoList){
-				strOrderIds.append(sku.getOrderIds()==null?0:sku.getOrderIds());
-				strOrderIds.append(",");
-				strReqIds.append(sku.getReqIds()==null?0:sku.getReqIds());
-				strReqIds.append(",");
+				strOrderDetailIds.append(sku.getOrderDetailIds()==null?0:sku.getOrderDetailIds());
+				strOrderDetailIds.append("_");
+				strReqDetailIds.append(sku.getReqDetailIds()==null?0:sku.getReqDetailIds());
+				strReqDetailIds.append("_");
 			}
-			String strO= strOrderIds.toString();
-			String strR=strReqIds.toString();
+			String strO= strOrderDetailIds.toString();
+			String strR=strReqDetailIds.toString();
 			BizSkuInfo sku=bizSkuInfoService.get(entry.getKey());
+			BizSkuInfo skuInfo=bizSkuInfoService.findListProd(sku);
+			if(skuInfo==null){
+				continue;
+			}
 			sku.setReqQty(reqQty);
 			sku.setSentQty(sendQty);
-			sku.setOrderIds(strO.substring(0,strO.length()-1));
-			sku.setReqIds(strR.substring(0,strR.length()-1));
+			sku.setOrderDetailIds(strO.substring(0,strO.length()-1));
+			sku.setReqDetailIds(strR.substring(0,strR.length()-1));
 			skuMap.put(skuInfo,sku);
 		}
 
+//		model.addAttribute("requestDetailList",requestDetailList);
+//		model.addAttribute("orderDetailList",orderDetailList);
 		model.addAttribute("skuInfoMap",skuMap);
+		model.addAttribute("vendorId",vendorId);
+		model.addAttribute("bizPoHeader",new BizPoHeader());
 
-		return "modules/biz/request/bizSkuInfoGhForm";
+		return "modules/biz/po/bizPoHeaderForm";
 	}
 	private Map<Integer,List<BizSkuInfo>> getSkuInfoData(Map<Integer,List<BizSkuInfo>> map,Integer key,BizSkuInfo bizSkuInfo){
 		// BizSkuInfo bizSkuInfo= bizSkuInfoService.findListProd(bizSkuInfoService.get(key));

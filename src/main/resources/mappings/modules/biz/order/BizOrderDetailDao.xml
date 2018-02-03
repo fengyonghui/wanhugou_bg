@@ -97,7 +97,23 @@
 		pi.vendor_id AS "vendorId",
 		pi.vendor_name AS "vendorName"
 		FROM
-		biz_order_detail od
+		(
+		SELECT
+		a.id , a.sku_id,a.ord_qty,a.sent_qty,a.order_id,a.line_no
+		FROM
+		biz_order_detail a
+		WHERE
+		NOT EXISTS (
+		SELECT
+		por.so_line_no,
+		por.so_id
+		FROM
+		biz_po_order_req por
+		WHERE
+		por.so_line_no = a.line_no
+		AND por.so_id = a.order_id
+		AND por.so_type = 1
+		) ) od
 		LEFT JOIN biz_order_header oh ON od.order_id = oh.id
 		JOIN biz_sku_info si ON si.id = od.sku_id
 		JOIN biz_product_info pi ON pi.id = si.prod_id
