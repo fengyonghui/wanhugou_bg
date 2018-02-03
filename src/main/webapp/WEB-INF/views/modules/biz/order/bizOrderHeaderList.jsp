@@ -70,6 +70,9 @@
 			<li><label>订单编号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
+			<li><label>采购商电话：</label>
+				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
+			</li>
 			<%--<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"--%>
 					<%--labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"--%>
 					<%--title="采购商"  url="/sys/office/queryTreeList?type=6"--%>
@@ -108,6 +111,7 @@
 				<th>订单编号</th>
 				<th>订单类型</th>
 				<th>采购商名称</th>
+				<th>采购商电话</th>
 				<th>商品详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>
@@ -150,6 +154,9 @@
 				<%----end---%>
 				<td>
 					${orderHeader.customer.name}
+				</td>
+				<td>
+					${orderHeader.customer.phone}
 				</td>
 				<td>
 					<fmt:formatNumber type="number" value="${orderHeader.totalDetail}" pattern="0.00"/>
