@@ -11,6 +11,7 @@
 		a.user_id AS "user.id",
 		bsi.name AS  "skuShelfinfo.skuInfo.name",
 		su.name AS "user.name",
+		su.mobile AS  "user.mobile",
 		a.sku_qty AS "skuQty",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -64,6 +65,12 @@
 				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{user.name}, '%')</if>
 			</if>
+            <if test="user != null and user != ''">
+                AND su.mobile LIKE
+                <if test="dbName == 'oracle'">'%'||#{user.mobile}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{user.mobile}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{user.mobile}, '%')</if>
+            </if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_id = #{createBy.id}
 			</if>
@@ -73,11 +80,12 @@
 			<if test="sqlMap != null and sqlMap.shopCart != null and sqlMap.shopCart != ''">
 				${sqlMap.shopCart}
 			</if>
+            ORDER BY a.create_time DESC
 
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
+				, ${page.orderBy}
 			</when>
 			<otherwise>
 			</otherwise>

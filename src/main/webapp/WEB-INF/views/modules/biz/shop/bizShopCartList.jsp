@@ -32,6 +32,9 @@
 				<sys:treeselect id="office" name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"
 					title="部门" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
+			<li><label>采购商电话：</label>
+				<form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
 			<%--<li><label>客户专员：</label>--%>
 				<%--<sys:treeselect id="user" name="user.id" value="${bizShopCart.user.id}" labelName="user.name" labelValue="${bizShopCart.user.name}"--%>
                     <%--title="顾问" url="/sys/office/queryTreeList?type=8" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>--%>
@@ -48,6 +51,7 @@
 				<th>商品货架</th>
 				<th>采购商名称</th>
 				<%--<th>客户专员</th>--%>
+				<th>采购商电话</th>
                 <th>sku名称</th>
 				<th>sku数量</th>
 				<th>创建人</th>
@@ -66,6 +70,9 @@
                 </td>
 				<td>
 					${bizShopCart.office.name}
+				</td>
+				<td>
+						${bizShopCart.user.mobile}
 				</td>
                 <td>
                     ${bizShopCart.skuShelfinfo.skuInfo.name}
