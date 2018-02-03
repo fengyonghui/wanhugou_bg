@@ -89,7 +89,7 @@ public class BizInvoiceDetailController extends BaseController {
 	public String delete(BizInvoiceDetail bizInvoiceDetail, RedirectAttributes redirectAttributes) {
 		bizInvoiceDetailService.delete(bizInvoiceDetail);
 		addMessage(redirectAttributes, "删除发票详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceDetail/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceHeader/form?repage&id="+bizInvoiceDetail.getInvoiceHeader().getId();
 	}
 	
 	@ResponseBody

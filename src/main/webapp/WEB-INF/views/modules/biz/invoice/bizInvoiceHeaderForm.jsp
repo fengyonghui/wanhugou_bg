@@ -80,7 +80,6 @@ function dial(){
 					 $(".boxs").each(function(){
 						 if($(this).attr("checked")){
 								var orderId= $(this).val();
-									console.log(orderId+"  测试1");
 								var trId="order"+$(this).val();
 									console.log(trId+"  测试2");
 								var remov="<td><a href='#' onclick='removeItem(\""+orderId+"\")'>移除</a></td>";
@@ -156,8 +155,6 @@ function dial(){
             <label class="control-label">选择订单：</label>
             <div class="controls">
                     <input type="button" onclick="dial();" value="订单列表" htmlEscape="false" class="input-xlarge required"/>
-                    <%--<label class="error" id="addError" style="display:none;">必填信息</label>--%>
-                    <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>
 		<%--勾选订单列表显示隐藏--%>
@@ -167,9 +164,9 @@ function dial(){
 			<table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 				<tr>
-					<th>选择</th>
 					<th>采购商</th>
 					<th>订单编号</th>
+					<th>商品详情总价</th>
 					<th>订单总费用</th>
 					<th>运费</th>
 					<th>创建时间</th>
@@ -178,29 +175,30 @@ function dial(){
 				</thead>
 				<tbody id="orderHead_table">
 				<c:if test="${bizInvoiceHeader.id !=null && bizInvoiceHeader.id!=''}">
-						<c:forEach items="${bizInvoiceHeader.bizInvoiceDetailList}" var="bizInvoiceDetail">
+						<c:forEach items="${bizInvoiceHeader.bizInvoiceDetailList}" var="bizInvoice">
 							<tr>
-								<td><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}">
-										${bizInvoiceDetail.id}</a>
+								<td>
+										${bizInvoice.orderHead.customer.name}
 								</td>
 								<td>
-										${bizInvoiceDetail.invoiceHeader.orderNum}
+										${bizInvoice.orderHead.orderNum}
 								</td>
 								<td>
-										${bizInvoiceDetail.invoiceHeader.invTitle}
+										${bizInvoice.orderHead.totalDetail}
 								</td>
 								<td>
-										${bizInvoiceDetail.invoiceHeader.unitPrice}
+										${bizInvoice.orderHead.totalExp}
 								</td>
 								<td>
-										${bizOrderDetail.ordQty}
+										${bizInvoice.orderHead.freight}
 								</td>
 								<td>
-										${bizOrderDetail.sentQty}
+									<fmt:formatDate value="${bizInvoice.orderHead.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 								</td>
-								<td>
-									<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-								</td>
+								<shiro:hasPermission name="biz:invoice:bizInvoiceHeader:edit"><td>
+									<a href="${ctx}/biz/invoice/bizInvoiceDetail/delete?id=${bizInvoice.id}&invoiceHeader.id=${bizInvoiceHeader.id}" onclick="return confirmx('确认要移除该订单吗？', this.href)">
+										移除
+								</a></td></shiro:hasPermission>
 							</tr>
 						</c:forEach>
 				</c:if>
@@ -223,6 +221,7 @@ function dial(){
 			<th>选择</th>
             <th>采购商</th>
             <th>订单编号</th>
+			<th>商品详情总价</th>
             <th>订单总费用</th>
             <th>运费</th>
             <th>创建时间</th>

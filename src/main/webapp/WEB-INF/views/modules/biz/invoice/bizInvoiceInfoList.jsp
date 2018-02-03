@@ -25,12 +25,12 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>机构名称：</label>
-				<sys:treeselect id="office" name="office.id" value="${bizInvoiceInfo.office.id}" labelName="office.name" labelValue="${bizInvoiceInfo.office.name}"
-					title="机构" url="/sys/office/treeData?type=2" cssClass="input-xlarge" allowClear="true" notAllowSelectParent="true"/>
+			<li><label>采购商名称：</label>
+				<sys:treeselect id="office" name="office.id" value="" labelName="office.name" labelValue=""
+					title="采购商" url="/sys/office/treeData?type=2" cssClass="input-xlarge" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label>电话：</label>
-                <form:input path="tel" htmlEscape="false" maxlength="11" class="input-medium"/>
+                <form:input path="tel" htmlEscape="false" maxlength="11" class="input-xlarge"/>
             </li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -40,7 +40,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>机构名称</th>
+				<th>采购商名称</th>
 				<th>发票抬头</th>
 				<th>税号</th>
 				<th>开户行</th>

@@ -8,6 +8,7 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
@@ -34,9 +35,9 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String quality;        //材质
     private String color;        //颜色
     private String standard;    //规格
+    private Office suplyis;     //供货中心ID，sys_office.id; 默认本地备货对应采购中心id；其他货架对应供货中心ID；此值由采购专员同意发货前确定
 
     private Integer ordQtyUpda;        //用于存储修改时的采购数量
-//    private Integer maxLineNo;        //最大的行号
     private List<BizOpShelfSku> shelfList;    //用于计算有多少货架
     private String orderDetaIds;        //用于多选商品时传递数据
     private String saleQtys;          //用于采购数量时传递数量
@@ -50,13 +51,6 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Integer totalSendQty;
     private Integer vendorId;
     private String vendorName;
-
-    //    public Integer getMaxLineNo() {
-//        return maxLineNo;
-//    }
-//    public void setMaxLineNo(Integer maxLineNo) {
-//        this.maxLineNo = maxLineNo;
-//    }
 
     public List<BizOrderDetail> getOrderHeaderList() {
         return orderHeaderList;
@@ -278,5 +272,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setVendorName(String vendorName) {
         this.vendorName = vendorName;
+    }
+
+    public Office getSuplyis() {
+        return suplyis;
+    }
+
+    public void setSuplyis(Office suplyis) {
+        this.suplyis = suplyis;
     }
 }

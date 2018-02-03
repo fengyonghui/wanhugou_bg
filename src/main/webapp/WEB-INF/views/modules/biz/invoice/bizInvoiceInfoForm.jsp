@@ -32,45 +32,39 @@
 		});
 		 function mechanism(){
              var officeId=$('#officeId').val();
+              $("#province").empty();
+			  $("#city").empty();
+			  $("#region").empty();
+			  $("#address").empty();
                 $.ajax({
-                    type:"post",
-                    url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
-                    dataType:"json",
-                    success:function(data){
-                     $("#province").empty();
-                     $("#city").empty();
-                     $("#region").empty();
-                     $("#address").empty();
-                     if(data==''){
-                         console.log("数据为空");
-                         $("#add1").css("display","none");
-                         $("#add2").css("display","block");
-                         $("#add3").css("display","none");
-                     }else{
-                         console.log("数据不为空显示");
-                        $("#add1").css("display","block");
-                        $("#add2").css("display","none");
-                        $("#add3").css("display","block");
-                           $.each(data,function(index,add){
-                                 /*console.log(JSON.stringify(add)+"----");*/
-                                if(add.deFault ==1){
-                                    var option2=$("<option/>").text(add.bizLocation.province.name).val(add.bizLocation.province.id);
-                                    $("#province").append(option2);
-                                    var option3=$("<option/>").text(add.bizLocation.city.name).val(add.bizLocation.city.id);
-                                    $("#city").append(option3);
-                                    var option4=$("<option/>").text(add.bizLocation.region.name).val(add.bizLocation.region.id);
-                                    $("#region").append(option4);
-                                    $("#address").val(add.bizLocation.address);
-                                 }
-                           });
-                           //当省份的数据加载完毕之后 默认选中第一个遍历出来的省份信息
-                           $("#province").change();
-                           $("#city").change();
-                           $("#region").change();
-                           $("#address").change();
-                        }
+                type:"post",
+                url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
+                success:function(data){
+                 <%--console.log(JSON.stringify(data)+"---测试1");--%>
+                 if(data==''){
+                     console.log("数据为空显示 新增地址 ");
+                     $("#add1").css("display","none");
+                     $("#add2").css("display","block");
+                     $("#add3").css("display","none");
+                 }else{
+                     console.log("数据不为空隐藏 新增地址 ");
+                    $("#add1").css("display","block");
+                    $("#add2").css("display","none");
+                    $("#add3").css("display","block");
+						var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);
+						$("#province").append(option2);
+						var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);
+						$("#city").append(option3);
+						var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
+						$("#region").append(option4);
+						$("#address").val(data.bizLocation.address);
+				   $("#province").change();
+				   $("#city").change();
+				   $("#region").change();
+				   $("#address").change();
                     }
-                });
+                }
+            });
             }
 	</script>
 </head>
@@ -83,10 +77,10 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">机构名称：</label>
+			<label class="control-label">采购商名称：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizInvoiceInfo.office.id}" labelName="office.name" labelValue="${bizInvoiceInfo.office.name}"
-					title="机构" url="/sys/office/treeData?type=2" onchange="mechanism();" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+					title="采购商" url="/sys/office/queryTreeList?type=6" onchange="mechanism();" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.service.invoice;
 
+import java.util.HashSet;
 import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
@@ -56,24 +57,24 @@ public class BizInvoiceHeaderService extends CrudService<BizInvoiceHeaderDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void save(BizInvoiceHeader bizInvoiceHeader) {
+		Double sum=0.0;
 		BizInvoiceDetail bizInvoiceDetail = new BizInvoiceDetail();
-		List<BizInvoiceDetail> list = bizInvoiceHeader.getBizInvoiceDetailList();
-		if(list!=null){
-			for (BizInvoiceDetail biz : list) {
-//				计算单个订单的金额
-				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(biz.getOrderHead().getId());
-				Double totalExp = bizOrderHeader.getTotalExp();//订单总费用
-				Double freight = bizOrderHeader.getFreight();//运费
-				Double totalDetail = bizOrderHeader.getTotalDetail();//订单详情总价
-				bizInvoiceHeader.setInvTotal(totalExp + freight + totalDetail);//发票数额
-				super.save(bizInvoiceHeader);
-				bizInvoiceDetail.setOrderHead(bizOrderHeader);
-			}
-			bizInvoiceDetail.setInvAmt(bizInvoiceHeader.getInvTotal());
-			bizInvoiceDetail.setInvoiceHeader(bizInvoiceHeader);
-			bizInvoiceDetailService.save(bizInvoiceDetail);
+		bizInvoiceDetail.setInvoiceHeader(bizInvoiceHeader);
+		List<BizInvoiceDetail> list = bizInvoiceDetailService.findList(bizInvoiceDetail);
+		for (BizInvoiceDetail biz : list) {
+			BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(biz.getOrderHead().getId());
+			Double totalExp = bizOrderHeader.getTotalExp();//订单总费用
+			Double freight = bizOrderHeader.getFreight();//运费
+			Double totalDetail = bizOrderHeader.getTotalDetail();//订单详情总价
+			bizInvoiceDetail.setOrderHead(bizOrderHeader);
+			sum += totalExp + freight + totalDetail;
 		}
+		bizInvoiceHeader.setInvTotal(sum);//发票数额
 		super.save(bizInvoiceHeader);
+		bizInvoiceDetail.setInvAmt(bizInvoiceHeader.getInvTotal());
+		bizInvoiceDetail.setInvoiceHeader(bizInvoiceHeader);
+		bizInvoiceDetailService.save(bizInvoiceDetail);
+
 	}
 	
 	@Transactional(readOnly = false)

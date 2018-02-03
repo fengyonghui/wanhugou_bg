@@ -41,6 +41,7 @@
         document.onkeypress=banBackSpace;
         <%--禁止后退键 作用于IE、Chrome--%>
         document.onkeydown=banBackSpace;
+
     </script>
     <script type="text/javascript">
 		$(document).ready(function() {
@@ -150,6 +151,7 @@
         <%--}--%>
     <%--}--%>
 
+
     </script>
     <script type="text/javascript">
     function btnOrder(){
@@ -175,6 +177,7 @@
             }
         });
     }
+
 
     </script>
     <script type="text/javascript">
@@ -215,6 +218,7 @@
             });
         }
 
+
     </script>
     <script type="text/javascript">
     function checkPending(obj) {
@@ -248,6 +252,7 @@
 
         }
     }
+
 
     </script>
 </head>
@@ -285,26 +290,25 @@
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>
-    <%--<div class="control-group">--%>
-    <%--<label class="control-label">订单编号：</label>--%>
-    <%--<div class="controls">--%>
-    <%--<form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"--%>
-    <%--class="input-xlarge required"/>--%>
-    <%--</div>--%>
-    <%--</div>--%>
-    <%--<div class="control-group">--%>
-    <%--<label class="control-label">订单类型：</label>--%>
-    <%--<div class="controls">--%>
-    <%--<form:select path="orderType" class="input-medium required">--%>
-    <%--&lt;%&ndash;默认选中&ndash;%&gt;--%>
-    <%--<form:option value="1" label="普通订单" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
-    <%--&lt;%&ndash;<form:option value="" label="请选择"/>&ndash;%&gt;--%>
-    <%--&lt;%&ndash;<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"&ndash;%&gt;--%>
-    <%--&lt;%&ndash;htmlEscape="false"/>&ndash;%&gt;</form:select>--%>
-    <%--<span class="help-inline"><font color="red">*</font>j默认选择</span>--%>
-    <%--</div>--%>
-    <%--</div>--%>
 
+    <c:if test="${not empty entity.orderDetails}">
+        <div class="control-group">
+            <label class="control-label">订单编号：</label>
+            <div class="controls">
+                <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"
+                            class="input-xlarge"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">订单类型：</label>
+            <div class="controls">
+                <form:select path="orderType" class="input-xlarge" disabled="true">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/></form:select>
+            </div>
+        </div>
+    </c:if>
     <div class="control-group">
         <label class="control-label">采购商名称：</label>
         <div class="controls">
@@ -333,11 +337,11 @@
                 <%--allowClear="${office.currentUser.admin}" onchange="clickBut2();" dataMsgRequired="必填信息"/>--%>
                 <%--</c:if>--%>
             </c:if>
-            <span class="help-inline"><font color="red">*</font> </span>
+            <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">订单详情总价：</label>
+        <label class="control-label">商品详情总价：</label>
         <div class="controls">
             <form:input path="totalDetail" htmlEscape="false" placeholder="0.0" readOnly="true" class="input-xlarge"/>
             <input name="totalDetail" value="${entity.totalDetail}" htmlEscape="false" type="hidden"/>
@@ -348,11 +352,7 @@
         <label class="control-label">订单总费用：</label>
         <div class="controls">
             <form:input path="totalExp" htmlEscape="false" placeholder="无费用可填 0" class="input-xlarge required"/>
-            <span class="help-inline"><font color="red">*</font>
-                <c:if test="${entity.oneOrder eq 'firstOrder' && entity.totalDetail>10000}">
-                    首次下单不能大于10000元
-                </c:if>
-            </span>
+            <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
     <div class="control-group">
@@ -367,6 +367,29 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
+    <c:if test="${not empty entity.orderDetails}">
+        <c:if test="${fns:getUser().isAdmin()==false}">
+            <div class="control-group">
+                <label class="control-label">发票状态：</label>
+                <div class="controls">
+                    <form:select path="invStatus" class="input-medium">
+                        <form:option value="" label="请选择"/>
+                        <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label"
+                                      itemValue="value"
+                                      htmlEscape="false"/></form:select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">业务状态：</label>
+                <div class="controls">
+                    <form:select path="bizStatus" class="input-medium">
+                        <form:option value="" label="请选择"/>
+                        <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
+                                      htmlEscape="false"/></form:select>
+                </div>
+            </div>
+        </c:if>
+    </c:if>
     <c:if test="${fns:getUser().isAdmin()}">
         <div class="control-group">
             <label class="control-label">发票状态：</label>
@@ -379,8 +402,6 @@
                 <span class="help-inline"><font color="red">*</font>默认选择</span>
             </div>
         </div>
-    </c:if>
-    <c:if test="${fns:getUser().isAdmin()}">
         <div class="control-group">
             <label class="control-label">业务状态：</label>
             <div class="controls">
@@ -388,6 +409,7 @@
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
                                   htmlEscape="false"/></form:select>
+                    <c:if test="${bizOrderHeader.bizStatus==0}">${bizOrderHeader.bizStatus}</c:if>
                 <span class="help-inline"><font color="red">*</font>默认选择</span>
             </div>
         </div>
@@ -482,6 +504,33 @@
             <span class="help-inline">已经支付：<font color="red">${entity.receiveTotal}</font></span>
         </div>
     </c:if>
+    <c:if test="${not empty entity.orderDetails}">
+        <div class="control-group">
+            <label class="control-label">创建人：</label>
+            <div class="controls">
+                <form:input path="totalDetail" value="${bizOrderHeader.createBy.name}" readOnly="true" class="input-xlarge"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">创建时间：</label>
+            <div class="controls">
+                <fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">更新人：</label>
+            <div class="controls">
+                <form:input path="totalDetail" value="${bizOrderHeader.updateBy.name}" readOnly="true" class="input-xlarge"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">更新时间：</label>
+            <div class="controls">
+                <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+            </div>
+        </div>
+    </c:if>
+
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
@@ -521,7 +570,6 @@
                     <span class="help-inline"><font color="red">*</font></span>
                 </div>
             </div>
-
             <div class="form-actions">
                 <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                     <input class="btn btn-primary" type="button"
@@ -539,6 +587,10 @@
                                                                                      type="submit"
                                                                                      value="保存"/>&nbsp;</shiro:hasPermission>
                 </c:if>
+                <c:if test="${not empty entity.orderDetails}">
+                        待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>，
+                        <span class="help-inline">已经支付：<font color="red">${entity.receiveTotal}</font></span>
+                </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
 
@@ -555,14 +607,9 @@
         <th>详情行号</th>
         <th>货架名称</th>
         <th>商品名称</th>
-        <%--<th>商品属性</th>--%>
-        <%--<th>材质</th>--%>
-        <%--<th>颜色</th>--%>
-        <%--<th>规格</th>--%>
         <th>商品编号</th>
         <th>商品单价</th>
         <th>采购数量</th>
-        <%--<th>发货数量</th>--%>
         <th>创建时间</th>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
@@ -586,16 +633,6 @@
                     </c:if>
                         ${bizOrderDetail.skuName}</a>
             </td>
-                <%--<td>--%>
-                <%--${bizOrderDetail.quality}--%>
-                <%--</td>--%>
-                <%--<td>--%>
-                <%--${bizOrderDetail.color}--%>
-                <%--</td>--%>
-                <%--<td>--%>
-                <%--${bizOrderDetail.standard}--%>
-                <%--</td>--%>
-            <td></td>
             <td>
                     ${bizOrderDetail.partNo}
             </td>
@@ -605,9 +642,6 @@
             <td>
                     ${bizOrderDetail.ordQty}
             </td>
-                <%--<td>--%>
-                <%--${bizOrderDetail.sentQty}--%>
-                <%--</td>--%>
             <td>
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </td>
@@ -624,15 +658,18 @@
     </c:forEach>
     </tbody>
 </table>
-<c:if test="${empty entity.orderNoEditable}">
-    <div class="form-actions">
-        <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-            <shiro:hasPermission name="biz:order:bizOrderDetail:edit"><input type="button"
-                                                                             onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}';"
-                                                                             class="btn btn-primary"
-                                                                             value="订单商品信息添加"/></shiro:hasPermission>
-        </c:if>
-    </div>
-</c:if>
+<div class="form-actions">
+    <c:if test="${empty entity.orderNoEditable}">
+            <c:if test="${bizOrderHeader.id!=null}">
+                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                    <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
+                        <input type="button"
+                             onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}';"
+                             class="btn btn-primary"
+                             value="订单商品信息添加"/></shiro:hasPermission>
+                </c:if>
+            </c:if>
+    </c:if>
+</div>
 </body>
 </html>

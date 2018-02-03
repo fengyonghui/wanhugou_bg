@@ -56,6 +56,8 @@ public class BizInvoiceHeaderController extends BaseController {
 			List<BizInvoiceDetail> list = bizInvoiceDetailService.findList(bizInvoiceDetail);
 			for (BizInvoiceDetail invoiceDetail : list) {
 				System.out.println(invoiceDetail+"  --- 测试");
+				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(invoiceDetail.getOrderHead().getId());
+				invoiceDetail.setOrderHead(bizOrderHeader);
 			}
 			entity.setBizInvoiceDetailList(list);
 		}

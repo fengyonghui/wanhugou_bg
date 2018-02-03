@@ -115,11 +115,10 @@
 				<th>商品详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>
-				<th>订单总费用</th>
+				<th>订单总价</th>
 				<th>发票状态</th>
 				<th>业务状态</th>
 				<th>订单来源</th>
-				<%--<th>订单收货地址</th>--%>
 				<th>创建人</th>
 				<th>订单创建时间</th>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><th>操作</th></shiro:hasPermission>
@@ -138,50 +137,47 @@
 								${orderHeader.orderNum}</a>
 					</c:if>
 				</td>
-				<%--<td>--%>
-					<%--${fns:getDictLabel(bizOrderHeader.orderType, 'biz_order_type', '未知状态')}--%>
-				<%--</td>--%>
-				<%---start----%>
-				<td><c:if test="${orderHeader.bizType ==1}">
-						专营
-					</c:if>
-					<c:if test="${orderHeader.bizType ==2}">
-						非专营
-					</c:if><c:if test="${orderHeader.bizType ==0 || orderHeader.bizType ==null || orderHeader.bizType =='' || orderHeader.bizType >3}">
-						未知
-					</c:if>
+				<td>
+					${fns:getDictLabel(orderHeader.bizType, 'biz_order_type', '未知状态')}
 				</td>
-				<%----end---%>
 				<td>
 					${orderHeader.customer.name}
 				</td>
 				<td>
 					${orderHeader.customer.phone}
 				</td>
-				<td>
+				<td><font color="#848484">
 					<fmt:formatNumber type="number" value="${orderHeader.totalDetail}" pattern="0.00"/>
-				</td>
-				<td>
+				</font></td>
+				<td><font color="#848484">
 					<fmt:formatNumber type="number" value="${orderHeader.totalExp}" pattern="0.00"/>
-				</td>
-				<td>
+				</font></td>
+				<td><font color="#848484">
 					<fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
-				</td>
-				<td><font color="red">
+				</font></td>
+				<td><font color="#0A2A0A">
 					<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 				</font></td>
 				<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 				</td>
 				<td>
-					${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
+                    <c:if test="${orderHeader.bizStatus==0}">
+                        <font color="#848484">未支付</font>
+                    </c:if>
+                    <c:if test="${orderHeader.bizStatus==5}">
+                        <font color="#FF0000">有欠款</font>
+                    </c:if>
+                    <c:if test="${orderHeader.bizStatus==10}">
+                        <font color="#088A29">已结清</font>
+                    </c:if>
+                    <c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=0}">
+					    ${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
+                    </c:if>
 				</td>
 				<td>
 					${orderHeader.platformInfo.name}
 				</td>
-				<%--<td>--%>
-					<%--${bizOrderHeader.bizLocation.pcrName}${bizOrderHeader.bizLocation.address}--%>
-				<%--</td>--%>
 				<td>
 					${orderHeader.createBy.name}
 				</td>

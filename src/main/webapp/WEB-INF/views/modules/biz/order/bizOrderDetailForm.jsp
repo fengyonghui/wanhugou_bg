@@ -124,7 +124,12 @@
                 <li><label>商品编码：</label>
                     <input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="10" class="input-medium"/>
                 </li>
-
+                <%--<li><label>查询：</label>--%>
+                    <%--<select class="input-medium">--%>
+                        <%--<option value=""> 请选择 </option>--%>
+                        <%--<option id="skuAll" value="ono"> 查询所有 </option>--%>
+                    <%--</select>--%>
+                <%--</li>--%>
                 <li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
                 <li class="clearfix"></li>
             </ul>

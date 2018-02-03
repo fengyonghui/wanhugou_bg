@@ -20,6 +20,8 @@
 		a.unit_price AS "unitPrice",
 		a.sent_qty as "sentQty",
 		a.ord_qty AS "ordQty",
+		a.suply_id as "suplyis.id",
+		soo.name as "suplyis.name",
 		a.create_id AS "createBy.id",
 		su.name as "createBy.name",
 		a.create_time AS "createDate",
@@ -35,6 +37,7 @@
 		LEFT JOIN biz_op_shelf_sku ois on a.sku_shelf_id=ois.id
 		Left Join biz_op_shelf_info si on si.id = ois.shelf_id
 		<!--LEFT join biz_order_sku_prop_value ospv on ospv.order_detail_id=a.id-->
+		LEFT join sys_office soo on soo.id=a.suply_id
 	</sql>
     
 	<select id="get" resultType="BizOrderDetail">
@@ -70,6 +73,9 @@
 			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
 				AND a.sku_id = #{skuInfo.id}
 			</if>
+			<if test="suplyis != null and suplyis.id != null and suplyis.id != ''">
+				AND a.suply_id = #{suplyis.id}
+			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_id = #{createBy.id}
 			</if>
@@ -87,6 +93,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		order by createDate ASC
 	</select>
 
 	<select id="findOrderTotalByVendor" resultType="BizOrderDetail">
@@ -164,6 +171,9 @@
 			unit_price,
 			sent_qty,
 			ord_qty,
+		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
+			suply_id,
+		</if>
 			create_id,
 			create_time,
 			u_version,
@@ -190,6 +200,9 @@
 			#{unitPrice},
 			#{sentQty},
 			#{ordQty},
+		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
+			#{suplyis.id},
+		</if>
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -219,6 +232,9 @@
 			unit_price = #{unitPrice},
 			sent_qty = #{sentQty},
 			ord_qty = #{ordQty},
+		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
+			suply_id=#{suplyis.id},
+		</if>
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
