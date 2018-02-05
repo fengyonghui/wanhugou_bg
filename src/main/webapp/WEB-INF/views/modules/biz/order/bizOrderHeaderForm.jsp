@@ -67,21 +67,31 @@
 			});
 			<%--订单地址--%>
             if($("#id").val() !=""){
-                    var option2=$("<option/>").text("${orderAddressOne.province.name}").val(${orderAddressOne.province.id});
+                    var option2=$("<option/>").text("${orderAddress.province.name}").val(${orderAddress.province.id});
                     $("#province").append(option2);
-                    var option3=$("<option/>").text("${orderAddressOne.city.name}").val(${orderAddressOne.city.id});
+                    var option3=$("<option/>").text("${orderAddress.city.name}").val(${orderAddress.city.id});
                     $("#city").append(option3);
-                    var option4=$("<option/>").text("${orderAddressOne.region.name}").val(${orderAddressOne.region.id});
+                    var option4=$("<option/>").text("${orderAddress.region.name}").val(${orderAddress.region.id});
                     $("#region").append(option4);
-                    $("#address").val("${bizOrderHeader.bizLocation.address}");
+                    $("#address").val("${orderAddress.address}");
                     <%--交货地址--%>
-                    var option2=$("<option/>").text("${orderAddressOne.province.name}").val(${orderAddressOne.province.id});
-                    $("#jhprovince").append(option2);
-                    var option3=$("<option/>").text("${orderAddressOne.city.name}").val(${orderAddressOne.city.id});
-                    $("#jhcity").append(option3);
-                    var option4=$("<option/>").text("${orderAddressOne.region.name}").val(${orderAddressOne.region.id});
-                    $("#jhregion").append(option4);
-                    $("#jhaddress").val("${orderAddressOne.address}");
+                    if(${orderAddress.type==1 }){
+                        var option2=$("<option/>").text("${orderAddress.province.name}").val(${orderAddress.province.id});
+                        $("#jhprovince").append(option2);
+                        var option3=$("<option/>").text("${orderAddress.city.name}").val(${orderAddress.city.id});
+                        $("#jhcity").append(option3);
+                        var option4=$("<option/>").text("${orderAddress.region.name}").val(${orderAddress.region.id});
+                        $("#jhregion").append(option4);
+                        $("#jhaddress").val("${address.address}");
+                    }else{
+                        var option2=$("<option/>").text("${address.province.name}").val(${address.province.id});
+                        $("#jhprovince").append(option2);
+                        var option3=$("<option/>").text("${address.city.name}").val(${address.city.id});
+                        $("#jhcity").append(option3);
+                        var option4=$("<option/>").text("${address.region.name}").val(${address.region.id});
+                        $("#jhregion").append(option4);
+                        $("#jhaddress").val("${address.address}");
+                    }
                $("#province").change();
                $("#city").change();
                $("#region").change();
@@ -106,10 +116,10 @@
              $("#region").empty();
              $("#address").empty();
              <%--交货地址--%>
-            $("#jhprovince").empty();
-            $("#jhcity").empty();
-            $("#jhregion").empty();
-            $("#jhaddress").empty();
+            <%--$("#jhprovince").empty();--%>
+            <%--$("#jhcity").empty();--%>
+            <%--$("#jhregion").empty();--%>
+            <%--$("#jhaddress").empty();--%>
             $.ajax({
                 type:"post",
                 url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
@@ -133,22 +143,22 @@
                                 $("#region").append(option4);
                                 $("#address").val(data.bizLocation.address);
                                 <%--交货地址--%>
-                                var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);
-                                $("#jhprovince").append(option2);
-                                var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);
-                                $("#jhcity").append(option3);
-                                var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
-                                $("#jhregion").append(option4);
-                                $("#jhaddress").val(data.bizLocation.address);
+                                <%--var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);--%>
+                                <%--$("#jhprovince").append(option2);--%>
+                                <%--var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);--%>
+                                <%--$("#jhcity").append(option3);--%>
+                                <%--var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);--%>
+                                <%--$("#jhregion").append(option4);--%>
+                                <%--$("#jhaddress").val(data.bizLocation.address);--%>
                        $("#province").change();
                        $("#city").change();
                        $("#region").change();
                        $("#address").change();
                        <%--交货地址--%>
-                        $("#jhprovince").change();
-                        $("#jhcity").change();
-                        $("#jhregion").change();
-                        $("#jhaddress").change();
+                        <%--$("#jhprovince").change();--%>
+                        <%--$("#jhcity").change();--%>
+                        <%--$("#jhregion").change();--%>
+                        <%--$("#jhaddress").change();--%>
                     }
                 }
             });
@@ -165,7 +175,7 @@
         }
         $.ajax({
             type:"post",
-            url:"${ctx}/biz/order/bizOrderHeader/saveOrderHeader?payMentOne="+$("#payMentOne").val()+"&tobePaid="+${entity.tobePaid},
+            url:"${ctx}/biz/order/bizOrderHeader/saveOrderHeader?payMentOne="+$("#payMentOne").val()+"&tobePaid=${entity.tobePaid}",
             data:{id:$("#id").val()},
             success:function(data){
                 if(data=="ok"){

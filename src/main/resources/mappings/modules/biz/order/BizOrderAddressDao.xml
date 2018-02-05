@@ -47,9 +47,6 @@
 		<include refid="bizOrderAddressJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="id != null and id != ''">
-				AND a.id = #{id}
-			</if>
 			<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
 				AND a.order_id = #{orderHeaderID.id}
 			</if>
@@ -111,7 +108,7 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_order_address(
 			id,
-		<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
+		<if test="orderHeaderID!=null and orderHeaderID.id != null and orderHeaderID.id !='' ">
 			order_id,
 		</if>
 		<if test="type != null and type!= ''">
@@ -131,8 +128,8 @@
 			update_time
 		) VALUES (
 			#{id},
-		<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
-			#{orderHead0erID.id},
+		<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id !='' ">
+			#{orderHeaderID.id},
 		</if>
 		<if test="type != null and type!= ''">
 			#{type},
@@ -186,5 +183,22 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<!--用于查询交货地址-->
+	<select id="getAddress" resultType="BizOrderAddress">
+		SELECT
+		<include refid="bizOrderAddressColumns"/>
+		FROM biz_order_address a
+		<include refid="bizOrderAddressJoins"/>
+		WHERE
+		<if test="id != null and id != ''">
+			a.id = #{id}
+		</if>
+		<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
+			AND a.order_id = #{orderHeaderID.id}
+		</if>
+		<if test="type != null and type!= ''">
+			AND a.type = #{type}
+		</if>
+	</select>
 </mapper>

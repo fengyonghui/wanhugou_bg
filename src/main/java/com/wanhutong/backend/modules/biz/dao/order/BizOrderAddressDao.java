@@ -14,5 +14,6 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
  */
 @MyBatisDao
 public interface BizOrderAddressDao extends CrudDao<BizOrderAddress> {
-	
+
+	public BizOrderAddress getAddress(BizOrderAddress bizOrderAddress);
 }
