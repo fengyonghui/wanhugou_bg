@@ -109,10 +109,9 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                     if(bizOpShelfInfo!=null && bizOpShelfInfo.getType()==3){//type==3属于栏目类型 本地备货
                         detailnew.setSuplyis(opShelfSku.getCenterOffice());//采购中心
                     }else{
-                        Office bendiOff=new Office();
-                        bendiOff.setId(0);
-                        System.out.println("栏目不是本地备货 给默认值0");
-                        detailnew.setSuplyis(bendiOff);//采购中心
+                        Office officeCenter=new Office();
+                        System.out.println("栏目不是本地备货 给默认值 0 ");
+                        detailnew.setSuplyis(officeCenter);//采购中心
                     }
                 }
                 super.save(detailnew);

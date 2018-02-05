@@ -21,6 +21,8 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class BizOrderAddress extends DataEntity<BizOrderAddress> {
 	
 	private static final long serialVersionUID = 1L;
+	private BizOrderHeader orderHeaderID;	//biz_order_header.id
+	private Integer type;	//1：是订单收货地址，2：是订单交货地址
 	private SysRegion province;	// 省份
 	private SysRegion city;		// 城市
 	private SysRegion region;		// 区域
@@ -120,5 +122,21 @@ public class BizOrderAddress extends DataEntity<BizOrderAddress> {
 
 	public void setSelectedRegionId(Integer selectedRegionId) {
 		this.selectedRegionId = selectedRegionId;
+	}
+
+	public BizOrderHeader getOrderHeaderID() {
+		return orderHeaderID;
+	}
+
+	public void setOrderHeaderID(BizOrderHeader orderHeaderID) {
+		this.orderHeaderID = orderHeaderID;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 }

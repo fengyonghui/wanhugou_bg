@@ -111,6 +111,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
         }
         super.save(bizOrderHeader);
+        bizLocation.setOrderHeaderID(bizOrderHeader);
+        bizOrderAddressService.save(bizLocation);
 //		----------------------------查询是否首次下单--------------------------------------
         BizOrderHeader boh = new BizOrderHeader();
         Office custid = bizOrderHeader.getCustomer();

@@ -4,6 +4,8 @@
     
 	<sql id="bizOrderAddressColumns">
 		a.id AS "id",
+		a.order_id as "orderHeaderID.id",
+		a.type as "type",
 		a.province_id AS "province.id",
 		a.city_id AS "city.id",
 		a.region_id AS "region.id",
@@ -27,6 +29,7 @@
 		LEFT JOIN sys_region city ON city.id = a.city_id
 		LEFT JOIN sys_region reg ON reg.id = a.region_id
 		left join sys_user su on a.create_id=su.id
+		LEFT join biz_order_header boh on boh.id=a.order_id
 	</sql>
     
 	<select id="get" resultType="BizOrderAddress">
@@ -46,6 +49,12 @@
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
+			</if>
+			<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
+				AND a.order_id = #{orderHeaderID.id}
+			</if>
+			<if test="type != null and type!= ''">
+				AND a.type = #{type}
 			</if>
 			<if test="province != null and province.id != null and province.id != ''">
 				AND a.province_id = #{province.id}
@@ -102,6 +111,12 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_order_address(
 			id,
+		<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
+			order_id,
+		</if>
+		<if test="type != null and type!= ''">
+			`type`,
+		</if>
 			province_id,
 			city_id,
 			region_id,
@@ -116,6 +131,12 @@
 			update_time
 		) VALUES (
 			#{id},
+		<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
+			#{orderHead0erID.id},
+		</if>
+		<if test="type != null and type!= ''">
+			#{type},
+		</if>
 			#{province.id},
 			#{city.id},
 			#{region.id},
@@ -132,14 +153,30 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_order_address SET 	
+		UPDATE biz_order_address SET
+		<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
+			order_id=#{orderHeaderID.id},
+		</if>
+		<if test="type != null and type!= ''">
+			`type`=#{type},
+		</if>
+		<if test="province != null and province.id != null and province.id != ''">
 			province_id = #{province.id},
+		</if>
+		<if test="city != null and city.id != null and city.id != ''">
 			city_id = #{city.id},
+		</if>
+		<if test="region != null and region.id != null and region.id != ''">
 			region_id = #{region.id},
+		</if>
 			pcr_name = #{pcrName},
 			address = #{address},
+		<if test="receiver != null and receiver!= ''">
 			receiver = #{receiver},
+		</if>
+		<if test="phone != null and phone!= ''">
 			phone = #{phone},
+		</if>
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>

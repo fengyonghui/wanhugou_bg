@@ -7,9 +7,11 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
@@ -65,6 +67,8 @@ public class BizOrderHeaderController extends BaseController {
 	private BizPayRecordService bizPayRecordService;
 	@Autowired
 	private SysPlatWalletService sysPlatWalletService;
+	@Autowired
+	private BizOrderAddressService bizOrderAddressService;
 
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
@@ -123,6 +127,7 @@ public class BizOrderHeaderController extends BaseController {
 			model.addAttribute("entity2", bizOrderHeader);
 		}
 		bizOrderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+		BizOrderAddress bizOrderAddressOne = bizOrderAddressService.get(bizOrderHeader.getBizLocation());
 		if(bizOrderHeader!=null){
 			Double totalDetail = bizOrderHeader.getTotalDetail();//订单详情总价
 			Double totalExp = bizOrderHeader.getTotalExp();//订单总费用
@@ -134,6 +139,23 @@ public class BizOrderHeaderController extends BaseController {
 			}
 			if(orderDetails!=null && orderDetails.equals("details")){
 				bizOrderHeader.setOrderDetails("details");//查看详情页面不能修改
+			}
+			if(bizOrderAddressOne!=null){
+				if(bizOrderAddressOne.getType()==1){
+					BizOrderAddress bizOrderAddress = new BizOrderAddress();
+					bizOrderAddress.setId(bizOrderHeader.getBizLocation().getId());
+					bizOrderAddress.setOrderHeaderID(bizOrderHeader);
+					bizOrderAddress.setType(bizOrderAddressOne.getType());
+					BizOrderAddress orderAddressOne = bizOrderAddressService.get(bizOrderAddress);
+					model.addAttribute("orderAddressOne", orderAddressOne);
+				}else{
+					BizOrderAddress OrderAddressTwo = new BizOrderAddress();
+					OrderAddressTwo.setId(bizOrderHeader.getBizLocation().getId());
+					OrderAddressTwo.setOrderHeaderID(bizOrderHeader);
+					OrderAddressTwo.setType(bizOrderAddressOne.getType());
+					BizOrderAddress orderAddressTwo = bizOrderAddressService.get(OrderAddressTwo);
+					model.addAttribute("orderAddressOne", orderAddressTwo);
+				}
 			}
 		}
 		BizOrderHeader boh = new BizOrderHeader();
@@ -267,10 +289,26 @@ public class BizOrderHeaderController extends BaseController {
 					if(objJsp==OrderHeaderBizStatusEnum.SUPPLYING.getState()){
 						bh.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());//15供货中
 						bizOrderHeaderService.saveOrderHeader(bh);//保存状态
+						BizOrderAddress OrderAddressTwo = new BizOrderAddress();
+						OrderAddressTwo.setId(bizOrderHeader.getBizLocation().getId());
+						OrderAddressTwo.setOrderHeaderID(bizOrderHeader);
+//						OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());//联系人
+//						OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());//电话
+						OrderAddressTwo.setAddress(bizOrderHeader.getBizLocation().getAddress());
+						OrderAddressTwo.setType(2);
+						bizOrderAddressService.save(OrderAddressTwo);
 						commis="ok";
 					}else if(objJsp==OrderHeaderBizStatusEnum.UNAPPROVE.getState()){
 						bh.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());//45审核失败
 						bizOrderHeaderService.saveOrderHeader(bh);//保存状态
+						BizOrderAddress OrderAddressTwo = new BizOrderAddress();
+						OrderAddressTwo.setId(bizOrderHeader.getBizLocation().getId());
+						OrderAddressTwo.setOrderHeaderID(bizOrderHeader);
+//						OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());//联系人
+//						OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());//电话
+						OrderAddressTwo.setAddress(bizOrderHeader.getBizLocation().getAddress());
+						OrderAddressTwo.setType(2);
+						bizOrderAddressService.save(OrderAddressTwo);
 						commis="ok";
 					}
 				}

@@ -65,15 +65,33 @@
 					}
 				}
 			});
-			<%--if($("#id").val()==""){--%>
-                if($("#officeId").val()!=""){
-                    clickBut();
-                }
-			<%--}else{--%>
-			    <%--if($("#officeId").val()!=""){--%>
-                    <%--clickBut2();--%>
-                <%--}--%>
-			<%--}--%>
+			<%--订单地址--%>
+            if($("#id").val() !=""){
+                    var option2=$("<option/>").text("${orderAddressOne.province.name}").val(${orderAddressOne.province.id});
+                    $("#province").append(option2);
+                    var option3=$("<option/>").text("${orderAddressOne.city.name}").val(${orderAddressOne.city.id});
+                    $("#city").append(option3);
+                    var option4=$("<option/>").text("${orderAddressOne.region.name}").val(${orderAddressOne.region.id});
+                    $("#region").append(option4);
+                    $("#address").val("${bizOrderHeader.bizLocation.address}");
+                    <%--交货地址--%>
+                    var option2=$("<option/>").text("${orderAddressOne.province.name}").val(${orderAddressOne.province.id});
+                    $("#jhprovince").append(option2);
+                    var option3=$("<option/>").text("${orderAddressOne.city.name}").val(${orderAddressOne.city.id});
+                    $("#jhcity").append(option3);
+                    var option4=$("<option/>").text("${orderAddressOne.region.name}").val(${orderAddressOne.region.id});
+                    $("#jhregion").append(option4);
+                    $("#jhaddress").val("${orderAddressOne.address}");
+               $("#province").change();
+               $("#city").change();
+               $("#region").change();
+               $("#address").change();
+               <%--交货地址--%>
+                $("#jhprovince").change();
+                $("#jhcity").change();
+                $("#jhregion").change();
+                $("#jhaddress").change();
+            }
             $("#addAddressHref").click(function () {
                 var officeId=$("#officeId").val();
                 var officeName =$("#officeName").val();
@@ -81,7 +99,6 @@
             });
 		});
 
-    <%--if($("#id").val()==""){--%>
       function clickBut(){
          var officeId=$("#officeId").val();
              $("#province").empty();
@@ -97,7 +114,6 @@
                 type:"post",
                 url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
                 success:function(data){
-                 <%--console.log(JSON.stringify(data)+"---测试1");--%>
                  if(data==''){
                      console.log("数据为空显示 新增地址 ");
                      $("#add1").css("display","none");
@@ -136,22 +152,7 @@
                     }
                 }
             });
-     }
-    <%--}else{--%>
-        <%--function clickBut2(){--%>
-            <%--var officeId2=$("#officeId").val();--%>
-            <%--$.ajax({--%>
-                <%--type:"post",--%>
-                <%--url:"${ctx}/biz/order/bizOrderAddress/orderForm?id=${bizOrderHeader.bizLocation.id}",--%>
-                <%--success:function(data){--%>
-                    <%--console.log("-测试--"+data);--%>
-                    <%--console.log(JSON.stringify(data)+"---测试1");--%>
-                <%--}--%>
-            <%--});--%>
-        <%--}--%>
-    <%--}--%>
-
-
+        }
     </script>
     <script type="text/javascript">
     function btnOrder(){
@@ -180,46 +181,46 @@
 
 
     </script>
-    <script type="text/javascript">
-        function deliveryAddress(){
-            var officeId=$("#officeId").val();
-            $("#jhprovince").empty();
-            $("#jhcity").empty();
-            $("#jhregion").empty();
-            $("#jhaddress").empty();
-            $.ajax({
-                type:"post",
-                url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
-                success:function(data){
-                console.log(data+"-----777");
-                    if(data==''){
-                        $("#jhadd1").css("display","none");
-                        $("#jhadd2").css("display","block");
-                        $("#jhadd3").css("display","none");
-                    }else{
-                        $("#jhadd1").css("display","block");
-                        $("#jhadd2").css("display","none");
-                        $("#jhadd3").css("display","block");
-                        var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);
-                        $("#jhprovince").append(option2);
-                        var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);
-                        $("#jhcity").append(option3);
-                        var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
-                        $("#jhregion").append(option4);
-                        $("#jhaddress").val(data.bizLocation.address);
-                        <%--}--%>
-                        //当省份的数据加载完毕之后
-                        $("#jhprovince").change();
-                        $("#jhcity").change();
-                        $("#jhregion").change();
-                        $("#jhaddress").change();
-                    }
-                }
-            });
-        }
+    <%--<script type="text/javascript">--%>
+        <%--function deliveryAddress(){--%>
+            <%--var officeId=$("#officeId").val();--%>
+            <%--$("#jhprovince").empty();--%>
+            <%--$("#jhcity").empty();--%>
+            <%--$("#jhregion").empty();--%>
+            <%--$("#jhaddress").empty();--%>
+            <%--$.ajax({--%>
+                <%--type:"post",--%>
+                <%--url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,--%>
+                <%--success:function(data){--%>
+                <%--console.log(data+"-----777");--%>
+                    <%--if(data==''){--%>
+                        <%--$("#jhadd1").css("display","none");--%>
+                        <%--$("#jhadd2").css("display","block");--%>
+                        <%--$("#jhadd3").css("display","none");--%>
+                    <%--}else{--%>
+                        <%--$("#jhadd1").css("display","block");--%>
+                        <%--$("#jhadd2").css("display","none");--%>
+                        <%--$("#jhadd3").css("display","block");--%>
+                        <%--var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);--%>
+                        <%--$("#jhprovince").append(option2);--%>
+                        <%--var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);--%>
+                        <%--$("#jhcity").append(option3);--%>
+                        <%--var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);--%>
+                        <%--$("#jhregion").append(option4);--%>
+                        <%--$("#jhaddress").val(data.bizLocation.address);--%>
+                        <%--&lt;%&ndash;}&ndash;%&gt;--%>
+                        <%--//当省份的数据加载完毕之后--%>
+                        <%--$("#jhprovince").change();--%>
+                        <%--$("#jhcity").change();--%>
+                        <%--$("#jhregion").change();--%>
+                        <%--$("#jhaddress").change();--%>
+                    <%--}--%>
+                <%--}--%>
+            <%--});--%>
+        <%--}--%>
 
 
-    </script>
+    <%--</script>--%>
     <script type="text/javascript">
     function checkPending(obj) {
         if(obj==${OrderHeaderBizStatusEnum.SUPPLYING.state}){ <%--15同意发货--%>
@@ -227,7 +228,8 @@
             $.ajax({
                type:"post",
                url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
-               data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}",
+               data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}&bizLocation.address="+$("#jhaddress").val(),
+                        <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
                success:function(commis){
                     if(commis=="ok"){
                         alert(" 同意发货 ");
@@ -241,11 +243,13 @@
             $.ajax({
                type:"post",
                url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
-               data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.UNAPPROVE.state}",
+               data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.UNAPPROVE.state}&bizLocation.address="+$("#jhaddress").val(),
                success:function(commis){
                     if(commis=="ok"){
                         alert(" 不同意发货 ");
                          window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
+                    }else{
+                        alert(" 发货失败 ");
                     }
                }
             });
@@ -313,29 +317,18 @@
         <label class="control-label">采购商名称：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-                <sys:treeselect id="office" name="customer.id" disabled="disabled" value="${entity2.customer.id}"
-                                labelName="customer.name"
-                                labelValue="${entity2.customer.name}"
-                                notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
-                                allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
-                <%--notAllowSelectRoot="true"--%>
-            </c:if>
-            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <%--<c:if test="${bizOrderHeader.id==null }">--%>
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
-                <%--</c:if>--%>
-                <%--<c:if test="${bizOrderHeader.id!=null }">--%>
-                <%--<sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"--%>
-                <%--labelValue="${entity2.customer.name}"--%>
-                <%--notAllowSelectParent="true"--%>
-                <%--title="采购商2" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"--%>
-                <%--allowClear="${office.currentUser.admin}" onchange="clickBut2();" dataMsgRequired="必填信息"/>--%>
-                <%--</c:if>--%>
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
+                            labelValue="${entity2.customer.name}"
+                            notAllowSelectParent="true"
+                            title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+                            allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
             </c:if>
             <span class="help-inline"><font color="red">*</font></span>
         </div>
@@ -409,7 +402,6 @@
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
                                   htmlEscape="false"/></form:select>
-                    <c:if test="${bizOrderHeader.bizStatus==0}">${bizOrderHeader.bizStatus}</c:if>
                 <span class="help-inline"><font color="red">*</font>默认选择</span>
             </div>
         </div>
@@ -436,29 +428,41 @@
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <select id="province" class="input-medium" name="bizLocation.province.id" disabled="disabled"
                         style="width:150px;text-align: center;">
-                    <option value="-1">—— 省 ——</option>
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 省 ——</option>
+                    </c:if>
                 </select>
                 <select id="city" class="input-medium" name="bizLocation.city.id" disabled="disabled"
                         style="width:150px;text-align: center;">
-                    <option value="-1">—— 市 ——</option>
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 市 ——</option>
+                    </c:if>
                 </select>
                 <select id="region" class="input-medium" name="bizLocation.region.id" disabled="disabled"
                         style="width:150px;text-align: center;">
-                    <option value="-1">—— 区 ——</option>
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 区 ——</option>
+                    </c:if>
                 </select>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <select id="province" class="input-medium" name="bizLocation.province.id"
                         style="width:150px;text-align: center;">
-                    <option value="-1">—— 省 ——</option>
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 省 ——</option>
+                    </c:if>
                 </select>
                 <select id="city" class="input-medium" name="bizLocation.city.id"
                         style="width:150px;text-align: center;">
-                    <option value="-1">—— 市 ——</option>
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 市 ——</option>
+                    </c:if>
                 </select>
                 <select id="region" class="input-medium" name="bizLocation.region.id"
                         style="width:150px;text-align: center;">
-                    <option value="-1">—— 区 ——</option>
+                    <c:if test="${bizOrderHeader.id ==null}">
+                        <option value="-1">—— 区 ——</option>
+                    </c:if>
                 </select>
             </c:if>
             <span class="help-inline"><font color="red">*</font> </span>
@@ -538,15 +542,21 @@
                 <div class="controls">
                     <select id="jhprovince" class="input-medium" name="bizLocation.province.id" disabled="disabled"
                             style="width:150px;text-align: center;">
-                        <option value="-1">—— 省 ——</option>
+                        <c:if test="${bizOrderHeader.id ==null}">
+                            <option value="-1">—— 省 ——</option>
+                        </c:if>
                     </select>
                     <select id="jhcity" class="input-medium" name="bizLocation.city.id" disabled="disabled"
                             style="width:150px;text-align: center;">
-                        <option value="-1">—— 市 ——</option>
+                        <c:if test="${bizOrderHeader.id ==null}">
+                            <option value="-1">—— 市 ——</option>
+                        </c:if>
                     </select>
                     <select id="jhregion" class="input-medium" name="bizLocation.region.id" disabled="disabled"
                             style="width:150px;text-align: center;">
-                        <option value="-1">—— 区 ——</option>
+                        <c:if test="${bizOrderHeader.id ==null}">
+                            <option value="-1">—— 区 ——</option>
+                        </c:if>
                     </select>
                     <span class="help-inline"><font color="red">*</font> </span>
                 </div>
