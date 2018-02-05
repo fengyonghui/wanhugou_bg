@@ -129,7 +129,7 @@ public class BizOrderHeaderController extends BaseController {
 			Double totalExp = bizOrderHeaderTwo.getTotalExp();//订单总费用
 			Double freight = bizOrderHeaderTwo.getFreight();//运费
 			Double orderHeaderTotal=totalDetail+totalExp+freight;
-			bizOrderHeaderTwo.setTobePaid(orderHeaderTotal-bizOrderHeaderTwo.getReceiveTotal());//页面显示待支付总价
+			bizOrderHeader.setTobePaid(orderHeaderTotal-bizOrderHeaderTwo.getReceiveTotal());//页面显示待支付总价
 			if(orderNoEditable!=null && orderNoEditable.equals("editable") ){//不可编辑标识符
 				bizOrderHeaderTwo.setOrderNoEditable("editable");//待支付页面不能修改
 			}
