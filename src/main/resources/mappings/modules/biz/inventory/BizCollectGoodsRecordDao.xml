@@ -99,6 +99,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		ORDER BY createDate DESC
 	</select>
 	
 	<insert id="insert">

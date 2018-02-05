@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.po;
 
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -37,6 +38,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private String reqDetailIds;
 	private String unitPrices;
 	private String ordQtys;
+	private List<BizPoOrderReq>poOrderReqList;
 
 	
 	public BizPoHeader() {
@@ -158,5 +160,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setOrdQtys(String ordQtys) {
 		this.ordQtys = ordQtys;
+	}
+
+	public List<BizPoOrderReq> getPoOrderReqList() {
+		return poOrderReqList;
+	}
+
+	public void setPoOrderReqList(List<BizPoOrderReq> poOrderReqList) {
+		this.poOrderReqList = poOrderReqList;
 	}
 }

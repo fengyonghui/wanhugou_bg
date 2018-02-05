@@ -115,10 +115,11 @@ public class BizRequestOrderController extends BaseController {
 			List<BizOrderDetail> orderDetailList=bizOrderDetailService.findOrderTotalByVendor(bizOrderHeader);
 
 			String key="0";
+
 			for(BizRequestDetail bizRequestDetail:requestDetailList){
 				key=bizRequestDetail.getVendorId()+","+bizRequestDetail.getVendorName();
 				Integer reqQty=bizRequestDetail.getTotalReqQty()-bizRequestDetail.getTotalRecvQty();
-				map.put(key,reqQty+"-"+bizRequestDetail.getReqDetailIds());
+				map.put(key,reqQty+"-"+bizRequestDetail.getReqDetailIds()+"-r");
 
 			}
 
@@ -126,11 +127,11 @@ public class BizRequestOrderController extends BaseController {
 				key=bizOrderDetail.getVendorId()+","+bizOrderDetail.getVendorName();
 				Integer ordQty=bizOrderDetail.getTotalReqQty()-bizOrderDetail.getTotalSendQty();
 				if(map.containsKey(key)){
-					String str=map.get(key)+"|"+ordQty+"-"+bizOrderDetail.getDetailIds();
+					String str=map.get(key)+"|"+ordQty+"-"+bizOrderDetail.getDetailIds()+"-s";
 					map.remove(key);
 					map.put(key,str);
 				}else {
-					map.put(key,ordQty+"-"+bizOrderDetail.getDetailIds());
+					map.put(key,ordQty+"-"+bizOrderDetail.getDetailIds()+"-s");
 				}
 			}
 

@@ -94,6 +94,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		saveOrdReqBizStatus(bizPoHeader);
 
 	}
+
+    @Transactional(readOnly = false)
+    public void savePoHeader(BizPoHeader bizPoHeader) {
+
+        super.save(bizPoHeader);
+
+        savePoHeaderDetail(bizPoHeader);
+    }
+
 	@Transactional(readOnly = false)
 	public void savePoHeaderDetail(BizPoHeader bizPoHeader) {
 		String orderDetailIds=bizPoHeader.getOrderDetailIds();

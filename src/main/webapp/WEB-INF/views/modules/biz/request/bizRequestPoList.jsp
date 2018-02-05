@@ -87,16 +87,36 @@
 					<c:set value="${fn:split(orderReq[0],'-' )}" var="req"></c:set>
 					<c:set value="${fn:split(orderReq[1],'-' )}" var="ord"></c:set>
 					<td>
+
 							${req[0]+ord[0]}
 					</td>
 					<td>
-						${req[0]}
+						<c:if test="${req[2]=='r'}">
+							${req[0]}
+						</c:if>
+
 					</td>
 					<td>
-						${ord[0]}
+						<c:choose>
+							<c:when test="${req[2]=='s'}">
+								${req[0]}
+							</c:when>
+							<c:otherwise>
+								${ord[0]}
+							</c:otherwise>
+						</c:choose>
 					</td>
 					<td>
-						<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${req[1]}&ordIds=${ord[1]}&vendorId=${vendor[0]}">供货</a>
+						<c:choose>
+							<c:when test="${req[2]=='s'}">
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${req[1]}&vendorId=${vendor[0]}">供货</a>
+
+							</c:when>
+							<c:otherwise>
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${req[1]}&ordIds=${ord[1]}&vendorId=${vendor[0]}">供货</a>
+
+							</c:otherwise>
+						</c:choose>
 
 					</td>
 				</tr>

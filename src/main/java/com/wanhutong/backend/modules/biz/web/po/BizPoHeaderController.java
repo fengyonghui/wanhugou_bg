@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.po;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
@@ -20,6 +21,8 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.PoHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -59,9 +62,14 @@ public class BizPoHeaderController extends BaseController {
 	private BizPoDetailService bizPoDetailService;
 	@Autowired
 	private BizPlatformInfoService bizPlatformInfoService;
-
-
-	
+	@Autowired
+	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizPoOrderReqService bizPoOrderReqService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizRequestHeaderService bizRequestHeaderService;
 	@ModelAttribute
 	public BizPoHeader get(@RequestParam(required=false) Integer id) {
 		BizPoHeader entity = null;
@@ -70,7 +78,29 @@ public class BizPoHeaderController extends BaseController {
 			BizPoDetail bizPoDetail=new BizPoDetail();
 			bizPoDetail.setPoHeader(entity);
 			List<BizPoDetail> poDetailList=bizPoDetailService.findList(bizPoDetail);
-			entity.setPoDetailList(poDetailList);
+			List<BizPoDetail> poDetails= Lists.newArrayList();
+			for(BizPoDetail poDetail:poDetailList){
+			    BizSkuInfo bizSkuInfo=poDetail.getSkuInfo();
+                BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(bizSkuInfo.getId()));
+                poDetail.setSkuInfo(skuInfo);
+                poDetails.add(poDetail);
+            }
+			entity.setPoDetailList(poDetails);
+			BizPoOrderReq bizPoOrderReq=new BizPoOrderReq();
+			bizPoOrderReq.setPoHeader(entity);
+			List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+			List<BizPoOrderReq> poOrderReqs= Lists.newArrayList();
+				for (BizPoOrderReq poOrderReq:poOrderReqList){
+				if(poOrderReq.getSoType()== Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())){
+					BizOrderHeader bizOrderHeader=bizOrderHeaderService.get(poOrderReq.getSoId());
+					poOrderReq.setOrderHeader(bizOrderHeader);
+				}else if(poOrderReq.getSoType()==Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())){
+					BizRequestHeader bizRequestHeader=bizRequestHeaderService.get(poOrderReq.getSoId());
+					poOrderReq.setRequestHeader(bizRequestHeader);
+				}
+					poOrderReqs.add(poOrderReq);
+			}
+			entity.setPoOrderReqList(poOrderReqs);
 		}
 		if (entity == null){
 			entity = new BizPoHeader();
@@ -114,7 +144,17 @@ public class BizPoHeaderController extends BaseController {
 //		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/?repage";
 //	}
 
-	
+	@RequiresPermissions("biz:po:bizPoHeader:edit")
+	@RequestMapping(value = "savePoHeader")
+	public String savePoHeader(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes) {
+		if (!beanValidator(model, bizPoHeader)){
+			return form(bizPoHeader, model);
+		}
+			bizPoHeaderService.savePoHeader(bizPoHeader);
+
+		addMessage(redirectAttributes, "保存采购订单成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/?repage";
+	}
 	@RequiresPermissions("biz:po:bizPoHeader:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizPoHeader bizPoHeader, RedirectAttributes redirectAttributes) {

@@ -100,8 +100,8 @@
 					<%--${bizPoHeader.plateformInfo.id}--%>
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><td>
-    				<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
-					<a href="${ctx}/biz/po/bizPoHeader/delete?id=${bizPoHeader.id}" onclick="return confirmx('确认要删除该采购订单吗？', this.href)">删除</a>
+    				<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>--%>
+					<%--<a href="${ctx}/biz/po/bizPoHeader/delete?id=${bizPoHeader.id}" onclick="return confirmx('确认要删除该采购订单吗？', this.href)">删除</a>--%>
 					<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">详情</a>
 				</td></shiro:hasPermission>
 			</tr>

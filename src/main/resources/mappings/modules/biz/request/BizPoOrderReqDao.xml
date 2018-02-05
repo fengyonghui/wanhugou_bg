@@ -3,8 +3,6 @@
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.request.BizPoOrderReqDao">
     
 	<sql id="bizPoOrderReqColumns">
-		a.so_id AS "orderHeader.id",
-		a.so_id AS "requestHeader.id",
 		a.so_id AS "soId",
 		a.po_id AS "poHeader.id",
 		a.so_line_no AS "soLineNo",

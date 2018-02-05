@@ -104,7 +104,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			//商品
 			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bsgr.getSkuInfo().getId());
 
-            //仓库
+            //仓库biz_send_goods_record
 			BizInventoryInfo invInfo = bizSendGoodsRecord.getInvInfo();
 			int sendNum = bsgr.getSendNum();    //供货数
 			//累计备货单供货数量
@@ -189,6 +189,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					if (list == null || list.size() == 0 || list.get(0).getStockQty() == 0){
 						bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
 						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+						flagOrder=false;
 					}else {
 						//有库存
 						for (BizInventorySku invSku:list) {
@@ -197,6 +198,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 							if (stock < bsgr.getBizOrderDetail().getOrdQty()){
 								bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
 								bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+								flagOrder=false;
 								if(sendNum > stock){
 									sendNum = stock;
 								}
@@ -320,11 +322,12 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
                 List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
                 if (porList != null && porList.size() > 0 ){
                     por = porList.get(0);
+					BizPoHeader poHeader = por.getPoHeader();
+					int status = PoHeaderStatusEnum.COMPLETE.getCode();
+					poHeader.setBizStatus((byte)status);
+					bizPoHeaderService.save(poHeader);
                 }
-                BizPoHeader poHeader = por.getPoHeader();
-                int status = PoHeaderStatusEnum.COMPLETE.getCode();
-                poHeader.setBizStatus((byte)status);
-                bizPoHeaderService.save(poHeader);
+
             }
 		}
 		//

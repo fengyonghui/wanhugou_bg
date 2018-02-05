@@ -82,7 +82,9 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_po_header(
 			id,
+			<if test="orderNum!=null and orderNum !=''">
 			order_num,
+			</if>
 			<if test="vendOffice!=null and vendOffice.id !=null ">
 				vend_id,
 			</if>
@@ -111,7 +113,9 @@
 			update_time
 		) VALUES (
 			#{id},
+		<if test="orderNum!=null and orderNum !=''">
 			#{orderNum},
+		</if>
 		<if test="vendOffice!=null and vendOffice.id !=null ">
 			#{vendOffice.id},
 		</if>
@@ -141,8 +145,10 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_po_header SET 	
+		UPDATE biz_po_header SET
+		<if test="orderNum!=null and orderNum !=''">
 			order_num = #{orderNum},
+		</if>
 		<if test="vendOffice!=null and vendOffice.id !=null ">
 			vend_id = #{vendOffice.id},
 		</if>
@@ -161,7 +167,10 @@
 		<if test="invStatus!=null">
 			biz_status = #{bizStatus},
 		</if>
+		<if test="plateformInfo!=null and plateformInfo.id!=null">
 			plateform_id = #{plateformInfo.id},
+		</if>
+
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
