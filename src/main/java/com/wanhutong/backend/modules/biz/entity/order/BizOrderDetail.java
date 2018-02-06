@@ -51,6 +51,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Integer totalSendQty;
     private Integer vendorId;
     private String vendorName;
+    private String suplyIds;
 
     public List<BizOrderDetail> getOrderHeaderList() {
         return orderHeaderList;
@@ -280,5 +281,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setSuplyis(Office suplyis) {
         this.suplyis = suplyis;
+    }
+
+    public String getSuplyIds() {
+        return suplyIds;
+    }
+
+    public void setSuplyIds(String suplyIds) {
+        this.suplyIds = suplyIds;
     }
 }

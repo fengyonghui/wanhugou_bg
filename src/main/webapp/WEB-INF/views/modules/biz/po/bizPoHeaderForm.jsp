@@ -177,7 +177,7 @@
 					<td>${map.key.name}</td>
 					<td>${map.key.partNo}</td>
 					<td>${map.key.skuPropertyInfos}</td>
-					<td>${map.value.reqQty}
+					<td>${map.value.reqQty-map.value.sentQty}
 						<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>
 						<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>
 						<input type='hidden' name='orderDetailIds' value='${map.value.orderDetailIds}'/>
@@ -185,7 +185,7 @@
 					<%--<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>--%>
 					</td>
 					<%--<td>${reqDetail.recvQty}</td>--%>
-					<td><input  name="ordQtys" readonly="readonly"  value="${map.value.reqQty}" class="input-mini" type='text'/></td>
+					<td><input  name="ordQtys" readonly="readonly"  value="${map.value.reqQty-map.value.sentQty}" class="input-mini" type='text'/></td>
 					<td>
 					<input type="text" name="unitPrices" class="input-mini">
 					</td>

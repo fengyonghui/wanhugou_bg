@@ -69,7 +69,7 @@ public class BizRequestOrderController extends BaseController {
 			List<BizRequestHeader> list=findBizRequest(bizRequestHeader,requestHeaderList);
 			 model.addAttribute("requestHeaderList",list);
 			}else if("xsgh".equals(source)){
-			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
+			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
 			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
 			 orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
 			model.addAttribute("orderHeaderList",orderHeaderList);
@@ -110,7 +110,7 @@ public class BizRequestOrderController extends BaseController {
 			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findReqTotalByVendor(bizRequestHeader);
 
 			BizOrderHeader bizOrderHeader=new BizOrderHeader();
-			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
+			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
 			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
 			List<BizOrderDetail> orderDetailList=bizOrderDetailService.findOrderTotalByVendor(bizOrderHeader);
 
@@ -124,14 +124,28 @@ public class BizRequestOrderController extends BaseController {
 			}
 
 			for (BizOrderDetail bizOrderDetail:orderDetailList){
+				StringBuffer sb =new StringBuffer();
+				if(StringUtils.isNotBlank(bizOrderDetail.getSuplyIds())){
+				String[] supplyIdArr=StringUtils.split(bizOrderDetail.getSuplyIds(),",");
+				String[] detailIdArr=StringUtils.split(bizOrderDetail.getDetailIds(),",");
+					for(int i=0;i<supplyIdArr.length;i++){
+						if(Integer.parseInt(supplyIdArr[i].trim())==0){
+							sb.append(detailIdArr[i].trim());
+							if(i!=supplyIdArr.length-1){
+								sb.append(",");
+							}
+
+						}
+					}
+				}
 				key=bizOrderDetail.getVendorId()+","+bizOrderDetail.getVendorName();
 				Integer ordQty=bizOrderDetail.getTotalReqQty()-bizOrderDetail.getTotalSendQty();
 				if(map.containsKey(key)){
-					String str=map.get(key)+"|"+ordQty+"-"+bizOrderDetail.getDetailIds()+"-s";
+					String str=map.get(key)+"|"+ordQty+"-"+sb.toString()+"-s";
 					map.remove(key);
 					map.put(key,str);
 				}else {
-					map.put(key,ordQty+"-"+bizOrderDetail.getDetailIds()+"-s");
+					map.put(key,ordQty+"-"+sb.toString()+"-s");
 				}
 			}
 

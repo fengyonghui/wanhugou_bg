@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
@@ -211,7 +212,7 @@ public class BizOrderHeaderController extends BaseController {
 		   if(bizCustCredit!=null){
 			   BigDecimal wallet = bizCustCredit.getWallet();//钱包总余额
 			   if(wallet==null){
-				   System.out.println(" 余额不足 ");
+//				   System.out.println(" 余额不足 ");
 				   recordBiz=0;
 			   }else {
 				   recordBiz=1;
@@ -264,11 +265,13 @@ public class BizOrderHeaderController extends BaseController {
 	   return payMent;
     }
 
+
+
 //    用于客户专员页面-订单管理列表中的待审核验证
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")
 	@RequestMapping(value = "Commissioner")
-	public String Commissioner(BizOrderHeader bizOrderHeader, Integer objJsp, Model model, RedirectAttributes redirectAttributes) {
+	public String Commissioner(BizOrderHeader bizOrderHeader,String localSendIds, Integer objJsp, Model model, RedirectAttributes redirectAttributes) {
 		String commis="comError";
 		try {
 			if(bizOrderHeader.getId()!=null){
@@ -293,6 +296,16 @@ public class BizOrderHeaderController extends BaseController {
 						OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());
 						OrderAddressTwo.setType(2);
 						bizOrderAddressService.save(OrderAddressTwo);
+						if(StringUtils.isNotBlank(localSendIds)){
+						    String[]sidArr=localSendIds.split(",");
+						    for(int i=0;i<sidArr.length;i++){
+                             BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(sidArr[i].trim()));
+                             BizOrderHeader orderHeader=bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+                             BizCustomCenterConsultant bizCustomCenterConsultant= bizCustomCenterConsultantService.get(orderHeader.getCustomer().getId());
+                             bizOrderDetail.setSuplyis(officeService.get(bizCustomCenterConsultant.getCenters().getId()));
+                             bizOrderDetailService.saveStatus(bizOrderDetail);
+						    }
+                        }
 						commis="ok";
 					}else if(objJsp==OrderHeaderBizStatusEnum.UNAPPROVE.getState()){
 						bh.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());//45审核失败
@@ -323,5 +336,22 @@ public class BizOrderHeaderController extends BaseController {
 		}
 		return commis;
 	}
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+	@RequestMapping(value = "saveBizOrderHeader")
+	public String saveBizOrderHeader(BizOrderHeader bizOrderHeader,Integer orderId,Double money){
+        String flag="";
+	    try {
+	        BizOrderHeader orderHeader=bizOrderHeaderService.get(orderId);
+            orderHeader.setTotalExp(money);
+            bizOrderHeaderService.saveOrderHeader(orderHeader);
+            flag="ok";
 
+        }catch (Exception e){
+	        flag="error";
+            logger.error(e.getMessage());
+        }
+        return flag;
+
+    }
 }

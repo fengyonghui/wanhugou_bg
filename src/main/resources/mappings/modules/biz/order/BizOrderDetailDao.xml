@@ -11,6 +11,7 @@
 		a.sku_shelf_id as "shelfInfo.id",
 		si.name as "shelfInfo.opShelfInfo.name",
 		a.sku_id AS "skuInfo.id",
+		a.suply_id AS "suplyis.id",
 		bsi.name as "skuInfo.name",
 		<!--a.quality as "quality",
 		a.color as "color",
@@ -99,6 +100,7 @@
 	<select id="findOrderTotalByVendor" resultType="BizOrderDetail">
 		SELECT
 		GROUP_CONCAT( od.id ) AS "detailIds",
+		GROUP_CONCAT( od.suply_id ) AS "suplyIds",
 		sum( od.ord_qty ) AS "totalReqQty",
 		sum( od.sent_qty ) AS "totalSendQty",
 		pi.vendor_id AS "vendorId",
@@ -106,10 +108,12 @@
 		FROM
 		(
 		SELECT
-		a.id , a.sku_id,a.ord_qty,a.sent_qty,a.order_id,a.line_no
+		a.id , a.sku_id,a.ord_qty,a.sent_qty,a.order_id,a.suply_id,a.line_no
 		FROM
 		biz_order_detail a
 		WHERE
+		a.suply_id =0 and a.ord_qty > a.sent_qty
+		and
 		NOT EXISTS (
 		SELECT
 		por.so_line_no,

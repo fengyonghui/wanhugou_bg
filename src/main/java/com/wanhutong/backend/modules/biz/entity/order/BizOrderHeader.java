@@ -50,6 +50,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	private String orderNum2;		//用于删除订单页面传值
 
+    private String localSendIds;
+
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
 	}
@@ -257,4 +259,12 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	public void setOrderNum2(String orderNum2) {
 		this.orderNum2 = orderNum2;
 	}
+
+    public String getLocalSendIds() {
+        return localSendIds;
+    }
+
+    public void setLocalSendIds(String localSendIds) {
+        this.localSendIds = localSendIds;
+    }
 }

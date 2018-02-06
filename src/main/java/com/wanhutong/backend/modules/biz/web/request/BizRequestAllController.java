@@ -79,6 +79,9 @@ public class BizRequestAllController {
         }
         //用户属于供应中心或管理员
 
+       String type= user.getCompany().getType();
+        System.out.println(type);
+
         boolean flag=false;
         if(user.getRoleList()!=null) {
             for (Role role : user.getRoleList()) {
