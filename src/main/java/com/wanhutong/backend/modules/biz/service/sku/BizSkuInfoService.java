@@ -264,10 +264,10 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 					File file = new File(pathFile);
 					String photoNewName=System.currentTimeMillis()+""+(GenerateOrderUtils.getRandomNum())+imgType;
 					File file2 = new File(pathFile2+"/"+photoNewName);
-					AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
+
 					if (!photoArr[i].contains(DsConfig.getImgServer())) {
 						file.renameTo(file2);
-						aliOssClientUtil.uploadObject2OSS(file2, path);
+						AliOssClientUtil.uploadObject2OSS(file2, path);
 						commonImg.setImgPath("\\"+path+photoNewName);
 						if(file2.exists()){
 							file2.delete();

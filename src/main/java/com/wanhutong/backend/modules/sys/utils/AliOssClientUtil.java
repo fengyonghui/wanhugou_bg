@@ -32,9 +32,6 @@ import java.util.UUID;
  **/
 @Component
 public class AliOssClientUtil {
-
-//    @Resource
-//    private ImgUploadConfig imgUploadConfig;
     /**
      * 保存全局属性值
      */
@@ -42,13 +39,15 @@ public class AliOssClientUtil {
 
     private final static String PAHT_PREFIX = "corp";
     private final static int IMG_BASE64_SPILT_SIZE = 2;
-    private final static int UPLOAD_LIMIT_SIZE = 1024*1024*10;
+    private final static int UPLOAD_LIMIT_SIZE = 1024 * 1024 * 10;
     /**
      * 属性文件加载对象
      */
     private static PropertiesLoader loader = new PropertiesLoader("oss.properties");
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    private static OSSClient ossClient = null;
+
+    protected static Logger log = LoggerFactory.getLogger(AliOssClientUtil.class);
 
    /* @Value("${oss.endpoint}")
     private static String endpoint;
@@ -60,14 +59,18 @@ public class AliOssClientUtil {
     private static String bucketName;
     @Value("#{configProperties['folder']}")
     public static String folder;*/
+
     /**
      * 获取阿里云OSS客户端对象
      *
      * @return ossClient
      */
-    public OSSClient getOSSClient() {
-        String endpoint = getConfig("endpoint");
-        return new OSSClient(endpoint, getAccessKeyId(), getAccessKeySecret());
+    private static OSSClient getOSSClient() {
+        if (ossClient == null) {
+            String endpoint = getConfig("endpoint");
+            ossClient = new OSSClient(endpoint, getAccessKeyId(), getAccessKeySecret());
+        }
+        return ossClient;
     }
 
     /**
@@ -76,7 +79,7 @@ public class AliOssClientUtil {
      * @param bucketName 存储空间
      * @return String
      */
-    public String createBucketName(String bucketName) {
+    public static String createBucketName(String bucketName) {
         //存储空间
         OSSClient ossClient = getOSSClient();
         if (!ossClient.doesBucketExist(bucketName)) {
@@ -93,7 +96,7 @@ public class AliOssClientUtil {
      *
      * @param bucketName 存储空间
      */
-    public void deleteBucket(String bucketName) {
+    public static void deleteBucket(String bucketName) {
         OSSClient ossClient = getOSSClient();
         ossClient.deleteBucket(bucketName);
         log.info("删除" + bucketName + "Bucket成功");
@@ -106,7 +109,7 @@ public class AliOssClientUtil {
      * @param folder     模拟文件夹名如"qj_nanjing/"
      * @return 文件夹名
      */
-    public String createFolder(String bucketName, String folder) {
+    public static String createFolder(String bucketName, String folder) {
         //判断文件夹是否存在，不存在则创建
         OSSClient ossClient = getOSSClient();
         if (!ossClient.doesObjectExist(bucketName, folder)) {
@@ -128,7 +131,7 @@ public class AliOssClientUtil {
      * @param folder     模拟文件夹名 如"qj_nanjing/"
      * @param key        Bucket下的文件的路径名+文件名 如："upload/cake.jpg"
      */
-    public void deleteFile(OSSClient ossClient, String bucketName, String folder, String key) {
+    public static void deleteFile(OSSClient ossClient, String bucketName, String folder, String key) {
         ossClient.deleteObject(getBucketName(), getFolder() + key);
         log.info("删除" + getBucketName() + "下的文件" + getFolder() + key + "成功");
     }
@@ -139,7 +142,7 @@ public class AliOssClientUtil {
      * @param file 上传文件（文件全路径如：D:\\image\\cake.jpg）
      * @return String 返回的唯一MD5数字签名
      */
-    public String uploadObject2OSS(File file,String path) {
+    public static String uploadObject2OSS(File file, String path) {
         /*// 图片格式
         String suffix = "";*/
         String resultStr = null;
@@ -189,7 +192,7 @@ public class AliOssClientUtil {
      * @param base64Data base64图片数据
      * @return String 返回的唯一MD5数字签名
      */
-    public String uploadBase64Object2OSS(String imgPath, String base64Data) {
+    public static String uploadBase64Object2OSS(String imgPath, String base64Data) {
         // 图片格式
         String dataSuffix = "";
         // 图片内容
@@ -251,13 +254,13 @@ public class AliOssClientUtil {
             OSSClient ossClient = getOSSClient();
             PutObjectResult putResult = ossClient.putObject(getBucketName(), finalImgPath, is, metadata);
             //解析结果
-           putResult.getETag();
-           resultStr = finalImgPath;
+            putResult.getETag();
+            resultStr = finalImgPath;
         } catch (Exception e) {
             e.printStackTrace();
             log.error("上传阿里云OSS服务器异常." + e.getMessage(), e);
         }
-        log.info("resultStr"+resultStr);
+        log.info("resultStr" + resultStr);
         return resultStr;
     }
 
@@ -267,7 +270,7 @@ public class AliOssClientUtil {
      * @param fileName 文件名
      * @return 文件的contentType
      */
-    private String getContentType(String fileName) {
+    private static String getContentType(String fileName) {
         //文件的后缀名
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
         if (".bmp".equalsIgnoreCase(fileExtension)) {
@@ -301,7 +304,7 @@ public class AliOssClientUtil {
         return "image/jpeg";
     }
 
-    private String getContentTypeByBase64(String dataSuffix) throws Exception {
+    private static String getContentTypeByBase64(String dataSuffix) throws Exception {
         //文件的后缀名
         String suffix = "";
         // data:image/jpeg;base64,base64编码的jpeg图片数据
@@ -365,7 +368,7 @@ public class AliOssClientUtil {
 
     public static String getConfig(String key) {
         String value = map.get(key);
-        if (value == null){
+        if (value == null) {
             value = loader.getProperty(key);
             map.put(key, value != null ? value : com.wanhutong.backend.common.utils.StringUtils.EMPTY);
         }
