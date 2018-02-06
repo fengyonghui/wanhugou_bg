@@ -18,6 +18,8 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderAddressDao;
 
+import javax.annotation.Resource;
+
 /**
  * 订单地址Service
  * @author OuyangXiutian
@@ -29,11 +31,18 @@ public class BizOrderAddressService extends CrudService<BizOrderAddressDao, BizO
 
 	@Autowired
 	private SysRegionService sysRegionService;
+	@Resource
+	private BizOrderAddressDao bizOrderAddressDao;
 
 	public BizOrderAddress get(Integer id) {
 		return super.get(id);
 	}
-	
+
+//	交货地址
+	public BizOrderAddress getAddress(BizOrderAddress bizOrderAddress) {
+		return bizOrderAddressDao.getAddress(bizOrderAddress);
+	}
+
 	public List<BizOrderAddress> findList(BizOrderAddress bizOrderAddress) {
 		return super.findList(bizOrderAddress);
 	}
