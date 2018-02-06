@@ -7,10 +7,12 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -66,6 +68,8 @@ public class BizOrderHeaderController extends BaseController {
 	private SysPlatWalletService sysPlatWalletService;
 	@Autowired
 	private BizOrderAddressService bizOrderAddressService;
+	@Autowired
+	private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
@@ -76,19 +80,6 @@ public class BizOrderHeaderController extends BaseController {
 			BizOrderDetail bizOrderDetail = new BizOrderDetail();
 			bizOrderDetail.setOrderHeader(entity);
 			List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
-//			if(list.size()!=0){
-//				for (BizOrderDetail detail : list) {
-//					Double price = detail.getUnitPrice();//商品单价
-//					Integer ordQty = detail.getOrdQty();//采购数量
-//					if(price==null){
-//						price=0.0;
-//					}
-//					if(ordQty==null){
-//						ordQty=0;
-//					}
-//					sum+=price*ordQty;
-//				}
-//			}
 			entity.setTotalDetail(entity.getTotalDetail());
 			entity.setOrderDetailList(list);
 		}
@@ -122,6 +113,13 @@ public class BizOrderHeaderController extends BaseController {
 			Office office=officeService.get(bizOrderHeader.getCustomer().getId());
 			bizOrderHeader.setCustomer(office);
 			model.addAttribute("entity2", bizOrderHeader);
+//			用于销售订单页面展示属于哪个采购中心哪个客户专员
+			BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+			if(bizCustomCenterConsultant!=null){
+				model.addAttribute("orderCenter", bizCustomCenterConsultant);
+			}else{
+				model.addAttribute("orderCenter", new BizCustomCenterConsultant());
+			}
 		}
 		BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
 		if(bizOrderHeader.getId()!=null){
@@ -142,7 +140,6 @@ public class BizOrderHeaderController extends BaseController {
 				for (BizOrderAddress orderAddress : list) {
 					if(orderAddress.getType()==1){
 						model.addAttribute("orderAddress", orderAddress);
-//						model.addAttribute("address", new BizOrderAddress());
 					}
 					if(orderAddress.getType()==2){
 						model.addAttribute("address", orderAddress);

@@ -144,24 +144,11 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                 }
                 sum += price * ordQty;
             }
-                BizOrderHeader bizOrder = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
-                Double Money01 = sum * BizOrderDiscount.SELF_SUPPORT.getCalcs();//0.1
-                Double Money005 = sum * BizOrderDiscount.NON_SELF_SUPPORT.getCalcs();//0.05
-                if (sum <= 10000) {//限额 10000
-                    if (bizOrder.getBizType() == BizOrderDiscount.TWO_ORDER.getOneOr()) {//专营订单 1
-                        System.out.println(" 优惠1 ");
-                        bizOrder.setTotalDetail(sum - Money01);//0.1
-                        bizOrder.setTotalExp(-Money01);
-                        bizOrderHeaderService.updateMoney(bizOrder);
-                    } else if (bizOrder.getBizType() == BizOrderDiscount.THIS_ORDER.getOneOr()) {//非专营订单 2
-                        System.out.println(" 优惠2 ");
-                        bizOrder.setTotalDetail(sum - Money005);//0.05
-                        bizOrder.setTotalExp(-Money005);
-                        bizOrderHeaderService.updateMoney(bizOrder);
-                    } else {
-                        System.out.println(" 未知 ");
-                    }
-                }
+            BizOrderHeader bizOrder = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+            if(bizOrder !=null){
+                bizOrder.setTotalDetail(sum);
+                bizOrderHeaderService.updateMoney(bizOrder);
+            }
             //删除执行库存表相应的加减销售订单数量
             BizInventorySku bizInventorySku = new BizInventorySku();
             bizInventorySku.setSkuInfo(bizOrderDetail.getSkuInfo());

@@ -332,6 +332,13 @@
                                 notAllowSelectParent="true"
                                 title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
+                <span class="help-inline"><font color="red">*</font></span>
+                <c:if test="${entity.orderDetails eq 'details'}">
+                    <c:if test="${orderCenter.centers !=null }">
+                        该采购商的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
+                        客户专员：<font color="#04B404">${orderCenter.consultants.name}</font>
+                    </c:if>
+                </c:if>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
@@ -339,8 +346,8 @@
                             notAllowSelectParent="true"
                             title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                             allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
+                <span class="help-inline"><font color="red">*</font></span>
             </c:if>
-            <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
     <div class="control-group">

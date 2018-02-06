@@ -82,14 +82,6 @@ public class BizOrderDetailController extends BaseController {
 			BizOrderDetail orderDetail = new BizOrderDetail();
 			orderDetail.setOrderHeader(entity.getOrderHeader());
 			List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
-//			for (BizOrderDetail od : list) {
-////				BizOrderSkuPropValue bizOrderSkuPropValue = bizOrderSkuPropValueService.findList(od.);//订单商品属性表
-//				BizOpShelfSku bizOpShelfSku = bizOpShelfSkuService.get(od.getShelfInfo());//查询商品货架
-//				bizOpShelfSku.getMinQty();
-//				bizOpShelfSku.getMaxQty();
-//				bizOpShelfSku.getSalePrice();
-//				entity.setShelfInfo(bizOpShelfSku);
-//			}
 			entity.setOrderHeaderList(list);//用于修改商品查询有多少商品
 		}
 		if (entity == null){
@@ -168,36 +160,10 @@ public class BizOrderDetailController extends BaseController {
 				if(ordQty==null){ordQty=0; }
 				sum+=price*ordQty;
 			}
-			if(bizOrderDetail.getOrderHeader().getOneOrder().equals("firstOrder")){
-				BizOrderHeader bizOrder = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
-				Double Money01 = sum * BizOrderDiscount.SELF_SUPPORT.getCalcs();//0.1
-				Double Money005 = sum * BizOrderDiscount.NON_SELF_SUPPORT.getCalcs();//0.05
-				if(sum <= 10000){//限额 10000
-					if(bizOrder.getBizType() == BizOrderDiscount.TWO_ORDER.getOneOr()) {//专营订单 1
-						System.out.println(" 优惠1 ");
-						bizOrderHeader.setTotalDetail(sum - Money01);//0.1
-						bizOrderHeader.setTotalExp(-Money01);//订单总费用
-						bizOrderHeaderService.updateMoney(bizOrderHeader);
-					}else if(bizOrder.getBizType() == BizOrderDiscount.THIS_ORDER.getOneOr()) {//非专营订单 2
-						System.out.println(" 优惠2 ");
-						bizOrderHeader.setTotalDetail(sum - Money005);//0.05
-						bizOrderHeader.setTotalExp(-Money005);//订单总费用
-						bizOrderHeaderService.updateMoney(bizOrderHeader);
-					}else{
-						System.out.println(" 未知 ");
-					}
-				}
-			}else{
-				System.out.println(" 无优惠 ");
-				bizOrderHeader.setTotalDetail(sum);
-				bizOrderHeaderService.updateMoney(bizOrderHeader);
-			}
+			bizOrderHeader.setTotalDetail(sum);
+			bizOrderHeaderService.updateMoney(bizOrderHeader);
 		}
 		addMessage(redirectAttributes, "删除订单详情成功");
-//		if(orderDetailDetele !=null && orderDetailDetele.equals("details")){
-//			//跳回添加商品orderDetail页面
-//			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
-//		}
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
 	}
 
