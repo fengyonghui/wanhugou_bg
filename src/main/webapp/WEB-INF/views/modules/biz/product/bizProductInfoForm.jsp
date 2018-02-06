@@ -4,7 +4,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>商品信息表管理</title>
+	<title>产品信息表管理</title>
 	<meta name="decorator" content="default"/>
 	<%@include file="/WEB-INF/views/include/treeview.jsp" %>
 	<script type="text/javascript">
@@ -254,8 +254,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/product/bizProductInfo/">商品信息表列表</a></li>
-		<li class="active"><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">商品信息表<shiro:hasPermission name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz/product/bizProductInfo/">产品信息表列表</a></li>
+		<li class="active"><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">产品信息表<shiro:hasPermission name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
     <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
 	<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/save" method="post" class="form-horizontal">
@@ -264,14 +264,14 @@
 		<input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">商品名称：</label>
+			<label class="control-label">产品名称：</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<%--<div class="control-group">--%>
-			<%--<label class="control-label">商品类型：</label>--%>
+			<%--<label class="control-label">产品类型：</label>--%>
 			<%--<div class="controls">--%>
 				<%--<form:select path="prodType" class="input-xlarge required">--%>
 					<%--<form:options items="${fns:getDictList('prod_type')}" itemLabel="label"  itemValue="value"--%>
@@ -289,34 +289,34 @@
     	 </div>
  		</div>
 		<div class="control-group">
-			<label class="control-label">商品主图:</label>
+			<label class="control-label">产品主图:</label>
 			<div class="controls">
 				<form:hidden id="prodMaxImg" path="photos" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 				<sys:ckfinder input="prodMaxImg" type="images" uploadPath="/prod/main" selectMultiple="true" maxWidth="100" maxHeight="100"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品列表图:</label>
+			<label class="control-label">产品列表图:</label>
 			<div class="controls">
 				<form:hidden id="prodListImg" path="photoLists" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 				<sys:ckfinder input="prodListImg" type="images" uploadPath="/prod/item" selectMultiple="true" maxWidth="100" maxHeight="100"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品代码：</label>
+			<label class="control-label">产品代码：</label>
 			<div class="controls">
 				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品描述：</label>
+			<label class="control-label">产品描述：</label>
 			<div class="controls">
 				<form:textarea path="description" htmlEscape="false" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">商品详情图片:</label>
+			<label class="control-label">产品详情图片:</label>
 			<div class="controls">
 				<form:hidden id="prodDetailImg" path="photoDetails" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 				<sys:ckfinder input="prodDetailImg" type="images" uploadPath="/prod/detail" selectMultiple="true" maxWidth="100" maxHeight="100"/>
@@ -334,7 +334,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">请选择商品分类：</label>
+			<label class="control-label">请选择产品分类：</label>
 			<div class="controls">
 				<div id="cateTree" class="ztree" style="margin-top:3px;float:left;"></div>
 				<form:hidden path="cateIds"/>
@@ -351,7 +351,7 @@
             </div>
         </div>
 		<div class="control-group">
-			<label class="control-label">商品属性：</label>
+			<label class="control-label">产品属性：</label>
 			<div  id ="cateProp" class="controls">
             </div>
 		</div>
@@ -431,9 +431,9 @@
 		<thead>
 		<tr>
 			<%--<th>商品产品Id</th>--%>
-			<th>sku名称</th>
-			<th>sku类型</th>
-			<th>sku编码</th>
+			<th>商品名称</th>
+			<th>商品类型</th>
+			<th>商品编码</th>
 			<th>基础售价</th>
 			<th>采购价格</th>
 			<th>更新人</th>
@@ -479,7 +479,7 @@
 				<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><input type="button"
 																				 onclick="javascript:window.location.href='${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}';"
 																				 class="btn btn-primary"
-																				 value="sku信息添加"/></shiro:hasPermission>
+																				 value="商品信息添加"/></shiro:hasPermission>
 			</c:if>
 		</div>
 
