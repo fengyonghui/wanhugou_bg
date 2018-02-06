@@ -664,6 +664,7 @@
         <th>商品编号</th>
         <th>商品单价</th>
         <th>采购数量</th>
+        <th>已发货数量</th>
         <c:if test="${bizOrderHeader.flag=='check_pending'}">
             <th>本地备货</th>
         </c:if>
@@ -698,6 +699,9 @@
             </td>
             <td>
                     ${bizOrderDetail.ordQty}
+            </td>
+            <td>
+                    ${bizOrderDetail.sentQty}
             </td>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <td>
