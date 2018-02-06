@@ -122,6 +122,10 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
                 BizPoHeader poHeader = null;
                 BizPoDetail bizPoDetail = new BizPoDetail();
                 BizPoDetail poDetail = null;
+                BizRequestDetail bizReqDetail = new BizRequestDetail();
+                bizReqDetail.setSkuInfo(bizSkuInfo);
+                bizPoOrderReq.setRequestDetail(bizReqDetail);
+//                bizPoOrderReq.setSoType((byte)2);
                 bizPoOrderReq.setRequestHeader(bizSendGoodsRecord.getBizRequestHeader());
                 List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
                 if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0){
@@ -172,7 +176,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					continue;
 				}
 				//该用户是采购中心
-				if(!office1.getType().equals(OfficeTypeEnum.SUPPLYCENTER.getType())){
+				if(bizSendGoodsRecord.getBizStatus() == SendGoodsRecordBizStatusEnum.CENTER.getState()){
 
 					//销售单状态改为同意供货（供货中）（15）
 					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
@@ -246,6 +250,10 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
                     BizPoHeader poHeader = null;
                     BizPoDetail bizPoDetail = new BizPoDetail();
                     BizPoDetail poDetail = null;
+                    BizOrderDetail bizOrdDetail = new BizOrderDetail();
+                    bizOrdDetail.setSkuInfo(bizSkuInfo);
+                    bizPoOrderReq.setOrderDetail(bizOrdDetail);
+//                    bizPoOrderReq.setSoType((byte)1);
                     bizPoOrderReq.setOrderHeader(bizSendGoodsRecord.getBizOrderHeader());
                     List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
                     if (bizPoOrderReqList != null && bizPoOrderReqList.size()>0){

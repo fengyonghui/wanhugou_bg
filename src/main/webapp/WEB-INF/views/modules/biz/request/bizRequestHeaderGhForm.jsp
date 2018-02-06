@@ -92,7 +92,7 @@
 								<input   value="${reqDetail.reqQty}" readonly="readonly" class="input-medium" type='text'/>
 							</td>
 							<td>
-								<input  value="${reqDetail.recvQty}" readonly="readonly" class="input-medium" type='text'/>
+								<input  value="${reqDetail.sendQty}" readonly="readonly" class="input-medium" type='text'/>
 							</td>
 						</tr>
 					</c:forEach>

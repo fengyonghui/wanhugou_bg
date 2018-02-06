@@ -18,12 +18,13 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/inventory/bizSendGoodsRecord/">供货记录列表</a></li>
+		<li class="active"><a href="${ctx}/biz/inventory/bizSendGoodsRecord?bizStatus=${bizStatus}">供货记录列表</a></li>
 		 <%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><li><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form">供货记录添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<input id="bizStatus" name="bizStatus" type="hidden" value="${bizStatus}"/>
 		<ul class="ul-form">
 			<li><label>商品名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
@@ -45,22 +46,28 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>仓库名称</th>
+				<c:if test="${bizStatus==0}">
+					<th>仓库名称</th>
+				</c:if>
 				<th>商品名称</th>
 				<th>商品编号</th>
 				<th>订单号</th>
 				<th>供货数量</th>
 				<th>客户</th>
 				<th>供货时间</th>
-				<%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th>操作</th></shiro:hasPermission>--%>
+				<c:if test="${fns:getUser().isAdmin()}">
+				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th>操作</th></shiro:hasPermission>
+				</c:if>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizSendGoodsRecord">
 			<tr>
-				<td><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">
-				</a>${bizSendGoodsRecord.invInfo.name}
-				</td>
+				<c:if test="${bizStatus==0}">
+					<td><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">
+					</a>${bizSendGoodsRecord.invInfo.name}
+					</td>
+				</c:if>
 				<td>
 					${bizSendGoodsRecord.skuInfo.name}
 				</td>
@@ -79,10 +86,12 @@
 				<td>
 					<fmt:formatDate value="${bizSendGoodsRecord.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><td>
-    				&lt;%&ndash;<a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">修改</a>&ndash;%&gt;
-					&lt;%&ndash;<a href="${ctx}/biz/inventory/bizSendGoodsRecord/delete?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要删除该供货记录吗？', this.href)">删除</a>&ndash;%&gt;
-				</td></shiro:hasPermission>--%>
+				<c:if test="${fns:getUser().isAdmin()}">
+				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><td>
+    				<a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">修改</a>
+					<a href="${ctx}/biz/inventory/bizSendGoodsRecord/delete?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要删除该供货记录吗？', this.href)">删除</a>
+				</td></shiro:hasPermission>
+				</c:if>
 			</tr>
 		</c:forEach>
 		</tbody>

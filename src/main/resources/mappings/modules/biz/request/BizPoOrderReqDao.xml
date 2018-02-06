@@ -6,18 +6,30 @@
 		a.so_id AS "soId",
 		a.po_id AS "poHeader.id",
 		a.so_line_no AS "soLineNo",
-		so_qty AS "soQty",
-		so_type AS "soType",
-		po_line_no AS "poLineNo",
-		status AS "delFalg",
-		create_id AS "createBy.id",
-		create_time AS "createDate",
-		u_version AS "uVersion",
-		update_id AS "updateBy.id",
-		update_time AS "updateDate"
+		a.so_qty AS "soQty",
+		<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+			od.sku_id AS "orderDetail.skuInfo.id",
+		</if>
+		<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+			rd.sku_id AS "requestDetail.skuInfo.id",
+		</if>
+		a.so_type AS "soType",
+		a.po_line_no AS "poLineNo",
+		a.status AS "delFalg",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="bizPoOrderReqJoins">
+		<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+			LEFT JOIN biz_order_detail od ON od.order_id = a.so_id AND od.line_no = a.so_line_no
+		</if>
+		<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+			LEFT JOIN biz_request_detail rd ON rd.header_id = a.so_id AND rd.line_no = a.so_line_no
+		</if>
 	</sql>
     
 	<select id="get" resultType="BizPoOrderReq">
@@ -37,9 +49,15 @@
 			
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
 				AND a.so_id = #{orderHeader.id}
+				<if test="orderDetail != null and orderDetail.skuInfo != null and orderDetail.skuInfo.id != null and orderDetail.skuInfo.id != ''">
+					AND od.sku_id = #{orderDetail.skuInfo.id}
+				</if>
 			</if>
 			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 				AND a.so_id = #{requestHeader.id}
+				<if test="requestDetail != null and requestDetail.skuInfo != null and requestDetail.skuInfo.id != null and requestDetail.skuInfo.id != ''">
+					AND rd.sku_id = #{requestDetail.skuInfo.id}
+				</if>
 			</if>
 			<if test="poHeader != null and poHeader.id != null and poHeader.id != ''">
 				AND a.po_id = #{poHeader.id}

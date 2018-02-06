@@ -40,6 +40,7 @@
 		FROM biz_send_goods_record a
 		<include refid="bizSendGoodsRecordJoins"/>
 		WHERE a.id = #{id}
+		ORDER BY updateDate DESC
 	</select>
 	
 	<select id="findList" resultType="BizSendGoodsRecord">
@@ -79,6 +80,9 @@
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
 			<if test="sqlMap != null and sqlMap.sendGoodsRecord != null and sqlMap.sendGoodsRecord != ''">
 				${sqlMap.sendGoodsRecord}
 			</if>
@@ -90,7 +94,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		ORDER BY createDate DESC
+		ORDER BY updateDate DESC
 	</select>
 	
 	<select id="findAllList" resultType="BizSendGoodsRecord">
@@ -114,7 +118,9 @@
 		INSERT INTO biz_send_goods_record(
 			id,
 			sku_id,
-			inv_id,
+			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
+				inv_id,
+			</if>
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				order_id,
 			</if>
@@ -135,7 +141,9 @@
 		) VALUES (
 			#{id},
 			#{skuInfo.id},
-			#{invInfo.id},
+			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
+				#{invInfo.id},
+			</if>
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				#{bizOrderHeader.id},
 			</if>

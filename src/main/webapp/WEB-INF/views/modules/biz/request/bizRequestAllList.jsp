@@ -33,10 +33,10 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${source eq 'sh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}">备货清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}">收货清单列表</a></li>
 		</c:if>
 		<c:if test="${source eq 'kc'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}">销售清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&bizStatu=${bizStatu}&ship=${ship}">供货清单列表</a></li>
 		</c:if>
 	</ul>
 	<sys:message content="${message}"/>
@@ -59,13 +59,13 @@
 		</thead>
 		<tbody>
 		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">
-		<c:if test="${source == 'sh' || source=='gh'}">
+		<c:if test="${source == 'sh' || source=='gh' || bizStatu==1 && ship=='bh'}">
 			<c:forEach items="${requestHeaderList}" var="requestHeader">
 				<tr>
 					<c:if test="${source=='gh'}">
 					<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
 					</c:if>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=bh">
 						${requestHeader.reqNo}
 					</a></td>
 					<td>
@@ -96,13 +96,13 @@
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>
 							</c:when>
 							<c:when test="${source=='sh'}">
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货单详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货详情</a>
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">收货</a>
 							</c:when>
-							<c:otherwise>
-
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">供货</a>
-							</c:otherwise>
+							<c:when test="${bizStatu=='1'}">
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货详情</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=bh">供货</a>
+							</c:when>
 						</c:choose>
 
 					</td></shiro:hasPermission>
@@ -110,13 +110,13 @@
 			</c:forEach>
 		</c:if>
 
-		<c:if test="${source != 'sh' || source=='gh'}">
+		<c:if test="${source == 'kc' && ship=='xs' || source=='gh'}">
 			<c:forEach items="${orderHeaderList}" var="orderHeader">
 				<tr>
 					<c:if test="${source=='gh'}">
 						<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
 					</c:if>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">
 							${orderHeader.orderNum}
 					</a></td>
 					<td>
@@ -147,7 +147,7 @@
 							</c:when>
 							<c:otherwise>
 								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs">供货详情</a>
-								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}">供货</a>
+								<a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">供货</a>
 							</c:otherwise>
 						</c:choose>
 					</td></shiro:hasPermission>

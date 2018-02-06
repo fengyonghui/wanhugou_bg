@@ -164,7 +164,7 @@
 		<if test="invStatus!=null">
 			inv_status = #{invStatus},
 		</if>
-		<if test="invStatus!=null">
+		<if test="bizStatus!=null">
 			biz_status = #{bizStatus},
 		</if>
 		<if test="plateformInfo!=null and plateformInfo.id!=null">

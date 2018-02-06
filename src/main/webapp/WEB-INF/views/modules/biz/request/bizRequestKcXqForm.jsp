@@ -76,11 +76,11 @@
 						<th>SKU编号</th>
 						<th>申报数量</th>
 						<th>已供数量</th>
-
-						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-							<th>供货仓库</th>
-						</shiro:hasPermission>
-
+						<c:if test="${bizStatu==0}">
+							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+								<th>供货仓库</th>
+							</shiro:hasPermission>
+						</c:if>
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
@@ -121,16 +121,17 @@
 							<td>
 								<input id="sentQty${ordStatus.index}" name='bizSendGoodsRecordList[${ordStatus.index}].bizOrderDetail.sentQty' readonly="readonly" value="${ordDetail.sentQty}" type='text'/>
 							</td>
-
-							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-								<td>
-									<select disabled="disabled" name="invInfo.id" class="input-medium">
-										<c:forEach  items="${invInfoList}" var="invInfo">
-											<option value="${invInfo.id}"/>${invInfo.name}
-										</c:forEach>
-									</select>
-								</td>
-							</shiro:hasPermission>
+							<c:if test="${bizStatu==0}">
+								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+									<td>
+										<select disabled="disabled" name="invInfo.id" class="input-medium">
+											<c:forEach  items="${invInfoList}" var="invInfo">
+												<option value="${invInfo.id}"/>${invInfo.name}
+											</c:forEach>
+										</select>
+									</td>
+								</shiro:hasPermission>
+							</c:if>
 							</tr>
 						</c:forEach>
 					</c:if>

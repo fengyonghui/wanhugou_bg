@@ -3,8 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.entity.request;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -24,8 +26,9 @@ public class BizPoOrderReq extends DataEntity<BizPoOrderReq> {
 	private Integer soLineNo;
 	private Integer soQty;
 	private Byte soType;
-
 	private Integer soId;
+	private BizOrderDetail orderDetail;
+	private BizRequestDetail requestDetail;
 
 	
 	public BizPoOrderReq() {
@@ -98,5 +101,21 @@ public class BizPoOrderReq extends DataEntity<BizPoOrderReq> {
 
 	public void setSoId(Integer soId) {
 		this.soId = soId;
+	}
+
+	public BizOrderDetail getOrderDetail() {
+		return orderDetail;
+	}
+
+	public void setOrderDetail(BizOrderDetail orderDetail) {
+		this.orderDetail = orderDetail;
+	}
+
+	public BizRequestDetail getRequestDetail() {
+		return requestDetail;
+	}
+
+	public void setRequestDetail(BizRequestDetail requestDetail) {
+		this.requestDetail = requestDetail;
 	}
 }

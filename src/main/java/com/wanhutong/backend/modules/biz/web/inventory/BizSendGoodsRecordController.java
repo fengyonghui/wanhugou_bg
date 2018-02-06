@@ -54,21 +54,7 @@ public class BizSendGoodsRecordController extends BaseController {
 
 	@Autowired
 	private BizSendGoodsRecordService bizSendGoodsRecordService;
-	@Autowired
-	private OfficeService officeService;
-	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
-	@Autowired
-	private BizRequestDetailService bizRequestDetailService;
-	@Autowired
-	private BizOrderHeaderService bizOrderHeaderService;
-	@Autowired
-	private BizRequestHeaderService bizRequestHeaderService;
-	@Autowired
-	private BizOrderDetailService bizOrderDetailService;
-	@Autowired
-    private BizInventorySkuService bizInventorySkuService;
-	
+
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
 		BizSendGoodsRecord entity = null;
@@ -83,9 +69,16 @@ public class BizSendGoodsRecordController extends BaseController {
 	
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(BizSendGoodsRecord bizSendGoodsRecord, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizSendGoodsRecord> page = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), bizSendGoodsRecord); 
+	public String list(Integer bizStatu, BizSendGoodsRecord bizSendGoodsRecord, HttpServletRequest request, HttpServletResponse response, Model model) {
+//		if ("0".equals(bizStatu)){
+			bizSendGoodsRecord.setBizStatus(bizStatu);
+//		}
+//		if ("1".equals(bizStatu)){
+//			bizSendGoodsRecord.setBizStatus(1);
+//		}
+		Page<BizSendGoodsRecord> page = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), bizSendGoodsRecord);
 		model.addAttribute("page", page);
+		model.addAttribute("bizStatus",bizStatu);
 		return "modules/biz/inventory/bizSendGoodsRecordList";
 	}
 
@@ -103,9 +96,10 @@ public class BizSendGoodsRecordController extends BaseController {
 //		if (!beanValidator(model, bizSendGoodsRecord)){
 //			return form(bizSendGoodsRecord, model);
 //		}
+
 		    bizSendGoodsRecordService.save(bizSendGoodsRecord);
 			addMessage(redirectAttributes, "保存供货记录成功");
-			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage";
+			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage&bizStatu="+bizSendGoodsRecord.getBizStatus();
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")

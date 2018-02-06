@@ -16,10 +16,13 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -37,7 +40,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供应中心供货, source=sh 备货中）
+ * 备货清单和销售订单（source=gh审核通过、采购中，source=kc 采购中、采购完成、供应中心供货, source=sh 备货中, source=ghs 供货详情，ship=xs 销售单，ship=bh 备货单）
+ * 采购中心和供货中心（bizStatu=0采购中心，bizStatu=1供货中心）
  */
 
 @Controller
@@ -62,7 +66,7 @@ public class BizRequestAllController {
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
-    public String list(String source, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader){
+    public String list(String source,Integer bizStatu,String ship, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader){
 
         User user= UserUtils.getUser();
         DefaultProp defaultProp=new DefaultProp();
@@ -73,12 +77,28 @@ public class BizRequestAllController {
             DefaultProp prop=defaultPropList.get(0);
             vendId=Integer.parseInt(prop.getPropValue());
         }
+        //用户属于供应中心或管理员
+
+        boolean flag=false;
+        if(user.getRoleList()!=null) {
+            for (Role role : user.getRoleList()) {
+                if (!RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if(flag){
+            model.addAttribute("ship",ship);
+        }
+
+//        if (user.getCompany().getType().equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
+//            model.addAttribute("ship",ship);
+//        }
         model.addAttribute("source",source);
         if(bizOrderHeader==null){
             bizOrderHeader=new BizOrderHeader();
         }
-
-
 		 	if("kc".equals(source)) {
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
@@ -103,31 +123,30 @@ public class BizRequestAllController {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
             }
-
-
                 List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
-
                 model.addAttribute("requestHeaderList",requestHeaderList);
-
                 List<BizOrderHeader> orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
                 model.addAttribute("orderHeaderList",orderHeaderList);
+                if (bizStatu != null){
+                    model.addAttribute("bizStatu",bizStatu.toString());
+                }
                 return "modules/biz/request/bizRequestAllList";
         }
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = "form")
-    public String form(String source,Integer id, Model model) {
+    public String form(String source,Integer id, Model model,Integer bizStatu,String ship) {
         List<BizRequestDetail> reqDetailList = Lists.newArrayList();
         List<BizOrderDetail> ordDetailList=Lists.newArrayList();
         BizOrderHeader orderHeader=null;
         BizRequestHeader requestHeader=null;
         BizRequestHeader bizRequestHeader = new BizRequestHeader();
         BizOrderHeader bizOrderHeader= new BizOrderHeader();
-        if ("kc".equals(source) || "ghs".equals(source)){
+        if ("kc".equals(source) && "xs".equals(ship) || "ghs".equals(source)){
             bizOrderHeader = bizOrderHeaderService.get(id);
         }else{
             bizRequestHeader = bizRequestHeaderService.get(id);
         }
-        if (bizRequestHeader.getId() != null) {
+        if (bizRequestHeader != null && bizRequestHeader.getId() != null) {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             User user = UserUtils.getUser();
@@ -151,7 +170,7 @@ public class BizRequestAllController {
             }
             requestHeader= bizRequestHeaderService.get(bizRequestHeader.getId());
         }
-        if (bizOrderHeader.getId() != null) {
+        if (bizOrderHeader != null && bizOrderHeader.getId() != null) {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             User user = UserUtils.getUser();
@@ -180,6 +199,8 @@ public class BizRequestAllController {
         model.addAttribute("reqDetailList", reqDetailList);
         model.addAttribute("ordDetailList", ordDetailList);
         model.addAttribute("source",source);
+        model.addAttribute("bizStatu",bizStatu);
+        model.addAttribute("ship",ship);
         if (source != null && "kc".equals(source)) {
             return "modules/biz/request/bizRequestHeaderKcForm";
         }

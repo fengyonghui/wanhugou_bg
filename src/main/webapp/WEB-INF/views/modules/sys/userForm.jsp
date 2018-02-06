@@ -58,7 +58,7 @@
 			<label class="control-label">归属公司:</label>
 			<div class="controls">
                 <sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-					title="公司" url="/sys/office/treeData?type=1" cssClass="required"/>
+					title="公司" url="/sys/office/treeData?type=2" cssClass="required"/>
 			</div>
 		</div>
 		<div class="control-group">

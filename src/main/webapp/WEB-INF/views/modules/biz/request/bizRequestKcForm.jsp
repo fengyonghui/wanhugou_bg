@@ -24,7 +24,7 @@
                 }
             });
         });
-        /*$("#btnSubmit").click(function () {
+        $("#btnSubmit").click(function () {
 			var reqQty = $("#reqQty").val();
 			var sendNum = $("#sendNum").val();
 			if (sendNum > reqQty){
@@ -34,7 +34,7 @@
 			$(".reqDetailList").find("td").find("input[title='sendNum']").each(function () {
 				console.info($(this).val())
             });
-        });*/
+        });
 
         function checkout(obj) {
             var reqQty = $("#reqQty"+obj).val();	//申报数量
@@ -175,8 +175,8 @@
 						</tr>
 					</c:forEach>
 				</c:if>
-
-					<%--<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
+				<!-------------------------------------------------------------------------------->
+					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
 							<tr id="${ordDetail.id}" class="ordDetailList">
 								<td><img src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
@@ -194,7 +194,7 @@
 								<td>${ordDetail.skuInfo.productInfo.brandName}</td>
 								<td>
 										${ordDetail.skuInfo.productInfo.office.name}
-										&lt;%&ndash;<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>&ndash;%&gt;
+										<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
 								</td>
 								<td>${ordDetail.skuInfo.name}</td>
 								<td>${ordDetail.skuInfo.partNo}</td>
@@ -218,11 +218,10 @@
 										<input title="sendNum${ordStatus.index}" name="bizCollectGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
 									</td>
 								</shiro:hasPermission>
-
-
 							</tr>
 						</c:forEach>
-					</c:if>--%>
+					</c:if>
+				<!-------------------------------------------------------------------------------->
 				</tbody>
 			</table>
 		</div>

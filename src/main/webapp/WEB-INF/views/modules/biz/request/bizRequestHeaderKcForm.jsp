@@ -63,9 +63,9 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${source eq 'kc'}"></c:if>
-		<li><a href="${ctx}/biz/request/bizRequestAll?source=kc">供货清单列表</a></li>
+		<li><a href="${ctx}/biz/request/bizRequestAll?source=kc&bizStatu=${bizStatu}&ship=${ship}">供货清单列表</a></li>
 		<li class="active">
-			<a href="${ctx}/biz/request/bizRequestAll/form?id=${bizOrderHeader.id}&source=kc">
+			<a href="${ctx}/biz/request/bizRequestAll/form?id=${bizOrderHeader.id}&source=kc&bizStatu=${bizStatu}&ship=${ship}">
 				${not empty bizOrderHeader.id?'销售清单':''}<shiro:hasPermission name="biz:request:bizRequestHeader:edit">供货</shiro:hasPermission><shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission>
 			</a>
 		</li>
@@ -76,6 +76,7 @@
 		<sys:message content="${message}"/>
 		<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
 		<input name="bizOrderHeader.id" value="${bizOrderHeader==null?0:bizOrderHeader.id}" type="hidden"/>
+		<input name="bizStatus" value="${bizStatu}" type="hidden"/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
@@ -120,14 +121,16 @@
 						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 							<th>供应数量</th>
 						</shiro:hasPermission>
-						<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+						<c:if test="${bizStatu==0}">
+							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 							<th>供货仓库</th>
 						</shiro:hasPermission>
-
+						</c:if>
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
-					<%--<c:if test="${reqDetailList!=null && reqDetailList.size()>0}">
+					<!-------------------------------------------------备货单供货------------------------------------------------------>
+					<c:if test="${reqDetailList!=null && reqDetailList.size()>0}">
 						<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
 							<tr id="${reqDetail.id}" class="reqDetailList">
 								<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
@@ -145,7 +148,7 @@
 								<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 								<td>
 									${reqDetail.skuInfo.productInfo.office.name}
-									&lt;%&ndash;<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>&ndash;%&gt;
+									<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
 								</td>
 								<td>${reqDetail.skuInfo.name}</td>
 								<td>${reqDetail.skuInfo.partNo}</td>
@@ -170,8 +173,8 @@
 								</shiro:hasPermission>
 							</tr>
 						</c:forEach>
-					</c:if>--%>
-
+					</c:if>
+					<!-------------------------------------------------销售单供货------------------------------------------------------>
 					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
 							<tr id="${ordDetail.id}" class="ordDetailList">
@@ -214,15 +217,17 @@
 										<input id="sendNum${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
 									</td>
 								</shiro:hasPermission>
-								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-									<td>
-										<select name="invInfo.id" class="input-medium">
-											<c:forEach items="${invInfoList}" var="invInfo">
-												<option value="${invInfo.id}"/>${invInfo.name}
-											</c:forEach>
-										</select>
-									</td>
-								</shiro:hasPermission>
+								<c:if test="${bizStatu==0}">
+									<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+										<td>
+											<select name="invInfo.id" class="input-medium">
+												<c:forEach items="${invInfoList}" var="invInfo">
+													<option value="${invInfo.id}"/>${invInfo.name}
+												</c:forEach>
+											</select>
+										</td>
+									</shiro:hasPermission>
+								</c:if>
 							</tr>
 						</c:forEach>
 					</c:if>
