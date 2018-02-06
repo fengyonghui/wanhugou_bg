@@ -92,11 +92,19 @@
                     $("#jhregion").append(option4);
                     $("#jhaddress").val("${address.address}");
                 }
+<<<<<<< Updated upstream
                 $("#province").change();
                 $("#city").change();
                 $("#region").change();
                 $("#address").change();
                 <%--交货地址--%>
+=======
+               $("#province").change();
+               $("#city").change();
+               $("#region").change();
+               $("#address").change();
+               <%--交货地址--%>
+>>>>>>> Stashed changes
                 $("#jhprovince").change();
                 $("#jhcity").change();
                 $("#jhregion").change();
@@ -108,6 +116,7 @@
                 window.location.href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&office.id="+officeId+"&office.name="+officeName+"&flag=order"
             });
 
+<<<<<<< Updated upstream
             $("#updateMoney").click(function () {
                 updateMoney();
             })
@@ -124,10 +133,19 @@
             <%--$("#jhcity").empty();--%>
             <%--$("#jhregion").empty();--%>
             <%--$("#jhaddress").empty();--%>
+=======
+      function clickBut(){
+         var officeId=$("#officeId").val();
+             $("#province").empty();
+             $("#city").empty();
+             $("#region").empty();
+             $("#address").empty();
+>>>>>>> Stashed changes
             $.ajax({
                 type:"post",
                 url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
                 success:function(data){
+<<<<<<< Updated upstream
                     if(data==''){
                         console.log("数据为空显示 新增地址 ");
                         $("#add1").css("display","none");
@@ -163,6 +181,29 @@
                         <%--$("#jhcity").change();--%>
                         <%--$("#jhregion").change();--%>
                         <%--$("#jhaddress").change();--%>
+=======
+                 if(data==''){
+                     console.log("数据为空显示 新增地址 ");
+                     $("#add1").css("display","none");
+                     $("#add2").css("display","block");
+                     $("#add3").css("display","none");
+                 }else{
+                    console.log("数据不为空隐藏 新增地址 ");
+                    $("#add1").css("display","block");
+                    $("#add2").css("display","none");
+                    $("#add3").css("display","block");
+                                var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);
+                                $("#province").append(option2);
+                                var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);
+                                $("#city").append(option3);
+                                var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
+                                $("#region").append(option4);
+                                $("#address").val(data.bizLocation.address);
+                       $("#province").change();
+                       $("#city").change();
+                       $("#region").change();
+                       $("#address").change();
+>>>>>>> Stashed changes
                     }
                 }
             });
@@ -215,6 +256,7 @@
 
     </script>
     <%--<script type="text/javascript">--%>
+<<<<<<< Updated upstream
     <%--function deliveryAddress(){--%>
     <%--var officeId=$("#officeId").val();--%>
     <%--$("#jhprovince").empty();--%>
@@ -253,6 +295,44 @@
     <%--}--%>
 
 
+=======
+        <%--function deliveryAddress(){--%>
+            <%--var officeId=$("#officeId").val();--%>
+            <%--$("#jhprovince").empty();--%>
+            <%--$("#jhcity").empty();--%>
+            <%--$("#jhregion").empty();--%>
+            <%--$("#jhaddress").empty();--%>
+            <%--$.ajax({--%>
+                <%--type:"post",--%>
+                <%--url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,--%>
+                <%--success:function(data){--%>
+                <%--console.log(data+"-----777");--%>
+                    <%--if(data==''){--%>
+                        <%--$("#jhadd1").css("display","none");--%>
+                        <%--$("#jhadd2").css("display","block");--%>
+                        <%--$("#jhadd3").css("display","none");--%>
+                    <%--}else{--%>
+                        <%--$("#jhadd1").css("display","block");--%>
+                        <%--$("#jhadd2").css("display","none");--%>
+                        <%--$("#jhadd3").css("display","block");--%>
+                        <%--var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);--%>
+                        <%--$("#jhprovince").append(option2);--%>
+                        <%--var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);--%>
+                        <%--$("#jhcity").append(option3);--%>
+                        <%--var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);--%>
+                        <%--$("#jhregion").append(option4);--%>
+                        <%--$("#jhaddress").val(data.bizLocation.address);--%>
+                        <%--&lt;%&ndash;}&ndash;%&gt;--%>
+                        <%--//当省份的数据加载完毕之后--%>
+                        <%--$("#jhprovince").change();--%>
+                        <%--$("#jhcity").change();--%>
+                        <%--$("#jhregion").change();--%>
+                        <%--$("#jhaddress").change();--%>
+                    <%--}--%>
+                <%--}--%>
+            <%--});--%>
+        <%--}--%>
+>>>>>>> Stashed changes
     <%--</script>--%>
     <script type="text/javascript">
         function checkPending(obj) {

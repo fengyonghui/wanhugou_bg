@@ -14,5 +14,5 @@ import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceHeader;
  */
 @MyBatisDao
 public interface BizInvoiceHeaderDao extends CrudDao<BizInvoiceHeader> {
-	
+    public void updateInvTotal(BizInvoiceHeader bizInvoiceHeader);
 }

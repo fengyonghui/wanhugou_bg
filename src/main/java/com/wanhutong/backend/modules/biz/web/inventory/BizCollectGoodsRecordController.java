@@ -44,6 +44,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.service.inventory.BizCollectGoodsRecordService;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -126,4 +127,27 @@ public class BizCollectGoodsRecordController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizCollectGoodsRecord/?repage";
 	}
 
+//	用于库存变更记录列表
+	@RequiresPermissions("biz:inventory:bizCollectGoodsRecord:view")
+	@RequestMapping(value = "stockChangeList")
+	public String stockChangeList(BizCollectGoodsRecord bizCollectGoodsRecord,HttpServletRequest request, HttpServletResponse response, Model model) {
+//		List<BizSendGoodsRecord> list1 = new ArrayList<>();
+//		List<BizCollectGoodsRecord> list2 = new ArrayList<>();
+		if(bizCollectGoodsRecord.getQueryClass()==null){
+			Page<BizSendGoodsRecord> pageSend = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), new BizSendGoodsRecord());
+			model.addAttribute("pageSend", pageSend);
+			Page<BizCollectGoodsRecord> pageGods = bizCollectGoodsRecordService.findPage(new Page<BizCollectGoodsRecord>(request, response), bizCollectGoodsRecord);
+			model.addAttribute("pageGods", pageGods);
+		}else if(bizCollectGoodsRecord.getQueryClass()==1){
+//			入库记录
+			Page<BizCollectGoodsRecord> pageGods = bizCollectGoodsRecordService.findPage(new Page<BizCollectGoodsRecord>(request, response), bizCollectGoodsRecord);
+			model.addAttribute("pageGods", pageGods);
+		}else{
+			//出库记录
+			Page<BizSendGoodsRecord> pageSend = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), new BizSendGoodsRecord());
+			model.addAttribute("pageSend", pageSend);
+		}
+
+		return "modules/biz/inventory/bizCollectStockChangeRecordList";
+	}
 }

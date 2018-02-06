@@ -22,6 +22,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -80,7 +82,6 @@ public class SysOfficeAddressController extends BaseController {
 	@RequiresPermissions("sys:office:sysOfficeAddress:view")
 	@RequestMapping(value = "form")
 	public String form(SysOfficeAddress sysOfficeAddress, Model model) {
-		sysOfficeAddress.getDeFaultStatus();
 		model.addAttribute("entity", sysOfficeAddress);
 		return "modules/sys/office/sysOfficeAddressForm";
 	}
@@ -93,14 +94,26 @@ public class SysOfficeAddressController extends BaseController {
 		}
 		sysOfficeAddressService.save(sysOfficeAddress);
 		addMessage(redirectAttributes, "保存地址信息成功");
+//		订单新增地址跳转
 		if(sysOfficeAddress.getFlag()!=null && sysOfficeAddress.getFlag().equals("order")){
-//			Integer ohId=sysOfficeAddress.getOhId();
-//			if(ohId==null){
-//				ohId=0;
-//			}
-//			id="+ohId+"&
-			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id=&customer.id="+sysOfficeAddress.getOffice().getId()
-					+"&bizLocation.receiver="+sysOfficeAddress.getReceiver()+"&bizLocation.phone="+sysOfficeAddress.getPhone();
+			String receiver = sysOfficeAddress.getReceiver();//联系人
+			try {
+				return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id=&customer.id="+sysOfficeAddress.getOffice().getId()
+                        +"&bizLocation.receiver="+URLEncoder.encode(receiver,"utf-8")+"&bizLocation.phone="+sysOfficeAddress.getPhone();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+
+//		记录发票信息跳转
+		if(sysOfficeAddress.getFlag()!=null && sysOfficeAddress.getFlag().equals("invoiceFlag")){
+			String name = sysOfficeAddress.getOffice().getName();
+			try {
+				return "redirect:"+Global.getAdminPath()+"/biz/invoice/bizInvoiceInfo/form?office.id="+sysOfficeAddress.getOffice().getId()+"" +
+                        "&office.name="+URLEncoder.encode(name,"utf-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
 	}

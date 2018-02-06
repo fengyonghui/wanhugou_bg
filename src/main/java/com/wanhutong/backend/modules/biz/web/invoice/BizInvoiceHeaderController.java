@@ -55,7 +55,6 @@ public class BizInvoiceHeaderController extends BaseController {
 			bizInvoiceDetail.setInvoiceHeader(entity);
 			List<BizInvoiceDetail> list = bizInvoiceDetailService.findList(bizInvoiceDetail);
 			for (BizInvoiceDetail invoiceDetail : list) {
-				System.out.println(invoiceDetail+"  --- 测试");
 				BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(invoiceDetail.getOrderHead().getId());
 				invoiceDetail.setOrderHead(bizOrderHeader);
 			}
@@ -66,11 +65,11 @@ public class BizInvoiceHeaderController extends BaseController {
 		}
 		return entity;
 	}
-	
+
 	@RequiresPermissions("biz:invoice:bizInvoiceHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizInvoiceHeader bizInvoiceHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizInvoiceHeader> page = bizInvoiceHeaderService.findPage(new Page<BizInvoiceHeader>(request, response), bizInvoiceHeader); 
+		Page<BizInvoiceHeader> page = bizInvoiceHeaderService.findPage(new Page<BizInvoiceHeader>(request, response), bizInvoiceHeader);
 		model.addAttribute("page", page);
 		return "modules/biz/invoice/bizInvoiceHeaderList";
 	}

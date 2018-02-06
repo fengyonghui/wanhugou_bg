@@ -36,7 +36,9 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private BizRequestDetail bizRequestDetail;
 	private BizOrderDetail bizOrderDetail;
 	private List<BizCollectGoodsRecord> bizCollectGoodsRecordList;
-	
+
+	private Integer queryClass;		//用于库存变更记录查询 类别展示
+
 	public BizCollectGoodsRecord() {
 		super();
 	}
@@ -142,5 +144,13 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setBizCollectGoodsRecordList(List<BizCollectGoodsRecord> bizCollectGoodsRecordList) {
 		this.bizCollectGoodsRecordList = bizCollectGoodsRecordList;
+	}
+
+	public Integer getQueryClass() {
+		return queryClass;
+	}
+
+	public void setQueryClass(Integer queryClass) {
+		this.queryClass = queryClass;
 	}
 }

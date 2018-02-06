@@ -144,5 +144,13 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<!--用于保存发票数额-->
+	<update id="updateInvTotal">
+		UPDATE biz_invoice_header SET
+			<if test="invTotal!=null and invTotal!=''">
+				inv_total = #{invTotal}
+			</if>
+		WHERE id = #{id}
+	</update>
 </mapper>

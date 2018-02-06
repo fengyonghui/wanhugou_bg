@@ -49,13 +49,12 @@ function orderoffice(){
       			 console.log("已有数据"+data);
             var htmlOrder="<tbody>";
              $("#boxTbody").empty();
-                <%--console.log(JSON.stringify(data)+"-测试 1- appendTo('#images')--");--%>
             $.each(data,function(index,order){
               $("#boxTbody").empty();
                 $("<td/>").attr("src", order.id);
                 htmlOrder+="<tr id='order"+order.id+"'><td><input type='checkbox' class='boxs' value="+order.id+">"+
                                 "</td><td><input name='bizInvoiceDetailList["+index+"].orderHead.id' value='"+order.id+"' type='hidden'/>"+order.customer.name+"</td>"+
-                                "<td>"+order.orderNum+"</td><td>"+order.totalExp+"</td><td>"+order.freight+"</td>"+
+                                "<td>"+order.orderNum+"</td><td>"+order.totalDetail+"</td><td>"+order.totalExp+"</td><td>"+order.freight+"</td>"+
                                 "<td>"+order.createDate+"</td></tr>";
             });
             htmlOrder+="</tbody>";
@@ -81,9 +80,7 @@ function dial(){
 						 if($(this).attr("checked")){
 								var orderId= $(this).val();
 								var trId="order"+$(this).val();
-									console.log(trId+"  测试2");
-								var remov="<td><a href='#' onclick='removeItem(\""+orderId+"\")'>移除</a></td>";
-									console.log(remov+"  测试3");
+								var remov="<td><a href='#' onclick='removeItem("+orderId+")'>移除</a></td>";
 								checkID+="<tr>"+$("#"+trId).html()+remov+"</tr>";
 						 }
 					 });
@@ -95,7 +92,6 @@ function dial(){
  }
  <%--移除--%>
  function removeItem(obj) {
- 	$("#"+obj).remove();
  	console.log(obj+" 点击了移除");
 }
 </script>

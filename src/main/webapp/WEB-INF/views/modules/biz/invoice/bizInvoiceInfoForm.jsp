@@ -9,8 +9,8 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-                    if($("#address2").val()==''){
-                        $("#addError").css("display","inline-block")
+                    if($("#address").val()==''){
+                        $("#addError").css("display","inline-block");
                         return false;
                     }
 					loading('正在提交，请稍等...');
@@ -26,9 +26,15 @@
 					}
 				}
 			});
-			if($("#id").val()!=""){
+			if($("#officeId").val()!=""){
                 mechanism();
             }
+            <%--显示新增地址跳转--%>
+            $("#addressNew").click(function () {
+                var officeId=$("#officeId").val();
+                var officeName =$("#officeName").val();
+                window.location.href="${ctx}/sys/office/sysOfficeAddress/form?office.id="+officeId+"&office.name="+officeName+"&flag=invoiceFlag"
+            });
 		});
 		 function mechanism(){
              var officeId=$('#officeId').val();
@@ -40,7 +46,6 @@
                 type:"post",
                 url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
                 success:function(data){
-                 <%--console.log(JSON.stringify(data)+"---测试1");--%>
                  if(data==''){
                      console.log("数据为空显示 新增地址 ");
                      $("#add1").css("display","none");
@@ -75,7 +80,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInvoiceInfo" action="${ctx}/biz/invoice/bizInvoiceInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">采购商名称：</label>
 			<div class="controls">
@@ -120,8 +125,7 @@
         <div class="control-group" id="add2" style="display:none">
             <label class="control-label">邮寄地址；</label>
             <div class="controls">
-                <a href="${ctx}/sys/office/sysOfficeAddress/form?ohId=${bizOrderHeader.id}&flag=order">
-                <input type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/></a>
+                <input id="addressNew" type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/>
                 <label class="error" id="addError" style="display:none;">必填信息</label>
                 <span class="help-inline"><font color="red">*</font></span>
             </div>
