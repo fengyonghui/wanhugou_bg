@@ -8,11 +8,14 @@
 		a.out_trade_no AS "outTradeNo",
 		a.pay_money AS "payMoney",
 		a.payer AS "payer",
+		s.name AS  "bizPayRecord.payer.name",
 		a.cust_id AS "customer.id",
 		so.name as "customer.name",
 		a.biz_status AS "bizStatus",
 		a.account AS "account",
+		o.name AS  "account.name",
 		a.to_account AS "toAccount",
+		f.name AS "toAccount.name",
 		a.record_type AS "recordType",
 		a.record_type_name AS "recordTypeName",
 		a.pay_type AS "payType",
@@ -30,6 +33,9 @@
 	<sql id="bizPayRecordJoins">
 		left join sys_user su on a.create_id=su.id
 		LEFT JOIN sys_office so on so.id=a.cust_id
+		LEFT JOIN sys_user s on s.id = a.payer
+		LEFT JOIN sys_office o on o.id = a.account
+	    LEFT JOIN  sys_office f on f.id = a.to_account
 	</sql>
     
 	<select id="get" resultType="BizPayRecord">
@@ -47,14 +53,17 @@
 		<include refid="bizPayRecordJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="id != null and id != ''">
-				AND a.id = #{id}
-			</if>
 			<if test="payNum != null and payNum != ''">
-				AND a.pay_num = #{payNum}
+				AND a.pay_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{payNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{payNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{payNum},'%')</if>
 			</if>
 			<if test="outTradeNo != null and outTradeNo != ''">
-				AND a.out_trade_no = #{outTradeNo}
+				AND a.out_trade_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{outTradeNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{outTradeNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{outTradeNo},'%')</if>
 			</if>
 			<if test="payMoney != null and payMoney != ''">
 				AND a.pay_money = #{payMoney}
@@ -62,10 +71,22 @@
 			<if test="payer != null and payer != ''">
 				AND a.payer = #{payer}
 			</if>
-			<if test="customer != null and customer.id != null and customer.id != ''">
-				AND a.cust_id = #{customer.id}
+			<if test="customer != null and customer.name != null and customer.name != ''">
+				AND so.NAME LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.name},'%')</if>
 			</if>
-			<if test="bizStatus != null and bizStatus != ''">
+			<if test="trandStartTime != null and trandStartTime != '' and trandEndTime != null and trandEndTime != ''">
+				AND a.create_time BETWEEN #{trandStartTime} and #{trandEndTime}
+			</if>
+			<if test="trandStartTime != null and trandStartTime != ''and trandEndTime == null ">
+				AND a.create_time &gt;= #{trandStartTime}
+			</if>
+			<if test="trandStartTime == null and trandStartTime != null and trandStartTime != ''" >
+				AND a.create_time &lt;= #{trandStartTime}
+			</if>
+			<if test="bizStatus != null and bizStatus != -1">
 				AND a.biz_status = #{bizStatus}
 			</if>
 			<if test="account != null and account != ''">
@@ -88,6 +109,12 @@
 			</if>
 			<if test="tradeReason != null and tradeReason != ''">
 				AND a.trade_reason = #{tradeReason}
+			</if>
+			<if test="createBy != null and createBy.name != '' and createBy.name != null">
+				AND su.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{createBy.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{createBy.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{createBy.name},'%')</if>
 			</if>
 		</where>
 		<choose>

@@ -27,13 +27,15 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 	private Integer payer;		// 支付人
 	private Office customer;		// 客户ID
 	private Integer bizStatus;		// 支付状态
-	private String account;		// 支付账号
-	private String toAccount;		// 支付到账户
+	private Office account;		// 支付账号
+	private Office toAccount;		// 支付到账户
 	private Integer recordType;		// 交易类型：充值、体现、支付
 	private String recordTypeName;		// 交易类型名称
 	private Integer payType;		// 支付类型：wx(微信) alipay(支付宝)
 	private String payTypeName;		// 支付类型名称
 	private String tradeReason;		// 交易作用/原因
+	private Date trandStartTime;   //交易开始时间
+	private Date trandEndTime;     //交易结束时间
 
 	public BizPayRecord() {
 		super();
@@ -77,24 +79,22 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 		this.customer = customer;
 	}
 
-	@Length(min=0, max=50, message="支付账号长度必须介于 0 和 50 之间")
-	public String getAccount() {
+	public Office getAccount() {
 		return account;
 	}
 
-	public void setAccount(String account) {
+	public void setAccount(Office account) {
 		this.account = account;
 	}
-	
-	@Length(min=1, max=50, message="支付到账户长度必须介于 1 和 50 之间")
-	public String getToAccount() {
+
+	public Office getToAccount() {
 		return toAccount;
 	}
 
-	public void setToAccount(String toAccount) {
+	public void setToAccount(Office toAccount) {
 		this.toAccount = toAccount;
 	}
-	
+
 	@Length(min=1, max=10, message="交易类型名称长度必须介于 1 和 10 之间")
 	public String getRecordTypeName() {
 		return recordTypeName;
@@ -152,5 +152,21 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 
 	public Double getPayMoney() {
 		return payMoney;
+	}
+
+	public Date getTrandStartTime() {
+		return trandStartTime;
+	}
+
+	public void setTrandStartTime(Date trandStartTime) {
+		this.trandStartTime = trandStartTime;
+	}
+
+	public Date getTrandEndTime() {
+		return trandEndTime;
+	}
+
+	public void setTrandEndTime(Date trandEndTime) {
+		this.trandEndTime = trandEndTime;
 	}
 }
