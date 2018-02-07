@@ -86,7 +86,6 @@
                             var flag=true;
 
                             var tr_tds="";
-
                             var t=0;
                             $.each(skuInfoList,function (index,skuInfo) {
 
@@ -120,7 +119,7 @@
                     skuIds+=$(this).val()+",";
 				});
                 skuIds=skuIds.substring(0,skuIds.length-1);
-				$("#tbody").empty();
+				<%--$("#tbody").empty(); 点击确定清空选中商品 --%>
                 $.ajax({
                     type:"POST",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameList?ids="+skuIds,
@@ -128,14 +127,14 @@
                     success:function(data){
                         var htmlInfo = "";
                         $.each(data,function(index,item) {
-							var td1=$("#tbody tr td").eq(index).find("input").text();
-							<%--var tr = $("#tbody").children("tr");--%>
-							var tr=$("#tbody").children();
-							var history_income_type = tr.eq("+item.id+").find("input").val();
+							<%--var td1=$("#tbody tr td").eq(index).find("input").text();--%>
+							<%--&lt;%&ndash;var tr = $("#tbody").children("tr");&ndash;%&gt;--%>
+							<%--var tr=$("#tbody").children();--%>
+							<%--var history_income_type = tr.eq("+item.id+").find("input").val();--%>
 
-							if(history_income_type!=undefined){
-								console.log(" 相同的id ");
-							}else{
+							<%--if(history_income_type!=undefined){--%>
+								<%--console.log(" 相同的id "); 点击确定一次只能添加选中商品 --%>
+							<%--}else{--%>
 								htmlInfo+="<tr id='"+item.id+"'><td><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
 									"<td><input name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！'/></td>"+
 									"<td><input name='orgPrices' readonly='readonly' value='"+item.basePrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！' /></td>"+
@@ -149,7 +148,7 @@
 									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
 									"<td><input name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
 									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
-							}
+							<%--}--%>
                         });
                         $("#tbody").append(htmlInfo);
                     }

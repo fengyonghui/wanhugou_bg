@@ -120,7 +120,7 @@
 				<th>业务状态</th>
 				<th>订单来源</th>
 				<th>创建人</th>
-				<th>订单创建时间</th>
+				<th>订单更新时间</th>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -182,7 +182,7 @@
 					${orderHeader.createBy.name}
 				</td>
 				<td>
-                    <fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                    <fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                 </td>
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
 					<c:choose>
