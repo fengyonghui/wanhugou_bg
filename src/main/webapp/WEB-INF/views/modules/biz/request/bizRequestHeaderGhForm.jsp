@@ -139,7 +139,7 @@
 	<div class="control-group">
 		<label class="control-label">备注：</label>
 		<div class="controls">
-			<textarea readonly="readonly"  class="input-xlarge ">${remark}</textarea>
+			<textarea readonly="readonly"  class="input-xlarge ">${bizRequestHeader.remark}</textarea>
 		</div>
 	</div>
 
