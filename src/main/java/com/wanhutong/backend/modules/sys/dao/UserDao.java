@@ -86,4 +86,9 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public int updateUserInfo(User user);
 
+	/**
+	 * 会员搜索
+	 */
+	public List<User> contact(User user);
+
 }

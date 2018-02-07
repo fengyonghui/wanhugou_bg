@@ -194,7 +194,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		}
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void delete(Office office) {
 		super.delete(office);

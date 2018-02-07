@@ -90,7 +90,7 @@ public class UserController extends BaseController {
 
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
-	public String form(User user, Model model) {
+	public String form(User user, Model model,String flag) {
 		if (user.getOffice()==null || user.getOffice().getId()==null){
 			user.setCompany(UserUtils.getUser().getCompany());
 			user.setOffice(UserUtils.getUser().getOffice());
@@ -117,6 +117,9 @@ public class UserController extends BaseController {
 				user.setOffice(null);
 			}
 		}
+		if (flag != null && !"".equals(flag)){
+		    model.addAttribute("flag",flag);
+        }
 		model.addAttribute("user", user);
 		model.addAttribute("allRoles", systemService.findAllRole());
 //		if(user.getConn().equals("connIndex")){
@@ -156,11 +159,11 @@ public class UserController extends BaseController {
 			user.setPassword(SystemService.entryptPassword(user.getNewPassword()));
 		}
 		if (!beanValidator(model, user)){
-			return form(user, model);
+			return form(user, model,null);
 		}
 		if (!"true".equals(checkLoginName(user.getOldLoginName(), user.getLoginName()))){
 			addMessage(model, "保存用户'" + user.getLoginName() + "'失败，登录名已存在");
-			return form(user, model);
+			return form(user, model,null);
 		}
 		// 角色数据有效性验证，过滤不在授权内的角色
 		List<Role> roleList = Lists.newArrayList();
@@ -431,5 +434,25 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"conIndex"})
 	public String conIndex(User user, Model model) {
 		return "modules/sys/conIndex";
+	}
+
+    /**
+     * 会员搜索
+     * flag = ck 查看
+     */
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = "contact")
+	public String contact(User user, HttpServletRequest request, HttpServletResponse response, Model model){
+		Office company = new Office();
+		if (user.getCompany() != null && user.getCompany().getName() != null && !"".equals(user.getCompany().getName())){
+            company.setName(user.getCompany().getName());
+        }
+		company.setType(OfficeTypeEnum.CUSTOMER.getType());
+        user.setCompany(company);
+        Page<User> page = systemService.contact(new Page<User>(request, response),user);
+		model.addAttribute("page", page);
+		model.addAttribute("flag","ck");
+//		model.addAttribute("userList",userList);
+		return "modules/sys/office/sysOfficeContact";
 	}
 }

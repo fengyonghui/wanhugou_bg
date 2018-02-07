@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>商品库存详情管理</title>
+	<title>会员搜索</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -18,36 +18,22 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/inventory/bizInventorySku?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情列表</a></li>
-		<c:if test="${zt eq '2'}">
-			<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-				<li><a href="${ctx}/biz/inventory/bizInventorySku/form?invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">商品库存详情添加</a></li>
-			</shiro:hasPermission>
-		</c:if>
+		<li class="active"><a href="${ctx}/sys/user/contact">联系人列表</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizInventorySku" action="${ctx}/biz/inventory/bizInventorySku/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/contact" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<input id="zt" type="hidden" name="zt" value="${zt}"/>
-		<input id="invInfo.id" type="hidden" name="invInfo.id" value="${bizInventorySku.invInfo.id}"/>
 		<ul class="ul-form">
-			<li><label>商品名称：</label>
-				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
-                <input id="skuInfo.id" type="hidden" name="skuInfo.id" value="${skuInfo.id}"/>
+			<li><label>联系人姓名：</label>
+				<form:input path="name" htmlEscape="false" maxlength="11" class="input-medium"/>
+                <%--<input id="id" type="hidden" name="id" value="${id}"/>--%>
 			</li>
-			<li><label>商品编号：</label>
-				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>联系人电话：</label>
+				<form:input path="mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>仓库名称：</label>
-				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
-				<input id="invInfo.id" type="hidden" name="invInfo.id" value="${invInfo.id}"/>
+			<li><label>会员名称：</label>
+				<form:input path="company.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<%--<li><label>库存类型：</label>
-				<form:select path="invType" class="input-medium">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('inv_type')}" itemLabel="label" itemValue="value"
-								  htmlEscape="false"/></form:select>
-			</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -56,73 +42,31 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>库存类型</th>
-				<th>仓库名称</th>
-				<th>商品名称</th>
-				<th>商品编号</th>
-				<th>库存数量</th>
-				<c:if test="${zt eq '1' || zt eq '2'}">
-					<th>销售订单数量</th>
-					<th>调入数量</th>
-					<th>调出数量</th>
-					<%--<th>专属库存的客户</th>--%>
-				</c:if>
-				<c:if test="${zt eq '3'}">
-					<th>修改时间</th>
-					<th>修改人</th>
-				</c:if>
-				<c:if test="${zt eq '2' || zt eq '3'}">
-					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><th>操作</th></shiro:hasPermission>
-				</c:if>
+				<th>会员名称</th>
+				<th>联系人姓名</th>
+				<th>联系人电话</th>
+				<th>客户专员</th>
+				<th>采购中心</th>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizInventorySku">
+		<c:forEach items="${page.list}" var="user">
 			<tr>
-				<td>
-					<%--<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}">--%>
-					${fns:getDictLabel(bizInventorySku.invType, 'inv_type', '未知状态')}
-				</a></td>
-				<td>
-					${bizInventorySku.invInfo.name}
+				<td><a href="${ctx}/sys/office/form?id=${user.company.id}&flag=${flag}">
+						${user.company.name}</a>
+				</td>
+				<td><a href="${ctx}/sys/user/form?id=${user.id}&flag=${flag}">
+						${user.name}</a>
 				</td>
 				<td>
-					${bizInventorySku.skuInfo.name}
+					${user.mobile}
 				</td>
-				<td>
-					${bizInventorySku.skuInfo.partNo}
+				<td><a href="${ctx}/sys/user/form?id=${user.user.id}&flag=${flag}">
+						${user.user.name}</a>
 				</td>
-				<td>
-					${bizInventorySku.stockQty}
+				<td><a href="${ctx}/sys/office/form?id=${user.cent.id}&flag=${flag}">
+						${user.cent.name}</a>
 				</td>
-				<c:if test="${zt eq '1' || zt eq '2'}">
-					<td>
-						${bizInventorySku.stockOrdQty}
-					</td>
-					<td>
-						${bizInventorySku.transInQty}
-					</td>
-					<td>
-						${bizInventorySku.transOutQty}
-					</td>
-					<%--<td>
-						${bizInventorySku.customer.name}
-					</td>--%>
-				</c:if>
-				<c:if test="${zt eq '3'}">
-					<td>
-						<fmt:formatDate value="${bizInventorySku.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-					</td>
-					<td>
-						${bizInventorySku.updateBy.name}
-					</td>
-				</c:if>
-				<c:if test="${zt eq '2' || zt eq '3'}">
-					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><td>
-						<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">修改</a>
-						<a href="${ctx}/biz/inventory/bizInventorySku/delete?id=${bizInventorySku.id}&zt=${zt}" onclick="return confirmx('确认要删除该商品库存详情吗？', this.href)">删除</a>
-					</td></shiro:hasPermission>
-				</c:if>
 			</tr>
 		</c:forEach>
 		</tbody>

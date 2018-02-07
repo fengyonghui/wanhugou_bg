@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -246,7 +247,7 @@ public class OfficeController extends BaseController {
 			return "redirect:" + adminPath + "/sys/office/";
 		}
 		if (!beanValidator(model, office)){
-			return form(office, model);
+			return form(office, model,null);
 		}
 		BizCustCredit bizCustCredit = new BizCustCredit();
 		bizCustCredit.setLevel(office.getLevel());
@@ -278,7 +279,7 @@ public class OfficeController extends BaseController {
 	
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "form")
-	public String form(Office office, Model model) {
+	public String form(Office office, Model model,String flag) {
 		User user = UserUtils.getUser();
 		if (office.getParent()==null || office.getParent().getId()==null){
 			office.setParent(user.getOffice());
@@ -308,6 +309,9 @@ public class OfficeController extends BaseController {
 		if(office.getPrimaryPerson()!=null){
 			office.setPrimaryPerson(systemService.getUser(office.getPrimaryPerson().getId()));
 		}
+		if (flag != null && !"".equals(flag)){
+		    model.addAttribute("flag",flag);
+        }
 		model.addAttribute("office", office);
 		return "modules/sys/officeForm";
 	}
@@ -320,7 +324,7 @@ public class OfficeController extends BaseController {
 			return "redirect:" + adminPath + "/sys/office/";
 		}
 		if (!beanValidator(model, office)){
-			return form(office, model);
+			return form(office, model,null);
 		}
 		officeService.save(office);
 		
@@ -406,7 +410,6 @@ public class OfficeController extends BaseController {
 		}
 		return convertList(list);
 	}
-
 	private List<Map<String, Object>> convertList(List<Office> list){
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		if(list != null && list.size() > 0 ){

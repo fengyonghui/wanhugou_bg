@@ -424,6 +424,18 @@ public class SystemService extends BaseService implements InitializingBean {
 		// 清除日志相关缓存
 		CacheUtils.remove(LogUtils.CACHE_MENU_NAME_PATH_MAP);
 	}
+
+	/**
+	 * 会员搜索
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public Page<User> contact(Page<User> page,User user){
+		user.setPage(page);
+        List<User> contact = userDao.contact(user);
+        page.setList(userDao.contact(user));
+		return page;
+	}
 	
 	/**
 	 * 获取Key加载信息

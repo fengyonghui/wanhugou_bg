@@ -57,7 +57,7 @@
 			</collection>
 		</collection>
 	</resultMap> -->
-	
+
     <sql id="userColumns">
     	a.id,
     	a.company_id AS "company.id",
@@ -260,7 +260,53 @@
 		FROM sys_user a
 		WHERE a.status = #{DEL_FLAG_NORMAL}
 	</select>
-	
+	<!--会员搜索-->
+	<select id="contact" resultType="User">
+		SELECT
+			u.id AS "id",
+			u.name AS "name",
+			u.phone AS "phone",
+			u.mobile AS "mobile",
+			cust.id AS "company.id",
+			cust.name AS "company.name",
+			us.id AS "user.id",
+			us.name AS "user.name",
+			cent.id AS "cent.id",
+			cent.name AS "cent.name"
+		FROM sys_user u
+		LEFT JOIN sys_office cust ON cust.id = u.company_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = cust.id
+		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		LEFT JOIN sys_office cent ON cent.id = ccc.center_id
+		WHERE u.status = #{DEL_FLAG_NORMAL}
+		<if test="company != null and company.type != null">
+			and cust.type = #{company.type}
+		</if>
+		<if test="phone != null and phone !=''">
+			AND u.phone LIKE
+			<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{phone}, '%')</if>
+		</if>
+		<if test="name != null and name != ''">
+			AND u.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND u.mobile LIKE
+			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{mobile}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if>
+		</if>
+		<if test="company != null and company.name != null and company.name != ''">
+			AND cust.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{company.name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{company.name}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{company.name}, '%')</if>
+		</if>
+	</select>
 	<!-- 插入用户 -->
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO sys_user(

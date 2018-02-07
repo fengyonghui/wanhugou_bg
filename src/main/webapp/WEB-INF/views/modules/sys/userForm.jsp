@@ -34,13 +34,18 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
-			<li><a href="${ctx}/sys/user/list?conn=${user.conn}">用户列表</a></li>
-			<li class="active"><a href="${ctx}/sys/user/form?id=${user.id}&conn=${user.conn}">用户<shiro:hasPermission name="sys:user:edit">${not empty user.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:user:edit">查看</shiro:lacksPermission></a></li>
+		<c:if test="${flag eq 'ck'}">
+			<li>用户详情</li>
 		</c:if>
-		<c:if test="${empty user.conn}">
-			<li><a href="${ctx}/sys/user/list">用户列表</a></li>
-			<li class="active"><a href="${ctx}/sys/user/form?id=${user.id}">用户<shiro:hasPermission name="sys:user:edit">${not empty user.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:user:edit">查看</shiro:lacksPermission></a></li>
+		<c:if test="${flag ne 'ck'}">
+			<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
+				<li><a href="${ctx}/sys/user/list?conn=${user.conn}">用户列表</a></li>
+				<li class="active"><a href="${ctx}/sys/user/form?id=${user.id}&conn=${user.conn}">用户<shiro:hasPermission name="sys:user:edit">${not empty user.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:user:edit">查看</shiro:lacksPermission></a></li>
+			</c:if>
+			<c:if test="${empty user.conn}">
+				<li><a href="${ctx}/sys/user/list">用户列表</a></li>
+				<li class="active"><a href="${ctx}/sys/user/form?id=${user.id}">用户<shiro:hasPermission name="sys:user:edit">${not empty user.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:user:edit">查看</shiro:lacksPermission></a></li>
+			</c:if>
 		</c:if>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
@@ -169,7 +174,9 @@
 			</div>
 		</c:if>
 		<div class="form-actions">
-			<shiro:hasPermission name="sys:user:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<c:if test="${flag ne 'ck'}">
+				<shiro:hasPermission name="sys:user:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			</c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

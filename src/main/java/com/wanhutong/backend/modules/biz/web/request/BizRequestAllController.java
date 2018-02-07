@@ -79,7 +79,7 @@ public class BizRequestAllController {
         }
         //用户属于供应中心或管理员
 
-       String type= user.getCompany().getType();
+       /*String type= user.getCompany().getType();
         System.out.println(type);
 
         boolean flag=false;
@@ -93,11 +93,11 @@ public class BizRequestAllController {
         }
         if(flag){
             model.addAttribute("ship",ship);
-        }
+        }*/
 
-//        if (user.getCompany().getType().equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
-//            model.addAttribute("ship",ship);
-//        }
+        if (user.getCompany().getType().equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
+            model.addAttribute("ship",ship);
+        }
         model.addAttribute("source",source);
         if(bizOrderHeader==null){
             bizOrderHeader=new BizOrderHeader();

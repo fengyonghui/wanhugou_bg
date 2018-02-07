@@ -52,6 +52,8 @@ public class User extends DataEntity<User> {
 	
 	private Role role;	// 根据角色查询用户条件
 	private String conn;//用于标识客户专员
+	private User user;
+	private Office cent;
 
 	public String getConn() {
 		return conn;
@@ -310,7 +312,23 @@ public class User extends DataEntity<User> {
 			roleList.add(role);
 		}
 	}
-	
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Office getCent() {
+		return cent;
+	}
+
+	public void setCent(Office cent) {
+		this.cent = cent;
+	}
+
 	/**
 	 * 用户拥有的角色名称字符串, 多个角色名称用','分隔.
 	 */
