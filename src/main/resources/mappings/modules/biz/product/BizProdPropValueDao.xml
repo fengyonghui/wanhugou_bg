@@ -12,6 +12,7 @@
 		a.prop_value_id AS "catePropValue.id",
 		a.prop_value_id AS "sysPropValue.id",
 		a.prop_value AS "propValue",
+		a.code AS code,
 		a.source AS "source",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -95,6 +96,7 @@
 			prop_value_id,
 		</if>
 			prop_value,
+			code,
 			source,
 			create_id,
 			create_time,
@@ -113,6 +115,7 @@
 			#{sysPropValue.id},
 		</if>
 			#{propValue},
+			#{code},
 			#{source},
 			#{createBy.id},
 			#{createDate},
@@ -132,6 +135,7 @@
 			</if>
 			prop_name = #{propName},
 			prop_value = #{propValue},
+			code = #{code},
 			source = #{source},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},

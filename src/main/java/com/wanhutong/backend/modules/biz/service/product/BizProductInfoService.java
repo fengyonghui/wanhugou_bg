@@ -200,7 +200,6 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         result.clear();
         result.addAll(existSet);
         result.removeAll(newSet);
-
         for (String url : result) {
             for (CommonImg commonImg1 : commonImgs) {
                 if (url.equals(commonImg1.getImgServer() + commonImg1.getImgPath())) {

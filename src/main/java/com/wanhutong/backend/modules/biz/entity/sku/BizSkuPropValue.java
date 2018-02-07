@@ -27,6 +27,7 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 	private String propName;		// prop_name
 	private BizProdPropValue prodPropValue;		// biz_prod_prop_value.id
 	private String propValue;		// biz_prod_prop_value
+	private String code; //编码
 	private String source;
 	private PropertyInfo propertyInfo;
 
@@ -104,5 +105,13 @@ public class BizSkuPropValue extends DataEntity<BizSkuPropValue> {
 
 	public void setPropertyInfo(PropertyInfo propertyInfo) {
 		this.propertyInfo = propertyInfo;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 }

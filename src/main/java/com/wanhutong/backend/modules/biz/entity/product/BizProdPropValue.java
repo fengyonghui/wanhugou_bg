@@ -26,6 +26,7 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 	private BizCatePropValue catePropValue;			// biz_cate_prop_value.id
 	private PropValue sysPropValue;   					//biz_cate_prop_value.id或sys_prop_value
 	private String propValue;							// 属性值
+	private String code; //值编码
 	private String source;								// sys系统，cate分类
 
 	private Integer propertyInfoId;
@@ -134,5 +135,13 @@ public class BizProdPropValue extends DataEntity<BizProdPropValue> {
 
 	public void setProdPropertyInfoId(Integer prodPropertyInfoId) {
 		this.prodPropertyInfoId = prodPropertyInfoId;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 }

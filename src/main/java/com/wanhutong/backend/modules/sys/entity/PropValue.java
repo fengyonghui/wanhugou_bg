@@ -21,6 +21,7 @@ public class PropValue extends DataEntity<PropValue> {
 	private static final long serialVersionUID = 1L;
 	private PropertyInfo propertyInfo;		//
 	private String value;		// 记录该属性值
+	private String code;  //编码
 
 	
 	public PropValue() {
@@ -47,5 +48,14 @@ public class PropValue extends DataEntity<PropValue> {
 
 	public void setPropertyInfo(PropertyInfo propertyInfo) {
 		this.propertyInfo = propertyInfo;
+	}
+
+	@Length(min=1, max=10, message="记录该属性值长度必须介于 1 和 10 之间")
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 }

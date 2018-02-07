@@ -19,6 +19,7 @@ public class BizCatePropValue extends DataEntity<BizCatePropValue> {
 	private BizCatePropertyInfo catePropertyInfo;		// biz_cate_property_info.id
 	private String propName;
 	private String value;		// 记录该属性值
+	private String code; //值编码
 	private String source;
 
 	private PropertyInfo propertyInfo;
@@ -102,5 +103,13 @@ public class BizCatePropValue extends DataEntity<BizCatePropValue> {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 }
