@@ -9,6 +9,9 @@ import java.util.Map;
 
 
 import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,8 +66,10 @@ public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyIn
 	public void save(PropertyInfo propertyInfo) {
 	List<PropValue> propValueList=propertyInfo.getPropValueList();
 	super.save(propertyInfo);
-	for(PropValue propValue:propValueList) {
+		for(PropValue propValue:propValueList) {
 		propValue.setPropertyInfo(propertyInfo);
+		String code=HanyuPinyinHelper.getFirstLetters(propValue.getValue(), HanyuPinyinCaseType.UPPERCASE);
+		propValue.setCode(code);
 		propValueService.save(propValue);
 
 	}

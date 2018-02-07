@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.service.TreeService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
@@ -148,7 +149,7 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			commonImg=commonImgService.get(bizCategoryInfo.getImgId());
 		}
 		commonImg.setImgType(ImgEnum.CATEGORY_TYPE.getCode());
-		if (bizCategoryInfo.getCatePhoto() != null){
+		if (StringUtils.isNotBlank(bizCategoryInfo.getCatePhoto())){
 			commonImg.setObjectName("biz_category_info");
 			commonImg.setObjectId(bizCategoryInfo.getId());
 			commonImgService.delete(commonImg);
