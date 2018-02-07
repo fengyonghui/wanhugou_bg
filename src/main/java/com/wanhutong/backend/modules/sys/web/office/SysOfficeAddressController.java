@@ -38,6 +38,7 @@ public class SysOfficeAddressController extends BaseController {
 	@Autowired
 	private SysOfficeAddressService sysOfficeAddressService;
 
+//	用于地址信息中默认地址的逻辑
 	@ResponseBody
 	@RequiresPermissions("sys:office:sysOfficeAddress:view")
 	@RequestMapping(value = "findAddrByOffice")
@@ -45,13 +46,14 @@ public class SysOfficeAddressController extends BaseController {
 		SysOfficeAddress add = null;
 	//	BeanUtils.copyProperties(sysOfficeAddress,add);
 		sysOfficeAddress.setType(null);
-	//	add.setType(null);
 	//	add.setOffice(sysOfficeAddress.getOffice());
 		List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
+		Integer i=-1;	//进入循环初始值
 		if(list!=null && list.size()>0){
 			for (SysOfficeAddress a : list) {
+					++i;
 				if(a.getDeFaultStatus()==OrderHeaderBizStatusEnum.ORDER_DEFAULTSTATUS.getState()){//1
-					add = list.get(0);
+					add = list.get(i);
 					break;
 				}
 			}
