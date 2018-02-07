@@ -88,8 +88,8 @@
 		<div class="control-group">
 			<label class="control-label">主负责人:</label>
 			<div class="controls">
-				 <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office1.name}" labelName="office1.name" labelValue="${office1.name}"
-					title="用户" url="/sys/office/treeData?type=3" allowClear="true" notAllowSelectParent="true"/>
+				 <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
+					title="用户" url="/sys/user/treeData?type=3&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
@@ -97,7 +97,7 @@
 			<label class="control-label">副负责人:</label>
 			<div class="controls">
 				 <sys:treeselect id="deputyPerson" name="deputyPerson.id" value="${office.deputyPerson.id}" labelName="office.deputyPerson.name" labelValue="${office.deputyPerson.name}"
-					title="用户" url="/sys/office/treeData?type=3" allowClear="true" notAllowSelectParent="true"/>
+					title="用户" url="/sys/user/treeData?type=3&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
 			</div>
 		</div>
 		<div class="control-group">
