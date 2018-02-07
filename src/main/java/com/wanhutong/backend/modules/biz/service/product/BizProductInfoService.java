@@ -14,6 +14,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -119,6 +120,14 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         super.save(bizProductInfo);
     }
 
+    private List<CommonImg> getImgList(Integer imgType, Integer prodId) {
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(prodId);
+        commonImg.setObjectName("biz_product_info");
+        commonImg.setImgType(imgType);
+        return commonImgService.findList(commonImg);
+    }
+
     @Transactional(readOnly = false)
     public void saveCommonImg(BizProductInfo bizProductInfo) {
         String photos = null;
@@ -148,11 +157,24 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
             saveProdImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr);
         }
 
+        //设置主图和图片次序
+        List<CommonImg> commonImgs = getImgList(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo.getId());
+        for (int i = 0; i < commonImgs.size(); i++) {
+            CommonImg commonImg = commonImgs.get(i);
+            commonImg.setImgSort(i);
+            commonImgService.save(commonImg);
+
+            if (i == 0) {
+                bizProductInfo.setImgUrl(commonImg.getImgServer() + commonImg.getImgPath());
+                bizProductInfoDao.update(bizProductInfo);
+            }
+        }
+
         if (photoLists != null) {
             String[] photoArr = photoLists.split("\\|");
             saveProdImg(ImgEnum.LIST_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr);
         }
-        if (photoDetails != null ) {
+        if (photoDetails != null) {
             String[] photoArr = photoDetails.split("\\|");
             saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr);
         }
@@ -160,60 +182,55 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     }
 
     public void saveProdImg(Integer imgType, BizProductInfo bizProductInfo, String[] photoArr) {
-        User user = UserUtils.getUser();
-        String pahtPrefix = AliOssClientUtil.getPahtPrefix();
-        String s = DateUtils.formatDate(new Date()).replaceAll("-", "");
+        if (bizProductInfo.getId() == null) {
+            log.error("Can't save product image without product ID!");
+            return;
+        }
 
-//        delete current images with current img_type
+        List<CommonImg> commonImgs = getImgList(imgType, bizProductInfo.getId());
+
+        Set<String> existSet = new HashSet<>();
+        for (CommonImg commonImg1 : commonImgs) {
+            existSet.add(commonImg1.getImgServer() + commonImg1.getImgPath());
+        }
+        Set<String> newSet = new HashSet<>(Arrays.asList(photoArr));
+
+        Set<String> result = new HashSet<String>();
+        //差集，结果做删除操作
+        result.clear();
+        result.addAll(existSet);
+        result.removeAll(newSet);
+
+        for (String url : result) {
+            for (CommonImg commonImg1 : commonImgs) {
+                if (url.equals(commonImg1.getImgServer() + commonImg1.getImgPath())) {
+                    commonImg1.setDelFlag("0");
+                    commonImgService.delete(commonImg1);
+                }
+            }
+        }
+        //差集，结果做插入操作
+        result.clear();
+        result.addAll(newSet);
+        result.removeAll(existSet);
+
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(bizProductInfo.getId());
         commonImg.setObjectName("biz_product_info");
         commonImg.setImgType(imgType);
-        commonImgService.deleteCommonImg(commonImg);
-        //主图的处理
-        boolean mainImgSaved = false;
-        for (int i = 0; i < photoArr.length; i++) {
-            if (photoArr[i].trim().length() == 0) {
+        commonImg.setImgSort(20);
+        for (String name : result) {
+            if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer())) {
                 continue;
             }
-            String pathFile = Global.getUserfilesBaseDir() + photoArr[i];
-            File file = new File(pathFile);
-            String folder = AliOssClientUtil.getFolder();
-            String path = folder + "/" + pahtPrefix + "" + user.getCompany().getId() + "/" + user.getId() + "/" + s + "/";
-            int a = photoArr[i].lastIndexOf("/") + 1;
-            String photoName = photoArr[i].substring(a);
-            String fileType = photoName.substring(photoName.indexOf("."));
-            String pathFile2 = Global.getUserfilesBaseDir() + photoArr[i].substring(0, a - 1);
-            String photoNewName = System.currentTimeMillis() + "" + (GenerateOrderUtils.getRandomNum()) + fileType;
-            File file2 = new File(pathFile2 + "/" + photoNewName);
+            String pathFile = Global.getUserfilesBaseDir() + name;
+            String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
 
-            boolean flag = photoArr[i].contains(DsConfig.getImgServer());
-            if (!flag) {
-                file.renameTo(file2);
-                AliOssClientUtil.uploadObject2OSS(file2, path);
-                if (file2.exists()) {
-                    file2.delete();
-                }
-                commonImg.setImgPath(File.separator + path + photoNewName);
-            } else {
-                commonImg.setImgPath(File.separator + path + photoName);
-            }
-            commonImg.setImgSort(i);
+            commonImg.setId(null);
+            commonImg.setImgPath("/"+ossPath);
             commonImg.setImgServer(DsConfig.getImgServer());
             commonImgService.save(commonImg);
-
-            if (commonImg.getImgType() == ImgEnum.MAIN_PRODUCT_TYPE.getCode() && !mainImgSaved) {
-//                if (!flag) {
-//                    bizProductInfo.setImgUrl(commonImg.getImgServer() + "/" + path + photoNewName);
-//                } else {
-//                    bizProductInfo.setImgUrl(commonImg.getImgServer() + "/" + path + photoName);
-//                }
-                bizProductInfo.setImgUrl(commonImg.getImgServer() + commonImg.getImgPath());
-                super.save(bizProductInfo);
-                mainImgSaved = true;
-            }
         }
-
     }
 
     private void saveOwnProp(BizProductInfo bizProductInfo) {

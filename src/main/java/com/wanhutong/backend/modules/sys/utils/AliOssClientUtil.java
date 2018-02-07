@@ -6,7 +6,9 @@ import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
 import com.google.common.collect.Maps;
-import com.wanhutong.backend.common.utils.PropertiesLoader;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.utils.*;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,17 +51,6 @@ public class AliOssClientUtil {
     private static OSSClient ossClient = null;
 
     protected static Logger log = LoggerFactory.getLogger(AliOssClientUtil.class);
-
-   /* @Value("${oss.endpoint}")
-    private static String endpoint;
-    @Value("${accessKeyId}")
-    private static String accessKeyId;
-    @Value("${accessKeySecret}")
-    private static String accessKeySecret;
-    @Value("${bucketName}")
-    private static String bucketName;
-    @Value("#{configProperties['folder']}")
-    public static String folder;*/
 
     /**
      * 获取阿里云OSS客户端对象
@@ -170,12 +162,17 @@ public class AliOssClientUtil {
             //如果没有扩展名则填默认值application/octet-stream
             metadata.setContentType(getContentType(fileName));
             //指定该Object被下载时的名称（指示MINME用户代理如何显示附加的文件，打开或下载，及文件名称）
-            metadata.setContentDisposition("filename/filesize=" + fileName + "/" + fileSize + "Byte.");
+            metadata.setContentDisposition("filefileName/filesize=" + fileName + "/" + fileSize + "Byte.");
             //上传文件   (上传文件流的形式)
             OSSClient ossClient = getOSSClient();
 //            String bucketName = bucketName;
 //            String folder = folder;
-            PutObjectResult putResult = ossClient.putObject(getBucketName(), path + fileName, is, metadata);
+            PutObjectResult putResult = null;
+            if (path.indexOf(".") > 0){
+                putResult = ossClient.putObject(getBucketName(), path, is, metadata);
+            }else {
+                putResult = ossClient.putObject(getBucketName(), path + fileName, is, metadata);
+            }
             //解析结果
             resultStr = putResult.getETag();
         } catch (Exception e) {
@@ -246,7 +243,7 @@ public class AliOssClientUtil {
             //如果没有扩展名则填默认值application/octet-stream
             metadata.setContentType(suffix);
             //指定该Object被下载时的名称（指示MINME用户代理如何显示附加的文件，打开或下载，及文件名称）
-            metadata.setContentDisposition("filename/filesize=" + newFileName + "/" + fileSize + "Byte.");
+            metadata.setContentDisposition("filefileName/filesize=" + newFileName + "/" + fileSize + "Byte.");
             //上传文件   (上传文件流的形式)
 //            String bucketName = bucketName;
 //            String folder = folder;
@@ -373,5 +370,43 @@ public class AliOssClientUtil {
             map.put(key, value != null ? value : com.wanhutong.backend.common.utils.StringUtils.EMPTY);
         }
         return value;
+    }
+
+    /**
+     * 获取当前用户的OSS 文件上传路径
+     * @return OSS 文件上传路径
+     */
+    public static String getOssUploadPath(){
+        User user = UserUtils.getUser();
+        String pathPrefix = AliOssClientUtil.getPahtPrefix();
+        String datePart = DateUtils.formatDate(new Date()).replaceAll("-", "");
+        String ossFolder = AliOssClientUtil.getFolder();
+        String ossPath =  ossFolder + "/"+ pathPrefix + user.getCompany().getId() +"/" + user.getId() + "/" + datePart + "/";
+
+        return ossPath;
+    }
+
+    public static String getRandomFileName(String type){
+        return IdGen.uuid()+"."+type;
+    }
+
+    /**
+     * 将文件上传至阿里云OSS服务器
+     * @param pathFile 需上传的文件，全路径
+     * @param delAfterUpload 上传后，是否删除当前文件
+     * @return
+     */
+    public static String uploadFile(String pathFile, boolean delAfterUpload){
+        String ossPath = getOssUploadPath();
+        String fileType = FileUtils.getFileExtension(pathFile);
+        String newFileName = getRandomFileName(fileType);
+        String uploadFullPathWithName = ossPath + newFileName;
+        File file = new File(pathFile);
+        AliOssClientUtil.uploadObject2OSS(file, uploadFullPathWithName);
+
+        if (delAfterUpload && file.exists()) {
+            file.delete();
+        }
+        return uploadFullPathWithName;
     }
 }
