@@ -25,10 +25,10 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>商品名称：</label>
+			<li><label>产品名称：</label>
 				<form:input path="name" htmlEscape="false" class="input-medium"/>
 			</li>
-			<li><label>商品代码：</label>
+			<li><label>产品代码：</label>
 				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-medium"/>
 			</li>
 			<li><label>品牌名称：</label>
@@ -45,11 +45,11 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>商品图片</th>
-				<th>商品名称</th>
-				<th>商品代码</th>
+				<th>产品图片</th>
+				<th>产品名称</th>
+				<th>产品代码</th>
 				<th>品牌名称</th>
-				<th>商品描述</th>
+				<th>产品描述</th>
 				<th>供应商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
