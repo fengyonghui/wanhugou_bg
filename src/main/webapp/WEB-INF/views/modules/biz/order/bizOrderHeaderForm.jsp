@@ -112,7 +112,80 @@
             });
             $("#updateMoney").click(function () {
                 updateMoney();
-            })
+            });
+            <%--定义订单进度状态--%>
+            if(${bizOrderHeader.bizStatus}==0){ <%--0未支付--%>
+                $("#payment").css("display","block");
+                $("#payment0").addClass("btn-primary");
+                $("#payment5").addClass("btn-default");
+                $("#payment10").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==5){ <%--5首付款支付--%>
+                $("#payment5_1").css("display","block");
+                $("#payment5_2").addClass("btn-primary");
+                $("#payment5_3").addClass("btn-primary");
+                $("#payment5_4").addClass("btn-default");
+                $("#payment5_5").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==10){ <%--全10部支付--%>
+                $("#payment10_1").css("display","block");
+                $("#payment10_2").addClass("btn-primary");
+                $("#payment10_3").addClass("btn-primary");
+                $("#payment10_4").addClass("btn-primary");
+                $("#payment10_5").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==15){ <%--15供货中--%>
+                $("#commodity").css("display","block");
+                $("#commodity5").addClass("btn-primary");
+                $("#commodity10").addClass("btn-primary");
+                $("#commodity15").addClass("btn-primary");
+                $("#commodity17").addClass("btn-default");
+                $("#commodity20").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==17){ <%--17采购中--%>
+                $("#purchase").css("display","block");
+                $("#purchase5").addClass("btn-primary");
+                $("#purchase10").addClass("btn-primary");
+                $("#purchase15").addClass("btn-primary");
+                $("#purchase17").addClass("btn-primary");
+                $("#purchase20").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==18){ <%--18采购完成--%>
+                $("#supply_core").css("display","block");
+                $("#supply_core17").addClass("btn-primary");
+                $("#supply_core18").addClass("btn-primary");
+                $("#supply_core19").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==19){ <%--19供应中心供货--%>
+                $("#deliver_goods").css("display","block");
+                $("#deliver_goods18").addClass("btn-primary");
+                $("#deliver_goods19").addClass("btn-primary");
+                $("#deliver_goods20").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==20){ <%--20已发货--%>
+                $("#goods").css("display","block");
+                $("#goods15").addClass("btn-primary");
+                $("#goods19").addClass("btn-primary");
+                $("#goods20").addClass("btn-primary");
+                $("#goods25").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==25){ <%--25客户已收货--%>
+                $("#have_received_goods").css("display","block");
+                $("#have_received_goods20").addClass("btn-primary");
+                $("#have_received_goods25").addClass("btn-primary");
+                $("#have_received_goods10").addClass("btn-default");
+                $("#have_received_goods30").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==30){ <%--30已完成--%>
+                $("#completed").css("display","block");
+                $("#completed10").addClass("btn-primary");
+                $("#completed25").addClass("btn-primary");
+                $("#completed30").addClass("btn-primary");
+                $("#completed40").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==35){ <%--35已取消--%>
+                $("#cancel").css("display","block");
+                $("#cancel0").addClass("btn-primary");
+                $("#cancel5").addClass("btn-primary");
+                $("#cancel10").addClass("btn-primary");
+                $("#cancel35").addClass("btn-primary");
+                $("#cancel40").addClass("btn-default");
+            }else if(${bizOrderHeader.bizStatus}==40){ <%--40已删除--%>
+                $("#already_delete").css("display","block");
+                $("#already_delete30").addClass("btn-primary");
+                $("#already_delete35").addClass("btn-primary");
+                $("#already_delete40").addClass("btn-primary");
+            }
         });
 
         function clickBut(){
@@ -579,14 +652,200 @@
         </div>
     </c:if>
     <c:if test="${not empty entity.orderDetails}">
-        <%--<div class="control-group">--%>
-            <%--<label class="control-label">进度信息：</label>--%>
-            <%--<div class="controls">--%>
-                <%--<button type="button" class="btn btn-primary btn-arrow-left">箭头向左的按钮</button>--%>
-                <%--<button type="button" class="btn btn-success btn-arrow-right">箭头向右的按钮</button>--%>
-                <%--<button type="button" class="btn btn-success btn-arrow-right">箭头向右的按钮</button>--%>
-            <%--</div>--%>
-        <%--</div>--%>
+        <style type="text/css">
+            /*进度展示css*/
+            .quterMost{
+                /*width: 180px;*/
+                height: 64px;
+                float: left;
+            }
+            .quterMost_Left{
+                float: left;
+                height: 30px;
+                padding-top: 16px;
+            }
+            .quterMost_right{
+                float:right;
+            }
+        </style>
+        <div class="control-group">
+            <label class="control-label">进展信息：</label>
+            <div class="controls">
+                <div id="payment" style="display:none;width: 17%;float: left;">
+                    <div style="float: left;padding-top: 16px;">
+                        <button id="payment0" type="button" class="btn btn-arrow-left">未支付</button>
+                        &nbsp;&rarr;&nbsp;
+                    </div>
+                    <div style="float: left;">
+                        <div style="padding-bottom: 1px;">
+                            <button id="payment5" type="button" class="btn btn-arrow-right">首付款支付</button>
+                        </div>
+                        <div style="padding-top: 1px;">
+                        <button id="payment10" type="button" class="btn btn-arrow-right">全部支付</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="payment5_1" style="display:none;width: 27%;">
+                    <div style="float:left;padding-top: 16px;">
+                        <button id="payment5_2" type="button" class="btn btn-arrow-left">未支付</button>&nbsp;&rarr;
+                        <button id="payment5_3" type="button" class="btn btn-arrow-right">首付款支付</button>&nbsp;&rarr;
+                    </div>
+                    <div style="float:left;">
+                        <div style="padding-top: 1px;">
+                            <button id="payment5_4" type="button" class="btn btn-arrow-right">全部支付</button>
+                        </div>
+                        <div style="padding-top: 1px;">
+                            <button id="payment5_5" type="button" class="btn btn-arrow-left">供货中</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="payment10_1" style="display:none;width: 27%;">
+                    <div style="float:left;width: 110px;">
+                        <div style="padding-top: 1px;float: right;">
+                            <button id="payment10_2" type="button" class="btn btn-arrow-left">未支付</button>
+                        </div>
+                        <div style="padding-top: 1px;float: right;">
+                            <button id="payment10_3" type="button" class="btn btn-arrow-right">首付款支付</button>
+                        </div>
+                    </div>
+                    <div style="float:right;padding-top: 16px;">
+                        &rarr;&nbsp;<button id="payment10_4" type="button" class="btn btn-arrow-right">全部支付</button>
+                        &nbsp;&rarr;
+                        <button id="payment10_5" type="button" class="btn btn-arrow-left">供货中</button>
+                    </div>
+                </div>
+                <div id="commodity" style="display:none;width: 27%;">
+                    <div style="float:left;width: 110px;">
+                        <div style="padding-top: 1px;float: right;">
+                            <button id="commodity5" type="button" class="btn btn-arrow-right">首付款支付</button>
+                        </div>
+                        <div style="padding-top: 1px;float: right;">
+                            <button id="commodity10" type="button" class="btn btn-arrow-right">全部支付</button>
+                        </div>
+                    </div>
+                    <div style="float:left;padding-top: 16px;">
+                    &rarr;&nbsp;<button id="commodity15" type="button" class="btn btn-arrow-left">供货中</button>&nbsp;&rarr;&nbsp;
+                    </div>
+                    <div style="float: left">
+                        <div style="padding-bottom: 1px;">
+                            <button id="commodity17" type="button" class="btn btn-arrow-right">采购中</button>
+                        </div>
+                        <div style="padding-top: 1px;">
+                            <button id="commodity20" type="button" class="btn btn-arrow-right">已发货</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="purchase" style="display:none;float: left;width: 27%;">
+                    <div style="float:left;width: 120px;">
+                        <div style="padding-bottom: 1px;float: right;">
+                            <button id="purchase5" type="button" class="btn btn-arrow-left">首付款支付</button>&nbsp;&rarr;
+                        </div>
+                        <div style="padding-bottom: 1px;float: right;">
+                            <button id="purchase10" type="button" class="btn btn-arrow-right">全部支付</button>&nbsp;&rarr;
+                        </div>
+                        <div style="padding-bottom: 1px;float: right;">
+                            <button id="purchase15" type="button" class="btn btn-arrow-right">供货中</button>&nbsp;&rarr;
+                        </div>
+                    </div>
+                    <div style="float: left">
+                        <div style="padding-top: 31px;padding-left: 10px;">
+                            <button id="purchase17" type="button" class="btn btn-arrow-right">采购中</button>&nbsp;&rarr;&nbsp;
+                            <button id="purchase18" type="button" class="btn btn-arrow-right">采购完成</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="supply_core" style="display:none;width: 30%;">
+                    <button id="supply_core17" type="button" class="btn btn-arrow-left">采购中</button>&nbsp;&rarr;&nbsp;
+                    <button id="supply_core18" type="button" class="btn btn-arrow-right">采购完成</button>&nbsp;&rarr;&nbsp;
+                    <button id="supply_core19" type="button" class="btn btn-arrow-right">供应中心供货</button>
+                </div>
+                <div id="deliver_goods" style="display:none;width: 30%;">
+                    <button id="deliver_goods18" type="button" class="btn btn-arrow-left">采购完成</button>&nbsp;&rarr;&nbsp;
+                    <button id="deliver_goods19" type="button" class="btn btn-arrow-right">供应中心供货</button>&nbsp;&rarr;&nbsp;
+                    <button id="deliver_goods20" type="button" class="btn btn-arrow-right">已发货</button>
+                </div>
+                <div id="goods" style="display:none;width: 30%;">
+                    <div style="float:left;width: 120px;">
+                        <div style="padding-top: 1px;float: right;">
+                            <button id="goods15" type="button" class="btn btn-arrow-right">供货中</button>
+                        </div>
+                        <div style="padding-top: 1px;float: right;">
+                            <button id="goods19" type="button" class="btn btn-arrow-right">供应中心供货</button>
+                        </div>
+                    </div>
+                    <div style="float: left">
+                        <div style="padding-bottom: 1px;padding-top: 16px;">
+                            &nbsp;&rarr;&nbsp;<button id="goods20" type="button" class="btn btn-arrow-left">已发货</button>&nbsp;&rarr;&nbsp;
+                            <button id="goods25" type="button" class="btn btn-arrow-right">客户已收货</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="have_received_goods" style="display:none;width: 28%;">
+                    <div style="float: left;padding-top: 16px;">
+                        <button id="have_received_goods20" type="button" class="btn btn-arrow-left">已发货</button>&nbsp;&rarr;&nbsp;
+                        <button id="have_received_goods25" type="button" class="btn btn-arrow-left">客户已收货</button>&nbsp;&rarr;&nbsp;
+                    </div>
+                    <div style="float: left;">
+                        <div style="padding-bottom: 1px;">
+                            <button id="have_received_goods10" type="button" class="btn btn-arrow-right">全部支付</button>
+                        </div>
+                        <div style="padding-top: 1px;">
+                            <button id="have_received_goods30" type="button" class="btn btn-arrow-right">已完成</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="completed" style="display:none;width: 29%;">
+                    <div style="float:left;width: 110px;">
+                        <div style="padding-bottom: 1px;float: right;">
+                            <button id="completed10" type="button" class="btn btn-arrow-left">全部支付</button>
+                        </div>
+                        <div style="padding-bottom: 1px;float: right;">
+                            <button id="completed25" type="button" class="btn btn-arrow-left">客户已收货</button>
+                        </div>
+                    </div>
+                    <div style="float: left">
+                        <div style="padding-bottom: 1px;padding-top: 16px;">
+                            &nbsp;&rarr;&nbsp;<button id="completed30" type="button" class="btn btn-arrow-right">已完成</button>&nbsp;&rarr;&nbsp;
+                            <button id="completed40" type="button" class="btn btn-arrow-right">已删除</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="cancel" style="display:none;float: left;width: 28%;">
+                    <div style="float:left;width: 120px;">
+                        <div style="padding-bottom: 1px;float: right;">
+                            <button id="cancel0" type="button" class="btn btn-arrow-left">未支付</button>&nbsp;&rarr;&nbsp;
+                        </div>
+                        <div style="padding-bottom: 1px;float: right;">
+                            <button id="cancel5" type="button" class="btn btn-arrow-right">首付款支付</button>&nbsp;&rarr;&nbsp;
+                        </div>
+                        <div style="padding-bottom: 1px;float: right;">
+                            <button id="cancel10" type="button" class="btn btn-arrow-right">全部支付</button>&nbsp;&rarr;&nbsp;
+                        </div>
+                    </div>
+                    <div style="float: left">
+                        <div style="padding-top: 31px;">
+                            <button id="cancel35" type="button" class="btn btn-arrow-right">已取消</button>&nbsp;&rarr;&nbsp;
+                            <button id="cancel40" type="button" class="btn btn-arrow-right">已删除</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="already_delete" style="display:none;width: 27%;">
+                    <div style="float:left;width: 90px;">
+                        <div style="padding-bottom: 1px;float: right">
+                            <button id="already_delete30" type="button" class="btn btn-arrow-left">已完成</button>
+                        </div>
+                        <div style="padding-bottom: 1px;float: right">
+                            <button id="already_delete35" type="button" class="btn btn-arrow-left">已取消</button>
+                        </div>
+                    </div>
+                    <div style="float: left;">
+                        <div style="padding-top: 16px;">
+                            &rarr;<button id="already_delete40" type="button" class="btn btn-arrow-right">已删除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="control-group">
             <label class="control-label">创建人：</label>
             <div class="controls">
