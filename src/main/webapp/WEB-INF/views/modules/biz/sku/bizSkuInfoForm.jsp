@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>商品sku管理</title>
+	<title>商品管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -63,8 +63,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/sku/bizSkuInfo/">商品sku列表</a></li>
-		<li class="active"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">商品sku<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">${not empty bizSkuInfo.id?'详情':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:sku:bizSkuInfo:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz/sku/bizSkuInfo/">商品列表</a></li>
+		<li class="active"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">商品<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">${not empty bizSkuInfo.id?'详情':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:sku:bizSkuInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

@@ -66,6 +66,18 @@ public class BizSkuInfoController extends BaseController {
 		BizSkuInfo entity = null;
 		if (id!=null){
 			entity = bizSkuInfoService.get(id);
+			CommonImg commonImg=new CommonImg();
+			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+			commonImg.setObjectId(id);
+			commonImg.setObjectName("biz_sku_info");
+			List<CommonImg> imgList=commonImgService.findList(commonImg);
+
+			entity.setSkuImgs(imgList);
+			String photos = "";
+			for(CommonImg img:imgList){
+				photos+="|"+img.getImgServer()+img.getImgPath();
+			}
+			entity.setPhotos(photos);
 		}
 		if (entity == null){
 			entity = new BizSkuInfo();
@@ -91,21 +103,6 @@ public class BizSkuInfoController extends BaseController {
 
 		Map<String,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
 
-		CommonImg commonImg=new CommonImg();
-		commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-		commonImg.setObjectId(bizSkuInfo.getId());
-		commonImg.setObjectName("biz_sku_info");
-		if(bizSkuInfo.getId()!=null){
-			List<CommonImg> imgList=commonImgService.findList(commonImg);
-			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-			String photos="";
-			for(CommonImg img:imgList){
-				photos+="|"+img.getImgServer()+img.getImgPath();
-			}
-			if(!"".equals(photos)){
-				bizSkuInfo.setPhotos(photos);
-			}
-		}
 	//	model.addAttribute("prodPropInfoList", prodPropertyInfoList);
 		model.addAttribute("map", map);
 		return "modules/biz/sku/bizSkuInfoForm";

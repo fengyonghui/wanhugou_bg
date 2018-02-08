@@ -1,8 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoDao">
-    
-	<sql id="bizSkuInfoColumns">
+
+    <resultMap id="BizSkuInfoMap" type="com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo">
+        <id column="id" jdbcType="OTHER" property="id"/>
+        <result column="productInfo.id" jdbcType="OTHER" property="productInfo.id"/>
+        <result column="skuType" jdbcType="OTHER" property="skuType"/>
+        <result column="name" jdbcType="OTHER" property="name"/>
+        <result column="partNo" jdbcType="OTHER" property="partNo"/>
+        <result column="basePrice" jdbcType="OTHER" property="basePrice"/>
+        <result column="buyPrice" jdbcType="OTHER" property="buyPrice"/>
+        <result column="delFlag" jdbcType="OTHER" property="delFlag"/>
+        <result column="createBy.id" jdbcType="OTHER" property="createBy.id"/>
+        <result column="createDate" jdbcType="OTHER" property="createDate"/>
+        <result column="uVersion" jdbcType="OTHER" property="uVersion"/>
+        <result column="updateBy.id" jdbcType="OTHER" property="updateBy.id"/>
+        <result column="updateDate" jdbcType="OTHER" property="updateDate"/>
+        <result column="updateBy.name" jdbcType="OTHER" property="updateBy.name"/>
+        <result column="productInfo.name" jdbcType="OTHER" property="productInfo.name"/>
+        <result column="productInfo.imgUrl" jdbcType="OTHER" property="productInfo.imgUrl"/>
+        <result column="productInfo.brandName" jdbcType="OTHER" property="productInfo.brandName"/>
+        <result column="productInfo.prodCode" jdbcType="OTHER" property="productInfo.prodCode"/>
+        <result column="productInfo.office.id" jdbcType="OTHER" property="productInfo.office.id"/>
+        <collection property="skuImgs" ofType="com.wanhutong.backend.modules.biz.entity.common.CommonImg">
+            <id column="img_id" jdbcType="OTHER" property="id"/>
+            <result column="img_server" jdbcType="OTHER" property="imgServer"/>
+            <result column="img_path" jdbcType="OTHER" property="imgPath"/>
+            <result column="img_type" jdbcType="OTHER" property="imgType"/>
+        </collection>
+    </resultMap>
+
+    <sql id="bizSkuInfoColumns">
 		a.id AS "id",
 		a.prod_id AS "productInfo.id",
 		a.sku_type AS "skuType",
@@ -37,11 +65,13 @@
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="BizSkuInfo">
+	<select id="findList" resultMap="BizSkuInfoMap">
 		SELECT 
 			<include refid="bizSkuInfoColumns"/>
+            , ci.id AS img_id ,ci.img_server,ci.img_path,ci.img_type
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
+        LEFT JOIN common_img ci ON ci.object_id = a.id AND ci.object_name = 'biz_sku_info' AND ci.img_type = 30 AND ci.status = 1
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="id != null and id != ''">

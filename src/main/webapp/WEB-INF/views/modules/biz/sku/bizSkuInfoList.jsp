@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>商品sku管理</title>
+	<title>商品管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -18,7 +18,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/sku/bizSkuInfo/">商品sku列表</a></li>
+		<li class="active"><a href="${ctx}/biz/sku/bizSkuInfo/">商品列表</a></li>
 		<%--<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><li><a href="${ctx}/biz/sku/bizSkuInfo/form">商品sku添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo/" method="post" class="breadcrumb form-search">
@@ -46,6 +46,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>商品图片</th>
 				<th>商品名称</th>
 				<th>商品类型</th>
 				<th>产品名称</th>
@@ -64,7 +65,10 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizSkuInfo">
 			<tr>
-				<td><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">
+				<td>
+						<img src="${bizSkuInfo.defaultImgUrl}" width="120px" height="120px"/>
+				</td>
+				<td style="font-size: large"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">
 						${bizSkuInfo.name}</a>
 					</td>
 					<td>

@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.sku;
 
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import org.hibernate.validator.constraints.Length;
@@ -33,7 +34,9 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String partNo;    //商品编码
 	private Double basePrice; //基础售价
 	private Double buyPrice;   //采购价格
-	private List bizSkuInfo;
+	private List<CommonImg> skuImgs;
+
+	private String defaultImg;
 
 	private String skuPropertyInfos;
 
@@ -59,14 +62,6 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	public BizSkuInfo(Integer id){
 		super(id);
 	}
-
-//	public BizSkuInfo getBizSkuInfo() {
-//		return bizSkuInfo;
-//	}
-//
-//	public void setBizSkuInfo(BizSkuInfo bizSkuInfo) {
-//		this.bizSkuInfo = bizSkuInfo;
-//	}
 
 	public BizProductInfo getProductInfo() {
 		return productInfo;
@@ -115,14 +110,6 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setBuyPrice(Double buyPrice) {
 		this.buyPrice = buyPrice;
-	}
-
-	public List getBizSkuInfo() {
-		return bizSkuInfo;
-	}
-
-	public void setBizSkuInfo(List bizSkuInfo) {
-		this.bizSkuInfo = bizSkuInfo;
 	}
 
 	public int getSign() {
@@ -211,5 +198,26 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setStr(String str) {
 		this.str = str;
+	}
+
+	public String getDefaultImgUrl(){
+		if (skuImgs != null && skuImgs.size() > 0){
+			CommonImg commonImg = skuImgs.get(0);
+			return commonImg.getImgServer() + commonImg.getImgPath();
+		}
+
+		return "";
+	}
+
+	public void setSkuImgs(List<CommonImg> skuImgs) {
+		this.skuImgs = skuImgs;
+	}
+
+	public String getDefaultImg() {
+		return defaultImg;
+	}
+
+	public void setDefaultImg(String defaultImg) {
+		this.defaultImg = defaultImg;
 	}
 }
