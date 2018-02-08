@@ -68,7 +68,7 @@
 				<td>
 						<img src="${bizSkuInfo.defaultImgUrl}" width="120px" height="120px"/>
 				</td>
-				<td style="font-size: large"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">
+				<td style="font-size: larger"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">
 						${bizSkuInfo.name}</a>
 					</td>
 					<td>

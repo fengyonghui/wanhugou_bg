@@ -456,6 +456,7 @@
     <thead>
     <tr>
         <%--<th>商品产品Id</th>--%>
+        <th>商品图片</th>
         <th>商品名称</th>
         <th>商品类型</th>
         <th>商品编码</th>
@@ -473,6 +474,9 @@
                 <%--<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizSkuInfo.id}">
                         ${bizSkuInfo.id}</a>
                 </td>--%>
+            <td>
+                <img src="${bizSkuInfo.defaultImgUrl}" width="120px" height="120px"/>
+            </td>
             <td><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">
                     ${bizSkuInfo.name}
             </a>
