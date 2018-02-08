@@ -671,7 +671,7 @@
         <div class="control-group">
             <label class="control-label">进展信息：</label>
             <div class="controls">
-                <div id="payment" style="display:none;width: 17%;float: left;">
+                <div id="payment" style="display:none;width: 29%;float: left;">
                     <div style="float: left;padding-top: 16px;">
                         <button id="payment0" type="button" class="btn btn-arrow-left">未支付</button>
                         &nbsp;&rarr;&nbsp;
@@ -685,7 +685,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="payment5_1" style="display:none;width: 27%;">
+                <div id="payment5_1" style="display:none;width: 29%;">
                     <div style="float:left;padding-top: 16px;">
                         <button id="payment5_2" type="button" class="btn btn-arrow-left">未支付</button>&nbsp;&rarr;
                         <button id="payment5_3" type="button" class="btn btn-arrow-right">首付款支付</button>&nbsp;&rarr;
@@ -699,7 +699,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="payment10_1" style="display:none;width: 27%;">
+                <div id="payment10_1" style="display:none;width: 29%;">
                     <div style="float:left;width: 110px;">
                         <div style="padding-top: 1px;float: right;">
                             <button id="payment10_2" type="button" class="btn btn-arrow-left">未支付</button>
@@ -714,7 +714,7 @@
                         <button id="payment10_5" type="button" class="btn btn-arrow-left">供货中</button>
                     </div>
                 </div>
-                <div id="commodity" style="display:none;width: 27%;">
+                <div id="commodity" style="display:none;width: 29%;">
                     <div style="float:left;width: 110px;">
                         <div style="padding-top: 1px;float: right;">
                             <button id="commodity5" type="button" class="btn btn-arrow-right">首付款支付</button>
@@ -735,7 +735,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="purchase" style="display:none;float: left;width: 27%;">
+                <div id="purchase" style="display:none;float: left;width: 29%;">
                     <div style="float:left;width: 120px;">
                         <div style="padding-bottom: 1px;float: right;">
                             <button id="purchase5" type="button" class="btn btn-arrow-left">首付款支付</button>&nbsp;&rarr;
@@ -780,7 +780,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="have_received_goods" style="display:none;width: 28%;">
+                <div id="have_received_goods" style="display:none;width: 29%;">
                     <div style="float: left;padding-top: 16px;">
                         <button id="have_received_goods20" type="button" class="btn btn-arrow-left">已发货</button>&nbsp;&rarr;&nbsp;
                         <button id="have_received_goods25" type="button" class="btn btn-arrow-left">客户已收货</button>&nbsp;&rarr;&nbsp;
@@ -810,7 +810,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="cancel" style="display:none;float: left;width: 28%;">
+                <div id="cancel" style="display:none;float: left;width: 29%;">
                     <div style="float:left;width: 120px;">
                         <div style="padding-bottom: 1px;float: right;">
                             <button id="cancel0" type="button" class="btn btn-arrow-left">未支付</button>&nbsp;&rarr;&nbsp;
@@ -829,7 +829,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="already_delete" style="display:none;width: 27%;">
+                <div id="already_delete" style="display:none;width: 29%;">
                     <div style="float:left;width: 90px;">
                         <div style="padding-bottom: 1px;float: right">
                             <button id="already_delete30" type="button" class="btn btn-arrow-left">已完成</button>
