@@ -26,11 +26,16 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
+import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
+import com.wanhutong.backend.modules.sys.service.PropValueService;
+import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,6 +69,13 @@ public class BizProductInfoController extends BaseController {
 	private BizCategoryInfoService bizCategoryInfoService;
 	@Autowired
 	private CommonImgService commonImgService;
+	@Autowired
+	private PropValueService propValueService;
+	@Autowired
+	private PropertyInfoService propertyInfoService;
+
+	@Autowired
+	private DefaultPropService defaultPropService;
 
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
@@ -124,8 +136,18 @@ public class BizProductInfoController extends BaseController {
 				bizProductInfo.setPhotoLists(photoLists);
 			}
 		}
+		List<PropValue> propValues=null;
+		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("prop_brand"));
+			if(list!=null && list.size()>0){
+				PropertyInfo propertyInfo=propertyInfoService.get(Integer.parseInt(list.get(0).getPropValue()));
+				PropValue propValue =new PropValue();
+				propValue.setPropertyInfo(propertyInfo);
+				 propValues=propValueService.findList(propValue);
+			}
+
 			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
+			model.addAttribute("propValueList",propValues);
 			model.addAttribute("entity", bizProductInfo);
 		return "modules/biz/product/bizProductInfoForm";
 	}

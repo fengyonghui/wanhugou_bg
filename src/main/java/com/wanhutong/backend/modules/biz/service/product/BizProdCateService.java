@@ -62,12 +62,18 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 		super.delete(bizProdCate);
 	}
 
-	public Map<Integer,List<BizCatePropValue>> findCatePropMap(BizProdCate bizProdCate){
+	public Map<Integer,List<BizCatePropValue>> findCatePropMap(BizProdCate bizProdCate,Boolean boo){
 		List<BizCatePropValue> catePropValueList=bizCatePropValueService.findCatePropInfoValue(bizProdCate);
 		Map<Integer,List<BizCatePropValue>> map = new HashMap<Integer,List<BizCatePropValue>>();
-
+		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("prop_brand"));
 		List<BizCatePropValue>  propValueList=null;
 		for(BizCatePropValue bizCatePropValue:catePropValueList){
+			if(boo){
+				if(bizCatePropValue.getPropertyInfo().getId()==(Integer.parseInt(list.get(0).getPropValue()))){
+					continue;
+				}
+			}
+
 			if(bizCatePropValue.getSource()!=null && bizCatePropValue.getSource().equals("sys")){
 				Integer key=bizCatePropValue.getPropertyInfo().getId();
 				if(map.containsKey(key)){
@@ -88,7 +94,7 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 
 	public Map<String,List<BizCatePropValue>> findCatePropMap4Page(BizProdCate bizProdCate){
 		Map<String,List<BizCatePropValue>> propCateMap = new HashMap<String,List<BizCatePropValue>>();
-		Map<Integer,List<BizCatePropValue>> map=findCatePropMap( bizProdCate);
+		Map<Integer,List<BizCatePropValue>> map=findCatePropMap( bizProdCate,true);
 		for(Integer key :map.keySet()) {
 			PropertyInfo propertyInfo=propertyInfoService.get(key);
 			String sKey = propertyInfo.getId()+","+propertyInfo.getName();
@@ -98,7 +104,7 @@ public class BizProdCateService extends CrudService<BizProdCateDao, BizProdCate>
 	}
 	public List<BizCatePropValue> findCatePropMap4Brand(BizProdCate bizProdCate){
 		List<BizCatePropValue> brandList= new ArrayList<BizCatePropValue>();
-		Map<Integer,List<BizCatePropValue>> map=findCatePropMap( bizProdCate);
+		Map<Integer,List<BizCatePropValue>> map=findCatePropMap( bizProdCate,false);
 		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("prop_brand"));
 		if(list!=null && list.size()>0) {
 			DefaultProp defaultProp = list.get(0);

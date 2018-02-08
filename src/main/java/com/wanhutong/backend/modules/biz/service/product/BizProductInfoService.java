@@ -92,10 +92,10 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
     @Transactional(readOnly = false)
     public void save(BizProductInfo bizProductInfo) {
-        if (bizProductInfo.getCatePropValue() != null && bizProductInfo.getCatePropValue().getId() != null) {
-            BizCatePropValue bizCatePropValue = bizCatePropValueService.get(bizProductInfo.getCatePropValue().getId());
-            if (bizCatePropValue != null) {
-                bizProductInfo.setBrandName(bizCatePropValue.getValue());
+        if (bizProductInfo.getPropValue() != null && bizProductInfo.getPropValue().getId() != null) {
+            PropValue propValue = propValueService.get(bizProductInfo.getPropValue().getId());
+            if (propValue != null) {
+                bizProductInfo.setBrandName(propValue.getValue());
             }
         }
         super.save(bizProductInfo);

@@ -24,7 +24,9 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,32 +85,8 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	public void save(BizCategoryInfo bizCategoryInfo) {
 		super.save(bizCategoryInfo);
 		BizCatePropValue catePropValue = new BizCatePropValue();
-		BizCatePropertyInfo catePropertyInfo = new BizCatePropertyInfo();
-		String catePropertyInfoStr = bizCategoryInfo.getCatePropertyInfos();
-		bizCategoryInfoDao.deleteCatePropInfoReal(bizCategoryInfo);
-		if (catePropertyInfoStr != null && !catePropertyInfoStr.isEmpty()) {
-			String[] catePropertyInfos = catePropertyInfoStr.split(",");
-			for (int i = 0; i < catePropertyInfos.length; i++) {
-				Set<String> keySet = bizCategoryInfo.getPropertyMap().keySet();
-				if (!keySet.contains(catePropertyInfos[i])) {
-					Integer propId = Integer.parseInt(catePropertyInfos[i]);
-					PropertyInfo propertyInfo = propertyInfoService.get(propId);
-					catePropertyInfo.setName(propertyInfo.getName());
-					catePropertyInfo.setDescription(propertyInfo.getDescription());
-					catePropertyInfo.setCategoryInfo(bizCategoryInfo);
-					bizCatePropertyInfoService.save(catePropertyInfo);
+			bizCategoryInfoDao.deleteCatePropInfoReal(bizCategoryInfo);
 
-					catePropValue.setId(null);
-					catePropValue.setPropertyInfo(propertyInfo);
-					catePropValue.setSource("sys");
-					catePropValue.setPropName(catePropertyInfo.getName());
-					catePropValue.setCatePropertyInfo(catePropertyInfo);
-					bizCatePropValueService.save(catePropValue);
-
-
-				}
-			}
-		}
 		if (bizCategoryInfo.getPropertyMap() != null) {
 			for (Map.Entry<String, BizCatePropertyInfo> entry : bizCategoryInfo.getPropertyMap().entrySet()) {
 				Integer propId = Integer.parseInt(entry.getKey());
@@ -131,6 +109,8 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 						catePropValue.setPropName(bizCatePropertyInfo.getName());
 						catePropValue.setCatePropertyInfo(bizCatePropertyInfo);
 						catePropValue.setValue(propValue.getValue());
+						String code= HanyuPinyinHelper.getFirstLetters(propValue.getValue(), HanyuPinyinCaseType.UPPERCASE);
+						catePropValue.setCode(code);
 						catePropValue.setPropValue(propValue);
 						bizCatePropValueService.save(catePropValue);
 
@@ -139,9 +119,6 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 
 			}
 		}
-		User user = UserUtils.getUser();
-		String pahtPrefix = AliOssClientUtil.getPahtPrefix();
-		String s = DateUtils.formatDate(new Date()).replaceAll("-", "");
 		CommonImg commonImg=null;
 		if(bizCategoryInfo.getImgId()==null){
 			commonImg=new CommonImg();
@@ -149,38 +126,25 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			commonImg=commonImgService.get(bizCategoryInfo.getImgId());
 		}
 		commonImg.setImgType(ImgEnum.CATEGORY_TYPE.getCode());
-		if (StringUtils.isNotBlank(bizCategoryInfo.getCatePhoto())){
-			commonImg.setObjectName("biz_category_info");
-			commonImg.setObjectId(bizCategoryInfo.getId());
+		commonImg.setObjectName("biz_category_info");
+		commonImg.setObjectId(bizCategoryInfo.getId());
+		if(StringUtils.isBlank(bizCategoryInfo.getCatePhoto())){
 			commonImgService.delete(commonImg);
-		//	commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
-//			commonImg.setImgServer(DsConfig.getImgServer());
-//			commonImg.setImgSort(10);
-			int a=bizCategoryInfo.getCatePhoto().lastIndexOf("/")+1;
-			String photoName = bizCategoryInfo.getCatePhoto().substring(a);
-			String imgType=photoName.substring(photoName.indexOf("."));
-			String folder = AliOssClientUtil.getFolder();
-			String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
-			String  pathFile= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto();
-			String  pathFile2= Global.getUserfilesBaseDir()+bizCategoryInfo.getCatePhoto().substring(0,a-1);
-			File file = new File(pathFile);
-			String photoNewName=System.currentTimeMillis()+""+(GenerateOrderUtils.getRandomNum())+imgType;
-			File file2 = new File(pathFile2+"/"+photoNewName);
-            AliOssClientUtil aliOssClientUtil = new AliOssClientUtil();
-            if (!bizCategoryInfo.getCatePhoto().contains(DsConfig.getImgServer())) {
-				file.renameTo(file2);
-                aliOssClientUtil.uploadObject2OSS(file2, path);
-				if(file2.exists()){
-					file2.delete();
-				}
-				commonImg.setImgPath("\\"+path+photoNewName);
-            }else {
-				commonImg.setImgPath("\\"+path+photoName);
-			}
+		}
+		else if (StringUtils.isNotBlank(bizCategoryInfo.getCatePhoto())){
 
-//			commonImg.setImgPath(bizCategoryInfo.getCatePhoto());
-			commonImg.setImgServer(DsConfig.getImgServer());
+			if (bizCategoryInfo.getCatePhoto().contains(DsConfig.getImgServer())) {
+				return;
+			}else {
+				commonImgService.delete(commonImg);
+			}
+			String pathFile = Global.getUserfilesBaseDir() + bizCategoryInfo.getCatePhoto();
+			String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
+
+			commonImg.setId(null);
+			commonImg.setImgPath("/"+ossPath);
 			commonImg.setImgSort(10);
+			commonImg.setImgServer(DsConfig.getImgServer());
 			commonImgService.save(commonImg);
 		}
 

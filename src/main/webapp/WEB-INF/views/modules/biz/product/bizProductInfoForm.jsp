@@ -45,17 +45,11 @@
             if ($("#id").val() != '') {
                 var ids = "${entity.cateIds}";//后台获取的分类id集合
                 var cateValueId = $("#cateValueId").val();
-                ajaxGetPropInfoBrand(ids);
+             //   ajaxGetPropInfoBrand(ids);
                 t = setTimeout(function () {
                     ajaxGetPropInfo(ids);
 
                 }, 100);
-
-
-                // t = setTimeout(function() {
-                //     ajaxGetProdPropInfo($("#id").val());
-                //
-                // }, 100);
                 t = setTimeout(function () {
                     ajaxGetProdOwnPropInfo($("#id").val());
                 }, 100);
@@ -72,7 +66,7 @@
                     }
                 }
                 ajaxGetPropInfo(ids);
-                ajaxGetPropInfoBrand(ids);
+                // ajaxGetPropInfoBrand(ids);
 
             };
 
@@ -233,7 +227,9 @@
                 $('#myModal').modal('hide');
             })
 
-
+        $("#propValueId").change(function () {
+            alert($(this).val());
+            });
         });
 
         function addPropValueInfo(va) {
@@ -279,7 +275,7 @@
 <form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/save" method="post"
            class="form-horizontal">
     <form:hidden path="id"/>
-    <input type="hidden" id="cateValueId" value="${bizProductInfo.catePropValue.id}"/>
+    <%--<input type="hidden" id="cateValueId" value="${bizProductInfo.catePropValue.id}"/>--%>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -289,6 +285,18 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
+
+    <div class="control-group">
+        <label class="control-label">请选择品牌:</label>
+        <div class="controls">
+            <form:select items="${propValueList}" id="propValueId" path="propValue.id" class="input-xlarge required" itemLabel="value" itemValue="id">
+                <from:option value="">请选择</from:option>
+            </form:select>
+            <span class="help-inline"><font color="red">*</font> </span>
+        </div>
+    </div>
+
+
     <%--<div class="control-group">--%>
     <%--<label class="control-label">产品类型：</label>--%>
     <%--<div class="controls">--%>
@@ -323,13 +331,13 @@
                           maxHeight="100"/>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">产品代码：</label>
-        <div class="controls">
-            <form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
-            <span class="help-inline"><font color="red">*</font> </span>
-        </div>
-    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">产品代码：</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-xlarge required"/>--%>
+            <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <div class="control-group">
         <label class="control-label">产品描述：</label>
         <div class="controls">
