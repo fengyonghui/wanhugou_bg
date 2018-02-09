@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
@@ -712,7 +712,7 @@
                             <button id="payment10_3" type="button" class="btn btn-arrow-right">首付款支付</button>
                         </div>
                     </div>
-                    <div style="float:right;padding-top: 16px;">
+                    <div style="float:left;padding-top: 16px;">
                         &rarr;&nbsp;<button id="payment10_4" type="button" class="btn btn-arrow-right">全部支付</button>
                         &nbsp;&rarr;
                         <button id="payment10_5" type="button" class="btn btn-arrow-left">供货中</button>

@@ -50,6 +50,9 @@
 		<include refid="bizSendGoodsRecordJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="bizStatus != null">
+				AND a.biz_status = #{bizStatus}
+			</if>
 			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
 				AND a.sku_id = #{skuInfo.id}
 			</if>
@@ -80,9 +83,7 @@
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
-			<if test="bizStatus != null and bizStatus != ''">
-				AND a.biz_status = #{bizStatus}
-			</if>
+
 			<if test="sqlMap != null and sqlMap.sendGoodsRecord != null and sqlMap.sendGoodsRecord != ''">
 				${sqlMap.sendGoodsRecord}
 			</if>

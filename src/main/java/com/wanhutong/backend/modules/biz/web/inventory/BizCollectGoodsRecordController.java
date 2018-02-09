@@ -28,6 +28,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.InvSkuTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.SendGoodsRecordBizStatusEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -116,7 +117,7 @@ public class BizCollectGoodsRecordController extends BaseController {
 //		}
 		bizCollectGoodsRecordService.save(bizCollectGoodsRecord);
 		addMessage(redirectAttributes, "保存收货记录成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizCollectGoodsRecord/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestAll/?source=sh&ship=bh";
 	}
 	
 	@RequiresPermissions("biz:inventory:bizCollectGoodsRecord:edit")
@@ -131,10 +132,10 @@ public class BizCollectGoodsRecordController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizCollectGoodsRecord:view")
 	@RequestMapping(value = "stockChangeList")
 	public String stockChangeList(BizCollectGoodsRecord bizCollectGoodsRecord,HttpServletRequest request, HttpServletResponse response, Model model) {
-//		List<BizSendGoodsRecord> list1 = new ArrayList<>();
-//		List<BizCollectGoodsRecord> list2 = new ArrayList<>();
+		BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
+        bizSendGoodsRecord.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());//0
 		if(bizCollectGoodsRecord.getQueryClass()==null){
-			Page<BizSendGoodsRecord> pageSend = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), new BizSendGoodsRecord());
+			Page<BizSendGoodsRecord> pageSend = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), bizSendGoodsRecord);
 			model.addAttribute("pageSend", pageSend);
 			Page<BizCollectGoodsRecord> pageGods = bizCollectGoodsRecordService.findPage(new Page<BizCollectGoodsRecord>(request, response), bizCollectGoodsRecord);
 			model.addAttribute("pageGods", pageGods);
@@ -144,10 +145,9 @@ public class BizCollectGoodsRecordController extends BaseController {
 			model.addAttribute("pageGods", pageGods);
 		}else{
 			//出库记录
-			Page<BizSendGoodsRecord> pageSend = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), new BizSendGoodsRecord());
+            Page<BizSendGoodsRecord> pageSend = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), bizSendGoodsRecord);
 			model.addAttribute("pageSend", pageSend);
 		}
-
 		return "modules/biz/inventory/bizCollectStockChangeRecordList";
 	}
 }
