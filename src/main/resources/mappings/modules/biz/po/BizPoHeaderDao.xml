@@ -46,7 +46,7 @@
 			<if test="invStatus != null and invStatus != ''">
 				AND a.inv_status = #{invStatus}
 			</if>
-			<if test="bizStatus != null and bizStatus != ''">
+			<if test="bizStatus != null">
 				AND a.biz_status = #{bizStatus}
 			</if>
 			<if test="plateformInfo != null and plateformInfo.id !=null and  plateformInfo.id != ''">
