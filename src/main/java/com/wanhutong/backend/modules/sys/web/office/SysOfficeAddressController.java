@@ -5,7 +5,9 @@ package com.wanhutong.backend.modules.sys.web.office;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
@@ -78,14 +80,24 @@ public class SysOfficeAddressController extends BaseController {
 	public String list(SysOfficeAddress sysOfficeAddress, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<SysOfficeAddress> page = sysOfficeAddressService.findPage(new Page<SysOfficeAddress>(request, response), sysOfficeAddress); 
 		model.addAttribute("page", page);
+//		sysOfficeAddress.setSign(sysOfficeAddress.getOffice().getType());
+        if(sysOfficeAddress.getOffice()!=null && StringUtils.isNotBlank(sysOfficeAddress.getOffice().getType())&&sysOfficeAddress.getOffice().getType().equals(OfficeTypeEnum.VENDOR.getType())){
+            return"modules/sys/office/sysVendorAddressList";
+        }else{
 		return "modules/sys/office/sysOfficeAddressList";
+        }
 	}
 
 	@RequiresPermissions("sys:office:sysOfficeAddress:view")
 	@RequestMapping(value = "form")
 	public String form(SysOfficeAddress sysOfficeAddress, Model model) {
 		model.addAttribute("entity", sysOfficeAddress);
+		if(sysOfficeAddress.getOffice()!= null &&StringUtils.isNotBlank(sysOfficeAddress.getOffice().getType())&&sysOfficeAddress.getOffice().getType().equals(OfficeTypeEnum.VENDOR.getType())){
+//           if(StringUtils.isNotBlank(sysOfficeAddress.getSign())&&sysOfficeAddress.getSign() != null){
+            return "modules/sys/office/sysVendorAddressForm";
+        }else {
 		return "modules/sys/office/sysOfficeAddressForm";
+		}
 	}
 
 	@RequiresPermissions("sys:office:sysOfficeAddress:edit")
@@ -96,6 +108,7 @@ public class SysOfficeAddressController extends BaseController {
 		}
 		sysOfficeAddressService.save(sysOfficeAddress);
 		addMessage(redirectAttributes, "保存地址信息成功");
+
 //		订单新增地址跳转
 		if(sysOfficeAddress.getFlag()!=null && sysOfficeAddress.getFlag().equals("order")){
 			String receiver = sysOfficeAddress.getReceiver();//联系人
@@ -117,7 +130,7 @@ public class SysOfficeAddressController extends BaseController {
 				e.printStackTrace();
 			}
 		}
-		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
+		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress?office.type=" + sysOfficeAddress.getOffice().getType();
 	}
 	
 	@RequiresPermissions("sys:office:sysOfficeAddress:edit")

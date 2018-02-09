@@ -38,6 +38,7 @@
 		<form:hidden path="id"/>
 		<form:hidden path="ohId"/>
 		<form:hidden path="flag"/>
+		<form:hidden path="office.type"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
 			<label class="control-label">采购商名称：</label>

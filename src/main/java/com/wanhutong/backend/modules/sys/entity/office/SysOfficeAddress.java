@@ -23,7 +23,16 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	private Integer deFaultStatus;		// 1: 默认； 0：非默认
 	private Integer ohId;		//用于添加地址传参
 	private String flag;		//用于传参标记
+	private String sign;     //用于获取机构类型
 
+
+	public String getSign() {
+		return sign;
+	}
+
+	public void setSign(String sign) {
+		this.sign = sign;
+	}
 
 	public String getFlag() {
 		return flag;

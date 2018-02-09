@@ -19,11 +19,12 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/">地址信息列表</a></li>
-		<shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><li><a href="${ctx}/sys/office/sysOfficeAddress/form">地址信息添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><li><a href="${ctx}/sys/office/sysOfficeAddress/form?office.type=6">地址信息添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="sysOfficeAddress" action="${ctx}/sys/office/sysOfficeAddress/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<form:hidden path="office.type"/>
 		<ul class="ul-form">
 			<li><label>采购商名称：</label>
 				<sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}"  labelName="office.name"
