@@ -172,7 +172,7 @@
                             <td>${shelfSku.minQty}-${shelfSku.maxQty}</td>
                             <td>${shelfSku.salePrice}</td>
                             <td>${detail.ordQty}</td>
-                            <td><a href="${ctx}/biz/order/bizOrderDetail/delete?id=${orderList.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">
+                            <td><a href="${ctx}/biz/order/bizOrderDetail/delete?id=${detail.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">
                                     删除
                             </a></td>
                         </tr>

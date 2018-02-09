@@ -164,6 +164,9 @@ public class BizOrderDetailController extends BaseController {
 			bizOrderHeaderService.updateMoney(bizOrderHeader);
 		}
 		addMessage(redirectAttributes, "删除订单详情成功");
+//		if(orderDetailDetele.equals("details")){
+////			跳回添加商品
+//		}
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
 	}
 
