@@ -166,7 +166,7 @@
                         <font color="#848484">未支付</font>
                     </c:if>
                     <c:if test="${orderHeader.bizStatus==5}">
-                        <font color="#FF0000">有欠款</font>
+                        <font color="#FF0000">有尾款</font>
                     </c:if>
                     <c:if test="${orderHeader.bizStatus==10}">
                         <font color="#088A29">已结清</font>
