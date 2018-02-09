@@ -119,10 +119,10 @@
             <ul class="inline ul-form">
 
                 <li><label>商品名称：</label>
-                    <input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="10" class="input-medium"/>
+                    <input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="120" class="input-medium"/>
                 </li>
                 <li><label>商品编码：</label>
-                    <input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="10" class="input-medium"/>
+                    <input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="50" class="input-medium"/>
                 </li>
                 <%--<li><label>查询：</label>--%>
                     <%--<select class="input-medium">--%>

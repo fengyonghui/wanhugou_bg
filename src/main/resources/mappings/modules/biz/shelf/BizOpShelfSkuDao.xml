@@ -75,14 +75,18 @@
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
 			<if test="skuInfo != null and skuInfo.partNo != null and skuInfo.partNo != '' ">
-				AND bsi.part_no = #{skuInfo.partNo}
-			</if>
-			<if test="centerOffice != null and centerOffice.name != null and centerOffice.name != ''">
-				AND so.name = #{centerOffice.name}
-			</if>
-			<!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">
-				AND a.shelf_user = #{shelfUser.id}
-			</if>-->
+			<!--AND bsi.part_no = #{skuInfo.partNo}-->
+            AND bsi.part_no LIKE
+            <if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
+            <if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
+            <if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+        </if>
+        <if test="centerOffice != null and centerOffice.name != null and centerOffice.name != ''">
+            AND so.name = #{centerOffice.name}
+        </if>
+        <!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">
+            AND a.shelf_user = #{shelfUser.id}
+        </if>-->
 			<if test="shelfStartTime != null and shelfStartTime != '' and shelfEndTime != null and shelfEndTime != ''">
 				AND a.shelf_time BETWEEN #{shelfStartTime} and #{shelfEndTime}
             </if>
