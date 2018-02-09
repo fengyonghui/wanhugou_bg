@@ -1007,7 +1007,7 @@
             <td>
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </td>
-            <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+            <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <td>
                         <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">修改</a>

@@ -6,12 +6,10 @@
 		a.id AS "id",
 		a.order_detail_id AS "orderDetails.id",
 		a.prop_info_id AS "propInfos.id",
-		ppv.prop_name as "propInfos.name",
 		a.prop_name AS "propName",
 		a.prop_value AS "propValue",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
-		su.name as "createBy.name",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
@@ -21,7 +19,6 @@
 	<sql id="bizOrderSkuPropValueJoins">
 		LEFT join sys_user su on a.create_id=su.id
 		left join biz_order_detail bod on bod.id=a.order_detail_id
-		left join biz_prod_prop_value ppv on ppv.prop_id=a.prop_info_id
 	</sql>
     
 	<select id="get" resultType="BizOrderSkuPropValue">
