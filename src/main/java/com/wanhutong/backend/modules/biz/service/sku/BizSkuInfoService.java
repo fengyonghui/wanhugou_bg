@@ -4,6 +4,8 @@
 package com.wanhutong.backend.modules.biz.service.sku;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.*;
 
 import com.google.common.collect.Lists;
@@ -35,6 +37,8 @@ import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,6 +78,8 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	private PropertyInfoService propertyInfoService;
 	@Autowired
 	private BizProductInfoService bizProductInfoService;
+
+	protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
@@ -252,7 +258,13 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 
 	@Transactional(readOnly = false)
 	public void saveCommonImg(BizSkuInfo bizSkuInfo) {
-		String photos=bizSkuInfo.getPhotos();
+		String photos=null;
+		try {
+			photos = URLDecoder.decode(bizSkuInfo.getPhotos(), "utf-8");//SKU商品图片转换编码
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			log.error("SKU商品图片转换编码异常." + e.getMessage(), e);
+		}
 		CommonImg commonImg=new CommonImg();
 		User user = UserUtils.getUser();
 		String pahtPrefix = AliOssClientUtil.getPahtPrefix();
