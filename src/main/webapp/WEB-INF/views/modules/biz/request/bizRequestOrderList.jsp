@@ -33,14 +33,14 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${source eq 'bhgh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder?source=${source}">备货清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/list?source=${source}">备货清单列表</a></li>
 		</c:if>
 		<c:if test="${source eq 'xsgh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder?source=${source}">销售清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/list?source=${source}">销售清单列表</a></li>
 		</c:if>
 	</ul>
 	<c:if test="${requestHeaderList!=null}">
-		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestOrder/" method="post" class="breadcrumb form-search">
+		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
 			<input type="hidden" name="source" value="${source}"/>
 			<ul class="ul-form">
 				<li><label>备货单号：</label>
@@ -69,7 +69,7 @@
 		</form:form>
 	</c:if>
 	<c:if test="${orderHeaderList!=null}">
-		<form:form id="searchForm2" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/" method="post" class="breadcrumb form-search">
+		<form:form id="searchForm2" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
 			<input type="hidden" name="source" value="${source}"/>
 
 			<form:hidden path="consultantId"/>

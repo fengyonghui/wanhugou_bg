@@ -83,6 +83,7 @@
 				GROUP  BY a.id
 			</otherwise>
 		</choose>
+		order by updateDate desc
 	</select>
 	
 	<select id="findAllList" resultType="BizRequestHeader">
