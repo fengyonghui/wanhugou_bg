@@ -65,9 +65,9 @@
                     }
                 }
             });
-            if($("#officeId").val()!=""){
-                clickBut();
-            }
+            <%--if($("#officeId").val()!=""){--%>
+                <%--clickBut();--%>
+            <%--}--%>
             <%--订单地址--%>
             if($("#id").val() !=""){
                 var option2=$("<option/>").text("${orderAddress.province.name}").val(${orderAddress.province.id});
