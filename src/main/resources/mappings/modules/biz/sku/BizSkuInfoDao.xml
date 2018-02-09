@@ -159,7 +159,9 @@
 			<if test="partNo != null">
 				part_no,
 			</if>
-			base_price,
+			<if test="basePrice != null">
+				base_price,
+			</if>
 			buy_price,
 			status,
 			create_id,
@@ -175,7 +177,9 @@
 			<if test="partNo != null">
 				#{partNo},
 			</if>
-			#{basePrice},
+			<if test="basePrice != null">
+				#{basePrice},
+			</if>
 			#{buyPrice},
 			#{delFlag},
 			#{createBy.id},
@@ -192,7 +196,9 @@
 			sku_type = #{skuType},
 			name = #{name},
 			part_no = #{partNo},
-			base_price = #{basePrice},
+			<if test="basePrice != null">
+				base_price = #{basePrice},
+			</if>
 			buy_price = #{buyPrice},
 			create_time = #{createDate},
 			u_version = #{uVersion},
