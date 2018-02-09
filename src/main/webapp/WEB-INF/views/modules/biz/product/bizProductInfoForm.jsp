@@ -18,6 +18,7 @@
                             ids.push(nodes[i].id);
                         }
                     }
+
                     $("#cateIds").val(ids);
 
                     loading('正在提交，请稍等...');
@@ -33,17 +34,12 @@
                     }
                 }
             });
-            var setting = {
-                check: {enable: true, nocheckInherit: true}, view: {selectedMulti: false},
-                data: {simpleData: {enable: true}}, callback: {
-                    beforeClick: function (id, node) {
-                        tree.checkNode(node, !node.checked, true, true);
-                        return false;
-                    }, onCheck: zTreeOnCheck
-                }
-            }
+
             if ($("#id").val() != '') {
                 var ids = "${entity.cateIds}";//后台获取的分类id集合
+               var  brandId=$("#propValueId").val();
+                ajaxFindCateByBrand(brandId);
+
                 var cateValueId = $("#cateValueId").val();
              //   ajaxGetPropInfoBrand(ids);
                 t = setTimeout(function () {
@@ -57,42 +53,8 @@
 
             }
 
-            //ztree 复选框操作控制函数
-            function zTreeOnCheck(event, treeId, treeNode) {
-                var ids = [], nodes = tree.getCheckedNodes(true);
-                for (var i = 0; i < nodes.length; i++) {
-                    if (!nodes[i].isParent) {
-                        ids.push(nodes[i].id);
-                    }
-                }
-                ajaxGetPropInfo(ids);
-                // ajaxGetPropInfoBrand(ids);
-
-            };
-
-            /**
-             * 通过分类获取品牌
-             */
-
-            function ajaxGetPropInfoBrand(ids) {
-                $.post("${ctx}/biz/product/bizProdCate/findCatePropMap4Brand",
-                    {catIds: ids.toString()},
-                    function (data) {
-                        $("#catePropValueId").empty();
-                        $.each(data, function (index, catePropValue) {
-                            if (cateValueId == catePropValue.id) {
-                                $("#s2id_catePropValueId").find("span").eq(0).text(catePropValue.value);
-                                $("#catePropValueId").append('<option selected="selected"   value="' + catePropValue.id + '">' + catePropValue.value + '</option>');
-
-                            } else {
-                                $("#catePropValueId").append('<option value="' + catePropValue.id + '">' + catePropValue.value + '</option>');
-                            }
 
 
-                        })
-
-                    })
-            }
 
             /**
              * 通过分类获取分类属性
@@ -171,30 +133,30 @@
                 }
             });
 
-            // 分类--菜单
-            var zNodes = [
-                    <c:forEach items="${cateList}" var="cate">{
-                    id: "${cate.id}",
-                    pId: "${not empty cate.parent.id?cate.parent.id:0}",
-                    name: "${not empty cate.parent.id?cate.name:'分类列表'}"
-                },
-                </c:forEach>];
-            // 初始化树结构
-            var tree = $.fn.zTree.init($("#cateTree"), setting, zNodes);
-            // 不选择父节点
-            tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
-            // 默认选择节点
-            var ids = "${entity.cateIds}".split(",");
-            for (var i = 0; i < ids.length; i++) {
-                var node = tree.getNodeByParam("id", ids[i]);
-                try {
-                    tree.checkNode(node, true, false);
-                    tree.checkNode(node.getParentNode(), true, false);
-                } catch (e) {
-                }
-            }
-            // 默认展开全部节点
-            tree.expandAll(true);
+            <%--// 分类--菜单--%>
+            <%--var zNodes = [--%>
+                    <%--<c:forEach items="${cateList}" var="cate">{--%>
+                    <%--id: "${cate.id}",--%>
+                    <%--pId: "${not empty cate.parent.id?cate.parent.id:0}",--%>
+                    <%--name: "${not empty cate.parent.id?cate.name:'分类列表'}"--%>
+                <%--},--%>
+                <%--</c:forEach>];--%>
+            <%--// 初始化树结构--%>
+            <%--var tree = $.fn.zTree.init($("#cateTree"), setting, zNodes);--%>
+            <%--// 不选择父节点--%>
+            <%--tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};--%>
+            <%--// 默认选择节点--%>
+            <%--var ids = "${entity.cateIds}".split(",");--%>
+            <%--for (var i = 0; i < ids.length; i++) {--%>
+                <%--var node = tree.getNodeByParam("id", ids[i]);--%>
+                <%--try {--%>
+                    <%--tree.checkNode(node, true, false);--%>
+                    <%--tree.checkNode(node.getParentNode(), true, false);--%>
+                <%--} catch (e) {--%>
+                <%--}--%>
+            <%--}--%>
+            <%--// 默认展开全部节点--%>
+            <%--tree.expandAll(true);--%>
 
             var i = 0;
             $("#addPropValue").click(function () {
@@ -225,12 +187,62 @@
                 }
                 a++;
                 $('#myModal').modal('hide');
-            })
-
-        $("#propValueId").change(function () {
-            alert($(this).val());
             });
+            var tree="";
+        $("#propValueId").change(function () {
+            var brandId=$(this).val();
+            ajaxFindCateByBrand(brandId);
         });
+        });
+        function ajaxFindCateByBrand(brandId) {
+            $.post("${ctx}/biz/category/bizCategoryInfo/findListByBrandId",
+                {brandId: brandId, ranNum: Math.random()},
+                function (data, status) {
+                    treeNodes = data;   //把后台封装好的简单Json格式赋给treeNodes
+                    var setting = {
+                        check: {enable: true, nocheckInherit: true}, view: {selectedMulti: false},
+                        data: {simpleData: {enable: true}}, callback: {
+                            beforeClick: function (id, node) {
+                                tree.checkNode(node, !node.checked, true, true);
+                                return false;
+                            }, onCheck: zTreeOnCheck
+                        }
+                    };
+                    tree= $.fn.zTree.init($("#cateTree"), setting, treeNodes);
+                    // 不选择父节点
+                    tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
+
+                    //ztree 复选框操作控制函数
+                    function zTreeOnCheck(event, treeId, treeNode) {
+                        var ids = [], nodes = tree.getCheckedNodes(true);
+                        for (var i = 0; i < nodes.length; i++) {
+                            if (!nodes[i].isParent) {
+                                ids.push(nodes[i].id);
+                            }
+                        }
+
+                        ajaxGetPropInfo(ids);
+
+
+                    };
+
+                    // 默认选择节点
+                    var ids = "${entity.cateIds}".split(",");
+                    for (var i = 0; i < ids.length; i++) {
+                        var node = tree.getNodeByParam("id", ids[i]);
+                        try {
+                            tree.checkNode(node, true, false);
+                            tree.checkNode(node.getParentNode(), true, false);
+                        } catch (e) {
+                        }
+                    }
+                    // 默认展开全部节点
+                    tree.expandAll(true);
+                });
+
+        }
+
+
 
         function addPropValueInfo(va) {
             var t = $("input[title=" + va + "]").val();
@@ -295,18 +307,6 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
-
-
-    <%--<div class="control-group">--%>
-    <%--<label class="control-label">产品类型：</label>--%>
-    <%--<div class="controls">--%>
-    <%--<form:select path="prodType" class="input-xlarge required">--%>
-    <%--<form:options items="${fns:getDictList('prod_type')}" itemLabel="label"  itemValue="value"--%>
-    <%--htmlEscape="false"/>--%>
-    <%--</form:select>--%>
-    <%--<span class="help-inline"><font color="red">*</font> </span>--%>
-    <%--</div>--%>
-    <%--</div>--%>
     <div class="control-group">
         <label class="control-label">上市时间：</label>
         <div class="controls">
@@ -372,15 +372,7 @@
                 <%--<span class="help-inline"><font color="red">*</font> </span>--%>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">请选择品牌:</label>
-        <div class="controls">
-            <select id="catePropValueId" name="catePropValue.id" autofocus="autofocus" class="input-xlarge required">
-                <option value="">请选择</option>
-            </select>
-            <span class="help-inline"><font color="red">*</font> </span>
-        </div>
-    </div>
+
     <div class="control-group">
         <label class="control-label">产品属性：</label>
         <div id="cateProp" class="controls">
@@ -518,10 +510,20 @@
 
 <div class="form-actions">
     <c:if test="${entity.id !=null && entity.id!='' }">
-        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><input type="button"
-                                                                   onclick="javascript:window.location.href='${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}';"
-                                                                   class="btn btn-primary"
-                                                                   value="商品信息添加"/></shiro:hasPermission>
+        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+            <c:choose>
+                <c:when test="${entity.skuInfosList.size()==0}">
+                    <input type="button" onclick="javascript:window.location.href='${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}&sort=01';" class="btn btn-primary" value="商品信息添加"/>
+                </c:when>
+                <c:otherwise>
+                    <input type="button" onclick="javascript:window.location.href='${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}&sort=0${entity.skuInfosList.size()+1}';" class="btn btn-primary" value="商品信息添加"/>
+                </c:otherwise>
+            </c:choose>
+
+
+        </shiro:hasPermission>
+
+
     </c:if>
 </div>
 

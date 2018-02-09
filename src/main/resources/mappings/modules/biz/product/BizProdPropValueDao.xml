@@ -88,9 +88,7 @@
 		INSERT INTO biz_prod_prop_value(
 			id,
 			prod_prop_id,
-		<if test="source!=null and source=='sys'">
 			prop_id,
-		</if>
 			prop_name,
 		<if test="source!=null and source=='sys'">
 			prop_value_id,
@@ -107,9 +105,16 @@
 		) VALUES (
 			#{id},
 			#{prodPropertyInfo.id},
-			<if test="source!=null and source=='sys'">
-				#{propertyInfo.id},
-			</if>
+
+		<choose>
+				<when test="source!=null and source=='sys'">
+					#{propertyInfo.id},
+				</when>
+				<otherwise>
+					#{prodPropertyInfoId},
+				</otherwise>
+			</choose>
+
 			#{propName},
 		<if test="source!=null and source=='sys'">
 			#{sysPropValue.id},

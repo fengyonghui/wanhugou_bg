@@ -23,12 +23,15 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdCateService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -63,12 +66,14 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	private BizSkuInfoDao bizSkuInfoDao;
 	@Autowired
 	private BizProductInfoDao bizProductInfoDao;
-	@Autowired
-	private BizProdCateService bizProdCateService;
+	@Resource
+	private PropValueService propValueService;
 	@Autowired
 	private OfficeService officeService;
 	@Autowired
 	private PropertyInfoService propertyInfoService;
+	@Autowired
+	private BizProductInfoService bizProductInfoService;
 
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
@@ -177,13 +182,19 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	
 	@Transactional(readOnly = false)
 	public void save(BizSkuInfo bizSkuInfo) {
- 	 BizProductInfo bizProductInfo=bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
-		String prodCode=bizProductInfo.getProdCode().length()>4?bizProductInfo.getProdCode().substring(0,4):bizProductInfo.getProdCode();
-		String vendId=autoGenericCode(bizProductInfo.getOffice().getId().toString(),4);
-		logger.info("prodCode======="+prodCode+"======="+vendId);
- 		 super.save(bizSkuInfo);
- 		 String partNo=prodCode+vendId+autoGenericCode(bizSkuInfo.getId().toString(),6);
-		bizSkuInfo.setPartNo(partNo);
+		String brandCode="";
+		String prodCode="";
+ 	 	BizProductInfo bizProductInfo=bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
+		PropValue brandValue = propValueService.get(bizProductInfo.getPropValue().getId());
+		if (brandValue != null) {
+			bizProductInfo.setBrandName(brandValue.getValue());
+			brandCode=bizProductInfoService.addZeroForNum(brandValue.getCode(),false,4);
+			prodCode="CODE";
+		}
+		if(bizSkuInfo.getId()==null){
+			String partNo=brandCode+prodCode+"P_"+autoGenericCode(bizProductInfo.getId(),6)+bizSkuInfo.getSort();
+			bizSkuInfo.setPartNo(partNo);
+		}
 		super.save(bizSkuInfo);
  		 BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();
 		if (bizSkuInfo.getProdPropMap() != null) {
@@ -217,6 +228,7 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 						bizSkuPropValue.setProdPropValue(propValue);
 						bizSkuPropValue.setSource(propValue.getSource());
 						bizSkuPropValue.setSkuInfo(bizSkuInfo);
+						bizSkuPropValue.setCode(propValue.getCode());
 						bizSkuPropValueService.save(bizSkuPropValue);
 					}
 				}
@@ -227,13 +239,13 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		saveCommonImg(bizSkuInfo);
 	}
 
-	private String autoGenericCode(String code, int num) {
+	private String autoGenericCode(Integer code, int num) {
 		String result = "";
 		// 保留num的位数
     // 0 代表前面补充0
 		// num 代表长度为4
 		// d 代表参数为正数型
-		result = String.format("%0" + num + "d", Integer.parseInt(code) + 1);
+		result = String.format("%0" + num + "d", code + 1);
 
 		return result;
 	}

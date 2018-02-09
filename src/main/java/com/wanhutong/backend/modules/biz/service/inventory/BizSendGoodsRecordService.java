@@ -83,7 +83,10 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			if(user.isAdmin()){
 				return super.findPage(page, bizSendGoodsRecord);
 			}else {
-				bizSendGoodsRecord.getSqlMap().put("sendGoodsRecord", BaseService.dataScopeFilter(user, "s", "su"));
+				if(user.getCompany().getType().equals(OfficeTypeEnum.CUSTOMER.getType())){
+					bizSendGoodsRecord.getSqlMap().put("sendGoodsRecord", BaseService.dataScopeFilter(user, "s", "su"));
+				}
+
 				return super.findPage(page, bizSendGoodsRecord);
 			}
 

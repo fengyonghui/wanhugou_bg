@@ -65,6 +65,44 @@
 		</choose>
 	</select>
 
+	<select id="findListByBrandId" resultType="BizCategoryInfo">
+		SELECT
+		<include refid="bizCategoryInfoColumns"/>
+		FROM biz_category_info a
+		<include refid="bizCategoryInfoJoins"/>
+		LEFT JOIN biz_cate_property_info cpi on a.id = cpi.cat_id
+		Left Join biz_cate_prop_value  cpv on cpv.prop_id=cpi.id
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="catelogInfo != null and catelogInfo.id!=null and  catelogInfo.id!='' ">
+				AND a.catelog_id = #{catelogInfo.id}
+			</if>
+			<if test="parent != null and parent.id !=null  and parent.id != ''">
+				AND a.p_id = #{parent.id}
+			</if>
+
+			<if test="brandId != null">
+				AND cpv.sys_prop_value_id=#{brandId}
+			</if>
+
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
 	<select id="findByParentIdsLike" resultType="BizCategoryInfo">
 		SELECT
 		<include refid="bizCategoryInfoColumns"/>

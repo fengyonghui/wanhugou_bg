@@ -55,10 +55,33 @@
                             console.log(skuPropValue);
                             $("#"+skuPropValue.prodPropertyInfo.id).attr('checked',true);
                             $("#value_"+skuPropValue.prodPropValue.id).attr('checked',true);
+                            checkOnly(skuPropValue.prodPropertyInfo.id)
                         });
                     });
             }
+
+            // $("#inputForm").find(":checkbox").each(function(){
+             //    $(this).click(function(){
+             //        alert($(this).attr("class"));
+             //        // if($(this).is(':checked')){
+             //        //     $(this).attr('checked',true).siblings().attr('checked',false);
+             //        // }else{
+             //        //     $(this).attr('checked',false).siblings().attr('checked',false);
+             //        // }
+			// 	});
+			// });
 		});
+		function checkOnly(obj) {
+			$(".value_"+obj).click(function () {
+                if($(this).is(':checked')) {
+                    $(".value_" + obj).attr('checked', false);
+                    $(this).attr('checked', true);
+                }
+                // }else{
+                //     $(this).attr('checked',false).siblings().attr('checked',false);
+                // }
+            })
+        }
 	</script>
 </head>
 <body>
@@ -69,6 +92,7 @@
 	<form:form id="inputForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<input id="str" type="hidden"  value="${bizSkuInfo.str}"/>
+		<form:hidden id="sort" path="sort"/>
 		<form:hidden id="prodId" path="productInfo.id"/>
 		<sys:message content="${message}"/>
 		<%--<div class="control-group">
@@ -133,14 +157,25 @@
 				<c:forEach items="${map}" var="propertyInfo">
 					<c:set value="${ fn:split(propertyInfo.key, ',') }" var="info" />
 
-					<input  class="select_all" id="${info[0]}" type="checkbox" name="prodPropertyInfos" value="${info[0]}"/> ${info[1]}：
-					<c:forEach items="${propertyInfo.value}" var="propValue">
+					<input   class="select_all" id="${info[0]}" type="checkbox" name="prodPropertyInfos" value="${info[0]}"/> ${info[1]}：
+					<c:forEach items="${propertyInfo.value}" var="propValue" varStatus="propValueStatus">
+
 						<c:choose>
 							<c:when test="${propValue.sysPropValue.id==0}">
-								<input  class="value_${info[0]}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.id}"/> ${propValue.propValue}
+								<c:if test="${propertyInfo.value.size()==1}">
+									<input checked="checked" onclick="return false;"  class="value_${info[0]}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.id}"/> ${propValue.propValue}
+								</c:if>
+								<c:if test="${propertyInfo.value.size()!=1}">
+									<input  onclick="checkOnly(${info[0]})"  class="value_${info[0]}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.id}"/> ${propValue.propValue}
+								</c:if>
 							</c:when>
 						<c:otherwise>
-							<input  class="value_${info[0]}" id="value_${propValue.sysPropValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.sysPropValue.id}"/> ${propValue.propValue}
+							<c:if test="${propertyInfo.value.size()==1}">
+							<input  checked="checked" onclick="return false;" class="value_${info[0]}" id="value_${propValue.sysPropValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.sysPropValue.id}"/> ${propValue.propValue}
+							</c:if>
+							<c:if test="${propertyInfo.value.size()!=1}">
+								<input onclick="checkOnly(${info[0]})" class="value_${info[0]}" id="value_${propValue.sysPropValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.sysPropValue.id}"/> ${propValue.propValue}
+							</c:if>
 						</c:otherwise>
 						</c:choose>
 					</c:forEach>

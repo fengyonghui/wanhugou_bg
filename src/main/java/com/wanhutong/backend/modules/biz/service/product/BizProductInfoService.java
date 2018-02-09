@@ -5,16 +5,9 @@ package com.wanhutong.backend.modules.biz.service.product;
 
 import java.io.*;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.*;
-
-import com.aliyun.oss.model.ObjectMetadata;
-import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
-import com.wanhutong.backend.common.utils.GenerateOrderUtils;
-import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -32,12 +25,14 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.ehcache.util.ProductInfo;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,8 +53,7 @@ import javax.annotation.Resource;
 @Service
 @Transactional(readOnly = true)
 public class BizProductInfoService extends CrudService<BizProductInfoDao, BizProductInfo> {
-    @Resource
-    private BizCatePropValueService bizCatePropValueService;
+
     @Resource
     private PropertyInfoService propertyInfoService;
     @Resource
@@ -72,8 +66,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     private PropValueService propValueService;
     @Resource
     private CommonImgService commonImgService;
-    @Resource
-    private BizSkuInfoService bizSkuInfoService;
+
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -92,13 +85,24 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
     @Transactional(readOnly = false)
     public void save(BizProductInfo bizProductInfo) {
+        String brandCode="";
+        String prodCode="";
         if (bizProductInfo.getPropValue() != null && bizProductInfo.getPropValue().getId() != null) {
             PropValue propValue = propValueService.get(bizProductInfo.getPropValue().getId());
             if (propValue != null) {
                 bizProductInfo.setBrandName(propValue.getValue());
+                brandCode=addZeroForNum(propValue.getCode(),false,4);
+                prodCode="CODE";
             }
+
         }
         super.save(bizProductInfo);
+        if(bizProductInfo.getId()==null){
+            String partNo=brandCode+prodCode+autoGenericCode(bizProductInfo.getId().toString(),6);
+            bizProductInfo.setProdCode(partNo);
+            super.save(bizProductInfo);
+        }
+
         if (bizProductInfo.getCategoryInfoList() != null && bizProductInfo.getCategoryInfoList().size() > 0) {
             bizProductInfoDao.deleteProdCate(bizProductInfo);
             bizProductInfoDao.insertProdCate(bizProductInfo);
@@ -113,6 +117,35 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         saveOwnProp(bizProductInfo);
         //保存产品图片
         saveCommonImg(bizProductInfo);
+    }
+
+    private String autoGenericCode(String code, int num) {
+        String result = "";
+        // 保留num的位数
+        // 0 代表前面补充0
+        // num 代表长度为4
+        // d 代表参数为正数型
+        result = String.format("%0" + num + "d", Integer.parseInt(code) + 1);
+
+        return result;
+    }
+
+    public static String addZeroForNum(String str,boolean flag, int strLength) {
+        int strLen = str.length();
+        if (strLen < strLength) {
+            while (strLen < strLength) {
+                StringBuffer sb = new StringBuffer();
+                if(flag){
+                    sb.append("0").append(str);// 左补0
+                }else {
+                    sb.append(str).append("0");//右补0
+                }
+                str = sb.toString();
+                strLen = str.length();
+            }
+        }
+
+        return str;
     }
 
     @Transactional(readOnly = false)
@@ -284,7 +317,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                     List<String> stringList = map.get(flag);
                     for (String str : stringList) {
                         bizProdPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+                        bizProdPropValue.setProdPropertyInfoId(bizProdPropertyInfo.getId());
                         bizProdPropValue.setSource("prod");
+                        bizProdPropValue.setCode(HanyuPinyinHelper.getFirstLetters(str, HanyuPinyinCaseType.UPPERCASE));
                         bizProdPropValue.setPropValue(str);
                         bizProdPropValue.setPropName(bizProdPropertyInfo.getPropName());
 
@@ -298,35 +333,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
     private void saveCatePropAndValue(BizProductInfo bizProductInfo) {
         BizProdPropValue prodPropValue = new BizProdPropValue();
-        //BizProdPropertyInfo prodPropertyInfo = new BizProdPropertyInfo();
-        /**
-         * 产品选择分类属性（只选择属性，没有值）
-         */
-//		String catePropertyInfoStr = bizProductInfo.getProdPropertyInfos();
         bizProductInfoDao.deleteProdPropInfoReal(bizProductInfo);
-//		if (catePropertyInfoStr != null && !catePropertyInfoStr.isEmpty()) {
-//			String[] catePropertyInfos = catePropertyInfoStr.split(",");
-//			for (int i = 0; i < catePropertyInfos.length; i++) {
-//				Set<String> keySet = bizProductInfo.getPropertyMap().keySet();
-//				if (!keySet.contains(catePropertyInfos[i])) {
-//					Integer propId = Integer.parseInt(catePropertyInfos[i]);
-//					PropertyInfo propertyInfo = propertyInfoService.get(propId);
-//					prodPropertyInfo.setPropName(propertyInfo.getName());
-//					prodPropertyInfo.setPropDescription(propertyInfo.getDescription());
-//					prodPropValue.setPropertyInfo(propertyInfo);
-//
-//					prodPropertyInfo.setProductInfo(bizProductInfo);
-//					bizProdPropertyInfoService.save(prodPropertyInfo);
-//					prodPropValue.setId(null);
-//					prodPropValue.setProdPropertyInfo(prodPropertyInfo);
-//					prodPropValue.setSource("sys");
-//					prodPropValue.setPropName(prodPropertyInfo.getPropName());
-//					bizProdPropValueService.save(prodPropValue);
-//
-//				}
-//			}
-//
-//		}
+
         /**
          * 选择分类属性（属性和值）
          */
@@ -349,10 +357,12 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                         Integer propValueId = Integer.parseInt(catePropertyValues[j].trim());
                         PropValue propValue = propValueService.get(propValueId);
                         prodPropValue.setPropertyInfo(propertyInfo);
+                        prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
                         prodPropValue.setSource("sys");
                         prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
                         prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
                         prodPropValue.setPropValue(propValue.getValue());
+                        prodPropValue.setCode(propValue.getCode());
                         prodPropValue.setSysPropValue(propValue);
                         bizProdPropValueService.save(prodPropValue);
                     }

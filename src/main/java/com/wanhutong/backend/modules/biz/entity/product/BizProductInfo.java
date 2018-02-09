@@ -156,7 +156,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.name = name;
 	}
 	
-	@Length(min=1, max=10, message="商品代码--厂家定的-或自己定的长度必须介于 1 和 10 之间")
+
 	public String getProdCode() {
 		return prodCode;
 	}

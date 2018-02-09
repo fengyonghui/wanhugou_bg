@@ -185,5 +185,26 @@ public class BizCategoryInfoController extends BaseController {
 		}
 		return mapList;
 	}
+	@ResponseBody
+	@RequestMapping(value = "findListByBrandId")
+	public List<Map<String, Object>> findListByBrandId(BizCategoryInfo bizCategoryInfo,Integer brandId){
+		bizCategoryInfo.setBrandId(brandId);
+		List<BizCategoryInfo> list= bizCategoryInfoService.findListByBrandId(bizCategoryInfo);
+		return  convertList(list);
+	}
 
+	private List<Map<String, Object>> convertList(List<BizCategoryInfo> list){
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		if(list != null && list.size() > 0 ){
+			for (int i = 0; i < list.size(); i++) {
+				BizCategoryInfo e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("name", e.getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
+	}
 }

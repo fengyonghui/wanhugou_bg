@@ -21,6 +21,7 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	private String description;		// 分类描述
 	private Byte status;//是否可用
 	private Integer cid;//用于参数传递
+	private Integer brandId; // 根据品牌查分类
 
 	private String catePhoto; //分类图片
 	private Integer imgId;
@@ -120,5 +121,13 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 
 	public void setPropertyMap(Map<String, BizCatePropertyInfo> propertyMap) {
 		this.propertyMap = propertyMap;
+	}
+
+	public Integer getBrandId() {
+		return brandId;
+	}
+
+	public void setBrandId(Integer brandId) {
+		this.brandId = brandId;
 	}
 }

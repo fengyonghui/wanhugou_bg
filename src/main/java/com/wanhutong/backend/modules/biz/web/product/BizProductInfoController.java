@@ -145,7 +145,7 @@ public class BizProductInfoController extends BaseController {
 				 propValues=propValueService.findList(propValue);
 			}
 
-			model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
+			//model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
 			model.addAttribute("propValueList",propValues);
 			model.addAttribute("entity", bizProductInfo);

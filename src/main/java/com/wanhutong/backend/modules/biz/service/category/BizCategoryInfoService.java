@@ -156,5 +156,9 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 		super.delete(bizCategoryInfo);
 		UserUtils.removeCache(UserUtils.CACHE_CATEGORYINFO_LIST);
 	}
+
+	public List<BizCategoryInfo> findListByBrandId(BizCategoryInfo bizCategoryInfo){
+		return bizCategoryInfoDao.findListByBrandId(bizCategoryInfo);
+	}
 	
 }
