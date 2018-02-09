@@ -45,7 +45,7 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
-			<if test="type != null and type != ''">
+			<if test="type != null">
 				and a.type = #{type}
 			</if>
 			<if test="sqlMap != null and sqlMap.shelfInfo != null and sqlMap.shelfInfo != ''">

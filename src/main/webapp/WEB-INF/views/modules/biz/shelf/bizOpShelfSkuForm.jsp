@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.BizOpShelfInfo" %>
+<%--当前系统时间--%>
+<jsp:useBean id="time" class="java.util.Date"/>
 <html>
 <head>
 	<title>商品上架管理</title>
@@ -132,10 +135,10 @@
                                 "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/></td>"+
                                 "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
                                 "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
-                                "<td><input name=\"shelfTimes\" value=\"\" type=\"number\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
-                                "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"必填！\"/></td>"+
+                                "<td><input id='shelfDate' name=\"shelfTimes\" value=\"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+                                "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
-                                "<td><input name=\"unshelfTimes\" type=\"number\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+                                "<td><input name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
                                 "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
                                 "<td><input name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
                                 "<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
@@ -167,7 +170,7 @@
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
                 success:function (data) {
-					if(data.type==3){
+					if(data.type==${BizOpShelfInfo.LOCAL_STOCK.getLocal()}){
 						$("#PurchaseID").css("display","block");
 					}else{
 						$("#PurchaseID").css("display","none");
@@ -273,7 +276,7 @@
 									<%--<th>上架人：</th>--%>
 							<%--</c:if>--%>
 							<th>上架数量(个)：</th>
-							<th>原价(元)：</th>
+							<th>出厂价(元)：</th>
 							<th>销售单价(元)</th>
 							<th>最低销售数量(个)：</th>
 							<th>最高销售数量(个,0:不限制)：</th>
