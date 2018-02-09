@@ -28,12 +28,16 @@ import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.omg.PortableInterceptor.INACTIVE;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -56,6 +60,7 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	private BizCategoryInfoDao bizCategoryInfoDao;
 	@Resource
 	private CommonImgService commonImgService;
+	protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
 	public BizCategoryInfo get(Integer id) {
 		return super.get(id);
@@ -138,7 +143,14 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			}else {
 				commonImgService.delete(commonImg);
 			}
-			String pathFile = Global.getUserfilesBaseDir() + bizCategoryInfo.getCatePhoto();
+			String categorCatePhoto=null;
+			try {
+				categorCatePhoto = URLDecoder.decode(bizCategoryInfo.getCatePhoto(), "utf-8");//分类图片转换编码
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+				log.error("分类图片转换编码." + e.getMessage(), e);
+			}
+			String pathFile = Global.getUserfilesBaseDir() + categorCatePhoto;
 			String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
 
 			commonImg.setId(null);
