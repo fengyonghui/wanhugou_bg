@@ -49,7 +49,7 @@ public class SysOfficeAddressController extends BaseController {
 	//	BeanUtils.copyProperties(sysOfficeAddress,add);
 		sysOfficeAddress.setType(null);
 	//	add.setOffice(sysOfficeAddress.getOffice());
-		List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
+		List<SysOfficeAddress> list = sysOfficeAddressService.orderHeaderfindList(sysOfficeAddress);
 		Integer i=-1;	//进入循环初始值
 		if(list!=null && list.size()>0){
 			for (SysOfficeAddress a : list) {

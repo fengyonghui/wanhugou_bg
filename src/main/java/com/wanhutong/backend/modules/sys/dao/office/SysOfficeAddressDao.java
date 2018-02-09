@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 
+import java.util.List;
+
 /**
  * 地址管理(公司+详细地址)DAO接口
  * @author OuyangXiutian
@@ -14,5 +16,6 @@ import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
  */
 @MyBatisDao
 public interface SysOfficeAddressDao extends CrudDao<SysOfficeAddress> {
-	
+	public List<SysOfficeAddress> orderHeaderfindList(SysOfficeAddress sysOfficeAddress);
+
 }

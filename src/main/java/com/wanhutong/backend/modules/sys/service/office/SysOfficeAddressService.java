@@ -20,6 +20,8 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.dao.office.SysOfficeAddressDao;
 
+import javax.annotation.Resource;
+
 /**
  * 地址管理(公司+详细地址)Service
  * @author OuyangXiutian
@@ -30,6 +32,8 @@ import com.wanhutong.backend.modules.sys.dao.office.SysOfficeAddressDao;
 public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, SysOfficeAddress> {
 	@Autowired
 	private CommonLocationService commonLocationService;
+	@Resource
+	private SysOfficeAddressDao sysOfficeAddressDao;
 
 	public SysOfficeAddress get(Integer id) {
 		return super.get(id);
@@ -76,5 +80,9 @@ public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, Sy
 	public void delete(SysOfficeAddress sysOfficeAddress) {
 		super.delete(sysOfficeAddress);
 	}
-	
+
+
+	public List<SysOfficeAddress> orderHeaderfindList(SysOfficeAddress sysOfficeAddress) {
+		return sysOfficeAddressDao.orderHeaderfindList(sysOfficeAddress);
+	}
 }

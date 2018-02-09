@@ -59,7 +59,6 @@
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
-
 			<if test="bizLocation != null and bizLocation.id != null and bizLocation.id != ''">
 				AND a.addr_id = #{bizLocation.id}
 			</if>
@@ -170,5 +169,39 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<!--用于订单默认地址查询-->
+	<select id="orderHeaderfindList" resultType="SysOfficeAddress">
+		SELECT
+		<include refid="sysOfficeAddressColumns"/>
+		FROM sys_office_address a
+		<include refid="sysOfficeAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="office != null and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="deFaultStatus != null and deFaultStatus != ''">
+				AND a.default_status = #{deFaultStatus}
+			</if>
+			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
+				AND a.update_id = #{updateBy.id}
+			</if>
+
+			<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">
+				${sqlMap.officeAddress}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+
 </mapper>
