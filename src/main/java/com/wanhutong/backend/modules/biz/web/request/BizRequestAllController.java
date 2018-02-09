@@ -104,13 +104,19 @@ public class BizRequestAllController {
         }
 		 	if("kc".equals(source)) {
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
-                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
-                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
-                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
+                if("0".equals(bizStatu)) {
+                    bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+                    bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
+                }
+                if ("1".equals(bizStatu)){
+                    bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                    bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
+                }
             }
             else if("sh".equals(source)){
-                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
-                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
     //                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.STOCKING.getState());
     //                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.COMPLETE.getState());
             }

@@ -110,7 +110,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
             //仓库biz_send_goods_record
 			BizInventoryInfo invInfo = bizSendGoodsRecord.getInvInfo();
 			int sendNum = bsgr.getSendNum();    //供货数
-			//累计备货单供货数量
+			//该单属于备货单，累计备货单供货数量
 			if (bsgr.getBizRequestDetail() != null && bsgr.getBizRequestDetail().getId() != 0) {
 				int sendQty = bsgr.getBizRequestDetail().getSendQty();   //备货单累计供货数量
 				//当供货数量和申报数量不相等时，更改备货单状态
@@ -149,7 +149,11 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(bsgr.getBizRequestDetail().getId());
 				bizRequestDetail.setSendQty(sendQty + sendNum);
 				bizRequestDetailService.save(bizRequestDetail);
-				//生成供货记录表
+				//改备货单状态为备货中(20)
+                BizRequestHeader bizReqHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
+                bizReqHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
+                bizRequestHeaderService.save(bizReqHeader);
+                //生成供货记录表
 				bsgr.setSendNum(sendNum);
 				if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {
 					BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
@@ -194,8 +198,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					int stock = 0;
 					//没有库存，改销售单状态为采购中（17）
 					if (list == null || list.size() == 0 || list.get(0).getStockQty() == 0){
-						bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
-						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+						/*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*/
 						flagOrder=false;
 					}else {
 						//有库存
@@ -203,8 +207,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 							stock = invSku.getStockQty();
 							//如果库存不够，则改销售单状态为采购中（17）
 							if (stock < bsgr.getBizOrderDetail().getOrdQty()){
-								bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
-								bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+								/*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+								bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*/
 								flagOrder=false;
 								if(sendNum > stock){
 									sendNum = stock;
@@ -275,6 +279,10 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					BizOrderDetail bizOrderDetail = bizOrderDetailService.get(bsgr.getBizOrderDetail().getId());
 					bizOrderDetail.setSentQty(sentQty + sendNum);
 					bizOrderDetailService.saveStatus(bizOrderDetail);
+					//修改订单状态为供应商发货（19）
+                    BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
+                    bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.STOCKING.getState());
+                    bizOrderHeaderService.save(bizOrderHeader);
 					//生成供货记录表
 					bsgr.setSendNum(sendNum);
 					if (bizSendGoodsRecord.getBizRequestHeader() != null && bizSendGoodsRecord.getBizRequestHeader().getId() != 0) {

@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.enums;
 
 public enum ReqHeaderStatusEnum {
+    //业务状态：0未审核 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
     UNREVIEWED(0),APPROVE(5),PURCHASING(10),ACCOMPLISH_PURCHASE(15), STOCKING(20),STOCK_COMPLETE(25),COMPLETE(30),CLOSE(35);
 
     private Integer state;
