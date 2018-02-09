@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
-<%@ page import="com.wanhutong.backend.modules.enums.BizOpShelfInfo" %>
+<%@ page import="com.wanhutong.backend.modules.enums.BizOpShelfInfoEnum" %>
 <%--当前系统时间--%>
 <jsp:useBean id="time" class="java.util.Date"/>
 <html>
@@ -115,6 +115,16 @@
                     }
                 })
             });
+
+            /**
+             *
+             * 获取当前时间
+             */
+            function p(s) {
+                return s < 10 ? '0' + s: s;
+            }
+
+
             <%--点击确定时填写商品数量--%>
             $("#ensureData").click(function () {
                 var skuIds="";
@@ -122,6 +132,14 @@
                     skuIds+=$(this).val()+",";
 				});
                 skuIds=skuIds.substring(0,skuIds.length-1);
+                var myDate = new Date();
+                var year=myDate.getFullYear();
+                var month=myDate.getMonth()+1;
+                var date=myDate.getDate();
+                var h=myDate.getHours();       //获取当前小时数(0-23)
+                var m=myDate.getMinutes();     //获取当前分钟数(0-59)
+                var s=myDate.getSeconds();
+                var now=year+'-'+p(month)+"-"+p(date)+" "+p(h)+':'+p(m)+":"+p(s);
                 $.ajax({
                     type:"POST",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameList?ids="+skuIds,
@@ -135,7 +153,7 @@
                                 "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/></td>"+
                                 "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
                                 "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
-                                "<td><input id='shelfDate' name=\"shelfTimes\" value=\"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+                                "<td><input id='shelfDate' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
                                 "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
                                 "<td><input name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
@@ -170,7 +188,7 @@
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
                 success:function (data) {
-					if(data.type==${BizOpShelfInfo.LOCAL_STOCK.getLocal()}){
+					if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){
 						$("#PurchaseID").css("display","block");
 					}else{
 						$("#PurchaseID").css("display","none");
@@ -303,7 +321,7 @@
 								<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 								<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 								<td><input name="shelfTimes" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-										   value="<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+										   value="<fmt:formatDate value="${bizOpShelfSku.shelfTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
 										   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/></td>
 								<%--<td><input name="createBy.name" value="${bizOpShelfSku.unshelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="number" placeholder="必填！"/></td>--%>
 								<td><input name="unshelfTimes" type="number" readonly="readonly" maxlength="20" class="input-medium Wdate "

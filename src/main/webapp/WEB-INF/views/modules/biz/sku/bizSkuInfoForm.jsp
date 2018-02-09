@@ -30,15 +30,15 @@
 					}
 				}
 			});
-            $('.select_all').live('click',function(){
-                var obj=$(this).attr("id");
-                var choose=$(".value_"+obj);
-                if($(this).attr('checked')){
-                    choose.attr('checked',true);
-                }else{
-                    choose.attr('checked',false);
-                }
-            });
+            // $('.select_all').live('click',function(){
+            //     var obj=$(this).attr("id");
+            //     var choose=$(".value_"+obj);
+            //     if($(this).attr('checked')){
+            //         choose.attr('checked',true);
+            //     }else{
+            //         choose.attr('checked',false);
+            //     }
+            // });
 			if($("#id").val()!=''){
                 ajaxGetSkuPropInfo($("#id").val());
 			}

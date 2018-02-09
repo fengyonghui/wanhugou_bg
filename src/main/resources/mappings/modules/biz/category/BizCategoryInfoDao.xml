@@ -115,6 +115,12 @@
 			<if test="dbName == 'mssql'">'%'+#{id}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{parentIds},'%')</if>
 		</if>
+		<if test="name != null and name != ''">
+			AND a.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name</if>
+			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		</if>
 	</select>
 
 	<select id="findAllList" resultType="BizCategoryInfo">

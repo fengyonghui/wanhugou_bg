@@ -318,6 +318,13 @@
                 });
 
             localSendIds= localSendIds.substring(0,localSendIds.length-1);
+            if(localSendIds==''){
+                $("input[name='localSendIds']").each(function () {
+                    localSendIds+=$(this).val()+",";
+                });
+                localSendIds= "0,"+localSendIds.substring(0,localSendIds.length-1);
+            }
+
             if(obj==${OrderHeaderBizStatusEnum.SUPPLYING.state}){ <%--15同意发货--%>
                 $("#id").val();
                 $.ajax({

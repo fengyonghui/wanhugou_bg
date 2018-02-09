@@ -5,6 +5,12 @@
 	<title>机构管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
+        $(document).ready(function() {
+            if ($("#id").val() != '') {
+                var bcID = $("#bcID").val();
+                changeSelect(bcID);
+            }
+        });
 		function changeSelect(id){
 			 $("#adviserId").html("");
 			 $("#adviserId").append("<option value='' selected = 'selected'>==请选择采购顾问==</option>");
