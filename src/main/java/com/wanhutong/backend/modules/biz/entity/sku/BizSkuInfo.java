@@ -208,6 +208,15 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 		return "";
 	}
+    public String getDefaultImgThumbUrl(){
+        if (skuImgs != null && skuImgs.size() > 0){
+            CommonImg commonImg = skuImgs.get(0);
+            return commonImg.getImgServer() + commonImg.getImgPath()+"?x-oss-process=style/thumb_hight200fix";
+        }
+
+        return "";
+    }
+
 
 	public void setSkuImgs(List<CommonImg> skuImgs) {
 		this.skuImgs = skuImgs;

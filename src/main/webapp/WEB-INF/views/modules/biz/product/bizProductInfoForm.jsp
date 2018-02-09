@@ -483,7 +483,7 @@
                         ${bizSkuInfo.id}</a>
                 </td>--%>
             <td>
-                <img src="${bizSkuInfo.defaultImgUrl}" width="120px" height="120px"/>
+                <img src="${bizSkuInfo.defaultImgThumbUrl}" width="120px" height="120px"/>
             </td>
             <td><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">
                     ${bizSkuInfo.name}
