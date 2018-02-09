@@ -99,7 +99,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		ORDER BY createDate DESC
+		ORDER BY updateDate DESC
 	</select>
 	
 	<select id="findAllList" resultType="SysOfficeAddress">
