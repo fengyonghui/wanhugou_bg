@@ -95,7 +95,7 @@
 	<%--@elvariable id="bizCategoryInfo" type="com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo"--%>
 	<form:form id="inputForm" modelAttribute="bizCategoryInfo" action="${ctx}/biz/category/bizCategoryInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<form:hidden path="parent.id"/>
+		<%--<form:hidden path="parent.id"/>--%>
 		<sys:message content="${message}"/>
 
 		<div class="control-group">

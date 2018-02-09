@@ -5,14 +5,14 @@ package com.wanhutong.backend.modules.enums;
  * Ouyang Xiutian
  * 2017/12/26
  * */
-public enum BizOpShelfInfo {
+public enum BizOpShelfInfoEnum {
 //    /*用于商品上下架选择货架 显示采购中心添加*/
 //    本地备货            货架
     LOCAL_STOCK(3), SPECIAL_OFFER(2);
 
     private Integer local;
 
-    BizOpShelfInfo(Integer local) {
+    BizOpShelfInfoEnum(Integer local) {
         this.local = local;
     }
 
@@ -24,8 +24,8 @@ public enum BizOpShelfInfo {
         this.local = local;
     }
 
-    public static BizOpShelfInfo stateOf(Integer local) {
-        for (BizOpShelfInfo state : values()) {
+    public static BizOpShelfInfoEnum stateOf(Integer local) {
+        for (BizOpShelfInfoEnum state : values()) {
             if (state.getLocal() == local) {
                 return state;
             }
@@ -35,7 +35,7 @@ public enum BizOpShelfInfo {
     
     public static void main(String[] args) {
     
-        System.out.println( BizOpShelfInfo.LOCAL_STOCK.getLocal());
+        System.out.println( BizOpShelfInfoEnum.LOCAL_STOCK.getLocal());
     }
     
 }

@@ -236,9 +236,15 @@
 			unit_price = #{unitPrice},
 			sent_qty = #{sentQty},
 			ord_qty = #{ordQty},
-		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
-			suply_id=#{suplyis.id},
-		</if>
+		<choose>
+			<when test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
+				suply_id=#{suplyis.id},
+			</when>
+			<otherwise>
+				suply_id=0,
+			</otherwise>
+		</choose>
+
 			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},

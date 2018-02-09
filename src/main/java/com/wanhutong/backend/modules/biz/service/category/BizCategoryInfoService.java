@@ -100,7 +100,7 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 				bizCatePropertyInfo.setName(propertyInfo.getName());
 				bizCatePropertyInfo.setDescription(propertyInfo.getDescription());
 				bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
-			//	bizCatePropertyInfo.setPropertyInfo(propertyInfo);
+
 				bizCatePropertyInfoService.save(bizCatePropertyInfo);
 				String catePropertyValueStr = bizCatePropertyInfo.getCatePropertyValues();
 				if (catePropertyValueStr != null && !"".equals(catePropertyValueStr)) {

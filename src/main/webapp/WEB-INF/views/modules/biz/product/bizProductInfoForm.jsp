@@ -9,6 +9,7 @@
     <%@include file="/WEB-INF/views/include/treeview.jsp" %>
     <script type="text/javascript">
         $(document).ready(function () {
+            var tree="";
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function (form) {
@@ -52,77 +53,6 @@
 
 
             }
-
-
-
-
-            /**
-             * 通过分类获取分类属性
-             * @param ids
-             */
-            function ajaxGetPropInfo(ids) {
-                $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
-                    {catIds: ids.toString()},
-                    function (data, status) {
-                        $("#cateProp").empty();
-                        $.each(data, function (keys, values) {
-                            var propKeys = keys.split(",");
-                            var propId = propKeys[0];
-                            if (propId != $("#brandDefId").val()) {
-                                var propName = propKeys[1]
-                                $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
-                                for (var p in values) {
-                                    if (values[p].value != null) {
-                                        $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
-                                    }
-                                }
-                            }
-
-                        });
-                        if ($("#id").val() != '' && status == 'success') {
-                            ajaxGetProdPropInfo($("#id").val());
-                        }
-
-
-                    })
-            }
-
-            function ajaxGetProdPropInfo(prodId) {
-                $.post("${ctx}/biz/product/bizProdPropertyInfo/findProdPropertyList",
-                    {prodId: prodId, ranNum: Math.random()},
-                    function (data, status) {
-                        $.each(data, function (index, prodPropertyInfo) {
-                            $.each(prodPropertyInfo.prodPropValueList, function (index, prodPropValue) {
-                                console.log("prodPropValue===" + prodPropValue);
-                                $("#" + prodPropValue.propertyInfoId).attr('checked', true)
-                                $("#value_" + prodPropValue.propertyValueId).attr('checked', true)
-                            });
-                        });
-                    });
-            }
-
-            var a = 0;
-            var str = ["a", "b", "c", "d", "e", "f", "g", "h", "j", "k", "l", "m", "n"];
-
-            function ajaxGetProdOwnPropInfo(prodId) {
-                $.post("${ctx}/biz/product/bizProdPropValue/findList",
-                    {prodId: prodId, source: "prod", ranNum: Math.random()},
-                    function (data, status) {
-                        $.each(data, function (keys, values) {
-                            var propKeys = keys.split(",");
-                            var propName = propKeys[0];
-                            var propDesc = propKeys[1]
-                            $("#ownPropInfo").append("<input title='" + str[a] + "' style='margin-bottom: 10px' onblur='cancelValue($(this),\"" + str[a] + "\");' class='input-mini' type='text' name='propNames' value='" + propName + "'/>:<input type='hidden'  name='propNames' value='" + str[a] + "_'/>");
-                            for (var p in values) {
-                                $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' class='" + str[a] + "' type='text' name='propOwnValues' value='" + values[p].propValue + "'/><input type='hidden'  name='propOwnValues' value='" + str[a] + "_'>")
-
-
-                            }
-                            $("#ownPropInfo").append("<button id='id_" + str[a] + "' onclick='addPropValueInfo(\"" + str[a] + "\")'  type=\"button\" class=\"btn btn-default\"><span class=\"icon-plus\"></span></button><br/>");
-                            a++;
-                        });
-                    });
-            };
             $('.select_all').live('click', function () {
                 var obj = $(this).attr("id");
                 var choose = $(".value_" + obj);
@@ -132,6 +62,15 @@
                     choose.attr('checked', false);
                 }
             });
+
+
+
+
+
+
+
+
+
 
             <%--// 分类--菜单--%>
             <%--var zNodes = [--%>
@@ -188,59 +127,64 @@
                 a++;
                 $('#myModal').modal('hide');
             });
-            var tree="";
+
         $("#propValueId").change(function () {
             var brandId=$(this).val();
             ajaxFindCateByBrand(brandId);
         });
-        });
-        function ajaxFindCateByBrand(brandId) {
-            $.post("${ctx}/biz/category/bizCategoryInfo/findListByBrandId",
-                {brandId: brandId, ranNum: Math.random()},
-                function (data, status) {
-                    treeNodes = data;   //把后台封装好的简单Json格式赋给treeNodes
-                    var setting = {
-                        check: {enable: true, nocheckInherit: true}, view: {selectedMulti: false},
-                        data: {simpleData: {enable: true}}, callback: {
-                            beforeClick: function (id, node) {
-                                tree.checkNode(node, !node.checked, true, true);
-                                return false;
-                            }, onCheck: zTreeOnCheck
-                        }
-                    };
-                    tree= $.fn.zTree.init($("#cateTree"), setting, treeNodes);
-                    // 不选择父节点
-                    tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
 
-                    //ztree 复选框操作控制函数
-                    function zTreeOnCheck(event, treeId, treeNode) {
-                        var ids = [], nodes = tree.getCheckedNodes(true);
-                        for (var i = 0; i < nodes.length; i++) {
-                            if (!nodes[i].isParent) {
-                                ids.push(nodes[i].id);
+            function ajaxFindCateByBrand(brandId) {
+                $.post("${ctx}/biz/category/bizCategoryInfo/findListByBrandId",
+                    {brandId: brandId, ranNum: Math.random()},
+                    function (data, status) {
+                        treeNodes = data;   //把后台封装好的简单Json格式赋给treeNodes
+                        var setting = {
+                            check: {enable: true, nocheckInherit: true}, view: {selectedMulti: false},
+                            data: {simpleData: {enable: true}}, callback: {
+                                beforeClick: function (id, node) {
+                                    tree.checkNode(node, !node.checked, true, true);
+                                    return false;
+                                }, onCheck: zTreeOnCheck
+                            }
+                        };
+                        tree= $.fn.zTree.init($("#cateTree"), setting, treeNodes);
+                        // 不选择父节点
+                        tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
+
+                        //ztree 复选框操作控制函数
+                        function zTreeOnCheck(event, treeId, treeNode) {
+                            var ids = [], nodes = tree.getCheckedNodes(true);
+                            for (var i = 0; i < nodes.length; i++) {
+                                if (!nodes[i].isParent) {
+                                    ids.push(nodes[i].id);
+                                }
+                            }
+
+                            ajaxGetPropInfo(ids);
+
+
+                        };
+
+                        // 默认选择节点
+                        var ids = "${entity.cateIds}".split(",");
+                        for (var i = 0; i < ids.length; i++) {
+                            var node = tree.getNodeByParam("id", ids[i]);
+                            try {
+                                tree.checkNode(node, true, false);
+                                tree.checkNode(node.getParentNode(), true, false);
+                            } catch (e) {
                             }
                         }
+                        // 默认展开全部节点
+                        tree.expandAll(true);
+                    });
 
-                        ajaxGetPropInfo(ids);
+            }
+
+        });
 
 
-                    };
 
-                    // 默认选择节点
-                    var ids = "${entity.cateIds}".split(",");
-                    for (var i = 0; i < ids.length; i++) {
-                        var node = tree.getNodeByParam("id", ids[i]);
-                        try {
-                            tree.checkNode(node, true, false);
-                            tree.checkNode(node.getParentNode(), true, false);
-                        } catch (e) {
-                        }
-                    }
-                    // 默认展开全部节点
-                    tree.expandAll(true);
-                });
-
-        }
 
 
 
@@ -266,12 +210,82 @@
 
         }
 
+        /**
+         * 通过分类获取分类属性
+         * @param ids
+         */
+        function ajaxGetPropInfo(ids) {
+            $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
+                {catIds: ids.toString()},
+                function (data, status) {
+                    $("#cateProp").empty();
+                    $.each(data, function (keys, values) {
+                        var propKeys = keys.split(",");
+                        var propId = propKeys[0];
+                        if (propId != $("#brandDefId").val()) {
+                            var propName = propKeys[1]
+                            $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
+                            for (var p in values) {
+                                if (values[p].value != null) {
+                                    $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
+                                }
+                            }
+                        }
+
+                    });
+                    if ($("#id").val() != '' && status == 'success') {
+                        ajaxGetProdPropInfo($("#id").val());
+                    }
+
+
+                })
+        }
+
+        function ajaxGetProdPropInfo(prodId) {
+            $.post("${ctx}/biz/product/bizProdPropertyInfo/findProdPropertyList",
+                {prodId: prodId, ranNum: Math.random()},
+                function (data, status) {
+                    $.each(data, function (index, prodPropertyInfo) {
+                        $.each(prodPropertyInfo.prodPropValueList, function (index, prodPropValue) {
+                            console.log("prodPropValue===" + prodPropValue);
+                            $("#" + prodPropValue.propertyInfoId).attr('checked', true)
+                            $("#value_" + prodPropValue.propertyValueId).attr('checked', true)
+                        });
+                    });
+                });
+        }
+
+        var a = 0;
+        var str = ["a", "b", "c", "d", "e", "f", "g", "h", "j", "k", "l", "m", "n"];
+
+        function ajaxGetProdOwnPropInfo(prodId) {
+            $.post("${ctx}/biz/product/bizProdPropValue/findList",
+                {prodId: prodId, source: "prod", ranNum: Math.random()},
+                function (data, status) {
+                    $.each(data, function (keys, values) {
+                        var propKeys = keys.split(",");
+                        var propName = propKeys[0];
+                        var propDesc = propKeys[1]
+                        $("#ownPropInfo").append("<input title='" + str[a] + "' style='margin-bottom: 10px' onblur='cancelValue($(this),\"" + str[a] + "\");' class='input-mini' type='text' name='propNames' value='" + propName + "'/>:<input type='hidden'  name='propNames' value='" + str[a] + "_'/>");
+                        for (var p in values) {
+                            $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' class='" + str[a] + "' type='text' name='propOwnValues' value='" + values[p].propValue + "'/><input type='hidden'  name='propOwnValues' value='" + str[a] + "_'>")
+
+
+                        }
+                        $("#ownPropInfo").append("<button id='id_" + str[a] + "' onclick='addPropValueInfo(\"" + str[a] + "\")'  type=\"button\" class=\"btn btn-default\"><span class=\"icon-plus\"></span></button><br/>");
+                        a++;
+                    });
+                });
+        };
+
         function cancelValue(obj, k) {
             if (obj.val() == '') {
                 obj.parent().children("." + k).remove();
             }
 
         }
+
+
     </script>
 </head>
 <body>

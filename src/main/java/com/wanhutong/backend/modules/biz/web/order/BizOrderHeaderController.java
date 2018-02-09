@@ -297,14 +297,27 @@ public class BizOrderHeaderController extends BaseController {
 						OrderAddressTwo.setType(2);
 						bizOrderAddressService.save(OrderAddressTwo);
 						if(StringUtils.isNotBlank(localSendIds)){
-						    String[]sidArr=localSendIds.split(",");
-						    for(int i=0;i<sidArr.length;i++){
-                             BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(sidArr[i].trim()));
-                             BizOrderHeader orderHeader=bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
-                             BizCustomCenterConsultant bizCustomCenterConsultant= bizCustomCenterConsultantService.get(orderHeader.getCustomer().getId());
-                             bizOrderDetail.setSuplyis(officeService.get(bizCustomCenterConsultant.getCenters().getId()));
-                             bizOrderDetailService.saveStatus(bizOrderDetail);
-						    }
+							String[]sidArr=localSendIds.split(",");
+							if(localSendIds.startsWith("0")){
+								for(int i=0;i<sidArr.length;i++){
+									if("0".equals(sidArr[i].trim())){
+										continue;
+									}
+									BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(sidArr[i].trim()));
+									bizOrderDetail.setSuplyis(officeService.get(0));
+									bizOrderDetailService.saveStatus(bizOrderDetail);
+								}
+							}else {
+								for(int i=0;i<sidArr.length;i++){
+									BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(sidArr[i].trim()));
+									BizOrderHeader orderHeader=bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+									BizCustomCenterConsultant bizCustomCenterConsultant= bizCustomCenterConsultantService.get(orderHeader.getCustomer().getId());
+									bizOrderDetail.setSuplyis(officeService.get(bizCustomCenterConsultant.getCenters().getId()));
+									bizOrderDetailService.saveStatus(bizOrderDetail);
+								}
+							}
+
+
                         }
 						commis="ok";
 					}else if(objJsp==OrderHeaderBizStatusEnum.UNAPPROVE.getState()){
