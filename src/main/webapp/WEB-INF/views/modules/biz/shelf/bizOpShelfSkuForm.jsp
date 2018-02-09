@@ -119,7 +119,6 @@
                     skuIds+=$(this).val()+",";
 				});
                 skuIds=skuIds.substring(0,skuIds.length-1);
-				<%--$("#tbody").empty(); 点击确定清空选中商品 --%>
                 $.ajax({
                     type:"POST",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameList?ids="+skuIds,
@@ -127,30 +126,30 @@
                     success:function(data){
                         var htmlInfo = "";
                         $.each(data,function(index,item) {
-							<%--var td1=$("#tbody tr td").eq(index).find("input").text();--%>
-							<%--&lt;%&ndash;var tr = $("#tbody").children("tr");&ndash;%&gt;--%>
-							<%--var tr=$("#tbody").children();--%>
-							<%--var history_income_type = tr.eq("+item.id+").find("input").val();--%>
+                           htmlInfo+="<tr id='"+item.id+"'><td id='rowsTd'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
+                                "<td><input name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/></td>"+
+                                "<td><input name='orgPrices' readonly='readonly' value='"+item.basePrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
+                                "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/></td>"+
+                                "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
+                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
+                                "<td><input name=\"shelfTimes\" value=\"\" type=\"number\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+                                "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"必填！\"/></td>"+
 
-							<%--if(history_income_type!=undefined){--%>
-								<%--console.log(" 相同的id "); 点击确定一次只能添加选中商品 --%>
-							<%--}else{--%>
-								htmlInfo+="<tr id='"+item.id+"'><td><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
-									"<td><input name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！'/></td>"+
-									"<td><input name='orgPrices' readonly='readonly' value='"+item.basePrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='text' placeholder='必填！' /></td>"+
-									"<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" placeholder=\"必填！\"/></td>"+
-									"<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-									"<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-									"<td><input name=\"shelfTimes\" value=\"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
-									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"必填！\"/></td>"+
-
-									"<td><input name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
-									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-									"<td><input name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"text\" placeholder=\"必填！\"/></td>"+
-									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
-							<%--}--%>
+                                "<td><input name=\"unshelfTimes\" type=\"number\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+                                "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
+                                "<td><input name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
+                                "<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
                         });
                         $("#tbody").append(htmlInfo);
+                        <%--遍历每个tr下td--%>
+                        <%--var leng = $("#tbody tr").length;--%>
+                        <%--var filter_numbs = new Array();--%>
+                        <%--for(var i=0; i<=leng; i++){--%>
+                            <%--$("#rowsTd").attr("rowspan",""+i+"");--%>
+                            <%--numberStr = $("#tbody tr").eq(i).find("td:first").empty();--%>
+                            <%--filter_numbs.push(numberStr);--%>
+                        <%--}--%>
+                        <%---end---%>
                     }
                 })
             });
@@ -158,7 +157,6 @@
 		});
         function removeItem(obj) {
             $("#"+obj).remove();
-
         }
 	</script>
 	<script type="text/javascript">
@@ -295,20 +293,20 @@
 									<input name="id" value="${bizOpShelfSku.id}" class="input-medium required" type="hidden"/>
 									<input name="skuInfoIds" value="${bizOpShelfSku.skuInfo.id}" class="input-medium required" type="hidden"/>${bizOpShelfSku.skuInfo.name}
 									</td>
-								<%--<td><input name="createBy.name" value="${bizOpShelfSku.shelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="text" placeholder="必填！"/></td>--%>
-								<td><input name="shelfQtys" value="${bizOpShelfSku.shelfQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="text" placeholder="必填！"/></td>
-								<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="text" placeholder="必填！"/></td>
-								<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false" maxlength="6" class="input-medium required" placeholder="必填！"/></td>
-								<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="text" placeholder="必填！"/></td>
-								<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="text" placeholder="必填！"/></td>
+								<%--<td><input name="createBy.name" value="${bizOpShelfSku.shelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="number" placeholder="必填！"/></td>--%>
+								<td><input name="shelfQtys" value="${bizOpShelfSku.shelfQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
+								<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
+								<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
+								<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
+								<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 								<td><input name="shelfTimes" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
 										   value="<fmt:formatDate value="${bizOpShelfSku.shelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 										   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/></td>
-								<%--<td><input name="createBy.name" value="${bizOpShelfSku.unshelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="text" placeholder="必填！"/></td>--%>
-								<td><input name="unshelfTimes" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
+								<%--<td><input name="createBy.name" value="${bizOpShelfSku.unshelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="number" placeholder="必填！"/></td>--%>
+								<td><input name="unshelfTimes" type="number" readonly="readonly" maxlength="20" class="input-medium Wdate "
 										   value="<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 										   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="选填！"/></td>
-								<td><input name="prioritys" value="${bizOpShelfSku.priority}" htmlEscape="false" maxlength="5" class="input-medium required" type="text" placeholder="必填！"/></td>
+								<td><input name="prioritys" value="${bizOpShelfSku.priority}" htmlEscape="false" maxlength="5" class="input-medium required" type="number" placeholder="必填！"/></td>
 							</tr>
 						</c:if>
 					</tbody>
