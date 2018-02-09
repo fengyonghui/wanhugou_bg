@@ -138,7 +138,9 @@ public class SysOfficeAddressController extends BaseController {
 	public String delete(SysOfficeAddress sysOfficeAddress, RedirectAttributes redirectAttributes) {
 		sysOfficeAddressService.delete(sysOfficeAddress);
 		addMessage(redirectAttributes, "删除地址信息成功");
-		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
+
+//		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress/?repage";
+		return "redirect:"+Global.getAdminPath()+"/sys/office/sysOfficeAddress?office.type=" + sysOfficeAddress.getOffice().getType();
 	}
 
 }
