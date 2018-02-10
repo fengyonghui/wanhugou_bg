@@ -12,7 +12,7 @@
 		a.prop_value_id AS "catePropValue.id",
 		a.prop_value_id AS "sysPropValue.id",
 		a.prop_value AS "propValue",
-		a.code AS code,
+		a.code AS "code",
 		a.source AS "source",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -62,9 +62,9 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
 			</otherwise>
 		</choose>
+		ORDER BY updateDate DESC
 	</select>
 	
 	<select id="findAllList" resultType="BizProdPropValue">
@@ -94,7 +94,9 @@
 			prop_value_id,
 		</if>
 			prop_value,
-			code,
+		<if test="code!=null and code!=''">
+			`code`,
+		</if>
 			source,
 			create_id,
 			create_time,
@@ -105,22 +107,22 @@
 		) VALUES (
 			#{id},
 			#{prodPropertyInfo.id},
-
 		<choose>
-				<when test="source!=null and source=='sys'">
-					#{propertyInfo.id},
-				</when>
-				<otherwise>
-					#{prodPropertyInfoId},
-				</otherwise>
-			</choose>
-
+			<when test="source!=null and source=='sys'">
+				#{propertyInfo.id},
+			</when>
+			<otherwise>
+				#{prodPropertyInfoId},
+			</otherwise>
+		</choose>
 			#{propName},
 		<if test="source!=null and source=='sys'">
 			#{sysPropValue.id},
 		</if>
 			#{propValue},
+		<if test="code !=null and code !='' ">
 			#{code},
+		</if>
 			#{source},
 			#{createBy.id},
 			#{createDate},
@@ -140,7 +142,9 @@
 			</if>
 			prop_name = #{propName},
 			prop_value = #{propValue},
-			code = #{code},
+		<if test="code !=null and code=='' ">
+			`code` = #{code},
+		</if>
 			source = #{source},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},
