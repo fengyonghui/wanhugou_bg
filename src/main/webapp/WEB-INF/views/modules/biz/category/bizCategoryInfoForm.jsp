@@ -4,8 +4,51 @@
 <head>
 	<title>商品类别管理</title>
 	<meta name="decorator" content="default"/>
+	<%--<style type="text/css">
+		#menu {
+			font-size: 12px;
+			font-weight: bolder;
+		}
+		#menu li{
+			list-style-image: none;
+			list-style-type: none;
+			background-color: #ffffff;
+			border-right-width: 0px;
+			border-right-style: solid;
+			border-right-color: #000000;
+			float: left;
+		}
+		#menu li a{
+			color: #000000;
+			text-decoration: none;
+			margin: 0px;
+			padding-top: 8px;
+			display: block; /* 作为一个块 */
+			padding-right: 50px; /* 设置块的属性 */
+			padding-bottom: 8px;
+			padding-left: 0px;
+		}
+		#menu li a:hover{
+			background-color: #0099CC;
+		}
+
+	</style>--%>
+	<script src="${ctxStatic}/jquery/jquery-1.8.3.min.js" type="text/javascript"></script>
+	<%--<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js"></script>--%>
+	<script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="${ctxStatic}/bootstrap/bootstrap-select.css">
+	<script type="text/javascript" src="${ctxStatic}/bootstrap/bootstrap-select.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
+            $(".selectpicker").selectpicker({
+                noneSelectedText : '请选择'
+            });
+            $(window).on('load', function () {
+                $('.selectpicker').selectpicker('val', '');
+                // $('.selectpicker').selectpicker('refresh');
+                // $('.selectpicker').selectpicker('render');
+            });
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
@@ -74,16 +117,72 @@
                     $("#myModal").on("hidden.bs.modal", function (e) {
                         alert("保存成功！");
                         window.location.href="${ctx}/biz/category/bizCategoryInfo/form?id="+id;
-                    })
+                    });
                 }
             }
-        })
-    })
+        });
+    });
 
-	});
+		});
+        <%--/*function selectedPropertyInfo(obj) {--%>
+            <%--alert(obj);--%>
+            <%--$("#propertyValueList").html("");--%>
+            <%--$.ajax({--%>
+                <%--type:"post",--%>
+                <%--url:"${ctx}/biz/category/bizCategoryInfo/propertyForm?value=null&id="+obj,--%>
+				<%--dataType:"json",--%>
+                <%--success:function (data) {--%>
+                    <%--$.each(data,function (index,list) {--%>
+                       <%--console.log(list)--%>
+						<%--$.each(list, function (index,proValue) {--%>
+							<%--alert(proValue.value);--%>
+							<%--var htmlInfo = "";--%>
+							<%--htmlInfo += "<a href='#' onclick='addItem("+proValue+")'><li role='option' id='"+proValue.id+"' class='cc-cbox-item cc-hasChild-item'>"+proValue.value+"</li></a>";--%>
+							<%--$("#propertyValueList").append(htmlInfo);--%>
+                        <%--});--%>
 
+                    <%--});--%>
 
+                <%--}--%>
+            <%--});--%>
+        <%--}*/--%>
 
+        /*function addItem(obj) {
+			var htmlInfo = "";
+			htmlInfo += "<li role=\"option\" id='"+obj.id+"' class='cc-cbox-item cc-hasChild-item'>"+obj.value+"</li>";
+			$("#proValue").append(htmlInfo);
+        }*/
+
+			function selectProValue(obj) {
+                $(".selectpicker"+obj).selectpicker({
+                    noneSelectedText : '请选择'
+                });
+                $(window).on('load', function () {
+                    $('.selectpicker'+obj).selectpicker('val', '');
+                    $('.selectpicker'+obj).selectpicker('refresh');
+                });
+			    alert("1");
+				$.ajax({
+					type:"post",
+					url:"${ctx}/biz/category/bizCategoryInfo/propertyForm?value=&id="+obj,
+					success:function (data) {
+					    alert(data);
+						$.each(data,function(key,values){
+						    console.log(values);
+							$.each(values,function(index,item){
+                                console.log(item);
+								var html = "";
+								var select = $("#id_select"+obj);
+								html+="<option name='propertyMap["+obj+"].catePropertyValues' value='"+item.id+"'>"+item.value+"</option>";
+								select.append(html);
+							});
+						});
+                        $('.selectpicker'+obj).selectpicker('val', '');
+                        $('.selectpicker'+obj).selectpicker('refresh');
+                        $('.selectpicker'+obj).selectpicker('render');
+                    }
+				});
+            }
 	</script>
 </head>
 <body>
@@ -91,11 +190,20 @@
 		<li><a href="${ctx}/biz/category/bizCategoryInfo/list?id=${bizCategoryInfo.parentId}&parentIds=${bizCategoryInfo.parentIds}&cid=${bizCategoryInfo.id}">商品类别列表</a></li>
 		<li class="active"><a href="${ctx}/biz/category/bizCategoryInfo/form?id=${bizCategoryInfo.id}">商品类别<shiro:hasPermission name="biz:category:bizCategoryInfo:edit">${not empty bizCategoryInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:category:bizCategoryInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-
+	<label for="id_select"></label>
+	<select id="id_select" class="selectpicker bla bla bli" multiple data-live-search="true">
+		<optgroup label="">
+		<option>cow</option>
+		<option>bull</option>
+		<option>ASD</option>
+		<option selected>Bla</option>
+		<option>Ble</option>
+		</optgroup>
+	</select>
 	<%--@elvariable id="bizCategoryInfo" type="com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo"--%>
 	<form:form id="inputForm" modelAttribute="bizCategoryInfo" action="${ctx}/biz/category/bizCategoryInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<%--<form:hidden path="parent.id"/>--%>
+		<form:hidden path="parent.id"/>
 		<sys:message content="${message}"/>
 
 		<div class="control-group">
@@ -131,13 +239,107 @@
 			<div class="control-group">
 				<label class="control-label">分类属性：</label>
 				<div class="controls">
-					<c:forEach items="${propertyInfoList}" var="propertyInfo">
-						<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="catePropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.name}：
-						<c:forEach items="${map[propertyInfo.id]}" var="propValue">
-							<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}
+					<%--<table id="CategoryTable0" style="width: 30%;float: left" class="table table-striped table-bordered table-condensed">
+						<c:forEach items="${propertyInfoList}" var="propertyInfo">
+							<tr>
+							<td>
+							<a name="catePropertyInfos" id="${propertyInfo.id}" value="${propertyInfo.id}" onclick="selectedPropertyInfo(${propertyInfo.id})">${propertyInfo.name}</a>
+							</td>
+							</tr>
 						</c:forEach>
-						<br/>
-					</c:forEach>
+					</table>
+					<table id="CategoryTable1" style="width: 35%;float: left" class="table table-striped table-bordered table-condensed">
+
+					</table>
+					<table id="CategoryTable2" style="width: 35%;float: left" class="table table-striped table-bordered table-condensed">
+
+					</table>--%>
+				<%--<div class="cate-main">
+					<div id="cate-cascading">
+							&lt;%&ndash;<a href="#" class="cc-prev cc-nav" title="上一级" id="J_LinkPrev" style="visibility: hidden;">
+								<span>上一级</span>
+							</a>&ndash;%&gt;
+							<div class="cc-listwrap">
+								<ol id="menu" class="cc-list">
+									<li id="propertyList" style="width: 20%" class="cc-list-item" tabindex="-1">
+										<div id="propertyInfo">
+											<ul id="menu1" role="group">
+												<c:forEach items="${propertyInfoList}" var="propertyInfo">
+
+													<a href="#" onclick="selectedPropertyInfo(${propertyInfo.id})"><li id="${propertyInfo.id}" value="${propertyInfo.id}" >
+																${propertyInfo.name}</li><br/></a>
+													&lt;%&ndash;<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="catePropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.name}：&ndash;%&gt;
+													&lt;%&ndash;<c:forEach items="${map[propertyInfo.id]}" var="propValue">
+                                                        <li id="value_${propValue.id}" value="${propValue.id}">${propValue.value}</li>
+                                                        &lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;
+                                                    </c:forEach>&ndash;%&gt;
+
+												</c:forEach>
+											</ul>
+										</div>
+									</li>
+									&lt;%&ndash;<form:form id="selectForm" modelAttribute="bizCategoryInfo" action="${ctx}/biz/category/bizCategoryInfo/propertyForm" method="post" class="form-horizontal">
+									<li id="propertyValueList" style="width: 40%" class="cc-list-item" tabindex="-1">
+										<input id="selectProValue" name="selectProValue" placeholder="搜索" class="selectProValue" role="textbox" autocomplete="off" style="width: 176px;" value=""/>
+										<div role="tree" class="cc-tree" id="propValueList">
+											<ul role="listbox" id="pValueList" tabindex="-1" hidefocus="-1" unselectable="on" class="cc-cont">
+												<li role="option" id="cc-cbox-item" class="cc-cbox-item cc-hasChild-item">qqqq</li>
+											</ul>
+										</div>
+									</li>
+									</form:form>&ndash;%&gt;
+									<li id="propertyValueList" style="width: 40%">
+									<div class="form-group">
+										<label for="id_select"></label>
+										<select id="id_select" class="selectpicker bla bla bli" multiple data-live-search="true">
+											<option>cow</option>
+											<option>bull</option>
+											<option>ASD</option>
+											<option selected>Bla</option>
+											<option>Ble</option>
+											</optgroup>
+										</select>
+									</div>
+									</li>
+
+									<li id="propertyValue" style="width: 40%" class="cc-list-item" tabindex="-1">
+										<div id="propValue">
+											<ul id="proValue" tabindex="-1" hidefocus="-1">
+												<li role="option">qqq</li>
+											</ul>
+										</div>
+									</li >
+								</ol>
+							</div>
+						</div>
+					</div>--%>
+						<ul id="menu1" role="group">
+							<c:forEach items="${propertyInfoList}" var="propertyInfo" varStatus="property">
+
+								<%--<a href="#" onclick="selectedPropertyInfo(${propertyInfo.id})"></a>--%>
+									<li id="li${propertyInfo.id}" value="${propertyInfo.id}">
+										<a href="#" onclick="selectProValue(${propertyInfo.id})">${propertyInfo.name}</a>
+											<div class="form-group">
+												<label for="id_select${propertyInfo.id}"></label>
+												<select id="id_select${propertyInfo.id}" class="selectpicker${propertyInfo.id}" onclick="selectProValue(${propertyInfo.id})" multiple data-live-search="true" data_width="300px">
+													<%--<optgroup>--%>
+													<%--<option name="propertyMap[${propertyInfo.id}].catePropertyValues" value="">cow</option>--%>
+													<%--<option>bull</option>--%>
+													<%--<option>ASD</option>--%>
+													<%--<option selected>Bla</option>--%>
+													<%--<option>Ble</option>--%>
+													</optgroup>
+												</select>
+											</div></li><br/>
+								<%--<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="catePropertyInfos" value="${propertyInfo.id}"/> ${propertyInfo.name}：--%>
+								<%--<c:forEach items="${map[propertyInfo.id]}" var="propValue">
+                                    <li id="value_${propValue.id}" value="${propValue.id}">${propValue.value}</li>
+                                    &lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;
+                                </c:forEach>--%>
+
+							</c:forEach>
+						</ul>
+
 				</div>
 			</div>
 			<div class="control-group">

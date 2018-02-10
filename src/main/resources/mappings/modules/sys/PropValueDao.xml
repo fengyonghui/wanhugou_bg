@@ -37,6 +37,9 @@
 			<if test="propertyInfo!=null and propertyInfo.id!=null and propertyInfo.id!=''">
 				and a.prop_id=#{propertyInfo.id}
 			</if>
+			<if test="value != null and value != ''">
+				AND a.value = #{value}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

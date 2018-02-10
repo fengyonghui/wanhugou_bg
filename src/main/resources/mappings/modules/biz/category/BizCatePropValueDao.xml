@@ -40,7 +40,6 @@
 			<if test="catePropertyInfo != null and catePropertyInfo.id!=null and catePropertyInfo.id != ''">
 				AND a.prop_id = #{catePropertyInfo.id}
 			</if>
-
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

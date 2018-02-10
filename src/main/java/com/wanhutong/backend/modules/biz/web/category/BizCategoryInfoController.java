@@ -124,8 +124,11 @@ public class BizCategoryInfoController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("propertyForm")
-	public Map<Integer, List<PropValue>> propertyForm(Integer id) {
+	public Map<Integer, List<PropValue>> propertyForm(String value, Integer id) {
 		PropertyInfo propertyInfo=propertyInfoService.get(id);
+		if (value != null && !"".equals(value)){
+			propertyInfo.getPropValue().setValue(value);
+		}
 		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
 		return map;
 	}

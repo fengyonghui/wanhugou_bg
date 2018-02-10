@@ -46,6 +46,9 @@ public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyIn
 	}
 	public Map<Integer,List<PropValue>> findMapList(PropertyInfo propertyInfo){
 		PropValue propValue=new PropValue();
+		if (propertyInfo.getPropValue() != null && propertyInfo.getPropValue().getValue() != null && "".equals(propertyInfo.getPropValue().getValue())){
+			propValue.setValue(propertyInfo.getPropValue().getValue());
+		}
 		List<PropertyInfo> list=findList(propertyInfo);
 		Map<Integer,List<PropValue>> map=new HashMap<Integer,List<PropValue>>();
 		for(PropertyInfo info:list){
