@@ -5,9 +5,10 @@
 	<sql id="bizSearchColumns">
 		a.id AS "id",
 		a.part_no AS "partNo",
-		a.cate_id AS "cateId",
+		bci.id AS  "cateId.id",
+		bci.name AS "cateId.name",
 		a.cate_name AS "cateName",
-		a.quality_id AS "qualityId",
+		spv.value AS "qualityId",
 		a.color AS "color",
 		a.standard AS "standard",
 		a.business_status AS "businessStatus",
@@ -18,15 +19,17 @@
 		a.amount AS "amount",
 		a.comment AS "comment",
 		a.status AS "status",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
 		u10.name AS "user.name"
 	</sql>
 	
 	<sql id="bizSearchJoins">
 		LEFT JOIN sys_user u10 ON u10.id = a.user_id
+		LEFT JOIN biz_category_info bci ON  bci.id = a.cate_id
+		LEFT JOIN sys_prop_value spv ON spv.id = a.quality_id
 	</sql>
     
 	<select id="get" resultType="BizSearch">
@@ -45,16 +48,22 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="partNo != null and partNo != ''">
-				AND a.part_no = #{partNo}
+				AND a.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
 			</if>
-			<if test="cateId != null and cateId != ''">
-				AND a.cate_id = #{cateId}
+			<if test="cateId != null and cateId.name != '' ">
+				AND bci.name = #{cateId.name}
 			</if>
 			<if test="cateName != null and cateName != ''">
-				AND a.cate_name = #{cateName}
+				AND a.cate_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{cateName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{cateName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{cateName},'%')</if>
 			</if>
 			<if test="qualityId != null and qualityId != ''">
-				AND a.quality_id = #{qualityId}
+				AND spv.value = #{qualityId}
 			</if>
 			<if test="color != null and color != ''">
 				AND a.color = #{color}
@@ -62,7 +71,7 @@
 			<if test="standard != null and standard != ''">
 				AND a.standard = #{standard}
 			</if>
-			<if test="businessStatus != null and businessStatus != ''">
+			<if test="businessStatus != null and businessStatus != -1 ">
 				AND a.business_status = #{businessStatus}
 			</if>
 		</where>
@@ -116,7 +125,7 @@
 		) VALUES (
 			#{id},
 			#{partNo},
-			#{cateId},
+			#{cateId.id},
 			#{cateName},
 			#{qualityId},
 			#{color},
@@ -128,18 +137,18 @@
 			#{maxPrice},
 			#{amount},
 			#{comment},
-			#{status},
-			#{createId.id},
-			#{createTime},
-			#{updateId.id},
-			#{updateTime}
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_search_sku SET 	
 			part_no = #{partNo},
-			cate_id = #{cateId},
+			cate_id = #{cateId.id},
 			cate_name = #{cateName},
 			quality_id = #{qualityId},
 			color = #{color},
@@ -151,10 +160,21 @@
 			max_price = #{maxPrice},
 			amount = #{amount},
 			comment = #{comment},
-			create_time = #{createTime},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			create_time = #{createDate},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
+	</update>
+
+	<update id="updatePartNo">
+		UPDATE biz_search_sku SET
+		<if test="partNo != null and partNo != '' ">
+			part_no = #{partNo},
+		</if>
+		<if test="businessStatus != null and businessStatus != '' ">
+			business_status = #{businessStatus}
+		</if>
+			WHERE id = #{id}
 	</update>
 	
 	<update id="delete">

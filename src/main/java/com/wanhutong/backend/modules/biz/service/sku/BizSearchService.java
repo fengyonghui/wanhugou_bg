@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.sku;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import com.wanhutong.backend.modules.biz.dao.sku.BizSearchDao;
 @Service
 @Transactional(readOnly = true)
 public class BizSearchService extends CrudService<BizSearchDao, BizSearch> {
+	@Autowired
+	private BizSearchDao bizSearchDao;
 
 	public BizSearch get(Integer id) {
 		return super.get(id);
@@ -37,6 +40,14 @@ public class BizSearchService extends CrudService<BizSearchDao, BizSearch> {
 	@Transactional(readOnly = false)
 	public void save(BizSearch bizSearch) {
 		super.save(bizSearch);
+	}
+	@Transactional(readOnly = false)
+	public void savePartNo(BizSearch bizSearch){
+		bizSearchDao.updatePartNo(bizSearch);
+	}
+	@Transactional(readOnly = false)
+	public void saveNone(BizSearch bizSearch){
+		bizSearchDao.updatePartNo(bizSearch);
 	}
 	
 	@Transactional(readOnly = false)

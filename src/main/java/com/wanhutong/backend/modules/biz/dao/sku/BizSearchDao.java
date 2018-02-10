@@ -14,5 +14,6 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSearch;
  */
 @MyBatisDao
 public interface BizSearchDao extends CrudDao<BizSearch> {
-	
+
+     int updatePartNo(BizSearch bizSearch);
 }
