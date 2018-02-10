@@ -93,7 +93,7 @@
 						<%--${bizSkuInfo.createBy.id}--%>
 					<%--</td>--%>
 					<td>
-						<fmt:formatDate value="${bizSkuInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+						<fmt:formatDate value="${bizSkuInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
 					<td>
 						${bizSkuInfo.updateBy.name}

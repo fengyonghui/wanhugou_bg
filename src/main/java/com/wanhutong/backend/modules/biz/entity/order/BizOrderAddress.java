@@ -30,6 +30,8 @@ public class BizOrderAddress extends DataEntity<BizOrderAddress> {
 	private String address;		// 详细地址
 	private String receiver;		// 收货人姓名
 	private String phone;		// 收货人联系电话
+	private Date appointedTime;		//制定的时间
+
 
 	private Integer selectedRegionId;
 
@@ -138,5 +140,13 @@ public class BizOrderAddress extends DataEntity<BizOrderAddress> {
 
 	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public Date getAppointedTime() {
+		return appointedTime;
+	}
+
+	public void setAppointedTime(Date appointedTime) {
+		this.appointedTime = appointedTime;
 	}
 }

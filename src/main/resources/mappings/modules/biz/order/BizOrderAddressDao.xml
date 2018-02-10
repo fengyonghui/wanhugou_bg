@@ -13,6 +13,7 @@
 		a.address AS "address",
 		a.receiver AS "receiver",
 		a.phone AS "phone",
+		if(appointed_time='0000-00-00 00:00:00',null,appointed_time) as "appointedTime",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		su.name as "createBy.name",
@@ -74,6 +75,9 @@
 			<if test="phone != null and phone != ''">
 				AND a.phone = #{phone}
 			</if>
+			<if test="appointedTime != null and appointedTime!= ''">
+				AND a.appointed_time = #{appointedTime}
+			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_id = #{createBy.id}
 			</if>
@@ -121,6 +125,9 @@
 			address,
 			receiver,
 			phone,
+		<if test="appointedTime != null and appointedTime!= ''">
+			appointed_time,
+		</if>
 			status,
 			create_id,
 			create_time,
@@ -141,6 +148,9 @@
 			#{address},
 			#{receiver},
 			#{phone},
+		<if test="appointedTime != null and appointedTime!= ''">
+			#{appointedTime},
+		</if>
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -173,6 +183,9 @@
 		</if>
 		<if test="phone != null and phone!= ''">
 			phone = #{phone},
+		</if>
+		<if test="appointedTime != null and appointedTime!= ''">
+			appointed_time=#{appointedTime},
 		</if>
 			update_time = #{updateDate}
 		WHERE id = #{id}
