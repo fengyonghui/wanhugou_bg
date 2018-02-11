@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -67,11 +68,46 @@ public class BizSearchController extends BaseController {
 		if (!beanValidator(model, bizSearch)){
 			return form(bizSearch, model);
 		}
+		bizSearch.setCateId(bizSearch.getCateId());
 		bizSearchService.save(bizSearch);
 		addMessage(redirectAttributes, "保存找货定制成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSearch/?repage";
 	}
-	
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSearch:edit")
+	@RequestMapping(value = "savePartNo")
+	public Boolean savePartNo(BizSearch bizSearch,Integer searchId ,String partNo){
+		boolean flag;
+		try {
+			bizSearch.setId(searchId);
+			bizSearch.setPartNo(partNo);
+			bizSearch.setBusinessStatus((byte)1);
+			bizSearchService.savePartNo(bizSearch);
+			flag=true;
+		}catch (Exception e){
+			logger.error(e.getMessage());
+			flag=false;
+		}
+		return flag;
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSearch:edit")
+	@RequestMapping(value = "saveNone")
+	public Boolean savePartNo(BizSearch bizSearch,Integer searchId){
+		boolean flag;
+		try {
+			bizSearch.setId(searchId);
+			bizSearch.setBusinessStatus((byte)2);
+			bizSearchService.saveNone(bizSearch);
+			flag=true;
+		}catch (Exception e){
+			logger.error(e.getMessage());
+			flag=false;
+		}
+		return flag;
+	}
+
 	@RequiresPermissions("biz:sku:bizSearch:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizSearch bizSearch, RedirectAttributes redirectAttributes) {

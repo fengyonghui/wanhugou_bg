@@ -52,11 +52,14 @@
 									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>
-				<li><span><label>期望收货时间：</label></span>
-					<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-						   value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-				</li>
+				<%--<li><span><label>期望收货时间：</label></span>--%>
+					<%--<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"--%>
+						   <%--value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
+						   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>--%>
+					<%--<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"--%>
+						   <%--value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
+						   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>--%>
+				<%--</li>--%>
 				<li><label>业务状态：</label>
 					<form:select path="bizStatus" class="input-medium">
 						<form:option value="" label="请选择"/>

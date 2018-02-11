@@ -65,9 +65,9 @@
                     }
                 }
             });
-            <%--if($("#officeId").val()!=""){--%>
-                <%--clickBut();--%>
-            <%--}--%>
+            if($("#bizOrderMark").val()!=""){
+                clickBut();
+            }
             <%--订单地址--%>
             if($("#id").val() !=""){
                 var option2=$("<option/>").text("${orderAddress.province.name}").val(${orderAddress.province.id});
@@ -390,6 +390,7 @@
            class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
+    <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" id="bizStatusID" name="bizStatus" value="${bizOrderHeader.bizStatus}">
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>

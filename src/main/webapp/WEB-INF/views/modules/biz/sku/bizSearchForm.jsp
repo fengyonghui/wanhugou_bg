@@ -40,9 +40,14 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">分类Id biz_category_info：</label>
-			<div class="controls">
+			<label class="control-label">分类名称：</label>
+			<%--<div class="controls">
 				<form:input path="cateId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>--%>
+			<div class="controls">
+				<sys:treeselect id="cateId" name="cateId.id" value="${bizSearch.cateId.id}" labelName="cateId.name" labelValue="${bizSearch.cateId.name}"
+								title="分类名称" url="/biz/category/bizCategoryInfo/treeData"  cssClass="required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -54,11 +59,16 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">材质属性Id sys_property_info  sys_prop_value：</label>
+			<label class="control-label">材质属性：</label>
 			<div class="controls">
 				<form:input path="qualityId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">*</font> <font>(1--5)</font></span>
 			</div>
+			<%--<div class="controls">--%>
+				<%--<sys:treeselect id="qualityId" name="qualityId" value="${bizSearch.qualityId}" labelName="qualityId" labelValue="${bizSearch.qualityId}"--%>
+								<%--title="材质属性" url="/sys/cate/treeData" cssClass="required" allowClear="true" notAllowSelectParent="true"/>--%>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+			<%--</div>--%>
 		</div>
 		<div class="control-group">
 			<label class="control-label">颜色：</label>
@@ -73,11 +83,16 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">业务状态 0：关闭 1：开放 2：取消：</label>
-			<div class="controls">
-				<form:input path="businessStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+			<label class="control-label">业务状态 ：</label>
+			<%--<div class="controls">--%>
+				<%--<form:input path="businessStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>--%>
+				<%--<span class="help-inline"><font color="red">*</font> <font> 0：关闭 1：开放 2：取消</font></span>--%>
+			<%--</div>--%>
+			<form:select path="businessStatus" class="input-xlarge ">
+				<form:option value="" label="请选择"/>
+				<form:options items="${fns:getDictList('businessStatus')}" itemLabel="label" itemValue="value"
+							  htmlEscape="false"/>
+			</form:select>
 		</div>
 		<div class="control-group">
 			<label class="control-label">期望到货时间：</label>
@@ -88,10 +103,10 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">用户ID：</label>
+			<label class="control-label">用户：</label>
 			<div class="controls">
 				<sys:treeselect id="user" name="user.id" value="${bizSearch.user.id}" labelName="user.name" labelValue="${bizSearch.user.name}"
-					title="用户" url="/sys/office/treeData?type=3" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
+					title="用户" url="/sys/office/queryTreeList?type=6" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -120,31 +135,7 @@
 				<form:input path="comment" htmlEscape="false" maxlength="255" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">创建时间：</label>
-			<div class="controls">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizSearch.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">修改人：</label>
-			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">修改时间：</label>
-			<div class="controls">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizSearch.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:sku:bizSearch:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

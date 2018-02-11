@@ -114,7 +114,8 @@ public class SysOfficeAddressController extends BaseController {
 			String receiver = sysOfficeAddress.getReceiver();//联系人
 			try {
 				return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id=&customer.id="+sysOfficeAddress.getOffice().getId()
-                        +"&bizLocation.receiver="+URLEncoder.encode(receiver,"utf-8")+"&bizLocation.phone="+sysOfficeAddress.getPhone();
+                        +"&bizLocation.receiver="+URLEncoder.encode(receiver,"utf-8")+"&bizLocation.phone="+sysOfficeAddress.getPhone()
+						+"&orderMark="+sysOfficeAddress.getId();
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
