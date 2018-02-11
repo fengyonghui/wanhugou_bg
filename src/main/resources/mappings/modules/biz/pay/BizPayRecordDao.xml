@@ -7,6 +7,8 @@
 		a.pay_num AS "payNum",
 		a.out_trade_no AS "outTradeNo",
 		a.pay_money AS "payMoney",
+		a.original_amount as"originalAmount",
+		a.cash_amount as "cashAmount",
 		a.payer AS "payer",
 		s.name AS  "bizPayRecord.payer.name",
 		a.cust_id AS "customer.id",
@@ -149,10 +151,18 @@
 			pay_num,
 			out_trade_no,
 			pay_money,
+		<if test="originalAmount !=null and originalAmount!=''">
+			original_amount,
+		</if>
+		<if test="cashAmount !=null and cashAmount!=''">
+			cash_amount,
+		</if>
 			payer,
 			cust_id,
 			biz_status,
+		<if test="account !=null and account!=''">
 			account,
+		</if>
 		<if test="toAccount !=null and toAccount!=''">
 			to_account,
 		</if>
@@ -172,10 +182,18 @@
 			#{payNum},
 			#{outTradeNo},
 			#{payMoney},
+		<if test="originalAmount !=null and originalAmount!=''">
+			#{original_amount},
+		</if>
+		<if test="cashAmount !=null and cashAmount!=''">
+			#{cashAmount},
+		</if>
 			#{payer},
 			#{customer.id},
 			#{bizStatus},
+		<if test="account !=null and account!=''">
 			#{account},
+		</if>
 		<if test="toAccount !=null and toAccount!=''">
 			#{toAccount},
 		</if>
@@ -200,10 +218,18 @@
 		<if test="payMoney != null and payMoney!=''">
 			pay_money = #{payMoney},
 		</if>
+		<if test="originalAmount !=null and originalAmount!=''">
+			original_amount = #{original_amount},
+		</if>
+		<if test="cashAmount !=null and cashAmount!=''">
+			cash_amount = #{cashAmount},
+		</if>
 			payer = #{payer},
 			cust_id = #{customer.id},
 			biz_status = #{bizStatus},
+		<if test="account !=null and account!=''">
 			account = #{account},
+		</if>
 		<if test="toAccount !=null and toAccount!=''">
 			to_account = #{toAccount},
 		</if>>

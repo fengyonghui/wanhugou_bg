@@ -202,7 +202,6 @@ public class BizOrderHeaderController extends BaseController {
 		Double receiveTotal = orderHeaderMent.getReceiveTotal();
 		Double Totail=bizOrderHeader.getTobePaid();//获取From方法的计算总价
 		BizPayRecord bizPayRecordCredit = new BizPayRecord();//保存客户钱包交易记录
-		BizPayRecord bizPayRecordWallet = new BizPayRecord();//保存平台总钱包交易记录
 		Integer customId = orderHeaderMent.getCustomer().getId();//采购商ID
 		BizCustCredit bizCustCredit = bizCustCreditService.get(customId);//客户钱包
 		BigDecimal subtract=null;
@@ -218,14 +217,17 @@ public class BizOrderHeaderController extends BaseController {
 				   recordBiz=1;
 				   BigDecimal payMentTwo = new BigDecimal(payMentOne);//输入支付的值
 				   subtract = wallet.subtract(payMentTwo);//计算后结果
-				   System.out.println(subtract.compareTo(new BigDecimal(0)));
+//				   System.out.println(subtract.compareTo(new BigDecimal(0)));
 				   //   以上输出结果是：-1小于、0等于、1大于
 				   if(subtract.compareTo(new BigDecimal(0))==1){
 					   bizCustCredit.setWallet(subtract);
 					   bizCustCreditService.save(bizCustCredit);
-					   SysPlatWallet sysPlatWallet = sysPlatWalletService.get(OrderTransaction.TOTAL_PURSE.getOrderId());//平台总钱包 1
-					   sysPlatWallet.setAmount(sysPlatWallet.getAmount()+payMentOne);
-					   sysPlatWalletService.save(sysPlatWallet);//保存到平台总钱包
+
+					   bizPayRecordCredit.setOriginalAmount(bizCustCredit.getWallet());//原金额
+					   bizPayRecordCredit.setCashAmount(subtract);//现金额
+//					   SysPlatWallet sysPlatWallet = sysPlatWalletService.get(OrderTransaction.TOTAL_PURSE.getOrderId());//平台总钱包 1
+//					   sysPlatWallet.setAmount(sysPlatWallet.getAmount()+payMentOne);
+//					   sysPlatWalletService.save(sysPlatWallet);//保存到平台总钱包
 					   if(payMentOne.equals(Totail)){
 						   orderHeaderMent.setReceiveTotal(receiveTotal+payMentOne);//订单已收货款
 						   orderHeaderMent.setBizStatus(OrderTransaction.WHOLE_PAYMENT.getOrderId());//订单状态 10全部支付

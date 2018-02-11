@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Length;//(min=1, max=4, message="支付类型：wx(微信) alipay");
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -24,6 +25,8 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 	private String payNum;		// 订单编号
 	private String outTradeNo;		// 支付宝或微信的业务流水号
 	private Double payMoney;		// 支付金额
+	private BigDecimal originalAmount = new BigDecimal(0);	//原金额
+	private BigDecimal cashAmount = new BigDecimal(0);	//现金额
 	private Integer payer;		// 支付人
 	private Office customer;		// 客户ID
 	private Integer bizStatus;		// 支付状态
@@ -168,5 +171,21 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 
 	public void setTrandEndTime(Date trandEndTime) {
 		this.trandEndTime = trandEndTime;
+	}
+
+	public BigDecimal getOriginalAmount() {
+		return originalAmount;
+	}
+
+	public void setOriginalAmount(BigDecimal originalAmount) {
+		this.originalAmount = originalAmount;
+	}
+
+	public BigDecimal getCashAmount() {
+		return cashAmount;
+	}
+
+	public void setCashAmount(BigDecimal cashAmount) {
+		this.cashAmount = cashAmount;
 	}
 }
