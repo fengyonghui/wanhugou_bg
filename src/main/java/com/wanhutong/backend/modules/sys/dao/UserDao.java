@@ -91,4 +91,9 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public List<User> contact(User user);
 
+	/**
+	 * 会员搜索
+	 */
+	public List<User> findUserByCompany(Integer type);
+
 }

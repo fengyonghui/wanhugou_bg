@@ -78,7 +78,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	
 	/**
 	 * 通过部门ID与角色ID获取用户列表
-	 * @param id role.id
+	 * @paramid role.id
 	 * @return
 	 */
 	public List<User> selectUserByOfficeId(User user) {
@@ -132,13 +132,19 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<User> findUserByOfficeId(Integer officeId) {
-		List<User> list = (List<User>)CacheUtils.get(UserUtils.USER_CACHE, UserUtils.USER_CACHE_LIST_BY_OFFICE_ID_ + officeId);
-		if (list == null){
-			User user = new User();
-			user.setOffice(new Office(officeId));
-			list = userDao.findUserByOfficeId(user);
-			CacheUtils.put(UserUtils.USER_CACHE, UserUtils.USER_CACHE_LIST_BY_OFFICE_ID_ + officeId, list);
+	public List<User> findUserByOfficeId(Integer officeId,Integer type) {
+		List<User> list=null;
+		if(officeId!=null){
+			list = (List<User>)CacheUtils.get(UserUtils.USER_CACHE, UserUtils.USER_CACHE_LIST_BY_OFFICE_ID_ + officeId);
+			if (list == null){
+				User user = new User();
+				user.setOffice(new Office(officeId));
+				list = userDao.findUserByOfficeId(user);
+				CacheUtils.put(UserUtils.USER_CACHE, UserUtils.USER_CACHE_LIST_BY_OFFICE_ID_ + officeId, list);
+			}
+		}else{
+//			添加机构无office.id时，显示主负责人，type=6采购商，type=7供应商
+			list = userDao.findUserByCompany(type);
 		}
 		return list;
 	}
@@ -582,5 +588,5 @@ public class SystemService extends BaseService implements InitializingBean {
 //	}
 	
 	///////////////// Synchronized to the Activiti end //////////////////
-	
+
 }

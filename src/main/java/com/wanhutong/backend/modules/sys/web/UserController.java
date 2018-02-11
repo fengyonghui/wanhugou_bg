@@ -393,9 +393,9 @@ public class UserController extends BaseController {
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "treeData")
-	public List<Map<String, Object>> treeData(@RequestParam(required=false) Integer officeId, HttpServletResponse response) {
+	public List<Map<String, Object>> treeData(@RequestParam(required=false) Integer officeId, @RequestParam(required=false) Integer type,HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<User> list = systemService.findUserByOfficeId(officeId);
+		List<User> list = systemService.findUserByOfficeId(officeId,type);
 		for (int i=0; i<list.size(); i++){
 			User e = list.get(i);
 			Map<String, Object> map = Maps.newHashMap();

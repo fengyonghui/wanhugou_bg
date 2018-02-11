@@ -1,6 +1,3 @@
-<%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
-<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
-<%@ page import="com.wanhutong.backend.modules.enums.SkuTypeEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
@@ -195,10 +192,10 @@
 						<input id="prodBrandName" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
 					</li>
 					<li><label>商品名称：</label>
-						<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="10" class="input-medium"/>
+						<input id="skuName"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
 					</li>
 					<li><label>商品编码：</label>
-						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="10" class="input-medium"/>
+						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
 					<%--<li><label>商品类型：</label>--%>
 						<%--<select id="skuType" class="input-medium">--%>

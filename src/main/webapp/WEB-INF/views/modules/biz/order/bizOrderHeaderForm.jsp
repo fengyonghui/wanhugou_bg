@@ -313,24 +313,25 @@
     <script type="text/javascript">
         function checkPending(obj) {
             var localSendIds= "";
-                $("input[name='localSendIds']:checked").each(function () {
-                    localSendIds+=$(this).val()+",";
-                });
-
-            localSendIds= localSendIds.substring(0,localSendIds.length-1);
-            if(localSendIds==''){
+            var boo="";
                 $("input[name='localSendIds']").each(function () {
                     localSendIds+=$(this).val()+",";
+                    if($(this).is(':checked')){
+                        boo+="true,";
+                    }else {
+                        boo+="false,";
+                    }
+
                 });
-                localSendIds= "0,"+localSendIds.substring(0,localSendIds.length-1);
-            }
+            localSendIds= localSendIds.substring(0,localSendIds.length-1);
+            boo=boo.substring(0,boo.length-1);
 
             if(obj==${OrderHeaderBizStatusEnum.SUPPLYING.state}){ <%--15同意发货--%>
                 $("#id").val();
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
-                    data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}&bizLocation.address="+$("#jhaddress").val()+"&localSendIds="+localSendIds,
+                    data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}&bizLocation.address="+$("#jhaddress").val()+"&localSendIds="+localSendIds+"&boo="+boo,
                     success:function(commis){
                         if(commis=="ok"){
                             alert(" 同意发货 ");
