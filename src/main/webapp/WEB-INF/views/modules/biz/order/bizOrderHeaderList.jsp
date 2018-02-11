@@ -70,6 +70,12 @@
 			<li><label>订单编号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
+			<li><label>订单状态：</label>
+				<form:select path="bizStatus" class="input-xlarge">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
+								  htmlEscape="false"/></form:select>
+			</li>
 			<li><label>采购商电话：</label>
 				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>

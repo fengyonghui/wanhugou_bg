@@ -255,7 +255,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		}
 
 	}
-	
+
+	/**
+	 * 采购单供货完成时，更改采购单状态
+	 * @param bizPoHeader
+	 */
+	@Transactional(readOnly = false)
+	public  void saveStatus(BizPoHeader bizPoHeader){
+		super.save(bizPoHeader);
+	}
 	@Transactional(readOnly = false)
 	public void delete(BizPoHeader bizPoHeader) {
 		super.delete(bizPoHeader);

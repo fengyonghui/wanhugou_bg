@@ -109,7 +109,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 						if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
 							flag=true;
 							break;
-						}else if(RoleEnNameEnum.BUYER.getState().equals(role.getName())){
+						}else if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
 							flagb=true;
 							break;
 						}

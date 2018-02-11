@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.sys.service;
 
 import java.util.*;
 
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.apache.shiro.session.Session;
@@ -437,10 +438,28 @@ public class SystemService extends BaseService implements InitializingBean {
 	 */
 	@Transactional(readOnly = true)
 	public Page<User> contact(Page<User> page,User user){
-		user.setPage(page);
-        List<User> contact = userDao.contact(user);
-        page.setList(userDao.contact(user));
-		return page;
+        user.setPage(page);
+		List<User> contact;
+		User nowUser = UserUtils.getUser();
+        boolean flag=false;
+        if(nowUser.getRoleList()!=null){
+            for(Role role:nowUser.getRoleList()){
+                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+                    flag=true;
+                    break;
+                }
+            }
+        }
+        if (nowUser.isAdmin()) {
+            contact = userDao.contact(user);
+        } else {
+            if (flag) {
+                user.getSqlMap().put("us", BaseService.dataScopeFilter(nowUser, "cent", "centu"));
+            }
+            contact = userDao.contact(user);
+        }
+         page.setList(contact);
+		 return page;
 	}
 	
 	/**

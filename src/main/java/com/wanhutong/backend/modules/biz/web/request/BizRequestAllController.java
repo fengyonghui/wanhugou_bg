@@ -105,11 +105,11 @@ public class BizRequestAllController {
 		 	if("kc".equals(source)) {
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
-                if("0".equals(bizStatu)) {
+                if(bizStatu == 0) {
                     bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                     bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
                 }
-                if ("1".equals(bizStatu)){
+                if (bizStatu == 1){
                     bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
                     bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
                 }

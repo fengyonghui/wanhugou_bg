@@ -88,7 +88,7 @@
 			<if test="receiveTotal != null and receiveTotal != ''">
 				AND a.receive_total = #{receiveTotal}
 			</if>
-			<if test="bizStatus !=null and bizStatus!=''">
+			<if test="bizStatus !=null">
 				AND a.biz_status=#{bizStatus}
 			</if>
 			<if test="bizType !=null and bizType!=''">

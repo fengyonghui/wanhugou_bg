@@ -47,6 +47,9 @@
 			<if test="skuName != null and skuName != ''">
 				AND a.sku_name = #{skuName}
 			</if>
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.sku_no = #{skuInfo.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

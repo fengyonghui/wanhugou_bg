@@ -321,9 +321,22 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
                     por = porList.get(0);
                 }
                 BizPoHeader poHeader = por.getPoHeader();
-                int status = PoHeaderStatusEnum.COMPLETE.getCode();
-                poHeader.setBizStatus((byte)status);
-                bizPoHeaderService.save(poHeader);
+                //获取该采购单的所有采购详情，如果所有的供货数都和采购数相等，则更改采购单状态为完成
+                BizPoHeader bizPoHeader = bizPoHeaderService.get(poHeader.getId());
+                BizPoDetail poDetail = new BizPoDetail();
+                poDetail.setPoHeader(bizPoHeader);
+                List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
+                boolean flag = true;
+                for (BizPoDetail bizPoDetail:poDetailList) {
+                    if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()){
+                        flag = false;
+                    }
+                }
+                if (flag) {
+                    int status = PoHeaderStatusEnum.COMPLETE.getCode();
+                    poHeader.setBizStatus((byte) status);
+                    bizPoHeaderService.saveStatus(poHeader);
+                }
             }
 		}
 		//销售单完成时，更该销售单状态为已供货（20）
@@ -341,12 +354,24 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
                 List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
                 if (porList != null && porList.size() > 0 ){
                     por = porList.get(0);
-					BizPoHeader poHeader = por.getPoHeader();
-					int status = PoHeaderStatusEnum.COMPLETE.getCode();
-					poHeader.setBizStatus((byte)status);
-					bizPoHeaderService.save(poHeader);
                 }
-
+                BizPoHeader poHeader = por.getPoHeader();
+                //获取该采购单的所有采购详情，如果所有的供货数都和采购数相等，则更改采购单状态为完成
+                BizPoHeader bizPoHeader = bizPoHeaderService.get(poHeader.getId());
+                BizPoDetail poDetail = new BizPoDetail();
+                poDetail.setPoHeader(bizPoHeader);
+                List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
+                boolean flag = true;
+                for (BizPoDetail bizPoDetail:poHeader.getPoDetailList()) {
+                    if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()){
+                        flag = false;
+                    }
+                }
+                if (flag) {
+                    int status = PoHeaderStatusEnum.COMPLETE.getCode();
+                    poHeader.setBizStatus((byte) status);
+                    bizPoHeaderService.saveStatus(poHeader);
+                }
             }
 		}
 		//
