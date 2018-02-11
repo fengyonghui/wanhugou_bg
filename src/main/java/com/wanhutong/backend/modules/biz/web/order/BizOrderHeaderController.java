@@ -271,7 +271,7 @@ public class BizOrderHeaderController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")
 	@RequestMapping(value = "Commissioner")
-	public String Commissioner(BizOrderHeader bizOrderHeader,String localSendIds, Integer objJsp, Model model, RedirectAttributes redirectAttributes) {
+	public String Commissioner(BizOrderHeader bizOrderHeader,String localSendIds,String boo, Integer objJsp, Model model, RedirectAttributes redirectAttributes) {
 		String commis="comError";
 		try {
 			if(bizOrderHeader.getId()!=null){
@@ -296,26 +296,23 @@ public class BizOrderHeaderController extends BaseController {
 						OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());
 						OrderAddressTwo.setType(2);
 						bizOrderAddressService.save(OrderAddressTwo);
-						if(StringUtils.isNotBlank(localSendIds)){
+						if(StringUtils.isNotBlank(localSendIds)&&StringUtils.isNotBlank(boo)){
 							String[]sidArr=localSendIds.split(",");
-							if(localSendIds.startsWith("0")){
+							String[] booStr=boo.split(",");
 								for(int i=0;i<sidArr.length;i++){
-									if("0".equals(sidArr[i].trim())){
-										continue;
-									}
-									BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(sidArr[i].trim()));
-									bizOrderDetail.setSuplyis(officeService.get(0));
+                                    BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(sidArr[i].trim()));
+								    if("false".equals(booStr[i].trim())){
+                                        bizOrderDetail.setSuplyis(officeService.get(0));
+                                    }else {
+                                        BizOrderHeader orderHeader=bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
+                                        BizCustomCenterConsultant bizCustomCenterConsultant= bizCustomCenterConsultantService.get(orderHeader.getCustomer().getId());
+                                        bizOrderDetail.setSuplyis(officeService.get(bizCustomCenterConsultant.getCenters().getId()));
+
+                                    }
+
 									bizOrderDetailService.saveStatus(bizOrderDetail);
 								}
-							}else {
-								for(int i=0;i<sidArr.length;i++){
-									BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(sidArr[i].trim()));
-									BizOrderHeader orderHeader=bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
-									BizCustomCenterConsultant bizCustomCenterConsultant= bizCustomCenterConsultantService.get(orderHeader.getCustomer().getId());
-									bizOrderDetail.setSuplyis(officeService.get(bizCustomCenterConsultant.getCenters().getId()));
-									bizOrderDetailService.saveStatus(bizOrderDetail);
-								}
-							}
+
 
 
                         }

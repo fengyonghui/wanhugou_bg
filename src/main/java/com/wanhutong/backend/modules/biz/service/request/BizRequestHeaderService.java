@@ -115,8 +115,10 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void save(BizRequestHeader bizRequestHeader) {
-		String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId());
-		bizRequestHeader.setReqNo(reqNo);
+		if(bizRequestHeader.getId()==null){
+			String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId());
+			bizRequestHeader.setReqNo(reqNo);
+		}
 		DefaultProp defaultProp=new DefaultProp();
 		defaultProp.setPropKey("vend_center");
 		List<DefaultProp> defaultPropList=defaultPropService.findList(defaultProp);

@@ -149,7 +149,7 @@
                         $.each(data,function(index,item) {
                            htmlInfo+="<tr id='"+item.id+"'><td id='rowsTd'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
                                 "<td><input name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/></td>"+
-                                "<td><input name='orgPrices' readonly='readonly' value='"+item.basePrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
+                                "<td><input name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
                                 "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/></td>"+
                                 "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
                                 "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
