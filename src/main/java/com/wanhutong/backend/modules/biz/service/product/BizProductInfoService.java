@@ -68,6 +68,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     private CommonImgService commonImgService;
 
 
+
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
 
@@ -97,7 +98,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
         }
         super.save(bizProductInfo);
-        if(bizProductInfo.getId()==null){
+        if(bizProductInfo.getProdCode()==null || "0".equals(bizProductInfo.getProdCode())){
             String partNo=brandCode+prodCode+autoGenericCode(bizProductInfo.getId().toString(),6);
             bizProductInfo.setProdCode(partNo);
             super.save(bizProductInfo);

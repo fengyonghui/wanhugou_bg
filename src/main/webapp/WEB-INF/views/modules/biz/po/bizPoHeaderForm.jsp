@@ -7,6 +7,11 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
+            var str=$("#str").val();
+            if(str=='detail'){
+                $("#inputForm").find("input[type!='button']").attr("disabled","disabled") ;
+                 $("#btnSubmit").hide();
+            }
 			$("#inputForm").validate({
 				submitHandler: function(form){
 
@@ -24,10 +29,24 @@
 					}
 				}
 			});
+            var deliveryStatus=$("#deliveryStatus").val();
+
+            if(deliveryStatus==0){
+                $("input[name='deliveryStatus']").attr("checked",false)
+                $("#deliveryStatus0").attr("checked",true);
+			}
 		});
 		function saveMon() {
 			$("#inputForm").attr("action","${ctx}/biz/po/bizPoHeader/savePoHeader");
             $("#inputForm").submit();
+        }
+        function choose(obj) {
+		    if($(obj).val()==0){
+		        $("#buyCenterId").show();
+			}else {
+                $("#buyCenterId").hide();
+			}
+
         }
         function savePoOrder(){
 		    var us=$("input[name='unitPrices']").val();
@@ -51,6 +70,8 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<input type="hidden" name="vendOffice.id" value="${vendorId}">
+		<input id="str" type="hidden"  value="${bizPoHeader.str}"/>
+		<input id="deliveryStatus" type="hidden"  value="${bizPoHeader.deliveryStatus}"/>
 		<c:if test="${bizPoHeader.id!=null}">
 			<div class="control-group">
 			<label class="control-label">订单编号：</label>
@@ -85,41 +106,80 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">订单商品总价：</label>
+			<label class="control-label">订单总价：</label>
 			<div class="controls">
 				<input type="text" disabled="disabled" value="${bizPoHeader.totalDetail}" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">订单总费用：</label>
-			<div class="controls">
-				<form:input path="totalExp"  htmlEscape="false" maxlength="30" class="input-xlarge "/>
-			</div>
-		</div>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">交易费用：</label>--%>
+			<%--<div class="controls">--%>
+				<%--<form:input path="totalExp"  htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+			<%--</div>--%>
+		<%--</div>--%>
+
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">运费：</label>--%>
+			<%--<div class="controls">--%>
+				<%--<form:input path="freight"  htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+			<%--</div>--%>
+		<%--</div>--%>
 
 		<div class="control-group">
-			<label class="control-label">运费：</label>
-			<div class="controls">
-				<form:input path="freight"  htmlEscape="false" maxlength="30" class="input-xlarge "/>
-			</div>
-		</div>
-
-		<div class="control-group">
-			<label class="control-label">订单总价：</label>
+			<label class="control-label">应付金额：</label>
 			<div class="controls">
 				<input type="text" disabled="disabled" value="${bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight}" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
 		</div>
-
 		<div class="control-group">
-			<label class="control-label">发票状态：</label>
+			<label class="control-label">首付款：</label>
 			<div class="controls">
-				<input type="text" disabled="disabled" value="${fns:getDictLabel(bizPoHeader.invStatus, 'biz_order_invStatus', '未知类型')}" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+				<form:input path="initialPay"  htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
 		</div>
 
+			<div class="control-group">
+				<label class="control-label">最后付款时间：</label>
+				<div class="controls">
+					<input name="lastPayDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+						   value="<fmt:formatDate value="${bizPoHeader.lastPayDate}"  pattern="yyyy-MM-dd"/>"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label">交货地点：</label>
+				<div class="controls">
+					<form:radiobutton id="deliveryStatus0" path="deliveryStatus"  onclick="choose(this)" value="0"/>采购中心
+					<form:radiobutton id="deliveryStatus1" path="deliveryStatus" checked="true" onclick="choose(this)" value="1"/>供应商
+				</div>
+			</div>
+			<div class="control-group" id="buyCenterId"  style="display:none">
+				<label class="control-label">采购中心：</label>
+				<div class="controls">
+					<sys:treeselect id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}" labelName="deliveryOffice.name"
+									labelValue="${bizPoHeader.deliveryOffice.name}"  notAllowSelectParent="true"
+									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge " dataMsgRequired="必填信息">
+					</sys:treeselect>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">备注：</label>
+				<div class="controls">
+					<form:textarea path="remark"  htmlEscape="false" maxlength="30" class="input-xlarge "/>
+				</div>
+			</div>
+
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">发票状态：</label>--%>
+			<%--<div class="controls">--%>
+				<%--<input type="text" disabled="disabled" value="${fns:getDictLabel(bizPoHeader.invStatus, 'biz_order_invStatus', '未知类型')}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+			<%--</div>--%>
+		<%--</div>--%>
+
 		<div class="control-group">
-			<label class="control-label">业务状态：</label>
+			<label class="control-label">订单状态：</label>
 			<div class="controls">
 				<input type="text" disabled="disabled" value="${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
@@ -141,6 +201,9 @@
 				<th>品牌名称</th>
 				<th>商品名称</th>
 				<th>商品编码</th>
+				<c:if test="${bizPoHeader.id!=null}">
+					<th>所属单号</th>
+				</c:if>
 				<th>商品属性</th>
 				<c:if test="${bizPoHeader.id==null}">
 					<th>申报数量</th>
@@ -149,7 +212,7 @@
 				<c:if test="${bizPoHeader.id!=null}">
 					<th>已供货数量</th>
 				</c:if>
-				<th>商品单价</th>
+				<th>工厂价</th>
 
 
 			</tr>
@@ -162,6 +225,21 @@
 								<td>${poDetail.skuInfo.productInfo.brandName}</td>
 								<td>${poDetail.skuInfo.name}</td>
 								<td>${poDetail.skuInfo.partNo}</td>
+								<c:if test="${bizPoHeader.id!=null}">
+									<td>
+										<c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}" var="orderNumStr" varStatus="orderStatus">
+											<c:if test="${orderNumStr.soType==1}">
+												<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
+											</c:if>
+											<c:if test="${orderNumStr.soType==2}">
+												<a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+											</c:if>
+												${orderNumStr.orderNumStr}
+												</a>
+										</c:forEach>
+
+									</td>
+								</c:if>
 								<td>${poDetail.skuInfo.skuPropertyInfos}</td>
 								<td>${poDetail.ordQty}</td>
 								<td>${poDetail.sendQty}</td>
@@ -187,7 +265,7 @@
 					<%--<td>${reqDetail.recvQty}</td>--%>
 					<td><input  name="ordQtys" readonly="readonly"  value="${map.value.reqQty-map.value.sentQty}" class="input-mini" type='text'/></td>
 					<td>
-					<input type="text" name="unitPrices" class="input-mini">
+					<input type="text" name="unitPrices" value="${map.value.buyPrice}" class="input-mini">
 					</td>
 
 					</tr>

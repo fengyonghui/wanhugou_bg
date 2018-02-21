@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
-		<shiro:hasPermission name="biz:po:bizPoHeader:edit"><li><a href="${ctx}/biz/po/bizPoHeader/form">采购订单添加</a></li></shiro:hasPermission>
+		<%--<shiro:hasPermission name="biz:po:bizPoHeader:edit"><li><a href="${ctx}/biz/po/bizPoHeader/form">采购订单添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -60,11 +60,11 @@
 			<tr>
 				<th>订单编号</th>
 				<th>供应商</th>
-				<th>订单详情总价</th>
-				<th>订单总费用</th>
-				<th>运费</th>
-				<th>发票状态</th>
-				<th>业务状态</th>
+				<th>订单总价</th>
+				<th>交易费用</th>
+				<th>应付金额</th>
+				<th>支付比例</th>
+				<th>订单状态</th>
 				<th>订单来源</th>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -72,7 +72,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizPoHeader">
 			<tr>
-				<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">
+				<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">
 					${bizPoHeader.orderNum}
 				</a></td>
 				<td>
@@ -85,10 +85,10 @@
 					${bizPoHeader.totalExp}
 				</td>
 				<td>
-					${bizPoHeader.freight}
+					${bizPoHeader.totalDetail+bizPoHeader.totalExp}
 				</td>
 				<td>
-						${fns:getDictLabel(bizPoHeader.invStatus, 'biz_order_invStatus', '未知类型')}
+					<fmt:formatNumber value="${bizPoHeader.initialPay/(bizPoHeader.totalDetail+bizPoHeader.totalExp)}" pattern="0.00"/>%
 
 				</td>
 				<td>
@@ -99,10 +99,12 @@
 						${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}
 					<%--${bizPoHeader.plateformInfo.id}--%>
 				</td>
-				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><td>
-    				<%--<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>--%>
-					<%--<a href="${ctx}/biz/po/bizPoHeader/delete?id=${bizPoHeader.id}" onclick="return confirmx('确认要删除该采购订单吗？', this.href)">删除</a>--%>
-					<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">详情</a>
+				<shiro:hasPermission name="biz:po:bizPoHeader:view"><td>
+				<shiro:hasPermission name="biz:po:bizPoHeader:edit">
+    				<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
+				</shiro:hasPermission>
+						<%--<a href="${ctx}/biz/po/bizPoHeader/delete?id=${bizPoHeader.id}" onclick="return confirmx('确认要删除该采购订单吗？', this.href)">删除</a>--%>
+					<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

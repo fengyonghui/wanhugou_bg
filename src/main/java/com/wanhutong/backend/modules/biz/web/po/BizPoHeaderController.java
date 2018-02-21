@@ -8,16 +8,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
+import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
@@ -69,7 +73,13 @@ public class BizPoHeaderController extends BaseController {
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
 	@Autowired
+	private BizOrderDetailService bizOrderDetailService;
+	@Autowired
 	private BizRequestHeaderService bizRequestHeaderService;
+	@Autowired
+	private BizRequestDetailService bizRequestDetailService;
+	@Autowired
+	private OfficeService officeService;
 	@ModelAttribute
 	public BizPoHeader get(@RequestParam(required=false) Integer id) {
 		BizPoHeader entity = null;
@@ -90,17 +100,74 @@ public class BizPoHeaderController extends BaseController {
 			bizPoOrderReq.setPoHeader(entity);
 			List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
 			List<BizPoOrderReq> poOrderReqs= Lists.newArrayList();
-				for (BizPoOrderReq poOrderReq:poOrderReqList){
+			BizOrderDetail bizOrderDetail=new BizOrderDetail();
+			BizRequestDetail bizRequestDetail=new BizRequestDetail();
+			Map<Integer,List<BizPoOrderReq>> map=new HashMap<>();
+			for (BizPoOrderReq poOrderReq:poOrderReqList){
 				if(poOrderReq.getSoType()== Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())){
 					BizOrderHeader bizOrderHeader=bizOrderHeaderService.get(poOrderReq.getSoId());
 					poOrderReq.setOrderHeader(bizOrderHeader);
+					bizOrderDetail.setOrderHeader(bizOrderHeader);
+					bizOrderDetail.setLineNo(poOrderReq.getSoLineNo());
+					List<BizOrderDetail> bizOrderDetailList=bizOrderDetailService.findList(bizOrderDetail);
+					if(bizOrderDetailList!=null && bizOrderDetailList.size()!=0){
+						BizOrderDetail orderDetail=bizOrderDetailList.get(0);
+						Integer key=orderDetail.getSkuInfo().getId();
+						if(map.containsKey(key)){
+							List<BizPoOrderReq> bizPoOrderReqList= map.get(key);
+
+							map.remove(key);
+
+							String orderNumStr=bizOrderHeader.getOrderNum();
+							poOrderReq.setOrderNumStr(orderNumStr);
+							bizPoOrderReqList.add(poOrderReq);
+							map.put(orderDetail.getSkuInfo().getId(),bizPoOrderReqList);
+						}else {
+							List<BizPoOrderReq> bizPoOrderReqList=Lists.newArrayList();
+							String orderNumStr=bizOrderHeader.getOrderNum();
+							poOrderReq.setOrderNumStr(orderNumStr);
+							bizPoOrderReqList.add(poOrderReq);
+							map.put(orderDetail.getSkuInfo().getId(),bizPoOrderReqList);
+						}
+
+					}
 				}else if(poOrderReq.getSoType()==Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())){
 					BizRequestHeader bizRequestHeader=bizRequestHeaderService.get(poOrderReq.getSoId());
 					poOrderReq.setRequestHeader(bizRequestHeader);
+					bizRequestDetail.setRequestHeader(bizRequestHeader);
+					bizRequestDetail.setLineNo(poOrderReq.getSoLineNo());
+					List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
+					if(requestDetailList!=null && requestDetailList.size()!=0){
+						BizRequestDetail requestDetail=requestDetailList.get(0);
+						Integer key=requestDetail.getSkuInfo().getId();
+						if(map.containsKey(key)){
+
+							List<BizPoOrderReq> bizPoOrderReqList= map.get(key);
+							map.remove(key);
+							poOrderReq.setOrderNumStr(bizRequestHeader.getReqNo());
+							bizPoOrderReqList.add(poOrderReq);
+							map.put(requestDetail.getSkuInfo().getId(),bizPoOrderReqList);
+
+						}else {
+							String orderNumStr=bizRequestHeader.getReqNo();
+							poOrderReq.setOrderNumStr(orderNumStr);
+							List<BizPoOrderReq> bizPoOrderReqList=Lists.newArrayList();
+							bizPoOrderReqList.add(poOrderReq);
+							map.put(requestDetail.getSkuInfo().getId(),bizPoOrderReqList);
+						}
+
+
+					}
 				}
+
 					poOrderReqs.add(poOrderReq);
 			}
+
 			entity.setPoOrderReqList(poOrderReqs);
+
+
+
+			entity.setOrderNumMap(map);
 		}
 		if (entity == null){
 			entity = new BizPoHeader();
@@ -119,6 +186,14 @@ public class BizPoHeaderController extends BaseController {
 	@RequiresPermissions("biz:po:bizPoHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizPoHeader bizPoHeader, Model model) {
+		if(bizPoHeader.getDeliveryOffice()!=null && bizPoHeader.getDeliveryOffice().getId()!=null){
+			Office office=officeService.get(bizPoHeader.getDeliveryOffice().getId());
+			if("8".equals(office.getType())){
+				bizPoHeader.setDeliveryStatus(0);
+			}else {
+				bizPoHeader.setDeliveryStatus(1);
+			}
+		}
 		model.addAttribute("bizPoHeader", bizPoHeader);
 		return "modules/biz/po/bizPoHeaderForm";
 	}

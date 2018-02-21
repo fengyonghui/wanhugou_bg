@@ -8,6 +8,8 @@ import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -29,6 +31,7 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	private Double unitPrice;		// 商品单价
 	private Integer ordQty;		// 采购数量
 	private Integer sendQty;		//采购单供货数量
+
 
 	
 	public BizPoDetail() {
@@ -112,4 +115,5 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	public void setSendQty(Integer sendQty) {
 		this.sendQty = sendQty;
 	}
+
 }

@@ -11,6 +11,8 @@ import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.Map;
+
 /**
  * 销售采购备货中间表Entity
  * @author 张腾飞
@@ -29,6 +31,9 @@ public class BizPoOrderReq extends DataEntity<BizPoOrderReq> {
 	private Integer soId;
 	private BizOrderDetail orderDetail;
 	private BizRequestDetail requestDetail;
+	private String orderNumStr;
+
+
 
 	
 	public BizPoOrderReq() {
@@ -117,5 +122,13 @@ public class BizPoOrderReq extends DataEntity<BizPoOrderReq> {
 
 	public void setRequestDetail(BizRequestDetail requestDetail) {
 		this.requestDetail = requestDetail;
+	}
+
+	public String getOrderNumStr() {
+		return orderNumStr;
+	}
+
+	public void setOrderNumStr(String orderNumStr) {
+		this.orderNumStr = orderNumStr;
 	}
 }

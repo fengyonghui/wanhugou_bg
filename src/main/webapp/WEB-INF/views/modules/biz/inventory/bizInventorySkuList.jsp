@@ -32,14 +32,14 @@
 		<input id="invInfo.id" type="hidden" name="invInfo.id" value="${bizInventorySku.invInfo.id}"/>
 		<ul class="ul-form">
 			<li><label>商品名称：</label>
-				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.name" htmlEscape="false" class="input-medium"/>
                 <input id="skuInfo.id" type="hidden" name="skuInfo.id" value="${skuInfo.id}"/>
 			</li>
 			<li><label>商品编号：</label>
-				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>
 			</li>
 			<li><label>仓库名称：</label>
-				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="invInfo.name" htmlEscape="false"  class="input-medium"/>
 				<input id="invInfo.id" type="hidden" name="invInfo.id" value="${invInfo.id}"/>
 			</li>
 			<%--<li><label>库存类型：</label>

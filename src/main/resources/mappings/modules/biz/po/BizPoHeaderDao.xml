@@ -13,6 +13,10 @@
 		a.biz_status AS "bizStatus",
 		a.plateform_id AS "plateformInfo.id",
 		a.status AS "delFlag",
+		a.initial_pay AS "initialPay",
+		a.last_pay_date AS "lastPayDate",
+		a.remark AS "remark",
+		a.delivery_office_id AS "deliveryOffice.id",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
@@ -104,6 +108,18 @@
 			<if test="bizStatus!=null">
 				biz_status,
 			</if>
+			<if test="initialPay!=null">
+				initial_pay,
+			</if>
+			<if test="lastPayDate!=null">
+				last_pay_date,
+			</if>
+			<if test="remark!=null">
+				remark,
+			</if>
+			<if test="deliveryOffice!=null and deliveryOffice.id!=null">
+				delivery_office_id,
+			</if>
 			plateform_id,
 			status,
 			create_id,
@@ -133,6 +149,18 @@
 		</if>
 		<if test="bizStatus!=null">
 			#{bizStatus},
+		</if>
+		<if test="initialPay!=null">
+			#{initialPay},
+		</if>
+		<if test="lastPayDate!=null">
+			#{lastPayDate},
+		</if>
+		<if test="remark!=null">
+			#{remark},
+		</if>
+		<if test="deliveryOffice!=null and deliveryOffice.id!=null">
+			#{deliveryOffice.id},
 		</if>
 			#{plateformInfo.id},
 			#{delFlag},
@@ -166,6 +194,18 @@
 		</if>
 		<if test="bizStatus!=null">
 			biz_status = #{bizStatus},
+		</if>
+		<if test="initialPay!=null">
+			initial_pay = #{initialPay},
+		</if>
+		<if test="lastPayDate!=null">
+			last_pay_date = #{lastPayDate},
+		</if>
+		<if test="remark!=null">
+			remark = #{remark},
+		</if>
+		<if test="deliveryOffice!=null and deliveryOffice.id!=null">
+		  delivery_office_id = #{deliveryOffice.id},
 		</if>
 		<if test="plateformInfo!=null and plateformInfo.id!=null">
 			plateform_id = #{plateformInfo.id},

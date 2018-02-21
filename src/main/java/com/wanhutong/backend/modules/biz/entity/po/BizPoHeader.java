@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -31,6 +32,14 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Double freight;		// 运费
 	private Byte invStatus;		// 0 不开发票 1 未开发票 3 已开发票
 	private Byte bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付3已发货 4已收货 5 已完成
+	private Double initialPay; //首付款
+	private Date lastPayDate;  //最后结算日期（账期）
+	private String remark;     //备注
+	private Office deliveryOffice;//交割地点（供应商或采购商）
+	private Integer deliveryStatus;
+	private String str;//详情标志
+
+
 	private BizPlatformInfo plateformInfo;		// 订单来源； biz_platform_info.id
 	private List<BizPoDetail> poDetailList;
 	private String orderDetailIds;
@@ -39,6 +48,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private String unitPrices;
 	private String ordQtys;
 	private List<BizPoOrderReq>poOrderReqList;
+	private Map<Integer,List<BizPoOrderReq>> orderNumMap;
 
 	
 	public BizPoHeader() {
@@ -168,5 +178,61 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setPoOrderReqList(List<BizPoOrderReq> poOrderReqList) {
 		this.poOrderReqList = poOrderReqList;
+	}
+
+	public Double getInitialPay() {
+		return initialPay;
+	}
+
+	public void setInitialPay(Double initialPay) {
+		this.initialPay = initialPay;
+	}
+
+	public Date getLastPayDate() {
+		return lastPayDate;
+	}
+
+	public void setLastPayDate(Date lastPayDate) {
+		this.lastPayDate = lastPayDate;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Office getDeliveryOffice() {
+		return deliveryOffice;
+	}
+
+	public void setDeliveryOffice(Office deliveryOffice) {
+		this.deliveryOffice = deliveryOffice;
+	}
+
+	public Integer getDeliveryStatus() {
+		return deliveryStatus;
+	}
+
+	public void setDeliveryStatus(Integer deliveryStatus) {
+		this.deliveryStatus = deliveryStatus;
+	}
+
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
+
+	public Map<Integer, List<BizPoOrderReq>> getOrderNumMap() {
+		return orderNumMap;
+	}
+
+	public void setOrderNumMap(Map<Integer, List<BizPoOrderReq>> orderNumMap) {
+		this.orderNumMap = orderNumMap;
 	}
 }

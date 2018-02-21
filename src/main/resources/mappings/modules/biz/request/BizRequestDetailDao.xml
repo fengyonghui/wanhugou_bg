@@ -45,6 +45,9 @@
 			<if test="requestHeader != null and requestHeader.id!=null and requestHeader.id != ''">
 				AND a.header_id = #{requestHeader.id}
 			</if>
+			<if test="lineNo!=null and lineNo!=''">
+				AND a.line_no = #{lineNo}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
