@@ -33,8 +33,13 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	private String orderNum;		//订单号
 	private Integer sendNum;		// 供货数量
 	private Office customer;		// 采购商ID sys_office.id &amp;  type='customer'
+	private String imgUrl;		//物流信息图
+	private Double valuePrice;		//货值
+	private Double operation;		//操作费
+	private Double freight;		//运费
 	private Date sendDate;		// 供货时间
 	private Integer bizStatus;		//供货方状态    0：采购中心 ，1：供货中心
+	private BizLogistics bizLogistics;		//物流商
 	private BizRequestDetail bizRequestDetail;
 	private BizOrderDetail bizOrderDetail;
 	private List<BizSendGoodsRecord> bizSendGoodsRecordList;
@@ -87,6 +92,38 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 		this.customer = customer;
 	}
 
+	public String getImgUrl() {
+		return imgUrl;
+	}
+
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
+	public Double getValuePrice() {
+		return valuePrice;
+	}
+
+	public void setValuePrice(Double valuePrice) {
+		this.valuePrice = valuePrice;
+	}
+
+	public Double getOperation() {
+		return operation;
+	}
+
+	public void setOperation(Double operation) {
+		this.operation = operation;
+	}
+
+	public Double getFreight() {
+		return freight;
+	}
+
+	public void setFreight(Double freight) {
+		this.freight = freight;
+	}
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@NotNull(message="供货时间不能为空")
 	public Date getSendDate() {
@@ -119,6 +156,14 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public void setBizOrderDetail(BizOrderDetail bizOrderDetail) {
 		this.bizOrderDetail = bizOrderDetail;
+	}
+
+	public BizLogistics getBizLogistics() {
+		return bizLogistics;
+	}
+
+	public void setBizLogistics(BizLogistics bizLogistics) {
+		this.bizLogistics = bizLogistics;
 	}
 
 	public BizRequestDetail getBizRequestDetail() {

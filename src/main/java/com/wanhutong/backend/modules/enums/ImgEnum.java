@@ -25,7 +25,10 @@ public enum ImgEnum{
     SKU_TYPE((byte)30,"产品SKU图"),
 
     /**office图*/
-    OFFICE_TYPE((byte)35,"office图");
+    OFFICE_TYPE((byte)35,"office图"),
+
+    /**物流信息图*/
+    LOGISTICS_TYPE((byte)40,"物流信息图");
 
     private int code;
     private String name;

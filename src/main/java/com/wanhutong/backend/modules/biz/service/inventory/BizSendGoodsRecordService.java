@@ -3,20 +3,27 @@
  */
 package com.wanhutong.backend.modules.biz.service.inventory;
 
-import java.util.Date;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
 
+import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
@@ -29,7 +36,10 @@ import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +79,12 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
     private BizPoOrderReqService bizPoOrderReqService;
 	@Resource
     private BizPoHeaderService bizPoHeaderService;
+	@Resource
+	private BizLogisticsService bizLogisticsService;
+	@Resource
+    private CommonImgService commonImgService;
+
+    protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
 	public BizSendGoodsRecord get(Integer id) {
 		return super.get(id);
@@ -166,11 +182,21 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
 				bsgr.setInvInfo(invInfo);
 				bsgr.setCustomer(office);
+				bsgr.setFreight(bsgr.getFreight());
+				bsgr.setOperation(bsgr.getOperation());
+				bsgr.setValuePrice(bsgr.getValuePrice());
+				bsgr.setImgUrl(bsgr.getImgUrl());
+                BizLogistics bizLogistics = bizLogisticsService.get(bsgr.getBizLogistics().getId());
+                bizLogistics.setCarrier(bsgr.getBizLogistics().getCarrier());
+                bizLogistics.setSettlementStatus(bsgr.getBizLogistics().getSettlementStatus());
+                bsgr.setBizLogistics(bizLogistics);
 				bsgr.setSkuInfo(bizSkuInfo);
 				bsgr.setOrderNum(bsgr.getOrderNum());
 				Date date = new Date();
 				bsgr.setSendDate(date);
 				super.save(bsgr);
+                //保存图片
+                saveCommonImg(bsgr);
 			}
 			//该订单属于销售订单，累计销售单供货数量
 			if (bsgr.getBizOrderDetail() != null && bsgr.getBizOrderDetail().getId() != 0) {
@@ -296,11 +322,21 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
 					bsgr.setInvInfo(invInfo);
 					bsgr.setCustomer(office);
+                    bsgr.setFreight(bsgr.getFreight());
+                    bsgr.setOperation(bsgr.getOperation());
+                    bsgr.setValuePrice(bsgr.getValuePrice());
+                    bsgr.setImgUrl(bsgr.getImgUrl());
+                    BizLogistics bizLogistics = bizLogisticsService.get(bsgr.getBizLogistics().getId());
+                    bizLogistics.setCarrier(bsgr.getBizLogistics().getCarrier());
+                    bizLogistics.setSettlementStatus(bsgr.getBizLogistics().getSettlementStatus());
+                    bsgr.setBizLogistics(bizLogistics);
 					bsgr.setSkuInfo(bizSkuInfo);
 					bsgr.setOrderNum(bsgr.getOrderNum());
 					Date date = new Date();
 					bsgr.setSendDate(date);
 					super.save(bsgr);
+                    //保存图片
+                    saveCommonImg(bsgr);
 				}
 			}
 		}
@@ -362,7 +398,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
                 poDetail.setPoHeader(bizPoHeader);
                 List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
                 boolean flag = true;
-                for (BizPoDetail bizPoDetail:poHeader.getPoDetailList()) {
+                for (BizPoDetail bizPoDetail:poDetailList) {
                     if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()){
                         flag = false;
                     }
@@ -377,6 +413,84 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 		//
 //			super.save(bizSendGoodsRecord);
 	}
+
+    /**
+     * 保存物流信息图片
+     * @param bizSendGoodsRecord
+     */
+    @Transactional(readOnly = false)
+    public void saveCommonImg(BizSendGoodsRecord bizSendGoodsRecord) {
+        String imgUrl = null;
+        try {
+            imgUrl = URLDecoder.decode(bizSendGoodsRecord.getImgUrl(), "utf-8");//主图转换编码
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            log.error("物流信息图转换编码异常." + e.getMessage(), e);
+        }
+        if (imgUrl != null) {
+            String[] photoArr = imgUrl.split("\\|");
+            saveLogisticsImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizSendGoodsRecord, photoArr);
+        }
+    }
+
+    private List<CommonImg> getImgList(Integer imgType, Integer bizSendGoodsRecordId) {
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(bizSendGoodsRecordId);
+        commonImg.setObjectName("biz_send_goods_record");
+        commonImg.setImgType(imgType);
+        return commonImgService.findList(commonImg);
+    }
+
+    public void saveLogisticsImg(Integer imgType, BizSendGoodsRecord bizSendGoodsRecord, String[] photoArr) {
+        if (bizSendGoodsRecord.getId() == null) {
+            log.error("Can't save logistics image without bizSendGoodsRecord ID!");
+            return;
+        }
+
+        List<CommonImg> commonImgs = getImgList(imgType, bizSendGoodsRecord.getId());
+
+        Set<String> existSet = new HashSet<>();
+        for (CommonImg commonImg1 : commonImgs) {
+            existSet.add(commonImg1.getImgServer() + commonImg1.getImgPath());
+        }
+        Set<String> newSet = new HashSet<>(Arrays.asList(photoArr));
+
+        Set<String> result = new HashSet<String>();
+        //差集，结果做删除操作
+        result.clear();
+        result.addAll(existSet);
+        result.removeAll(newSet);
+        for (String url : result) {
+            for (CommonImg commonImg1 : commonImgs) {
+                if (url.equals(commonImg1.getImgServer() + commonImg1.getImgPath())) {
+                    commonImg1.setDelFlag("0");
+                    commonImgService.delete(commonImg1);
+                }
+            }
+        }
+        //差集，结果做插入操作
+        result.clear();
+        result.addAll(newSet);
+        result.removeAll(existSet);
+
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(bizSendGoodsRecord.getId());
+        commonImg.setObjectName("biz_send_goods_record");
+        commonImg.setImgType(imgType);
+        commonImg.setImgSort(40);
+        for (String name : result) {
+            if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer())) {
+                continue;
+            }
+            String pathFile = Global.getUserfilesBaseDir() + name;
+            String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
+
+            commonImg.setId(null);
+            commonImg.setImgPath("/"+ossPath);
+            commonImg.setImgServer(DsConfig.getImgServer());
+            commonImgService.save(commonImg);
+        }
+    }
 	
 	@Transactional(readOnly = false)
 	public void delete(BizSendGoodsRecord bizSendGoodsRecord) {

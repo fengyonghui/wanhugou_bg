@@ -15,7 +15,13 @@
 		a.send_num AS "sendNum",
 		a.biz_status AS "bizStatus",
 		a.cust_id AS "customer.id",
+		a.logistics_id AS "bizLogistics.id",
+		logs.name AS "bizLogistics.name",
 		s.name AS "customer.name",
+		a.img_url AS "imgUrl",
+		a.value_price AS "valuePrice",
+		a.operation AS "operation",
+		a.freight AS "freight",
 		a.send_time AS "sendDate",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -32,6 +38,7 @@
 		LEFT JOIN sys_user su on su.id=a.create_id
 		LEFT JOIN biz_request_header reheader ON a.order_id = reheader.id
 		LEFT JOIN biz_inventory_info inv ON inv.id = a.inv_id
+		LEFT JOIN biz_logistics logs ON logs.id = a.logistics_id
 	</sql>
     
 	<select id="get" resultType="BizSendGoodsRecord">
@@ -132,6 +139,19 @@
 			send_num,
 			biz_status,
 			cust_id,
+			<if test="bizLogistics != null and bizLogistics.id != null and bizLogistics.id != ''">
+				logistics_id,
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				img_url,
+			</if>
+			value_price,
+			<if test="operation != null and operation != 0">
+				operation,
+			</if>
+			<if test="freight != null and freight != 0">
+				freight,
+			</if>
 			send_time,
 			status,
 			create_id,
@@ -155,6 +175,19 @@
 			#{sendNum},
 			#{bizStatus},
 			#{customer.id},
+			<if test="bizLogistics != null and bizLogistics.id != null and bizLogistics.id != ''">
+				#{bizLogistics.id},
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				#{imgUrl},
+			</if>
+			#{valuePrice},
+			<if test="operation != null and operation != 0">
+				#{operation},
+			</if>
+			<if test="freight != null and freight != 0">
+				#{freight},
+			</if>
 			#{sendDate},
 			#{delFlag},
 			#{createBy.id},
@@ -179,6 +212,19 @@
 			send_num = #{sendNum},
 			biz_status = #{bizStatus},
 			cust_id = #{customer.id},
+			<if test="bizLogistics != null and bizLogistics.id != null and bizLogistics.id != ''">
+				logistics_id = #{bizLogistics.id},
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				img_url = #{imgUrl},
+			</if>
+			value_price = #{valuePrice},
+			<if test="operation != null and operation != 0">
+				operation = #{operation},
+			</if>
+			<if test="freight != null and freight != 0">
+				freight = #{freight},
+			</if>
 			send_time = #{sendDate},
 			create_time = #{createDate},
 			u_version = #{uVersion},

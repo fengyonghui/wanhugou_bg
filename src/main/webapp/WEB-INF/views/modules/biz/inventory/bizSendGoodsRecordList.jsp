@@ -54,6 +54,16 @@
 				<th>订单号</th>
 				<th>供货数量</th>
 				<th>客户</th>
+				<c:if test="${bizStatus==1}">
+					<th>物流商</th>
+					<th>承运人</th>
+					<th>运费</th>
+					<th>操作费</th>
+					<th>货值</th>
+					<th>运费/货值</th>
+					<th>物流结算方式</th>
+					<th>物流信息图</th>
+				</c:if>
 				<th>供货时间</th>
 				<c:if test="${fns:getUser().isAdmin()}">
 				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th>操作</th></shiro:hasPermission>
@@ -83,6 +93,34 @@
 				<td>
 					${bizSendGoodsRecord.customer.name}
 				</td>
+				<c:if test="${bizStatus==1}">
+					<td>
+						${bizSendGoodsRecord.bizLogistics.name}
+					</td>
+					<td>
+						${bizSendGoodsRecord.bizLogistics.carrier}
+					</td>
+					<td>
+						${bizSendGoodsRecord.freight}
+					</td>
+					<td>
+						${bizSendGoodsRecord.operation}
+					</td>
+					<td>
+						${bizSendGoodsRecord.valuePrice}
+					</td>
+					<td>
+						<c:if test="${bizSendGoodsRecord.valuePrice != 0}">
+						<fmt:formatNumber type="number" value="${bizSendGoodsRecord.freight*100/bizSendGoodsRecord.valuePrice}" maxFractionDigits="0"/>%
+						</c:if>
+					</td>
+					<td>
+						${fns:getDictLabel(bizSendGoodsRecord.bizLogistics.settlementStatus, 'biz_settlement_status', '未知状态')}
+					</td>
+					<td>
+						<img src="${bizSendGoodsRecord.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
+					</td>
+				</c:if>
 				<td>
 					<fmt:formatDate value="${bizSendGoodsRecord.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

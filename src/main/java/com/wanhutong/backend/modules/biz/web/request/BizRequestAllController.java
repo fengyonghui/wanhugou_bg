@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -11,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
@@ -63,6 +65,8 @@ public class BizRequestAllController {
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private BizLogisticsService bizLogisticsService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -158,16 +162,21 @@ public class BizRequestAllController {
         if (bizRequestHeader != null && bizRequestHeader.getId() != null) {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+            BizLogistics bizLogistics = new BizLogistics();
             User user = UserUtils.getUser();
 //            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
             if (user.isAdmin()){
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
                 model.addAttribute("invInfoList",invInfoList);
+                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+                model.addAttribute("logisticsList",logisticsList);
             }else {
                 Office company = systemService.getUser(user.getId()).getCompany();
                 bizInventoryInfo.setCustomer(company);
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
                 model.addAttribute("invInfoList",invInfoList);
+                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+                model.addAttribute("logisticsList",logisticsList);
             }
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(bizRequestHeader);
@@ -182,16 +191,21 @@ public class BizRequestAllController {
         if (bizOrderHeader != null && bizOrderHeader.getId() != null) {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+            BizLogistics bizLogistics = new BizLogistics();
             User user = UserUtils.getUser();
             if (user.isAdmin()){
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
                 model.addAttribute("invInfoList",invInfoList);
+                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+                model.addAttribute("logisticsList",logisticsList);
             }else {
                 Office company = systemService.getUser(user.getId()).getCompany();
                 BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
                 bizInventoryInfo1.setCustomer(company);
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo1);
                 model.addAttribute("invInfoList",invInfoList);
+                List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+                model.addAttribute("logisticsList",logisticsList);
             }
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
