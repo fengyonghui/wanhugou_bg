@@ -8,6 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 
+import com.wanhutong.backend.modules.biz.dao.category.BizCatePropValueDao;
+import com.wanhutong.backend.modules.biz.dao.category.BizCatePropertyInfoDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -34,6 +40,8 @@ import javax.annotation.Resource;
 public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyInfo> {
 	@Resource
 	private PropValueService propValueService;
+	@Autowired
+	private BizCatePropertyInfoService bizCatePropertyInfoService;
 
 
 	public PropertyInfo get(Integer id) {
@@ -55,6 +63,24 @@ public class PropertyInfoService extends CrudService<PropertyInfoDao, PropertyIn
 			propValue.setId(null);
 			propValue.setPropertyInfo(info);
 			List<PropValue> valueList=propValueService.findList(propValue);
+			map.put(info.getId(),valueList);
+		}
+
+		return map;
+	}
+
+	public Map<Integer,List<PropValue>> findMapList(PropertyInfo propertyInfo,BizCategoryInfo bizCategoryInfo){
+		PropValue propValue=new PropValue();
+		if (propertyInfo.getPropValue() != null && propertyInfo.getPropValue().getValue() != null && "".equals(propertyInfo.getPropValue().getValue())){
+			propValue.setValue(propertyInfo.getPropValue().getValue());
+		}
+		List<PropertyInfo> list=findList(propertyInfo);
+		Map<Integer,List<PropValue>> map=new HashMap<Integer,List<PropValue>>();
+		for(PropertyInfo info:list){
+			propValue.setId(null);
+			propValue.setPropertyInfo(info);
+			propValue.setCatId(bizCategoryInfo.getId());
+			List<PropValue> valueList=propValueService.findPropValueList(propValue);
 			map.put(info.getId(),valueList);
 		}
 

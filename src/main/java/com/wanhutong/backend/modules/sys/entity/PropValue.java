@@ -23,6 +23,7 @@ public class PropValue extends DataEntity<PropValue> {
 	private String value;		// 记录该属性值
 	private String code;  //编码
 
+	private Integer catId;
 	
 	public PropValue() {
 		super();
@@ -57,5 +58,13 @@ public class PropValue extends DataEntity<PropValue> {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public Integer getCatId() {
+		return catId;
+	}
+
+	public void setCatId(Integer catId) {
+		this.catId = catId;
 	}
 }

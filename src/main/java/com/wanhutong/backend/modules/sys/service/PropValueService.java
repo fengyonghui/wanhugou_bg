@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.sys.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import com.wanhutong.backend.modules.sys.dao.PropValueDao;
 @Service
 @Transactional(readOnly = true)
 public class PropValueService extends CrudService<PropValueDao, PropValue> {
+	@Autowired
+	private PropValueDao propValueDao;
 
 	public PropValue get(Integer id) {
 		return super.get(id);
@@ -43,5 +46,8 @@ public class PropValueService extends CrudService<PropValueDao, PropValue> {
 	public void delete(PropValue propValue) {
 		super.delete(propValue);
 	}
-	
+
+	public List<PropValue> findPropValueList(PropValue propValue){
+		return propValueDao.findPropValueList(propValue);
+	}
 }

@@ -49,6 +49,29 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<select id="findPropValueList" resultType="PropValue" >
+		 SELECT
+				<include refid="propValueColumns"/>
+		FROM
+			sys_prop_value a
+				<include refid="propValueJoins"/>
+		WHERE
+				a.status = 1
+		<if test="propertyInfo!=null and propertyInfo.id!=null and propertyInfo.id!=''">
+			and a.prop_id=#{propertyInfo.id}
+		</if>
+			AND NOT EXISTS (
+		SELECT
+			p.sys_prop_value_id
+		FROM
+			biz_cate_prop_value p
+		WHERE
+			p.STATUS = 1
+			AND p.sys_prop_value_id = a.id
+			AND EXISTS ( SELECT cp.id FROM biz_cate_property_info cp WHERE a.status = 1 and cp.id = p.prop_id AND cp.cat_id = #{catId}  )
+			)
+	</select>
 	
 	<select id="findAllList" resultType="PropValue">
 		SELECT 

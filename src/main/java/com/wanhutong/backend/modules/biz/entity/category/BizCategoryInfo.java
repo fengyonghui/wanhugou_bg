@@ -29,6 +29,7 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	private List<BizCatePropertyInfo> catePropertyInfoList;
 
 	private Map<String,BizCatePropertyInfo> propertyMap;
+
 	private String catePropertyInfos;
 
 	public BizCategoryInfo() {
@@ -130,4 +131,5 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	public void setBrandId(Integer brandId) {
 		this.brandId = brandId;
 	}
+
 }

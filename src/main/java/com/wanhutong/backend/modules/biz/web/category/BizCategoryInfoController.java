@@ -8,9 +8,12 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatelogInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
@@ -53,12 +56,15 @@ public class BizCategoryInfoController extends BaseController {
 	private DefaultPropService defaultPropService;
 	@Autowired
 	private CommonImgService commonImgService;
+	@Autowired
+	private BizCatePropertyInfoService bizCatePropertyInfoService;
 
 	@ModelAttribute
 	public BizCategoryInfo get(@RequestParam(required=false) Integer id) {
 		BizCategoryInfo entity = null;
 		if (id!=null){
 			entity = bizCategoryInfoService.get(id);
+
 		}
 		if (entity == null){
 			entity = new BizCategoryInfo();
@@ -99,7 +105,8 @@ public class BizCategoryInfoController extends BaseController {
 		}
 		PropertyInfo propertyInfo=new PropertyInfo();
 		List<PropertyInfo> propertyInfoList=propertyInfoService.findList(propertyInfo);
-		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
+		//Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
+		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo,bizCategoryInfo);
 		CommonImg commonImg=new CommonImg();
 
 		commonImg.setImgType(ImgEnum.CATEGORY_TYPE.getCode());
@@ -112,10 +119,15 @@ public class BizCategoryInfoController extends BaseController {
 				bizCategoryInfo.setImgId(imgList.get(0).getId());
 			}
 		}
+		BizCatePropertyInfo bizCatePropertyInfo=new BizCatePropertyInfo();
+		bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
+		Map<Integer,List<BizCatePropValue>> catePropValueMap=bizCatePropertyInfoService.findMapList(bizCatePropertyInfo);
+		//bizCategoryInfo.setCheckedPropValue(catePropValueMap);
 		model.addAttribute("bizCategoryInfo", bizCategoryInfo);
 		model.addAttribute("propertyInfo",propertyInfo);
 		model.addAttribute("propertyInfoList", propertyInfoList);
 		model.addAttribute("map", map);
+		model.addAttribute("catePropValueMap",catePropValueMap);
 		return "modules/biz/category/bizCategoryInfoForm";
 	}
 
