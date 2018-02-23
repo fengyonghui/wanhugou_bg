@@ -4,7 +4,6 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
-import com.wanhutong.backend.modules.biz.entity.invoice.BizInvoiceDetail;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -47,6 +46,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private String flag;       //标志位
 	private String orderNoEditable;		//页面不可编辑标识符
 	private String orderDetails;		//页面不可编辑标识符2
+	private String clientModify;		//用于客户专员修改跳转
 
 	private String orderNum2;		//用于删除订单页面传值
     private String localSendIds;
@@ -274,5 +274,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setOrderMark(Integer orderMark) {
 		this.orderMark = orderMark;
+	}
+	
+	public String getClientModify() {
+		return clientModify;
+	}
+	
+	public void setClientModify(String clientModify) {
+		this.clientModify = clientModify;
 	}
 }

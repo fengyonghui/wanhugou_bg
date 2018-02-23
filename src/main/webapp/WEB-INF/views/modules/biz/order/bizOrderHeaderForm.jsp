@@ -393,6 +393,7 @@
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" id="bizStatusID" name="bizStatus" value="${bizOrderHeader.bizStatus}">
+    <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>
 

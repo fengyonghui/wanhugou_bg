@@ -204,6 +204,7 @@
 								审核失败
 							</c:if>
 						</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify">修改</a>
 					</c:when>
 					<c:otherwise>
 						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||
