@@ -121,13 +121,17 @@ public class BizCategoryInfoController extends BaseController {
 		}
 		BizCatePropertyInfo bizCatePropertyInfo=new BizCatePropertyInfo();
 		bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
-		Map<Integer,List<BizCatePropValue>> catePropValueMap=bizCatePropertyInfoService.findMapList(bizCatePropertyInfo);
+		if(bizCategoryInfo.getId()!=null){
+			Map<Integer,List<BizCatePropValue>> catePropValueMap=bizCatePropertyInfoService.findMapList(bizCatePropertyInfo);
+			model.addAttribute("catePropValueMap",catePropValueMap);
+		}
+
 		//bizCategoryInfo.setCheckedPropValue(catePropValueMap);
 		model.addAttribute("bizCategoryInfo", bizCategoryInfo);
 		model.addAttribute("propertyInfo",propertyInfo);
 		model.addAttribute("propertyInfoList", propertyInfoList);
 		model.addAttribute("map", map);
-		model.addAttribute("catePropValueMap",catePropValueMap);
+
 		return "modules/biz/category/bizCategoryInfoForm";
 	}
 
