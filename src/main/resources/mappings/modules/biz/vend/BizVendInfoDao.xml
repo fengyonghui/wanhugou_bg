@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.vend.BizVendInfoDao">
+    
+	<sql id="bizVendInfoColumns">
+		a.office_id AS "office.id",
+		a.vend_name AS "vendName",
+		a.cate_id AS "bizCategoryInfo.id",
+		a.cate_name AS "cateName",
+		a.code AS "code",
+		a.status AS "status",
+		a.u_version AS "uVersion",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		o1.name AS "office.name"
+	</sql>
+	
+	<sql id="bizVendInfoJoins">
+		LEFT JOIN sys_office o1 ON o1.id = a.office_id
+	</sql>
+    
+	<select id="get" resultType="BizVendInfo" parameterType="Integer">
+		SELECT 
+			<include refid="bizVendInfoColumns"/>
+		FROM biz_vend_info a
+		<include refid="bizVendInfoJoins"/>
+		WHERE a.office_id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizVendInfo">
+		SELECT 
+			<include refid="bizVendInfoColumns"/>
+		FROM biz_vend_info a
+		<include refid="bizVendInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="vendName != null and vendName != ''">
+				AND a.vend_name = #{vendName}
+			</if>
+			<if test="cateName != null and cateName != ''">
+				AND a.cate_name = #{cateName}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizVendInfo">
+		SELECT 
+			<include refid="bizVendInfoColumns"/>
+		FROM biz_vend_info a
+		<include refid="bizVendInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_vend_info(
+			office_id,
+			vend_name,
+			cate_id,
+			cate_name,
+			code,
+			status,
+			u_version,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) VALUES (
+			#{office.id},
+			#{vendName},
+			#{cateId},
+			#{cateName},
+			#{code},
+			#{status},
+			#{uVersion},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_vend_info SET 	
+			office_id = #{office.id},
+			vend_name = #{vendName},
+			cate_id = #{cateId},
+			cate_name = #{cateName},
+			code = #{code},
+			u_version = #{uVersion},
+			create_time = #{createDate},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_vend_info SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
