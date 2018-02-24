@@ -196,10 +196,12 @@
 								<td><input id="freight${reqStatus.index}" title="freight" name="bizSendGoodsRecordList[${reqStatus.index}].freight" value="" /></td>
 								<td><input id="operation${reqStatus.index}" title="operation" name="bizSendGoodsRecordList[${reqStatus.index}].operation" value="" /></td>
 								<td><input id="valuePrice${reqStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${reqStatus.index}].valuePrice" value="" /></td>
-								<td><select name="bizSendGoodsRecordList[${reqStatus.index}].bizLogistics.settlementStatus" class="input-xlarge">
-									<option value="" label="请选择"/>
+								<td>
+
+									<select name="bizSendGoodsRecordList[${reqStatus.index}].bizLogistics.settlementStatus" class="input-xlarge">
 										<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
-											<option <c:if test="${settlementStatus eq '现结'}"><c:out value="1"/></c:if><c:if test="${settlementStatus eq '账期'}"><c:out value="2"/></c:if> onclick="chenge(settlementStatus)">${settlementStatus}</option>
+											<option value="${settlementStatus.value}">${settlementStatus.label}</option>
+											<%--<option <c:if test="${settlementStatus eq '现结'}"><c:out value="1"/></c:if><c:if test="${settlementStatus eq '账期'}"><c:out value="2"/></c:if> onclick="chenge(settlementStatus)">${settlementStatus}</option>--%>
 										</c:forEach>
 									</select>
 								</td>
@@ -266,12 +268,15 @@
 									<td><input id="freight${ordStatus.index}" title="freight" name="bizSendGoodsRecordList[${ordStatus.index}].freight" value="" /></td>
 									<td><input id="operation${ordStatus.index}" title="operation" name="bizSendGoodsRecordList[${ordStatus.index}].operation" value="" /></td>
 									<td><input id="valuePrice${ordStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${ordStatus.index}].valuePrice" value="" /></td>
-									<td><select id="settlementStatus${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].bizLogistics.settlementStatus" class="input-xlarge"  onclick="chenge(settlementStatus)">
-										<option value="" label="请选择"/>
+									<td>
+										<select id="settlementStatus${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].bizLogistics.settlementStatus" class="input-xlarge" >
+										<option value="">请选择</option>
 											<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
-												<option <c:if test="${settlementStatus eq '现结'}"><c:out value="1"/></c:if><c:if test="${settlementStatus eq '账期'}"><c:out value="2"/></c:if>>${settlementStatus}</option>
+												<option value="${settlementStatus.value}">${settlementStatus.label}</option>
 											</c:forEach>
 										</select>
+
+
 									</td>
 									<td><input type="hidden" id="imgUrl${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 										<sys:ckfinder input="imgUrl${ordStatus.index}" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"

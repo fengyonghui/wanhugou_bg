@@ -37,7 +37,6 @@
             $("#but_sub").click(function () {
                 var flag=true;
 				$("#propValues").find("input").each(function (i) {
-					alert($(this).val());
 					if($(this).val()==''){
                         flag=false;
 					}
