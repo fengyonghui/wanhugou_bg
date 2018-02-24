@@ -102,6 +102,7 @@ public class BizOrderHeaderController extends BaseController {
 //				bizOrderHeader.setConsultantId(null);
 //			}
 //		}
+
 		Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
 		model.addAttribute("page", page);
 		return "modules/biz/order/bizOrderHeaderList";
@@ -174,6 +175,10 @@ public class BizOrderHeaderController extends BaseController {
 		addMessage(redirectAttributes, "保存订单信息成功");
 		Integer orId = bizOrderHeader.getId();
 		String oneOrder = bizOrderHeader.getOneOrder();
+		if(bizOrderHeader.getClientModify()!=null && bizOrderHeader.getClientModify().equals("client_modify")){
+//			保存跳回客户专员
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/list?flag=check_pending&consultantId="+bizOrderHeader.getConsultantId();
+		}
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?oneOrder="+oneOrder;
 	//	return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
 	}
@@ -290,6 +295,7 @@ public class BizOrderHeaderController extends BaseController {
 								OrderAddressTwo.setId(bizOrderAddress.getId());
 							}
 						}
+						OrderAddressTwo.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
 						OrderAddressTwo.setProvince(bizOrderHeader.getBizLocation().getProvince());
 						OrderAddressTwo.setRegion(bizOrderHeader.getBizLocation().getRegion());
 						OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
@@ -311,12 +317,8 @@ public class BizOrderHeaderController extends BaseController {
                                         bizOrderDetail.setSuplyis(officeService.get(bizCustomCenterConsultant.getCenters().getId()));
 
                                     }
-
 									bizOrderDetailService.saveStatus(bizOrderDetail);
 								}
-
-
-
                         }
 						commis="ok";
 					}else if(objJsp==OrderHeaderBizStatusEnum.UNAPPROVE.getState()){
@@ -330,6 +332,7 @@ public class BizOrderHeaderController extends BaseController {
 								OrderAddressTwo.setId(bizOrderAddress.getId());
 							}
 						}
+						OrderAddressTwo.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
 						OrderAddressTwo.setProvince(bizOrderHeader.getBizLocation().getProvince());
 						OrderAddressTwo.setRegion(bizOrderHeader.getBizLocation().getRegion());
 						OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());

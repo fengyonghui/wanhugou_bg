@@ -71,7 +71,7 @@
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>订单状态：</label>
-				<form:select path="bizStatus" class="input-xlarge">
+				<form:select path="bizStatus" class="input-medium">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
 								  htmlEscape="false"/></form:select>
@@ -204,7 +204,7 @@
 								审核失败
 							</c:if>
 						</a>
-						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify">修改</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
 					</c:when>
 					<c:otherwise>
 						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||

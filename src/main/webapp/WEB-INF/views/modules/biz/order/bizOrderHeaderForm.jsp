@@ -86,6 +86,7 @@
                     var option4=$("<option/>").text("${orderAddress.region.name}").val(${orderAddress.region.id});
                     $("#jhregion").append(option4);
                     $("#jhaddress").val("${address.address}");
+                    $("#appointedDate").val("<fmt:formatDate value="${address.appointedTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>");
                 }else{
                     var option2=$("<option/>").text("${address.province.name}").val(${address.province.id});
                     $("#jhprovince").append(option2);
@@ -94,6 +95,7 @@
                     var option4=$("<option/>").text("${address.region.name}").val(${address.region.id});
                     $("#jhregion").append(option4);
                     $("#jhaddress").val("${address.address}");
+                    $("#appointedDate").val("<fmt:formatDate value="${address.appointedTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>");
                 }
                 $("#province").change();
                 $("#city").change();
@@ -272,44 +274,6 @@
             }
         }
     </script>
-    <%--<script type="text/javascript">--%>
-    <%--function deliveryAddress(){--%>
-    <%--var officeId=$("#officeId").val();--%>
-    <%--$("#jhprovince").empty();--%>
-    <%--$("#jhcity").empty();--%>
-    <%--$("#jhregion").empty();--%>
-    <%--$("#jhaddress").empty();--%>
-    <%--$.ajax({--%>
-    <%--type:"post",--%>
-    <%--url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,--%>
-    <%--success:function(data){--%>
-    <%--console.log(data+"-----777");--%>
-    <%--if(data==''){--%>
-    <%--$("#jhadd1").css("display","none");--%>
-    <%--$("#jhadd2").css("display","block");--%>
-    <%--$("#jhadd3").css("display","none");--%>
-    <%--}else{--%>
-    <%--$("#jhadd1").css("display","block");--%>
-    <%--$("#jhadd2").css("display","none");--%>
-    <%--$("#jhadd3").css("display","block");--%>
-    <%--var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);--%>
-    <%--$("#jhprovince").append(option2);--%>
-    <%--var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);--%>
-    <%--$("#jhcity").append(option3);--%>
-    <%--var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);--%>
-    <%--$("#jhregion").append(option4);--%>
-    <%--$("#jhaddress").val(data.bizLocation.address);--%>
-    <%--&lt;%&ndash;}&ndash;%&gt;--%>
-    <%--//当省份的数据加载完毕之后--%>
-    <%--$("#jhprovince").change();--%>
-    <%--$("#jhcity").change();--%>
-    <%--$("#jhregion").change();--%>
-    <%--$("#jhaddress").change();--%>
-    <%--}--%>
-    <%--}--%>
-    <%--});--%>
-    <%--}--%>
-    <%--</script>--%>
     <script type="text/javascript">
         function checkPending(obj) {
             var localSendIds= "";
@@ -321,17 +285,15 @@
                     }else {
                         boo+="false,";
                     }
-
                 });
             localSendIds= localSendIds.substring(0,localSendIds.length-1);
             boo=boo.substring(0,boo.length-1);
-
             if(obj==${OrderHeaderBizStatusEnum.SUPPLYING.state}){ <%--15同意发货--%>
                 $("#id").val();
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
-                    data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}&bizLocation.address="+$("#jhaddress").val()+"&localSendIds="+localSendIds+"&boo="+boo,
+                    data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.SUPPLYING.state}&bizLocation.address="+$("#jhaddress").val()+"&bizLocation.appointedTime="+$("#appointedDate").val()+"&localSendIds="+localSendIds+"&boo="+boo,
                     success:function(commis){
                         if(commis=="ok"){
                             alert(" 同意发货 ");
@@ -345,7 +307,7 @@
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/order/bizOrderHeader/Commissioner",
-                    data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.UNAPPROVE.state}&bizLocation.address="+$("#jhaddress").val()+"&localSendIds="+localSendIds,
+                    data:"id="+$("#id").val()+"&flag=${bizOrderHeader.flag}&objJsp=${OrderHeaderBizStatusEnum.UNAPPROVE.state}&bizLocation.address="+$("#jhaddress").val()+"&bizLocation.appointedTime="+$("#appointedDate").val()+"&localSendIds="+localSendIds,
                     success:function(commis){
                         if(commis=="ok"){
                             alert(" 不同意发货 ");
@@ -367,8 +329,14 @@
         </li>
     </c:if>
     <c:if test="${empty bizOrderHeader.flag}">
-        <li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
+        <c:if test="${empty bizOrderHeader.clientModify}">
+            <li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
+        </c:if>
+        <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
+            <li><a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a></li>
+        </c:if>
     </c:if>
+
     <li class="active">
         <c:if test="${entity.orderNoEditable eq 'editable'}">
             <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=${entity.orderNoEditable}">订单信息支付</a>
@@ -380,9 +348,16 @@
             <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息审核</a>
         </c:if>
         <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">订单信息<shiro:hasPermission
-                    name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
-                    name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>
+            <c:if test="${empty bizOrderHeader.clientModify}">
+                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}">订单信息<shiro:hasPermission
+                        name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
+                        name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>
+            </c:if>
+            <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
+                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&flag=check_pending&consultantId=${bizOrderHeader.consultantId}">订单信息<shiro:hasPermission
+                        name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
+                        name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>
+            </c:if>
         </c:if>
     </li>
 </ul>
@@ -394,6 +369,7 @@
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" id="bizStatusID" name="bizStatus" value="${bizOrderHeader.bizStatus}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
+    <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>
 
@@ -666,22 +642,7 @@
         </div>
     </c:if>
     <c:if test="${not empty entity.orderDetails}">
-        <style type="text/css">
-            /*进度展示css*/
-            .quterMost{
-                /*width: 180px;*/
-                height: 64px;
-                float: left;
-            }
-            .quterMost_Left{
-                float: left;
-                height: 30px;
-                padding-top: 16px;
-            }
-            .quterMost_right{
-                float:right;
-            }
-        </style>
+        <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
             <label class="control-label">进展信息：</label>
             <div class="controls">
@@ -860,6 +821,7 @@
                 </div>
             </div>
         </div>
+        </c:if>
         <div class="control-group">
             <label class="control-label">创建人：</label>
             <div class="controls">
@@ -884,6 +846,7 @@
                 <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </div>
         </div>
+
     </c:if>
 
     <c:choose>
@@ -913,7 +876,7 @@
                 </div>
             </div>
             <div class="control-group" id="jhadd2" style="display:none">
-                <label class="control-label">收货地址；</label>
+                <label class="control-label">交货地址；</label>
                 <div class="controls">
                     <input id="addJhAddressHref" type="button" value="新增地址" htmlEscape="false"
                            class="input-xlarge required"/>
@@ -929,7 +892,15 @@
                     <span class="help-inline"><font color="red">*</font></span>
                 </div>
             </div>
-
+            <div class="control-group">
+                <label class="control-label">交货时间；</label>
+                <div class="controls">
+                    <input id="appointedDate" name="bizLocation.appointedTime" type="text" readonly="readonly"
+                           maxlength="20" class="input-xlarge Wdate required"
+                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+                    <span class="help-inline"><font color="red">*</font></span>
+                </div>
+            </div>
         </c:when>
         <c:otherwise>
             <div class="form-actions">
@@ -984,9 +955,15 @@
             </td>
             <td>
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">
-                    </c:if>
-                        ${bizOrderDetail.skuName}</a>
+                <c:if test="${empty bizOrderHeader.clientModify}">
+                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">
+                    ${bizOrderDetail.skuName}</a>
+                </c:if>
+                <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
+                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}">
+                    ${bizOrderDetail.skuName}</a>
+                </c:if>
+                </c:if>
             </td>
             <td>
                     ${bizOrderDetail.partNo}
@@ -1020,9 +997,16 @@
             <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <td>
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">修改</a>
-                        <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}"
-                           onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                        <c:if test="${empty bizOrderHeader.clientModify}">
+                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">修改</a>
+                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}"
+                               onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                        </c:if>
+                        <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
+                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}">修改</a>
+                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}"
+                               onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
+                        </c:if>
                     </td>
                 </c:if>
             </shiro:hasPermission>
@@ -1035,10 +1019,18 @@
         <c:if test="${bizOrderHeader.id!=null}">
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
+                    <c:if test="${empty bizOrderHeader.clientModify}">
                     <input type="button"
                            onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}';"
                            class="btn btn-primary"
-                           value="订单商品信息添加"/></shiro:hasPermission>
+                           value="订单商品信息添加"/></c:if>
+                    <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
+                        <input type="button"
+                               onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}';"
+                               class="btn btn-primary"
+                               value="订单商品信息添加"/>
+                    </c:if>
+                </shiro:hasPermission>
             </c:if>
             <c:if test="${not empty entity.orderDetails}">
                 <input onclick="window.print();" type="button" class="btn btn-primary" value="打印订单" style="background:#F78181;"/>

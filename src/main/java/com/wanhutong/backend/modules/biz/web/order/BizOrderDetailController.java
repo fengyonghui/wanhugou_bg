@@ -102,7 +102,7 @@ public class BizOrderDetailController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizOrderDetail bizOrderDetail, Model model) {
 //		用于往页面传给savg保存 首单标记 OneOrder
-        bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
+          bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
         BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
         if(orderHeader!=null){
 			BizOrderHeader ord = bizOrderHeaderService.get(orderHeader.getId());
@@ -139,6 +139,10 @@ public class BizOrderDetailController extends BaseController {
 ////		if(orderId !=null && orderId !=0){
 //		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 ////		}
+		if(bizOrderDetail.getOrderHeader().getClientModify()!=null && bizOrderDetail.getOrderHeader().getClientModify().equals("client_modify")){
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId+"&clientModify=client_modify"+
+					"&consultantId="+bizOrderDetail.getOrderHeader().getConsultantId();
+		}
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 	}
 	
