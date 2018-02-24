@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.entity.product;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -30,6 +31,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private static final long serialVersionUID = 1L;
 	private CommonImg commonImg;
 	private String name;		// 商品名称
+	private BizVarietyInfo bizVarietyInfo; //
 	private String prodCode;		// 商品代码--厂家定的-或自己定的
 	private PropValue propValue;		// biz_cate_prop_value.id, 对应品牌分类的属性值ID
 	private String brandName;		// 品牌名称，冗余字段，提升查询效率
@@ -342,5 +344,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setPropValue(PropValue propValue) {
 		this.propValue = propValue;
+	}
+
+	public BizVarietyInfo getBizVarietyInfo() {
+		return bizVarietyInfo;
+	}
+
+	public void setBizVarietyInfo(BizVarietyInfo bizVarietyInfo) {
+		this.bizVarietyInfo = bizVarietyInfo;
 	}
 }

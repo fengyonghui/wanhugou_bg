@@ -204,10 +204,22 @@ public class BizPoHeaderController extends BaseController {
 		if (!beanValidator(model, bizPoHeader)){
 			return form(bizPoHeader, model);
 		}
-		String poNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO,bizPoHeader.getVendOffice().getId());
+		int deOfifceId=0;
+		if(bizPoHeader.getDeliveryOffice()!=null && bizPoHeader.getDeliveryOffice().getId()!=null){
+			deOfifceId=bizPoHeader.getDeliveryOffice().getId();
+		}
+		String poNo="0";
 		bizPoHeader.setOrderNum(poNo);
 		bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
 		bizPoHeaderService.save(bizPoHeader);
+		if(bizPoHeader.getOrderNum()==null || "0".equals(bizPoHeader.getOrderNum())){
+			poNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO,deOfifceId,bizPoHeader.getVendOffice().getId(),bizPoHeader.getId());
+			bizPoHeader.setOrderNum(poNo);
+			bizPoHeaderService.save(bizPoHeader);
+		}
+
+
+
 
 		addMessage(redirectAttributes, "保存采购订单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/po/bizPoHeader/?repage";

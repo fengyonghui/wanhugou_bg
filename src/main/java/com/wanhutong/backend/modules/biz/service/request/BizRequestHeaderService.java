@@ -115,10 +115,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void save(BizRequestHeader bizRequestHeader) {
-		if(bizRequestHeader.getId()==null){
-			String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId());
-			bizRequestHeader.setReqNo(reqNo);
-		}
+
 		DefaultProp defaultProp=new DefaultProp();
 		defaultProp.setPropKey("vend_center");
 		List<DefaultProp> defaultPropList=defaultPropService.findList(defaultProp);
@@ -141,6 +138,17 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 
 		if(bizRequestHeader.getId()==null&&user.getRoleList()!=null && flag){
 			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
+		}
+		if(bizRequestHeader.getId()==null){
+			BizRequestHeader requestHeader=new BizRequestHeader();
+			requestHeader.setFromOffice(bizRequestHeader.getFromOffice());
+			List<BizRequestHeader> requestHeaderList=findList(requestHeader);
+			int s=0;
+			if (requestHeaderList!=null && requestHeaderList.size()>0){
+				s=requestHeaderList.size();
+			}
+			String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId(),bizRequestHeader.getToOffice().getId(),s+1);
+			bizRequestHeader.setReqNo(reqNo);
 		}
 		super.save(bizRequestHeader);
 		BizRequestDetail bizRequestDetail=new BizRequestDetail();

@@ -24,6 +24,11 @@
 		<association property="propValue" javaType="PropValue" column="propValue.id">
 			<id property="id" column="propValue.id"/>
 		</association>
+		<association property="bizVarietyInfo" javaType="BizVarietyInfo" column="bizVarietyInfo.id">
+			<id property="id" column="bizVarietyInfo.id"/>
+			<result property="name" column="bizVarietyInfo.name"/>
+            <result property="code" column="bizVarietyInfo.code"/>
+		</association>
 		<association property="createBy" javaType="User" column="createBy.id">
 			<id property="id" column="createBy.id"/>
 		</association>
@@ -50,6 +55,8 @@
 		a.vendor_id AS "office.id",
 		a.vendor_name AS "vendorName",
 		a.marketing_date AS "marketingDate",
+		a.vari_id AS "bizVarietyInfo.id",
+		vi.code AS "bizVarietyInfo.code",
 		a.min_price AS "minPrice",
 		a.max_price AS "maxPrice",
 		a.status AS "delFlag",
@@ -62,6 +69,7 @@
 	
 	<sql id="bizProductInfoJoins">
 		 LEFT JOIN sys_office so ON so.id = a.vendor_id
+		 LEFT JOIN biz_variety_info vi ON vi.id = a.vari_id
 	</sql>
     
 	<select id="get" resultMap="productInfoResult">
@@ -145,6 +153,7 @@
 			vendor_id,
 			vendor_name,
 			marketing_date,
+			vari_id,
 			<if test="minPrice!=null">
 				min_price,
 			</if>
@@ -170,6 +179,7 @@
 			#{office.id},
 			#{office.name},
 			#{marketingDate},
+			#{bizVarietyInfo.id}
 		<if test="minPrice!=null">
 			#{minPrice},
 		</if>
@@ -221,6 +231,7 @@
 		<if test="maxPrice!=null">
 			max_price = #{maxPrice},
 		</if>
+			vari_id = #{bizVarietyInfo.id},
 			u_version = #{uVersion},
 			update_time = #{updateDate},
 			update_id = #{updateBy.id}

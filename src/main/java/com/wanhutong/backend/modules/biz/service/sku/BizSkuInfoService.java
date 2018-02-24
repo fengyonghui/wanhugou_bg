@@ -188,17 +188,17 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	
 	@Transactional(readOnly = false)
 	public void save(BizSkuInfo bizSkuInfo) {
-		String brandCode="";
-		String prodCode="";
+
  	 	BizProductInfo bizProductInfo=bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
-		PropValue brandValue = propValueService.get(bizProductInfo.getPropValue().getId());
-		if (brandValue != null) {
-			bizProductInfo.setBrandName(brandValue.getValue());
-			brandCode=bizProductInfoService.addZeroForNum(brandValue.getCode(),false,4);
-			prodCode="CODE";
-		}
+//		PropValue brandValue = propValueService.get(bizProductInfo.getPropValue().getId());
+//		if (brandValue != null) {
+//			bizProductInfo.setBrandName(brandValue.getValue());
+//			brandCode=bizProductInfoService.addZeroForNum(brandValue.getCode(),false,4);
+//			prodCode="CODE";
+//		}
 		if(bizSkuInfo.getId()==null){
-			String partNo=brandCode+prodCode+"P_"+autoGenericCode(bizProductInfo.getId(),6)+bizSkuInfo.getSort();
+			String prodCode=bizProductInfo.getProdCode();
+			String partNo=prodCode+bizSkuInfo.getSort();
 			bizSkuInfo.setPartNo(partNo);
 		}
 		super.save(bizSkuInfo);
@@ -245,17 +245,6 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		saveCommonImg(bizSkuInfo);
 	}
 
-	private String autoGenericCode(Integer code, int num) {
-		String result = "";
-		// 保留num的位数
-    // 0 代表前面补充0
-		// num 代表长度为4
-		// d 代表参数为正数型
-		result = String.format("%0" + num + "d", code + 1);
-
-		return result;
-	}
-
 	@Transactional(readOnly = false)
 	public void saveCommonImg(BizSkuInfo bizSkuInfo) {
 		String photos=null;
@@ -265,50 +254,72 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 			e.printStackTrace();
 			log.error("SKU商品图片转换编码异常." + e.getMessage(), e);
 		}
-		CommonImg commonImg=new CommonImg();
-		User user = UserUtils.getUser();
-		String pahtPrefix = AliOssClientUtil.getPahtPrefix();
-		String s = DateUtils.formatDate(new Date()).replaceAll("-", "");
-		if(photos!=null && !"".equals(photos)) {
-			photos = photos.substring(1);
-			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-			String[]photoArr=photos.split("\\|");
-			if(photoArr.length>=1){
-				commonImg.setObjectId(bizSkuInfo.getId());
-				commonImg.setObjectName("biz_sku_info");
-				commonImgService.deleteCommonImg(commonImg);
-				for (int i=0;i<photoArr.length;i++){
-					int a = photoArr[i].lastIndexOf("/")+1;
-					String photoName = photoArr[i].substring(a);
-					String imgType=photoName.substring(photoName.indexOf("."));
-					String folder = AliOssClientUtil.getFolder();
-					String path =  folder + "/" + pahtPrefix +""+user.getCompany().getId() +"/" + user.getId() +"/" + s +"/" ;
-					String  pathFile = Global.getUserfilesBaseDir()+photoArr[i];
-					String  pathFile2 = Global.getUserfilesBaseDir() + photoArr[i].substring(0,a-1);
-					File file = new File(pathFile);
-					String photoNewName=System.currentTimeMillis()+""+(GenerateOrderUtils.getRandomNum())+imgType;
-					File file2 = new File(pathFile2+"/"+photoNewName);
-
-					if (!photoArr[i].contains(DsConfig.getImgServer())) {
-						file.renameTo(file2);
-						AliOssClientUtil.uploadObject2OSS(file2, path);
-						commonImg.setImgPath("\\"+path+photoNewName);
-						if(file2.exists()){
-							file2.delete();
-						}
-					}else {
-						commonImg.setImgPath("\\"+path+photoName);
-					}
-					commonImg.setImgSort(i);
-					commonImg.setImgServer(DsConfig.getImgServer());
-					commonImgService.save(commonImg);
-
-				}
-			}
+		if (photos != null) {
+			String[] photoArr = photos.split("\\|");
+			saveProdImg(ImgEnum.SKU_TYPE.getCode(), bizSkuInfo, photoArr);
 		}
 
 	}
-	
+
+
+	public void saveProdImg(Integer imgType, BizSkuInfo bizSkuInfo, String[] photoArr) {
+		if (bizSkuInfo.getId() == null) {
+			log.error("Can't save sku image without sku ID!");
+			return;
+		}
+
+		List<CommonImg> commonImgs = getImgList(imgType, bizSkuInfo.getId());
+
+		Set<String> existSet = new HashSet<>();
+		for (CommonImg commonImg1 : commonImgs) {
+			existSet.add(commonImg1.getImgServer() + commonImg1.getImgPath());
+		}
+		Set<String> newSet = new HashSet<>(Arrays.asList(photoArr));
+
+		Set<String> result = new HashSet<String>();
+		//差集，结果做删除操作
+		result.clear();
+		result.addAll(existSet);
+		result.removeAll(newSet);
+		for (String url : result) {
+			for (CommonImg commonImg1 : commonImgs) {
+				if (url.equals(commonImg1.getImgServer() + commonImg1.getImgPath())) {
+					commonImg1.setDelFlag("0");
+					commonImgService.delete(commonImg1);
+				}
+			}
+		}
+		//差集，结果做插入操作
+		result.clear();
+		result.addAll(newSet);
+		result.removeAll(existSet);
+
+		CommonImg commonImg = new CommonImg();
+		commonImg.setObjectId(bizSkuInfo.getId());
+		commonImg.setObjectName("biz_sku_info");
+		commonImg.setImgType(imgType);
+		commonImg.setImgSort(20);
+		for (String name : result) {
+			if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer())) {
+				continue;
+			}
+			String pathFile = Global.getUserfilesBaseDir() + name;
+			String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
+
+			commonImg.setId(null);
+			commonImg.setImgPath("/"+ossPath);
+			commonImg.setImgServer(DsConfig.getImgServer());
+			commonImgService.save(commonImg);
+		}
+	}
+
+	private List<CommonImg> getImgList(Integer imgType, Integer skuId) {
+		CommonImg commonImg = new CommonImg();
+		commonImg.setObjectId(skuId);
+		commonImg.setObjectName("biz_sku_info");
+		commonImg.setImgType(imgType);
+		return commonImgService.findList(commonImg);
+	}
 	@Transactional(readOnly = false)
 	public void delete(BizSkuInfo bizSkuInfo) {
 		super.delete(bizSkuInfo);

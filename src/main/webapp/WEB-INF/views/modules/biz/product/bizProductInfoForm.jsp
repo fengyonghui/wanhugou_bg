@@ -378,8 +378,20 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
+
     <div class="control-group">
-        <label class="control-label">请选择产品分类：</label>
+        <label class="control-label">请选择产品标签：</label>
+        <div class="controls">
+            <form:select path="bizVarietyInfo.id" class="input-medium">
+                <form:option value="" label="请选择"/>
+                <form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+            </form:select>
+            <span class="help-inline"><font color="red">*</font> </span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">请选择产品标签：</label>
         <div class="controls">
             <div id="cateTree" class="ztree" style="margin-top:3px;float:left;"></div>
             <form:hidden path="cateIds"/>

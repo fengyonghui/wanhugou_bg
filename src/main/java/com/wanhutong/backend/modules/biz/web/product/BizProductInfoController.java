@@ -13,6 +13,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
@@ -21,6 +22,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -65,8 +67,7 @@ public class BizProductInfoController extends BaseController {
 	private BizProductInfoService bizProductInfoService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
-	@Autowired
-	private BizCategoryInfoService bizCategoryInfoService;
+
 	@Autowired
 	private CommonImgService commonImgService;
 	@Autowired
@@ -76,6 +77,8 @@ public class BizProductInfoController extends BaseController {
 
 	@Autowired
 	private DefaultPropService defaultPropService;
+	@Autowired
+	private BizVarietyInfoService bizVarietyInfoService;
 
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
@@ -145,10 +148,13 @@ public class BizProductInfoController extends BaseController {
 				 propValues=propValueService.findList(propValue);
 			}
 
+			List<BizVarietyInfo> varietyInfoList=bizVarietyInfoService.findList(new BizVarietyInfo());
+
 			//model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
 			model.addAttribute("propValueList",propValues);
 			model.addAttribute("entity", bizProductInfo);
+			model.addAttribute("varietyInfoList",varietyInfoList);
 		return "modules/biz/product/bizProductInfoForm";
 	}
 

@@ -8,9 +8,11 @@ import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.BizOrderDiscount;
@@ -43,6 +45,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 //    private BizOrderDetailService bizOrderDetailService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
+    @Autowired
+    private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 
     public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader) {
         //查询状态 status=0 和 1的所有信息
@@ -98,8 +102,23 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizLocation.setRegion(new SysRegion());
         }
         bizOrderAddressService.save(bizLocation);
-        String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), bizOrderHeader.getCustomer().getId());
+
+
         if(bizOrderHeader.getId()==null || bizOrderHeader.getId()==0){
+            BizOrderHeader orderHeader=new BizOrderHeader();
+            orderHeader.setCustomer(bizOrderHeader.getCustomer());
+            orderHeader.setOrderType(Integer.parseInt(OrderTypeEnum.SO.getOrderType()));
+            List<BizOrderHeader> bizOrderHeaderList= bizOrderHeaderDao.findList(orderHeader);
+            int s=0;
+            if(bizOrderHeaderList!=null && bizOrderHeaderList.size()>0){
+                s=bizOrderHeaderList.size();
+            }
+            BizCustomCenterConsultant centerConsultant=bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+            int c=0;
+            if(centerConsultant!=null){
+                c=centerConsultant.getCenters().getId();
+            }
+            String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), c, bizOrderHeader.getCustomer().getId(),s+1);
             bizOrderHeader.setOrderNum(orderNum);
         }else{
             bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());

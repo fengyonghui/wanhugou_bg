@@ -10,15 +10,19 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -66,7 +70,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     private PropValueService propValueService;
     @Resource
     private CommonImgService commonImgService;
-
+    @Autowired
+    private BizVendInfoService bizVendInfoService;
 
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
@@ -88,18 +93,23 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     public void save(BizProductInfo bizProductInfo) {
         String brandCode="";
         String prodCode="";
+        String cateCode="";
         if (bizProductInfo.getPropValue() != null && bizProductInfo.getPropValue().getId() != null) {
             PropValue propValue = propValueService.get(bizProductInfo.getPropValue().getId());
             if (propValue != null) {
                 bizProductInfo.setBrandName(propValue.getValue());
-                brandCode=addZeroForNum(propValue.getCode(),false,4);
-                prodCode="CODE";
+                brandCode=addZeroForNum(propValue.getCode(),false,2);
+                Office office=bizProductInfo.getOffice();
+                BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
+                prodCode=addZeroForNum(bizVendInfo.getCode(),true,3);
+                BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
+                cateCode=addZeroForNum(bizVarietyInfo.getCode(),true,3);
             }
 
         }
         super.save(bizProductInfo);
         if(bizProductInfo.getProdCode()==null || "0".equals(bizProductInfo.getProdCode())){
-            String partNo=brandCode+prodCode+autoGenericCode(bizProductInfo.getId().toString(),6);
+            String partNo=brandCode+prodCode+cateCode+autoGenericCode(bizProductInfo.getId().toString(),6);
             bizProductInfo.setProdCode(partNo);
             super.save(bizProductInfo);
         }
@@ -144,6 +154,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                 str = sb.toString();
                 strLen = str.length();
             }
+        }else {
+            str=str.substring(0,strLength);
         }
 
         return str;
