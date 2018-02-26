@@ -102,8 +102,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizLocation.setRegion(new SysRegion());
         }
         bizOrderAddressService.save(bizLocation);
-
-
         if(bizOrderHeader.getId()==null || bizOrderHeader.getId()==0){
             BizOrderHeader orderHeader=new BizOrderHeader();
             orderHeader.setCustomer(bizOrderHeader.getCustomer());
@@ -129,6 +127,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }else{
             bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
         }
+        bizOrderHeader.setBizStatus(bizOrderHeader.getBizStatus());
         super.save(bizOrderHeader);
         bizLocation.setId(bizOrderHeader.getBizLocation().getId());
         bizLocation.setOrderHeaderID(bizOrderHeader);

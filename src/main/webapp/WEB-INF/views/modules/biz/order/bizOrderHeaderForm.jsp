@@ -116,75 +116,75 @@
                 updateMoney();
             });
 
-            if($("#id").val() !="" && $("#bizStatusID").val()!=""){
+            if($("#id").val() !="" && $("#bizStatus").val()!=""){
                 <%--定义订单进度状态--%>
-                if($("#bizStatusID").val()==0){ <%--0未支付--%>
+                if($("#bizStatus").val()==0){ <%--0未支付--%>
                     $("#payment").css("display","block");
                     $("#payment0").addClass("btn-primary");
                     $("#payment5").addClass("btn-default");
                     $("#payment10").addClass("btn-default");
-                }else if($("#bizStatusID").val()==5){ <%--5首付款支付--%>
+                }else if($("#bizStatus").val()==5){ <%--5首付款支付--%>
                     $("#payment5_1").css("display","block");
                     $("#payment5_2").addClass("btn-primary");
                     $("#payment5_3").addClass("btn-primary");
                     $("#payment5_4").addClass("btn-default");
                     $("#payment5_5").addClass("btn-default");
-                }else if($("#bizStatusID").val()==10){ <%--全10部支付--%>
+                }else if($("#bizStatus").val()==10){ <%--全10部支付--%>
                     $("#payment10_1").css("display","block");
                     $("#payment10_2").addClass("btn-primary");
                     $("#payment10_3").addClass("btn-primary");
                     $("#payment10_4").addClass("btn-primary");
                     $("#payment10_5").addClass("btn-default");
-                }else if($("#bizStatusID").val()==15){ <%--15供货中--%>
+                }else if($("#bizStatus").val()==15){ <%--15供货中--%>
                     $("#commodity").css("display","block");
                     $("#commodity5").addClass("btn-primary");
                     $("#commodity10").addClass("btn-primary");
                     $("#commodity15").addClass("btn-primary");
                     $("#commodity17").addClass("btn-default");
                     $("#commodity20").addClass("btn-default");
-                }else if($("#bizStatusID").val()==17){ <%--17采购中--%>
+                }else if($("#bizStatus").val()==17){ <%--17采购中--%>
                     $("#purchase").css("display","block");
                     $("#purchase5").addClass("btn-primary");
                     $("#purchase10").addClass("btn-primary");
                     $("#purchase15").addClass("btn-primary");
                     $("#purchase17").addClass("btn-primary");
                     $("#purchase20").addClass("btn-default");
-                }else if($("#bizStatusID").val()==18){ <%--18采购完成--%>
+                }else if($("#bizStatus").val()==18){ <%--18采购完成--%>
                     $("#supply_core").css("display","block");
                     $("#supply_core17").addClass("btn-primary");
                     $("#supply_core18").addClass("btn-primary");
                     $("#supply_core19").addClass("btn-default");
-                }else if($("#bizStatusID").val()==19){ <%--19供应中心供货--%>
+                }else if($("#bizStatus").val()==19){ <%--19供应中心供货--%>
                     $("#deliver_goods").css("display","block");
                     $("#deliver_goods18").addClass("btn-primary");
                     $("#deliver_goods19").addClass("btn-primary");
                     $("#deliver_goods20").addClass("btn-default");
-                }else if($("#bizStatusID").val()==20){ <%--20已发货--%>
+                }else if($("#bizStatus").val()==20){ <%--20已发货--%>
                     $("#goods").css("display","block");
                     $("#goods15").addClass("btn-primary");
                     $("#goods19").addClass("btn-primary");
                     $("#goods20").addClass("btn-primary");
                     $("#goods25").addClass("btn-default");
-                }else if($("#bizStatusID").val()==25){ <%--25客户已收货--%>
+                }else if($("#bizStatus").val()==25){ <%--25客户已收货--%>
                     $("#have_received_goods").css("display","block");
                     $("#have_received_goods20").addClass("btn-primary");
                     $("#have_received_goods25").addClass("btn-primary");
                     $("#have_received_goods10").addClass("btn-default");
                     $("#have_received_goods30").addClass("btn-default");
-                }else if($("#bizStatusID").val()==30){ <%--30已完成--%>
+                }else if($("#bizStatus").val()==30){ <%--30已完成--%>
                     $("#completed").css("display","block");
                     $("#completed10").addClass("btn-primary");
                     $("#completed25").addClass("btn-primary");
                     $("#completed30").addClass("btn-primary");
                     $("#completed40").addClass("btn-default");
-                }else if($("#bizStatusID").val()==35){ <%--35已取消--%>
+                }else if($("#bizStatus").val()==35){ <%--35已取消--%>
                     $("#cancel").css("display","block");
                     $("#cancel0").addClass("btn-primary");
                     $("#cancel5").addClass("btn-primary");
                     $("#cancel10").addClass("btn-primary");
                     $("#cancel35").addClass("btn-primary");
                     $("#cancel40").addClass("btn-default");
-                }else if($("#bizStatusID").val()==40){ <%--40已删除--%>
+                }else if($("#bizStatus").val()==40){ <%--40已删除--%>
                     $("#already_delete").css("display","block");
                     $("#already_delete30").addClass("btn-primary");
                     $("#already_delete35").addClass("btn-primary");
@@ -367,7 +367,6 @@
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
-    <input type="hidden" id="bizStatusID" name="bizStatus" value="${bizOrderHeader.bizStatus}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <form:hidden path="platformInfo.id" value="1"/>

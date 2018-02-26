@@ -202,12 +202,8 @@
 		</if>
 			total_exp = #{totalExp},
 			freight = #{freight},
-		<if test="invStatus !=null and invStatus !=''">
 			inv_status = #{invStatus},
-		</if>
-		<if test="bizStatus !=null and bizStatus !=''">
 			biz_status = #{bizStatus},
-		</if>
 			biz_type = #{bizType},
 			plateform_id = #{platformInfo.id},
 			ship_to_addr = #{bizLocation.id},
