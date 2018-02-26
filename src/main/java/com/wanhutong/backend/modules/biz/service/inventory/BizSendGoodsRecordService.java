@@ -41,6 +41,7 @@ import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,6 +85,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	private BizLogisticsService bizLogisticsService;
 	@Resource
     private CommonImgService commonImgService;
+	@Autowired
+    private BizSendGoodsRecordDao bizSendGoodsRecordDao;
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -181,7 +184,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					BizOrderHeader bizOrderHeader1 = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
 					bsgr.setBizOrderHeader(bizOrderHeader1);
 				}
-                String sendNumber = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(OrderTypeEnum.SE.getOrderType()),0,office.getId(),i++);
+                String sendNumber = GenerateOrderUtils.getOrderNum(OrderTypeEnum.SE,office1.getId(),office.getId(),i++);
 				bsgr.setSendNumber(sendNumber);
 				bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
 				bsgr.setInvInfo(invInfo);
@@ -198,6 +201,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bsgr.setOrderNum(bsgr.getOrderNum());
 				Date date = new Date();
 				bsgr.setSendDate(date);
+				super.save(bsgr);
+				bsgr.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,office1.getId(),office.getId(),bsgr.getId()));
 				super.save(bsgr);
                 //保存图片
                 saveCommonImg(bsgr);
@@ -282,6 +287,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 							Date date = new Date();
 							bsgr.setSendDate(date);
 							super.save(bsgr);
+                            bsgr.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,office1.getId(),office.getId(),bsgr.getId()));
+                            super.save(bsgr);
 					}
 				}else {//该用户是供应中心
                     //获取销售单相应的采购单详情,累计采购单单个商品的供货数
@@ -343,6 +350,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					Date date = new Date();
 					bsgr.setSendDate(date);
 					super.save(bsgr);
+                    bsgr.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,office1.getId(),office.getId(),bsgr.getId()));
+                    super.save(bsgr);
                     //保存图片
                     saveCommonImg(bsgr);
 				}
@@ -438,6 +447,17 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
         if (imgUrl != null) {
             String[] photoArr = imgUrl.split("\\|");
             saveLogisticsImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizSendGoodsRecord, photoArr);
+        }
+        List<CommonImg> commonImgs = getImgList(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizSendGoodsRecord.getId());
+        for (int i = 0; i < commonImgs.size(); i++) {
+            CommonImg commonImg = commonImgs.get(i);
+            commonImg.setImgSort(i);
+            commonImgService.save(commonImg);
+
+            if (i == 0) {
+                bizSendGoodsRecord.setImgUrl(commonImg.getImgServer() + commonImg.getImgPath());
+                bizSendGoodsRecordDao.update(bizSendGoodsRecord);
+            }
         }
     }
 

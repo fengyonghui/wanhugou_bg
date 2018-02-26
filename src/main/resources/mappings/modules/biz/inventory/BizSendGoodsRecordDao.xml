@@ -137,7 +137,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_send_goods_record(
 			id,
             send_number,
@@ -223,7 +223,9 @@
 		UPDATE biz_send_goods_record SET
             send_number=#{sendNumber},
 			sku_id = #{skuInfo.id},
-			inv_id = #{invInfo.id},
+			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
+				inv_id = #{invInfo.id},
+			</if>
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				order_id = #{bizOrderHeader.id},
 			</if>
