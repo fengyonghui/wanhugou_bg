@@ -10,6 +10,7 @@ import java.util.*;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
@@ -113,6 +114,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 		boolean flagRequest = true;		//备货单完成状态
 		boolean flagOrder = true;		//销售单完成状态
         boolean flagPo = true;     //采购单完成状态
+        int i = 1;      //供货单序号
 		// 取出当前用户所在机构，
 		User user = UserUtils.getUser();
 		Office office1 = officeService.get(user.getCompany().getId());
@@ -179,6 +181,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					BizOrderHeader bizOrderHeader1 = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
 					bsgr.setBizOrderHeader(bizOrderHeader1);
 				}
+                String sendNumber = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(OrderTypeEnum.SE.getOrderType()),0,office.getId(),i++);
+				bsgr.setSendNumber(sendNumber);
 				bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
 				bsgr.setInvInfo(invInfo);
 				bsgr.setCustomer(office);
@@ -187,8 +191,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bsgr.setValuePrice(bsgr.getValuePrice());
 				bsgr.setImgUrl(bsgr.getImgUrl());
                 BizLogistics bizLogistics = bizLogisticsService.get(bsgr.getBizLogistics().getId());
-                bizLogistics.setCarrier(bsgr.getBizLogistics().getCarrier());
-                bizLogistics.setSettlementStatus(bsgr.getBizLogistics().getSettlementStatus());
+                bsgr.setCarrier(bsgr.getCarrier());
+                bsgr.setSettlementStatus(bsgr.getSettlementStatus());
                 bsgr.setBizLogistics(bizLogistics);
 				bsgr.setSkuInfo(bizSkuInfo);
 				bsgr.setOrderNum(bsgr.getOrderNum());
@@ -269,6 +273,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 //							}else{
 //								bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
 //							}
+                            String sendNumber = GenerateOrderUtils.getOrderNum(OrderTypeEnum.SE,0,office.getId(),i++);
+                            bsgr.setSendNumber(sendNumber);
 							bsgr.setInvInfo(invInfo);
 							bsgr.setCustomer(office);
 							bsgr.setSkuInfo(bizSkuInfo);
@@ -319,6 +325,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 						BizOrderHeader bizOrderHeader1 = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
 						bsgr.setBizOrderHeader(bizOrderHeader1);
 					}
+                    String sendNumber = GenerateOrderUtils.getOrderNum(OrderTypeEnum.SE,0,office.getId(),i++);
+                    bsgr.setSendNumber(sendNumber);
 					bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
 					bsgr.setInvInfo(invInfo);
 					bsgr.setCustomer(office);
@@ -327,8 +335,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
                     bsgr.setValuePrice(bsgr.getValuePrice());
                     bsgr.setImgUrl(bsgr.getImgUrl());
                     BizLogistics bizLogistics = bizLogisticsService.get(bsgr.getBizLogistics().getId());
-                    bizLogistics.setCarrier(bsgr.getBizLogistics().getCarrier());
-                    bizLogistics.setSettlementStatus(bsgr.getBizLogistics().getSettlementStatus());
+                    bsgr.setCarrier(bsgr.getCarrier());
+                    bsgr.setSettlementStatus(bsgr.getSettlementStatus());
                     bsgr.setBizLogistics(bizLogistics);
 					bsgr.setSkuInfo(bizSkuInfo);
 					bsgr.setOrderNum(bsgr.getOrderNum());

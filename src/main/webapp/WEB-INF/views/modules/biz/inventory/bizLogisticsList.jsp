@@ -37,8 +37,6 @@
 		<thead>
 			<tr>
 				<th>物流商名称</th>
-				<th>承运人</th>
-				<th>物流结算方式</th>
 				<th>电话</th>
 				<shiro:hasPermission name="biz:inventory:bizLogistics:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -47,8 +45,6 @@
 		<c:forEach items="${page.list}" var="bizLogistics">
 			<tr>
 				<td>${bizLogistics.name}</td>
-				<td>${bizLogistics.carrier}</td>
-				<td>${fns:getDictLabel(bizLogistics.settlementStatus, 'biz_settlement_status', '未知状态')}</td>
 				<td>${bizLogistics.phone}</td>
 				<shiro:hasPermission name="biz:inventory:bizLogistics:edit"><td>
     				<a href="${ctx}/biz/inventory/bizLogistics/form?id=${bizLogistics.id}">修改</a>

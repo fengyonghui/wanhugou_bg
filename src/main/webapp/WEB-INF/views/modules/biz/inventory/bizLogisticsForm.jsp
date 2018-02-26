@@ -41,23 +41,6 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">承运人：</label>
-			<div class="controls">
-				<form:input path="carrier" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">物流结算方式：</label>
-			<div class="controls">
-				<form:select path="settlementStatus" class="input-xlarge">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('biz_settlement_status')}" itemLabel="label" itemValue="value"
-								  htmlEscape="false"/></form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
 			<label class="control-label">电话：</label>
 			<div class="controls">
 				<form:input path="phone" htmlEscape="false" maxlength="20" class="input-xlarge "/>

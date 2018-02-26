@@ -22,6 +22,7 @@ public class GenerateOrderUtils {
     private final static Integer OFFICE_LEN = 6;
     private final static Integer CENTER_LEN = 3;
     private final static Integer SERIAL_NUMBER_LEN = 2;
+    private final static Integer SEND_NUMBER_LEN = 6;
 
     private static String convertDate(Date date) {
         return new SimpleDateFormat("yyMMdd").format(date);
@@ -59,6 +60,29 @@ public class GenerateOrderUtils {
         String repairOfficeId = frontCompWithZore(officeId, OFFICE_LEN);
         String repairCenterId = frontCompWithZore(centerId, CENTER_LEN);
         String repairSerialNumber = frontCompWithZore(serialNumber, SERIAL_NUMBER_LEN);
+        StringBuilder orderBuilder = new StringBuilder().append(orderType.name()).append(repairOfficeId)
+                .append(repairCenterId).append(convertDate(new Date())).append(repairSerialNumber);
+        return orderBuilder.toString();
+    }
+
+    /**
+     * 生成订单号
+     *
+     * @param orderType    订单类型
+     * @param centerId     采购中心ID
+     * @param officeId     客户ID
+     * @param serialNumber 客户订单序号
+     * @return 订单号
+     */
+
+    public static String getSendNumber(OrderTypeEnum  orderType, Integer centerId, Integer officeId, Integer serialNumber) {
+        if (!ObjectUtils.allNotNull(orderType, centerId, officeId, serialNumber)
+                || officeId < 0 || centerId < 0 || serialNumber <= 0) {
+            return null;
+        }
+        String repairOfficeId = frontCompWithZore(officeId, OFFICE_LEN);
+        String repairCenterId = frontCompWithZore(centerId, CENTER_LEN);
+        String repairSerialNumber = frontCompWithZore(serialNumber, SEND_NUMBER_LEN);
         StringBuilder orderBuilder = new StringBuilder().append(orderType.name()).append(repairOfficeId)
                 .append(repairCenterId).append(convertDate(new Date())).append(repairSerialNumber);
         return orderBuilder.toString();

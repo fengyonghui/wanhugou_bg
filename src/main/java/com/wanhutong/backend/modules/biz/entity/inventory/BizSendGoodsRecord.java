@@ -26,6 +26,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	
 	private static final long serialVersionUID = 1L;
+	private String sendNumber;		//供货单号
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
 	private BizInventoryInfo invInfo;		//发货仓库，biz_inventory_info.id
 	private BizOrderHeader bizOrderHeader;		// order_id
@@ -37,6 +38,8 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	private Double valuePrice;		//货值
 	private Double operation;		//操作费
 	private Double freight;		//运费
+	private String carrier;		// 承运人
+	private Byte settlementStatus;		// 物流结算方式：1、现结；2、账期;
 	private Date sendDate;		// 供货时间
 	private Integer bizStatus;		//供货方状态    0：采购中心 ，1：供货中心
 	private BizLogistics bizLogistics;		//物流商
@@ -50,6 +53,14 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public BizSendGoodsRecord(Integer id){
 		super(id);
+	}
+
+	public String getSendNumber() {
+		return sendNumber;
+	}
+
+	public void setSendNumber(String sendNumber) {
+		this.sendNumber = sendNumber;
 	}
 
 	public BizSkuInfo getSkuInfo() {
@@ -122,6 +133,23 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public void setFreight(Double freight) {
 		this.freight = freight;
+	}
+
+	@Length(min=1, max=20, message="承运人长度必须介于 1 和 20 之间")
+	public String getCarrier() {
+		return carrier;
+	}
+
+	public void setCarrier(String carrier) {
+		this.carrier = carrier;
+	}
+
+	public Byte getSettlementStatus() {
+		return settlementStatus;
+	}
+
+	public void setSettlementStatus(Byte settlementStatus) {
+		this.settlementStatus = settlementStatus;
 	}
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

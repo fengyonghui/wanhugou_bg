@@ -58,9 +58,9 @@
                 return false;
             }
         }
-        function chenge(obj){
-			alert(obj);
-		}
+        // function chenge(obj){
+		// 	alert(obj);
+		// }
 	</script>
 </head>
 <body>
@@ -184,21 +184,21 @@
 								</td>
 								</shiro:hasPermission>
 								<td>
-									<select name="bizLogistics.id" class="input-medium">
+									<select name="bizSendGoodsRecordList[${reqStatus.index}].bizLogistics.id" class="input-medium">
 										<c:forEach items="${logisticsList}" var="bizLogistics">
 											<option value="${bizLogistics.id}"/>${bizLogistics.name}
 										</c:forEach>
 									</select>
 								</td>
 								<td>
-									<input id="carrier${reqStatus.index}" title="carrier" name="bizSendGoodsRecordList[${reqStatus.index}].bizLogistics.carrier" value="" />
+									<input id="carrier${reqStatus.index}" title="carrier" name="bizSendGoodsRecordList[${reqStatus.index}].carrier" value="" />
 								</td>
 								<td><input id="freight${reqStatus.index}" title="freight" name="bizSendGoodsRecordList[${reqStatus.index}].freight" value="" /></td>
 								<td><input id="operation${reqStatus.index}" title="operation" name="bizSendGoodsRecordList[${reqStatus.index}].operation" value="" /></td>
 								<td><input id="valuePrice${reqStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${reqStatus.index}].valuePrice" value="" /></td>
 								<td>
 
-									<select name="bizSendGoodsRecordList[${reqStatus.index}].bizLogistics.settlementStatus" class="input-xlarge">
+									<select name="bizSendGoodsRecordList[${reqStatus.index}].settlementStatus" class="input-xlarge">
 										<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
 											<option value="${settlementStatus.value}">${settlementStatus.label}</option>
 											<%--<option <c:if test="${settlementStatus eq '现结'}"><c:out value="1"/></c:if><c:if test="${settlementStatus eq '账期'}"><c:out value="2"/></c:if> onclick="chenge(settlementStatus)">${settlementStatus}</option>--%>
@@ -263,13 +263,13 @@
 										</select>
 									</td>
 									<td>
-										<input id="carrier${ordStatus.index}" title="carrier" name="bizSendGoodsRecordList[${ordStatus.index}].bizLogistics.carrier" value="" />
+										<input id="carrier${ordStatus.index}" title="carrier" name="bizSendGoodsRecordList[${ordStatus.index}].carrier" value="" />
 									</td>
 									<td><input id="freight${ordStatus.index}" title="freight" name="bizSendGoodsRecordList[${ordStatus.index}].freight" value="" /></td>
 									<td><input id="operation${ordStatus.index}" title="operation" name="bizSendGoodsRecordList[${ordStatus.index}].operation" value="" /></td>
 									<td><input id="valuePrice${ordStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${ordStatus.index}].valuePrice" value="" /></td>
 									<td>
-										<select id="settlementStatus${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].bizLogistics.settlementStatus" class="input-xlarge" >
+										<select id="settlementStatus${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].settlementStatus" class="input-xlarge" >
 										<option value="">请选择</option>
 											<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
 												<option value="${settlementStatus.value}">${settlementStatus.label}</option>

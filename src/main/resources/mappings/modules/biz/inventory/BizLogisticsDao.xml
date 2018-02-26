@@ -5,8 +5,6 @@
 	<sql id="bizLogisticsColumns">
 		a.id AS "id",
 		a.name AS "name",
-		a.carrier AS "carrier",
-		a.settlement_status AS "settlementStatus",
 		a.phone AS "phone",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -71,8 +69,6 @@
 		INSERT INTO biz_logistics(
 			id,
 			name,
-			carrier,
-			settlement_status,
 			phone,
 			status,
 			create_id,
@@ -83,8 +79,6 @@
 		) VALUES (
 			#{id},
 			#{name},
-			#{carrier},
-			#{settlementStatus},
 			#{phone},
 			#{delFlag},
 			#{createBy.id},
@@ -98,8 +92,6 @@
 	<update id="update">
 		UPDATE biz_logistics SET 	
 			name = #{name},
-			carrier = #{carrier},
-			settlement_status = #{settlementStatus},
 			phone = #{phone},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},

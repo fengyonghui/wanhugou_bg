@@ -49,6 +49,7 @@
 				<c:if test="${bizStatus==0}">
 					<th>仓库名称</th>
 				</c:if>
+                <td>供货单号</td>
 				<th>商品名称</th>
 				<th>商品编号</th>
 				<th>订单号</th>
@@ -78,6 +79,9 @@
 					</a>${bizSendGoodsRecord.invInfo.name}
 					</td>
 				</c:if>
+                <td>
+                    ${bizSendGoodsRecord.sendNumber}
+                </td>
 				<td>
 					${bizSendGoodsRecord.skuInfo.name}
 				</td>
@@ -98,7 +102,7 @@
 						${bizSendGoodsRecord.bizLogistics.name}
 					</td>
 					<td>
-						${bizSendGoodsRecord.bizLogistics.carrier}
+						${bizSendGoodsRecord.carrier}
 					</td>
 					<td>
 						${bizSendGoodsRecord.freight}
@@ -115,7 +119,7 @@
 						</c:if>
 					</td>
 					<td>
-						${fns:getDictLabel(bizSendGoodsRecord.bizLogistics.settlementStatus, 'biz_settlement_status', '未知状态')}
+						${fns:getDictLabel(bizSendGoodsRecord.settlementStatus, 'biz_settlement_status', '未知状态')}
 					</td>
 					<td>
 						<img src="${bizSendGoodsRecord.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
