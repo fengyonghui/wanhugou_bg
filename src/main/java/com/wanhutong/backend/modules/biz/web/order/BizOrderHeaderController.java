@@ -188,7 +188,8 @@ public class BizOrderHeaderController extends BaseController {
 	public String delete(BizOrderHeader bizOrderHeader,Model model ,RedirectAttributes redirectAttributes) {
 		bizOrderHeaderService.delete(bizOrderHeader);
 		addMessage(redirectAttributes, "删除订单信息成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage&customer.id="+bizOrderHeader.getCustomer().getId();
+//		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage&customer.id="+bizOrderHeader.getCustomer().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
 	}
 	
 	@ResponseBody

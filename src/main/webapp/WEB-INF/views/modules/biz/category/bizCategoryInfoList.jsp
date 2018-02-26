@@ -26,7 +26,6 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<form:hidden path="parentIds"/>
 		<ul class="ul-form">
-
 			<%--<li><label>父ID：</label>--%>
 				<%--<form:input path="pId" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
 			<%--</li>--%>
@@ -46,7 +45,7 @@
 				<th>分类名称</th>
 				<th>分类描述</th>
 				<th>创建人</th>
-				<th>创建时间</th>
+				<th>更新时间</th>
 				<th>数据状态</th>
 				<shiro:hasPermission name="biz:category:bizCategoryInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -65,7 +64,7 @@
 					${bizCategoryInfo.createBy.name}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizCategoryInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${bizCategoryInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 					${fns:getDictLabel(bizCategoryInfo.status, 'status', '')}

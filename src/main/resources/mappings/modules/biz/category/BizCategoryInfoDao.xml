@@ -60,9 +60,9 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
 			</otherwise>
 		</choose>
+		order by updateDate desc
 	</select>
 
 	<select id="findListByBrandId" resultType="BizCategoryInfo">
@@ -98,9 +98,9 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
 			</otherwise>
 		</choose>
+		order by updateDate desc
 	</select>
 
 	<select id="findByParentIdsLike" resultType="BizCategoryInfo">
@@ -121,6 +121,7 @@
 			<if test="dbName == 'mssql'">'%'+#{name</if>
 			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 		</if>
+		order by updateDate desc
 	</select>
 
 	<select id="findAllList" resultType="BizCategoryInfo">

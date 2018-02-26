@@ -49,6 +49,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		ORDER by updateDate desc
 	</select>
 	
 	<select id="findAllList" resultType="PropertyInfo">
