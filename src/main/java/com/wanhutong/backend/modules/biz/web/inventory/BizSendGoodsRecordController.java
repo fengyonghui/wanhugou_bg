@@ -99,7 +99,9 @@ public class BizSendGoodsRecordController extends BaseController {
 
 		    bizSendGoodsRecordService.save(bizSendGoodsRecord);
 			addMessage(redirectAttributes, "保存供货记录成功");
-			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage&bizStatu="+bizSendGoodsRecord.getBizStatus();
+//			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage&bizStatu="+bizSendGoodsRecord.getBizStatus();
+//		跳回订单发货列表
+		return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestAll?source=kc&bizStatu=1&ship=xs";
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")

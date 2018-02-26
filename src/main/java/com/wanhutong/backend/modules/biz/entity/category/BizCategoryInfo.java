@@ -22,7 +22,6 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	private Byte status;//是否可用
 	private Integer cid;//用于参数传递
 	private Integer brandId; // 根据品牌查分类
-	private String name;	//分类名称
 
 	private String catePhoto; //分类图片
 	private Integer imgId;
@@ -133,13 +132,4 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 		this.brandId = brandId;
 	}
 
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
 }
