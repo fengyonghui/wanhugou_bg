@@ -66,13 +66,13 @@ public class GenerateOrderUtils {
     }
 
     /**
-     * 生成订单号
+     * 生成供货单号
      *
      * @param orderType    订单类型
      * @param centerId     采购中心ID
      * @param officeId     客户ID
      * @param serialNumber 客户订单序号
-     * @return 订单号
+     * @return 供货单号
      */
 
     public static String getSendNumber(OrderTypeEnum  orderType, Integer centerId, Integer officeId, Integer serialNumber) {
