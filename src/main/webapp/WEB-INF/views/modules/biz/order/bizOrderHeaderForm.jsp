@@ -373,7 +373,7 @@
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>
 
-    <c:if test="${not empty entity.orderDetails}">
+    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
         <div class="control-group">
             <label class="control-label">订单编号：</label>
             <div class="controls">
@@ -381,7 +381,8 @@
                             class="input-xlarge"/>
             </div>
         </div>
-
+    </c:if>
+    <c:if test="${not empty entity.orderDetails}">
         <div class="control-group">
             <label class="control-label">订单类型：</label>
             <div class="controls">

@@ -48,6 +48,9 @@
 		<include refid="bizOrderAddressJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id!= ''">
+				AND a.id = #{id}
+			</if>
 			<if test="orderHeaderID != null and orderHeaderID.id != null and orderHeaderID.id != ''">
 				AND a.order_id = #{orderHeaderID.id}
 			</if>

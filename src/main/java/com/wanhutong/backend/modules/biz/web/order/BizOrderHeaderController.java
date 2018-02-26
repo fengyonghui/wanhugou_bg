@@ -89,7 +89,7 @@ public class BizOrderHeaderController extends BaseController {
 		}
 		return entity;
 	}
-	
+
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -137,16 +137,23 @@ public class BizOrderHeaderController extends BaseController {
 				bizOrderHeaderTwo.setOrderDetails("details");//查看详情页面不能修改
 			}
 				BizOrderAddress bizOrderAddress = new BizOrderAddress();
-				bizOrderAddress.setOrderHeaderID(bizOrderHeaderTwo);
+				bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
 				List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
 				for (BizOrderAddress orderAddress : list) {
+//					收货地址
 					if(orderAddress.getType()==1){
 						model.addAttribute("orderAddress", orderAddress);
 					}
-					if(orderAddress.getType()==2){
-						model.addAttribute("address", orderAddress);
-					}
 				}
+			BizOrderAddress orderAddress = new BizOrderAddress();
+			orderAddress.setOrderHeaderID(bizOrderHeaderTwo);
+			List<BizOrderAddress> Addresslist = bizOrderAddressService.findList(orderAddress);
+			for (BizOrderAddress address : Addresslist) {
+//				交货地址
+				if(address.getType()==2){
+					model.addAttribute("address", address);
+				}
+			}
 		}
 		BizOrderHeader boh = new BizOrderHeader();
 		if(bizOrderHeader!=null){
@@ -182,16 +189,15 @@ public class BizOrderHeaderController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?oneOrder="+oneOrder;
 	//	return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
 	}
-	
+
 	@RequiresPermissions("biz:order:bizOrderHeader:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizOrderHeader bizOrderHeader,Model model ,RedirectAttributes redirectAttributes) {
 		bizOrderHeaderService.delete(bizOrderHeader);
 		addMessage(redirectAttributes, "删除订单信息成功");
-//		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage&customer.id="+bizOrderHeader.getCustomer().getId();
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage&customer.id="+bizOrderHeader.getCustomer().getId();
 	}
-	
+
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
 	@RequestMapping(value = "findByOrder")
