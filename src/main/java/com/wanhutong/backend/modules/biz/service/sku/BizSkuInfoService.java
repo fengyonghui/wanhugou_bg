@@ -208,39 +208,42 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 			for (Map.Entry<String, BizProdPropertyInfo> entry : bizSkuInfo.getProdPropMap().entrySet()) {
 				Integer propId = Integer.parseInt(entry.getKey());
 				BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
-				BizProdPropertyInfo prodPropertyInfo = bizProdPropertyInfoService.get(propId);
-                PropertyInfo propertyInfo =null;
-				if (prodPropertyInfo == null){
-                    propertyInfo = propertyInfoService.get(propId);
-                }
+
 				String prodPropertyValueStr = bizProdPropertyInfo.getProdPropertyValues();
 				if (prodPropertyValueStr != null && !"".equals(prodPropertyValueStr)) {
-					String[] prodPropertyValues = prodPropertyValueStr.split(",");
-					for (int j = 0; j < prodPropertyValues.length; j++) {
-						bizSkuPropValue.setId(null);
-						Integer propValueId = Integer.parseInt(prodPropertyValues[j].trim());
-						BizProdPropValue propValue = bizProdPropValueService.get(propValueId);
-						if(prodPropertyInfo==null){
-                            bizSkuPropValue.setPropertyInfo(propertyInfo);
-                            bizSkuPropValue.setPropName(propertyInfo.getName());
-                        }else {
+					String[] prodPropertyValues = prodPropertyValueStr.split("-");
+					String source=prodPropertyValues[1].trim();
+					Integer propValueId=Integer.parseInt(prodPropertyValues[0].trim());
 
-                            bizSkuPropValue.setProdPropertyInfo(prodPropertyInfo);
-                            bizSkuPropValue.setPropName(prodPropertyInfo.getPropName());
-
-                        }
-
-						bizSkuPropValue.setPropValue(propValue.getPropValue());
-						bizSkuPropValue.setProdPropValue(propValue);
-						bizSkuPropValue.setSource(propValue.getSource());
-						bizSkuPropValue.setSkuInfo(bizSkuInfo);
+					bizSkuPropValue.setId(null);
+					if("sys".equals(source)){
+						PropertyInfo propertyInfo = propertyInfoService.get(propId);
+						bizSkuPropValue.setPropertyInfo(propertyInfo);
+						bizSkuPropValue.setPropName(propertyInfo.getName());
+						PropValue propValue= propValueService.get(propValueId);
+						bizSkuPropValue.setPropValue(propValue.getValue());
+						bizSkuPropValue.setPropValueObj(propValue);
+						bizSkuPropValue.setSource("sys");
 						bizSkuPropValue.setCode(propValue.getCode());
+
+					}else if("prod".equals(source)){
+						BizProdPropertyInfo prodPropertyInfo = bizProdPropertyInfoService.get(propId);
+						BizProdPropValue bizProdPropValue = bizProdPropValueService.get(propValueId);
+						bizSkuPropValue.setProdPropertyInfo(prodPropertyInfo);
+						bizSkuPropValue.setPropName(prodPropertyInfo.getPropName());
+						bizSkuPropValue.setPropValue(bizProdPropValue.getPropValue());
+						bizSkuPropValue.setProdPropValue(bizProdPropValue);
+						bizSkuPropValue.setSource(bizProdPropValue.getSource());
+						bizSkuPropValue.setCode(bizProdPropValue.getCode());
+					}
+
+						bizSkuPropValue.setSkuInfo(bizSkuInfo);
+
 						bizSkuPropValueService.save(bizSkuPropValue);
 					}
 				}
 
 			}
-		}
 		//sku图片保存
 		saveCommonImg(bizSkuInfo);
 	}

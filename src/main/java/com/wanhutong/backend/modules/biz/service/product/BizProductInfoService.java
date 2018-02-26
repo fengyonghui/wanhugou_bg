@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -72,6 +73,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     private CommonImgService commonImgService;
     @Autowired
     private BizVendInfoService bizVendInfoService;
+    @Autowired
+    private BizVarietyInfoService bizVarietyInfoService;
 
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
@@ -103,7 +106,8 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                 BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
                 prodCode=addZeroForNum(bizVendInfo.getCode(),true,3);
                 BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
-                cateCode=addZeroForNum(bizVarietyInfo.getCode(),true,3);
+                BizVarietyInfo varietyInfo=bizVarietyInfoService.get(bizVarietyInfo.getId());
+                cateCode=addZeroForNum(varietyInfo.getCode(),true,3);
             }
 
         }

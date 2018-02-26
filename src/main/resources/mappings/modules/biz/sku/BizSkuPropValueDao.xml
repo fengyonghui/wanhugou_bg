@@ -98,14 +98,20 @@
 		) VALUES (
 			#{id},
 			#{skuInfo.id},
-			<if test="prodPropertyInfo != null and prodPropertyInfo.id != null">
+			<if test="source != null and source == 'prod'">
 				#{prodPropertyInfo.id},
 			</if>
-			<if test="propertyInfo != null and propertyInfo.id != null">
+			<if test="source != null and source == 'sys'">
 				#{propertyInfo.id},
 			</if>
 			#{propName},
-			#{prodPropValue.id},
+			<if test="source != null and source == 'prod'">
+				#{prodPropValue.id},
+			</if>
+
+			<if test="source != null and source == 'sys'">
+				#{propValueObj.id},
+			</if>
 			#{propValue},
 			#{code},
 			#{source},

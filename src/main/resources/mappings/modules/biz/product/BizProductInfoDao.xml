@@ -179,7 +179,7 @@
 			#{office.id},
 			#{office.name},
 			#{marketingDate},
-			#{bizVarietyInfo.id}
+			#{bizVarietyInfo.id},
 		<if test="minPrice!=null">
 			#{minPrice},
 		</if>
