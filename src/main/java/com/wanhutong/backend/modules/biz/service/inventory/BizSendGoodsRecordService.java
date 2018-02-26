@@ -399,31 +399,36 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SEND.getState());
 				bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 			}
-            //更改采购单状态,已完成（5）
-            if (flagPo){
-                BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-                BizPoOrderReq por = null;
-                bizPoOrderReq.setOrderHeader(bizSendGoodsRecord.getBizOrderHeader());
-                List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
-                if (porList != null && porList.size() > 0 ){
-                    por = porList.get(0);
-                }
-                BizPoHeader poHeader = por.getPoHeader();
-                //获取该采购单的所有采购详情，如果所有的供货数都和采购数相等，则更改采购单状态为完成
-                BizPoHeader bizPoHeader = bizPoHeaderService.get(poHeader.getId());
-                BizPoDetail poDetail = new BizPoDetail();
-                poDetail.setPoHeader(bizPoHeader);
-                List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
-                boolean flag = true;
-                for (BizPoDetail bizPoDetail:poDetailList) {
-                    if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()){
-                        flag = false;
+			//当用户为供货中心时，才涉及采购单状态
+            if(bizSendGoodsRecord.getBizStatus() == SendGoodsRecordBizStatusEnum.CENTER.getState()){
+
+            }else {
+                //更改采购单状态,已完成（5）
+                if (flagPo){
+                    BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                    BizPoOrderReq por = null;
+                    bizPoOrderReq.setOrderHeader(bizSendGoodsRecord.getBizOrderHeader());
+                    List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
+                    if (porList != null && porList.size() > 0 ){
+                        por = porList.get(0);
                     }
-                }
-                if (flag) {
-                    int status = PoHeaderStatusEnum.COMPLETE.getCode();
-                    poHeader.setBizStatus((byte) status);
-                    bizPoHeaderService.saveStatus(poHeader);
+                    BizPoHeader poHeader = por.getPoHeader();
+                    //获取该采购单的所有采购详情，如果所有的供货数都和采购数相等，则更改采购单状态为完成
+                    BizPoHeader bizPoHeader = bizPoHeaderService.get(poHeader.getId());
+                    BizPoDetail poDetail = new BizPoDetail();
+                    poDetail.setPoHeader(bizPoHeader);
+                    List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
+                    boolean flag = true;
+                    for (BizPoDetail bizPoDetail:poDetailList) {
+                        if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()){
+                            flag = false;
+                        }
+                    }
+                    if (flag) {
+                        int status = PoHeaderStatusEnum.COMPLETE.getCode();
+                        poHeader.setBizStatus((byte) status);
+                        bizPoHeaderService.saveStatus(poHeader);
+                    }
                 }
             }
 		}
