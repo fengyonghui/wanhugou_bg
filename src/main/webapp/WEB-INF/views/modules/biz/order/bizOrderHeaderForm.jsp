@@ -847,9 +847,7 @@
                 <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </div>
         </div>
-
     </c:if>
-
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
@@ -955,15 +953,18 @@
                     ${bizOrderDetail.shelfInfo.opShelfInfo.name}
             </td>
             <td>
-                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <c:if test="${empty bizOrderHeader.clientModify}">
-                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">
-                    ${bizOrderDetail.skuName}</a>
+                <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                    ${bizOrderDetail.skuName}
                 </c:if>
-                <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-                    <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}">
-                    ${bizOrderDetail.skuName}</a>
-                </c:if>
+                <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
+                    <c:if test="${empty entity.orderNoEditable && empty entity.orderDetails && empty bizOrderHeader.flag && empty bizOrderHeader.clientModify}">
+                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}">
+                                ${bizOrderDetail.skuName}</a>
+                    </c:if>
+                    <c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">
+                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}">
+                            ${bizOrderDetail.skuName}</a>
+                    </c:if>
                 </c:if>
             </td>
             <td>

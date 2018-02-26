@@ -183,7 +183,7 @@
 			#{outTradeNo},
 			#{payMoney},
 		<if test="originalAmount !=null and originalAmount!=''">
-			#{original_amount},
+			#{originalAmount},
 		</if>
 		<if test="cashAmount !=null and cashAmount!=''">
 			#{cashAmount},

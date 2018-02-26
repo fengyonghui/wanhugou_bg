@@ -140,7 +140,7 @@ public class BizOrderHeaderController extends BaseController {
 				bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
 				List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
 				for (BizOrderAddress orderAddress : list) {
-//					收货地址
+//				    收货地址
 					if(orderAddress.getType()==1){
 						model.addAttribute("orderAddress", orderAddress);
 					}
@@ -217,11 +217,11 @@ public class BizOrderHeaderController extends BaseController {
 		Integer customId = orderHeaderMent.getCustomer().getId();//采购商ID
 		BizCustCredit bizCustCredit = bizCustCreditService.get(customId);//客户钱包
 		BigDecimal subtract=null;
-		Integer recordBiz=0;//0失败 1成功 支付记录表，支付状态
+                Integer recordBiz=0;//0失败 1成功 支付记录表，支付状态
 		String payMent="error";
        try {
 		   if(bizCustCredit!=null){
-			   BigDecimal wallet = bizCustCredit.getWallet();//钱包总余额
+               BigDecimal wallet = bizCustCredit.getWallet();//钱包总余额
 			   if(wallet==null){
 //				   System.out.println(" 余额不足 ");
 				   recordBiz=0;
@@ -237,9 +237,6 @@ public class BizOrderHeaderController extends BaseController {
 
 					   bizPayRecordCredit.setOriginalAmount(bizCustCredit.getWallet());//原金额
 					   bizPayRecordCredit.setCashAmount(subtract);//现金额
-//					   SysPlatWallet sysPlatWallet = sysPlatWalletService.get(OrderTransaction.TOTAL_PURSE.getOrderId());//平台总钱包 1
-//					   sysPlatWallet.setAmount(sysPlatWallet.getAmount()+payMentOne);
-//					   sysPlatWalletService.save(sysPlatWallet);//保存到平台总钱包
 					   if(payMentOne.equals(Totail)){
 						   orderHeaderMent.setReceiveTotal(receiveTotal+payMentOne);//订单已收货款
 						   orderHeaderMent.setBizStatus(OrderTransaction.WHOLE_PAYMENT.getOrderId());//订单状态 10全部支付

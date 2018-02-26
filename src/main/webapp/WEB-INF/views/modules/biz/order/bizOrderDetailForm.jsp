@@ -4,6 +4,11 @@
 <html>
 <head>
     <title>订单详情管理</title>
+    <style type="text/css">
+        .table-condensed td {
+            padding: 5px 2px;
+        }
+    </style>
     <script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -53,7 +58,7 @@
                         trdatas+="<td>"+Attribute+"</td>";
                         trdatas+="<td><input type='hidden' id='maxQty_"+opShelfSku.id+"' value='"+opShelfSku.maxQty+"'/>"+opShelfSku.minQty+"-"+opShelfSku.maxQty+"</td>";
                         trdatas+="<td>"+opShelfSku.salePrice+"</td>";
-                        trdatas+="<td><input type='text' class='input-mini' id='saleQty_"+opShelfSku.id+"'/></td>";
+                        trdatas+="<td><input type='number' class='input-mini' id='saleQty_"+opShelfSku.id+"' style='width:58px;' min='1' max='99999' /></td>";
                         trdatas+="<td id='td_"+opShelfSku.id+"'> <a href='#' onclick=\"addItem('"+opShelfSku.id+"')\">增加</a></td>";
                         trdatas+="<input type='hidden' id='orderDetaIds_"+opShelfSku.id+"' value='"+opShelfSku.skuInfo.id+"'>";
                         trdatas+="<input type='hidden' id='shelfSkuId_"+opShelfSku.id+"' value='"+opShelfSku.id+"'>"
@@ -172,7 +177,7 @@
                             </c:if>
                             <td>${shelfSku.minQty}-${shelfSku.maxQty}</td>
                             <td>${shelfSku.salePrice}</td>
-                            <td>${detail.ordQty}</td>
+                            <td style="text-align: center;">${detail.ordQty}</td>
                             <td><a href="${ctx}/biz/order/bizOrderDetail/delete?id=${detail.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">
                                     删除
                             </a></td>
@@ -181,7 +186,7 @@
                 </tbody>
             </table>
             <%--<c:if test="${entity.str!='detail'}">--%>
-                <table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered table-condensed">
+                <table id="contentTable2" style="width:48%;float: right;background-color:#CEECF5;" class="table table-bordered table-condensed">
                     <thead>
                     <tr>
                         <th>货架名称</th>
