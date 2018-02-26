@@ -161,15 +161,21 @@
 			<if test="imgUrl != null and imgUrl != ''">
 				img_url,
 			</if>
-			value_price,
+			<if test="valuePrice != null and valuePrice != ''">
+				value_price,
+			</if>
 			<if test="operation != null and operation != 0">
 				operation,
 			</if>
 			<if test="freight != null and freight != 0">
 				freight,
 			</if>
-            carrier,
-            settlement_status,
+			<if test="carrier != null and carrier != ''">
+            	carrier,
+			</if>
+			<if test="settlementStatus != null and settlementStatus != ''">
+            	settlement_status,
+			</if>
 			send_time,
 			status,
 			create_id,
@@ -200,15 +206,21 @@
 			<if test="imgUrl != null and imgUrl != ''">
 				#{imgUrl},
 			</if>
-			#{valuePrice},
+			<if test="valuePrice != null and valuePrice != ''">
+				#{valuePrice},
+			</if>
 			<if test="operation != null and operation != 0">
 				#{operation},
 			</if>
 			<if test="freight != null and freight != 0">
 				#{freight},
 			</if>
-            #{carrier},
-            #{settlementStatus},
+			<if test="carrier != null and carrier != ''">
+            	#{carrier},
+			</if>
+			<if test="settlementStatus != null and settlementStatus != ''">
+          		#{settlementStatus},
+			</if>
 			#{sendDate},
 			#{delFlag},
 			#{createBy.id},
@@ -242,15 +254,21 @@
 			<if test="imgUrl != null and imgUrl != ''">
 				img_url = #{imgUrl},
 			</if>
-			value_price = #{valuePrice},
+			<if test="valuePrice != null and valuePrice != ''">
+				value_price = #{valuePrice},
+			</if>
 			<if test="operation != null and operation != 0">
 				operation = #{operation},
 			</if>
 			<if test="freight != null and freight != 0">
 				freight = #{freight},
 			</if>
-            carrier = #{carrier},
-            settlement_status = #{settlementStatus},
+			<if test="carrier != null and carrier != ''">
+            	carrier = #{carrier},
+			</if>
+			<if test="settlementStatus != null and settlementStatus != ''">
+           		settlement_status = #{settlementStatus},
+			</if>
 			send_time = #{sendDate},
 			create_time = #{createDate},
 			u_version = #{uVersion},
