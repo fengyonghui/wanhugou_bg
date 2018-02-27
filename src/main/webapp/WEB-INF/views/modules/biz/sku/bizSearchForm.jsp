@@ -106,7 +106,7 @@
 			<label class="control-label">用户：</label>
 			<div class="controls">
 				<sys:treeselect id="user" name="user.id" value="${bizSearch.user.id}" labelName="user.name" labelValue="${bizSearch.user.name}"
-					title="用户" url="/sys/office/treeData?type=3" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
+					title="用户" url="/sys/user/treeData?type=6&officeId=${office.id}" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

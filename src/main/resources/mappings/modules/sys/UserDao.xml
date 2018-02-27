@@ -430,5 +430,21 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<!--查询用户 分采购商和供应商-->
+	<select id="findUserByCompany" resultType="User" parameterType="Integer">
+		SELECT
+		a.id,
+		a.company_id,
+		a.office_id,
+		a.login_name,
+		a. NAME
+		FROM sys_user a
+		LEFT JOIN sys_office so on so.id=a.company_id
+		WHERE
+		a.status = 1
+		and a.company_id = a.office_id
+		AND so.type = #{type}
+	</select>
+
 </mapper>
