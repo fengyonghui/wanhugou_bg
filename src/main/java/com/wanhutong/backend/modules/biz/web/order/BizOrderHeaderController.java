@@ -102,7 +102,6 @@ public class BizOrderHeaderController extends BaseController {
 //				bizOrderHeader.setConsultantId(null);
 //			}
 //		}
-
 		Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
 		model.addAttribute("page", page);
 		return "modules/biz/order/bizOrderHeaderList";
