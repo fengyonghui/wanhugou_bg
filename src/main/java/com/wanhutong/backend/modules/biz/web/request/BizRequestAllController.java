@@ -27,6 +27,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -67,6 +68,8 @@ public class BizRequestAllController {
     private SystemService systemService;
     @Autowired
     private BizLogisticsService bizLogisticsService;
+    @Autowired
+    private OfficeService officeService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -98,9 +101,11 @@ public class BizRequestAllController {
         if(flag){
             model.addAttribute("ship",ship);
         }*/
-
-        if (user.getCompany().getType().equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
+        String type = officeService.get(user.getCompany().getId()).getType();
+        if (type.equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
             model.addAttribute("ship",ship);
+        }else {
+            model.addAttribute("ship","");
         }
         model.addAttribute("source",source);
         if(bizOrderHeader==null){

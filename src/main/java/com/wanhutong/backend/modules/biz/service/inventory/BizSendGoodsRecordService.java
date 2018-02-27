@@ -113,7 +113,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	}
 	
 	@Transactional(readOnly = false)
-	public void save(BizSendGoodsRecord bizSendGoodsRecord) {
+	public void save(BizSendGoodsRecord bizSendGoodsRecord,String bizStatu) {
 		boolean flagRequest = true;		//备货单完成状态
 		boolean flagOrder = true;		//销售单完成状态
         boolean flagPo = true;     //采购单完成状态
@@ -218,7 +218,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					continue;
 				}
 				//该用户是采购中心
-				if(bizSendGoodsRecord.getBizStatus() == SendGoodsRecordBizStatusEnum.CENTER.getState()){
+				if(bizStatu.equals("0")){
 
 					//销售单状态改为同意供货（供货中）（15）
 					BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizSendGoodsRecord.getBizOrderHeader().getId());
@@ -290,7 +290,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
                             bsgr.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,office1.getId(),office.getId(),bsgr.getId()));
                             super.save(bsgr);
 					}
-				}else {//该用户是供应中心
+				}
+				if(bizStatu.equals("1")) {//该用户是供应中心
                     //获取销售单相应的采购单详情,累计采购单单个商品的供货数
                     BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
                     BizPoHeader poHeader = null;

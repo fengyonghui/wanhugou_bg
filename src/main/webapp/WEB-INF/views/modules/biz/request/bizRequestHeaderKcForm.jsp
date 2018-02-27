@@ -101,7 +101,9 @@
 		<sys:message content="${message}"/>
 		<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
 		<input name="bizOrderHeader.id" value="${bizOrderHeader==null?0:bizOrderHeader.id}" type="hidden"/>
-		<input name="bizStatus" value="${bizStatu}" type="hidden"/>
+		<input name="source" value="${source}" type="hidden"/>
+		<input name="bizStatu" value="${bizStatu}" type="hidden"/>
+		<input name="ship" value="${ship}" type="hidden"/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">

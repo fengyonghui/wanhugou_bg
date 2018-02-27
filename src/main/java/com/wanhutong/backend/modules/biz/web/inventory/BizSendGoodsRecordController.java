@@ -92,16 +92,16 @@ public class BizSendGoodsRecordController extends BaseController {
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")
 	@RequestMapping(value = "save")
-	public String save(BizSendGoodsRecord bizSendGoodsRecord, Model model, RedirectAttributes redirectAttributes) {
+	public String save(BizSendGoodsRecord bizSendGoodsRecord,String source,String bizStatu,String ship, Model model, RedirectAttributes redirectAttributes) {
 //		if (!beanValidator(model, bizSendGoodsRecord)){
 //			return form(bizSendGoodsRecord, model);
 //		}
 
-		    bizSendGoodsRecordService.save(bizSendGoodsRecord);
+		    bizSendGoodsRecordService.save(bizSendGoodsRecord,bizStatu);
 			addMessage(redirectAttributes, "保存供货记录成功");
 //			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage&bizStatu="+bizSendGoodsRecord.getBizStatus();
 //		跳回订单发货列表
-		return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestAll?source=kc&bizStatu=1&ship=xs";
+		return "redirect:" + Global.getAdminPath() + "/biz/request/bizRequestAll?source="+source+"&bizStatu="+bizStatu+"&ship="+ship;
 	}
 
 	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:edit")
