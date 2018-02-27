@@ -315,8 +315,12 @@
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
         <div class="controls">
-            <form:select items="${propValueList}" id="propValueId" path="propValue.id" class="input-xlarge required" itemLabel="value" itemValue="id">
-                <from:option value="">请选择</from:option>
+            <%--<form:select items="${propValueList}" id="propValueId" path="propValue.id" class="input-xlarge required" itemLabel="value" itemValue="id">--%>
+                <%--<from:option value="">请选择</from:option>--%>
+            <%--</form:select>--%>
+            <form:select path="propValue.id" class="input-xlarge required" id="propValueId">
+                <form:option value="" label="请选择品牌"/>
+                <form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>
             </form:select>
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
@@ -382,7 +386,7 @@
     <div class="control-group">
         <label class="control-label">请选择产品标签：</label>
         <div class="controls">
-            <form:select path="bizVarietyInfo.id" class="input-medium">
+            <form:select path="bizVarietyInfo.id" class="input-medium required">
                 <form:option value="" label="请选择"/>
                 <form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
             </form:select>
