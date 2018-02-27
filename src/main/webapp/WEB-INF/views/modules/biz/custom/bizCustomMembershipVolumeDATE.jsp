@@ -80,7 +80,7 @@
 			<select name="centers.id" id="bcID" style="width: 18%" onchange="changeSelect(this.value)">
 				<option value="">请选择采购中心</option>
 				<c:forEach items="${officeList}" var="item" varStatus="vs">
-					<option value="${item.id}" <c:if test='${bcc.centers.id!=null}'>selected</c:if> > ${item.name}</option>
+					<option value="${item.id}" <c:if test='${bcc.centers.id !=null}'>selected</c:if> > ${item.name}</option>
 				</c:forEach>
 			</select>
 		</div>

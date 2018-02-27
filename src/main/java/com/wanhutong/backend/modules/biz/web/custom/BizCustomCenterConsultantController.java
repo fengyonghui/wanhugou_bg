@@ -109,6 +109,13 @@ public class BizCustomCenterConsultantController extends BaseController {
 //        off.setParent(parentOff);
         off.setType(center);
         List<Office> officeList = officeService.queryCenterList(off);
+        for (int i = 0; i < officeList.size(); i++) {
+            if(officeList.get(i).getId().equals(user.getOffice().getId()) ){//关联时，判断采购中心
+                officeList.add(officeList.get(i));//把采购中心放到集合最后一位，保证能默认显示采购中心
+                officeList.remove(i);//删除之前采购中心
+                break;
+            }
+        }
         user = systemService.getUser(user.getId());
 //      Integer aaa=user.getOffice().getId();
         BizCustomCenterConsultant bc = new BizCustomCenterConsultant();

@@ -82,14 +82,19 @@
 			<tr>
 				<td>${bizUser.company.name}</td>
 				<td>${bizUser.office.name}</td>
-				<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}">${bizUser.loginName}</a></td>
+				<c:if test="${user.conn != null}">
+					<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">${bizUser.loginName}</a></td>
+				</c:if>
+				<c:if test="${user.conn == null}">
+					<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}">${bizUser.loginName}</a></td>
+				</c:if>
 				<td>${bizUser.name}</td>
 				<td>${bizUser.phone}</td>
 				<td>${bizUser.mobile}</td><%--
 				<td>${user.roleNames}</td> --%>
 				<shiro:hasPermission name="sys:user:edit"><td>
 					<c:if test="${user.conn != null}">
-						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}">关联采购商</a>
+						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}&office.id=${bizUser.office.id}">关联采购商</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>
 						<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
 						<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
