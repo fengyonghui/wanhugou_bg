@@ -102,11 +102,11 @@ public class BizCustomCenterConsultantController extends BaseController {
     @RequestMapping(value = "connOfficeForm")
     public String connOfficeForm(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
         Office off = new Office();
-        Office parentOff = new Office();
-        String socID = DictUtils.getDictValue("部门", "sys_office_centerId","");
+//        Office parentOff = new Office();
+//        String socID = DictUtils.getDictValue("部门", "sys_office_centerId","");
         String center = DictUtils.getDictValue("采购中心", "sys_office_type","");
-        parentOff.setId(Integer.parseInt(socID));
-        off.setParent(parentOff);
+//        parentOff.setId(Integer.parseInt(socID));
+//        off.setParent(parentOff);
         off.setType(center);
         List<Office> officeList = officeService.queryCenterList(off);
         user = systemService.getUser(user.getId());
