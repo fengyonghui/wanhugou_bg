@@ -324,7 +324,7 @@
 										   value="<fmt:formatDate value="${bizOpShelfSku.shelfTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
 										   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/></td>
 								<%--<td><input name="createBy.name" value="${bizOpShelfSku.unshelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="number" placeholder="必填！"/></td>--%>
-								<td><input name="unshelfTimes" type="number" readonly="readonly" maxlength="20" class="input-medium Wdate "
+								<td><input name="unshelfTimes" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
 										   value="<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 										   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="选填！"/></td>
 								<td><input name="prioritys" value="${bizOpShelfSku.priority}" htmlEscape="false" maxlength="5" class="input-medium required" type="number" placeholder="必填！"/></td>

@@ -242,5 +242,10 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<update id="dateTimeUpdate">
+		UPDATE biz_op_shelf_sku SET
+		unshelf_time = #{unshelfTime}
+		WHERE id = #{id}
+	</update>
 </mapper>

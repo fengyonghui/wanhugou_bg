@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.dao.shelf;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 
 /**
@@ -14,5 +15,5 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
  */
 @MyBatisDao
 public interface BizOpShelfSkuDao extends CrudDao<BizOpShelfSku> {
-	
+	public void dateTimeUpdate(BizOpShelfSku bizOpShelfSku);
 }

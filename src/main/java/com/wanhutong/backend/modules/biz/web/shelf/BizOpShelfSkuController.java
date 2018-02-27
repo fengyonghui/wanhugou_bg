@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
@@ -34,7 +35,9 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,6 +57,8 @@ public class BizOpShelfSkuController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private BizSkuPropValueService bizSkuPropValueService;
+	@Autowired
+	private BizOpShelfSkuDao bizOpShelfSkuDao;
 	
 	@ModelAttribute
 	public BizOpShelfSku get(@RequestParam(required=false) Integer id) {
@@ -196,5 +201,17 @@ public class BizOpShelfSkuController extends BaseController {
 		}
 		return "redirect:"+Global.getAdminPath()+"//biz/shelf/bizOpShelfInfo/form?id="+bizOpShelfSku.getOpShelfInfo().getId();
 	}
+
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
+	@RequestMapping(value = "dateTimeSave")
+	public String dateTimeSave(BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
+		Date day=new Date();//当前时间
+//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//格式化时间
+//		System.out.println(df.format(day));
+		bizOpShelfSku.setUnshelfTime(day);
+		bizOpShelfSkuDao.dateTimeUpdate(bizOpShelfSku);
+		addMessage(redirectAttributes, "下架成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
 	}
+}
 
