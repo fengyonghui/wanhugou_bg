@@ -44,6 +44,7 @@
 								<%--&lt;%&ndash;allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>&ndash;%&gt;--%>
 			<%--&lt;%&ndash;</li>&ndash;%&gt;--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>

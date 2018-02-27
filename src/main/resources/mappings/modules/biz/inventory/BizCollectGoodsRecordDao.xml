@@ -65,6 +65,12 @@
 				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
+			<if test="skuInfo != null and skuInfo.partNo != null and skuInfo.partNo != ''">
+				AND sku.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
