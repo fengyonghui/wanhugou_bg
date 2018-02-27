@@ -165,6 +165,26 @@ public class BizOpShelfSkuController extends BaseController {
 		}
 		return 	list;
 	}
+
+    /**
+     * 根据商品ID查询上架商品
+     * @param id
+     * @return
+     */
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@ResponseBody
+	@RequestMapping(value = "findOpShelfSkuList")
+	public BizOpShelfSku findOpShelfSkuList(Integer id){
+        BizSkuInfo bizSkuInfo = bizSkuInfoService.get(id);
+        BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+
+        bizOpShelfSku.setSkuInfo(bizSkuInfo);
+        List<BizOpShelfSku> opShelfSkuList = bizOpShelfSkuService.findList(bizOpShelfSku);
+        if (opShelfSkuList != null && opShelfSkuList.size()>0){
+            bizOpShelfSku = opShelfSkuList.get(0);
+        }
+        return bizOpShelfSku;
+	}
 	
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "delete")

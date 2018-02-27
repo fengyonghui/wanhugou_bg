@@ -58,9 +58,31 @@
                 return false;
             }
         }
-        // function chenge(obj){
-		// 	alert(obj);
-		// }
+        function skuSum(obj,param,index){
+				$.ajax({
+					type:"post",
+					url:"${ctx}/biz/sku/bizSkuInfo/findSysBySku?skuId="+param,
+					success:function(data){
+					    alert(data);
+						var valuePrice = obj*data.buyPrice;
+						alert(valuePrice);
+						$("#reqValuePrice"+index).val(valuePrice);
+					}
+				})
+		}
+        function skuSum2(obj,param,index){
+            alert(obj);
+            alert(param);
+            alert(index);
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/shelf/bizOpShelfSku/findOpShelfSkuList?id="+param,
+                success:function(data){
+                    var valuePrice = obj*data.salePrice;
+                    $("#ordValuePrice"+index).val(valuePrice);
+                }
+            })
+        }
 	</script>
 </head>
 <body>
@@ -180,7 +202,7 @@
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input id="sendNum${reqStatus.index}" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout(${reqStatus.index})"/>
+									<input id="sendNum${reqStatus.index}" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="0" type="text" <c:if test="${bizStatu==1}"> onchange="skuSum(value,${reqDetail.skuInfo.id},${reqStatus.index})" </c:if> onblur="checkout(${reqStatus.index})"/>
 								</td>
 								</shiro:hasPermission>
 								<td>
@@ -195,7 +217,7 @@
 								</td>
 								<td><input id="freight${reqStatus.index}" title="freight" name="bizSendGoodsRecordList[${reqStatus.index}].freight" value="" /></td>
 								<td><input id="operation${reqStatus.index}" title="operation" name="bizSendGoodsRecordList[${reqStatus.index}].operation" value="" /></td>
-								<td><input id="valuePrice${reqStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${reqStatus.index}].valuePrice" value="" /></td>
+								<td><input id="reqValuePrice${reqStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${reqStatus.index}].valuePrice" value="" /></td>
 								<td>
 
 									<select name="bizSendGoodsRecordList[${reqStatus.index}].settlementStatus" class="input-xlarge">
@@ -251,7 +273,7 @@
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 									<td>
-										<input id="sendNum${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
+										<input id="sendNum${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" <c:if test="${bizStatu==1}"> onchange="skuSum2(value,${ordDetail.skuInfo.id},${ordStatus.index})" </c:if> onblur="checkout2(${ordStatus.index})"/>
 									</td>
 								</shiro:hasPermission>
 								<c:if test="${bizStatu==1}">
@@ -267,7 +289,7 @@
 									</td>
 									<td><input id="freight${ordStatus.index}" title="freight" name="bizSendGoodsRecordList[${ordStatus.index}].freight" value="" /></td>
 									<td><input id="operation${ordStatus.index}" title="operation" name="bizSendGoodsRecordList[${ordStatus.index}].operation" value="" /></td>
-									<td><input id="valuePrice${ordStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${ordStatus.index}].valuePrice" value="" /></td>
+									<td><input id="ordValuePrice${ordStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${ordStatus.index}].valuePrice" value="" /></td>
 									<td>
 										<select id="settlementStatus${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].settlementStatus" class="input-xlarge" >
 										<option value="">请选择</option>
