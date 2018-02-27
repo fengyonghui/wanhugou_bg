@@ -113,8 +113,13 @@ public class UserController extends BaseController {
 				}
 
 			}else{
-				user.setCompany(office);
-				user.setOffice(null);
+				if(user.getConn()!=null && user.getConn().equals("connIndex")){//客户专员标识符
+					user.setCompany(office);
+					user.setOffice(office);
+				}else {
+					user.setCompany(office);
+					user.setOffice(null);
+				}
 			}
 		}
 		if (flag != null && !"".equals(flag)){
