@@ -71,8 +71,6 @@ public class BizSkuInfoController extends BaseController {
 			commonImg.setObjectId(id);
 			commonImg.setObjectName("biz_sku_info");
 			List<CommonImg> imgList=commonImgService.findList(commonImg);
-
-			entity.setSkuImgs(imgList);
 			String photos = "";
 			for(CommonImg img:imgList){
 				photos+="|"+img.getImgServer()+img.getImgPath();

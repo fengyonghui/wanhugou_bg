@@ -505,7 +505,7 @@
                         ${bizSkuInfo.id}</a>
                 </td>--%>
             <td>
-                <img src="${bizSkuInfo.defaultImgThumbUrl}" width="120px" height="120px"/>
+                <img src="${bizSkuInfo.productInfo.imgUrl}" width="80px" height="80px"/>
             </td>
             <td><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">
                     ${bizSkuInfo.name}
