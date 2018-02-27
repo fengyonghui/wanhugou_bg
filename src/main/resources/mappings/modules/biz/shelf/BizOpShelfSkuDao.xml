@@ -34,7 +34,8 @@
 		su.name AS "updateBy.name",
 		bsi.name AS "skuInfo.name",
 		bsi.part_no AS "skuInfo.partNo",
-		bsi.prod_id AS "skuInfo.productInfo.id"
+		bsi.prod_id AS "skuInfo.productInfo.id",
+		bpi.img_url AS "productInfo.imgUrl"
 	</sql>
 	
 	<sql id="bizOpShelfSkuJoins">
@@ -45,6 +46,7 @@
 		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
 		LEFT JOIN sys_office so ON so.id=a.center_id
 		LEFT JOIN biz_op_shelf_info shelf ON a.shelf_id = shelf.id
+		LEFT JOIN biz_product_info bpi ON a.prod_id =bpi.id
 
 
 	</sql>

@@ -75,6 +75,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>商品图片</th>
 				<th>商品名称</th>
 				<th>货架名称</th>
 				<th>采购中心</th>
@@ -95,6 +96,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizOpShelfSku">
 			<tr>
+				<td>
+					<img src="${bizOpShelfSku.productInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+				</td>
 				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
 					${bizOpShelfSku.skuInfo.name}
 				</a></td>
