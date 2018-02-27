@@ -38,23 +38,23 @@
 
 		function checkout(obj) {
             var reqQty = $("#reqQty"+obj).val();
-            var sendNum = $("#sendNum"+obj).val();
+            var sendNum = $("#reqSendNum"+obj).val();
             var sendQty = $("#sendQty"+obj).val();
             var sum = parseInt(sendNum) + parseInt(sendQty);
             if (sum > reqQty){
                 alert("供货数太大，已超过申报数，请重新调整供货数量！");
-                $("#sendNum"+obj).val(0);
+                $("#reqSendNum"+obj).val(0);
                 return false;
             }
         }
         function checkout2(obj) {
             var ordQty = $("#ordQty"+obj).val();
-            var sendNum = $("#sendNum"+obj).val();
+            var sendNum = $("#ordSendNum"+obj).val();
             var sentQty = $("#sentQty"+obj).val();
             var sum = parseInt(sendNum) + parseInt(sentQty);
             if (sum > ordQty){
                 alert("供货数太大，已超过申报数，请重新调整供货数量！");
-                $("#sendNum"+obj).val(0);
+                $("#ordSendNum"+obj).val(0);
                 return false;
             }
         }
@@ -71,9 +71,6 @@
 				})
 		}
         function skuSum2(obj,param,index){
-            alert(obj);
-            alert(param);
-            alert(index);
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfSku/findOpShelfSkuList?id="+param,
@@ -82,6 +79,60 @@
                     $("#ordValuePrice"+index).val(valuePrice);
                 }
             })
+        }
+        function checkName1(index){
+		    var sendNum = $("#reqSendNum"+index).val();
+		    if (sendNum != 0){
+		        if ($("#reqBizLogistics"+index).val() == null){
+		            alert("物流商不能为空");
+		            return false;
+                }
+			}
+		}
+        function checkName2(index){
+            var sendNum = $("#ordSendNum"+index).val();
+            if (sendNum != 0){
+                if ($("#ordBizLogistics"+index).val() == null){
+                    alert("物流商不能为空");
+                    return false;
+                }
+            }
+        }
+        function checkCarrier1(index){
+            var sendNum = $("#reqSendNum"+index).val();
+            if (sendNum != 0){
+                if ($("#reqCarrier"+index).val() == null || $("#reqCarrier"+index).val()==""){
+                    alert("承运人不能为空");
+                    return false;
+                }
+            }
+		}
+        function checkCarrier2(index){
+            var sendNum = $("#ordSendNum"+index).val();
+            if (!sendNum.eq(0)){
+                if ($("#ordCarrier"+index).val() == null || $("#ordCarrier"+index).val().eq("")){
+                    alert("承运人不能为空");
+                    return false;
+                }
+            }
+        }
+        function checkSettlementStatus1(index){
+            var sendNum = $("#reqSendNum"+index).val();
+            if (sendNum != 0){
+                if ($("#reqSettlementStatus"+index).val() == null){
+                    alert("物流结算方式不能为空");
+                    return false;
+                }
+            }
+		}
+        function checkSettlementStatus2(index){
+            var sendNum = $("#ordSendNum"+index).val();
+            if (sendNum != 0){
+                if ($("#ordSettlementStatus"+index).val() == null){
+                    alert("物流结算方式不能为空");
+                    return false;
+                }
+            }
         }
 	</script>
 </head>
@@ -204,25 +255,25 @@
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<input id="sendNum${reqStatus.index}" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="0" type="text" <c:if test="${bizStatu==1}"> onchange="skuSum(value,${reqDetail.skuInfo.id},${reqStatus.index})" </c:if> onblur="checkout(${reqStatus.index})"/>
+									<input id="reqSendNum${reqStatus.index}" title="sendNum" name="bizSendGoodsRecordList[${reqStatus.index}].sendNum" <c:if test="${reqDetail.reqQty==reqDetail.sendQty}">readonly="readonly"</c:if> value="0" type="text" <c:if test="${bizStatu==1}"> onchange="skuSum(value,${reqDetail.skuInfo.id},${reqStatus.index})" </c:if> onblur="checkout(${reqStatus.index})"/>
 								</td>
 								</shiro:hasPermission>
 								<td>
-									<select name="bizSendGoodsRecordList[${reqStatus.index}].bizLogistics.id" class="input-medium">
+									<select id="reqBizLogistics${reqStatus.index}" name="bizSendGoodsRecordList[${reqStatus.index}].bizLogistics.id" onmouseout="checkName1(${reqStatus.index})" class="input-medium">
 										<c:forEach items="${logisticsList}" var="bizLogistics">
 											<option value="${bizLogistics.id}"/>${bizLogistics.name}
 										</c:forEach>
 									</select>
 								</td>
 								<td>
-									<input id="carrier${reqStatus.index}" title="carrier" name="bizSendGoodsRecordList[${reqStatus.index}].carrier" value="" />
+									<input id="reqCarrier${reqStatus.index}" title="carrier" name="bizSendGoodsRecordList[${reqStatus.index}].carrier" onmouseout="checkCarrier1(${reqStatus.index})" value="" />
 								</td>
 								<td><input id="freight${reqStatus.index}" title="freight" name="bizSendGoodsRecordList[${reqStatus.index}].freight" value="" /></td>
 								<td><input id="operation${reqStatus.index}" title="operation" name="bizSendGoodsRecordList[${reqStatus.index}].operation" value="" /></td>
 								<td><input id="reqValuePrice${reqStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${reqStatus.index}].valuePrice" value="" /></td>
 								<td>
 
-									<select name="bizSendGoodsRecordList[${reqStatus.index}].settlementStatus" class="input-xlarge">
+									<select id="reqSettlementStatus${reqStatus.index}" name="bizSendGoodsRecordList[${reqStatus.index}].settlementStatus" onmouseout="checkSettlementStatus1(${reqStatus.index})" class="input-xlarge">
 										<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
 											<option value="${settlementStatus.value}">${settlementStatus.label}</option>
 											<%--<option <c:if test="${settlementStatus eq '现结'}"><c:out value="1"/></c:if><c:if test="${settlementStatus eq '账期'}"><c:out value="2"/></c:if> onclick="chenge(settlementStatus)">${settlementStatus}</option>--%>
@@ -275,25 +326,25 @@
 
 								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 									<td>
-										<input id="sendNum${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" <c:if test="${bizStatu==1}"> onchange="skuSum2(value,${ordDetail.skuInfo.id},${ordStatus.index})" </c:if> onblur="checkout2(${ordStatus.index})"/>
+										<input id="ordSendNum${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" <c:if test="${bizStatu==1}"> onchange="skuSum2(value,${ordDetail.skuInfo.id},${ordStatus.index})" </c:if> onblur="checkout2(${ordStatus.index})"/>
 									</td>
 								</shiro:hasPermission>
 								<c:if test="${bizStatu==1}">
 									<td>
-										<select name="bizSendGoodsRecordList[${ordStatus.index}].bizLogistics.id" class="input-medium">
+										<select id="ordBizLogistics${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].bizLogistics.id" onmouseout="checkName2(${ordStatus.index})" class="input-medium">
 											<c:forEach items="${logisticsList}" var="bizLogistics">
 												<option value="${bizLogistics.id}"/>${bizLogistics.name}
 											</c:forEach>
 										</select>
 									</td>
 									<td>
-										<input id="carrier${ordStatus.index}" title="carrier" name="bizSendGoodsRecordList[${ordStatus.index}].carrier" value="" />
+										<input id="ordCarrier${ordStatus.index}" title="carrier" name="bizSendGoodsRecordList[${ordStatus.index}].carrier" onmouseout="checkCarrier2(${reqStatus.index})" value="" />
 									</td>
 									<td><input id="freight${ordStatus.index}" title="freight" name="bizSendGoodsRecordList[${ordStatus.index}].freight" value="" /></td>
 									<td><input id="operation${ordStatus.index}" title="operation" name="bizSendGoodsRecordList[${ordStatus.index}].operation" value="" /></td>
 									<td><input id="ordValuePrice${ordStatus.index}" title="valuePrice" name="bizSendGoodsRecordList[${ordStatus.index}].valuePrice" value="" /></td>
 									<td>
-										<select id="settlementStatus${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].settlementStatus" class="input-xlarge" >
+										<select id="ordSettlementStatus${ordStatus.index}" name="bizSendGoodsRecordList[${ordStatus.index}].settlementStatus" onmouseout="checkSettlementStatus2(${reqStatus.index})" class="input-xlarge" >
 										<option value="">请选择</option>
 											<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
 												<option value="${settlementStatus.value}">${settlementStatus.label}</option>
