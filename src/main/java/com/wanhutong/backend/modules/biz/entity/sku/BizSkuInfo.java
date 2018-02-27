@@ -34,7 +34,6 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String partNo;    //商品编码
 	private Double basePrice; //基础售价
 	private Double buyPrice;   //采购价格
-	private List<CommonImg> skuImgs;
 
 	private String sort; //生成part_no排序
 
@@ -201,29 +200,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	public void setStr(String str) {
 		this.str = str;
 	}
-
-	public String getDefaultImgUrl(){
-		if (skuImgs != null && skuImgs.size() > 0){
-			CommonImg commonImg = skuImgs.get(0);
-			return commonImg.getImgServer() + commonImg.getImgPath();
-		}
-
-		return "";
-	}
-    public String getDefaultImgThumbUrl(){
-        if (skuImgs != null && skuImgs.size() > 0){
-            CommonImg commonImg = skuImgs.get(0);
-            return commonImg.getImgServer() + commonImg.getImgPath()+"?x-oss-process=style/thumb_hight200fix";
-        }
-
-        return "";
-    }
-
-
-	public void setSkuImgs(List<CommonImg> skuImgs) {
-		this.skuImgs = skuImgs;
-	}
-
+	
 	public String getDefaultImg() {
 		return defaultImg;
 	}

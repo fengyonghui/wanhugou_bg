@@ -66,7 +66,7 @@
 		<c:forEach items="${page.list}" var="bizSkuInfo">
 			<tr>
 				<td>
-						<img src="${bizSkuInfo.defaultImgThumbUrl}" width="120px" height="120px"/>
+						<img src="${bizSkuInfo.productInfo.imgUrl}" width="80px" height="80px"/>
 				</td>
 				<td style="font-size: larger"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">
 						${bizSkuInfo.name}</a>
