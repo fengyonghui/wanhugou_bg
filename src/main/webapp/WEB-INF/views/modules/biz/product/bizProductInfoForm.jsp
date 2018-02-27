@@ -53,7 +53,7 @@
 
 
             }
-            $('.select_all').live('click', function () {
+            /*$('.select_all').live('click', function () {
                 var obj = $(this).attr("id");
                 var choose = $(".value_" + obj);
                 if ($(this).attr('checked')) {
@@ -61,7 +61,7 @@
                 } else {
                     choose.attr('checked', false);
                 }
-            });
+            });*/
 
 
 
@@ -224,12 +224,36 @@
                         var propId = propKeys[0];
                         if (propId != $("#brandDefId").val()) {
                             var propName = propKeys[1]
-                            $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
+                            // $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
+                            var html = "";
+                            html += "<div style=\"width: 100%;display: inline-block\">\n" +
+                                "<span style=\"float:left;width:60px;padding-top:3px\">"+propName+"：</span>\n" +
+                                "<div style=\"float: left\">\n" +
+                                "<select title=\"search\" id=\"search_"+propId+"\" class=\"input-xlarge\" multiple=\"multiple\" size=\"8\">";
+
                             for (var p in values) {
                                 if (values[p].value != null) {
-                                    $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
+                                    html += "\"<option value=\\\""+values[p].propertyValueId+"\\\">"+values[p].value+"</option>";
+                                    // $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
                                 }
                             }
+                            html += "</select></div>"+
+                                    "<div  style=\"width: 20%;margin-left:10px;float: left\">\n" +
+                                "<button type=\"button\" id=\"search_"+propId+"_rightAll\" class=\"btn-block\"><i class=\"icon-forward\"></i></button>\n" +
+                                "<button type=\"button\" id=\"search_"+propId+"_rightSelected\" class=\"btn-block\"><i class=\"icon-chevron-right\"></i></button>\n" +
+                                "<button type=\"button\" id=\"search_"+propId+"_leftSelected\" class=\"btn-block\"><i class=\"icon-chevron-left\"></i></button>\n" +
+                                "<button type=\"button\" id=\"search_"+propId+"_leftAll\" class=\"btn-block\"><i class=\"icon-backward\"></i></button>\n" +
+                                "</div>"+
+                                "<div style=\"margin-left:10px;float: left\">\n" +
+                                "<select name=\"propertyMap["+propId+"].prodPropertyValues\" id=\"search_"+propId+"_to\" class=\"input-xlarge\" size=\"8\" multiple=\"multiple\">";
+                            // for (var p in values) {
+                            //     if (values[p].value != null) {
+                            //         html += "\"<option value=\\\""+values[p].propertyValueId+"\\\">"+values[p].value+"</option>";
+                            //         // $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
+                            //     }
+                            // }
+                            html += "</select></div></div>";
+                            $("#cateProp").append(html)
                         }
 
                     });
@@ -406,6 +430,39 @@
     <div class="control-group">
         <label class="control-label">产品属性：</label>
         <div id="cateProp" class="controls">
+            <%--<c:forEach items="${propertyInfoList}" var="propertyInfo">
+                <div  style="width: 100%;display: inline-block">
+                    <span  style="float:left;width:60px;padding-top:3px">${propertyInfo.name}：</span>
+                    <div style="float: left">
+                        <select title="search"  id="search_${propertyInfo.id}" class="input-xlarge" multiple="multiple" size="8">
+                            <c:forEach items="${map[propertyInfo.id]}" var="propValue">
+                                <option value="${propValue.id}">${propValue.value}</option>
+                            </c:forEach>
+
+
+                        </select>
+                    </div>
+                        &lt;%&ndash;<span class="icon-chevron-right"></span>&ndash;%&gt;
+                    <div  style="width: 20%;margin-left:10px;float: left">
+                        <button type="button" id="search_${propertyInfo.id}_rightAll" class="btn-block"><i class="icon-forward"></i></button>
+
+                        <button type="button" id="search_${propertyInfo.id}_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>
+
+                        <button type="button" id="search_${propertyInfo.id}_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>
+
+                        <button type="button" id="search_${propertyInfo.id}_leftAll" class="btn-block"><i class="icon-backward"></i></button>
+                    </div>
+
+                    <div style="margin-left:10px;float: left">
+                        <select name="propertyMap[${propertyInfo.id}].catePropertyValues" id="search_${propertyInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
+                            <c:forEach items="${catePropValueMap[propertyInfo.id]}" var="propValue">
+                                &lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;
+                                <option value="${propValue.propertyValueId}">${propValue.value}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
+            </c:forEach>--%>
         </div>
     </div>
     <div class="control-group">
@@ -558,5 +615,25 @@
 </div>
 
 
+    <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            <%--window.prettyPrint && prettyPrint();--%>
+
+            $('select[title="search"]').multiselect({
+                search: {
+                    left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
+                    right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
+                }
+                // ,
+                // fireSearch: function(value) {
+                //     return value.length >=1 ;
+                // }
+            });
+        });
+    </script>
 </body>
 </html>
