@@ -401,9 +401,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 				bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 			}
 			//当用户为供货中心时，才涉及采购单状态
-            if(bizSendGoodsRecord.getBizStatus() == SendGoodsRecordBizStatusEnum.CENTER.getState()){
-
-            }else {
+            if(bizStatu.equals("1")) {
                 //更改采购单状态,已完成（5）
                 if (flagPo){
                     BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
