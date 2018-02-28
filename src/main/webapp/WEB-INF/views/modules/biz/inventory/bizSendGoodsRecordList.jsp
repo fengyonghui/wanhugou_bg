@@ -30,7 +30,7 @@
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>订单编号：</label>
-				<form:input path="orderNum" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="orderNum" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><label>商品编号：</label>
 				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="11" class="input-medium"/>

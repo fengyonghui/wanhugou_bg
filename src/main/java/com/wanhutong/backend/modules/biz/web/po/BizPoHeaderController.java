@@ -186,7 +186,7 @@ public class BizPoHeaderController extends BaseController {
 	@RequiresPermissions("biz:po:bizPoHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizPoHeader bizPoHeader, Model model) {
-		if(bizPoHeader.getDeliveryOffice()!=null && bizPoHeader.getDeliveryOffice().getId()!=null){
+		if(bizPoHeader.getDeliveryOffice()!=null && bizPoHeader.getDeliveryOffice().getId()!=null && bizPoHeader.getDeliveryOffice().getId()!=0){
 			Office office=officeService.get(bizPoHeader.getDeliveryOffice().getId());
 			if("8".equals(office.getType())){
 				bizPoHeader.setDeliveryStatus(0);
@@ -215,7 +215,7 @@ public class BizPoHeaderController extends BaseController {
 		if(bizPoHeader.getOrderNum()==null || "0".equals(bizPoHeader.getOrderNum())){
 			poNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO,deOfifceId,bizPoHeader.getVendOffice().getId(),bizPoHeader.getId());
 			bizPoHeader.setOrderNum(poNo);
-			bizPoHeaderService.save(bizPoHeader);
+			bizPoHeaderService.savePoHeader(bizPoHeader);
 		}
 
 

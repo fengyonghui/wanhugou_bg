@@ -165,6 +165,10 @@
 						<shiro:hasPermission name="biz:request:bizRequestHeader:view">
 						<td>
 							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
+							<c:if test="${requestHeader.ownGenPoOrder}">
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">供货</a>
+							</c:if>
+
 						</td>
 						</shiro:hasPermission>
 
@@ -251,7 +255,10 @@
 					</td>
 							<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
-								</td>
+							<c:if test="${orderHeader.ownGenPoOrder}">
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">供货</a>
+							</c:if>
+							</td>
 							</shiro:hasPermission>
 
 				</tr>

@@ -34,10 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 备货清单Controller
@@ -72,7 +69,33 @@ public class BizRequestOrderController extends BaseController {
 			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
 			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
 			 orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
-			model.addAttribute("orderHeaderList",orderHeaderList);
+			Set<Integer> set=new HashSet();
+			List<BizOrderHeader> list=Lists.newArrayList();
+			 for(BizOrderHeader bizOrderHeader1:orderHeaderList){
+				BizOrderDetail bizOrderDetail = new BizOrderDetail();
+				bizOrderDetail.setOrderHeader(bizOrderHeader1);
+				 StringBuffer sb=new StringBuffer();
+				List<BizOrderDetail> orderDetails = bizOrderDetailService.findList(bizOrderDetail);
+				for (BizOrderDetail bizOrderDetail1:orderDetails){
+					BizSkuInfo bizSkuInfo=bizSkuInfoService.get(bizOrderDetail1.getSkuInfo().getId());
+					set.add(bizSkuInfo.getProductInfo().getOffice().getId());
+					sb.append(bizOrderDetail1.getId());
+					sb.append(",");
+				}
+
+				if(set.size()==1){
+					for( Iterator   it = set.iterator();  it.hasNext(); )
+					{
+						bizOrderHeader1.setOnlyVendor((Integer) it.next());
+						//System.out.println("value="+it.next().toString());
+					}
+					bizOrderHeader1.setOrderDetails(sb.substring(0,sb.lastIndexOf(",")));
+					bizOrderHeader1.setOwnGenPoOrder(true);
+				}
+				 list.add(bizOrderHeader1);
+
+			}
+			 model.addAttribute("orderHeaderList",list);
 			}
 
 		model.addAttribute("source",source);
@@ -89,10 +112,28 @@ public class BizRequestOrderController extends BaseController {
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
 			Integer reqQtys = 0;
 			Integer recvQtys = 0;
+			Set set=new HashSet();
+			StringBuffer sb=new StringBuffer();
 			for (BizRequestDetail bizRequestDetail:requestDetailList) {
 				reqQtys += bizRequestDetail.getReqQty();
 				recvQtys += bizRequestDetail.getRecvQty();
+				BizSkuInfo bizSkuInfo=bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+				set.add(bizSkuInfo.getProductInfo().getOffice().getId());
+				sb.append(bizRequestDetail.getId());
+				sb.append(",");
 			}
+
+			if(set.size()==1){
+				for( Iterator   it = set.iterator();  it.hasNext(); )
+				{
+					bizRequestHeader1.setOnlyVendor((Integer) it.next());
+					//System.out.println("value="+it.next().toString());
+				}
+
+				bizRequestHeader1.setReqDetailIds(sb.substring(0,sb.lastIndexOf(",")));
+				bizRequestHeader1.setOwnGenPoOrder(true);
+			}
+
 			bizRequestHeader1.setReqQtys(reqQtys.toString());
 			bizRequestHeader1.setRecvQtys(recvQtys.toString());
 			list.add(bizRequestHeader1);

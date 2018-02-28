@@ -7,6 +7,8 @@
     <title>产品信息表管理</title>
     <meta name="decorator" content="default"/>
     <%@include file="/WEB-INF/views/include/treeview.jsp" %>
+    <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             var tree="";
@@ -210,6 +212,65 @@
 
         }
 
+        <%--/**--%>
+         <%--* 通过分类获取分类属性--%>
+         <%--* @param ids--%>
+         <%--*/--%>
+        <%--function ajaxGetPropInfo(ids) {--%>
+            <%--$.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",--%>
+                <%--{catIds: ids.toString()},--%>
+                <%--function (data, status) {--%>
+                    <%--$("#cateProp").empty();--%>
+                    <%--$.each(data, function (keys, values) {--%>
+                        <%--var propKeys = keys.split(",");--%>
+                        <%--var propId = propKeys[0];--%>
+                        <%--if (propId != $("#brandDefId").val()) {--%>
+                            <%--var propName = propKeys[1]--%>
+                            <%--// $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')--%>
+                            <%--var html = "";--%>
+                            <%--html += "<div style=\"width: 100%;display: inline-block\">\n" +--%>
+                                <%--"<span style=\"float:left;width:60px;padding-top:3px\">"+propName+"：</span>\n" +--%>
+                                <%--"<div style=\"float: left\">\n" +--%>
+                                <%--"<select title=\"search\" id=\"search_"+propId+"\" class=\"input-xlarge\" multiple=\"multiple\" size=\"8\">";--%>
+
+                            <%--for (var p in values) {--%>
+                                <%--if (values[p].value != null) {--%>
+                                    <%--html += "\"<option value=\\\""+values[p].propertyValueId+"\\\">"+values[p].value+"</option>";--%>
+                                    <%--// $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')--%>
+                                <%--}--%>
+                            <%--}--%>
+                            <%--html += "</select></div>"+--%>
+                                    <%--"<div  style=\"width: 20%;margin-left:10px;float: left\">\n" +--%>
+                                <%--"<button type=\"button\" id=\"search_"+propId+"_rightAll\" class=\"btn-block\"><i class=\"icon-forward\"></i></button>\n" +--%>
+                                <%--"<button type=\"button\" id=\"search_"+propId+"_rightSelected\" class=\"btn-block\"><i class=\"icon-chevron-right\"></i></button>\n" +--%>
+                                <%--"<button type=\"button\" id=\"search_"+propId+"_leftSelected\" class=\"btn-block\"><i class=\"icon-chevron-left\"></i></button>\n" +--%>
+                                <%--"<button type=\"button\" id=\"search_"+propId+"_leftAll\" class=\"btn-block\"><i class=\"icon-backward\"></i></button>\n" +--%>
+                                <%--"</div>"+--%>
+                                <%--"<div style=\"margin-left:10px;float: left\">\n" +--%>
+                                <%--"<select name=\"propertyMap["+propId+"].prodPropertyValues\" id=\"search_"+propId+"_to\" class=\"input-xlarge\" size=\"8\" multiple=\"multiple\">";--%>
+                            <%--// for (var p in values) {--%>
+                            <%--//     if (values[p].value != null) {--%>
+                            <%--//         html += "\"<option value=\\\""+values[p].propertyValueId+"\\\">"+values[p].value+"</option>";--%>
+                            <%--//         // $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')--%>
+                            <%--//     }--%>
+                            <%--// }--%>
+                            <%--html += "</select></div></div>";--%>
+                            <%--$("#cateProp").append(html)--%>
+                        <%--}--%>
+
+                    <%--});--%>
+                    <%--if ($("#id").val() != '' && status == 'success') {--%>
+                        <%--ajaxGetProdPropInfo($("#id").val());--%>
+                    <%--}--%>
+
+
+                <%--});--%>
+         <%----%>
+
+
+        <%--}--%>
+
+
         /**
          * 通过分类获取分类属性
          * @param ids
@@ -222,44 +283,54 @@
                     $.each(data, function (keys, values) {
                         var propKeys = keys.split(",");
                         var propId = propKeys[0];
+
                         if (propId != $("#brandDefId").val()) {
-                            var propName = propKeys[1]
-                            // $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
-                            var html = "";
-                            html += "<div style=\"width: 100%;display: inline-block\">\n" +
-                                "<span style=\"float:left;width:60px;padding-top:3px\">"+propName+"：</span>\n" +
-                                "<div style=\"float: left\">\n" +
-                                "<select title=\"search\" id=\"search_"+propId+"\" class=\"input-xlarge\" multiple=\"multiple\" size=\"8\">";
+                            var propName = propKeys[1];
+
+                          //  $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
+
+                           var  str ='<div  style="width: 100%;display: inline-block">' +
+                               '<span  style="float:left;width:60px;padding-top:3px">' +propName +'</span>'+
+                               '<div style="float: left">' +
+                               '<select  title="search"   id="search_'+propId+'" class="input-xlarge" multiple="multiple" size="8">';
 
                             for (var p in values) {
                                 if (values[p].value != null) {
-                                    html += "\"<option value=\\\""+values[p].propertyValueId+"\\\">"+values[p].value+"</option>";
+                                    str+=' <option value="' + values[p].propertyValueId + '">'+values[p].value+'</option>'
                                     // $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
                                 }
                             }
-                            html += "</select></div>"+
-                                    "<div  style=\"width: 20%;margin-left:10px;float: left\">\n" +
-                                "<button type=\"button\" id=\"search_"+propId+"_rightAll\" class=\"btn-block\"><i class=\"icon-forward\"></i></button>\n" +
-                                "<button type=\"button\" id=\"search_"+propId+"_rightSelected\" class=\"btn-block\"><i class=\"icon-chevron-right\"></i></button>\n" +
-                                "<button type=\"button\" id=\"search_"+propId+"_leftSelected\" class=\"btn-block\"><i class=\"icon-chevron-left\"></i></button>\n" +
-                                "<button type=\"button\" id=\"search_"+propId+"_leftAll\" class=\"btn-block\"><i class=\"icon-backward\"></i></button>\n" +
-                                "</div>"+
-                                "<div style=\"margin-left:10px;float: left\">\n" +
-                                "<select name=\"propertyMap["+propId+"].prodPropertyValues\" id=\"search_"+propId+"_to\" class=\"input-xlarge\" size=\"8\" multiple=\"multiple\">";
-                            // for (var p in values) {
-                            //     if (values[p].value != null) {
-                            //         html += "\"<option value=\\\""+values[p].propertyValueId+"\\\">"+values[p].value+"</option>";
-                            //         // $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
-                            //     }
-                            // }
-                            html += "</select></div></div>";
-                            $("#cateProp").append(html)
+                            str+='</select></div>'
+
+                            str+=' <div  style="width: 20%;margin-left:10px;float: left">' +
+                                '<button type="button" id="search_'+propId+'_rightAll" class="btn-block"><i class="icon-forward"></i></button>' +
+                                '<button type="button" id="search_'+propId+'_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>' +
+                                '<button type="button" id="search_'+propId+'_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>' +
+                                '<button type="button" id="search_'+propId+'_leftAll" class="btn-block"><i class="icon-backward"></i></button>' +
+                                '</div>';
+
+                            str+='<div style="margin-left:10px;float: left">'+
+                                '<select name="propertyMap['+ propId +'].prodPropertyValues"  id="search_'+propId+'_to" class="input-xlarge" size="8" multiple="multiple">'+
+                                '</select></div>';
+
                         }
+                        $("#cateProp").append(str);
 
                     });
-                    if ($("#id").val() != '' && status == 'success') {
-                        ajaxGetProdPropInfo($("#id").val());
-                    }
+
+                    $('select[title="search"]').multiselect({
+                        search: {
+                            left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
+                            right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
+                        }
+                        // ,
+                        // fireSearch: function(value) {
+                        //     return value.length >=1 ;
+                        // }
+                    });
+                    // if ($("#id").val() != '' && status == 'success') {
+                    //     ajaxGetProdPropInfo($("#id").val());
+                    // }
 
 
                 })
@@ -613,26 +684,24 @@
 
     </c:if>
 </div>
-
-
     <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
     <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
-    <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+
     <script type="text/javascript">
         $(document).ready(function() {
 
             <%--window.prettyPrint && prettyPrint();--%>
 
-            $('select[title="search"]').multiselect({
-                search: {
-                    left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
-                    right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
-                }
-                // ,
-                // fireSearch: function(value) {
-                //     return value.length >=1 ;
-                // }
-            });
+            // $('select[title="search"]').multiselect({
+            //     search: {
+            //         left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
+            //         right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
+            //     }
+            //     // ,
+            //     // fireSearch: function(value) {
+            //     //     return value.length >=1 ;
+            //     // }
+            // });
         });
     </script>
 </body>

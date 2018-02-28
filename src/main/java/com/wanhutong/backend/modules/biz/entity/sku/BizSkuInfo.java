@@ -34,6 +34,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String partNo;    //商品编码
 	private Double basePrice; //基础售价
 	private Double buyPrice;   //采购价格
+	private List<CommonImg> skuImgs;
+	private String itemNo;
 
 	private String sort; //生成part_no排序
 
@@ -200,7 +202,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	public void setStr(String str) {
 		this.str = str;
 	}
-	
+
 	public String getDefaultImg() {
 		return defaultImg;
 	}
@@ -215,5 +217,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setSort(String sort) {
 		this.sort = sort;
+	}
+
+	public String getItemNo() {
+		return itemNo;
+	}
+
+	public void setItemNo(String itemNo) {
+		this.itemNo = itemNo;
 	}
 }

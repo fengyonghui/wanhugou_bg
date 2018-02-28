@@ -41,6 +41,8 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String lineNos;
 	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
 	private BizProductInfo productInfo;
+	private Boolean ownGenPoOrder; //自己生成采购单
+	private Integer onlyVendor;
 
 	private Byte bizStatusStart;
 	private Byte bizStatusEnd; //用于查询业务状态的区间
@@ -267,5 +269,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setLineNos(String lineNos) {
 		this.lineNos = lineNos;
+	}
+
+	public Boolean getOwnGenPoOrder() {
+		return ownGenPoOrder;
+	}
+
+	public void setOwnGenPoOrder(Boolean ownGenPoOrder) {
+		this.ownGenPoOrder = ownGenPoOrder;
+	}
+
+	public Integer getOnlyVendor() {
+		return onlyVendor;
+	}
+
+	public void setOnlyVendor(Integer onlyVendor) {
+		this.onlyVendor = onlyVendor;
 	}
 }

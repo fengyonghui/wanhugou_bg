@@ -90,15 +90,17 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		super.save(bizPoHeader);
 
 		savePoHeaderDetail(bizPoHeader);
+		if(bizPoHeader.getId()!=null){
+			saveOrdReqBizStatus(bizPoHeader);
+		}
 
-		saveOrdReqBizStatus(bizPoHeader);
 
 	}
 
     @Transactional(readOnly = false)
     public void savePoHeader(BizPoHeader bizPoHeader) {
 
-		if(bizPoHeader.getDeliveryStatus()==1){
+		if(bizPoHeader.getDeliveryStatus()!=null && bizPoHeader.getDeliveryStatus()==1){
 			BizPoHeader poHeader=get(bizPoHeader.getId());
 			bizPoHeader.setDeliveryOffice(poHeader.getVendOffice());
 		}

@@ -99,11 +99,7 @@ public class RoleController extends BaseController {
 			addMessage(model, "保存角色'" + role.getName() + "'失败, 英文名已存在");
 			return form(role, model);
 		}
-        List<Office> officeList = role.getOfficeList();
-		if (officeList != null && officeList.size()>0){
-		    role.setOffice(officeList.get(0));
-        }
-        systemService.saveRole(role);
+		systemService.saveRole(role);
 		addMessage(redirectAttributes, "保存角色'" + role.getName() + "'成功");
 		return "redirect:" + adminPath + "/sys/role/?repage";
 	}

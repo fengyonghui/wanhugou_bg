@@ -47,6 +47,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private String orderNoEditable;		//页面不可编辑标识符
 	private String orderDetails;		//页面不可编辑标识符2
 	private String clientModify;		//用于客户专员修改跳转
+	private Boolean ownGenPoOrder;
+	private Integer onlyVendor; //该订单的唯一供应商
 
 	private String orderNum2;		//用于删除订单页面传值
     private String localSendIds;
@@ -282,5 +284,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	
 	public void setClientModify(String clientModify) {
 		this.clientModify = clientModify;
+	}
+
+	public Boolean getOwnGenPoOrder() {
+		return ownGenPoOrder;
+	}
+
+	public void setOwnGenPoOrder(Boolean ownGenPoOrder) {
+		this.ownGenPoOrder = ownGenPoOrder;
+	}
+
+	public Integer getOnlyVendor() {
+		return onlyVendor;
+	}
+
+	public void setOnlyVendor(Integer onlyVendor) {
+		this.onlyVendor = onlyVendor;
 	}
 }

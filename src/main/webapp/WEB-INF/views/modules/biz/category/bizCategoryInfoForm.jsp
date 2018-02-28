@@ -37,6 +37,7 @@
             $("#but_sub").click(function () {
                 var flag=true;
 				$("#propValues").find("input").each(function (i) {
+					alert($(this).val());
 					if($(this).val()==''){
                         flag=false;
 					}
@@ -119,7 +120,7 @@
 							<%--<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="catePropertyInfos" value="${propertyInfo.id}"/> --%>
 							<span  style="float:left;width:60px;padding-top:3px">${propertyInfo.name}：</span>
 							<div style="float: left">
-								<select title="search"  id="search_${propertyInfo.id}" class="input-xlarge" multiple="multiple" size="8">
+								<select  title="search"  id="search_${propertyInfo.id}" class="input-xlarge" multiple="multiple" size="8">
 									<c:forEach items="${map[propertyInfo.id]}" var="propValue">
 										<%--<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}--%>
 										<option value="${propValue.id}">${propValue.value}</option>
