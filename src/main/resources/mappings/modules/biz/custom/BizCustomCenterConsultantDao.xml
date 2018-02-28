@@ -170,7 +170,7 @@
 		#{createDate},
 		#{createBy.id},
 		#{updateBy.id},
-		#{status}
+		#{delFlag}
 		)
 	</insert>
 

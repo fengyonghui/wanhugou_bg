@@ -47,18 +47,26 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 	
 	@Transactional(readOnly = false)
 	public void save(BizCustomCenterConsultant bizCustomCenterConsultant) {
-			BizCustomCenterConsultant bcc = super.get(bizCustomCenterConsultant.getCustoms().getId());
+		Office centers = bizCustomCenterConsultant.getCenters();
+		Office customs = bizCustomCenterConsultant.getCustoms();
+		BizCustomCenterConsultant bcc = super.get(bizCustomCenterConsultant.getCustoms().getId());
+		if(bcc !=null){
 			if(bcc.getDelFlag().equals("1")){
-//				System.out.println("  数据库已有相同采购商—不做操作 ");
+//					System.out.println("  数据库已有相同采购商—不做操作 ");
 			}else{
-				Office centers = bizCustomCenterConsultant.getCenters();
-				Integer customs = bizCustomCenterConsultant.getCustoms().getId();
-				bizCustomCenterConsultant.setId(customs);
+				bizCustomCenterConsultant.setId(customs.getId());
 				bizCustomCenterConsultant.setCenters(officeService.get(centers));
 				bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
 				bizCustomCenterConsultant.setDelFlag("1");
 				super.save(bizCustomCenterConsultant);
 			}
+		}else{
+			bizCustomCenterConsultant.setCustoms(customs);
+			bizCustomCenterConsultant.setCenters(officeService.get(centers));
+			bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
+			bizCustomCenterConsultant.setDelFlag("1");
+			super.save(bizCustomCenterConsultant);
+		}
 	}
 	
 	@Transactional(readOnly = false)
