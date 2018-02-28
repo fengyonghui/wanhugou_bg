@@ -122,6 +122,7 @@
 				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
 			</if>
+			AND a.unshelf_time is NULL
 			<!--<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
 				AND a.unshelf_user = #{unshelfUser.id}
 			</if>-->
