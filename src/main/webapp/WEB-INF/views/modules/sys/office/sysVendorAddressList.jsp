@@ -29,7 +29,7 @@
         <li><label>供应商名称：</label>
             <sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
                             labelValue="${entity.office.name}" notAllowSelectParent="true"
-                            title="供应商"  url="/sys/office/queryTreeList?type=7"
+                            title="供应商"  url="/sys/office/queryTreeList?type=7&source=gys"
                             cssClass="input-xlarge required"
                             allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
         </li>

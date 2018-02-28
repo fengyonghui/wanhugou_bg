@@ -102,7 +102,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && !OfficeTypeEnum.PURCHASINGCENTER.getType().equals(officeType.getType())){
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 				}
-            else if (source.equals("ghs")){
+            else if (source.equals("ghs") || source.equals("gys") || source.equals("cgs")){
 
             }
 			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){

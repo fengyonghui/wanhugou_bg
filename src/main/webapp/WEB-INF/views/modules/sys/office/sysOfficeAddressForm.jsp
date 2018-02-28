@@ -29,7 +29,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/sys/office/sysOfficeAddress/">地址信息列表</a></li>
+		<li><a href="${ctx}/sys/office/sysOfficeAddress/list?office.type=6">地址信息列表</a></li>
 		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/form?id=${sysOfficeAddress.id}">地址信息<shiro:hasPermission name="sys:office:sysOfficeAddress:edit">${not empty sysOfficeAddress.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:office:sysOfficeAddress:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 
@@ -45,7 +45,7 @@
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${entity.office.id}"  labelName="office.name"
 								labelValue="${entity.office.name}" notAllowSelectParent="true"
-								title="采购商"  url="/sys/office/queryTreeList?type=6"
+								title="采购商"  url="/sys/office/queryTreeList?type=6&source=cgs"
 								cssClass="input-xlarge required"
 								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
