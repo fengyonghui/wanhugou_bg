@@ -70,7 +70,6 @@
 				<form:input path="code" htmlEscape="false" maxlength="50"/>
 			</div>
 		</div>
-		<input type="hidden" name="officeId" value="${office.id}" />
 		<div class="control-group">
 			<label class="control-label">机构类型:</label>
 			<div class="controls">
@@ -107,16 +106,28 @@
 		<div class="control-group">
 			<label class="control-label">主负责人:</label>
 			<div class="controls">
-				 <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office1.primaryPerson.id}" labelName="office1.primaryPerson.name" labelValue="${office1.primaryPerson.name}"
-					title="用户" url="/sys/user/treeData?type=6&officeId=${office.id}" allowClear="true" />
+               <c:if test="${office.id !=null }">
+                   <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office1.primaryPerson.name" labelValue="${office.primaryPerson.name}"
+                                   title="用户" url="/sys/user/treeData?type=6&officeId=${office.id}" allowClear="true" />
+               </c:if>
+                <c:if test="${empty office.id}">
+                     <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office1.primaryPerson.name" labelValue="${office.primaryPerson.name}"
+                        title="用户" url="/sys/user/treeData?type=6&officeId=${office.id}" allowClear="true" />
+                </c:if>
 				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">副负责人:</label>
 			<div class="controls">
+                <c:if test="${office.id !=null }">
 				 <sys:treeselect id="deputyPerson" name="deputyPerson.id" value="${office.deputyPerson.id}" labelName="office.deputyPerson.name" labelValue="${office.deputyPerson.name}"
 					title="用户" url="/sys/user/treeData?type=6&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
+                </c:if>
+                <c:if test="${empty office.id}">
+                    <sys:treeselect id="deputyPerson" name="deputyPerson.id" value="${office.deputyPerson.id}" labelName="office.deputyPerson.name" labelValue="${office.deputyPerson.name}"
+                                    title="用户" url="/sys/user/treeData?type=6&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
+                </c:if>
 			</div>
 		</div>
 		<div class="control-group">

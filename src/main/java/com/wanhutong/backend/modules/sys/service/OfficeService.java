@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.sys.service;
 
 import java.util.*;
 
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.fieldtype.OfficeType;
@@ -199,6 +200,16 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public void delete(Office office) {
 		super.delete(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
+	}
+
+	public Page<Office> findPage(Page<Office> page, Office office) {
+		User user= UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, office);
+		}else {
+			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "s", "su"));
+			return super.findPage(page, office);
+		}
 	}
 	
 }

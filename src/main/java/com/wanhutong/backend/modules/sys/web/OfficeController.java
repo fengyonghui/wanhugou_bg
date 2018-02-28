@@ -7,10 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.dao.OfficeDao;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +51,11 @@ public class OfficeController extends BaseController {
 
 	@Autowired
 	private OfficeService officeService;
-	
 	@Autowired
 	private BizCustCreditService bizCustCreditService;
 	@Autowired
 	private SystemService systemService;
-	
+
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) Integer id) {
 		if (id!=null){
@@ -76,19 +80,23 @@ public class OfficeController extends BaseController {
 	
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "purchasersList")
-	public String purchasersList(Office office, String conn,Integer centers,Integer consultants, Model model) {
-		if(office.getId() == null || office.getParentIds() == null){
-			String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId","");
-			Office off = officeService.get(Integer.valueOf(purchasersId));
-			office.setParentIds("%,"+purchasersId+",");
-			office.setType(OfficeTypeEnum.CUSTOMER.getType());
-			List<Office> findList = officeService.findList(office);
-			findList.add(off);
-			model.addAttribute("list", findList);
-		}else{
-			model.addAttribute("list", officeService.findList(office));
-		}
-//		System.out.println(conn);
+	public String purchasersList(Office office, String conn,Integer centers,Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
+//		if(office.getId() == null || office.getParentIds() == null){
+////			String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId","");
+////			Office off = officeService.get(Integer.valueOf(purchasersId));
+////			office.setParentIds("%,"+purchasersId+",");
+//			office.setType(OfficeTypeEnum.CUSTOMER.getType());
+////			List<Office> findList = officeService.findList(office);
+////			findList.add(off);
+////			page.getList().add(off);
+////			model.addAttribute("list", findList);
+//		}else{
+//        if(office.getFindOffice() !=null && office.getFindOffice().equals("query_member")){
+            office.setType("6");//属于查询采购商
+			Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
+//			model.addAttribute("list", officeService.findList(office));
+			model.addAttribute("page", page);
+//		}
 //		if(conn.equals("connIndex")){
 //			//TODO 客户专员管理页面跳转没解决：添加客户专员跳转，关联采购商跳转，修改跳转
 ////			跳回客户专员管理
@@ -97,7 +105,6 @@ public class OfficeController extends BaseController {
 //			return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
 //		}
 		return "modules/sys/purchasersList";
-//		return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
 	}
 	
 	@RequiresPermissions("sys:office:view")
@@ -267,7 +274,7 @@ public class OfficeController extends BaseController {
 		}
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		Integer id = office.getParentId()==0 ? null : office.getParentId();
-		return "redirect:" + adminPath + "/sys/office/purchasersList?id="+id+"&parentIds="+office.getParentIds();
+		return "redirect:" + adminPath + "/sys/office/purchasersList";
 	}
 	
 	@RequiresPermissions("sys:office:view")
@@ -426,4 +433,5 @@ public class OfficeController extends BaseController {
 		}
 		return mapList;
 	}
+
 }
