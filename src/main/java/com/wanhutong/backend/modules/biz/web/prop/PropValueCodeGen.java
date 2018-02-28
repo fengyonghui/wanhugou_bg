@@ -3,9 +3,11 @@ package com.wanhutong.backend.modules.biz.web.prop;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
+import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
@@ -15,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -31,6 +35,8 @@ public class PropValueCodeGen {
     private BizProdPropValueService bizProdPropValueService;
     @Autowired
     private BizSkuPropValueService bizSkuPropValueService;
+    @Autowired
+    private BizVendInfoService bizVendInfoService;
 
     @RequestMapping(value = "genSysPropCode")
     public String genSysPropCode() {
@@ -102,5 +108,26 @@ public class PropValueCodeGen {
         }
 
         return "";
+    }
+
+    @RequestMapping(value = "genVendorPropCode")
+    @ResponseBody
+    public String genVendorPropCode() {
+        BizVendInfo propValue = new BizVendInfo();
+        propValue.setDelFlag("1");
+        List<BizVendInfo> propValues = bizVendInfoService.findList(propValue);
+        for (BizVendInfo propValue1 : propValues) {
+            String code = HanyuPinyinHelper.getFirstLetters(propValue1.getVendName(), HanyuPinyinCaseType.UPPERCASE);
+            if (code.length() > 10){
+                code = code.substring(0,10);
+            }
+            propValue1.setCode(code);
+            log.info("-----:" + code);
+            //set 0 to force update
+            propValue1.setId(0);
+            bizVendInfoService.save(propValue1);
+        }
+
+        return "success!";
     }
 }

@@ -284,7 +284,6 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = cust.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		LEFT JOIN sys_office cent ON cent.id = ccc.center_id
-		LEFT JOIN sys_user centu ON cent.id = centu.company_id
 		WHERE u.status = #{DEL_FLAG_NORMAL}
 		<if test="company != null and company.type != null">
 			and cust.type = #{company.type}

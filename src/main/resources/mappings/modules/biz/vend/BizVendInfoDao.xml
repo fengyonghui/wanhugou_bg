@@ -85,7 +85,7 @@
 		) VALUES (
 			#{office.id},
 			#{vendName},
-			#{cateId},
+			#{bizCategoryInfo.id},
 			#{cateName},
 			#{code},
 			#{status},
@@ -99,16 +99,15 @@
 	
 	<update id="update">
 		UPDATE biz_vend_info SET 	
-			office_id = #{office.id},
 			vend_name = #{vendName},
-			cate_id = #{cateId},
+			cate_id = #{bizCategoryInfo.id},
 			cate_name = #{cateName},
 			code = #{code},
 			u_version = #{uVersion},
 			create_time = #{createDate},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
-		WHERE id = #{id}
+		WHERE office_id = #{office.id}
 	</update>
 	
 	<update id="delete">
