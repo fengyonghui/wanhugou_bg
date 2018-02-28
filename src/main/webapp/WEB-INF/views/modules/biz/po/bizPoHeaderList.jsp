@@ -19,6 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
+		<li><a href="${ctx}/biz/request/bizRequestOrder/form?source=gh">供货需求汇总</a></li>
 		<%--<shiro:hasPermission name="biz:po:bizPoHeader:edit"><li><a href="${ctx}/biz/po/bizPoHeader/form">采购订单添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/" method="post" class="breadcrumb form-search">
