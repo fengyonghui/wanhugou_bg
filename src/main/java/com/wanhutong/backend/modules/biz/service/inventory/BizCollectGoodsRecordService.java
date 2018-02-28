@@ -24,6 +24,7 @@ import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +59,8 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	private BizRequestHeaderService bizRequestHeaderService;
 	@Resource
 	private BizInventorySkuService bizInventorySkuService;
+	@Resource
+    private OfficeService officeService;
 
 	public BizCollectGoodsRecord get(Integer id) {
 		return super.get(id);
@@ -73,7 +76,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 		boolean flag=false;
 		if(user.getRoleList()!=null){
 			for(Role role:user.getRoleList()){
-				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname()) || RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())){
 					flag=true;
 					break;
 				}
@@ -94,9 +97,11 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	
 	@Transactional(readOnly = false)
 	public void save(BizCollectGoodsRecord bizCollectGoodsRecord) {
-		boolean flagRequest = true;		//备货单完成状态
-		boolean flagPo = true;      //采购单完成状态
-		int recvQtySum = 0;
+        User user = UserUtils.getUser();
+        officeService.get(user.getCompany().getId());
+        boolean flagRequest = true;		//备货单完成状态
+//		boolean flagPo = true;      //采购单完成状态
+//		int recvQtySum = 0;
 		//得到同一采购单下销售单信息
 		/*BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
 		bizPoOrderReq.setRequestHeader(bizCollectGoodsRecord.getBizRequestHeader());
@@ -151,6 +156,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 //			}
 			bcgr.setInvInfo(bizCollectGoodsRecord.getInvInfo());
 			bcgr.setSkuInfo(bizSkuInfo);
+			bcgr.setVender(officeService.get(user.getCompany().getId()));
 			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bcgr.setBizRequestHeader(bizRequestHeader);
 			bcgr.setOrderNum(bcgr.getOrderNum());
