@@ -48,23 +48,21 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 	@Transactional(readOnly = false)
 	public void save(BizCustomCenterConsultant bizCustomCenterConsultant) {
 			BizCustomCenterConsultant bcc = super.get(bizCustomCenterConsultant.getCustoms().getId());
-			if(bcc!=null){
+			if(bcc.getDelFlag().equals("1")){
 //				System.out.println("  数据库已有相同采购商—不做操作 ");
 			}else{
-				Office customs = bizCustomCenterConsultant.getCustoms();
 				Office centers = bizCustomCenterConsultant.getCenters();
-				bizCustomCenterConsultant.setCustoms(officeService.get(customs));
+				Integer customs = bizCustomCenterConsultant.getCustoms().getId();
+				bizCustomCenterConsultant.setId(customs);
 				bizCustomCenterConsultant.setCenters(officeService.get(centers));
 				bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
+				bizCustomCenterConsultant.setDelFlag("1");
 				super.save(bizCustomCenterConsultant);
 			}
 	}
 	
 	@Transactional(readOnly = false)
 	public void delete(BizCustomCenterConsultant bizCustomCenterConsultant) {
-//		BizCustomCenterConsultant bizCustomCenterConsultant1 = super.get(bizCustomCenterConsultant.getCustoms().getId());
-//		bizCustomCenterConsultant1.setStatuss(0);
-//		super.save(bizCustomCenterConsultant1);
 		super.delete(bizCustomCenterConsultant);
 	}
 
