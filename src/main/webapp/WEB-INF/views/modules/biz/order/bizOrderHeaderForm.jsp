@@ -419,7 +419,7 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">商品详情总价：</label>
+        <label class="control-label">商品总价：</label>
         <div class="controls">
             <form:input path="totalDetail" htmlEscape="false" placeholder="0.0" readOnly="true" class="input-xlarge"/>
             <input name="totalDetail" value="${entity.totalDetail}" htmlEscape="false" type="hidden"/>
@@ -427,7 +427,7 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">订单总费用：</label>
+        <label class="control-label">交易金额：</label>
         <div class="controls">
                 <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
                 <span class="help-inline"><font color="red">*</font></span>
@@ -450,7 +450,7 @@
     </div>
     <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
         <div class="control-group">
-            <label class="control-label">订单总价：</label>
+            <label class="control-label">应付金额：</label>
             <div class="controls">
                 <input type="text" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"
                        disabled="true" class="input-xlarge">
