@@ -39,6 +39,7 @@
 			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&bizStatu=${bizStatu}&ship=${ship}">供货清单列表</a></li>
 		</c:if>
 	</ul>
+
 	<c:if test="${ship eq 'bh'}">
 		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestAll/" method="post" class="breadcrumb form-search">
 			<ul class="ul-form">

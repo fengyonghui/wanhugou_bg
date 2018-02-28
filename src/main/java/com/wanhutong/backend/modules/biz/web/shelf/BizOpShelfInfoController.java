@@ -114,7 +114,7 @@ public class BizOpShelfInfoController extends BaseController {
         if(user.isAdmin()){
 			return bizOpShelfInfoService.findList(bizOpShelfInfo);
         }else {
-            bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "suc"));
+            bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "s"));
             return bizOpShelfInfoService.findList(bizOpShelfInfo);
         }
        /* User user = UserUtils.getUser();

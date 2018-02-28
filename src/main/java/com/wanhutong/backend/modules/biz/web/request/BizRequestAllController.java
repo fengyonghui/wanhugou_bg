@@ -101,12 +101,12 @@ public class BizRequestAllController {
         if(flag){
             model.addAttribute("ship",ship);
         }*/
-        String type = officeService.get(user.getCompany().getId()).getType();
-        if (type.equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
+//        String type = officeService.get(user.getCompany().getId()).getType();
+//        if (type.equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
             model.addAttribute("ship",ship);
-        }else {
-            model.addAttribute("ship","");
-        }
+//        }else {
+//            model.addAttribute("ship","");
+//        }
         model.addAttribute("source",source);
         if(bizOrderHeader==null){
             bizOrderHeader=new BizOrderHeader();
@@ -176,7 +176,7 @@ public class BizRequestAllController {
                 List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
                 model.addAttribute("logisticsList",logisticsList);
             }else {
-                Office company = systemService.getUser(user.getId()).getCompany();
+                Office company = officeService.get(user.getCompany().getId());
                 bizInventoryInfo.setCustomer(company);
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
                 model.addAttribute("invInfoList",invInfoList);
@@ -204,10 +204,9 @@ public class BizRequestAllController {
                 List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
                 model.addAttribute("logisticsList",logisticsList);
             }else {
-                Office company = systemService.getUser(user.getId()).getCompany();
-                BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
-                bizInventoryInfo1.setCustomer(company);
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo1);
+                Office company = officeService.get(user.getCompany().getId());
+                bizInventoryInfo.setCustomer(company);
+                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
                 model.addAttribute("invInfoList",invInfoList);
                 List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
                 model.addAttribute("logisticsList",logisticsList);

@@ -93,22 +93,11 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			bizRequestHeader.setStartDate("'"+f.format(yesterday)+"'");
 		}
 		User user = UserUtils.getUser();
-		boolean flag=false;
-		if(user.getRoleList()!=null){
-			for(Role role:user.getRoleList()){
-				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
-					flag=true;
-					break;
-				}
-			}
-		}
-		if (user.isAdmin()) {
+        Office office = officeService.get(user.getCompany().getId());
+        if (user.isAdmin()) {
 			return super.findPage(page, bizRequestHeader);
 		} else {
-			if(flag){
-				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
-
-			}
+			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
 			return super.findPage(page, bizRequestHeader);
 		}
 	}
