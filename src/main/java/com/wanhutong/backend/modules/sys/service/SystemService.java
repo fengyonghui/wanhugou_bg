@@ -444,7 +444,7 @@ public class SystemService extends BaseService implements InitializingBean {
         boolean flag=false;
         if(nowUser.getRoleList()!=null){
             for(Role role:nowUser.getRoleList()){
-                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname()) || RoleEnNameEnum.BUYER.getState().equals(role.getEnname()) ){
                     flag=true;
                     break;
                 }
@@ -454,7 +454,7 @@ public class SystemService extends BaseService implements InitializingBean {
             contact = userDao.contact(user);
         } else {
             if (flag) {
-                user.getSqlMap().put("us", BaseService.dataScopeFilter(nowUser, "cent", "centu"));
+                user.getSqlMap().put("us", BaseService.dataScopeFilter(nowUser, "cent", ""));
             }
             contact = userDao.contact(user);
         }
