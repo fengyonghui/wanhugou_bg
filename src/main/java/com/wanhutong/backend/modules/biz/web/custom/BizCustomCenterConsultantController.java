@@ -140,12 +140,12 @@ public class BizCustomCenterConsultantController extends BaseController {
 		if(bizCustomCenterConsultant == null || bizCustomCenterConsultant.getCustoms() == null || bizCustomCenterConsultant.getConsultants() == null){
 			return "0";
 		}
-		BizCustomCenterConsultant BCC = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
-		bizCustomCenterConsultant.setIsNewRecord(true);
-		if(BCC != null){
-			bizCustomCenterConsultant.setIsNewRecord(false);
-		}
-		bizCustomCenterConsultant.setStatus("1");
+//		BizCustomCenterConsultant BCC = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
+//		if(BCC!=null && BCC.getDelFlag().equals(1)){
+//            bizCustomCenterConsultant.setIsNewRecord(true);//新记录 insert
+//		}else{
+//            bizCustomCenterConsultant.setIsNewRecord(false);//不是新记录,update
+//        }
 		bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
 		return "1";
 	}
