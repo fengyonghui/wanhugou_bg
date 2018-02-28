@@ -18,7 +18,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/list?office.type=${office.type}">地址信息列表</a></li>
+		<li class="active"><a href="${ctx}/sys/office/sysOfficeAddress/list?office.type=6">地址信息列表</a></li>
 		<shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><li><a href="${ctx}/sys/office/sysOfficeAddress/form?office.type=6">地址信息添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="sysOfficeAddress" action="${ctx}/sys/office/sysOfficeAddress/" method="post" class="breadcrumb form-search">
