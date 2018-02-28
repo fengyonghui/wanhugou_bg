@@ -40,7 +40,7 @@
 	</table>
 	<script type="text/template" id="treeTableTpl">
 		<tr id="{{row.id}}" pId="{{pid}}">
-			<td><a href="${ctx}/sys/office/form?id={{row.id}}">{{row.name}}</a></td>
+			<td><a href="${ctx}/sys/office/supplierForm?id={{row.id}}">{{row.name}}</a></td>
 			<td>{{row.area.name}}</td>
 			<td>{{row.code}}</td>
 			<td>{{dict.type}}</td>
