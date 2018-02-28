@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.biz.service.shelf;
 import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.enums.BizOpShelfInfoEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
@@ -35,10 +38,23 @@ public class BizOpShelfInfoService extends CrudService<BizOpShelfInfoDao, BizOpS
 	
 	public Page<BizOpShelfInfo> findPage(Page<BizOpShelfInfo> page, BizOpShelfInfo bizOpShelfInfo) {
 		User user= UserUtils.getUser();
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+					break;
+				}
+			}
+		}
 		if(user.isAdmin()){
 			return super.findPage(page, bizOpShelfInfo);
 		}else {
-			bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "suc"));
+			if (flag) {
+				bizOpShelfInfo.setType(BizOpShelfInfoEnum.LOCAL_STOCK.getLocal());
+			}else {
+				bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "suc"));
+			}
 			return super.findPage(page, bizOpShelfInfo);
 		}
 
