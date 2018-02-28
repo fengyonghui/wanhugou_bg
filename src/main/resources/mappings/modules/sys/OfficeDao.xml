@@ -90,21 +90,21 @@
 		where FIND_IN_SET(id,
 		(select GROUP_CONCAT(parent_ids,'0')
 		from biz_custom_center_consultant ccc, sys_office so
-		where ccc.cust_id = so.id
+		where ccc.cust_id = so.id and ccc.status=1
 		<if test="customs != null and customs.id != null and customs.id != ''">
-			AND ccc.cust_id = #{customs.id}) )
+			AND ccc.cust_id = #{customs.id}
 		</if>
 		<if test="centers != null and centers.id != null and centers.id != ''">
-			AND ccc.center_id = #{centers.id}) )
+			AND ccc.center_id = #{centers.id}
 		</if>
 		<if test="consultants != null and consultants.id != null and consultants.id != ''">
-			AND ccc.consultant_id = #{consultants.id})
+			AND ccc.consultant_id = #{consultants.id}
 		</if>
 		))
 		union all
 		select so.*
 		from biz_custom_center_consultant ccc, sys_office so
-		where ccc.cust_id = so.id and so.status=1
+		where ccc.cust_id = so.id and so.status=1 and  ccc.status=1
 		<if test="customs != null and customs.id != null and customs.id != ''">
 			AND ccc.cust_id = #{customs.id}
 		</if>

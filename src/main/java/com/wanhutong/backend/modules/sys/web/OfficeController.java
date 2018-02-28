@@ -197,7 +197,7 @@ public class OfficeController extends BaseController {
 
 			List<Map<String, Object>> mapList = Lists.newArrayList();
 
-			List<Office>list = officeService.filerOffice(null,null,OfficeTypeEnum.CUSTOMER);
+			List<Office>list = officeService.filerOffice(null,"purchaser",OfficeTypeEnum.CUSTOMER);
 			for (int i=0; i<list.size(); i++){
 				Office e = list.get(i);
 				if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))

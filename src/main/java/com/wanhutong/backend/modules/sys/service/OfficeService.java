@@ -102,7 +102,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) ){
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 				}
-            else if (source!=null && !"".equals(source) && source.equals("ghs") || source.equals("gys") || source.equals("cgs")){
+            else if (StringUtils.isNotBlank(source) && (source.equals("ghs") || source.equals("gys") || source.equals("cgs"))){
 
             }
 			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){
@@ -120,8 +120,11 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 					}
 				}
 				BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
-				if(flag){
+				if(flag || (StringUtils.isNotBlank(source) && source.equals("purchaser"))){
 					customCenterConsultant.setCenters(user.getCompany());
+					if(StringUtils.isNotBlank(source) && source.equals("purchaser")){
+						customCenterConsultant.setConsultants(user);
+					}
 				List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
 
 				return officeList;
