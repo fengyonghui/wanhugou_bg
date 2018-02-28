@@ -63,9 +63,7 @@
 					type:"post",
 					url:"${ctx}/biz/sku/bizSkuInfo/findSysBySku?skuId="+param,
 					success:function(data){
-					    alert(data);
 						var valuePrice = obj*data.buyPrice;
-						alert(valuePrice);
 						$("#reqValuePrice"+index).val(valuePrice);
 					}
 				})

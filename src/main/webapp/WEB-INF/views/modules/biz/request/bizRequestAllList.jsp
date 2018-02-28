@@ -96,7 +96,7 @@
 					<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
 						<sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
 										labelValue="" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6"
+										title="采购商"  url="/sys/office/queryTreeList?type=6&source=cgs"
 										cssClass="input-medium required"
 										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 					</c:if>

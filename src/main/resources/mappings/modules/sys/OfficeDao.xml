@@ -98,8 +98,9 @@
 			AND ccc.center_id = #{centers.id}) )
 		</if>
 		<if test="consultants != null and consultants.id != null and consultants.id != ''">
-			AND ccc.consultant_id = #{consultants.id}) )
+			AND ccc.consultant_id = #{consultants.id})
 		</if>
+		))
 		union all
 		select so.*
 		from biz_custom_center_consultant ccc, sys_office so

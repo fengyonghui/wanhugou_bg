@@ -96,12 +96,15 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		return  new ArrayList<Office>();
 	}
 
-	public List<Office> filerOffice(List<Office> offices, OfficeTypeEnum officeType){
+	public List<Office> filerOffice(List<Office> offices,String source, OfficeTypeEnum officeType){
 		Office office = new Office();
 			User user = UserUtils.getUser();
 			if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && !OfficeTypeEnum.PURCHASINGCENTER.getType().equals(officeType.getType())){
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 				}
+            else if (source.equals("ghs")){
+
+            }
 			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){
 				boolean flag=false;
 				boolean flagb=false;

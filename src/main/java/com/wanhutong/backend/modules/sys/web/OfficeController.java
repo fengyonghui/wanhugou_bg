@@ -197,7 +197,7 @@ public class OfficeController extends BaseController {
 
 			List<Map<String, Object>> mapList = Lists.newArrayList();
 
-			List<Office>list = officeService.filerOffice(null,OfficeTypeEnum.CUSTOMER);
+			List<Office>list = officeService.filerOffice(null,null,OfficeTypeEnum.CUSTOMER);
 			for (int i=0; i<list.size(); i++){
 				Office e = list.get(i);
 				if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
@@ -407,10 +407,10 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "queryTreeList")
-	public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type,RedirectAttributes redirectAttributes) {
+	public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type,String source,RedirectAttributes redirectAttributes) {
 		List<Office> list = null;
 		if(StringUtils.isNotBlank(type)){
-			list = officeService.filerOffice(null,OfficeTypeEnum.stateOf(type));
+			list = officeService.filerOffice(null,source,OfficeTypeEnum.stateOf(type));
 		}
 		if(list == null || list.size() == 0){
 			addMessage(redirectAttributes, "列表不存在");
