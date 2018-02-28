@@ -84,7 +84,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         if(user.isAdmin()){
             return super.findPage(page, bizOrderHeader);
         }else {
-            bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            bizOrderHeader.setConsultantId(user.getId());
+         //   bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "ccs"));
             return super.findPage(page, bizOrderHeader);
         }
     }

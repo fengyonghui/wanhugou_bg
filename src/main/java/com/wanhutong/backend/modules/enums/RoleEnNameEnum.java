@@ -2,7 +2,8 @@ package com.wanhutong.backend.modules.enums;
 
 public enum RoleEnNameEnum {
     P_CENTER_MANAGER("p_center_manager"),
-    BUYER("buyer");
+    BUYER("buyer"),
+    STOCKREADYCOMMISSIONER("stock_ready_commissioner");
 
     private String state;
 

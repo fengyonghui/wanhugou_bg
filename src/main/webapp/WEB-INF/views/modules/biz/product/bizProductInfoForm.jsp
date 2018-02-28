@@ -440,7 +440,7 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label">请选择产品标签：</label>
+        <label class="control-label">请选择产品分类：</label>
         <div class="controls">
             <form:select path="bizVarietyInfo.id" class="input-medium required">
                 <form:option value="" label="请选择"/>

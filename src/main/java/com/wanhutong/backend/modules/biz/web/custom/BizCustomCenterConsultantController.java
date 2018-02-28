@@ -52,14 +52,14 @@ public class BizCustomCenterConsultantController extends BaseController {
     @Autowired
     private SystemService systemService;
 
-    @RequiresPermissions("sys:office:view")
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = "form")
     public String form(BizCustomCenterConsultant bizCustomCenterConsultant, Model model) {
         model.addAttribute("entity", bizCustomCenterConsultant);
         return "modules/biz/common/commonImgForm";
     }
 
-    @RequiresPermissions("sys:office:view")
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
         BizCustomCenterConsultant BCC = new BizCustomCenterConsultant();
@@ -98,7 +98,7 @@ public class BizCustomCenterConsultantController extends BaseController {
 //    }
 
 //    关联采购商
-    @RequiresPermissions("sys:office:view")
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = "connOfficeForm")
     public String connOfficeForm(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
         Office off = new Office();
@@ -133,7 +133,7 @@ public class BizCustomCenterConsultantController extends BaseController {
     }
 
 //    保存状态给 officeController
-	@RequiresPermissions("sys:office:view")
+	@RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
 	@RequestMapping(value = "save")
 	@ResponseBody
 	public String save(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -150,11 +150,11 @@ public class BizCustomCenterConsultantController extends BaseController {
 		return "1";
 	}
 
-    @RequiresPermissions("biz:order:bizOrderDetail:edit")
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
     @RequestMapping(value = "delete")
     public String delete(BizCustomCenterConsultant bizCustomCenterConsultant, RedirectAttributes redirectAttributes) {
         bizCustomCenterConsultantService.delete(bizCustomCenterConsultant);
-        addMessage(redirectAttributes, "删除订单详情成功");
+        addMessage(redirectAttributes, "删除客户专员成功");
         return "redirect:"+Global.getAdminPath()+"/biz/custom/bizCustomCenterConsultant/list?consultants.id="+bizCustomCenterConsultant.getConsultants().getId();
     }
 

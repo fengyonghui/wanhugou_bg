@@ -38,6 +38,8 @@ public class Office extends TreeEntity<Office> {
 	private User deputyPerson;//副负责人
 	private List<String> childDeptList;//快速添加子部门
 	private String level; //钱包等级
+
+	private String source;
 	
 	public String getLevel() {
 		return level;
@@ -221,5 +223,13 @@ public class Office extends TreeEntity<Office> {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 }

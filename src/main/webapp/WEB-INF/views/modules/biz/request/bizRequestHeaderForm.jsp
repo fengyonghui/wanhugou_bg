@@ -1,4 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -325,7 +328,7 @@
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
 				<c:forEach items="${fns:getUser().roleList}" var="role">
-					<c:if test="${role.enname==RoleEnNameEnum.P_CENTER_MANAGER.state}">
+					<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state}">
 						<c:set var="flag" value="true"/>
 					</c:if>
 				</c:forEach>
@@ -333,6 +336,7 @@
 					<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;
 				</c:if>
 				<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
+
 					<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;
 					<input id="btnCheck" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.APPROVE.state},this.value)" type="button" value="审核通过"/>&nbsp;
 				</c:if>

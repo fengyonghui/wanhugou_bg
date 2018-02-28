@@ -107,7 +107,11 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                 brandCode=addZeroForNum(propValue.getCode(),false,2);
                 Office office=bizProductInfo.getOffice();
                 BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
-                prodCode=addZeroForNum(bizVendInfo.getCode(),true,3);
+                String vCode="0";
+                if(bizVendInfo!=null){
+                    vCode= bizVendInfo.getCode();
+                }
+                prodCode=addZeroForNum(vCode,true,3);
                 BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
                 BizVarietyInfo varietyInfo=bizVarietyInfoService.get(bizVarietyInfo.getId());
                 cateCode=addZeroForNum(varietyInfo.getCode(),true,3);
