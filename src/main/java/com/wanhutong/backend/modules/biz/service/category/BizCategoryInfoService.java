@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.service.category;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.TreeService;
@@ -92,37 +93,53 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 		BizCatePropValue catePropValue = new BizCatePropValue();
 			bizCategoryInfoDao.deleteCatePropInfoReal(bizCategoryInfo);
 
-		if (bizCategoryInfo.getPropertyMap() != null) {
-			for (Map.Entry<String, BizCatePropertyInfo> entry : bizCategoryInfo.getPropertyMap().entrySet()) {
-				Integer propId = Integer.parseInt(entry.getKey());
-				BizCatePropertyInfo bizCatePropertyInfo = entry.getValue();
+		if (bizCategoryInfo.getCatePropertyInfos() != null) {
+			String[] propInfoValue=bizCategoryInfo.getCatePropertyInfos().split(",");
+			BizCatePropertyInfo bizCatePropertyInfo =new BizCatePropertyInfo();
+			Map<Integer,List<String>> map=new HashMap<>();
+			for(int i=0;i<propInfoValue.length;i++) {
+				String[] infoValue = propInfoValue[i].split("-");
+				Integer key = Integer.parseInt(infoValue[0]);
+				if (map.containsKey(key)) {
+					List<String> list = map.get(key);
+					map.remove(key);
+					list.add(infoValue[1]);
+					map.put(key, list);
+				} else {
+					List<String> list = Lists.newArrayList();
+					list.add(infoValue[1]);
+					map.put(Integer.parseInt(infoValue[0]), list);
+				}
+			}
+
+			for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
+				Integer propId = entry.getKey();
 				PropertyInfo propertyInfo = propertyInfoService.get(propId);
+				bizCatePropertyInfo.setId(null);
 				bizCatePropertyInfo.setName(propertyInfo.getName());
 				bizCatePropertyInfo.setDescription(propertyInfo.getDescription());
 				bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
-
 				bizCatePropertyInfoService.save(bizCatePropertyInfo);
-				String catePropertyValueStr = bizCatePropertyInfo.getCatePropertyValues();
-				if (catePropertyValueStr != null && !"".equals(catePropertyValueStr)) {
-					String[] catePropertyValues = catePropertyValueStr.split(",");
-					for (int j = 0; j < catePropertyValues.length; j++) {
-						catePropValue.setId(null);
-						Integer propValueId = Integer.parseInt(catePropertyValues[j].trim());
-						PropValue propValue = propValueService.get(propValueId);
-						catePropValue.setPropertyInfo(propertyInfo);
-						catePropValue.setSource("sys");
-						catePropValue.setPropName(bizCatePropertyInfo.getName());
-						catePropValue.setCatePropertyInfo(bizCatePropertyInfo);
-						catePropValue.setValue(propValue.getValue());
-						String code= HanyuPinyinHelper.getFirstLetters(propValue.getValue(), HanyuPinyinCaseType.UPPERCASE);
-						catePropValue.setCode(code);
-						catePropValue.setPropValue(propValue);
-						bizCatePropValueService.save(catePropValue);
 
-					}
+				List<String> catePropertyValueList=entry.getValue();
+
+				for(int i=0;i<catePropertyValueList.size();i++){
+					Integer propValueId = Integer.parseInt(catePropertyValueList.get(i).trim());
+					PropValue propValue = propValueService.get(propValueId);
+					catePropValue.setPropertyInfo(propertyInfo);
+					catePropValue.setSource("sys");
+					catePropValue.setPropName(bizCatePropertyInfo.getName());
+					catePropValue.setCatePropertyInfo(bizCatePropertyInfo);
+					catePropValue.setValue(propValue.getValue());
+					String code= HanyuPinyinHelper.getFirstLetters(propValue.getValue(), HanyuPinyinCaseType.UPPERCASE);
+					catePropValue.setCode(code);
+					catePropValue.setPropValue(propValue);
+					bizCatePropValueService.save(catePropValue);
 				}
 
 			}
+
+
 		}
 		CommonImg commonImg=null;
 		if(bizCategoryInfo.getImgId()==null){

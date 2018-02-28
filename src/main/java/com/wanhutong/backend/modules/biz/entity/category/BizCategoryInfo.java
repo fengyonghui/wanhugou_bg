@@ -4,6 +4,8 @@
 package com.wanhutong.backend.modules.biz.entity.category;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
+import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
@@ -31,6 +33,13 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 	private Map<String,BizCatePropertyInfo> propertyMap;
 
 	private String catePropertyInfos;
+
+
+	private List<PropertyInfo> propertyInfoList;
+
+	private Map<Integer,List<BizCatePropValue>> catePropValueMap;
+
+	Map<Integer,List<PropValue>> map;
 
 	public BizCategoryInfo() {
 		super();
@@ -132,4 +141,27 @@ public class BizCategoryInfo extends TreeEntity<BizCategoryInfo>  {
 		this.brandId = brandId;
 	}
 
+	public Map<Integer, List<BizCatePropValue>> getCatePropValueMap() {
+		return catePropValueMap;
+	}
+
+	public void setCatePropValueMap(Map<Integer, List<BizCatePropValue>> catePropValueMap) {
+		this.catePropValueMap = catePropValueMap;
+	}
+
+	public List<PropertyInfo> getPropertyInfoList() {
+		return propertyInfoList;
+	}
+
+	public void setPropertyInfoList(List<PropertyInfo> propertyInfoList) {
+		this.propertyInfoList = propertyInfoList;
+	}
+
+	public Map<Integer, List<PropValue>> getMap() {
+		return map;
+	}
+
+	public void setMap(Map<Integer, List<PropValue>> map) {
+		this.map = map;
+	}
 }

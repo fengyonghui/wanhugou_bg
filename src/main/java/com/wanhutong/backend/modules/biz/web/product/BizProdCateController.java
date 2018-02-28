@@ -9,16 +9,18 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdCate;
-import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.service.product.BizProdCateService;
-import com.wanhutong.backend.modules.sys.entity.PropValue;
-import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,10 @@ public class BizProdCateController extends BaseController {
 
 	@Autowired
 	private BizProdCateService bizProdCateService;
+	@Autowired
+	private BizProdPropertyInfoService bizProdPropertyInfoService;
+	@Autowired
+	private BizProductInfoService bizProductInfoService;
 
 	
 	@ModelAttribute
@@ -91,12 +97,22 @@ public class BizProdCateController extends BaseController {
 	}
 	@ResponseBody
 	@RequestMapping(value = "findCatePropInfoMap")
-	public Map<String,List<BizCatePropValue>> findCatePropInfoMap(BizProdCate bizProdCate,String catIds){
+	public Map<String, Object> findCatePropInfoMap(BizProdCate bizProdCate, Integer prodId, String catIds){
+		Map<String, Object> modelMap = new HashMap<>();
 		if (catIds != null && !"".equals(catIds)){
 			String[] ids = StringUtils.split(catIds, ",");
 			bizProdCate.setCatIds(Lists.newArrayList(ids));
 			Map<String,List<BizCatePropValue>> map=bizProdCateService.findCatePropMap4Page(bizProdCate);
-			return map;
+			if(prodId!=null){
+				BizProdPropertyInfo bizProdPropertyInfo=new BizProdPropertyInfo();
+				BizProductInfo bizProductInfo=bizProductInfoService.get(prodId);
+				bizProdPropertyInfo.setProductInfo(bizProductInfo);
+				Map<String, List<BizProdPropValue>> prodPropValueMap=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
+//			bizCategoryInfo.setCatePropValueMap(catePropValueMap);
+				modelMap.put("prodPropValueMap",prodPropValueMap);
+			}
+			modelMap.put("map",map);
+			return modelMap;
 		}
 		return null;
 

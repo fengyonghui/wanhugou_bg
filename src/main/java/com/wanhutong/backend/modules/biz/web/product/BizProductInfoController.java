@@ -16,6 +16,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -24,6 +25,7 @@ import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoSer
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -79,6 +81,8 @@ public class BizProductInfoController extends BaseController {
 	private DefaultPropService defaultPropService;
 	@Autowired
 	private BizVarietyInfoService bizVarietyInfoService;
+	@Autowired
+	private BizProdPropertyInfoService bizProdPropertyInfoService;
 
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
@@ -148,6 +152,14 @@ public class BizProductInfoController extends BaseController {
 				 propValues=propValueService.findList(propValue);
 			}
 
+		if(bizProductInfo.getId()!=null){
+			BizProdPropertyInfo bizProdPropertyInfo=new BizProdPropertyInfo();
+			bizProdPropertyInfo.setProductInfo(bizProductInfo);
+			Map<String, List<BizProdPropValue>> prodPropValueMap=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
+//			bizCategoryInfo.setCatePropValueMap(catePropValueMap);
+			model.addAttribute("prodPropValueMap",prodPropValueMap);
+		}
+
 			List<BizVarietyInfo> varietyInfoList=bizVarietyInfoService.findList(new BizVarietyInfo());
 
 			//model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
@@ -157,6 +169,7 @@ public class BizProductInfoController extends BaseController {
 			model.addAttribute("varietyInfoList",varietyInfoList);
 		return "modules/biz/product/bizProductInfoForm";
 	}
+
 
 	@RequiresPermissions("biz:product:bizProductInfo:edit")
 	@RequestMapping(value = "save")

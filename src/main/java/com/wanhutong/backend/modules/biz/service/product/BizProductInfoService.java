@@ -6,10 +6,13 @@ package com.wanhutong.backend.modules.biz.service.product;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
+
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
@@ -355,10 +358,61 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         /**
          * 选择分类属性（属性和值）
          */
-        if (bizProductInfo.getPropertyMap() != null) {
-            for (Map.Entry<String, BizProdPropertyInfo> entry : bizProductInfo.getPropertyMap().entrySet()) {
-                Integer propId = Integer.parseInt(entry.getKey());
-                BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
+//        if (bizProductInfo.getPropertyMap() != null) {
+//            for (Map.Entry<String, BizProdPropertyInfo> entry : bizProductInfo.getPropertyMap().entrySet()) {
+//                Integer propId = Integer.parseInt(entry.getKey());
+//                BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
+//                PropertyInfo propertyInfo = propertyInfoService.get(propId);
+//                bizProdPropertyInfo.setPropName(propertyInfo.getName());
+//                bizProdPropertyInfo.setPropDescription(propertyInfo.getDescription());
+//                bizProdPropertyInfo.setProductInfo(bizProductInfo);
+//
+//                bizProdPropertyInfoService.save(bizProdPropertyInfo);
+//
+//                String catePropertyValueStr = bizProdPropertyInfo.getProdPropertyValues();
+//                if (catePropertyValueStr != null && !"".equals(catePropertyValueStr)) {
+//                    String[] catePropertyValues = catePropertyValueStr.split(",");
+//                    for (int j = 0; j < catePropertyValues.length; j++) {
+//                        prodPropValue.setId(null);
+//                        Integer propValueId = Integer.parseInt(catePropertyValues[j].trim());
+//                        PropValue propValue = propValueService.get(propValueId);
+//                        prodPropValue.setPropertyInfo(propertyInfo);
+//                        prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
+//                        prodPropValue.setSource("sys");
+//                        prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
+//                        prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+//                        prodPropValue.setPropValue(propValue.getValue());
+//                        prodPropValue.setCode(propValue.getCode());
+//                        prodPropValue.setSysPropValue(propValue);
+//                        bizProdPropValueService.save(prodPropValue);
+//                    }
+//                }
+//
+//            }
+//        }
+
+        if (bizProductInfo.getProdPropertyInfos() != null) {
+            String[] propInfoValue=bizProductInfo.getProdPropertyInfos().split(",");
+            BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
+            Map<Integer,List<String>> map=new HashMap<>();
+            for(int i=0;i<propInfoValue.length;i++) {
+                String[] infoValue = propInfoValue[i].split("-");
+                Integer key = Integer.parseInt(infoValue[0]);
+                if (map.containsKey(key)) {
+                    List<String> list = map.get(key);
+                    map.remove(key);
+                    list.add(infoValue[1]);
+                    map.put(key, list);
+                } else {
+                    List<String> list = Lists.newArrayList();
+                    list.add(infoValue[1]);
+                    map.put(Integer.parseInt(infoValue[0]), list);
+                }
+            }
+
+            for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
+                Integer propId = entry.getKey();
+
                 PropertyInfo propertyInfo = propertyInfoService.get(propId);
                 bizProdPropertyInfo.setPropName(propertyInfo.getName());
                 bizProdPropertyInfo.setPropDescription(propertyInfo.getDescription());
@@ -366,13 +420,12 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
                 bizProdPropertyInfoService.save(bizProdPropertyInfo);
 
-                String catePropertyValueStr = bizProdPropertyInfo.getProdPropertyValues();
-                if (catePropertyValueStr != null && !"".equals(catePropertyValueStr)) {
-                    String[] catePropertyValues = catePropertyValueStr.split(",");
-                    for (int j = 0; j < catePropertyValues.length; j++) {
-                        prodPropValue.setId(null);
-                        Integer propValueId = Integer.parseInt(catePropertyValues[j].trim());
-                        PropValue propValue = propValueService.get(propValueId);
+                List<String> prodPropertyValueList=entry.getValue();
+
+                for(int i=0;i<prodPropertyValueList.size();i++){
+                    Integer propValueId = Integer.parseInt(prodPropertyValueList.get(i).trim());
+                    PropValue propValue = propValueService.get(propValueId);
+                    prodPropValue.setId(null);
                         prodPropValue.setPropertyInfo(propertyInfo);
                         prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
                         prodPropValue.setSource("sys");
@@ -382,10 +435,11 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                         prodPropValue.setCode(propValue.getCode());
                         prodPropValue.setSysPropValue(propValue);
                         bizProdPropValueService.save(prodPropValue);
-                    }
                 }
 
             }
+
+
         }
     }
 

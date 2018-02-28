@@ -24,6 +24,13 @@
 
                     $("#cateIds").val(ids);
 
+                    var str="";
+                    $("select[name='propertys']").find("option").each(function(){
+
+                        str+=$(this).val()+",";
+                    });
+                    str=str.substring(0,str.length-1);
+                    $("input[name='prodPropertyInfos']").val(str);
                     loading('正在提交，请稍等...');
                     form.submit();
                 },
@@ -38,6 +45,7 @@
                 }
             });
 
+            var prodId=$("#id").val();
             if ($("#id").val() != '') {
                 var ids = "${entity.cateIds}";//后台获取的分类id集合
                var  brandId=$("#propValueId").val();
@@ -46,7 +54,7 @@
                 var cateValueId = $("#cateValueId").val();
              //   ajaxGetPropInfoBrand(ids);
                 t = setTimeout(function () {
-                    ajaxGetPropInfo(ids);
+                    ajaxGetPropInfo(ids,prodId);
 
                 }, 100);
                 t = setTimeout(function () {
@@ -161,11 +169,11 @@
                                     ids.push(nodes[i].id);
                                 }
                             }
-
-                            ajaxGetPropInfo(ids);
+                            ajaxGetPropInfo(ids,prodId);
 
 
                         };
+
 
                         // 默认选择节点
                         var ids = "${entity.cateIds}".split(",");
@@ -211,79 +219,20 @@
             }
 
         }
-
-        <%--/**--%>
-         <%--* 通过分类获取分类属性--%>
-         <%--* @param ids--%>
-         <%--*/--%>
-        <%--function ajaxGetPropInfo(ids) {--%>
-            <%--$.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",--%>
-                <%--{catIds: ids.toString()},--%>
-                <%--function (data, status) {--%>
-                    <%--$("#cateProp").empty();--%>
-                    <%--$.each(data, function (keys, values) {--%>
-                        <%--var propKeys = keys.split(",");--%>
-                        <%--var propId = propKeys[0];--%>
-                        <%--if (propId != $("#brandDefId").val()) {--%>
-                            <%--var propName = propKeys[1]--%>
-                            <%--// $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')--%>
-                            <%--var html = "";--%>
-                            <%--html += "<div style=\"width: 100%;display: inline-block\">\n" +--%>
-                                <%--"<span style=\"float:left;width:60px;padding-top:3px\">"+propName+"：</span>\n" +--%>
-                                <%--"<div style=\"float: left\">\n" +--%>
-                                <%--"<select title=\"search\" id=\"search_"+propId+"\" class=\"input-xlarge\" multiple=\"multiple\" size=\"8\">";--%>
-
-                            <%--for (var p in values) {--%>
-                                <%--if (values[p].value != null) {--%>
-                                    <%--html += "\"<option value=\\\""+values[p].propertyValueId+"\\\">"+values[p].value+"</option>";--%>
-                                    <%--// $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')--%>
-                                <%--}--%>
-                            <%--}--%>
-                            <%--html += "</select></div>"+--%>
-                                    <%--"<div  style=\"width: 20%;margin-left:10px;float: left\">\n" +--%>
-                                <%--"<button type=\"button\" id=\"search_"+propId+"_rightAll\" class=\"btn-block\"><i class=\"icon-forward\"></i></button>\n" +--%>
-                                <%--"<button type=\"button\" id=\"search_"+propId+"_rightSelected\" class=\"btn-block\"><i class=\"icon-chevron-right\"></i></button>\n" +--%>
-                                <%--"<button type=\"button\" id=\"search_"+propId+"_leftSelected\" class=\"btn-block\"><i class=\"icon-chevron-left\"></i></button>\n" +--%>
-                                <%--"<button type=\"button\" id=\"search_"+propId+"_leftAll\" class=\"btn-block\"><i class=\"icon-backward\"></i></button>\n" +--%>
-                                <%--"</div>"+--%>
-                                <%--"<div style=\"margin-left:10px;float: left\">\n" +--%>
-                                <%--"<select name=\"propertyMap["+propId+"].prodPropertyValues\" id=\"search_"+propId+"_to\" class=\"input-xlarge\" size=\"8\" multiple=\"multiple\">";--%>
-                            <%--// for (var p in values) {--%>
-                            <%--//     if (values[p].value != null) {--%>
-                            <%--//         html += "\"<option value=\\\""+values[p].propertyValueId+"\\\">"+values[p].value+"</option>";--%>
-                            <%--//         // $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')--%>
-                            <%--//     }--%>
-                            <%--// }--%>
-                            <%--html += "</select></div></div>";--%>
-                            <%--$("#cateProp").append(html)--%>
-                        <%--}--%>
-
-                    <%--});--%>
-                    <%--if ($("#id").val() != '' && status == 'success') {--%>
-                        <%--ajaxGetProdPropInfo($("#id").val());--%>
-                    <%--}--%>
-
-
-                <%--});--%>
-         <%----%>
-
-
-        <%--}--%>
-
-
         /**
          * 通过分类获取分类属性
          * @param ids
          */
-        function ajaxGetPropInfo(ids) {
+        function ajaxGetPropInfo(ids,prodId) {
+
             $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
-                {catIds: ids.toString()},
+                {catIds: ids.toString(),prodId:prodId},
                 function (data, status) {
+
                     $("#cateProp").empty();
-                    $.each(data, function (keys, values) {
+                    $.each(data.map, function (keys, values) {
                         var propKeys = keys.split(",");
                         var propId = propKeys[0];
-
                         if (propId != $("#brandDefId").val()) {
                             var propName = propKeys[1];
 
@@ -296,7 +245,7 @@
 
                             for (var p in values) {
                                 if (values[p].value != null) {
-                                    str+=' <option value="' + values[p].propertyValueId + '">'+values[p].value+'</option>'
+                                    str+=' <option value="'+propId+'-' + values[p].propertyValueId + '">'+values[p].value+'</option>'
                                     // $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
                                 }
                             }
@@ -309,15 +258,27 @@
                                 '<button type="button" id="search_'+propId+'_leftAll" class="btn-block"><i class="icon-backward"></i></button>' +
                                 '</div>';
 
+
+
                             str+='<div style="margin-left:10px;float: left">'+
-                                '<select name="propertyMap['+ propId +'].prodPropertyValues"  id="search_'+propId+'_to" class="input-xlarge" size="8" multiple="multiple">'+
-                                '</select></div>';
+                                '<select name="propertys"  id="search_'+propId+'_to" class="input-xlarge" size="8" multiple="multiple">';
+                            if(prodId!=''){
+                                var prodValues=data.prodPropValueMap[keys];
+                                for(var t in prodValues){
+                                    str+=' <option value="'+propId+'-' + prodValues[t].sysPropValue.id + '">'+prodValues[t].propValue+'</option>'
+                                }
+                            }
+
+                            str+=    '</select></div>';
 
                         }
+
+
                         $("#cateProp").append(str);
 
-                    });
 
+                    });
+                    $("#cateProp").append('<input type="hidden" name="prodPropertyInfos" value=""/>');
                     $('select[title="search"]').multiselect({
                         search: {
                             left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',

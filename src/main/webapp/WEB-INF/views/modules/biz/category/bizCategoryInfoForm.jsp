@@ -11,6 +11,13 @@
         $(document).ready(function() {
             $("#inputForm").validate({
                 submitHandler: function(form){
+                    var str="";
+                    $("select[name='aaa']").find("option").each(function(){
+
+                        str+=$(this).val()+",";
+					});
+                    str=str.substring(0,str.length-1);
+                    $("input[name='catePropertyInfos']").val(str);
                     loading('正在提交，请稍等...');
                     form.submit();
                 },
@@ -115,15 +122,15 @@
 				<label class="control-label">分类属性：</label>
 				<div class="controls">
 
-					<c:forEach items="${propertyInfoList}" var="propertyInfo">
+					<c:forEach items="${bizCategoryInfo.propertyInfoList}" var="propertyInfo">
 						<div  style="width: 100%;display: inline-block">
 							<%--<input  class="select_all" id="${propertyInfo.id}" type="checkbox" name="catePropertyInfos" value="${propertyInfo.id}"/> --%>
 							<span  style="float:left;width:60px;padding-top:3px">${propertyInfo.name}：</span>
 							<div style="float: left">
 								<select  title="search"  id="search_${propertyInfo.id}" class="input-xlarge" multiple="multiple" size="8">
-									<c:forEach items="${map[propertyInfo.id]}" var="propValue">
+									<c:forEach items="${bizCategoryInfo.map[propertyInfo.id]}" var="propValue">
 										<%--<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}--%>
-										<option value="${propValue.id}">${propValue.value}</option>
+										<option value="${propertyInfo.id}-${propValue.id}">${propValue.value}</option>
 									</c:forEach>
 
 
@@ -141,16 +148,17 @@
 							</div>
 
 							<div style="margin-left:10px;float: left">
-								<select name="propertyMap[${propertyInfo.id}].catePropertyValues" id="search_${propertyInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
-									<c:forEach items="${catePropValueMap[propertyInfo.id]}" var="propValue">
+
+								<select name="aaa"  id="search_${propertyInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
+									<c:forEach items="${bizCategoryInfo.catePropValueMap[propertyInfo.id]}" var="propValue">
 										<%--<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}--%>
-										<option value="${propValue.propertyValueId}">${propValue.value}</option>
+										<option value="${propertyInfo.id}-${propValue.propertyValueId}">${propValue.value}</option>
 									</c:forEach>
 								</select>
 							</div>
 						</div>
 					</c:forEach>
-
+					<input type="hidden" name="catePropertyInfos" value=""/>
 				</div>
 			</div>
 			<div class="control-group">
