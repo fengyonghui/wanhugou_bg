@@ -44,8 +44,9 @@
 				type:"POST",
 				dataType:'json',
 				success:function(data){
-					window.location.href = "${ctx}/sys/office/purchasersList?centers="+$("#bcID").val()+"&consultants="+$("#adviserId").val();
-				},
+					<%----%>
+                    window.location.href = "${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id="+$("#adviserId").val()+"&conn=connIndex&office.id="+$("#bcID").val();
+					},
 				error:function(er){
 					alert("关联失败");
 				}

@@ -120,6 +120,38 @@
 
 	</select>
 
+	<select id="findOfficeCustByIdToParent" resultType="Office">
+	SELECT
+		*
+	FROM
+		sys_office a
+	WHERE
+		FIND_IN_SET(
+		id,
+		(
+	SELECT
+		GROUP_CONCAT( parent_ids, '0' )
+	FROM
+		sys_office so
+	WHERE so.status = #{DEL_FLAG_NORMAL}
+		<if test="type != null and type != ''">
+			AND so.type = #{type}
+		</if>
+		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1)
+		)
+		) UNION ALL
+	SELECT
+		so.*
+	FROM
+		sys_office so
+	WHERE
+		so.status = #{DEL_FLAG_NORMAL}
+		<if test="type != null and type != ''">
+			AND so.type = #{type}
+		</if>
+		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1)
+
+</select>
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO sys_office(
 			id, 

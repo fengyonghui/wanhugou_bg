@@ -24,4 +24,5 @@ public interface OfficeDao extends TreeDao<Office> {
 
     List<Office> findOfficeByIdToParent(BizCustomCenterConsultant bizCustomCenterConsultant);
 
+    List<Office> findOfficeCustByIdToParent(Office office);
 }

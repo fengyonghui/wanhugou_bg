@@ -99,10 +99,10 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public List<Office> filerOffice(List<Office> offices,String source, OfficeTypeEnum officeType){
 		Office office = new Office();
 			User user = UserUtils.getUser();
-			if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && !OfficeTypeEnum.PURCHASINGCENTER.getType().equals(officeType.getType())){
+			if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) ){
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 				}
-            else if (source.equals("ghs") || source.equals("gys") || source.equals("cgs")){
+            else if (source!=null && !"".equals(source) && source.equals("ghs") || source.equals("gys") || source.equals("cgs")){
 
             }
 			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){
@@ -122,12 +122,16 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 				BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
 				if(flag){
 					customCenterConsultant.setCenters(user.getCompany());
-				}else if(flagb){
-					customCenterConsultant.setConsultants(user);
-				}
-				List<Office> officeList=officeDao.findOfficeByIdToParent(customCenterConsultant);
+				List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
 
-				return  officeList;
+				return officeList;
+				}else if(flagb){
+					office.setType(String.valueOf(officeType.ordinal()));
+
+					office.setDelFlag(DEL_FLAG_NORMAL);
+					List<Office> officeList =	officeDao.findOfficeCustByIdToParent(office);
+					return officeList;
+				}
 			}
 
 		office.setType(String.valueOf(officeType.ordinal()));
@@ -210,7 +214,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		if(user.isAdmin()){
 			return super.findPage(page, office);
 		}else {
-			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "s", "su"));
+			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 			return super.findPage(page, office);
 		}
 	}

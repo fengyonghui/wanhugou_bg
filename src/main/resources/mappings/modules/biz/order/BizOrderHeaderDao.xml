@@ -103,6 +103,11 @@
 			<if test="consultantId!=null">
 				and ccs.consultant_id = #{consultantId}
 			</if>
+
+			<if test="centerId!=null">
+				and ccs.center_id = #{centerId}
+			</if>
+
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
 			</if>
