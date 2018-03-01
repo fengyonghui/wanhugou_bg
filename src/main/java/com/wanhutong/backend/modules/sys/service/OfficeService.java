@@ -120,15 +120,22 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 					}
 				}
 				BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
-				if(flag || (StringUtils.isNotBlank(source) && source.equals("purchaser"))){
+				if(flag){
+					customCenterConsultant.setCenters(user.getCompany());
+
+					List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+
+				return officeList;
+				}else if(flagb && StringUtils.isNotBlank(source) && source.equals("purchaser")) {
 					customCenterConsultant.setCenters(user.getCompany());
 					if(StringUtils.isNotBlank(source) && source.equals("purchaser")){
 						customCenterConsultant.setConsultants(user);
 					}
-				List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
+					List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
 
-				return officeList;
-				}else if(flagb){
+					return officeList;
+				}
+				else if(flagb){
 					office.setType(String.valueOf(officeType.ordinal()));
 
 					office.setDelFlag(DEL_FLAG_NORMAL);
@@ -164,9 +171,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			if (!parentSet.contains(id) && !String.valueOf(officeType.ordinal()).equals(office1.getType()))
 				iterator.remove();   //注意这个地方
 		}
-
-
-
 
 		return offices;
 
@@ -217,7 +221,27 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		if(user.isAdmin()){
 			return super.findPage(page, office);
 		}else {
-			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
+			boolean flag=false;
+			boolean flagb=false;
+			if(user.getRoleList()!=null){
+				for(Role role:user.getRoleList()){
+					if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+						flag=true;
+						break;
+					}else if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
+						flagb=true;
+						break;
+					}
+				}
+			}
+			if(flagb){
+				office.setConsultantId(user.getId());
+			}else if(flag){
+				office.setCenterId(user.getCompany().getId());
+			}
+
+			office.setCcStatus(1);
+			//office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 			return super.findPage(page, office);
 		}
 	}

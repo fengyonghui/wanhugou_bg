@@ -441,22 +441,32 @@ public class SystemService extends BaseService implements InitializingBean {
         user.setPage(page);
 		List<User> contact;
 		User nowUser = UserUtils.getUser();
-        boolean flag=false;
-        if(nowUser.getRoleList()!=null){
-            for(Role role:nowUser.getRoleList()){
-                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname()) || RoleEnNameEnum.BUYER.getState().equals(role.getEnname()) ){
-                    flag=true;
-                    break;
-                }
-            }
-        }
+		boolean flag=false;
+		boolean flagb=false;
+		if(nowUser.getRoleList()!=null){
+			for(Role role:nowUser.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+					break;
+				}else if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
+					flagb=true;
+					break;
+				}
+			}
+		}
         if (nowUser.isAdmin()) {
             contact = userDao.contact(user);
         } else {
-            if (flag) {
-                user.getSqlMap().put("us", BaseService.dataScopeFilter(nowUser, "cent", ""));
-            }
-            contact = userDao.contact(user);
+            if (flagb) {
+//                user.getSqlMap().put("us", BaseService.dataScopeFilter(nowUser, "cent", ""));
+				user.setConsultantId(nowUser.getId());
+				user.setCcStatus(1);
+
+            }else if(flag){
+				user.setCenterId(nowUser.getCompany().getId());
+				user.setCcStatus(1);
+			}
+			contact = userDao.contact(user);
         }
          page.setList(contact);
 		 return page;

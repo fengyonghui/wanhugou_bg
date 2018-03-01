@@ -40,7 +40,10 @@ public class Office extends TreeEntity<Office> {
 	private String level; //钱包等级
 
 	private String source;
-	
+
+	private Integer consultantId;
+	private Integer centerId;
+	private Integer ccStatus;
 	public String getLevel() {
 		return level;
 	}
@@ -231,5 +234,29 @@ public class Office extends TreeEntity<Office> {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public Integer getConsultantId() {
+		return consultantId;
+	}
+
+	public void setConsultantId(Integer consultantId) {
+		this.consultantId = consultantId;
+	}
+
+	public Integer getCenterId() {
+		return centerId;
+	}
+
+	public void setCenterId(Integer centerId) {
+		this.centerId = centerId;
+	}
+
+	public Integer getCcStatus() {
+		return ccStatus;
+	}
+
+	public void setCcStatus(Integer ccStatus) {
+		this.ccStatus = ccStatus;
 	}
 }

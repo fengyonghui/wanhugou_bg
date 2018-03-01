@@ -312,6 +312,15 @@
 			<if test="dbName == 'mssql'">'%'+#{company.name}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{company.name}, '%')</if>
 		</if>
+		<if test="consultantId !=null ">
+			and ccc.consultant_id= #{consultantId}
+		</if>
+		<if test="centerId !=null ">
+			and ccc.center_id = #{centerId}
+		</if>
+		<if test="ccStatus !=null ">
+			and ccc.status= #{ccStatus}
+		</if>
 		<!--<if test="sqlMap != null and sqlMap.us != null and sqlMap.us != ''">-->
 			${sqlMap.us}
 		<!--</if>-->

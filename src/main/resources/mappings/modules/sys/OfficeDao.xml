@@ -39,6 +39,7 @@
 		LEFT JOIN sys_area ar ON ar.id = a.area_id
 		LEFT JOIN sys_user pp ON pp.id = a.primary_person
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
+		LEFT JOIN biz_custom_center_consultant ccc on a.id=ccc.cust_id
     </sql>
 	
 	<select id="get" resultType="Office">
@@ -262,6 +263,7 @@
 		<if test="parent != null and parent.id != null">
 			AND a.parent_id = #{parent.id}
 		</if>
+
 		<!--<if test="id != null">-->
 		<!-- 数据范围过滤 -->
 		<if test="sqlMap!=null and sqlMap.dsf!=null and sqlMap.dsf!=''">
@@ -297,6 +299,15 @@
 				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="consultantId !=null ">
+				and ccc.consultant_id= #{consultantId}
+			</if>
+			<if test="centerId !=null ">
+				and ccc.center_id = #{centerId}
+			</if>
+			<if test="ccStatus !=null ">
+				and ccc.status= #{ccStatus}
 			</if>
 		</where>
 			<!-- 数据范围过滤 -->

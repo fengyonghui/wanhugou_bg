@@ -55,6 +55,10 @@ public class User extends DataEntity<User> {
 	private User user;
 	private Office cent;
 
+	private Integer consultantId;
+	private Integer centerId;
+	private Integer ccStatus;
+
 	public String getConn() {
 		return conn;
 	}
@@ -344,4 +348,27 @@ public class User extends DataEntity<User> {
 		return id != null && (1==id || 16==id);
 	}
 
+	public Integer getConsultantId() {
+		return consultantId;
+	}
+
+	public void setConsultantId(Integer consultantId) {
+		this.consultantId = consultantId;
+	}
+
+	public Integer getCenterId() {
+		return centerId;
+	}
+
+	public void setCenterId(Integer centerId) {
+		this.centerId = centerId;
+	}
+
+	public Integer getCcStatus() {
+		return ccStatus;
+	}
+
+	public void setCcStatus(Integer ccStatus) {
+		this.ccStatus = ccStatus;
+	}
 }
