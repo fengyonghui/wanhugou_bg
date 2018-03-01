@@ -53,7 +53,6 @@
 								labelValue="" notAllowSelectParent="true"
 								title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
-				<input type="hidden" name="findOffice" value="query_member"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
