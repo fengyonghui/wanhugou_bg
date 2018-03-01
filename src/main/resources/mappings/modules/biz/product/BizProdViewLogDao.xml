@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.product.BizProdViewLogDao">
+    
+	<sql id="bizProdViewLogColumns">
+		a.id AS "id",
+		a.shelf_id AS "opShelfInfo.id",
+		bosi.name AS  "opShelfInfo.name",
+		a.center_id AS "center.id",
+		so.name as "center.name",
+		a.prod_id AS "productInfo.id",
+		bpi.name AS  "productInfo.name",
+		a.user_id AS "user.id",
+		a.create_time AS "createDate",
+		u5.name AS "user.name"
+	</sql>
+	
+	<sql id="bizProdViewLogJoins">
+		LEFT JOIN sys_user u5 ON u5.id = a.user_id
+		LEFT JOIN biz_product_info bpi on bpi.id = a.prod_id
+		LEFT JOIN sys_office so on so.id = a.center_id
+		LEFT JOIN biz_op_shelf_info bosi on bosi.id = a.shelf_id
+	</sql>
+    
+	<select id="get" resultType="BizProdViewLog">
+		SELECT 
+			<include refid="bizProdViewLogColumns"/>
+		FROM biz_prod_view_log a
+		<include refid="bizProdViewLogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizProdViewLog">
+		SELECT 
+			<include refid="bizProdViewLogColumns"/>
+		FROM biz_prod_view_log a
+		<include refid="bizProdViewLogJoins"/>
+
+		<where>
+			
+			<if test="opShelfInfo != null and opShelfInfo != '' and opShelfInfo.name != ''">
+				AND bosi.name  LIKE
+				<if test="dbName == 'oracle'">'%'||#{opShelfInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
+			</if>
+			<if test="center != null and center.name != null and center.name != ''">
+				AND so.name = #{center.name}
+			</if>
+			<if test="productInfo != null and productInfo != '' and productInfo.name != ''">
+				AND bpi.NAME LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+		</where>
+		ORDER BY a.create_time DESC
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	</select>
+	
+	<select id="findAllList" resultType="BizProdViewLog">
+		SELECT 
+			<include refid="bizProdViewLogColumns"/>
+		FROM biz_prod_view_log a
+		<include refid="bizProdViewLogJoins"/>
+
+		<where>
+
+		</where>
+		ORDER BY a.create_time DESC
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_prod_view_log(
+			id,
+			shelf_id,
+			center_id,
+			prod_id,
+			user_id,
+			create_time
+		) VALUES (
+			#{id},
+			#{opShelfInfo.id},
+			#{center.id},
+			#{productInfo.id},
+			#{user.id},
+			#{createTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_prod_view_log SET 	
+			shelf_id = #{opShelfInfo.id},
+			center_id = #{center.id},
+			prod_id = #{productInfo.id},
+			user_id = #{user.id},
+			create_time = #{createTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_prod_view_log
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
