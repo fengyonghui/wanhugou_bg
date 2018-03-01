@@ -21,8 +21,8 @@ public class BizPlatformInfo extends DataEntity<BizPlatformInfo> {
 	private static final long serialVersionUID = 1L;
 	private String name;		// 产品平台名称
 	private String description;		// 产品平台描述
-	private String uVersion;		// 产品版本
-
+	private Date onlineDate;		// 上线日期
+	private String lastVersion;		// 最后版本
 	
 	public BizPlatformInfo() {
 		super();
@@ -49,9 +49,21 @@ public class BizPlatformInfo extends DataEntity<BizPlatformInfo> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
 
-	
 
-	
+	public Date getOnlineDate() {
+		return onlineDate;
+	}
+
+	public void setOnlineDate(Date onlineDate) {
+		this.onlineDate = onlineDate;
+	}
+
+	public String getLastVersion() {
+		return lastVersion;
+	}
+
+	public void setLastVersion(String lastVersion) {
+		this.lastVersion = lastVersion;
+	}
 }

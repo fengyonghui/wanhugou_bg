@@ -47,35 +47,15 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">产品版本：</label>
+			<label class="control-label">上线日期：</label>
 			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="onlineDate" htmlEscape="false" maxlength="200" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">create_time：</label>
+			<label class="control-label">最后版本：</label>
 			<div class="controls">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizPlatformInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_id：</label>
-			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_time：</label>
-			<div class="controls">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizPlatformInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="lastVersion" htmlEscape="false" maxlength="200" class="input-xlarge "/>
 			</div>
 		</div>
 		<div class="form-actions">

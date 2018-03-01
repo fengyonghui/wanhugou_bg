@@ -25,14 +25,8 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>产品平台名称：</label>
+			<li><label>产品平台：</label>
 				<form:input path="name" htmlEscape="false" maxlength="30" class="input-medium"/>
-			</li>
-			<li><label>create_id：</label>
-				<form:input path="createId.id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>update_id：</label>
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -42,43 +36,28 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>产品平台名称</th>
+				<th>产品平台</th>
 				<th>产品平台描述</th>
-				<th>产品版本</th>
-				<th>create_id</th>
-				<th>create_time</th>
-				<th>status</th>
-				<th>update_id</th>
-				<th>update_time</th>
+				<th>上线日期</th>
+				<th>最后版本</th>
 				<shiro:hasPermission name="biz:paltform:bizPlatformInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizPlatformInfo">
 			<tr>
-				<td><a href="${ctx}/biz/paltform/bizPlatformInfo/form?id=${bizPlatformInfo.id}">
-					${bizPlatformInfo.name}
-				</a></td>
+				<td>
+					<a href="${ctx}/biz/paltform/bizPlatformInfo/form?id=${bizPlatformInfo.id}">
+					${bizPlatformInfo.name}</a>
+				</td>
 				<td>
 					${bizPlatformInfo.description}
 				</td>
 				<td>
-					${bizPlatformInfo.uVersion}
+					<fmt:formatDate value="${bizPlatformInfo.onlineDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-					${bizPlatformInfo.createId.id}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizPlatformInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
-					${fns:getDictLabel(bizPlatformInfo.status, 'status', '')}
-				</td>
-				<td>
-					${bizPlatformInfo.updateId.id}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizPlatformInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					${bizPlatformInfo.lastVersion}
 				</td>
 				<shiro:hasPermission name="biz:paltform:bizPlatformInfo:edit"><td>
     				<a href="${ctx}/biz/paltform/bizPlatformInfo/form?id=${bizPlatformInfo.id}">修改</a>

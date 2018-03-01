@@ -25,48 +25,14 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>id：</label>
-				<form:input path="id" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>产品页面：</label>
+				<form:select path="pageInfo.id" class="input-xlarge required" id="pageInfoId">
+					<form:option value="" label="请选择"/>
+					<form:options items="${pageInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 			</li>
-			<li><label>biz_page_info.id：</label>
-				<form:input path="pageId" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>1. banner 2，货架；++自定义：</label>
-				<form:input path="type" htmlEscape="false" maxlength="4" class="input-medium"/>
-			</li>
-			<li><label>栏目标题名称：</label>
+			<li><label>栏目标题：</label>
 				<form:input path="title" htmlEscape="false" maxlength="30" class="input-medium"/>
-			</li>
-			<li><label>biz_op_shelf_info.id;  default:-1 没有货架：</label>
-				<form:input path="shelfId" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>栏目排序：</label>
-				<form:input path="setOrder" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>栏目描述：</label>
-				<form:input path="description" htmlEscape="false" maxlength="200" class="input-medium"/>
-			</li>
-			<li><label>status：</label>
-				<form:radiobuttons path="status" items="${fns:getDictList('status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-			</li>
-			<li><label>create_id：</label>
-				<form:input path="createId.id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>create_time：</label>
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizCmsColumInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</li>
-			<li><label>1：</label>
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-medium"/>
-			</li>
-			<li><label>update_id：</label>
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>update_time：</label>
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizCmsColumInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -76,63 +42,32 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>id</th>
-				<th>biz_page_info.id</th>
-				<th>1. banner 2，货架；++自定义</th>
-				<th>栏目标题名称</th>
-				<th>biz_op_shelf_info.id;  default:-1 没有货架</th>
+				<th>产品页面</th>
+				<th>栏目标题</th>
+				<th>货架名称</th>
 				<th>栏目排序</th>
 				<th>栏目描述</th>
-				<th>status</th>
-				<th>create_id</th>
-				<th>create_time</th>
-				<th>1</th>
-				<th>update_id</th>
-				<th>update_time</th>
 				<shiro:hasPermission name="biz:cms:bizCmsColumInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizCmsColumInfo">
 			<tr>
-				<td><a href="${ctx}/biz/cms/bizCmsColumInfo/form?id=${bizCmsColumInfo.id}">
-					${bizCmsColumInfo.id}
-				</a></td>
 				<td>
-					${bizCmsColumInfo.pageId}
-				</td>
-				<td>
-					${bizCmsColumInfo.type}
+					<%--<a href="${ctx}/biz/cms/bizCmsPageInfo/form?id=${bizCmsColumInfo.id}"></a>--%>
+					${bizCmsColumInfo.pageInfo.name}
 				</td>
 				<td>
 					${bizCmsColumInfo.title}
 				</td>
 				<td>
-					${bizCmsColumInfo.shelfId}
+					${bizCmsColumInfo.shelfInfo.name}
 				</td>
 				<td>
 					${bizCmsColumInfo.setOrder}
 				</td>
 				<td>
 					${bizCmsColumInfo.description}
-				</td>
-				<td>
-					${fns:getDictLabel(bizCmsColumInfo.status, 'status', '')}
-				</td>
-				<td>
-					${bizCmsColumInfo.createId.id}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizCmsColumInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
-					${bizCmsColumInfo.uVersion}
-				</td>
-				<td>
-					${bizCmsColumInfo.updateId.id}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizCmsColumInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:cms:bizCmsColumInfo:edit"><td>
     				<a href="${ctx}/biz/cms/bizCmsColumInfo/form?id=${bizCmsColumInfo.id}">修改</a>

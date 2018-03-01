@@ -25,39 +25,14 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>id：</label>
-				<form:input path="id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>biz_platform_info.id：</label>
-				<form:input path="platId" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>产品名称：</label>
+				<form:select path="platInfo.id" class="input-xlarge required" id="platInfoId">
+					<form:option value="" label="请选择"/>
+					<form:options items="${platList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 			</li>
 			<li><label>页面名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="30" class="input-medium"/>
-			</li>
-			<li><label>页面描述：</label>
-				<form:input path="description" htmlEscape="false" maxlength="200" class="input-medium"/>
-			</li>
-			<li><label>1active ; 0 inactive：</label>
-				<form:radiobuttons path="status" items="${fns:getDictList('status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-			</li>
-			<li><label>create_id：</label>
-				<form:input path="createId.id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>create_time：</label>
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizCmsPageInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</li>
-			<li><label>u_version：</label>
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-medium"/>
-			</li>
-			<li><label>update_id：</label>
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>update_time：</label>
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizCmsPageInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -67,16 +42,9 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>id</th>
-				<th>biz_platform_info.id</th>
 				<th>页面名称</th>
+				<th>产品名称</th>
 				<th>页面描述</th>
-				<th>1active ; 0 inactive</th>
-				<th>create_id</th>
-				<th>create_time</th>
-				<th>u_version</th>
-				<th>update_id</th>
-				<th>update_time</th>
 				<shiro:hasPermission name="biz:cms:bizCmsPageInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -84,34 +52,13 @@
 		<c:forEach items="${page.list}" var="bizCmsPageInfo">
 			<tr>
 				<td><a href="${ctx}/biz/cms/bizCmsPageInfo/form?id=${bizCmsPageInfo.id}">
-					${bizCmsPageInfo.id}
-				</a></td>
-				<td>
-					${bizCmsPageInfo.platId}
+					${bizCmsPageInfo.name}</a>
 				</td>
 				<td>
-					${bizCmsPageInfo.name}
+					${bizCmsPageInfo.platInfo.name}
 				</td>
 				<td>
 					${bizCmsPageInfo.description}
-				</td>
-				<td>
-					${fns:getDictLabel(bizCmsPageInfo.status, 'status', '')}
-				</td>
-				<td>
-					${bizCmsPageInfo.createId.id}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizCmsPageInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
-					${bizCmsPageInfo.uVersion}
-				</td>
-				<td>
-					${bizCmsPageInfo.updateId.id}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizCmsPageInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:cms:bizCmsPageInfo:edit"><td>
     				<a href="${ctx}/biz/cms/bizCmsPageInfo/form?id=${bizCmsPageInfo.id}">修改</a>

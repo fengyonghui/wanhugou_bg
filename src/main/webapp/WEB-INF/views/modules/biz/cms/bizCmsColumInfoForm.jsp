@@ -34,16 +34,22 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">biz_page_info.id：</label>
+			<label class="control-label">产品页面名称：</label>
 			<div class="controls">
-				<form:input path="pageId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:select path="pageInfo.id" class="input-xlarge required" id="pageInfoId">
+					<form:option value="" label="请选择"/>
+					<form:options items="${pageInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">1. banner 2，货架；++自定义：</label>
+			<label class="control-label">栏目类型：</label>
 			<div class="controls">
-				<form:input path="type" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
+				<form:select path="type" class="input-xlarge ">
+					<form:option value="" label=""/>
+					<form:options items="${fns:getDictList('biz_cms_colum')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -55,10 +61,12 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">biz_op_shelf_info.id;  default:-1 没有货架：</label>
+			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<form:input path="shelfId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:select path="shelfInfo.id" class="input-xlarge" id="pageInfoId">
+					<form:option value="" label="请选择"/>
+					<form:options items="${shelfInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 			</div>
 		</div>
 		<div class="control-group">
@@ -72,38 +80,6 @@
 			<label class="control-label">栏目描述：</label>
 			<div class="controls">
 				<form:input path="description" htmlEscape="false" maxlength="200" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">create_time：</label>
-			<div class="controls">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizCmsColumInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">1：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_id：</label>
-			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_time：</label>
-			<div class="controls">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizCmsColumInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="form-actions">

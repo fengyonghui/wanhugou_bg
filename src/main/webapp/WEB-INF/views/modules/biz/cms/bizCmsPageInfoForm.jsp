@@ -34,9 +34,12 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">biz_platform_info.id：</label>
+			<label class="control-label">产品名称：</label>
 			<div class="controls">
-				<form:input path="platId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:select path="platInfo.id" class="input-xlarge required" id="propValueId">
+					<form:option value="" label="请选择"/>
+					<form:options items="${platList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -51,38 +54,6 @@
 			<label class="control-label">页面描述：</label>
 			<div class="controls">
 				<form:input path="description" htmlEscape="false" maxlength="200" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">create_time：</label>
-			<div class="controls">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizCmsPageInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">u_version：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_id：</label>
-			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_time：</label>
-			<div class="controls">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${bizCmsPageInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="form-actions">

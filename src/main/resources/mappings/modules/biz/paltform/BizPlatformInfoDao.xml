@@ -6,6 +6,8 @@
 		a.id AS "id",
 		a.name AS "name",
 		a.description AS "description",
+		a.online_date AS "onlineDate",
+		a.last_version AS "lastVersion",
 		a.u_version AS "uVersion",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -38,11 +40,11 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
-			<if test="createId != null and createId.id != null and createId.id != ''">
-				AND a.create_id = #{createId.id}
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
 			</if>
-			<if test="updateId != null and updateId.id != null and updateId.id != ''">
-				AND a.update_id = #{updateId.id}
+			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
+				AND a.update_id = #{updateBy.id}
 			</if>
 		</where>
 		<choose>
@@ -76,6 +78,8 @@
 			id,
 			name,
 			description,
+			online_date,
+			last_version,
 			u_version,
 			create_id,
 			create_time,
@@ -86,12 +90,14 @@
 			#{id},
 			#{name},
 			#{description},
+			#{onlineDate},
+			#{lastVersion},
 			#{uVersion},
-			#{createId.id},
-			#{createTime},
-			#{status},
-			#{updateId.id},
-			#{updateTime}
+			#{createBy.id},
+			#{createDate},
+			#{delFlag},
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
@@ -99,10 +105,12 @@
 		UPDATE biz_cms_platform_info SET 	
 			name = #{name},
 			description = #{description},
+			online_date = #{onlineDate},
+			last_version = #{lastVersion},
 			u_version = #{uVersion},
-			create_time = #{createTime},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			create_time = #{createDate},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	

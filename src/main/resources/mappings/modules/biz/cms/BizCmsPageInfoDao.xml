@@ -5,6 +5,7 @@
 	<sql id="bizCmsPageInfoColumns">
 		a.id AS "id",
 		a.plat_id AS "platInfo.id",
+		cpi.name AS "platInfo.name",
 		a.name AS "name",
 		a.description AS "description",
 		a.status AS "delFlag",
@@ -18,6 +19,7 @@
 	
 	<sql id="bizCmsPageInfoJoins">
 		LEFT JOIN sys_user suc on suc.id = a.create_id
+		LEFT JOIN biz_cms_platform_info cpi ON cpi.id = a.plat_id
 	</sql>
     
 	<select id="get" resultType="BizCmsPageInfo">

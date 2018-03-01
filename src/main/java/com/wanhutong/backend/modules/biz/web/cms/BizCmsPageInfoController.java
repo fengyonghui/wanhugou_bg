@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.cms;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
+import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.cms.BizCmsPageInfo;
 import com.wanhutong.backend.modules.biz.service.cms.BizCmsPageInfoService;
 
+import java.util.List;
+
 /**
  * 定义产品页面Controller
  * @author OuyangXiutian
@@ -33,6 +37,8 @@ public class BizCmsPageInfoController extends BaseController {
 
 	@Autowired
 	private BizCmsPageInfoService bizCmsPageInfoService;
+	@Autowired
+	private BizPlatformInfoService bizPlatformInfoService;
 	
 	@ModelAttribute
 	public BizCmsPageInfo get(@RequestParam(required=false) Integer id) {
@@ -49,15 +55,20 @@ public class BizCmsPageInfoController extends BaseController {
 	@RequiresPermissions("biz:cms:bizCmsPageInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizCmsPageInfo bizCmsPageInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizCmsPageInfo> page = bizCmsPageInfoService.findPage(new Page<BizCmsPageInfo>(request, response), bizCmsPageInfo); 
+		Page<BizCmsPageInfo> page = bizCmsPageInfoService.findPage(new Page<BizCmsPageInfo>(request, response), bizCmsPageInfo);
 		model.addAttribute("page", page);
+        List<BizPlatformInfo> platList = bizPlatformInfoService.findList(new BizPlatformInfo());
+        model.addAttribute("platList",platList);
 		return "modules/biz/cms/bizCmsPageInfoList";
 	}
 
 	@RequiresPermissions("biz:cms:bizCmsPageInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizCmsPageInfo bizCmsPageInfo, Model model) {
-		model.addAttribute("bizCmsPageInfo", bizCmsPageInfo);
+        List<BizPlatformInfo> platList = bizPlatformInfoService.findList(new BizPlatformInfo());
+        model.addAttribute("bizCmsPageInfo", bizCmsPageInfo);
+        model.addAttribute("platList",platList);
+
 		return "modules/biz/cms/bizCmsPageInfoForm";
 	}
 

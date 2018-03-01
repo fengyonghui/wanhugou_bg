@@ -5,9 +5,11 @@
 	<sql id="bizCmsColumInfoColumns">
 		a.id AS "id",
 		a.page_id AS "pageInfo.id",
+		cpi.name AS "pageInfo.name",
 		a.type AS "type",
 		a.title AS "title",
 		a.shelf_id AS "shelfInfo.id",
+		osi.name AS "shelfInfo.name",
 		a.set_order AS "setOrder",
 		a.description AS "description",
 		a.status AS "delFlag",
@@ -21,6 +23,8 @@
 	
 	<sql id="bizCmsColumInfoJoins">
 		LEFT JOIN sys_user suc on suc.id = a.create_id
+		LEFT JOIN biz_cms_page_info cpi ON cpi.id = a.page_id
+		LEFT JOIN biz_op_shelf_info osi ON osi.id = a.shelf_id
 	</sql>
     
 	<select id="get" resultType="BizCmsColumInfo">

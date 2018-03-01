@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.web.cms;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.cms.BizCmsPageInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
+import com.wanhutong.backend.modules.biz.service.cms.BizCmsPageInfoService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +40,10 @@ public class BizCmsColumInfoController extends BaseController {
 
 	@Autowired
 	private BizCmsColumInfoService bizCmsColumInfoService;
+	@Autowired
+	private BizCmsPageInfoService bizCmsPageInfoService;
+	@Autowired
+    private BizOpShelfInfoService bizOpShelfInfoService;
 	
 	@ModelAttribute
 	public BizCmsColumInfo get(@RequestParam(required=false) Integer id) {
@@ -54,14 +62,20 @@ public class BizCmsColumInfoController extends BaseController {
 	public String list(BizCmsColumInfo bizCmsColumInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizCmsColumInfo> page = bizCmsColumInfoService.findPage(new Page<BizCmsColumInfo>(request, response), bizCmsColumInfo); 
 		model.addAttribute("page", page);
-		return "modules/biz/cms/bizCmsColumInfoList";
+        List<BizCmsPageInfo> pageInfoList = bizCmsPageInfoService.findList(new BizCmsPageInfo());
+        model.addAttribute("pageInfoList",pageInfoList);
+        return "modules/biz/cms/bizCmsColumInfoList";
 	}
 
 	@RequiresPermissions("biz:cms:bizCmsColumInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizCmsColumInfo bizCmsColumInfo, Model model) {
 		model.addAttribute("bizCmsColumInfo", bizCmsColumInfo);
-		return "modules/biz/cms/bizCmsColumInfoForm";
+        List<BizCmsPageInfo> pageInfoList = bizCmsPageInfoService.findList(new BizCmsPageInfo());
+        model.addAttribute("pageInfoList",pageInfoList);
+        List<BizOpShelfInfo> shelfInfoList = bizOpShelfInfoService.findList(new BizOpShelfInfo());
+        model.addAttribute("shelfInfoList",shelfInfoList);
+        return "modules/biz/cms/bizCmsColumInfoForm";
 	}
 
 	@RequiresPermissions("biz:cms:bizCmsColumInfo:edit")
