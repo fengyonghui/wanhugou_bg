@@ -41,6 +41,7 @@
 			<tr>
 				<th>货架名称</th>
 				<%--<th>货架描述</th>--%>
+				<th>栏目类型</th>
 				<th>创建时间</th>
 				<th>更新人</th>
 				<th>更新时间</th>
@@ -61,6 +62,9 @@
 				<%--<td>
 					${description}
 				</td>--%>
+				<td>
+					${fns:getDictLabel(bizOpShelfInfo.type, 'biz_cms_colum', '未知状态')}
+				</td>
 				<td>
 					<fmt:formatDate value="${bizOpShelfInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

@@ -60,7 +60,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		ORDER BY updateDate DESC
+		ORDER BY a.id asc
 	</select>
 	
 	<select id="findAllList" resultType="BizOpShelfInfo">
