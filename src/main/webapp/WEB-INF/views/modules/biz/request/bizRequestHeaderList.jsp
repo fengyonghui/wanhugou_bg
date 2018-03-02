@@ -45,7 +45,7 @@
 			</li>
 			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-								labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								labelValue="${entity.fromOffice.name}"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 			</li>

@@ -44,6 +44,12 @@
 		<include refid="bizPoHeaderJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
 			<if test="vendOffice != null and vendOffice.id !=null and vendOffice.id != ''">
 				AND a.vend_id = #{vendOffice.id}
 			</if>

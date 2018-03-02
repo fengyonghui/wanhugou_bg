@@ -25,6 +25,9 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<li><label>订单编号</label>
+				<form:input path="orderNum" htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
 			<li><label>供应商</label>
 				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${entity.vendOffice.id}" labelName="vendOffice.name"
 								labelValue="${entity.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"

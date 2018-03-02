@@ -328,7 +328,7 @@
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
 				<c:forEach items="${fns:getUser().roleList}" var="role">
-					<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state}">
+					<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state || role.enname==RoleEnNameEnum.P_CENTER_MANAGER.state}">
 						<c:set var="flag" value="true"/>
 					</c:if>
 				</c:forEach>
