@@ -19,7 +19,10 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfInfo/">货架信息列表</a></li>
-		<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfInfo/form">货架信息添加</a></li></shiro:hasPermission>
+		<c:if test="${fns:getUser().isAdmin()}">
+			<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit">
+					<li><a href="${ctx}/biz/shelf/bizOpShelfInfo/form">货架信息添加</a></li></shiro:hasPermission>
+		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOpShelfInfo" action="${ctx}/biz/shelf/bizOpShelfInfo/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
