@@ -14,5 +14,5 @@ import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
  */
 @MyBatisDao
 public interface BizVendInfoDao extends CrudDao<BizVendInfo> {
-	
+	int recover(BizVendInfo bizVendInfo);
 }

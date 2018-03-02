@@ -68,7 +68,7 @@ public class BizVendInfoController extends BaseController {
 			return form(bizVendInfo, model);
 		}
 		bizVendInfoService.save(bizVendInfo);
-		addMessage(redirectAttributes, "保存供应商拓展表成功");
+		addMessage(redirectAttributes, "保存供应商拓展成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/vend/bizVendInfo/?repage";
 	}
 	
@@ -76,7 +76,14 @@ public class BizVendInfoController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(BizVendInfo bizVendInfo, RedirectAttributes redirectAttributes) {
 		bizVendInfoService.delete(bizVendInfo);
-		addMessage(redirectAttributes, "删除供应商拓展表成功");
+		addMessage(redirectAttributes, "删除供应商拓展成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/vend/bizVendInfo/?repage";
+	}
+	@RequiresPermissions("biz:vend:bizVendInfo:edit")
+	@RequestMapping(value = "recover")
+	public String recover(BizVendInfo bizVendInfo, RedirectAttributes redirectAttributes) {
+		bizVendInfoService.recover(bizVendInfo);
+		addMessage(redirectAttributes, "恢复供应商拓展成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/vend/bizVendInfo/?repage";
 	}
 

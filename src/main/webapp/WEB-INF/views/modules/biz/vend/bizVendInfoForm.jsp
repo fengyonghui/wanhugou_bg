@@ -34,45 +34,38 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">sys_office.id,type=vend：</label>
+			<label class="control-label">机构：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizVendInfo.office.id}" labelName="office.name" labelValue="${bizVendInfo.office.name}"
-					title="部门" url="/sys/office/treeData?type=2" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
+					title="部门" url="/sys/office/queryTreeList?type=7" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">vend_name：</label>
+			<label class="control-label">供应商名称：</label>
 			<div class="controls">
 				<form:input path="vendName" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">cate_id：</label>
+			<label class="control-label">分类：</label>
 			<div class="controls">
-				<form:input path="cateId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<sys:treeselect id="bizCategoryInfo" name="bizCategoryInfo.id" value="${bizCategoryInfo.id}" labelName="bizCategoryInfo.name" labelValue="${bizCategoryInfo.name}"
+								title="分类" url="/biz/category/bizCategoryInfo/treeData" extId="${bizCategoryInfo.id}" cssClass="" allowClear="${bizCategoryInfo.currentUser.admin}"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">cate_name：</label>
+			<label class="control-label">分类名称：</label>
 			<div class="controls">
 				<form:input path="cateName" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">code：</label>
+			<label class="control-label">供应商代码：</label>
 			<div class="controls">
 				<form:input path="code" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">版本管理：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="3" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

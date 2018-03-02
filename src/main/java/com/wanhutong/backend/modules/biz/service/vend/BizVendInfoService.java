@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.vend;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import com.wanhutong.backend.modules.biz.dao.vend.BizVendInfoDao;
 @Service
 @Transactional(readOnly = true)
 public class BizVendInfoService extends CrudService<BizVendInfoDao, BizVendInfo> {
+
+	@Autowired
+	private BizVendInfoDao bizVendInfoDao;
 
 	public BizVendInfo get(Integer id) {
 		return super.get(id);
@@ -42,6 +46,11 @@ public class BizVendInfoService extends CrudService<BizVendInfoDao, BizVendInfo>
 	@Transactional(readOnly = false)
 	public void delete(BizVendInfo bizVendInfo) {
 		super.delete(bizVendInfo);
+	}
+
+	@Transactional(readOnly = false)
+	public void recover(BizVendInfo bizVendInfo) {
+		bizVendInfoDao.recover(bizVendInfo);
 	}
 	
 }

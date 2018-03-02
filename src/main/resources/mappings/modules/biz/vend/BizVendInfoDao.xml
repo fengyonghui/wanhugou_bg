@@ -8,7 +8,7 @@
 		a.cate_id AS "bizCategoryInfo.id",
 		a.cate_name AS "cateName",
 		a.code AS "code",
-		a.status AS "status",
+		a.status AS "delFlag",
 		a.u_version AS "uVersion",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -35,12 +35,20 @@
 		FROM biz_vend_info a
 		<include refid="bizVendInfoJoins"/>
 		<where>
-			a.status = #{DEL_FLAG_NORMAL}
 			<if test="vendName != null and vendName != ''">
-				AND a.vend_name = #{vendName}
+				 a.vend_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{vendName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{vendName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{vendName},'%')</if>
 			</if>
 			<if test="cateName != null and cateName != ''">
 				AND a.cate_name = #{cateName}
+			</if>
+			<if test="code != null and code != ''">
+				AND a.code LIKE
+				<if test="dbName == 'oracle'">'%'||#{code}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{code}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{code},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -88,7 +96,7 @@
 			#{bizCategoryInfo.id},
 			#{cateName},
 			#{code},
-			#{status},
+			#{delFlag},
 			#{uVersion},
 			#{createBy.id},
 			#{createDate},
@@ -109,11 +117,17 @@
 			update_time = #{updateDate}
 		WHERE office_id = #{office.id}
 	</update>
+
+	<update id="recover">
+		UPDATE biz_vend_info SET
+		status = #{DEL_FLAG_NORMAL}
+		WHERE  office_id = #{office.id}
+	</update>
 	
 	<update id="delete">
 		UPDATE biz_vend_info SET 
 			status = #{DEL_FLAG_DELETE}
-		WHERE id = #{id}
+		WHERE office_id = #{office.id}
 	</update>
 	
 </mapper>
