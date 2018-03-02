@@ -89,7 +89,7 @@
 		select *
 		from sys_office a
 		where FIND_IN_SET(id,
-		(select GROUP_CONCAT(parent_ids,'0')
+		(select GROUP_CONCAT(distinct parent_ids,'0')
 		from biz_custom_center_consultant ccc, sys_office so
 		where ccc.cust_id = so.id and ccc.status=1
 		<if test="customs != null and customs.id != null and customs.id != ''">
@@ -118,7 +118,7 @@
 		<if test="parentIds!=null and parentIds !=''">
 			AND so.parent_ids LIKE #{parentIds}
 		</if>
-
+		order by parent_ids
 	</select>
 
 	<select id="findOfficeCustByIdToParent" resultType="Office">
