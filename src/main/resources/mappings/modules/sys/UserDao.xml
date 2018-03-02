@@ -451,7 +451,7 @@
         LEFT JOIN sys_office so on so.id=a.company_id
         WHERE
         a.status = 1
-        and a.company_id = a.office_id
+		<!--and a.company_id = a.office_id-->
         AND so.type = #{type}
     </select>
 
