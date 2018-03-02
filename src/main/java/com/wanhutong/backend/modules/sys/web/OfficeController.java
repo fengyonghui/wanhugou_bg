@@ -81,22 +81,20 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "purchasersList")
 	public String purchasersList(Office office, String conn,Integer centers,Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
-//		if(office.getId() == null || office.getParentIds() == null){
-////			String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId","");
-////			Office off = officeService.get(Integer.valueOf(purchasersId));
-////			office.setParentIds("%,"+purchasersId+",");
-//			office.setType(OfficeTypeEnum.CUSTOMER.getType());
-////			List<Office> findList = officeService.findList(office);
-////			findList.add(off);
-////			page.getList().add(off);
-////			model.addAttribute("list", findList);
-//		}else{
-//        if(office.getFindOffice() !=null && office.getFindOffice().equals("query_member")){
-            office.setType("6");//属于查询采购商
+		if(office.getId() == null || office.getParentIds() == null){
+			String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId","");
+//			Office off = officeService.get(Integer.valueOf(purchasersId));
+			office.setParentIds("%,"+purchasersId+",");
+			office.setType(OfficeTypeEnum.CUSTOMER.getType());
+			Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
+//			findList.add(off);
+//			page.getList().add(off);
+			model.addAttribute("page", page);
+		}else{
 			Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
 //			model.addAttribute("list", officeService.findList(office));
 			model.addAttribute("page", page);
-//		}
+		}
 //		if(conn.equals("connIndex")){
 //			//TODO 客户专员管理页面跳转没解决：添加客户专员跳转，关联采购商跳转，修改跳转
 ////			跳回客户专员管理
