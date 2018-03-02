@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.vend.BizVendMarkDao">
+    
+	<sql id="bizVendMarkColumns">
+		a.id AS "id",
+		a.user_id AS "user.id",
+		a.vendor_id AS "vendor.id",
+		s.name AS "vendor.name",
+		a.vendor_name AS "vendorName",
+		a.status AS "delFlag",
+		a.u_version AS "uVersion",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		u2.name AS "user.name",
+		u3.name AS "createBy.name",
+		u4.name AS "updateBy.name"
+	</sql>
+	
+	<sql id="bizVendMarkJoins">
+		LEFT JOIN sys_user u2 ON u2.id = a.user_id
+		LEFT JOIN sys_office s ON s.id = a.vendor_id
+		LEFT JOIN sys_user u3 ON u3.id = a.create_id
+		LEFT JOIN sys_user u4 ON u4.id = a.update_id
+	</sql>
+    
+	<select id="get" resultType="BizVendMark">
+		SELECT 
+			<include refid="bizVendMarkColumns"/>
+		FROM biz_vendor_mark a
+		<include refid="bizVendMarkJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizVendMark">
+		SELECT 
+			<include refid="bizVendMarkColumns"/>
+		FROM biz_vendor_mark a
+		<include refid="bizVendMarkJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id = #{user.id}
+			</if>
+			<if test="vendor != null and vendor != '' and vendor.name != null">
+				AND s.name LIKE
+					<if test="dbName == 'oracle'">'%'||#{vendor.name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{vendor.name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{vendor.name},'%')</if>
+			</if>
+		</where>
+		ORDER BY a.update_time
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		DESC
+	</select>
+	
+	<select id="findAllList" resultType="BizVendMark">
+		SELECT 
+			<include refid="bizVendMarkColumns"/>
+		FROM biz_vendor_mark a
+		<include refid="bizVendMarkJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			ORDER by a.update_time
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				, ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		DESC
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_vendor_mark(
+			id,
+			user_id,
+			vendor_id,
+			vendor_name,
+			status,
+			u_version,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{user.id},
+			#{vendor.id},
+			#{vendor.name},
+			#{delFlag},
+			#{uVersion},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_vendor_mark SET 	
+			user_id = #{user.id},
+			vendor_id = #{vendor.id},
+			vendor_name = #{vendorName},
+			u_version = #{uVersion},
+			create_time = #{createDate},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_vendor_mark SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
