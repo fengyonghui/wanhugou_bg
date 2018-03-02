@@ -40,6 +40,7 @@ public class Office extends TreeEntity<Office> {
 	private String level; //钱包等级
 
 	private String source;
+	private String gysFlag;	//用于供应商保存跳转标识
 
 	private Integer consultantId;
 	private Integer centerId;
@@ -258,5 +259,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setCcStatus(Integer ccStatus) {
 		this.ccStatus = ccStatus;
+	}
+
+	public String getGysFlag() {
+		return gysFlag;
+	}
+
+	public void setGysFlag(String gysFlag) {
+		this.gysFlag = gysFlag;
 	}
 }

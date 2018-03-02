@@ -31,7 +31,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/sys/office/supplierList">机构列表</a></li>
-		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/supplierForm?parent.id=${office.id}">机构添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/supplierForm?parent.id=${office.id}&gysFlag=gys_save">机构添加</a></li></shiro:hasPermission>
 	</ul>
 	<sys:message content="${message}"/>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
@@ -40,15 +40,15 @@
 	</table>
 	<script type="text/template" id="treeTableTpl">
 		<tr id="{{row.id}}" pId="{{pid}}">
-			<td><a href="${ctx}/sys/office/supplierForm?id={{row.id}}">{{row.name}}</a></td>
+			<td><a href="${ctx}/sys/office/supplierForm?id={{row.id}}&gysFlag=gys_save">{{row.name}}</a></td>
 			<td>{{row.area.name}}</td>
 			<td>{{row.code}}</td>
 			<td>{{dict.type}}</td>
 			<td>{{row.remarks}}</td>
 			<shiro:hasPermission name="sys:office:edit"><td>
-				<a href="${ctx}/sys/office/supplierForm?id={{row.id}}">修改</a>
+				<a href="${ctx}/sys/office/supplierForm?id={{row.id}}&gysFlag=gys_save">修改</a>
 				<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
-				<a href="${ctx}/sys/office/supplierForm?parent.id={{row.id}}">添加下级机构</a> 
+				<a href="${ctx}/sys/office/supplierForm?parent.id={{row.id}}&gysFlag=gys_save">添加下级机构</a>
 			</td></shiro:hasPermission>
 		</tr>
 	</script>
