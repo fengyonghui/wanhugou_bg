@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.sys.service;
 
 import java.util.*;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
@@ -307,16 +308,25 @@ public class SystemService extends BaseService implements InitializingBean {
 		}
 		// 更新角色与部门关联
 
-		if (role.getOfficeList().size() > 0){
-			roleDao.deleteRoleOffice(role);
-			roleDao.insertRoleOffice(role);
-		}
-
-
 		if (role.getOfficeRoleList().size() > 0){
 			roleDao.deleteRoleOffice(role);
 			roleDao.insertRoleOfficeCore(role);
 		}
+
+		if (role.getOfficeList().size() > 0){
+			roleDao.deleteRoleOffice(role);
+			List<Office> list= role.getOfficeList();
+			if(role.getOfficeRoleList()!=null&&role.getOfficeRoleList().size()>0){
+				for(Office office:role.getOfficeRoleList()){
+					list.add(office);
+				}
+				role.setOfficeList(list);
+			}
+			roleDao.insertRoleOffice(role);
+		}
+
+
+
 		// 同步到Activiti
 //		saveActivitiGroup(role);
 		// 清除用户角色缓存

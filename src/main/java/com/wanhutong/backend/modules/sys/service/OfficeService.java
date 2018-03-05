@@ -120,7 +120,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 					}
 				}
 				BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
-				if(flag){
+				if(flag && StringUtils.isBlank(source)){
 					customCenterConsultant.setCenters(user.getCompany());
 
 					List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
@@ -135,7 +135,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 					return officeList;
 				}
-				else if(flagb){
+				else if(flagb || (flag&& StringUtils.isNotBlank(source) && source.equals("con"))){
 					office.setType(String.valueOf(officeType.ordinal()));
 
 					office.setDelFlag(DEL_FLAG_NORMAL);

@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,6 +56,8 @@ public class BizRequestOrderController extends BaseController {
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private OfficeService officeService;
 
 
 	@RequiresPermissions("biz:request:selecting:supplier:view")
@@ -72,11 +75,16 @@ public class BizRequestOrderController extends BaseController {
 			Set<Integer> set=new HashSet();
 			List<BizOrderHeader> list=Lists.newArrayList();
 			 for(BizOrderHeader bizOrderHeader1:orderHeaderList){
+				 boolean flag=false;
 				BizOrderDetail bizOrderDetail = new BizOrderDetail();
 				bizOrderDetail.setOrderHeader(bizOrderHeader1);
+			//	bizOrderDetail.setSuplyis(officeService.get(0));
 				 StringBuffer sb=new StringBuffer();
 				List<BizOrderDetail> orderDetails = bizOrderDetailService.findList(bizOrderDetail);
 				for (BizOrderDetail bizOrderDetail1:orderDetails){
+					if(bizOrderDetail1.getSuplyis().getId()==0){
+						flag=true;
+					}
 					BizSkuInfo bizSkuInfo=bizSkuInfoService.get(bizOrderDetail1.getSkuInfo().getId());
 					set.add(bizSkuInfo.getProductInfo().getOffice().getId());
 					sb.append(bizOrderDetail1.getId());
@@ -92,7 +100,10 @@ public class BizRequestOrderController extends BaseController {
 					bizOrderHeader1.setOrderDetails(sb.substring(0,sb.lastIndexOf(",")));
 					bizOrderHeader1.setOwnGenPoOrder(true);
 				}
-				 list.add(bizOrderHeader1);
+				if(flag){
+					list.add(bizOrderHeader1);
+				}
+
 
 			}
 			 model.addAttribute("orderHeaderList",list);

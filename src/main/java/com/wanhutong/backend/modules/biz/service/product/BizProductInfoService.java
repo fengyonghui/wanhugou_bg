@@ -362,39 +362,6 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         /**
          * 选择分类属性（属性和值）
          */
-//        if (bizProductInfo.getPropertyMap() != null) {
-//            for (Map.Entry<String, BizProdPropertyInfo> entry : bizProductInfo.getPropertyMap().entrySet()) {
-//                Integer propId = Integer.parseInt(entry.getKey());
-//                BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
-//                PropertyInfo propertyInfo = propertyInfoService.get(propId);
-//                bizProdPropertyInfo.setPropName(propertyInfo.getName());
-//                bizProdPropertyInfo.setPropDescription(propertyInfo.getDescription());
-//                bizProdPropertyInfo.setProductInfo(bizProductInfo);
-//
-//                bizProdPropertyInfoService.save(bizProdPropertyInfo);
-//
-//                String catePropertyValueStr = bizProdPropertyInfo.getProdPropertyValues();
-//                if (catePropertyValueStr != null && !"".equals(catePropertyValueStr)) {
-//                    String[] catePropertyValues = catePropertyValueStr.split(",");
-//                    for (int j = 0; j < catePropertyValues.length; j++) {
-//                        prodPropValue.setId(null);
-//                        Integer propValueId = Integer.parseInt(catePropertyValues[j].trim());
-//                        PropValue propValue = propValueService.get(propValueId);
-//                        prodPropValue.setPropertyInfo(propertyInfo);
-//                        prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
-//                        prodPropValue.setSource("sys");
-//                        prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
-//                        prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
-//                        prodPropValue.setPropValue(propValue.getValue());
-//                        prodPropValue.setCode(propValue.getCode());
-//                        prodPropValue.setSysPropValue(propValue);
-//                        bizProdPropValueService.save(prodPropValue);
-//                    }
-//                }
-//
-//            }
-//        }
-
         if (bizProductInfo.getProdPropertyInfos() != null) {
             String[] propInfoValue=bizProductInfo.getProdPropertyInfos().split(",");
             BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();

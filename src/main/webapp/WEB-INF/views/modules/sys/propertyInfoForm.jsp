@@ -36,7 +36,7 @@
 				}
 					
 		    	i++;
-			$("#propValues").append("<input type='text' id='propValueList"+i+"' name=\"propValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
+			$("#propValues").append("<input type='text' value='' id='propValueList"+i+"' name=\"propValueList["+i+"].value\"  maxlength=\"512\" class=\"input-small\"/>")
            
 			return true;
 			});
@@ -71,16 +71,21 @@
 			<label class="control-label">属性值：</label>
 			<div class="controls">
 				<span id="propValues">
+					<c:choose>
+						<c:when test="${propertyInfo.propValueList==null}">
+							<input type="text" id="propValueList0" name="propValueList[0].value"  maxlength="512" class="input-small"/>
+						</c:when>
+						<c:otherwise>
+							<c:forEach items="${propertyInfo.propValueList}" var = "propValue"  varStatus="status">
+								<input  type="text" name="propValueList[${status.index}].value" value="${propValue.value}" id="propValueList${status.index}" htmlEscape="false" maxlength="512" class="input-small" />
+								<c:if test="${status.last}">
+									<c:set var="j" value="${status.index}"></c:set>
+								</c:if>
+							</c:forEach>
+						</c:otherwise>
+					</c:choose>
 
-					<c:if test="${propertyInfo.propValueList==null}">
-						<input type="text" id="propValueList0" name="propValueList[0].value" h maxlength="512" class="input-small"/>
-					</c:if>
-				<c:forEach items="${propertyInfo.propValueList}" var = "propValue"  varStatus="status">
-					<input  type="text" name="propValueList[${status.index}].value" value="${propValue.value}" id="propValueList0" htmlEscape="false" maxlength="512" class="input-small" />
-					<c:if test="${status.last}">
-						<c:set var="j" value="${status.index}"></c:set>
-					</c:if>
-				</c:forEach>
+
 				</span>
 				<button id="addPropValue" type="button" title="${j}"  class="btn btn-default" >
 					<span class="icon-plus"></span>

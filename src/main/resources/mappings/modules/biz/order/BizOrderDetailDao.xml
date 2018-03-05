@@ -74,7 +74,7 @@
 			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
 				AND a.sku_id = #{skuInfo.id}
 			</if>
-			<if test="suplyis != null and suplyis.id != null and suplyis.id != ''">
+			<if test="suplyis != null and suplyis.id != null">
 				AND a.suply_id = #{suplyis.id}
 			</if>
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
