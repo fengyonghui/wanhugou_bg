@@ -171,13 +171,10 @@
 
 						<c:choose>
 							<c:when test="${propValue.sysPropValue.id==0}">
-								<c:if test="${propertyInfo.value.size()==1 && id==''}">
-									<input checked="checked" onclick="return false;"  class="value_${info[0]}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.id}-${propValue.source}"/> ${propValue.propValue}
 
-								</c:if>
 
 								<c:if test="${propertyInfo.value.size()==1}">
-									<input  onclick="return false;"  class="value_${info[0]}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.id}-${propValue.source}"/> ${propValue.propValue}
+									<input checked="checked"  onclick="return false;"  class="value_${info[0]}" id="value_${propValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.id}-${propValue.source}"/> ${propValue.propValue}
 
 								</c:if>
 
@@ -187,13 +184,10 @@
 								</c:if>
 							</c:when>
 						<c:otherwise>
-							<c:if test="${propertyInfo.value.size()==1 && id ==''}">
-								<input  checked="checked" onclick="return false;" class="value_${info[0]}" id="value_${propValue.sysPropValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.sysPropValue.id}-sys"/> ${propValue.propValue}
 
-							</c:if>
 
 							<c:if test="${propertyInfo.value.size()==1}">
-								<input  onclick="return false;" class="value_${info[0]}" id="value_${propValue.sysPropValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.sysPropValue.id}-sys"/> ${propValue.propValue}
+								<input  checked="checked" onclick="return false;" class="value_${info[0]}" id="value_${propValue.sysPropValue.id}" type="checkbox" name="prodPropMap[${info[0]}].prodPropertyValues" value="${propValue.sysPropValue.id}-sys"/> ${propValue.propValue}
 
 							</c:if>
 
