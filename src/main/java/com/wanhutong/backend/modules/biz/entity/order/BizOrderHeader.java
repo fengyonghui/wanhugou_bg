@@ -43,7 +43,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private String oneOrder;		// 首次下单 firstOrder ，非首次下单 endOrder
 	private Double DiscountPrice;		//优惠价格页面显示
 	private Double tobePaid;		//待支付金额
-
+	private Double totalBuyPrice;		//订单总出厂价
 	private String flag;       //标志位
 	private String orderNoEditable;		//页面不可编辑标识符
 	private String orderDetails;		//页面不可编辑标识符2
@@ -309,5 +309,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setCenterId(Integer centerId) {
 		this.centerId = centerId;
+	}
+
+	public Double getTotalBuyPrice() {
+		return totalBuyPrice;
+	}
+
+	public void setTotalBuyPrice(Double totalBuyPrice) {
+		this.totalBuyPrice = totalBuyPrice;
 	}
 }

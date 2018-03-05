@@ -928,6 +928,8 @@
         <th>货架名称</th>
         <th>商品名称</th>
         <th>商品编号</th>
+        <th>供应商</th>
+        <th>供应商电话</th>
         <th>商品单价</th>
         <th>采购数量</th>
         <th>已发货数量</th>
@@ -968,6 +970,12 @@
             </td>
             <td>
                     ${bizOrderDetail.partNo}
+            </td>
+            <td>
+                    ${bizOrderDetail.vendor.name}
+            </td>
+            <td>
+                    ${bizOrderDetail.primary.mobile}
             </td>
             <td>
                     ${bizOrderDetail.unitPrice}

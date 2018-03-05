@@ -121,6 +121,7 @@
 				<th>交易金额</th>
 				<th>运费</th>
 				<th>应付金额</th>
+				<th>利润</th>
 				<th>发票状态</th>
 				<th>业务状态</th>
 				<th>订单来源</th>
@@ -163,6 +164,9 @@
 				<td><font color="#0A2A0A">
 					<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 				</font></td>
+				<td>
+					<fmt:formatNumber type="number"  value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
+				</td>
 				<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 				</td>

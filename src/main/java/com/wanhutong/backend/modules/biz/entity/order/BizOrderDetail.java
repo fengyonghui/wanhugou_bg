@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String partNo;        // 商品编号
     private String skuName;        // 商品名称
     private Double unitPrice;        // 商品单价
+    private Double buyPrice;        //出厂价
     private Integer sentQty;        //发货数量
     private Integer ordQty;        // 采购数量
     private String quality;        //材质
@@ -52,6 +54,8 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Integer vendorId;
     private String vendorName;
     private String suplyIds;
+    private Office vendor;      //供应商
+    private User primary;       //供应商主联系人
 
     public List<BizOrderDetail> getOrderHeaderList() {
         return orderHeaderList;
@@ -289,5 +293,29 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setSuplyIds(String suplyIds) {
         this.suplyIds = suplyIds;
+    }
+
+    public Double getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(Double buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public Office getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Office vendor) {
+        this.vendor = vendor;
+    }
+
+    public User getPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(User primary) {
+        this.primary = primary;
     }
 }
