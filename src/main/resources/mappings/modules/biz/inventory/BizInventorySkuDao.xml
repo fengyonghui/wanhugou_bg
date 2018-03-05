@@ -192,5 +192,13 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<update id="orderUpdate">
+		UPDATE biz_inventory_sku SET
+		<if test="stockOrdQty != null and stockOrdQty != 0">
+			s_ord_qty = #{stockOrdQty}
+		</if>
+		WHERE id = #{id}
+	</update>
+
 </mapper>
