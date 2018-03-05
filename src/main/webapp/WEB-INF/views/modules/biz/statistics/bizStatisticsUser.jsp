@@ -20,6 +20,7 @@
         title: {
             text: '1月销量达成表'
         },
+        tooltip : {},
         toolbox: {
             show: true,
             right: 30,
@@ -73,6 +74,7 @@
         title: {
             text: '11月-1月销售额'
         },
+        tooltip : {},
         toolbox: {
             show: true,
             right: 30,
@@ -125,6 +127,7 @@
         title: {
             text: '采购频次分析'
         },
+        tooltip : {},
         toolbox: {
             show: true,
             right: 30,
@@ -185,6 +188,7 @@
         title: {
             text: '11月-1月用户量分析'
         },
+        tooltip : {},
         toolbox: {
             show: true,
             right: 30,
