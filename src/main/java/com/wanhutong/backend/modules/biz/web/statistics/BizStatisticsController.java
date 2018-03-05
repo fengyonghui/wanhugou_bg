@@ -21,6 +21,11 @@ import java.util.List;
 public class BizStatisticsController {
 
 
+    /**
+     * 用户相关统计数据
+     * @param request
+     * @return
+     */
     @RequiresPermissions("biz:statistics:user:view")
     @RequestMapping(value = {"user", ""})
     public String user(HttpServletRequest request) {

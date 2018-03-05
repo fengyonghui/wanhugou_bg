@@ -7,22 +7,30 @@
     <title>用户统计</title>
 </head>
 <body>
-<div id="userCountChart" style="weight:200px; height: 300px"></div>
-<div id="purchaseFrequencyChart" style="weight:200px; height: 300px"></div>
-<div id="monthSalesVolumeChart" style="weight:200px; height: 300px"></div>
-<div id="echartsTest" style="weight:200px; height: 300px"></div>
+<div id="userCountChart" style="height: 300px"></div>
+<div id="purchaseFrequencyChart" style="height: 300px"></div>
+<div id="monthSalesVolumeChart" style="height: 300px"></div>
+<div id="echartsTest" style="height: 300px"></div>
 
 </body>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
 <script type="application/javascript">
     var salesVolumeChart = echarts.init(document.getElementById('echartsTest'));
-
-    // 指定图表的配置项和数据
     salesVolumeChart.setOption({
         title: {
             text: '1月销量达成表'
         },
-        tooltip: {},
+        toolbox: {
+            show: true,
+            right: 30,
+            feature: {
+                saveAsImage: {
+                    show:true,
+                    excludeComponents :['toolbox'],
+                    pixelRatio: 2
+                }
+            }
+        },
         legend: {
             data: ['销量', '达成率']
         },
@@ -65,7 +73,17 @@
         title: {
             text: '11月-1月销售额'
         },
-        tooltip: {},
+        toolbox: {
+            show: true,
+            right: 30,
+            feature: {
+                saveAsImage: {
+                    show:true,
+                    excludeComponents :['toolbox'],
+                    pixelRatio: 2
+                }
+            }
+        },
         legend: {
             data: ['11月销售额', '12月销售额', '1月销售额']
         },
@@ -107,7 +125,17 @@
         title: {
             text: '采购频次分析'
         },
-        tooltip: {},
+        toolbox: {
+            show: true,
+            right: 30,
+            feature: {
+                saveAsImage: {
+                    show:true,
+                    excludeComponents :['toolbox'],
+                    pixelRatio: 2
+                }
+            }
+        },
         legend: {
             data: [
                 '11月采购次数',
@@ -157,7 +185,19 @@
         title: {
             text: '11月-1月用户量分析'
         },
-        tooltip: {},
+        toolbox: {
+            show: true,
+            right: 30,
+            itemGap:30,
+            orient:'vertical',
+            feature: {
+                saveAsImage: {
+                    show:true,
+                    excludeComponents :['toolbox'],
+                    pixelRatio: 2
+                }
+            }
+        },
         legend: {
             data: [
                 '11月',
