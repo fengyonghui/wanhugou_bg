@@ -281,6 +281,10 @@
 					<input id="btnSubmit" type="button" onclick="savePoOrder()"  class="btn btn-primary"  value="生成采购单"/>
 				</c:if>
 				&nbsp;</shiro:hasPermission>
+			<c:if test="${not empty bizPoHeader.str && bizPoHeader.str eq 'detail'}">
+				<input onclick="window.print();" type="button" class="btn btn-primary" value="打印采购订单" style="background:#F78181;"/>
+				&nbsp;&nbsp;&nbsp;
+			</c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

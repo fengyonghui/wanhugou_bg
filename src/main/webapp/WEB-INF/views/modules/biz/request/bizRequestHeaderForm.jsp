@@ -345,9 +345,12 @@
 				</c:if>
 
 			</shiro:hasPermission>
+			<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+				<input onclick="window.print();" type="button" class="btn btn-primary" value="打印备货清单" style="background:#F78181;"/>
+				&nbsp;&nbsp;&nbsp;
+			</c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 		</div>
-
 	</form:form>
 	<form:form id="searchForm" modelAttribute="bizSkuInfo" >
 		<%--<form:hidden id="productNameCopy" path="productInfo.name"/>--%>
