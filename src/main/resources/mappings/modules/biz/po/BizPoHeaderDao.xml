@@ -70,6 +70,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		order by a.update_time desc
 	</select>
 	
 	<select id="findAllList" resultType="BizPoHeader">

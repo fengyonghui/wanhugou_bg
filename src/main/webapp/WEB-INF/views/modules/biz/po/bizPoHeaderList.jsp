@@ -98,8 +98,12 @@
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
 
 				</td>
+				<div style="display:none;">
+					<td style="display:none;">
+						<fmt:formatDate value="${bizPoHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+				</div>
 				<td>
-						${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}
+					${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}
 					<%--${bizPoHeader.plateformInfo.id}--%>
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view"><td>
