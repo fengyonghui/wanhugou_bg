@@ -29,7 +29,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active">销售单详情<shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a>销售单详情<shiro:lacksPermission name="biz:request:bizRequestHeader:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<%--@elvariable id="bizSendGoodsRecord" type="com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord"--%>
 	<form:form id="inputForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord/save" method="post" class="form-horizontal">
@@ -149,6 +149,8 @@
 		</div>
 
 		<div class="form-actions">
+			<input onclick="window.print();" type="button" class="btn btn-primary" value="打印供货清单发货" style="background:#F78181;"/>
+			&nbsp;&nbsp;&nbsp;
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 		</div>
 

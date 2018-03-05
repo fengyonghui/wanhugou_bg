@@ -29,8 +29,8 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li>
-		备货清单详情
+	<li class="active">
+		<a href="">备货清单收货详情</a>
 	</li>
 </ul><br/>
 <form:form id="inputForm"  method="post" class="form-horizontal">
@@ -144,6 +144,8 @@
 	</div>
 
 	<div class="form-actions">
+		<input onclick="window.print();" type="button" class="btn btn-primary" value="打印备货清单收货" style="background:#F78181;"/>
+		&nbsp;&nbsp;&nbsp;
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/>
 	</div>
 
