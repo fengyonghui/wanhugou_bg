@@ -112,10 +112,10 @@ public class BizSendGoodsRecordController extends BaseController {
                             inventorySku.setId(bizInventorySku.getId());
                             inventorySku.setStockOrdQty(bizInventorySku.getStockOrdQty()+i);
                             bizInventorySkuService.orderSave(inventorySku);
-                            break;
+//                            break;
                         }
                     }
-                    break;
+//                    break;
                 }
             }
         }
