@@ -6,18 +6,22 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,6 +57,8 @@ public class BizInvoiceController extends BaseController {
     private BizOrderDetailService bizOrderDetailService;
 	@Autowired
     private BizRequestDetailService bizRequestDetailService;
+	@Autowired
+    private BizInventoryInfoService bizInventoryInfoService;
 	
 	@ModelAttribute
 	public BizInvoice get(@RequestParam(required=false) Integer id) {
@@ -104,6 +110,8 @@ public class BizInvoiceController extends BaseController {
 		model.addAttribute("logisticsList",logisticsList);
         List<BizOrderHeader> orderList = bizOrderHeaderService.findList(new BizOrderHeader());
         List<BizRequestHeader> requestList = bizRequestHeaderService.findList(new BizRequestHeader());
+        List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(new BizInventoryInfo());
+        model.addAttribute("invInfoList",invInfoList);
         model.addAttribute("orderList",orderList);
         model.addAttribute("requestList",requestList);
 		model.addAttribute("bizInvoice", bizInvoice);
@@ -116,7 +124,7 @@ public class BizInvoiceController extends BaseController {
 		if (!beanValidator(model, bizInvoice)){
 			return form(bizInvoice, model);
 		}
-		bizInvoiceService.save(bizInvoice);
+		bizInvoiceService.save(bizInvoice,bizStatu);
 		addMessage(redirectAttributes, "保存发货单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";
 	}

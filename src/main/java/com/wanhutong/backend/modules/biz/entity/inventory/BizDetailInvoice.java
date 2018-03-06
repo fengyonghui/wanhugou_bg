@@ -7,7 +7,9 @@ import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 
 /**
  * 发货单和订单详情关系Entity
@@ -18,8 +20,8 @@ public class BizDetailInvoice extends DataEntity<BizDetailInvoice> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizInvoice invoice;		// 发货单ID，biz_invoice.id
-	private BizOrderDetail orderDetail;		// 销售单详情ID，biz_order_detail.id
-	private BizRequestDetail requestDetail;		// 备货单详情ID，biz_request_detail.id
+	private BizOrderHeader orderHeader;		// 销售单ID，biz_order_header.id
+	private BizRequestHeader requestHeader;		// 备货单详情ID，biz_request_header.id
 	
 	public BizDetailInvoice() {
 		super();
@@ -38,19 +40,19 @@ public class BizDetailInvoice extends DataEntity<BizDetailInvoice> {
 		this.invoice = invoice;
 	}
 
-	public BizOrderDetail getOrderDetail() {
-		return orderDetail;
+	public BizOrderHeader getOrderHeader() {
+		return orderHeader;
 	}
 
-	public void setOrderDetail(BizOrderDetail orderDetail) {
-		this.orderDetail = orderDetail;
+	public void setOrderHeader(BizOrderHeader orderHeader) {
+		this.orderHeader = orderHeader;
 	}
 
-	public BizRequestDetail getRequestDetail() {
-		return requestDetail;
+	public BizRequestHeader getRequestHeader() {
+		return requestHeader;
 	}
 
-	public void setRequestDetail(BizRequestDetail requestDetail) {
-		this.requestDetail = requestDetail;
+	public void setRequestHeader(BizRequestHeader requestHeader) {
+		this.requestHeader = requestHeader;
 	}
 }

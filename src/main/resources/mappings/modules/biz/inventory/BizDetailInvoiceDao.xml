@@ -5,8 +5,8 @@
 	<sql id="bizDetailInvoiceColumns">
 		a.id AS "id",
 		a.invoice_id AS "invoice",
-		a.order_detail_id AS "orderDetail",
-		a.request_detail_id AS "requestDetail"
+		a.order_header_id AS "orderHeader",
+		a.request_header_id AS "requestHeader"
 	</sql>
 	
 	<sql id="bizDetailInvoiceJoins">
@@ -30,11 +30,11 @@
 			<if test="invoice != null and invoice != ''">
 				AND a.invoice_id = #{invoice}
 			</if>
-			<if test="orderDetail != null and orderDetail != ''">
-				AND a.order_detail_id = #{orderDetail}
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				AND a.order_header_id = #{orderHeader}
 			</if>
-			<if test="requestDetail != null and requestDetail != ''">
-				AND a.request_detail_id = #{requestDetail}
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				AND a.request_header_id = #{requestHeader}
 			</if>
 		</where>
 		<choose>
@@ -67,21 +67,21 @@
 		INSERT INTO biz_detail_invoice(
 			id,
 			invoice_id,
-			order_detail_id,
-			request_detail_id
+			order_header_id,
+			request_header_id
 		) VALUES (
 			#{id},
 			#{invoice},
-			#{orderDetail},
-			#{requestDetail}
+			#{orderHeader},
+			#{requestHeader}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_detail_invoice SET 	
 			invoice_id = #{invoice},
-			order_detail_id = #{orderDetail},
-			request_detail_id = #{requestDetail}
+			order_header_id = #{orderHeader},
+			request_header_id = #{requestHeader}
 		WHERE id = #{id}
 	</update>
 	

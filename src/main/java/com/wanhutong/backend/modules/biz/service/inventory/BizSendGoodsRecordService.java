@@ -62,14 +62,14 @@ import javax.annotation.Resource;
 @Transactional(readOnly = true)
 public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao, BizSendGoodsRecord> {
 
-	@Resource
+    @Resource
+    private OfficeService officeService;
+   /* @Resource
 	private BizInventorySkuService bizInventorySkuService;
-	@Resource
+    @Resource
 	private BizRequestHeaderService bizRequestHeaderService;
-	@Resource
+    @Resource
 	private BizSkuInfoService bizSkuInfoService;
-	@Resource
-	private OfficeService officeService;
 	@Resource
 	private BizOrderDetailService bizOrderDetailService;
 	@Resource
@@ -87,9 +87,9 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	@Resource
     private CommonImgService commonImgService;
 	@Autowired
-    private BizSendGoodsRecordDao bizSendGoodsRecordDao;
+    private BizSendGoodsRecordDao bizSendGoodsRecordDao;*/
 
-    protected Logger log = LoggerFactory.getLogger(getClass());//日志
+//    protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
 	public BizSendGoodsRecord get(Integer id) {
 		return super.get(id);
@@ -114,8 +114,10 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 	}
 	
 	@Transactional(readOnly = false)
-	public void save(BizSendGoodsRecord bizSendGoodsRecord,String bizStatu) {
-		boolean flagRequest = true;		//备货单完成状态
+	public void save(BizSendGoodsRecord bizSendGoodsRecord) {
+	    super.save(bizSendGoodsRecord);
+    }
+		/*boolean flagRequest = true;		//备货单完成状态
 		boolean flagOrder = true;		//销售单完成状态
         boolean flagPo = true;     //采购单完成状态
         int i = 1;      //供货单序号
@@ -234,8 +236,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 					int stock = 0;
 					//没有库存，改销售单状态为采购中（17）
 					if (list == null || list.size() == 0 || list.get(0).getStockQty() == 0){
-						/*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
-						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*/
+						*//*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*//*
 						flagOrder=false;
 					}else {
 						//有库存
@@ -243,8 +245,8 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 							stock = invSku.getStockQty();
 							//如果库存不够，则改销售单状态为采购中（17）
 							if (stock < bsgr.getBizOrderDetail().getOrdQty()){
-								/*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
-								bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*/
+								*//*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+								bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*//*
 								flagOrder=false;
 								if(sendNum > stock){
 									sendNum = stock;
@@ -436,10 +438,10 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 //			super.save(bizSendGoodsRecord);
 	}
 
-    /**
+    *//**
      * 保存物流信息图片
      * @param bizSendGoodsRecord
-     */
+     *//*
     @Transactional(readOnly = false)
     public void saveCommonImg(BizSendGoodsRecord bizSendGoodsRecord) {
         String imgUrl = null;
@@ -523,7 +525,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
             commonImg.setImgServer(DsConfig.getImgServer());
             commonImgService.save(commonImg);
         }
-    }
+    }*/
 	
 	@Transactional(readOnly = false)
 	public void delete(BizSendGoodsRecord bizSendGoodsRecord) {

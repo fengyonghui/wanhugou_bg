@@ -11,10 +11,9 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
+import com.wanhutong.backend.modules.biz.entity.inventory.*;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
@@ -22,15 +21,15 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.enums.SendGoodsRecordBizStatusEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -44,7 +43,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizInvoiceDao;
 
 import javax.annotation.Resource;
@@ -78,6 +76,14 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     private BizRequestDetailService bizRequestDetailService;
 	@Autowired
     private BizRequestHeaderService bizRequestHeaderService;
+	@Autowired
+    private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+    private BizInventorySkuService bizInventorySkuService;
+	@Autowired
+    private BizOrderDetailService bizOrderDetailService;
+	@Autowired
+    private BizPoHeaderService bizPoHeaderService;
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -94,7 +100,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	}
 	
 	@Transactional(readOnly = false)
-	public void save(BizInvoice bizInvoice) {
+	public void save(BizInvoice bizInvoice,String bizStatu) {
         boolean flagRequest = true;		//备货单完成状态
         boolean flagOrder = true;		//销售单完成状态
         boolean flagPo = true;     //采购单完成状态
@@ -103,103 +109,279 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         Office company = officeService.get(user.getCompany().getId());
         //采购商或采购中心
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
-        bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,bizInvoice.getId()));
         Date date = new Date();
         bizInvoice.setSendDate(date);
         super.save(bizInvoice);
+        bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,bizInvoice.getId()));
         super.save(bizInvoice);
-        List<BizOrderDetail> orderDetailList = bizInvoice.getOrderDetailList();
-        List<BizRequestDetail> requestDetailList = bizInvoice.getRequestDetailList();
-        if (orderDetailList != null && orderDetailList.size() > 0) {
-            for (BizOrderDetail bizOrderDetail : orderDetailList) {
+        //保存图片
+        saveCommonImg(bizInvoice);
+        List<BizOrderHeader> orderHeaderList = bizInvoice.getOrderHeaderList();
+        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
+        if (orderHeaderList != null && orderHeaderList.size() > 0){
+            for(BizOrderHeader bizOrderHeader:orderHeaderList) {
+                BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+                BizOrderDetail ordDetail = new BizOrderDetail();
+                ordDetail.setOrderHeader(orderHeader);
+                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(ordDetail);
                 //加入中间表关联关系
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(bizInvoice);
-                bizDetailInvoice.setOrderDetail(bizOrderDetail);
+                bizDetailInvoice.setOrderHeader(bizOrderHeader);
                 bizDetailInvoiceService.save(bizDetailInvoice);
-                //生成供货记录
-                //商品
-                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
-                int sendNum = bizOrderDetail.getSendNum();    //供货数
-                //订单号
-                bizOrderDetail.getOrderHeader();
-//                int sendQty = bsgr.getBizRequestDetail().getSendQty();   //备货单累计供货数量
-                //当供货数量和申报数量不相等时，更改备货单状态
-//                if (bsgr.getBizRequestDetail().getReqQty() != (sendQty + sendNum)) {
-//                    flagRequest = false;
-//                }
-//                if (sendNum == 0) {
-//                    continue;
-//                }
-                BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
-                bsgr.setSendNum(sendNum);
-                bsgr.setOrderNum(bizOrderDetail.getOrderHeader().getOrderNum());
-                bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
-                bsgr.setSkuInfo(bizSkuInfo);
-                bsgr.setSendDate(date);
+                for (BizOrderDetail bizOrderDetail : orderDetailList) {
+                        //商品
+                        BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+                        int sendNum = bizOrderDetail.getSendNum();    //供货数
+                        //采购商
+                        Office office = officeService.get(orderHeader.getCustomer().getId());
+                        int sentQty = bizOrderDetail.getSentQty();    //销售单累计供货数量
+                        //当供货数量和申报数量不相等时，更改销售单状态
+                        if (bizOrderDetail.getOrdQty() != (sentQty + sendNum)) {
+                            flagOrder = false;
+                        }
+                        if (sendNum == 0) {
+                            continue;
+                        }
+                        //采购中心订单发货
+                        if (bizStatu.equals("0")) {
+                            //销售单状态改为同意供货（供货中）（15）
+                            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+                            bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+                            //获取库存数
+                            BizInventorySku bizInventorySku = new BizInventorySku();
+                            bizInventorySku.setSkuInfo(bizSkuInfo);
+                            bizInventorySku.setInvInfo(bizOrderDetail.getInventoryInfo());
+                            bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
+                            List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
+                            int stock = 0;
+                            //没有库存，
+                            if (list == null || list.size() == 0 || list.get(0).getStockQty() == 0) {
+                            /*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                            bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*/
+                                flagOrder = false;
+                            } else {
+                                //有库存
+                                for (BizInventorySku invSku : list) {
+                                    stock = invSku.getStockQty();
+                                    //如果库存不够，
+                                    if (stock < bizOrderDetail.getOrdQty()) {
+                                    /*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                                    bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*/
+                                        flagOrder = false;
+                                        if (sendNum > stock) {
+                                            sendNum = stock;
+                                        }
+                                        invSku.setStockQty(stock - sendNum);
+                                        bizInventorySkuService.save(invSku);
+                                    } else {
+                                        invSku.setStockQty(stock - sendNum);
+                                        bizInventorySkuService.save(invSku);
+                                    }
+                                }
+                                //累计已供数量
+                                bizOrderDetail.setSentQty(sentQty + sendNum);
+                                bizOrderDetailService.saveStatus(bizOrderDetail);
+                                //生成供货记录表
+                                BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
+                                bsgr.setSendNum(sendNum);
+                                bsgr.setInvInfo(bizOrderDetail.getInventoryInfo());
+                                bsgr.setCustomer(office);
+                                bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
+                                bsgr.setOrderNum(bizOrderHeader.getOrderNum());
+                                bsgr.setBizOrderHeader(bizOrderHeader);
+                                bsgr.setSkuInfo(bizSkuInfo);
+                                bsgr.setSendDate(date);
+                                bizSendGoodsRecordService.save(bsgr);
+                            }
+                        }
+                        //供应商或供货部发货
+                        if (bizStatu.equals("1")) {
+                            //获取销售单相应的采购单详情,累计采购单单个商品的供货数
+                            BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                            BizPoHeader poHeader = null;
+                            BizPoDetail bizPoDetail = new BizPoDetail();
+                            BizPoDetail poDetail = null;
+                            BizOrderDetail bizOrdDetail = new BizOrderDetail();
+                            bizOrdDetail.setSkuInfo(bizSkuInfo);
+                            bizPoOrderReq.setOrderDetail(bizOrdDetail);
+                            bizPoOrderReq.setOrderHeader(bizOrderHeader);
+                            List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                            if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
+                                poHeader = bizPoOrderReqList.get(0).getPoHeader();
+                            }
+                            bizPoDetail.setPoHeader(poHeader);
+                            bizPoDetail.setSkuInfo(bizSkuInfo);
+                            List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
+                            if (bizPoDetailList != null && bizPoDetailList.size() > 0) {
+                                poDetail = bizPoDetailList.get(0);
+                            }
+                            if (poDetail.getSendQty() + sendNum != poDetail.getOrdQty()) {
+                                flagPo = false;
+                            }
+                            //累计已供数量
+                            bizOrderDetail.setSentQty(sentQty + sendNum);
+                            bizOrderDetailService.saveStatus(bizOrderDetail);
+                        }
+                        //生成供货记录
+                        BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
+                        bsgr.setSendNum(sendNum);
+                        bsgr.setCustomer(office);
+                        bsgr.setOrderNum(bizOrderHeader.getOrderNum());
+                        bsgr.setBizOrderHeader(bizOrderHeader);
+                        bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
+                        bsgr.setSkuInfo(bizSkuInfo);
+                        bsgr.setSendDate(date);
+                    }
+                //销售单完成时，更该销售单状态为已供货（20）
+                if (flagOrder) {
+                    bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SEND.getState());
+                    bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+                    if (bizStatu.equals("0")){
+                        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+                        bizOrderDetail.setOrderHeader(bizOrderHeader);
+                        List<BizOrderDetail> ordDetailList = bizOrderDetailService.findList(bizOrderDetail);
+                        for(BizOrderDetail orderDetail:ordDetailList){
+                            BizSkuInfo skuInfo = orderDetail.getSkuInfo();
+                            BizInventoryInfo inventoryInfo = orderDetail.getInventoryInfo();
+                            BizInventorySku bizInventorySku = new BizInventorySku();
+                            bizInventorySku.setSkuInfo(skuInfo);
+                            bizInventorySku.setInvInfo(inventoryInfo);
+                            List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
+                            if (invSkuList != null && invSkuList.size() > 0){
+                                BizInventorySku inventorySku = invSkuList.get(0);
+                                inventorySku.setStockOrdQty(inventorySku.getStockOrdQty()+1);
+                            }
+                        }
+                    }
+                }
+                //当供货部或供应商发货时，才涉及采购单状态
+                if(bizStatu.equals("1")) {
+                    //更改采购单状态,已完成（5）
+                    if (flagPo){
+                        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                        BizPoOrderReq por = null;
+                        bizPoOrderReq.setOrderHeader(bizOrderHeader);
+                        List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
+                        if (porList != null && porList.size() > 0 ){
+                            por = porList.get(0);
+                        }
+                        BizPoHeader poHeader = por.getPoHeader();
+                        //获取该采购单的所有采购详情，如果所有的供货数都和采购数相等，则更改采购单状态为完成
+                        BizPoHeader bizPoHeader = bizPoHeaderService.get(poHeader.getId());
+                        BizPoDetail poDetail = new BizPoDetail();
+                        poDetail.setPoHeader(bizPoHeader);
+                        List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
+                        boolean flag = true;
+                        for (BizPoDetail bizPoDetail:poDetailList) {
+                            if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()){
+                                flag = false;
+                            }
+                        }
+                        if (flag) {
+                            int status = PoHeaderStatusEnum.COMPLETE.getCode();
+                            poHeader.setBizStatus((byte) status);
+                            bizPoHeaderService.saveStatus(poHeader);
+                        }
+                    }
+                }
             }
         }
-        if(requestDetailList != null && requestDetailList.size() > 0) {
-            for (BizRequestDetail bizRequestDetail : requestDetailList) {
+        if(requestHeaderList != null && requestHeaderList.size() > 0) {
+            for(BizRequestHeader bizRequestHeader:requestHeaderList) {
+                BizRequestHeader requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
+                BizRequestDetail reqDetail = new BizRequestDetail();
+                reqDetail.setRequestHeader(requestHeader);
+                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(reqDetail);
                 //加入中间表关联关系
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(bizInvoice);
-                bizDetailInvoice.setRequestDetail(bizRequestDetail);
+                bizDetailInvoice.setRequestHeader(bizRequestHeader);
                 bizDetailInvoiceService.save(bizDetailInvoice);
-                //商品
-                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
-//                int sendNum = bizRequestDetail.getSendNum();    //供货数
-                //订单号
-                bizRequestDetail.getRequestHeader();
-//                int sendQty = bsgr.getBizRequestDetail().getSendQty();   //备货单累计供货数量
-                //当供货数量和申报数量不相等时，更改备货单状态
-//                if (bsgr.getBizRequestDetail().getReqQty() != (sendQty + sendNum)) {
-//                    flagRequest = false;
-//                }
-//                if (sendNum == 0) {
-//                    continue;
-//                }
-                //获取备货单相应的采购单详情,累计采购单单个商品的供货数
-                BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-                BizPoHeader poHeader = null;
-                BizPoDetail bizPoDetail = new BizPoDetail();
-                BizPoDetail poDetail = null;
-                BizRequestDetail bizReqDetail = new BizRequestDetail();
-                bizReqDetail.setSkuInfo(bizSkuInfo);
-                bizPoOrderReq.setRequestDetail(bizReqDetail);
-//                bizPoOrderReq.setSoType((byte)2);
-//                bizPoOrderReq.setRequestHeader(bizSendGoodsRecord.getBizRequestHeader());
-                List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
-                if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0){
-                    poHeader = bizPoOrderReqList.get(0).getPoHeader();
+                for (BizRequestDetail bizRequestDetail : requestDetailList) {
+                    //商品
+                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+                    int sendNum = bizRequestDetail.getSendNum();    //供货数
+                    int sendQty = bizRequestDetail.getSendQty();   //备货单累计供货数量
+                    //当供货数量和申报数量不相等时，更改备货单状态
+                    if (bizRequestDetail.getReqQty() != (sendQty + sendNum)) {
+                        flagRequest = false;
+                    }
+                    if (sendNum == 0) {
+                        continue;
+                    }
+                    //获取备货单相应的采购单详情,累计采购单单个商品的供货数
+                    BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                    BizPoHeader poHeader = null;
+                    BizPoDetail bizPoDetail = new BizPoDetail();
+                    BizPoDetail poDetail = null;
+                    BizRequestDetail bizReqDetail = new BizRequestDetail();
+                    bizReqDetail.setSkuInfo(bizSkuInfo);
+                    bizPoOrderReq.setRequestDetail(bizReqDetail);
+                    bizPoOrderReq.setRequestHeader(requestHeader);
+                    List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                    if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
+                        poHeader = bizPoOrderReqList.get(0).getPoHeader();
+                    }
+                    bizPoDetail.setPoHeader(poHeader);
+                    bizPoDetail.setSkuInfo(bizSkuInfo);
+                    List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
+                    if (bizPoDetailList != null && bizPoDetailList.size() > 0) {
+                        poDetail = bizPoDetailList.get(0);
+                    }
+                    if (poDetail.getSendQty() + sendNum != poDetail.getOrdQty()) {
+                        flagPo = false;
+                    }
+                    poDetail.setSendQty(poDetail.getSendQty() + sendNum);
+                    bizPoDetailService.save(poDetail);
+                    //累计备货单供货数量
+                    bizRequestDetail.setSendQty(sendQty + sendNum);
+                    bizRequestDetailService.save(bizRequestDetail);
+                    //改备货单状态为备货中(20)
+                    requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
+                    bizRequestHeaderService.save(requestHeader);
+                    //生成供货记录
+                    BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
+                    bsgr.setSendNum(sendNum);
+                    bsgr.setBizRequestHeader(requestHeader);
+                    bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
+                    bsgr.setSkuInfo(bizSkuInfo);
+                    bsgr.setOrderNum(requestHeader.getReqNo());
+                    bsgr.setSendDate(date);
+                    bizSendGoodsRecordService.save(bsgr);
                 }
-                bizPoDetail.setPoHeader(poHeader);
-                bizPoDetail.setSkuInfo(bizSkuInfo);
-                List<BizPoDetail> bizPoDetailList = bizPoDetailService.findList(bizPoDetail);
-                if (bizPoDetailList != null && bizPoDetailList.size() > 0){
-                    poDetail = bizPoDetailList.get(0);
+                //更改备货单状态
+                if (flagRequest) {
+                    requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
+                    bizRequestHeaderService.saveRequestHeader(requestHeader);
                 }
-//                if (poDetail.getSendQty()+sendNum != poDetail.getOrdQty()){
-//                    flagPo = false;
-//                }
-//                poDetail.setSendQty(poDetail.getSendQty()+sendNum);
-//                bizPoDetailService.save(poDetail);
-//                bizRequestDetail.setSendQty(sendQty + sendNum);
-                bizRequestDetailService.save(bizRequestDetail);
-                //改备货单状态为备货中(20)
-//                BizRequestHeader bizReqHeader = bizRequestHeaderService.get(bizSendGoodsRecord.getBizRequestHeader().getId());
-//                bizReqHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
-//                bizRequestHeaderService.save(bizReqHeader);
-                //生成供货记录
-                BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
-//                bsgr.setSendNum(sendNum);
-                BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizReqDetail.getRequestHeader().getId());
-                bsgr.setBizRequestHeader(bizRequestHeader);
-                bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
-                bsgr.setSkuInfo(bizSkuInfo);
-                bsgr.setOrderNum(bizRequestHeader.getReqNo());
-                bsgr.setSendDate(date);
-
+                //更改采购单状态,已完成（5）
+                if (flagPo){
+                    BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                    BizPoOrderReq por = null;
+                    bizPoOrderReq.setRequestHeader(bizRequestHeader);
+                    List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
+                    if (porList != null && porList.size() > 0 ){
+                        por = porList.get(0);
+                    }
+                    BizPoHeader poHeader = por.getPoHeader();
+                    //获取该采购单的所有采购详情，如果所有的供货数都和采购数相等，则更改采购单状态为完成
+                    BizPoHeader bizPoHeader = bizPoHeaderService.get(poHeader.getId());
+                    BizPoDetail poDetail = new BizPoDetail();
+                    poDetail.setPoHeader(bizPoHeader);
+                    List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
+                    boolean flag = true;
+                    for (BizPoDetail bizPoDetail:poDetailList) {
+                        if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()){
+                            flag = false;
+                        }
+                    }
+                    if (flag) {
+                        int status = PoHeaderStatusEnum.COMPLETE.getCode();
+                        poHeader.setBizStatus((byte) status);
+                        bizPoHeaderService.saveStatus(poHeader);
+                    }
+                }
             }
         }
 	}

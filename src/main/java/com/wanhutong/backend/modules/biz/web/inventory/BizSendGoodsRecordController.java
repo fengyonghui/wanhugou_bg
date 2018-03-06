@@ -99,7 +99,7 @@ public class BizSendGoodsRecordController extends BaseController {
 //			return form(bizSendGoodsRecord, model);
 //		}
 //      点击确认供货 增加库存销售订单数量
-        BizInventorySku inventorySku = new BizInventorySku();//库存
+        /*BizInventorySku inventorySku = new BizInventorySku();//库存
         List<BizSendGoodsRecord> sendGoodsRecordList = bizSendGoodsRecord.getBizSendGoodsRecordList();//用于判断订单下有没有商品
         if(sendGoodsRecordList!=null && sendGoodsRecordList.size()!=0){
             int i=1;
@@ -118,8 +118,8 @@ public class BizSendGoodsRecordController extends BaseController {
 //                    break;
                 }
             }
-        }
-        bizSendGoodsRecordService.save(bizSendGoodsRecord,bizStatu);
+        }*/
+        bizSendGoodsRecordService.save(bizSendGoodsRecord);
 			addMessage(redirectAttributes, "保存供货记录成功");
 //			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage&bizStatu="+bizSendGoodsRecord.getBizStatus();
 //		跳回订单发货列表

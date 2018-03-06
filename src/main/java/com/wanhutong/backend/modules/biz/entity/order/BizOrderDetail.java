@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -45,7 +46,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String saleQtys;          //用于采购数量时传递数量
     private String shelfSkus;          //用于多选货架是传递数量
     private List<BizOrderDetail> orderHeaderList;   //用于查询该订单下有多少商品
-
+    private BizInventoryInfo inventoryInfo;     //仓库
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
 
     private String  detailIds;
@@ -325,5 +326,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setSendNum(Integer sendNum) {
         this.sendNum = sendNum;
+    }
+
+    public BizInventoryInfo getInventoryInfo() {
+        return inventoryInfo;
+    }
+
+    public void setInventoryInfo(BizInventoryInfo inventoryInfo) {
+        this.inventoryInfo = inventoryInfo;
     }
 }

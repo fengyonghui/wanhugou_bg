@@ -151,4 +151,12 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	public void setVendorName(String vendorName) {
 		this.vendorName = vendorName;
 	}
+
+	public Integer getSendNum() {
+		return sendNum;
+	}
+
+	public void setSendNum(Integer sendNum) {
+		this.sendNum = sendNum;
+	}
 }

@@ -3,9 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
@@ -34,8 +32,8 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String carrier;		// 承运人
 	private Integer settlementStatus;		// 物流结算方式：1、现结；2、账期;
 	private Date sendDate;		// 供货时间
-	private List<BizOrderDetail> orderDetailList;
-	private List<BizRequestDetail> requestDetailList;
+	private List<BizOrderHeader> orderHeaderList;
+	private List<BizRequestHeader> requestHeaderList;
 
 	public BizInvoice() {
 		super();
@@ -122,19 +120,19 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 		this.settlementStatus = settlementStatus;
 	}
 
-	public List<BizOrderDetail> getOrderDetailList() {
-		return orderDetailList;
+	public List<BizOrderHeader> getOrderHeaderList() {
+		return orderHeaderList;
 	}
 
-	public void setOrderDetailList(List<BizOrderDetail> orderDetailList) {
-		this.orderDetailList = orderDetailList;
+	public void setOrderHeaderList(List<BizOrderHeader> orderHeaderList) {
+		this.orderHeaderList = orderHeaderList;
 	}
 
-	public List<BizRequestDetail> getRequestDetailList() {
-		return requestDetailList;
+	public List<BizRequestHeader> getRequestHeaderList() {
+		return requestHeaderList;
 	}
 
-	public void setRequestDetailList(List<BizRequestDetail> requestDetailList) {
-		this.requestDetailList = requestDetailList;
+	public void setRequestHeaderList(List<BizRequestHeader> requestHeaderList) {
+		this.requestHeaderList = requestHeaderList;
 	}
 }
