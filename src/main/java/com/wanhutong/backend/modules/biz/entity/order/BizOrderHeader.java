@@ -51,6 +51,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Boolean ownGenPoOrder;
 	private Integer onlyVendor; //该订单的唯一供应商
 	private String itemNo;      //根据sku货号搜索
+	private String partNo;      //根据sku编号搜索
 	private Integer orderCount; //find List中订单总条数据
 
 	private String orderNum2;		//用于删除订单页面传值
@@ -335,5 +336,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setOrderCount(Integer orderCount) {
 		this.orderCount = orderCount;
+	}
+
+	public String getPartNo() {
+		return partNo;
+	}
+
+	public void setPartNo(String partNo) {
+		this.partNo = partNo;
 	}
 }

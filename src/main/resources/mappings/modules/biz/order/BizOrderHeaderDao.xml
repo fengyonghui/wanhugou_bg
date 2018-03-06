@@ -60,6 +60,7 @@
         <collection property="orderDetailList" ofType="BizOrderDetail">
             <id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
+			<result property="sentQty" column="orderDetailList.sentQty" />
             <association property="skuInfo" javaType="BizSkuInfo" column="skuInfo.id">
                 <id property="id" column="orderDetailList.skuInfo.id"/>
                 <result property="buyPrice" column="orderDetailList.skuInfo.buyPrice" />
@@ -198,6 +199,7 @@
         od.id AS "orderDetailList.id",
 		od.unit_price AS "orderDetailList.unitPrice",
 		od.ord_qty AS "orderDetailList.ordQty",
+		od.sent_qty AS "orderDetailList.sentQty",
         si.id AS "orderDetailList.skuInfo.id",
         si.buy_price AS "orderDetailList.skuInfo.buyPrice",
         si.item_no AS "orderDetailList.skuInfo.itemNo"
@@ -257,6 +259,14 @@
 				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
             </if>
 
+			<if test="partNo !=null and partNo !=''">
+				and si.part_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+
             <if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
                 ${sqlMap.order}
             </if>
@@ -266,10 +276,92 @@
                 ORDER BY ${page.orderBy}
             </when>
             <otherwise>
+-- 				GROUP  BY a.id
             </otherwise>
         </choose>
         ORDER BY updateDate DESC
     </select>
+
+	<select id="findCount" resultType="Integer">
+		SELECT count(1)FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
+		<include refid="bizOrderHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
+			<if test="customer != null and customer.id != null and customer.id!=''">
+				AND a.cust_id = #{customer.id}
+			</if>
+			<if test="customer != null and customer.phone != null and customer.phone!=''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
+			</if>
+			<if test="receiveTotal != null and receiveTotal != ''">
+				AND a.receive_total = #{receiveTotal}
+			</if>
+			<if test="bizStatus !=null">
+				AND a.biz_status=#{bizStatus}
+			</if>
+			<if test="bizType !=null and bizType!=''">
+				AND a.biz_type=#{bizType}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="invStatus !=null and invStatus!=''">
+				AND a.inv_status=#{invStatus}
+			</if>
+			<if test="consultantId!=null">
+				and ccs.consultant_id = #{consultantId}
+			</if>
+
+			<if test="centerId!=null">
+				and ccs.center_id = #{centerId}
+			</if>
+
+			<if test="itemNo !=null and itemNo !=''">
+				and si.item_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+
+			<if test="partNo !=null and partNo !=''">
+				and si.part_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				 	GROUP  BY a.id
+			</otherwise>
+		</choose>
+
+	</select>
+
 	<select id="findAllList" resultType="BizOrderHeader">
 		SELECT 
 			<include refid="bizOrderHeaderColumns"/>

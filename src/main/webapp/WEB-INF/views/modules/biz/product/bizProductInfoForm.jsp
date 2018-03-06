@@ -1,6 +1,4 @@
 <%@ taglib prefix="from" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="fns" uri="http://java.sun.com/jsp/jstl/functionss" %>
-<%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
@@ -49,7 +47,7 @@
             var prodId=$("#id").val();
             if ($("#id").val() != '') {
                 var ids = "${entity.cateIds}";//后台获取的分类id集合
-               var  brandId=$("#propValueId").val();
+                var  brandId=$("#propValueId").val();
                 ajaxFindCateByBrand(brandId);
 
                 var cateValueId = $("#cateValueId").val();

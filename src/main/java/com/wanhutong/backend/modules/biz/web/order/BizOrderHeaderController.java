@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.order;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -13,11 +14,13 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.BizOrderDiscount;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTransaction;
@@ -71,6 +74,8 @@ public class BizOrderHeaderController extends BaseController {
 	private BizOrderAddressService bizOrderAddressService;
 	@Autowired
 	private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+	@Autowired
+	private BizSkuInfoService bizSkuInfoService;
 
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
@@ -93,20 +98,11 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-//			客户专员跳转需要参数
-// 			User user=UserUtils.getUser();
-//			if("check_pending".equals(bizOrderHeader.getFlag())){
-////			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.UNPAY.getState());
-////			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-//			if(user.getId()==bizOrderHeader.getConsultantId()){
-//				bizOrderHeader.setConsultantId(null);
-//			}
-//		}
-
 		Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
 		model.addAttribute("page", page);
 		return "modules/biz/order/bizOrderHeaderList";
 	}
+
 
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
@@ -202,8 +198,25 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
 	@RequestMapping(value = "findByOrder")
 	public List<BizOrderHeader> findByOrder(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+		bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
+		bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
 		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-		return list;
+		List<BizOrderHeader> bizOrderHeaderList=Lists.newArrayList();
+		for (BizOrderHeader orderHeader : list) {
+			List<BizOrderDetail> bizOrderDetailList= Lists.newArrayList();
+			List<BizOrderDetail> orderDetailList=orderHeader.getOrderDetailList();
+			for (BizOrderDetail orderDetail:orderDetailList){
+				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
+				orderDetail.setSkuInfo(skuInfo);
+				bizOrderDetailList.add(orderDetail);
+			}
+			orderHeader.setOrderDetailList(bizOrderDetailList);
+
+			bizOrderHeaderList.add(orderHeader);
+
+		}
+
+		return bizOrderHeaderList;
 	}
 
 	@ResponseBody

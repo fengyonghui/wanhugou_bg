@@ -115,6 +115,7 @@ public class BizInvoiceController extends BaseController {
         model.addAttribute("orderList",orderList);
         model.addAttribute("requestList",requestList);
 		model.addAttribute("bizInvoice", bizInvoice);
+		model.addAttribute("bizOrderHeader",new BizOrderHeader());
 		return "modules/biz/inventory/bizInvoiceForm";
 	}
 

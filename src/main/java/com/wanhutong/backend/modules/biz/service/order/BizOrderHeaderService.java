@@ -54,8 +54,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
-    @Autowired @Lazy
-    private BizOrderDetailDao bizOrderDetailDao;
+
 
     public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader) {
         //查询状态 status=0 和 1的所有信息
@@ -91,7 +90,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
+
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
+            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+            page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             Double totalBuyPrice = 0.0;
             for (BizOrderHeader orderHeader:orderHeaderList) {
@@ -117,8 +119,19 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }else {
                 bizOrderHeader.setConsultantId(user.getId());
             }
-         //   bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "ccs"));
-            return super.findPage(page, bizOrderHeader);
+            Page<BizOrderHeader> orderHeaderPage=super.findPage(page, bizOrderHeader);
+            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+            page.setCount(count);
+            List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
+            Double totalBuyPrice = 0.0;
+            for (BizOrderHeader orderHeader:orderHeaderList) {
+
+                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo().getBuyPrice()*orderDetail.getOrdQty()).sum();
+                orderHeader.setTotalBuyPrice(totalBuyPrice);
+            }
+            orderHeaderPage.setList(orderHeaderList);
+
+            return orderHeaderPage;
         }
     }
 

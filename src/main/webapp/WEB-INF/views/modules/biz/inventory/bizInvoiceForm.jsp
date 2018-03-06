@@ -22,6 +22,85 @@
 					}
 				}
 			});
+
+            $("#searchData").click(function () {
+                var orderNum=$("#orderNum").val();
+                $("#orderNumCopy").val(orderNum);
+                var skuItemNo=$("#skuItemNo").val();
+                $("#skuItemNoCopy").val(skuItemNo);
+                var skuCode =$("#skuCode").val();
+                $("#skuCodeCopy").val(skuCode);
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/biz/order/bizOrderHeader/findByOrder",
+                    data:$('#searchForm').serialize(),
+                    success:function (data) {
+                        if ($("#id").val() == '') {
+                            $("#prodInfo2").empty();
+                        }
+                        var tr_tds="";
+                        $.each(data, function (index,orderHeader) {
+							if(orderHeader.bizStatus==17){
+                                bizName="采购中"
+							}else if(orderHeader.bizStatus==18){
+                                bizName="采购完成"
+							}else if(orderHeader.bizStatus==19){
+                                bizName="供应商供货"
+							}else if(orderHeader.bizStatus==20){
+                                bizName="已发货"
+							}
+
+							var flag= true;
+                            $.each(orderHeader.orderDetailList,function (index,detail) {
+
+                                tr_tds+="<tr class='"+orderHeader.id+"'>";
+
+                                if(flag){
+                                    tr_tds+="<td rowspan='"+orderHeader.orderDetailList.length+"'><input type='checkbox' value='"+orderHeader.id+"' /></td>";
+
+                                    tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.orderNum+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
+                                }
+                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                                tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
+                                tr_tds+="<td><input id='"+orderHeader.id+""+index+"' type='text' title='sent' name='' value='0'></td>";
+                                tr_tds+="</tr>";
+                                if(orderHeader.orderDetailList.length>1){
+                                    flag=false;
+                                }
+                            });
+
+                            tr_tds+="<input type='hidden' title='orders' id='h_"+orderHeader.id+"' value='"+orderHeader.id+"'>";
+                        });
+                        $("#prodInfo2").append(tr_tds);
+                    }
+            });
+		});
+
+            <%--点击确定时获取订单详情--%>
+            $("#ensureData").click(function () {
+                // var flag=false;
+				// $("input[title='sent']").each(function () {
+				// 	var v=$(this).val();
+				// 	alert(v)
+				// 	if(v!=0){
+				// 	   flag=true;
+				// 	}
+                // });
+				// if(flag){
+                    var trHtml="";
+                    $('input:checkbox:checked').each(function(i){
+
+                        var t=$(this).val();
+                         trHtml=$("."+t).parent().html();
+                        $("#prodInfo").append(trHtml);
+                        $("#prodInfo").find("input[title='sent']").attr("name","sendNum");
+                        $("#prodInfo").find("input[title='orders']").attr("name","orderHeaderList")
+                    });
+
+
+			//	}
+            });
+
 		});
 	</script>
 </head>
@@ -90,10 +169,87 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+
+
+		<div class="control-group">
+			<label class="control-label">选择订单：</label>
+			<div class="controls">
+				<ul class="inline ul-form">
+					<li><label>订单编号：</label>
+						<input id="orderNum" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
+					</li>
+					<li><label>商品货号：</label>
+						<input id="skuItemNo"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
+					</li>
+					<li><label>商品编码：</label>
+						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
+					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
+					<li class="clearfix"></li>
+				</ul>
+
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">待发货订单：</label>
+			<div class="controls">
+				<table id="contentTable2"  class="table table-striped table-bordered table-condensed">
+					<thead>
+					<tr>
+						<th><input id="select_all" type="checkbox" /></th>
+						<th>订单编号</th>
+						<th>采购商名称</th>
+						<th>业务状态</th>
+						<th>商品名称</th>
+						<th>商品编码</th>
+						<th>商品属性</th>
+						<th>采购数量</th>
+						<th>已发货数量</th>
+						<th>发货数量</th>
+					</tr>
+					</thead>
+					<tbody id="prodInfo2">
+
+					</tbody>
+				</table>
+				<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>
+			</div>
+
+			<div class="controls">
+				<table id="contentTable"  class="table table-striped table-bordered table-condensed">
+					<thead>
+					<tr>
+						<th></th>
+						<th>订单编号</th>
+						<th>采购商名称</th>
+						<th>业务状态</th>
+						<th>商品名称</th>
+						<th>商品编码</th>
+						<th>商品属性</th>
+						<th>采购数量</th>
+						<th>已发货数量</th>
+						<th>发货数量</th>
+					</tr>
+					</thead>
+					<tbody id="prodInfo">
+
+					</tbody>
+				</table>
+				<%--<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>--%>
+			</div>
+		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
+	</form:form>
+
+	<form:form id="searchForm" modelAttribute="bizOrderHeader">
+		<form:hidden id="orderNumCopy" path="orderNum"/>
+		<form:hidden id="skuItemNoCopy" path="itemNo"/>
+		<form:hidden id="skuCodeCopy" path="partNo"/>
+
 	</form:form>
 </body>
 </html>

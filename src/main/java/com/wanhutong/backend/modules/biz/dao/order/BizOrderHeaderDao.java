@@ -20,6 +20,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
 
      void updateMoney(BizOrderHeader bizOrderHeader);
 
-     List<BizOrderHeader> findListPage(BizOrderHeader bizOrderHeader);
+
+     Integer findCount(BizOrderHeader bizOrderHeader);
 
 }
