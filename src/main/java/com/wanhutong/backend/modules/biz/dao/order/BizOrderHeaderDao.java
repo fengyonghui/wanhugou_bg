@@ -22,10 +22,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     public void updateMoney(BizOrderHeader bizOrderHeader);
 
     /**
-     *  按月获取有效订单的总金额和订单数量
+     * 按月获取订单的总金额和订单数量
      *
-     * @param month 月
-     * @return 查询
+     * @param month 月份
+     * @param status 订单状态
+     * @param officeType 机构类型
+     * @return 订单统计数据
      */
     List<BizOrderStatisticsDto> getOrderTotalAndCountByCreateTimeMonthStatus( @Param("month")String month, @Param("status") Integer status, @Param("officeType") String officeType);
 }

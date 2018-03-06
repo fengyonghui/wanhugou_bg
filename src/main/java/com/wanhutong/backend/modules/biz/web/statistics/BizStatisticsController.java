@@ -35,9 +35,7 @@ public class BizStatisticsController {
     @RequiresPermissions("biz:statistics:user:view")
     @RequestMapping(value = {"user", ""})
     public String user(HttpServletRequest request) {
-        // 根据日期取当月订单数据
-        List<BizOrderStatisticsDto> bizOrderStatisticsDtos = bizStatisticsService.orderStaticData("2018-02");
-        System.out.println(bizOrderStatisticsDtos);
+
 
         List<String> districtList = Lists.newArrayList("河南信阳", "山东济南", "山东临沂", "山东德州", "山东潍坊");
         List<Integer> salesVolumeList = Lists.newArrayList(10, 80, 30, 44, 55);
@@ -59,6 +57,20 @@ public class BizStatisticsController {
         return "modules/biz/statistics/bizStatisticsUser";
     }
 
+    /**
+     * 订单相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"order", ""})
+    public String order(HttpServletRequest request) {
+// 根据日期取当月订单数据
+        List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = bizStatisticsService.orderStaticData("2018-02");
+        System.out.println(bizOrderStatisticsDtoList);
 
+        return "modules/biz/statistics/bizStatisticsOrder";
+    }
 
 }
