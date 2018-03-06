@@ -928,6 +928,7 @@
         <th>货架名称</th>
         <th>商品名称</th>
         <th>商品编号</th>
+        <th>商品货号</th>
         <th>供应商</th>
         <th>供应商电话</th>
         <th>商品单价</th>
@@ -970,6 +971,9 @@
             </td>
             <td>
                     ${bizOrderDetail.partNo}
+            </td>
+            <td>
+                ${bizOrderDetail.skuInfo.itemNo}
             </td>
             <td>
                     ${bizOrderDetail.vendor.name}

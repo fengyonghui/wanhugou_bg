@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderDetailDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
@@ -26,6 +27,7 @@ import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,8 +54,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
-    @Autowired
-    private BizOrderDetailService bizOrderDetailService;
+    @Autowired @Lazy
+    private BizOrderDetailDao bizOrderDetailDao;
 
     public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader) {
         //查询状态 status=0 和 1的所有信息
@@ -93,10 +95,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             Double totalBuyPrice = 0.0;
             for (BizOrderHeader orderHeader:orderHeaderList) {
-                BizOrderDetail bizOrderDetail = new BizOrderDetail();
-                bizOrderDetail.setOrderHeader(orderHeader);
-                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-                totalBuyPrice = orderDetailList.stream().parallel().mapToDouble(orderDetail -> orderDetail.getBuyPrice()*orderDetail.getOrdQty()).sum();
+
+                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo().getBuyPrice()*orderDetail.getOrdQty()).sum();
                 orderHeader.setTotalBuyPrice(totalBuyPrice);
             }
             orderHeaderPage.setList(orderHeaderList);
@@ -117,7 +117,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }else {
                 bizOrderHeader.setConsultantId(user.getId());
             }
-
          //   bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "ccs"));
             return super.findPage(page, bizOrderHeader);
         }

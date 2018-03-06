@@ -102,13 +102,21 @@ public class SQLHelper {
     							final MappedStatement mappedStatement, final Object parameterObject,
     							final BoundSql boundSql, Log log) throws SQLException {
     	String dbName = Global.getConfig("jdbc.type");
+    	String tabName=Global.getConfig("jdbc.table");
+
 		final String countSql;
 		if("oracle".equals(dbName)){
 			countSql = "select count(1) from (" + sql + ") tmp_count";
 		}else{
-			countSql = "select count(1) from (" + removeOrders(sql) + ") tmp_count";
+            if(StringUtils.isNotBlank(tabName)&&"orderHeader".equals(tabName)){
+                countSql = "select count(1) from (" + removeOrders(sql) + " GROUP  by a.id) tmp_count";
+            }else {
+                countSql = "select count(1) from (" + removeOrders(sql) + ") tmp_count";
+            }
+
 //	        countSql = "select count(1) " + removeSelect(removeOrders(sql));
 		}
+
         Connection conn = connection;
         PreparedStatement ps = null;
         ResultSet rs = null;

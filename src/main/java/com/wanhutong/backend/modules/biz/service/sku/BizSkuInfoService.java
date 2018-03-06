@@ -13,6 +13,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -205,6 +206,8 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
  		 BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();
 		if (bizSkuInfo.getProdPropMap() != null) {
 			bizSkuInfoDao.deleteSkuPropInfoReal(bizSkuInfo);
+			String sizeStr="";
+			String colorStr="";
 			for (Map.Entry<String, BizProdPropertyInfo> entry : bizSkuInfo.getProdPropMap().entrySet()) {
 				Integer propId = Integer.parseInt(entry.getKey());
 				BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
@@ -236,13 +239,22 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 						bizSkuPropValue.setSource(bizProdPropValue.getSource());
 						bizSkuPropValue.setCode(bizProdPropValue.getCode());
 					}
-
+						if(StringUtils.isNotBlank(bizSkuPropValue.getPropName()) && bizSkuPropValue.getPropName().contains("尺寸")){
+							sizeStr="/"+bizSkuPropValue.getPropValue();
+						}
+						if(StringUtils.isNotBlank(bizSkuPropValue.getPropName()) && bizSkuPropValue.getPropName().contains("颜色")){
+							colorStr="/"+bizSkuPropValue.getPropValue();
+						}
 						bizSkuPropValue.setSkuInfo(bizSkuInfo);
 
 						bizSkuPropValueService.save(bizSkuPropValue);
+
+
 					}
 				}
 
+			bizSkuInfo.setItemNo(bizProductInfo.getItemNo()+sizeStr+colorStr);
+			super.save(bizSkuInfo);
 			}
 		//sku图片保存
 		saveCommonImg(bizSkuInfo);

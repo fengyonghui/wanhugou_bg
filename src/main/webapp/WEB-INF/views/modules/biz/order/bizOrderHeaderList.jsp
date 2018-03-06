@@ -79,6 +79,10 @@
 			<li><label>采购商电话：</label>
 				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
+			<li>
+				<label>货架编号：</label>
+				<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
+			</li>
 			<%--<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"--%>
 					<%--labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"--%>
 					<%--title="采购商"  url="/sys/office/queryTreeList?type=6"--%>

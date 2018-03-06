@@ -1,4 +1,5 @@
 <%@ taglib prefix="from" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fns" uri="http://java.sun.com/jsp/jstl/functionss" %>
 <%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
@@ -405,13 +406,13 @@
                           maxHeight="100"/>
         </div>
     </div>
-    <%--<div class="control-group">--%>
-        <%--<label class="control-label">产品代码：</label>--%>
-        <%--<div class="controls">--%>
-            <%--<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-xlarge required"/>--%>
-            <%--<span class="help-inline"><font color="red">*</font> </span>--%>
-        <%--</div>--%>
-    <%--</div>--%>
+    <div class="control-group">
+        <label class="control-label">产品货号：</label>
+        <div class="controls">
+            <form:input path="itemNo" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
+            <span class="help-inline"><font color="red">*</font> </span>
+        </div>
+    </div>
     <div class="control-group">
         <label class="control-label">产品描述：</label>
         <div class="controls">
@@ -579,6 +580,7 @@
         <th>商品名称</th>
         <th>商品类型</th>
         <th>商品编码</th>
+        <th>商品货号</th>
         <th>基础售价</th>
         <th>采购价格</th>
         <th>更新人</th>
@@ -606,6 +608,7 @@
             <td>
                     ${bizSkuInfo.partNo}
             </td>
+            <td>    ${bizSkuInfo.itemNo}</td>
             <td>
                     ${bizSkuInfo.basePrice}
             </td>

@@ -19,6 +19,7 @@
 		a.standard as "standard",-->
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
+		bsi.item_no AS "skuInfo.itemNo",
 		a.unit_price AS "unitPrice",
 		a.sent_qty as "sentQty",
 		a.ord_qty AS "ordQty",

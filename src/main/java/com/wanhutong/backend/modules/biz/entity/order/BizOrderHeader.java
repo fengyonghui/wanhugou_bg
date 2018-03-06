@@ -50,6 +50,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private String clientModify;		//用于客户专员修改跳转
 	private Boolean ownGenPoOrder;
 	private Integer onlyVendor; //该订单的唯一供应商
+	private String itemNo;      //根据sku货号搜索
+	private Integer orderCount; //find List中订单总条数据
 
 	private String orderNum2;		//用于删除订单页面传值
     private String localSendIds;
@@ -317,5 +319,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setTotalBuyPrice(Double totalBuyPrice) {
 		this.totalBuyPrice = totalBuyPrice;
+	}
+
+	public String getItemNo() {
+		return itemNo;
+	}
+
+	public void setItemNo(String itemNo) {
+		this.itemNo = itemNo;
+	}
+
+	public Integer getOrderCount() {
+		return orderCount;
+	}
+
+	public void setOrderCount(Integer orderCount) {
+		this.orderCount = orderCount;
 	}
 }
