@@ -37,7 +37,12 @@ public class BizStatisticsService {
     }
 
 
-    // 订单统计数据获取
+    /**
+     * 根据月份取订单统计相关数据
+     *
+     * @param month 取数据的月份
+     * @return 根据不同机构分类的统计数据
+     */
     public List<BizOrderStatisticsDto> orderStaticData(String month) {
         return bizOrderHeaderDao.getOrderTotalAndCountByCreateTimeMonthStatus(month, OrderHeaderBizStatusEnum.COMPLETE.getState(), OfficeTypeEnum.PURCHASINGCENTER.getType());
     }
