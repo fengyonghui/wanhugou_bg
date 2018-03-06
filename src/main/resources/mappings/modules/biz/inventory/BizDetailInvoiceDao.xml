@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizDetailInvoiceDao">
+    
+	<sql id="bizDetailInvoiceColumns">
+		a.id AS "id",
+		a.invoice_id AS "invoice",
+		a.order_detail_id AS "orderDetail",
+		a.request_detail_id AS "requestDetail"
+	</sql>
+	
+	<sql id="bizDetailInvoiceJoins">
+	</sql>
+    
+	<select id="get" resultType="BizDetailInvoice">
+		SELECT 
+			<include refid="bizDetailInvoiceColumns"/>
+		FROM biz_detail_invoice a
+		<include refid="bizDetailInvoiceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizDetailInvoice">
+		SELECT 
+			<include refid="bizDetailInvoiceColumns"/>
+		FROM biz_detail_invoice a
+		<include refid="bizDetailInvoiceJoins"/>
+		<where>
+			
+			<if test="invoice != null and invoice != ''">
+				AND a.invoice_id = #{invoice}
+			</if>
+			<if test="orderDetail != null and orderDetail != ''">
+				AND a.order_detail_id = #{orderDetail}
+			</if>
+			<if test="requestDetail != null and requestDetail != ''">
+				AND a.request_detail_id = #{requestDetail}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizDetailInvoice">
+		SELECT 
+			<include refid="bizDetailInvoiceColumns"/>
+		FROM biz_detail_invoice a
+		<include refid="bizDetailInvoiceJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_detail_invoice(
+			id,
+			invoice_id,
+			order_detail_id,
+			request_detail_id
+		) VALUES (
+			#{id},
+			#{invoice},
+			#{orderDetail},
+			#{requestDetail}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_detail_invoice SET 	
+			invoice_id = #{invoice},
+			order_detail_id = #{orderDetail},
+			request_detail_id = #{requestDetail}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_detail_invoice
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

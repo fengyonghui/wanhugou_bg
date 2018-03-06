@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizInvoiceDao">
+    
+	<sql id="bizInvoiceColumns">
+		a.id AS "id",
+		a.send_number AS "sendNumber",
+		a.logistics_id AS "logistics",
+		a.img_url AS "imgUrl",
+		a.value_price AS "valuePrice",
+		a.operation AS "operation",
+		a.freight AS "freight",
+		a.carrier AS "carrier",
+		a.settlement_status AS "settlementStatus",
+		a.send_time AS "sendDate",
+		a.status AS "delFlag",
+		a.create_id AS "createBy",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizInvoiceJoins">
+	</sql>
+    
+	<select id="get" resultType="BizInvoice">
+		SELECT 
+			<include refid="bizInvoiceColumns"/>
+		FROM biz_invoice a
+		<include refid="bizInvoiceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizInvoice">
+		SELECT 
+			<include refid="bizInvoiceColumns"/>
+		FROM biz_invoice a
+		<include refid="bizInvoiceJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="sendNumber != null and sendNumber != ''">
+				AND a.send_number = #{sendNumber}
+			</if>
+			<if test="logistics != null and logistics != ''">
+				AND a.logistics_id = #{logistics}
+			</if>
+			<if test="carrier != null and carrier != ''">
+				AND a.carrier LIKE 
+					<if test="dbName == 'oracle'">'%'||#{carrier}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{carrier}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{carrier},'%')</if>
+			</if>
+			<if test="settlementStatus != null and settlementStatus != ''">
+				AND a.settlement_status = #{settlementStatus}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizInvoice">
+		SELECT 
+			<include refid="bizInvoiceColumns"/>
+		FROM biz_invoice a
+		<include refid="bizInvoiceJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_invoice(
+			id,
+			send_number,
+			logistics_id,
+			img_url,
+			value_price,
+			operation,
+			freight,
+			carrier,
+			settlement_status,
+			send_time,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{sendNumber},
+			#{logistics},
+			#{imgUrl},
+			#{valuePrice},
+			#{operation},
+			#{freight},
+			#{carrier},
+			#{settlementStatus},
+			#{sendDate},
+			#{delFlag},
+			#{createBy},
+			#{createDate},
+			#{uVersion},
+			#{updateBy},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_invoice SET 	
+			send_number = #{sendNumber},
+			logistics_id = #{logistics},
+			img_url = #{imgUrl},
+			value_price = #{valuePrice},
+			operation = #{operation},
+			freight = #{freight},
+			carrier = #{carrier},
+			settlement_status = #{settlementStatus},
+			send_time = #{sendDate},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_invoice SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

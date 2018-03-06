@@ -35,6 +35,7 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private Integer totalRecvQty;
 	private Integer vendorId;
 	private String vendorName;
+	private Integer sendNum;		//记录页面传的供货数量
 
 	
 	public BizRequestDetail() {

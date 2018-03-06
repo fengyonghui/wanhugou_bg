@@ -38,7 +38,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String color;        //颜色
     private String standard;    //规格
     private Office suplyis;     //供货中心ID，sys_office.id; 默认本地备货对应采购中心id；其他货架对应供货中心ID；此值由采购专员同意发货前确定
-
+    private Integer sendNum;        //存储页面传入的供货数量
     private Integer ordQtyUpda;        //用于存储修改时的采购数量
     private List<BizOpShelfSku> shelfList;    //用于计算有多少货架
     private String orderDetaIds;        //用于多选商品时传递数据
@@ -317,5 +317,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setPrimary(User primary) {
         this.primary = primary;
+    }
+
+    public Integer getSendNum() {
+        return sendNum;
+    }
+
+    public void setSendNum(Integer sendNum) {
+        this.sendNum = sendNum;
     }
 }
