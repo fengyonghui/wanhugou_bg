@@ -258,4 +258,20 @@
 		</if>
 		WHERE id = #{id}
 	</update>
+
+	<select id="getOrderTotalAndCountByCreateTimeMonthStatus" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		SELECT
+   			sum(total_detail + total_exp + freight) AS totalMoney,
+  			count(1) AS orderCount,
+  			office.id AS officeId,
+  			office.name AS officeName
+		FROM biz_order_header AS header
+  			LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
+  			LEFT JOIN sys_office AS office ON consultant.center_id = office.id
+		WHERE biz_status = #{status}
+      		AND date_format(header.create_time, '%Y-%m') = #{month}
+      		AND office.type = #{officeType}
+      		GROUP BY office.id;
+	</select>
+
 </mapper>

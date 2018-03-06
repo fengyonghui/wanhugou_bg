@@ -5,7 +5,9 @@ package com.wanhutong.backend.modules.biz.dao.order;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +20,12 @@ import java.util.List;
 public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader);
     public void updateMoney(BizOrderHeader bizOrderHeader);
+
+    /**
+     *  按月获取有效订单的总金额和订单数量
+     *
+     * @param month 月
+     * @return 查询
+     */
+    List<BizOrderStatisticsDto> getOrderTotalAndCountByCreateTimeMonthStatus( @Param("month")String month, @Param("status") Integer status, @Param("officeType") String officeType);
 }
