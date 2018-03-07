@@ -4,6 +4,11 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
+/**
+ * EchartsSeriesDto 图表数据
+ *
+ * @author Ma.Qiang
+ */
 public class EchartsSeriesDto {
 
     /**

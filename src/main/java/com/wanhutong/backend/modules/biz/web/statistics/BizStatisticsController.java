@@ -77,6 +77,7 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"order", ""})
     public String order(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsOrder";
     }
 
@@ -116,33 +117,36 @@ public class BizStatisticsController extends BaseController {
 
 
         ArrayList<EchartsSeriesDto> seriesList = Lists.newArrayList(
-                genEchartsSeriesDto(officeNameSet, beforeLastDataMap, beforeLastMonth),
-                genEchartsSeriesDto(officeNameSet, lastDataMap, lastMonth),
-                genEchartsSeriesDto(officeNameSet, selectDataMap, selectMonth)
+                bizStatisticsService.genEchartsSeriesDto(officeNameSet, beforeLastDataMap, beforeLastMonth),
+                bizStatisticsService.genEchartsSeriesDto(officeNameSet, lastDataMap, lastMonth),
+                bizStatisticsService.genEchartsSeriesDto(officeNameSet, selectDataMap, selectMonth)
         );
         seriesList.removeAll(Collections.singleton(null));
 
         paramMap.put("seriesList", seriesList);
-        String s = JSONObject.fromObject(paramMap).toString();
-        System.out.println(s);
+
+        ArrayList<EchartsSeriesDto> rateSeriesList = Lists.newArrayList();
+        officeNameSet.forEach(o -> {
+            EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+            echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+            List<Object> dataList = Lists.newArrayList();
+
+            dataList.add(beforeLastDataMap.get(o) != null ? beforeLastDataMap.get(o).getTotalMoney() : 0);
+            dataList.add(lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : 0);
+            dataList.add(selectDataMap.get(o) != null ? selectDataMap.get(o).getTotalMoney() : 0);
+
+            echartsSeriesDto.setData(dataList);
+            echartsSeriesDto.setName(o);
+            rateSeriesList.add(echartsSeriesDto);
+        });
+        seriesList.removeAll(Collections.singleton(null));
+
+
+        paramMap.put("rateSeriesList", rateSeriesList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesList));
         return JSONObject.fromObject(paramMap).toString();
     }
 
-    public EchartsSeriesDto genEchartsSeriesDto(Set<String> officeNameSet, Map<String, BizOrderStatisticsDto> dataMap, LocalDateTime selectMonth) {
-        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
-        if (dataMap.size() > 0) {
-            List<Object> dataList = Lists.newArrayList();
-            officeNameSet.forEach(o -> {
-                BizOrderStatisticsDto bizOrderStatisticsDto = dataMap.get(o);
-                if (bizOrderStatisticsDto != null) {
-                    dataList.add(bizOrderStatisticsDto.getTotalMoney());
-                }
-            });
-            echartsSeriesDto.setData(dataList);
-            echartsSeriesDto.setName(selectMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
-            return echartsSeriesDto;
-        }
-        return null;
-    }
 
 }

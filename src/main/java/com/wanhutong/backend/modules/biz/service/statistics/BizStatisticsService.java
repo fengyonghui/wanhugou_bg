@@ -1,15 +1,16 @@
 package com.wanhutong.backend.modules.biz.service.statistics;
 
 
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,10 +40,10 @@ public class BizStatisticsService {
 
     /**
      * 用户相关统计数据
+     *
      * @return 用户统计数据
      */
     public String user() {
-
 
 
         return null;
@@ -64,6 +65,29 @@ public class BizStatisticsService {
         return resultMap;
     }
 
+
+    /**
+     * 封装成页面图表所需要的数据格式
+     *
+     * @param officeNameSet 所有机构名称
+     * @param dataMap       数据集合
+     * @param month         选择的日期
+     * @return 封装数据
+     */
+    public EchartsSeriesDto genEchartsSeriesDto(Set<String> officeNameSet, Map<String, BizOrderStatisticsDto> dataMap, LocalDateTime month) {
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        if (dataMap.size() > 0) {
+            List<Object> dataList = Lists.newArrayList();
+            officeNameSet.forEach(o -> {
+                BizOrderStatisticsDto bizOrderStatisticsDto = dataMap.get(o);
+                dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getTotalMoney() : 0);
+            });
+            echartsSeriesDto.setData(dataList);
+            echartsSeriesDto.setName(month.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+            return echartsSeriesDto;
+        }
+        return null;
+    }
 
 
 }
