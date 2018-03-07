@@ -61,7 +61,7 @@ public class BizOrderStatisticsDto {
     public String toString() {
         return "BizOrderStatisticsDto{" +
                 "totalMoney=" + totalMoney +
-                ", sheets=" + orderCount +
+                ", orderCount=" + orderCount +
                 ", officeId=" + officeId +
                 ", officeName=" + officeName +
                 '}';
