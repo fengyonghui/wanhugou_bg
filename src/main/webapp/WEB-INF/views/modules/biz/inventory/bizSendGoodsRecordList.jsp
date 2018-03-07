@@ -35,6 +35,9 @@
 			<li><label>商品编号：</label>
 				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
+			<li><label>商品货号：</label>
+				<form:input path="skuInfo.itemNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
 			<li><label>仓库名称：</label>
 				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
@@ -51,6 +54,7 @@
 				</c:if>
 				<th>商品名称</th>
 				<th>商品编号</th>
+				<th>商品货号</th>
 				<th>订单号</th>
 				<th>供货数量</th>
 				<th>客户</th>
@@ -83,6 +87,9 @@
 				</td>
 				<td>
 					${bizSendGoodsRecord.skuInfo.partNo}
+				</td>
+				<td>
+					${bizSendGoodsRecord.skuInfo.itemNo}
 				</td>
 				<td>
 					<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${bizSendGoodsRecord.bizOrderHeader.id}&source=ghs"></a>--%>

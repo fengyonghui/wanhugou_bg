@@ -29,6 +29,8 @@
                 $("#skuNameCopy").val(skuName);
                 var skuCode =$("#skuCode").val();
                 $("#skuCodeCopy").val(skuCode);
+                var itemNo = $("#itemNo").val();
+                $("#itemNoCopy").val(itemNo);
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuInfoList",
@@ -57,6 +59,7 @@
                                 trdatas+="<td id='invInfoId_"+skuInfo.id+"'>"+selecttd+"</td>";
                                 trdatas+="<td><input type='hidden' id='skuInfoIds_"+skuInfo.id+"' value='"+skuInfo.id+"'/>"+skuInfo.name+"</td>";
                                 trdatas+="<td>"+skuInfo.partNo+"</td>";
+                                trdatas+="<td>"+skuInfo.itemNo+"</td>";
                                 trdatas+="<td>"+skuInfo.skuPropertyInfos+"</td>";
                                 trdatas+="<td id='invType_"+skuInfo.id+"'>"+selectInvTypetd+"</td>";
                                 trdatas+="<td><input  type='text' class='input-mini' id='saleQty_"+skuInfo.id+"'/></td>";
@@ -159,6 +162,9 @@
 					<li><label>供应商名称：</label>
 						<input id="vendorName"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
+					<li><label>商品货号：</label>
+						<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
 
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
 					<li class="clearfix"></li>
@@ -175,6 +181,7 @@
 						<th>仓库名称</th>
 						<th>商品名称</th>
 						<th>商品编码</th>
+						<th>商品货号</th>
 						<th>商品属性</th>
 						<th>库存类型</th>
 						<th>库存数量</th>
@@ -187,6 +194,7 @@
 						<td>${entity.invInfo.name}</td>
 						<td>${entity.skuInfo.name}</td>
 						<td>${entity.skuInfo.partNo}</td>
+						<td>${entity.skuInfo.itemNo}</td>
 						<td>${entity.invType}</td>
 						<td>${entity.stockQty}</td>
 							<td><a href='#' onclick="delItem('${entity.id}')">删除</a></td>
@@ -200,6 +208,7 @@
 						<th>仓库名称</th>
 						<th>商品名称</th>
 						<th>商品编码</th>
+						<th>商品货号</th>
 						<th>商品属性</th>
 						<th>库存类型</th>
 						<th>库存数量</th>
@@ -224,6 +233,7 @@
 		<form:hidden id="skuNameCopy" path="name"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
 		<form:hidden id="vendorNameCopy" path="productInfo.vendorName"/>
+		<form:hidden id="itemNoCopy" path="itemNo"/>
 	</form:form>
 </body>
 </html>

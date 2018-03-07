@@ -68,6 +68,8 @@
                 $("#skuNameCopy").val(skuName);
                 var skuCode =$("#skuCode").val();
                 $("#skuCodeCopy").val(skuCode);
+                var itemNo =$("#itemNo").val();
+                $("#itemNoCopy").val(itemNo);
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
@@ -94,7 +96,7 @@
 
                                 tr_tds+= "<tr class='"+prodId+"'>";
                                 tr_tds+="<td><input type='checkbox' value='"+skuInfo.id+"' title='shelfIds'/></td>";
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td>" ;
+                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td>" ;
 
                                 if(flag){
                                     tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
@@ -255,6 +257,9 @@
 					<li><label>商品编码：</label>
 						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
+					<li><label>商品货号：</label>
+						<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
 					<li class="clearfix"></li>
 				</ul>
@@ -270,6 +275,7 @@
 					<th><input id="select_all" type="checkbox" /></th>
 					<th>商品名称</th>
 					<th>商品编码</th>
+					<th>商品货号</th>
 					<th>商品属性</th>
 					<th>品牌名称</th>
 					<th>产品图片</th>
@@ -347,6 +353,7 @@
 		<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>
 		<form:hidden id="skuNameCopy" path="name"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
+		<form:hidden id="itemNoCopy" path="itemNo"/>
 		<%--<form:hidden id="skuTypeCopy" path="skuType"/>--%>
 	</form:form>
 

@@ -94,6 +94,12 @@
 				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
 			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
 			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
 				AND a.prod_id =#{productInfo.id}
 			</if>
@@ -162,6 +168,12 @@
 				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
 			</if>
 			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
 				AND a.prod_id =#{productInfo.id}

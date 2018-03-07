@@ -47,6 +47,8 @@
                 $("#skuNameCopy").val(skuName);
                 var skuCode =$("#skuCode").val();
                 $("#skuCodeCopy").val(skuCode);
+                var itemNo = $("#itemNo").val();
+                $("#itemNoCopy").val(itemNo);
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
@@ -79,7 +81,7 @@
 
                                     "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
 								}
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
@@ -200,6 +202,9 @@
 					<li><label>商品编码：</label>
 						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
+					<li><label>商品货号：</label>
+						<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
 					<%--<li><label>商品类型：</label>--%>
 						<%--<select id="skuType" class="input-medium">--%>
 							<%--<option value="">请选择</option>--%>
@@ -226,6 +231,7 @@
 					<th>品牌名称</th>
 					<th>商品名称</th>
 					<th>商品编码</th>
+					<th>商品货号</th>
 					<th>商品属性</th>
 					<th>申报数量</th>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
@@ -288,6 +294,7 @@
 							<%--<th>供应商</th>--%>
 						<th>商品名称</th>
 						<th>商品编码</th>
+						<th>商品货号</th>
 						<th>商品属性</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
@@ -358,6 +365,7 @@
 		<form:hidden id="prodBrandNameCopy" path="productInfo.brandName"/>
 		<form:hidden id="skuNameCopy" path="name"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
+		<form:hidden id="itemNoCopy" path="itemNo"/>
 		<input type="hidden" name="skuType" value="${SkuTypeEnum.OWN_PRODUCT.code}"/>
 		<%--<form:hidden id="skuTypeCopy" path="skuType"/>--%>
 	</form:form>

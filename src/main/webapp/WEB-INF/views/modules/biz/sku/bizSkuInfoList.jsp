@@ -38,6 +38,9 @@
 			<li><label>商品编码：</label>
 				<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
+			<li><label>商品货号：</label>
+				<form:input path="itemNo" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -51,6 +54,7 @@
 				<th>商品类型</th>
 				<th>产品名称</th>
 				<th>商品编码</th>
+				<th>商品货号</th>
 				<%--<th>创建人</th>--%>
 				<th>基础售价</th>
 				<th>采购价格</th>
@@ -80,6 +84,10 @@
 				    <td>
 						<input name="partNo" value="${bizSkuInfo.partNo}" type="hidden"/>
 						${bizSkuInfo.partNo}
+					</td>
+					<td>
+						<input name="itemNo" value="${bizSkuInfo.itemNo}" type="hidden"/>
+							${bizSkuInfo.itemNo}
 					</td>
 					<td>
 						<input name="basePrice" value="${bizSkuInfo.basePrice}" type="hidden"/>

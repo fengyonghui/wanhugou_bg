@@ -63,6 +63,7 @@
                             $("#prodInfo2").empty();
                         }
                         var tr_tds="";
+                        var sum = 0;
                         $.each(data, function (index,orderHeader) {
 							if(orderHeader.bizStatus==17){
                                 bizName="采购中"
@@ -91,24 +92,31 @@
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
                                 tr_tds+="<td><input  type='text' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
                                 tr_tds+="</tr>";
+                                // alert(detail.skuInfo.buyPrice)
 
-
+                                sum += parseInt(detail.ordQty)*parseInt($("input[title='sent_"+orderHeader.id+"]"));
+								console.log(sum)
                                 if(orderHeader.orderDetailList.length>1){
                                     flag=false;
                                 }
                             });
 
                         });
+                        $("#valuePrice").attr("value",sum);
+                        alert($("#valuePrice").val())
                         $("#prodInfo2").append(tr_tds);
                     }
             });
 		});
-
+			var num = 0;
             <%--点击确定时获取订单详情--%>
             $("#ensureData").click(function () {
                     $('input:checkbox:checked').each(function(i) {
                        var t= $(this).val();
+                       // alert(t)
                        var ttp= $(this).parent().parent().parent();
+                        // console.log(ttp)
+                        // alert(JSON.stringify(ttp));
                        var trt= ttp.find($(".tr_"+t))
                         $("#prodInfo").append(trt);
                     });
@@ -152,7 +160,7 @@
 		<div class="control-group">
 			<label class="control-label">货值：</label>
 			<div class="controls">
-				<input id="valuePrice" name="valuePrice"  htmlEscape="false" class="input-xlarge required"/>
+				<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
