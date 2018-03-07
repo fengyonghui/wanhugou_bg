@@ -78,8 +78,25 @@
 		SELECT
 			<include refid="officeColumns"/>
 		FROM sys_office a
+		LEFT JOIN sys_user su ON su.company_id = a.id
 		<include refid="officeJoins"/>
-		WHERE a.status = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		WHERE
+		a.status = #{DEL_FLAG_NORMAL}
+		<if test="parentIds != null and parentIds != ''">
+		AND a.parent_ids LIKE #{parentIds}
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		</if>
+		<if test="phone != null and phone != ''">
+			AND su.mobile LIKE
+			<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>
+		</if>
 		<!-- 数据范围过滤 -->
 -- 		${sqlMap.dsf}
 		ORDER BY a.code
@@ -296,6 +313,12 @@
 				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone LIKE
+				<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>
 			</if>
 			<if test="consultantId !=null ">
 				and ccc.consultant_id= #{consultantId}
