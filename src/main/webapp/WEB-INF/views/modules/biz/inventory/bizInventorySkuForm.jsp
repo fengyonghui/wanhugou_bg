@@ -57,6 +57,7 @@
                                 trdatas+="<td id='invInfoId_"+skuInfo.id+"'>"+selecttd+"</td>";
                                 trdatas+="<td><input type='hidden' id='skuInfoIds_"+skuInfo.id+"' value='"+skuInfo.id+"'/>"+skuInfo.name+"</td>";
                                 trdatas+="<td>"+skuInfo.partNo+"</td>";
+                                trdatas+="<td>"+skuInfo.skuPropertyInfos+"</td>";
                                 trdatas+="<td id='invType_"+skuInfo.id+"'>"+selectInvTypetd+"</td>";
                                 trdatas+="<td><input  type='text' class='input-mini' id='saleQty_"+skuInfo.id+"'/></td>";
                                 trdatas+="<td id='td_"+skuInfo.id+"'> <a href='#' onclick=\"addItem('"+skuInfo.id+"')\">增加</a></td>";
@@ -155,6 +156,10 @@
 						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
 
+					<li><label>供应商名称：</label>
+						<input id="vendorName"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
+
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
 					<li class="clearfix"></li>
 				</ul>
@@ -170,6 +175,7 @@
 						<th>仓库名称</th>
 						<th>商品名称</th>
 						<th>商品编码</th>
+						<th>商品属性</th>
 						<th>库存类型</th>
 						<th>库存数量</th>
 						<th>操作</th>
@@ -194,6 +200,7 @@
 						<th>仓库名称</th>
 						<th>商品名称</th>
 						<th>商品编码</th>
+						<th>商品属性</th>
 						<th>库存类型</th>
 						<th>库存数量</th>
 						<th>操作</th>
@@ -216,6 +223,7 @@
 	<form:form id="searchForm" modelAttribute="bizSkuInfo" >
 		<form:hidden id="skuNameCopy" path="name"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
+		<form:hidden id="vendorNameCopy" path="productInfo.vendorName"/>
 	</form:form>
 </body>
 </html>

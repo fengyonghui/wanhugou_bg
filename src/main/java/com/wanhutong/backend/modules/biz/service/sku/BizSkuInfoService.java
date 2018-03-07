@@ -93,6 +93,10 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		return null;
 	}
 
+	public List<BizSkuInfo> findListByParam(BizSkuInfo bizSkuInfo){
+		return bizSkuInfoDao.findListByParam(bizSkuInfo);
+	}
+
 	public Map<String, List<BizSkuInfo>> findListForProd(BizSkuInfo bizSkuInfo) {
 		List<BizSkuInfo> skuInfoList=super.findList(bizSkuInfo);
 		Map<BizProductInfo,List<BizSkuInfo>> map=new HashMap<BizProductInfo,List<BizSkuInfo>>();
@@ -253,7 +257,7 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 					}
 				}
 
-			bizSkuInfo.setItemNo(bizProductInfo.getItemNo()+sizeStr+colorStr);
+			bizSkuInfo.setItemNo(bizProductInfo.getItemNo()+(bizProductInfo.getVendorName()==null?0:bizProductInfo.getVendorName())+sizeStr+colorStr);
 			super.save(bizSkuInfo);
 			}
 		//sku图片保存

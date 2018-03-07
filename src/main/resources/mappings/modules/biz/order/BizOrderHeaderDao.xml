@@ -283,7 +283,17 @@
     </select>
 
 	<select id="findCount" resultType="Integer">
-		SELECT count(1)FROM biz_order_header a
+		SELECT count(1) from
+		(SELECT
+		<include refid="bizOrderHeaderColumns"/>,
+		od.id AS "orderDetailList.id",
+		od.unit_price AS "orderDetailList.unitPrice",
+		od.ord_qty AS "orderDetailList.ordQty",
+		od.sent_qty AS "orderDetailList.sentQty",
+		si.id AS "orderDetailList.skuInfo.id",
+		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
+		si.item_no AS "orderDetailList.skuInfo.itemNo"
+		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		<include refid="bizOrderHeaderJoins"/>
@@ -351,14 +361,14 @@
 				${sqlMap.order}
 			</if>
 		</where>
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-				 	GROUP  BY a.id
-			</otherwise>
-		</choose>
+
+
+
+				GROUP  BY a.id
+				) tmp_count
+
+
+
 
 	</select>
 
