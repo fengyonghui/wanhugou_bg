@@ -40,6 +40,7 @@
 		LEFT JOIN sys_user pp ON pp.id = a.primary_person
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
 		LEFT JOIN biz_custom_center_consultant ccc on a.id=ccc.cust_id
+		LEFT JOIN sys_user su ON su.company_id = a.id
     </sql>
 	
 	<select id="get" resultType="Office">
@@ -74,33 +75,33 @@
 		ORDER BY a.code
 	</select>
 	
-	<select id="findByParentIdsLike" resultType="Office">
-		SELECT
-			<include refid="officeColumns"/>
-		FROM sys_office a
-		LEFT JOIN sys_user su ON su.company_id = a.id
-		<include refid="officeJoins"/>
-		WHERE
-		a.status = #{DEL_FLAG_NORMAL}
-		<if test="parentIds != null and parentIds != ''">
-		AND a.parent_ids LIKE #{parentIds}
-		</if>
-		<if test="name != null and name != ''">
-			AND a.name LIKE
-			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
-			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
-			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
-		</if>
-		<if test="phone != null and phone != ''">
-			AND su.mobile LIKE
-			<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
-			<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
-			<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>
-		</if>
-		<!-- 数据范围过滤 -->
--- 		${sqlMap.dsf}
-		ORDER BY a.code
-	</select>
+	<!--<select id="findByParentIdsLike" resultType="Office">-->
+		<!--SELECT-->
+			<!--<include refid="officeColumns"/>-->
+		<!--FROM sys_office a-->
+		<!--LEFT JOIN sys_user su ON su.company_id = a.id-->
+		<!--<include refid="officeJoins"/>-->
+		<!--WHERE-->
+		<!--a.status = #{DEL_FLAG_NORMAL}-->
+		<!--<if test="parentIds != null and parentIds != ''">-->
+		<!--AND a.parent_ids LIKE #{parentIds}-->
+		<!--</if>-->
+		<!--<if test="name != null and name != ''">-->
+			<!--AND a.name LIKE-->
+			<!--<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>-->
+			<!--<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>-->
+			<!--<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>-->
+		<!--</if>-->
+		<!--<if test="phone != null and phone != ''">-->
+			<!--AND su.mobile LIKE-->
+			<!--<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>-->
+			<!--<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>-->
+			<!--<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>-->
+		<!--</if>-->
+		<!--&lt;!&ndash; 数据范围过滤 &ndash;&gt;-->
+<!--&#45;&#45; 		${sqlMap.dsf}-->
+		<!--ORDER BY a.code-->
+	<!--</select>-->
 
 	<select id="findOfficeByIdToParent" resultType="Office">
 		select *
@@ -319,6 +320,12 @@
 				<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>
+			</if>
+			<if test="gysMobile != null and gysMobile != ''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{gysMobile}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{gysMobile}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{gysMobile},'%')</if>
 			</if>
 			<if test="consultantId !=null ">
 				and ccc.consultant_id= #{consultantId}

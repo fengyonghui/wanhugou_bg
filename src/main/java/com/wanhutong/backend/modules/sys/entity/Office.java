@@ -38,6 +38,7 @@ public class Office extends TreeEntity<Office> {
 	private User deputyPerson;//副负责人
 	private List<String> childDeptList;//快速添加子部门
 	private String level; //钱包等级
+	private String gysMobile;	//供应商联系方式
 
 	private String source;
 	private String gysFlag;	//用于供应商保存跳转标识
@@ -267,5 +268,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setGysFlag(String gysFlag) {
 		this.gysFlag = gysFlag;
+	}
+
+	public String getGysMobile() {
+		return gysMobile;
+	}
+
+	public void setGysMobile(String gysMobile) {
+		this.gysMobile = gysMobile;
 	}
 }
