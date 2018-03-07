@@ -9,8 +9,16 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
+                    if(window.confirm('你确定要发货吗？')){
+                        // alert("确定");
+                        form.submit();
+                        return true;
+                        loading('正在提交，请稍等...');
+
+                    }else{
+                        //alert("取消");
+                        return false;
+                    }
 				},
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
@@ -51,6 +59,8 @@
 							}
 
 							var flag= true;
+							var deId = "";
+							var  num = "";
                             $.each(orderHeader.orderDetailList,function (index,detail) {
 
                                 tr_tds+="<tr class='"+orderHeader.id+"'>";
@@ -60,16 +70,20 @@
 
                                     tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.orderNum+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
                                 }
+                                deId+=detail.id+";";
+                                // tr_tds+="<input id='"+detail.id+"' title='details' name='' type='hidden' value='"+detail.id+"'>";
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
-                                tr_tds+="<td><input id='"+orderHeader.id+""+index+"' type='text' title='sent' name='' value='0'></td>";
+                                tr_tds+="<td><input id='"+orderHeader.id+""+detail.id+"' type='text' title='sent' name='' value='0'></td>";
                                 tr_tds+="</tr>";
+
+
                                 if(orderHeader.orderDetailList.length>1){
                                     flag=false;
                                 }
                             });
 
-                            tr_tds+="<input type='hidden' title='orders' id='h_"+orderHeader.id+"' value='"+orderHeader.id+"'>";
+                            tr_tds+="<input type='hidden' title='orders' id='h_"+orderHeader.id+"' value='"+orderHeader.id+"-"+deId+"-"+"'>";
                         });
                         $("#prodInfo2").append(tr_tds);
                     }
@@ -78,6 +92,8 @@
 
             <%--点击确定时获取订单详情--%>
             $("#ensureData").click(function () {
+                $("#334326").val()
+                alert($("#334326").val());
                 // var flag=false;
 				// $("input[title='sent']").each(function () {
 				// 	var v=$(this).val();
@@ -88,13 +104,24 @@
                 // });
 				// if(flag){
                     var trHtml="";
+                	var num = "";
                     $('input:checkbox:checked').each(function(i){
-
+						alert("1")
+						alert(num)
                         var t=$(this).val();
                          trHtml=$("."+t).parent().html();
                         $("#prodInfo").append(trHtml);
-                        $("#prodInfo").find("input[title='sent']").attr("name","sendNum");
-                        $("#prodInfo").find("input[title='orders']").attr("name","orderHeaderList")
+
+                        $("#prodInfo").find("input[title='sent']").each(function (index) {
+                            var t=$(this).val()
+                            num += t+";";
+                            alert(num)
+                        });
+                        $("#prodInfo").find("input[title='orders']").attr("value",$("#prodInfo").find("input[title='orders']").val().append(num));
+                        // $("#prodInfo").find("input[title='sent']").attr("name","sendNums");
+                        // $("#prodInfo").find("input[title='details']").attr("name","ordDetails");
+						alert($("#prodInfo").find("input[title='orders']").val())
+                        $("#prodInfo").find("input[title='orders']").attr("name","orderHeaders")
                     });
 
 
@@ -116,7 +143,7 @@
 		<div class="control-group">
 			<label class="control-label">物流商：</label>
 			<div class="controls">
-				<select id="bizLogistics" name="bizLogistics.id" onmouseout="" class="input-medium">
+				<select id="bizLogistics" name="logistics.id" onmouseout="" class="input-medium">
 					<c:forEach items="${logisticsList}" var="bizLogistics">
 						<option value="${bizLogistics.id}"/>${bizLogistics.name}
 					</c:forEach>
@@ -127,13 +154,15 @@
 		<div class="control-group">
 			<label class="control-label">物流信息图：</label>
 			<div class="controls">
-				<form:input path="imgUrl" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+				<input type="hidden" id="imgUrl" name="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
+							  maxHeight="100"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">货值：</label>
 			<div class="controls">
-				<form:input path="valuePrice" htmlEscape="false" class="input-xlarge required"/>
+				<input id="valuePrice" name="valuePrice"  htmlEscape="false" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -160,7 +189,7 @@
 		<div class="control-group">
 			<label class="control-label">物流结算方式：</label>
 			<div class="controls">
-				<select id="settlementStatus" path="settlementStatus" onmouseout="" class="input-xlarge">
+				<select id="settlementStatus" name="settlementStatus" onmouseout="" class="input-xlarge">
 					<c:forEach items="${fns:getDictList('biz_settlement_status')}" var="settlementStatus">
 						<option value="${settlementStatus.value}">${settlementStatus.label}</option>
 						<%--<option <c:if test="${settlementStatus eq '现结'}"><c:out value="1"/></c:if><c:if test="${settlementStatus eq '账期'}"><c:out value="2"/></c:if> onclick="chenge(settlementStatus)">${settlementStatus}</option>--%>
@@ -233,7 +262,7 @@
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
-
+						<input name="bizStatu" value="1" type="hidden"/>
 					</tbody>
 				</table>
 				<%--<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>--%>

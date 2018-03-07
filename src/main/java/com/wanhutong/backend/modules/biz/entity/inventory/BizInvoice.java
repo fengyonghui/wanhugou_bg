@@ -34,6 +34,11 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private Date sendDate;		// 供货时间
 	private List<BizOrderHeader> orderHeaderList;
 	private List<BizRequestHeader> requestHeaderList;
+	private String requestHeaders;		//发货备货单ID
+	private String orderHeaders;		//发货订单ID
+	private String sendNums;		//供货数
+	private String reqDetails;		//发货备货单详情ID
+	private String ordDetails;		//发货订单详情ID
 
 	public BizInvoice() {
 		super();
@@ -134,5 +139,45 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setRequestHeaderList(List<BizRequestHeader> requestHeaderList) {
 		this.requestHeaderList = requestHeaderList;
+	}
+
+	public String getRequestHeaders() {
+		return requestHeaders;
+	}
+
+	public void setRequestHeaders(String requestHeaders) {
+		this.requestHeaders = requestHeaders;
+	}
+
+	public String getOrderHeaders() {
+		return orderHeaders;
+	}
+
+	public void setOrderHeaders(String orderHeaders) {
+		this.orderHeaders = orderHeaders;
+	}
+
+	public String getSendNums() {
+		return sendNums;
+	}
+
+	public void setSendNums(String sendNums) {
+		this.sendNums = sendNums;
+	}
+
+	public String getReqDetails() {
+		return reqDetails;
+	}
+
+	public void setReqDetails(String reqDetails) {
+		this.reqDetails = reqDetails;
+	}
+
+	public String getOrdDetails() {
+		return ordDetails;
+	}
+
+	public void setOrdDetails(String ordDetails) {
+		this.ordDetails = ordDetails;
 	}
 }

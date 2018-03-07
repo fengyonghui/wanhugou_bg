@@ -45,12 +45,39 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>发货号</th>
+				<th>物流商</th>
+				<th>运费</th>
+				<th>操作费</th>
+				<th>货值</th>
+				<th>运费/货值</th>
+				<th>承运人</th>
+				<th>物流结算方式</th>
+				<th>发货时间</th>
+				<th>物流信息图</th>
+
 				<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizInvoice">
 			<tr>
+				<td>${bizInvoice.sendNumber}</td>
+				<td>${bizInvoice.logistics.name}</td>
+				<td>${bizInvoice.freight}</td>
+				<td>${bizInvoice.operation}</td>
+				<td>${bizInvoice.valuePrice}</td>
+				<td>
+					<c:if test="${bizInvoice.valuePrice != 0}">
+					<fmt:formatNumber type="number" value="${bizInvoice.freight*100/bizInvoice.valuePrice}" maxFractionDigits="0"/>%
+					</c:if>
+				</td>
+				<td>${bizInvoice.carrier}</td>
+				<td>${fns:getDictLabel(bizInvoice.settlementStatus, 'biz_settlement_status', '未知状态')}</td>
+				<td>
+					<fmt:formatDate value="${bizInvoice.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><td>
     				<a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}">修改</a>
 					<a href="${ctx}/biz/inventory/bizInvoice/delete?id=${bizInvoice.id}" onclick="return confirmx('确认要删除该发货单吗？', this.href)">删除</a>

@@ -42,13 +42,16 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="sendNumber != null and sendNumber != ''">
-				AND a.send_number = #{sendNumber}
+				AND a.send_number LIKE #{sendNumber}
+				<if test="dbName == 'oracle'">'%'||#{sendNumber}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{sendNumber}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{sendNumber},'%')</if>
 			</if>
 			<if test="logistics != null and logistics.id != null and logistics.id != ''">
 				AND a.logistics_id = #{logistics.id}
 			</if>
 			<if test="logistics != null and logistics.id != null and logistics.id != ''">
-				AND LIKE
+				AND bl.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{logistics.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{logistics.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{logistics.name},'%')</if>

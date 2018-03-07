@@ -111,33 +111,53 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
         Date date = new Date();
         bizInvoice.setSendDate(date);
+        bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,1));
         super.save(bizInvoice);
         bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,bizInvoice.getId()));
         super.save(bizInvoice);
         //保存图片
         saveCommonImg(bizInvoice);
-        List<BizOrderHeader> orderHeaderList = bizInvoice.getOrderHeaderList();
+        //获取订单ID
+        String orderHeaders = bizInvoice.getOrderHeaders();
+        String[] orders = orderHeaders.split(",".trim());
+        for(int i = 0; i < orders.length; i++){
+            String[] oheaders = orders[i].split("-".trim());
+            for(int j = 0; j < oheaders.length; j++){
+                oheaders[j].split(";");
+            }
+        }
+        //获取供货数
+        String sendNums = bizInvoice.getSendNums();
+        String[] sNums = sendNums.split(",".trim());
+        //获取订单详情ID
+        String ordDetails = bizInvoice.getOrdDetails();
+        String[] oDetails = ordDetails.split(",".trim());
+        List<BizOrderHeader> orderHeaderList = new LinkedList<>();
+
+        for(int i=0; i<orders.length; i++){
+            orderHeaderList.add(bizOrderHeaderService.get(Integer.parseInt(orders[i])));
+        }
         List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if (orderHeaderList != null && orderHeaderList.size() > 0){
             for(BizOrderHeader bizOrderHeader:orderHeaderList) {
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
                 BizOrderDetail ordDetail = new BizOrderDetail();
                 ordDetail.setOrderHeader(orderHeader);
-                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(ordDetail);
                 //加入中间表关联关系
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(bizInvoice);
                 bizDetailInvoice.setOrderHeader(bizOrderHeader);
                 bizDetailInvoiceService.save(bizDetailInvoice);
-                for (BizOrderDetail bizOrderDetail : orderDetailList) {
-                        //商品
-                        BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
-                        int sendNum = bizOrderDetail.getSendNum();    //供货数
+                for (int i = 0; i< oDetails.length; i++) {
+                    BizOrderDetail orderDetail = bizOrderDetailService.get(Integer.parseInt(oDetails[i]));
+                    //商品
+                        BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
+                        int sendNum = Integer.parseInt(sNums[i]);    //供货数
                         //采购商
                         Office office = officeService.get(orderHeader.getCustomer().getId());
-                        int sentQty = bizOrderDetail.getSentQty();    //销售单累计供货数量
+                        int sentQty = orderDetail.getSentQty();    //销售单累计供货数量
                         //当供货数量和申报数量不相等时，更改销售单状态
-                        if (bizOrderDetail.getOrdQty() != (sentQty + sendNum)) {
+                        if (orderDetail.getOrdQty() != (sentQty + sendNum)) {
                             flagOrder = false;
                         }
                         if (sendNum == 0) {
@@ -151,7 +171,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             //获取库存数
                             BizInventorySku bizInventorySku = new BizInventorySku();
                             bizInventorySku.setSkuInfo(bizSkuInfo);
-                            bizInventorySku.setInvInfo(bizOrderDetail.getInventoryInfo());
+                            bizInventorySku.setInvInfo(orderDetail.getInventoryInfo());
                             bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
                             List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
                             int stock = 0;
@@ -165,7 +185,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                                 for (BizInventorySku invSku : list) {
                                     stock = invSku.getStockQty();
                                     //如果库存不够，
-                                    if (stock < bizOrderDetail.getOrdQty()) {
+                                    if (stock < orderDetail.getOrdQty()) {
                                     /*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
                                     bizOrderHeaderService.saveOrderHeader(bizOrderHeader);*/
                                         flagOrder = false;
@@ -180,12 +200,12 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                                     }
                                 }
                                 //累计已供数量
-                                bizOrderDetail.setSentQty(sentQty + sendNum);
-                                bizOrderDetailService.saveStatus(bizOrderDetail);
+                                orderDetail.setSentQty(sentQty + sendNum);
+                                bizOrderDetailService.saveStatus(orderDetail);
                                 //生成供货记录表
                                 BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
                                 bsgr.setSendNum(sendNum);
-                                bsgr.setInvInfo(bizOrderDetail.getInventoryInfo());
+                                bsgr.setInvInfo(orderDetail.getInventoryInfo());
                                 bsgr.setCustomer(office);
                                 bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
                                 bsgr.setOrderNum(bizOrderHeader.getOrderNum());
@@ -220,18 +240,22 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                                 flagPo = false;
                             }
                             //累计已供数量
-                            bizOrderDetail.setSentQty(sentQty + sendNum);
-                            bizOrderDetailService.saveStatus(bizOrderDetail);
+                            orderDetail.setSentQty(sentQty + sendNum);
+                            bizOrderDetailService.saveStatus(orderDetail);
+                            //修改订单状态为供应商发货（19）
+                            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.STOCKING.getState());
+                            bizOrderHeaderService.save(bizOrderHeader);
+                            //生成供货记录
+                            BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
+                            bsgr.setSendNum(sendNum);
+                            bsgr.setCustomer(office);
+                            bsgr.setOrderNum(bizOrderHeader.getOrderNum());
+                            bsgr.setBizOrderHeader(bizOrderHeader);
+                            bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
+                            bsgr.setSkuInfo(bizSkuInfo);
+                            bsgr.setSendDate(date);
+                            bizSendGoodsRecordService.save(bsgr);
                         }
-                        //生成供货记录
-                        BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
-                        bsgr.setSendNum(sendNum);
-                        bsgr.setCustomer(office);
-                        bsgr.setOrderNum(bizOrderHeader.getOrderNum());
-                        bsgr.setBizOrderHeader(bizOrderHeader);
-                        bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
-                        bsgr.setSkuInfo(bizSkuInfo);
-                        bsgr.setSendDate(date);
                     }
                 //销售单完成时，更该销售单状态为已供货（20）
                 if (flagOrder) {

@@ -122,9 +122,9 @@ public class BizInvoiceController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
 	@RequestMapping(value = "save")
 	public String save(BizInvoice bizInvoice,String source,String bizStatu,String ship, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizInvoice)){
+		/*if (!beanValidator(model, bizInvoice)){
 			return form(bizInvoice, model);
-		}
+		}*/
 		bizInvoiceService.save(bizInvoice,bizStatu);
 		addMessage(redirectAttributes, "保存发货单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";

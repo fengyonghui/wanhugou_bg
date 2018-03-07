@@ -4,9 +4,9 @@
     
 	<sql id="bizDetailInvoiceColumns">
 		a.id AS "id",
-		a.invoice_id AS "invoice",
-		a.order_header_id AS "orderHeader",
-		a.request_header_id AS "requestHeader"
+		a.invoice_id AS "invoice.id",
+		a.order_header_id AS "orderHeader.id",
+		a.request_header_id AS "requestHeader.id"
 	</sql>
 	
 	<sql id="bizDetailInvoiceJoins">
@@ -27,14 +27,14 @@
 		<include refid="bizDetailInvoiceJoins"/>
 		<where>
 			
-			<if test="invoice != null and invoice != ''">
-				AND a.invoice_id = #{invoice}
+			<if test="invoice != null and invoice.id != null and invoice.id != ''">
+				AND a.invoice_id = #{invoice.id}
 			</if>
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
-				AND a.order_header_id = #{orderHeader}
+				AND a.order_header_id = #{orderHeader.id}
 			</if>
 			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
-				AND a.request_header_id = #{requestHeader}
+				AND a.request_header_id = #{requestHeader.id}
 			</if>
 		</where>
 		<choose>
@@ -67,21 +67,33 @@
 		INSERT INTO biz_detail_invoice(
 			id,
 			invoice_id,
-			order_header_id,
-			request_header_id
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				order_header_id
+			</if>
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				request_header_id
+			</if>
 		) VALUES (
 			#{id},
-			#{invoice},
-			#{orderHeader},
-			#{requestHeader}
+			#{invoice.id},
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				#{orderHeader.id}
+			</if>
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				#{requestHeader.id}
+			</if>
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE biz_detail_invoice SET 	
-			invoice_id = #{invoice},
-			order_header_id = #{orderHeader},
-			request_header_id = #{requestHeader}
+			invoice_id = #{invoice.id},
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				order_header_id = #{orderHeader.id}
+			</if>
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				request_header_id = #{requestHeader.id}
+			</if>
 		WHERE id = #{id}
 	</update>
 	

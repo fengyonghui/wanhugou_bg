@@ -4,7 +4,6 @@
     
 	<sql id="bizSendGoodsRecordColumns">
 		a.id AS "id",
-		a.send_number AS "sendNumber",
 		a.sku_id AS "skuInfo.id",
 		sku.name AS "skuInfo.name",
 		a.inv_id AS "invInfo.id",
@@ -63,12 +62,6 @@
 			<if test="bizStatus != null">
 				AND a.biz_status = #{bizStatus}
 			</if>
-            <if test="sendNumber != null and sendNumber != ''">
-                AND a.send_number LIKE
-                <if test="dbName == 'oracle'">'%'||#{sendNumber}||'%'</if>
-                <if test="dbName == 'mssql'">'%'+#{sendNumber}+'%'</if>
-                <if test="dbName == 'mysql'">concat('%',#{sendNumber},'%')</if>
-            </if>
             <if test="carrier != null and carrier != ''">
                 AND a.send_number LIKE
                 <if test="dbName == 'oracle'">'%'||#{carrier}||'%'</if>
@@ -140,7 +133,6 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_send_goods_record(
 			id,
-            send_number,
 			sku_id,
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				inv_id,
@@ -185,7 +177,6 @@
 			update_time
 		) VALUES (
 			#{id},
-            #{sendNumber},
 			#{skuInfo.id},
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				#{invInfo.id},
@@ -233,7 +224,6 @@
 	
 	<update id="update">
 		UPDATE biz_send_goods_record SET
-            send_number=#{sendNumber},
 			sku_id = #{skuInfo.id},
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				inv_id = #{invInfo.id},
