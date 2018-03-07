@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
+import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -90,7 +91,7 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = {"orderData", ""})
     @ResponseBody
-    public String orderData(HttpServletRequest request, String month) {
+    public String orderData(HttpServletRequest request, String month, String lineChartType) {
         LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
         LocalDateTime lastMonth = selectMonth.minusMonths(1);
         LocalDateTime beforeLastMonth = lastMonth.minusMonths(1);
@@ -125,25 +126,36 @@ public class BizStatisticsController extends BaseController {
 
         paramMap.put("seriesList", seriesList);
 
-        ArrayList<EchartsSeriesDto> rateSeriesList = Lists.newArrayList();
-        officeNameSet.forEach(o -> {
-            EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
-            echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+        ArrayList<EchartsSeriesDto> lineSeriesList = Lists.newArrayList();
 
-            List<Object> dataList = Lists.newArrayList();
+        switch (OrderStatisticsDataTypeEnum.parse(StringUtils.isNotBlank(lineChartType) ? Integer.valueOf(lineChartType) : 0)) {
+            case SALEROOM:
+                officeNameSet.forEach(o -> {
+                    EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+                    echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
 
-            dataList.add(beforeLastDataMap.get(o) != null ? beforeLastDataMap.get(o).getTotalMoney() : 0);
-            dataList.add(lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : 0);
-            dataList.add(selectDataMap.get(o) != null ? selectDataMap.get(o).getTotalMoney() : 0);
+                    List<Object> dataList = Lists.newArrayList();
 
-            echartsSeriesDto.setData(dataList);
-            echartsSeriesDto.setName(o);
-            rateSeriesList.add(echartsSeriesDto);
-        });
+                    dataList.add(beforeLastDataMap.get(o) != null ? beforeLastDataMap.get(o).getTotalMoney() : 0);
+                    dataList.add(lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : 0);
+                    dataList.add(selectDataMap.get(o) != null ? selectDataMap.get(o).getTotalMoney() : 0);
+
+                    echartsSeriesDto.setData(dataList);
+                    echartsSeriesDto.setName(o);
+                    lineSeriesList.add(echartsSeriesDto);
+                });
+                break;
+            case SALES_GROWTH_RATE:
+                // TODO 销售额增长率计算
+                break;
+            default:
+                break;
+        }
+
         seriesList.removeAll(Collections.singleton(null));
 
 
-        paramMap.put("rateSeriesList", rateSeriesList);
+        paramMap.put("rateSeriesList", lineSeriesList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesList));
         return JSONObject.fromObject(paramMap).toString();
     }

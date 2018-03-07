@@ -134,7 +134,7 @@
                 });
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-
+                alert("未查询到数据!");
             }
         });
     }

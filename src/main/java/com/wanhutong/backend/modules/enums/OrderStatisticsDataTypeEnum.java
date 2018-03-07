@@ -9,7 +9,8 @@ public enum  OrderStatisticsDataTypeEnum {
     /**
      * 销售增长率
      */
-    SALES_GROWTH_RATE(1,"销售增长率"),
+    SALEROOM(1,"销售额"),
+    SALES_GROWTH_RATE(2,"销售增长率"),
     ;
     private int code;
     private String desc;
@@ -27,12 +28,12 @@ public enum  OrderStatisticsDataTypeEnum {
         return desc;
     }
 
-    public OrderStatisticsDataTypeEnum parse(int i) {
+    public static OrderStatisticsDataTypeEnum parse(int i) {
         for (OrderStatisticsDataTypeEnum type : values()) {
             if (type.getCode() == i) {
                 return type;
             }
         }
-        return null;
+        return SALEROOM;
     }
 }
