@@ -27,30 +27,101 @@
 			}
 		}
 	</script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+		});
+		function page(n,s){
+			$("#pageNo").val(n);
+			$("#pageSize").val(s);
+			$("#searchForm").submit();
+        	return false;
+        }
+	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/sys/office/supplierList">机构列表</a></li>
+		<li class="active"><a href="${ctx}/sys/office/supplierListGys">机构列表</a></li>
 		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/supplierForm?parent.id=${office.id}&gysFlag=gys_save">机构添加</a></li></shiro:hasPermission>
 	</ul>
+	<form:form id="searchForm" modelAttribute="office" action="${ctx}/sys/office/supplierListGys" method="post" class="breadcrumb form-search">
+		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<ul class="ul-form">
+			<li><label>供应商名称：</label>
+				<sys:treeselect id="office" name="id" value="" labelName="customer.name"
+								labelValue="" notAllowSelectParent="true"
+								title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium"
+								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
+			</li>
+			<li><label>联系人电话：</label>
+				<form:input path="gysMobile" htmlEscape="false" placeholder="请输入供应商联系人电话"  class="input-medium"/></li>
+			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="clearfix"></li>
+		</ul>
+	</form:form>
 	<sys:message content="${message}"/>
+	<%--<table id="treeTable" class="table table-striped table-bordered table-condensed">--%>
+		<%--<thead><tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>机构类型</th><th>备注</th><shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr></thead>--%>
+		<%--<tbody id="treeTableList"></tbody>--%>
+	<%--</table>--%>
+	<%--<script type="text/template" id="treeTableTpl">--%>
+		<%--<tr id="{{row.id}}" pId="{{pid}}">--%>
+			<%--<td><a href="${ctx}/sys/office/supplierForm?id={{row.id}}&gysFlag=gys_save">{{row.name}}</a></td>--%>
+			<%--<td>{{row.area.name}}</td>--%>
+			<%--<td>{{row.code}}</td>--%>
+			<%--<td>{{dict.type}}</td>--%>
+			<%--<td>{{row.remarks}}</td>--%>
+			<%--<shiro:hasPermission name="sys:office:edit"><td>--%>
+				<%--<a href="${ctx}/sys/office/supplierForm?id={{row.id}}&gysFlag=gys_save">修改</a>--%>
+				<%--<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>--%>
+				<%--<a href="${ctx}/sys/office/supplierForm?parent.id={{row.id}}&gysFlag=gys_save">添加下级机构</a>--%>
+			<%--</td></shiro:hasPermission>--%>
+		<%--</tr>--%>
+	<%--</script>--%>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
-		<thead><tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>机构类型</th><th>备注</th><shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr></thead>
-		<tbody id="treeTableList"></tbody>
+		<thead>
+		<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>机构类型</th><th>备注</th>
+			<shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr>
+		</thead>
+		<tbody>
+		<%--<c:if test="${empty list}">--%>
+			<c:forEach items="${page.list}" var="off">
+				<tr>
+					<td><a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_save">${off.name}</a></td>
+					<td>${off.area.name}</td>
+					<td>${off.code}</td>
+					<td>
+						${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
+					</td>
+					<td>${off.remarks}</td>
+					<shiro:hasPermission name="sys:office:edit"><td>
+						<a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_save">修改</a>
+						<a href="${ctx}/sys/office/delete?id=${off.id}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
+						<a href="${ctx}/sys/office/supplierForm?parent.id=${off.id}&gysFlag=gys_save">添加下级机构</a>
+					</td></shiro:hasPermission>
+				</tr>
+			</c:forEach>
+		<%--</c:if><c:if test="${not empty list}">--%>
+			<%--<c:forEach items="${list}" var="gysNo">--%>
+			<%--<tr>--%>
+				<%--<td><a href="${ctx}/sys/office/supplierForm?id=${gysNo.id}&gysFlag=gys_save">${gysNo.name}</a></td>--%>
+				<%--<td>${gysNo.area.name}</td>--%>
+				<%--<td>${gysNo.code}</td>--%>
+				<%--<td>--%>
+						<%--${fns:getDictLabel(gysNo.type, 'sys_office_type', '未知状态')}--%>
+				<%--</td>--%>
+				<%--<td>${gysNo.remarks}</td>--%>
+				<%--<shiro:hasPermission name="sys:office:edit"><td>--%>
+					<%--<a href="${ctx}/sys/office/supplierForm?id=${gysNo.id}&gysFlag=gys_save">修改</a>--%>
+					<%--<a href="${ctx}/sys/office/delete?id=${gysNo.id}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>--%>
+					<%--<a href="${ctx}/sys/office/supplierForm?parent.id=${gysNo.id}&gysFlag=gys_save">添加下级机构</a>--%>
+				<%--</td></shiro:hasPermission>--%>
+			<%--</tr>--%>
+			<%--</c:forEach>--%>
+		<%--</c:if>--%>
+		</tbody>
 	</table>
-	<script type="text/template" id="treeTableTpl">
-		<tr id="{{row.id}}" pId="{{pid}}">
-			<td><a href="${ctx}/sys/office/supplierForm?id={{row.id}}&gysFlag=gys_save">{{row.name}}</a></td>
-			<td>{{row.area.name}}</td>
-			<td>{{row.code}}</td>
-			<td>{{dict.type}}</td>
-			<td>{{row.remarks}}</td>
-			<shiro:hasPermission name="sys:office:edit"><td>
-				<a href="${ctx}/sys/office/supplierForm?id={{row.id}}&gysFlag=gys_save">修改</a>
-				<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
-				<a href="${ctx}/sys/office/supplierForm?parent.id={{row.id}}&gysFlag=gys_save">添加下级机构</a>
-			</td></shiro:hasPermission>
-		</tr>
-	</script>
+	<div class="pagination">${page}</div>
 </body>
 </html>

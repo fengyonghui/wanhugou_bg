@@ -31,7 +31,8 @@
 		ar.name AS "area.name",
 		ar.parent_ids AS "area.parentIds",
 		pp.name AS "primaryPerson.name",
-		dp.name AS "deputyPerson.name"
+		dp.name AS "deputyPerson.name",
+		su.mobile as "id.mobile"
 	</sql>
 	
 	<sql id="officeJoins">
@@ -75,33 +76,25 @@
 		ORDER BY a.code
 	</select>
 	
-	<!--<select id="findByParentIdsLike" resultType="Office">-->
-		<!--SELECT-->
-			<!--<include refid="officeColumns"/>-->
-		<!--FROM sys_office a-->
-		<!--LEFT JOIN sys_user su ON su.company_id = a.id-->
-		<!--<include refid="officeJoins"/>-->
-		<!--WHERE-->
-		<!--a.status = #{DEL_FLAG_NORMAL}-->
-		<!--<if test="parentIds != null and parentIds != ''">-->
-		<!--AND a.parent_ids LIKE #{parentIds}-->
-		<!--</if>-->
-		<!--<if test="name != null and name != ''">-->
-			<!--AND a.name LIKE-->
-			<!--<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>-->
-			<!--<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>-->
-			<!--<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>-->
-		<!--</if>-->
-		<!--<if test="phone != null and phone != ''">-->
-			<!--AND su.mobile LIKE-->
-			<!--<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>-->
-			<!--<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>-->
-			<!--<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>-->
-		<!--</if>-->
-		<!--&lt;!&ndash; 数据范围过滤 &ndash;&gt;-->
-<!--&#45;&#45; 		${sqlMap.dsf}-->
-		<!--ORDER BY a.code-->
-	<!--</select>-->
+	<select id="findByParentIdsLike" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE
+		a.status = #{DEL_FLAG_NORMAL}
+		<if test="parentIds != null and parentIds != ''">
+		AND a.parent_ids LIKE #{parentIds}
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		</if>
+		<!--${sqlMap.dsf}-->
+		ORDER BY a.code
+	</select>
 
 	<select id="findOfficeByIdToParent" resultType="Office">
 		select *

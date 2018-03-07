@@ -201,7 +201,7 @@
 					<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
-							<c:if test="${orderHeader.bizStatus!=OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus!=OrderHeaderBizStatusEnum.UNAPPROVE.state}">
+							<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 || orderHeader.bizStatus==10}">
 								待审核
 								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
 							</c:if>
@@ -211,8 +211,10 @@
 							<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.UNAPPROVE.state}">
 								审核失败
 								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
+							</c:if></a>
+							<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus !=15}">
+								${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 							</c:if>
-						</a>
 					</c:when>
 					<c:otherwise>
 						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||

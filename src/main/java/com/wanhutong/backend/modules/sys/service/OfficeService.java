@@ -90,12 +90,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 				return  officeList;
 			}
-			if(office.getName()!=null){
-				office.setName(office.getName());
-			}
-			if(office.getPhone()!=null){
-				office.setPhone(office.getPhone());
-			}
 			return dao.findByParentIdsLike(office);
 		}
 		return  new ArrayList<Office>();
