@@ -9,6 +9,22 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    var tt="";
+                    $('input:checkbox:checked').each(function(i) {
+                        var t= $(this).val();
+                        var detail="";
+                        var num ="";
+                        var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
+                        $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
+                            detail+=$(this).val()+"-"+sObj[i].value+"*";
+
+                        });
+                        tt+=t+"#"+detail+",";
+
+                    });
+                    tt=tt.substring(0,tt.length-1);
+                    $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>")
+
                     if(window.confirm('你确定要发货吗？')){
                         // alert("确定");
                         form.submit();
@@ -63,18 +79,17 @@
 							var  num = "";
                             $.each(orderHeader.orderDetailList,function (index,detail) {
 
-                                tr_tds+="<tr class='"+orderHeader.id+"'>";
+                                tr_tds+="<tr class='tr_"+orderHeader.id+"'>";
 
                                 if(flag){
                                     tr_tds+="<td rowspan='"+orderHeader.orderDetailList.length+"'><input type='checkbox' value='"+orderHeader.id+"' /></td>";
 
                                     tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.orderNum+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
                                 }
-                                deId+=detail.id+";";
-                                // tr_tds+="<input id='"+detail.id+"' title='details' name='' type='hidden' value='"+detail.id+"'>";
+                                 tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
-                                tr_tds+="<td><input id='"+orderHeader.id+""+detail.id+"' type='text' title='sent' name='' value='0'></td>";
+                                tr_tds+="<td><input  type='text' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
                                 tr_tds+="</tr>";
 
 
@@ -83,7 +98,6 @@
                                 }
                             });
 
-                            tr_tds+="<input type='hidden' title='orders' id='h_"+orderHeader.id+"' value='"+orderHeader.id+"-"+deId+"-"+"'>";
                         });
                         $("#prodInfo2").append(tr_tds);
                     }
@@ -92,43 +106,19 @@
 
             <%--点击确定时获取订单详情--%>
             $("#ensureData").click(function () {
-                $("#334326").val()
-                alert($("#334326").val());
-                // var flag=false;
-				// $("input[title='sent']").each(function () {
-				// 	var v=$(this).val();
-				// 	alert(v)
-				// 	if(v!=0){
-				// 	   flag=true;
-				// 	}
-                // });
-				// if(flag){
-                    var trHtml="";
-                	var num = "";
-                    $('input:checkbox:checked').each(function(i){
-						alert("1")
-						alert(num)
-                        var t=$(this).val();
-                         trHtml=$("."+t).parent().html();
-                        $("#prodInfo").append(trHtml);
-
-                        $("#prodInfo").find("input[title='sent']").each(function (index) {
-                            var t=$(this).val()
-                            num += t+";";
-                            alert(num)
-                        });
-                        $("#prodInfo").find("input[title='orders']").attr("value",$("#prodInfo").find("input[title='orders']").val().append(num));
-                        // $("#prodInfo").find("input[title='sent']").attr("name","sendNums");
-                        // $("#prodInfo").find("input[title='details']").attr("name","ordDetails");
-						alert($("#prodInfo").find("input[title='orders']").val())
-                        $("#prodInfo").find("input[title='orders']").attr("name","orderHeaders")
+                    $('input:checkbox:checked').each(function(i) {
+                       var t= $(this).val();
+                       var ttp= $(this).parent().parent().parent();
+                       var trt= ttp.find($(".tr_"+t))
+                        $("#prodInfo").append(trt);
                     });
 
 
-			//	}
+			});
+
             });
 
-		});
+
 	</script>
 </head>
 <body>

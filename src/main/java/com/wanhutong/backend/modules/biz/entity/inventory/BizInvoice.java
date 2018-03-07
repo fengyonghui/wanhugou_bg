@@ -39,6 +39,7 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String sendNums;		//供货数
 	private String reqDetails;		//发货备货单详情ID
 	private String ordDetails;		//发货订单详情ID
+	private String ship;
 
 	public BizInvoice() {
 		super();
@@ -179,5 +180,13 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setOrdDetails(String ordDetails) {
 		this.ordDetails = ordDetails;
+	}
+
+	public String getShip() {
+		return ship;
+	}
+
+	public void setShip(String ship) {
+		this.ship = ship;
 	}
 }
