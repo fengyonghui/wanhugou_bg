@@ -81,7 +81,7 @@
 	<%--</script>--%>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
 		<thead>
-		<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>电话</th><th>机构类型</th><th>备注</th>
+		<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>联系人电话</th><th>机构类型</th><th>备注</th>
 			<shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr>
 		</thead>
 		<tbody>
@@ -91,7 +91,7 @@
 					<td><a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_save">${off.name}</a></td>
 					<td>${off.area.name}</td>
 					<td>${off.code}</td>
-					<td>${off.phone}</td>
+					<td>${off.primaryPerson.mobile}</td>
 					<td>
 						${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
 					</td>
