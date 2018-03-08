@@ -17,7 +17,7 @@
     <label>
         <select class="input-medium" id="dataType">
             <option value="1" label="销售额">销售额</option>
-            <option value="2" label="销售额增长率">销售额增长率</option>
+            <option value="2" label="销售额增长率">销售额增长率(%)</option>
         </select>
     </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
@@ -32,12 +32,14 @@
 
 
     function initChart() {
-        var dataType = $("#dataType").find("option:selected").html();
+        var dataTypeEle = $("#dataType");
+        var dataType = dataTypeEle.find("option:selected").val();
+        var dataTypeDesc = dataTypeEle.find("option:selected").html();
         var applyDate = $("#applyDate").val();
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/orderData",
-            data: {"month": applyDate},
+            data: {"month": applyDate, "lineChartType": dataType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -127,7 +129,7 @@
                         {
                             type: 'value',
                             scale: true,
-                            name: dataType
+                            name: dataTypeDesc
                         }
                     ],
                     series: msg.rateSeriesList

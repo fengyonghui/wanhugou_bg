@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.*;
 
 
@@ -35,6 +36,17 @@ public class BizStatisticsController extends BaseController {
 
     @Resource
     private BizStatisticsService bizStatisticsService;
+
+    /**
+     * 查询数据月数
+     */
+    private static final int DATA_MONTH_COUNT = 3;
+
+    /**
+     * 默认除法运算精度
+     */
+    private static final int DEF_DIV_SCALE = 2;
+
 
 
     /**
@@ -92,36 +104,43 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"orderData", ""})
     @ResponseBody
     public String orderData(HttpServletRequest request, String month, String lineChartType) {
+        // 月份集合
+        List<LocalDateTime> monthDateList = Lists.newArrayList();
         LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
-        LocalDateTime lastMonth = selectMonth.minusMonths(1);
-        LocalDateTime beforeLastMonth = lastMonth.minusMonths(1);
+        monthDateList.add(selectMonth);
+        for (int i = 0; i < DATA_MONTH_COUNT; i++) {
+            if (i != 0) {
+                monthDateList.add(selectMonth.minusMonths(i));
+            }
+        }
 
-        // 根据日期取当月订单数据
-        Map<String, BizOrderStatisticsDto> selectDataMap = bizStatisticsService.orderStaticData(selectMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
-        Map<String, BizOrderStatisticsDto> lastDataMap = bizStatisticsService.orderStaticData(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
-        Map<String, BizOrderStatisticsDto> beforeLastDataMap = bizStatisticsService.orderStaticData(beforeLastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        // 主要数据集合
+        Map<LocalDateTime, Map<String, BizOrderStatisticsDto>> dataMap = Maps.newLinkedHashMap();
+        // 月份字符串集合
+        List<String> monthList = Lists.newArrayList();
+        monthDateList.forEach(o -> {
+            dataMap.put(o, bizStatisticsService.orderStaticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        });
+        Collections.reverse(monthList);
 
         Set<String> officeNameSet = Sets.newHashSet();
-        officeNameSet.addAll(selectDataMap.keySet());
-        officeNameSet.addAll(lastDataMap.keySet());
-        officeNameSet.addAll(beforeLastDataMap.keySet());
-
+        monthDateList.forEach(o -> {
+            officeNameSet.addAll(dataMap.get(o) != null ? dataMap.get(o).keySet() : CollectionUtils.EMPTY_COLLECTION);
+        });
+        officeNameSet.removeAll(Collections.singleton(null));
 
         Map<String, Object> paramMap = Maps.newHashMap();
-        List<String> monthList = Lists.newArrayList(
-                beforeLastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT),
-                lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT),
-                selectMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT)
-        );
+
         paramMap.put("officeNameSet", officeNameSet);
         paramMap.put("monthList", monthList);
 
+        // echarts 数据实体
+        ArrayList<EchartsSeriesDto> seriesList = Lists.newArrayList();
+        for (int i = dataMap.size() - 1; i >= 0; i--) {
+            seriesList.add(bizStatisticsService.genEchartsSeriesDto(officeNameSet, dataMap.get(monthDateList.get(i)), monthDateList.get(i)));
+        }
 
-        ArrayList<EchartsSeriesDto> seriesList = Lists.newArrayList(
-                bizStatisticsService.genEchartsSeriesDto(officeNameSet, beforeLastDataMap, beforeLastMonth),
-                bizStatisticsService.genEchartsSeriesDto(officeNameSet, lastDataMap, lastMonth),
-                bizStatisticsService.genEchartsSeriesDto(officeNameSet, selectDataMap, selectMonth)
-        );
         seriesList.removeAll(Collections.singleton(null));
 
         paramMap.put("seriesList", seriesList);
@@ -136,9 +155,9 @@ public class BizStatisticsController extends BaseController {
 
                     List<Object> dataList = Lists.newArrayList();
 
-                    dataList.add(beforeLastDataMap.get(o) != null ? beforeLastDataMap.get(o).getTotalMoney() : 0);
-                    dataList.add(lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : 0);
-                    dataList.add(selectDataMap.get(o) != null ? selectDataMap.get(o).getTotalMoney() : 0);
+                    for (int i = dataMap.size() - 1; i >= 0; i--) {
+                        dataList.add(dataMap.get(monthDateList.get(i)).get(o) != null ? dataMap.get(monthDateList.get(i)).get(o).getTotalMoney() : 0);
+                    }
 
                     echartsSeriesDto.setData(dataList);
                     echartsSeriesDto.setName(o);
@@ -146,14 +165,38 @@ public class BizStatisticsController extends BaseController {
                 });
                 break;
             case SALES_GROWTH_RATE:
-                // TODO 销售额增长率计算
+                // 销售额增长率
+                officeNameSet.forEach(o -> {
+                    EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+                    echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+                    List<Object> dataList = Lists.newArrayList();
+
+                    for (int i = dataMap.size() - 1; i >= 0; i--) {
+                        // 当前月
+                        LocalDateTime currentMonth = monthDateList.get(i);
+                        // 当前月数据
+                        BigDecimal currentData = dataMap.get(currentMonth).get(o) != null ? dataMap.get(currentMonth).get(o).getTotalMoney() : BigDecimal.valueOf(0);
+                        // 上个月
+                        LocalDateTime lastMonth = currentMonth.minusMonths(i);
+                        // 上个月数据
+                        Map<String, BizOrderStatisticsDto> lastDataMap = dataMap.get(lastMonth);
+                        if (lastDataMap == null ) {
+                            lastDataMap = bizStatisticsService.orderStaticData(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+                        }
+                        BigDecimal lastData = lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : BigDecimal.valueOf(0);
+                        // 增长率
+                        BigDecimal growthRate = lastData.intValue() == 0 ? BigDecimal.valueOf(0) : currentData.subtract(lastData).divide(lastData, DEF_DIV_SCALE).multiply(BigDecimal.valueOf(100));
+                        dataList.add(growthRate);
+                    }
+                    echartsSeriesDto.setData(dataList);
+                    echartsSeriesDto.setName(o);
+                    lineSeriesList.add(echartsSeriesDto);
+                });
                 break;
             default:
                 break;
         }
-
-        seriesList.removeAll(Collections.singleton(null));
-
 
         paramMap.put("rateSeriesList", lineSeriesList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesList));

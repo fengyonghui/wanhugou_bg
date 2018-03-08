@@ -3,13 +3,11 @@ package com.wanhutong.backend.modules.biz.service.statistics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +55,7 @@ public class BizStatisticsService {
      * @return 根据不同机构分类的统计数据
      */
     public Map<String, BizOrderStatisticsDto> orderStaticData(String month) {
-        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getOrderTotalAndCountByCreateTimeMonthStatus(month, OrderHeaderBizStatusEnum.COMPLETE.getState(), OfficeTypeEnum.PURCHASINGCENTER.getType());
+        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonth(month, OrderHeaderBizStatusEnum.VALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
         Map<String, BizOrderStatisticsDto> resultMap = Maps.newHashMap();
         orderTotalAndCountByCreateTimeMonthStatus.forEach(o -> {
             resultMap.putIfAbsent(o.getOfficeName(), o);

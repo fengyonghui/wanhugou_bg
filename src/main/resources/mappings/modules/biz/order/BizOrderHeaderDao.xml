@@ -259,7 +259,7 @@
 		WHERE id = #{id}
 	</update>
 
-	<select id="getOrderTotalAndCountByCreateTimeMonthStatus" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+	<select id="getValidOrderTotalAndCountByCreateTimeMonth" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
    			sum(total_detail + total_exp + freight) AS totalMoney,
   			count(1) AS orderCount,
@@ -268,7 +268,11 @@
 		FROM biz_order_header AS header
   			LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
   			LEFT JOIN sys_office AS office ON consultant.center_id = office.id
-		WHERE biz_status = #{status}
+		WHERE
+			(<foreach collection="statusList" index="index" item="item" open="(" separator="OR" close=")">
+				biz_status = #{item.state}
+			</foreach>
+			OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
       		AND date_format(header.create_time, '%Y-%m') = #{month}
       		AND office.type = #{officeType}
       		GROUP BY office.id;
