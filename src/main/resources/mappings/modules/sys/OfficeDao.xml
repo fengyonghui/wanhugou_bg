@@ -287,7 +287,9 @@
 	<select id="findList" resultType="Office">
 		SELECT
 		<include refid="officeColumns"/>
+		,su.mobile
 		FROM sys_office a
+		LEFT JOIN sys_user su on su.company_id=a.id
 		<include refid="officeJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -296,6 +298,18 @@
 				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone LIKE
+				<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>
+			</if>
+			<if test="gysMobile != null and gysMobile != ''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{gysMobile}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{gysMobile}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{gysMobile},'%')</if>
 			</if>
 			<if test="consultantId !=null ">
 				and ccc.consultant_id= #{consultantId}

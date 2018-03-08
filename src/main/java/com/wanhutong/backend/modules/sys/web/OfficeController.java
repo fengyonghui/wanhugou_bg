@@ -469,6 +469,9 @@ public class OfficeController extends BaseController {
 //			Office off = officeService.get(Integer.valueOf(supplierId));
 			office.setParentIds("%,"+supplierId+",");
 			office.setType(OfficeTypeEnum.VENDOR.getType());
+			if(office.getGysMobile()!=null){
+				office.setGysMobile(office.getGysMobile());//供应商电话查询
+			}
 			Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
 			model.addAttribute("page", page);
 		}else{
