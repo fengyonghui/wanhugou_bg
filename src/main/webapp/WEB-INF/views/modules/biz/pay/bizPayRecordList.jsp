@@ -38,7 +38,7 @@
 				<form:input path="payMoney" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><label>客户名称：</label>
-				<form:input path="customer.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="customer.name" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
 			<li><label>支付状态：</label>
 				<form:select path="bizStatus" class="input-medium">
@@ -80,8 +80,11 @@
 				<%--<form:radiobuttons path="status" items="${fns:getDictList('status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
 			<%--</li>--%>
 			<li><label>支付人：</label>
-				<form:input path="createBy.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="createBy.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
+				<li><label>联系电话：</label>
+					<form:input path="customer.phone" htmlEscape="false" maxlength="12" class="input-medium"/>
+				</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -94,7 +97,8 @@
 				<th>业务流水号</th>
 				<th>支付金额</th>
 				<th>支付人</th>
-				<th>客户</th>
+				<th>客户名称</th>
+				<th>联系电话</th>
 				<th>支付状态</th>
 				<th>支付账号</th>
 				<th>支付到账户</th>
@@ -122,6 +126,9 @@
 				</td>
 				<td>
 					${bizPayRecord.customer.name}
+				</td>
+				<td>
+					${bizPayRecord.customer.phone}
 				</td>
 				<td>
 					${fns:getDictLabel(bizPayRecord.bizStatus, 'bizStatus', '')}

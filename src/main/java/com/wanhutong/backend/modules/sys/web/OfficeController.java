@@ -362,8 +362,8 @@ public class OfficeController extends BaseController {
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		Integer id = office.getParentId()==0 ? null : office.getParentId();
 		if(office.getGysFlag() !=null && office.getGysFlag().equals("gys_save")){
-			//供应商踢跳转
-			return "redirect:" + adminPath + "/sys/office/supplierList";
+			//供应商保存、修改跳转
+			return "redirect:" + adminPath + "/sys/office/supplierListGys";
 		}else {
 			return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 		}

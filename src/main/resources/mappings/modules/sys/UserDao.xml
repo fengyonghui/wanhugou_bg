@@ -217,7 +217,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY c.code, o.code, a.name
+				ORDER BY c.code, o.code, a.name,a.update_date desc
 			</otherwise>
 		</choose>
 	</select>

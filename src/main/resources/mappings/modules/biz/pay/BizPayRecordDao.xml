@@ -13,6 +13,7 @@
 		s.name AS  "bizPayRecord.payer.name",
 		a.cust_id AS "customer.id",
 		so.name as "customer.name",
+		so.phone as "customer.phone",
 		a.biz_status AS "bizStatus",
 		a.account AS "account",
 		o.name AS  "account.name",
@@ -79,6 +80,12 @@
 				<if test="dbName == 'mssql'">'%'+#{customer.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{customer.name},'%')</if>
 			</if>
+			<if test="customer != null and customer.phone != null and customer.phone != ''">
+				AND so.phone LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
+			</if>
 			<if test="trandStartTime != null and trandStartTime != '' and trandEndTime != null and trandEndTime != ''">
 				AND a.create_time BETWEEN #{trandStartTime} and #{trandEndTime}
 			</if>
@@ -126,6 +133,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		order by update_time desc
 	</select>
 	
 	<select id="findAllList" resultType="BizPayRecord">
