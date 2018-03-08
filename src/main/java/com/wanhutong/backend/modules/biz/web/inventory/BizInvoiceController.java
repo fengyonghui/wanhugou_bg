@@ -63,8 +63,7 @@ public class BizInvoiceController extends BaseController {
     private BizRequestDetailService bizRequestDetailService;
 	@Autowired
     private BizDetailInvoiceService bizDetailInvoiceService;
-	@Autowired
-    private BizInventoryInfoService bizInventoryInfoService;
+
 	
 	@ModelAttribute
 	public BizInvoice get(@RequestParam(required=false) Integer id) {
@@ -174,7 +173,7 @@ public class BizInvoiceController extends BaseController {
 		}*/
 		bizInvoiceService.save(bizInvoice);
 		addMessage(redirectAttributes, "保存发货单成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage&bizStatus="+bizInvoice.getBizStatus()+"&ship="+bizInvoice.getShip();
 	}
 	
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")

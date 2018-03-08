@@ -15,10 +15,20 @@
                         var detail="";
                         var num ="";
                         var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
-                        $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-                            detail+=$(this).val()+"-"+sObj[i].value+"*";
+                        var iObj=$("#prodInfo").find("select[title='invInfoId']");
+						if(iObj.length!=0){
+                            $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
 
-                        });
+                                detail+=$(this).val()+"-"+sObj[i].value+"-"+iObj[i].value+"*";
+
+                            });
+						}else {
+                            $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
+                                detail+=$(this).val()+"-"+sObj[i].value+"*";
+
+                            });
+						}
+
                         tt+=t+"#"+detail+",";
 
                     });
@@ -26,8 +36,8 @@
                     $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>")
 
                     if(window.confirm('你确定要发货吗？')){
-                        // alert("确定");
-                        form.submit();
+
+                       form.submit();
                         return true;
                         loading('正在提交，请稍等...');
 

@@ -86,6 +86,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     private BizOrderDetailService bizOrderDetailService;
 	@Autowired
     private BizPoHeaderService bizPoHeaderService;
+	@Autowired
+	private BizInventoryInfoService bizInventoryInfoService;
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -197,7 +199,12 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             //生成供货记录表
                             BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
                             bsgr.setSendNum(sendNum);
-                            bsgr.setInvInfo(orderDetail.getInventoryInfo());
+                            if(odArr.length==3){
+                              BizInventoryInfo inventoryInfo=  bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
+                                bsgr.setInvInfo(inventoryInfo);
+                            }
+
+
                             bsgr.setCustomer(office);
                             bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
                             bsgr.setOrderNum(orderHeader.getOrderNum());
