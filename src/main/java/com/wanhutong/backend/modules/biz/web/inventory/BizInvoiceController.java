@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
@@ -108,14 +109,18 @@ public class BizInvoiceController extends BaseController {
         BizLogistics bizLogistics = new BizLogistics();
 		List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
 		model.addAttribute("logisticsList",logisticsList);
-        List<BizOrderHeader> orderList = bizOrderHeaderService.findList(new BizOrderHeader());
-        List<BizRequestHeader> requestList = bizRequestHeaderService.findList(new BizRequestHeader());
-        List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(new BizInventoryInfo());
-        model.addAttribute("invInfoList",invInfoList);
-        model.addAttribute("orderList",orderList);
-        model.addAttribute("requestList",requestList);
+//        List<BizOrderHeader> orderList = bizOrderHeaderService.findList(new BizOrderHeader());
+//        List<BizRequestHeader> requestList = bizRequestHeaderService.findList(new BizRequestHeader());
+//        List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(new BizInventoryInfo());
+//        model.addAttribute("invInfoList",invInfoList);
+//        model.addAttribute("orderList",orderList);
+//        model.addAttribute("requestList",requestList);
 		model.addAttribute("bizInvoice", bizInvoice);
 		model.addAttribute("bizOrderHeader",new BizOrderHeader());
+		if(StringUtils.isNotBlank(bizInvoice.getShip()) && "bh".equals(bizInvoice.getShip()) ){
+            model.addAttribute("bizRequestHeader",new BizRequestHeader());
+		    return "modules/biz/inventory/bizInvoiceRequestForm";
+        }
 		return "modules/biz/inventory/bizInvoiceForm";
 	}
 

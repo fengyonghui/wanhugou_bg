@@ -17,6 +17,7 @@ import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuServic
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,9 +72,12 @@ public class BizRequestHeaderController extends BaseController {
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
         List<BizRequestHeader> list = page.getList();
+        BizSkuInfo bizSkuInfo=new BizSkuInfo();
         for (BizRequestHeader bizRequestHeader1:list) {
             BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
             bizRequestDetail1.setRequestHeader(bizRequestHeader1);
+			bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
+			bizRequestDetail1.setSkuInfo(bizSkuInfo);
             List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
             Integer reqQtys = 0;
             Integer recvQtys = 0;
@@ -83,6 +87,7 @@ public class BizRequestHeaderController extends BaseController {
             }
             bizRequestHeader1.setReqQtys(reqQtys.toString());
             bizRequestHeader1.setRecvQtys(recvQtys.toString());
+
         }
         page.setList(list);
         model.addAttribute("page", page);
@@ -110,6 +115,36 @@ public class BizRequestHeaderController extends BaseController {
 
 		return "modules/biz/request/bizRequestHeaderForm";
 	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = "findByRequest")
+	public List<BizRequestHeader> findByRequest(BizRequestHeader bizRequestHeader) {
+		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+		bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+		List<BizRequestHeader> list= bizRequestHeaderService.findList(bizRequestHeader);
+		List<BizRequestHeader> bizRequestHeaderList=Lists.newArrayList();
+		for (BizRequestHeader bizRequestHeader1:list) {
+			BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
+			bizRequestDetail1.setRequestHeader(bizRequestHeader1);
+			BizSkuInfo bizSkuInfo =new BizSkuInfo();
+			bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
+			bizRequestDetail1.setSkuInfo(bizSkuInfo);
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
+			List<BizRequestDetail> reqDetailList =Lists.newArrayList();
+			for (BizRequestDetail requestDetail:requestDetailList){
+				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+				requestDetail.setSkuInfo(skuInfo);
+				reqDetailList.add(requestDetail);
+			}
+			bizRequestHeader1.setRequestDetailList(reqDetailList);
+			bizRequestHeaderList.add(bizRequestHeader1);
+
+		}
+		return bizRequestHeaderList;
+	}
+
+
 
 
 

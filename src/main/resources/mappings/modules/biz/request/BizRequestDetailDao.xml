@@ -8,6 +8,7 @@
 		reheader.req_no AS "requestHeader.reqNo",
 		a.line_no AS "lineNo",
 		a.sku_id AS "skuInfo.id",
+		si.item_no AS "skuInfo.itemNo",
 		a.req_qty AS "reqQty",
 		a.recv_qty AS "recvQty",
 		a.send_qty AS "sendQty",
@@ -22,6 +23,7 @@
 	
 	<sql id="bizRequestDetailJoins">
 		LEFT JOIN biz_request_header reheader ON a.header_id = reheader.id
+		LEFT JOIN biz_sku_info si on si.id= a.sku_id
 	</sql>
     
 	<select id="get" resultType="BizRequestDetail">
@@ -41,6 +43,9 @@
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="skuInfo != null and skuInfo.id!=null and skuInfo.id != ''">
 				AND a.sku_id = #{skuInfo.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.itemNo!=null and skuInfo.itemNo != ''">
+				AND si.item_no = #{skuInfo.itemNo}
 			</if>
 			<if test="requestHeader != null and requestHeader.id!=null and requestHeader.id != ''">
 				AND a.header_id = #{requestHeader.id}

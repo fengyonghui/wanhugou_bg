@@ -44,6 +44,7 @@
 			<include refid="bizRequestHeaderColumns"/>
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
+
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="reqNo != null and reqNo != ''">

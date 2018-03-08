@@ -31,19 +31,17 @@
 		ar.name AS "area.name",
 		ar.parent_ids AS "area.parentIds",
 		pp.name AS "primaryPerson.name",
-		dp.name AS "deputyPerson.name",
-		su.mobile as "id.mobile"
+		dp.name AS "deputyPerson.name"
 	</sql>
-	
+
 	<sql id="officeJoins">
 		LEFT JOIN sys_office p ON p.id = a.parent_id
 		LEFT JOIN sys_area ar ON ar.id = a.area_id
 		LEFT JOIN sys_user pp ON pp.id = a.primary_person
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
 		LEFT JOIN biz_custom_center_consultant ccc on a.id=ccc.cust_id
-		LEFT JOIN sys_user su ON su.company_id = a.id
     </sql>
-	
+
 	<select id="get" resultType="Office">
 		SELECT
 			<include refid="officeColumns"/>
@@ -51,7 +49,7 @@
 		<include refid="officeJoins"/>
 		WHERE a.id = #{id}
 	</select>
-	
+
 	<!--<select id="findList" resultType="Office">-->
 		<!--SELECT-->
 			<!--<include refid="officeColumns"/>-->
@@ -66,7 +64,7 @@
 		<!--OR a.id = #{currentUser.office.id}-->
 		<!--ORDER BY a.code-->
 	<!--</select>-->
-			
+
 	<select id="findAllList" resultType="Office">
 		SELECT
 			<include refid="officeColumns"/>
@@ -75,24 +73,15 @@
 		WHERE a.status = #{DEL_FLAG_NORMAL}
 		ORDER BY a.code
 	</select>
-	
+
 	<select id="findByParentIdsLike" resultType="Office">
 		SELECT
 			<include refid="officeColumns"/>
 		FROM sys_office a
 		<include refid="officeJoins"/>
-		WHERE
-		a.status = #{DEL_FLAG_NORMAL}
-		<if test="parentIds != null and parentIds != ''">
-		AND a.parent_ids LIKE #{parentIds}
-		</if>
-		<if test="name != null and name != ''">
-			AND a.name LIKE
-			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
-			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
-			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
-		</if>
-		<!--${sqlMap.dsf}-->
+		WHERE a.status = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		<!-- 数据范围过滤 -->
+-- 		${sqlMap.dsf}
 		ORDER BY a.code
 	</select>
 
@@ -166,93 +155,93 @@
 </select>
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO sys_office(
-			id, 
-			parent_id, 
-			parent_ids, 
-			area_id, 
-			code, 
-			name, 
-			sort, 
-			type, 
-			grade, 
-			address, 
-			zip_code, 
-			master, 
-			phone, 
-			fax, 
-			email, 
+			id,
+			parent_id,
+			parent_ids,
+			area_id,
+			code,
+			name,
+			sort,
+			type,
+			grade,
+			address,
+			zip_code,
+			master,
+			phone,
+			fax,
+			email,
 			create_id,
-			create_date, 
+			create_date,
 			update_id,
-			update_date, 
-			remarks, 
+			update_date,
+			remarks,
 			status,
 			useable,
 			primary_person,
 			deputy_person
 		) VALUES (
-			#{id}, 
-			#{parent.id}, 
-			#{parentIds}, 
-			#{area.id}, 
-			#{code}, 
-			#{name}, 
-			#{sort}, 
-			#{type}, 
-			#{grade}, 
-			#{address}, 
-			#{zipCode}, 
-			#{master}, 
-			#{phone}, 
-			#{fax}, 
-			#{email}, 
-			#{createBy.id}, 
-			#{createDate}, 
-			#{updateBy.id}, 
-			#{updateDate}, 
-			#{remarks}, 
+			#{id},
+			#{parent.id},
+			#{parentIds},
+			#{area.id},
+			#{code},
+			#{name},
+			#{sort},
+			#{type},
+			#{grade},
+			#{address},
+			#{zipCode},
+			#{master},
+			#{phone},
+			#{fax},
+			#{email},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
 			#{delFlag},
 			#{useable},
 			#{primaryPerson.id},
 			#{deputyPerson.id}
 		)
 	</insert>
-	
+
 	<update id="update">
-		UPDATE sys_office SET 
-			parent_id = #{parent.id}, 
-			parent_ids = #{parentIds}, 
-			area_id = #{area.id}, 
-			code = #{code}, 
-			name = #{name}, 
-			type = #{type}, 
-			grade = #{grade}, 
-			address = #{address}, 
-			zip_code = #{zipCode}, 
-			master = #{master}, 
-			phone = #{phone}, 
-			fax = #{fax}, 
-			email = #{email}, 
+		UPDATE sys_office SET
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			area_id = #{area.id},
+			code = #{code},
+			name = #{name},
+			type = #{type},
+			grade = #{grade},
+			address = #{address},
+			zip_code = #{zipCode},
+			master = #{master},
+			phone = #{phone},
+			fax = #{fax},
+			email = #{email},
 			update_id = #{updateBy.id},
-			update_date = #{updateDate}, 
+			update_date = #{updateDate},
 			remarks = #{remarks},
 			useable=#{useable},
 			primary_person=#{primaryPerson.id},
 			deputy_person=#{deputyPerson.id}
 		WHERE id = #{id}
 	</update>
-	
+
 	<update id="updateParentIds">
-		UPDATE sys_office SET 
-			parent_id = #{parent.id}, 
+		UPDATE sys_office SET
+			parent_id = #{parent.id},
 			parent_ids = #{parentIds}
 		WHERE id = #{id}
 	</update>
-	
+
 	<update id="delete">
-		UPDATE sys_office SET 
+		UPDATE sys_office SET
 			status = #{DEL_FLAG_DELETE}
-		WHERE id = #{id} OR parent_ids LIKE 
+		WHERE id = #{id} OR parent_ids LIKE
 					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 					<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
@@ -307,18 +296,6 @@
 				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
-			</if>
-			<if test="phone != null and phone != ''">
-				AND a.phone LIKE
-				<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>
-			</if>
-			<if test="gysMobile != null and gysMobile != ''">
-				AND su.mobile LIKE
-				<if test="dbName == 'oracle'">'%'||#{gysMobile}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{gysMobile}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{gysMobile},'%')</if>
 			</if>
 			<if test="consultantId !=null ">
 				and ccc.consultant_id= #{consultantId}

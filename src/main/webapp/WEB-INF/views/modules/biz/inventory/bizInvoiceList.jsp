@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice/">发货单列表</a></li>
-		<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><li><a href="${ctx}/biz/inventory/bizInvoice/form">发货单添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><li><a href="${ctx}/biz/inventory/bizInvoice/form?ship=${bizInvoice.ship}">发货单添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
