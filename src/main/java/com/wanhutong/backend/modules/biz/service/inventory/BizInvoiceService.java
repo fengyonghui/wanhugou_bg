@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.inventory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import com.wanhutong.backend.common.config.Global;
@@ -101,7 +102,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	}
 	
 	@Transactional(readOnly = false)
-	public void save(BizInvoice bizInvoice,String bizStatu) {
+	public void save(BizInvoice bizInvoice,String bizStatu,String ship) {
         boolean flagRequest = true;		//备货单完成状态
         boolean flagOrder = true;		//销售单完成状态
         boolean flagPo = true;     //采购单完成状态
@@ -112,6 +113,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
         Date date = new Date();
         bizInvoice.setSendDate(date);
+        bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
+        bizInvoice.setShip(Integer.parseInt(ship));
         bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,1));
         super.save(bizInvoice);
         bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,bizInvoice.getId()));
@@ -121,14 +124,18 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         //获取订单ID
         String orderHeaders = bizInvoice.getOrderHeaders();
         String[] orders = orderHeaders.split(",".trim());
-
-        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
+        //获取备货单ID
+        String requestHeaders = bizInvoice.getRequestHeaders();
+        String[] requests = requestHeaders.split(",".trim());
+        //货值
+        Double valuePrice = 0.0;
+//        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if(StringUtils.isNotBlank(orderHeaders)) {
             for (int a = 0; a < orders.length; a++) {
                 String[] oheaders = orders[a].split("#".trim());
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
-                BizOrderDetail ordDetail = new BizOrderDetail();
-                ordDetail.setOrderHeader(orderHeader);
+//                BizOrderDetail ordDetail = new BizOrderDetail();
+//                ordDetail.setOrderHeader(orderHeader);
                 //加入中间表关联关系
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(bizInvoice);
@@ -141,6 +148,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     //商品
                     BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                     int sendNum = Integer.parseInt(odArr[1]);    //供货数
+                    valuePrice += bizSkuInfo.getBuyPrice()*sendNum;//累计货值
                     //采购商
                     Office office = officeService.get(orderHeader.getCustomer().getId());
                     int sentQty = orderDetail.getSentQty();    //销售单累计供货数量
@@ -245,6 +253,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         bizSendGoodsRecordService.save(bsgr);
                     }
                 }
+
                 //销售单完成时，更该销售单状态为已供货（20）
                 if (flagOrder) {
                     orderHeader.setBizStatus(OrderHeaderBizStatusEnum.SEND.getState());
@@ -298,25 +307,35 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
             }
+            bizInvoice.setValuePrice(valuePrice);
+            super.save(bizInvoice);
         }
-        if(requestHeaderList != null && requestHeaderList.size() > 0) {
-            for(BizRequestHeader bizRequestHeader:requestHeaderList) {
-                BizRequestHeader requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
-                BizRequestDetail reqDetail = new BizRequestDetail();
-                reqDetail.setRequestHeader(requestHeader);
-                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(reqDetail);
+
+        if(StringUtils.isNotBlank(requestHeaders)) {
+            for (int b = 0; b < requests.length; b++) {
+                String[] rheaders = requests[b].split("#".trim());
+                BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
+//                BizRequestDetail reqDetail = new BizRequestDetail();
+//                reqDetail.setRequestHeader(requestHeader);
+//                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(reqDetail);
                 //加入中间表关联关系
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(bizInvoice);
-                bizDetailInvoice.setRequestHeader(bizRequestHeader);
+                bizDetailInvoice.setRequestHeader(requestHeader);
                 bizDetailInvoiceService.save(bizDetailInvoice);
-                for (BizRequestDetail bizRequestDetail : requestDetailList) {
+                String[] reNumArr = rheaders[1].split("\\*");
+                for (int i = 0; i < reNumArr.length; i++) {
+                    String[] reArr = reNumArr[i].split("-");
+                    BizRequestDetail requestDetail = bizRequestDetailService.get(Integer.parseInt(reArr[0]));
                     //商品
-                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
-                    int sendNum = bizRequestDetail.getSendNum();    //供货数
-                    int sendQty = bizRequestDetail.getSendQty();   //备货单累计供货数量
+                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo().getId());
+                    int sendNum = requestDetail.getSendNum();    //供货数
+                    valuePrice += bizSkuInfo.getBuyPrice()*sendNum;//累计货值
+                    //采购中心
+                    Office office = officeService.get(requestHeader.getFromOffice().getId());
+                    int sendQty = requestDetail.getSendQty();   //备货单累计供货数量
                     //当供货数量和申报数量不相等时，更改备货单状态
-                    if (bizRequestDetail.getReqQty() != (sendQty + sendNum)) {
+                    if (requestDetail.getReqQty() != (sendQty + sendNum)) {
                         flagRequest = false;
                     }
                     if (sendNum == 0) {
@@ -347,8 +366,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     poDetail.setSendQty(poDetail.getSendQty() + sendNum);
                     bizPoDetailService.save(poDetail);
                     //累计备货单供货数量
-                    bizRequestDetail.setSendQty(sendQty + sendNum);
-                    bizRequestDetailService.save(bizRequestDetail);
+                    requestDetail.setSendQty(sendQty + sendNum);
+                    bizRequestDetailService.save(requestDetail);
                     //改备货单状态为备货中(20)
                     requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
                     bizRequestHeaderService.save(requestHeader);
@@ -371,7 +390,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 if (flagPo){
                     BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
                     BizPoOrderReq por = null;
-                    bizPoOrderReq.setRequestHeader(bizRequestHeader);
+                    bizPoOrderReq.setRequestHeader(requestHeader);
                     List<BizPoOrderReq> porList = bizPoOrderReqService.findList(bizPoOrderReq);
                     if (porList != null && porList.size() > 0 ){
                         por = porList.get(0);
@@ -395,6 +414,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
             }
+            bizInvoice.setValuePrice(valuePrice);
+            super.save(bizInvoice);
         }
 	}
 

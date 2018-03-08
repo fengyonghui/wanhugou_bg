@@ -13,6 +13,8 @@
 		a.freight AS "freight",
 		a.carrier AS "carrier",
 		a.settlement_status AS "settlementStatus",
+		a.biz_status AS "bizStatus",
+		a.ship AS "ship",
 		a.send_time AS "sendDate",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -42,7 +44,7 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="sendNumber != null and sendNumber != ''">
-				AND a.send_number LIKE #{sendNumber}
+				AND a.send_number LIKE
 				<if test="dbName == 'oracle'">'%'||#{sendNumber}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{sendNumber}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{sendNumber},'%')</if>
@@ -50,7 +52,13 @@
 			<if test="logistics != null and logistics.id != null and logistics.id != ''">
 				AND a.logistics_id = #{logistics.id}
 			</if>
-			<if test="logistics != null and logistics.id != null and logistics.id != ''">
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="ship != null and ship != ''">
+				AND a.ship = #{ship}
+			</if>
+			<if test="logistics != null and logistics.name != null and logistics.name != ''">
 				AND bl.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{logistics.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{logistics.name}+'%'</if>
@@ -117,6 +125,8 @@
 			<if test="settlementStatus != null and settlementStatus != ''">
 				settlement_status,
 			</if>
+			biz_status,
+			ship,
 			send_time,
 			status,
 			create_id,
@@ -148,6 +158,8 @@
 			<if test="settlementStatus != null and settlementStatus != ''">
 				#{settlementStatus},
 			</if>
+			#{bizStatus},
+			#{ship},
 			#{sendDate},
 			#{delFlag},
 			#{createBy.id},
@@ -182,6 +194,8 @@
 			<if test="settlementStatus != null and settlementStatus != ''">
 				settlement_status = #{settlementStatus},
 			</if>
+			biz_status = #{bizStatus},
+			ship = #{ship},
 			send_time = #{sendDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},

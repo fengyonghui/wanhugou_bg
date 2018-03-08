@@ -31,6 +31,8 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private Double freight;		// 运费
 	private String carrier;		// 承运人
 	private Integer settlementStatus;		// 物流结算方式：1、现结；2、账期;
+	private Integer bizStatus;		//发货地：0、采购中心； 1、供货中心；
+	private Integer ship;		//发货单来源：0、销售订单；1、备货单
 	private Date sendDate;		// 供货时间
 	private List<BizOrderHeader> orderHeaderList;
 	private List<BizRequestHeader> requestHeaderList;
@@ -39,7 +41,6 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String sendNums;		//供货数
 	private String reqDetails;		//发货备货单详情ID
 	private String ordDetails;		//发货订单详情ID
-	private String ship;
 
 	public BizInvoice() {
 		super();
@@ -182,11 +183,19 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 		this.ordDetails = ordDetails;
 	}
 
-	public String getShip() {
+	public Integer getShip() {
 		return ship;
 	}
 
-	public void setShip(String ship) {
+	public void setShip(Integer ship) {
 		this.ship = ship;
+	}
+
+	public Integer getBizStatus() {
+		return bizStatus;
+	}
+
+	public void setBizStatus(Integer bizStatus) {
+		this.bizStatus = bizStatus;
 	}
 }

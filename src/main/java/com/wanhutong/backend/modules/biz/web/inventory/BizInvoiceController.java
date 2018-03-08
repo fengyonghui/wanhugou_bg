@@ -75,9 +75,13 @@ public class BizInvoiceController extends BaseController {
 	
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(BizInvoice bizInvoice,String ship,String bizStatu, HttpServletRequest request, HttpServletResponse response, Model model) {
+	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
+	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
 		model.addAttribute("page", page);
+		model.addAttribute("ship",ship);
+		model.addAttribute("bizStatu",bizStatu);
 		return "modules/biz/inventory/bizInvoiceList";
 	}
 
@@ -105,7 +109,7 @@ public class BizInvoiceController extends BaseController {
 
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
 	@RequestMapping(value = "form")
-	public String form(BizInvoice bizInvoice, Model model) {
+	public String form(BizInvoice bizInvoice, Model model,String ship,String bizStatu) {
         BizLogistics bizLogistics = new BizLogistics();
 		List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
 		model.addAttribute("logisticsList",logisticsList);
@@ -117,8 +121,7 @@ public class BizInvoiceController extends BaseController {
 //        model.addAttribute("requestList",requestList);
 		model.addAttribute("bizInvoice", bizInvoice);
 		model.addAttribute("bizOrderHeader",new BizOrderHeader());
-		if(StringUtils.isNotBlank(bizInvoice.getShip()) && "bh".equals(bizInvoice.getShip()) ){
-            model.addAttribute("bizRequestHeader",new BizRequestHeader());
+		if(bizInvoice.getShip() != null && bizInvoice.getShip()==0 ){
 		    return "modules/biz/inventory/bizInvoiceRequestForm";
         }
 		return "modules/biz/inventory/bizInvoiceForm";
@@ -126,11 +129,11 @@ public class BizInvoiceController extends BaseController {
 
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
 	@RequestMapping(value = "save")
-	public String save(BizInvoice bizInvoice,String source,String bizStatu,String ship, Model model, RedirectAttributes redirectAttributes) {
+	public String save(BizInvoice bizInvoice,String bizStatu,String ship, Model model, RedirectAttributes redirectAttributes) {
 		/*if (!beanValidator(model, bizInvoice)){
 			return form(bizInvoice, model);
 		}*/
-		bizInvoiceService.save(bizInvoice,bizStatu);
+		bizInvoiceService.save(bizInvoice,bizStatu,ship);
 		addMessage(redirectAttributes, "保存发货单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";
 	}
