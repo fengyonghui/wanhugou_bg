@@ -45,7 +45,11 @@
 				AND a.sku_id = #{skuInfo.id}
 			</if>
 			<if test="skuInfo != null and skuInfo.itemNo!=null and skuInfo.itemNo != ''">
-				AND si.item_no = #{skuInfo.itemNo}
+				AND si.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.itemNo},'%')</if>
+
 			</if>
 			<if test="requestHeader != null and requestHeader.id!=null and requestHeader.id != ''">
 				AND a.header_id = #{requestHeader.id}

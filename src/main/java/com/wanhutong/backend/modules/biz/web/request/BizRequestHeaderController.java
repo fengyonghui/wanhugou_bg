@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -49,8 +50,6 @@ public class BizRequestHeaderController extends BaseController {
 	@Autowired
 	private BizRequestHeaderService bizRequestHeaderService;
 	@Autowired
-	private BizProductInfoService bizProductInfoService;
-	@Autowired
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
@@ -72,12 +71,9 @@ public class BizRequestHeaderController extends BaseController {
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
         List<BizRequestHeader> list = page.getList();
-        BizSkuInfo bizSkuInfo=new BizSkuInfo();
         for (BizRequestHeader bizRequestHeader1:list) {
             BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
             bizRequestDetail1.setRequestHeader(bizRequestHeader1);
-			bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
-			bizRequestDetail1.setSkuInfo(bizSkuInfo);
             List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
             Integer reqQtys = 0;
             Integer recvQtys = 0;
@@ -124,6 +120,7 @@ public class BizRequestHeaderController extends BaseController {
 		bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
 		List<BizRequestHeader> list= bizRequestHeaderService.findList(bizRequestHeader);
 		List<BizRequestHeader> bizRequestHeaderList=Lists.newArrayList();
+
 		for (BizRequestHeader bizRequestHeader1:list) {
 			BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
 			bizRequestDetail1.setRequestHeader(bizRequestHeader1);
@@ -137,9 +134,15 @@ public class BizRequestHeaderController extends BaseController {
 				requestDetail.setSkuInfo(skuInfo);
 				reqDetailList.add(requestDetail);
 			}
-			bizRequestHeader1.setRequestDetailList(reqDetailList);
-			bizRequestHeaderList.add(bizRequestHeader1);
-
+			if(StringUtils.isNotBlank(bizRequestHeader.getItemNo())){
+				if(requestDetailList!=null && requestDetailList.size()>0){
+					bizRequestHeader1.setRequestDetailList(reqDetailList);
+					bizRequestHeaderList.add(bizRequestHeader1);
+				}
+			}else {
+				bizRequestHeader1.setRequestDetailList(reqDetailList);
+				bizRequestHeaderList.add(bizRequestHeader1);
+			}
 		}
 		return bizRequestHeaderList;
 	}

@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -49,8 +48,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderAddressService bizOrderAddressService;
     @Autowired
     private BizSkuInfoService bizSkuInfoService;
-    @Autowired @Lazy
-    private BizOrderDetailService bizOrderDetailService;
+//    @Autowired
+//    private BizOrderDetailService bizOrderDetailService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired
@@ -95,20 +94,15 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
             Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             page.setCount(count);
-            List<BizOrderHeader> orHeaderList = new ArrayList<>();
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
-            Double totalBuyPrice = 0D;
+            Double totalBuyPrice = 0.0;
             for (BizOrderHeader orderHeader:orderHeaderList) {
-                BizOrderDetail bizOrderDetail = new BizOrderDetail();
-                bizOrderDetail.setOrderHeader(orderHeader);
-                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-                if (orderDetailList != null && !orderDetailList.isEmpty()) {
-                    totalBuyPrice = orderDetailList.stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo().getBuyPrice() * orderDetail.getOrdQty()).sum();
-                }
+
+                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo()==null?0:orderDetail.getSkuInfo().getBuyPrice()*orderDetail.getOrdQty()).sum();
                 orderHeader.setTotalBuyPrice(totalBuyPrice);
-                orHeaderList.add(orderHeader);
+
             }
-            orderHeaderPage.setList(orHeaderList);
+            orderHeaderPage.setList(orderHeaderList);
 
             return orderHeaderPage;
         }else {
@@ -129,20 +123,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             Page<BizOrderHeader> orderHeaderPage=super.findPage(page, bizOrderHeader);
             Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             page.setCount(count);
-            List<BizOrderHeader> orHeaderList = new ArrayList<>();
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             Double totalBuyPrice = 0.0;
             for (BizOrderHeader orderHeader:orderHeaderList) {
-                BizOrderDetail bizOrderDetail = new BizOrderDetail();
-                bizOrderDetail.setOrderHeader(orderHeader);
-                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-                if (orderDetailList != null && !orderDetailList.isEmpty()) {
-                    totalBuyPrice = orderDetailList.stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo().getBuyPrice() * orderDetail.getOrdQty()).sum();
-                }
+
+                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo().getBuyPrice()*orderDetail.getOrdQty()).sum();
                 orderHeader.setTotalBuyPrice(totalBuyPrice);
-                orHeaderList.add(orderHeader);
             }
-            orderHeaderPage.setList(orHeaderList);
+            orderHeaderPage.setList(orderHeaderList);
 
             return orderHeaderPage;
         }

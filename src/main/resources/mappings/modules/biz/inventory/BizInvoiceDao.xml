@@ -52,10 +52,10 @@
 			<if test="logistics != null and logistics.id != null and logistics.id != ''">
 				AND a.logistics_id = #{logistics.id}
 			</if>
-			<if test="bizStatus != null and bizStatus != ''">
+			<if test="bizStatus != null">
 				AND a.biz_status = #{bizStatus}
 			</if>
-			<if test="ship != null and ship != ''">
+			<if test="ship != null">
 				AND a.ship = #{ship}
 			</if>
 			<if test="logistics != null and logistics.name != null and logistics.name != ''">

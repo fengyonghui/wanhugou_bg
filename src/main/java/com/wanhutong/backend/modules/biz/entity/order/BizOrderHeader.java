@@ -57,6 +57,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private String orderNum2;		//用于删除订单页面传值
     private String localSendIds;
     private Integer orderMark;		//用于订单新增地址返回标记
+	private String suplyIds;       //用于查询本地发货的订单
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -344,5 +345,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setPartNo(String partNo) {
 		this.partNo = partNo;
+	}
+
+	public String getSuplyIds() {
+		return suplyIds;
+	}
+
+	public void setSuplyIds(String suplyIds) {
+		this.suplyIds = suplyIds;
 	}
 }

@@ -57,7 +57,6 @@
                         if(id==''){
                             $("#prodInfo2").empty();
                         }
-
                         $.each(data,function (keys,skuInfoList) {
                             var prodKeys= keys.split(",");
                             var prodId= prodKeys[0];
@@ -202,9 +201,6 @@
 					<li><label>商品编码：</label>
 						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
-					<li><label>商品货号：</label>
-						<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
-					</li>
 					<%--<li><label>商品类型：</label>--%>
 						<%--<select id="skuType" class="input-medium">--%>
 							<%--<option value="">请选择</option>--%>
@@ -255,6 +251,7 @@
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
+							<td>${reqDetail.skuInfo.itemNo}</td>
 							<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>

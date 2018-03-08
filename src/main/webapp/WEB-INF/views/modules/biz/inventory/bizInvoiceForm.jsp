@@ -54,16 +54,28 @@
                 $("#skuItemNoCopy").val(skuItemNo);
                 var skuCode =$("#skuCode").val();
                 $("#skuCodeCopy").val(skuCode);
+                var bizStatus= $("#bizStatus").val();
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/order/bizOrderHeader/findByOrder",
+                    url:"${ctx}/biz/order/bizOrderHeader/findByOrder?flag="+bizStatus,
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                         if ($("#id").val() == '') {
                             $("#prodInfo2").empty();
                         }
+
+                        if(bizStatus==0){
+                            var selecttd="<select class='input-mini' title='invInfoId'><option value=''>请选择</option>";
+                            $.each(data.inventoryInfoList,function (index,inventory) {
+                                selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
+                            });
+                        }
                         var tr_tds="";
-                        $.each(data, function (index,orderHeader) {
+                        var bizName ="";
+                        $.each(data.bizOrderHeaderList, function (index,orderHeader) {
+                            if(orderHeader.bizStatus==15){
+                                bizName="供货中"
+                            }
 							if(orderHeader.bizStatus==17){
                                 bizName="采购中"
 							}else if(orderHeader.bizStatus==18){
@@ -88,6 +100,9 @@
                                 }
                                  tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                                if(bizStatus==0) {
+                                    tr_tds += "<td>" + selecttd + "</td>"
+                                }
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
                                 tr_tds+="<td><input  type='text' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
                                 tr_tds+="</tr>";
@@ -123,10 +138,11 @@
 		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
 		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}&ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单<shiro:hasPermission name="biz:inventory:bizInvoice:edit">${not empty bizInvoice.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInvoice:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
-
+		<form:hidden path="ship"/>
+		<form:hidden path="bizStatus"/>
 		<div class="control-group">
 			<label class="control-label">物流商：</label>
 			<div class="controls">
@@ -220,6 +236,9 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
+						<c:if test="${bizInvoice.bizStatus==0}">
+							<th>选择仓库</th>
+						</c:if>
 						<th>采购数量</th>
 						<th>已发货数量</th>
 						<th>发货数量</th>
@@ -243,6 +262,9 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
+						<c:if test="${bizInvoice.bizStatus==0}">
+							<th>选择仓库</th>
+						</c:if>
 						<th>采购数量</th>
 						<th>已发货数量</th>
 						<th>发货数量</th>

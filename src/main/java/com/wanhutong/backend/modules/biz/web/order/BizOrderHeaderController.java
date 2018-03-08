@@ -10,12 +10,14 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -44,7 +46,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Controller
@@ -76,6 +80,8 @@ public class BizOrderHeaderController extends BaseController {
 	private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizInventoryInfoService bizInventoryInfoService;
 
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
@@ -197,10 +203,19 @@ public class BizOrderHeaderController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
 	@RequestMapping(value = "findByOrder")
-	public List<BizOrderHeader> findByOrder(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-		bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
-		bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+	public Map<String,Object> findByOrder(BizOrderHeader bizOrderHeader,String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
+		if(StringUtils.isNotBlank(flag) && "0".equals(flag)){
+			bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+			bizOrderHeader.setSuplyIds("0");
+
+		}else {
+			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
+			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+
+		}
+
 		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
+		Map<String,Object> map=new HashMap<String, Object>();
 		List<BizOrderHeader> bizOrderHeaderList=Lists.newArrayList();
 		for (BizOrderHeader orderHeader : list) {
 			List<BizOrderDetail> bizOrderDetailList= Lists.newArrayList();
@@ -215,8 +230,11 @@ public class BizOrderHeaderController extends BaseController {
 			bizOrderHeaderList.add(orderHeader);
 
 		}
+		List<BizInventoryInfo> inventoryInfoList=bizInventoryInfoService.findList(new BizInventoryInfo());
+		map.put("inventoryInfoList",inventoryInfoList);
+		map.put("bizOrderHeaderList",bizOrderHeaderList);
 
-		return bizOrderHeaderList;
+		return map;
 	}
 
 	@ResponseBody

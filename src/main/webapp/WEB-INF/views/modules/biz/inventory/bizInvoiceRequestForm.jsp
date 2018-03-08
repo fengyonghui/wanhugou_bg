@@ -23,7 +23,7 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>")
+                    $("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>")
 
                     if(window.confirm('你确定要发货吗？')){
                         // alert("确定");
@@ -54,6 +54,7 @@
                 $("#skuItemNoCopy").val(skuItemNo);
                 var skuCode =$("#skuCode").val();
                 $("#skuCodeCopy").val(skuCode);
+
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/request/bizRequestHeader/findByRequest",
@@ -62,48 +63,45 @@
                         if ($("#id").val() == '') {
                             $("#prodInfo2").empty();
                         }
+
+
                         var tr_tds="";
                         var sum = 0;
-                        $.each(data, function (index,request) {
-							if(orderHeader.bizStatus==17){
+                        $.each(data, function (index,requestHeader) {
+							if(requestHeader.bizStatus==10){
                                 bizName="采购中"
-							}else if(orderHeader.bizStatus==18){
+							}else if(requestHeader.bizStatus==15){
                                 bizName="采购完成"
-							}else if(orderHeader.bizStatus==19){
-                                bizName="供应商供货"
-							}else if(orderHeader.bizStatus==20){
-                                bizName="已发货"
+							}else if(requestHeader.bizStatus==20){
+                                bizName="备货中"
+							}else if(requestHeader.bizStatus==25){
+                                bizName="供货完成"
 							}
 
 							var flag= true;
-							var deId = "";
-							var  num = "";
-                            $.each(orderHeader.orderDetailList,function (index,detail) {
+                            $.each(requestHeader.requestDetailList,function (index,detail) {
 
-                                tr_tds+="<tr class='tr_"+orderHeader.id+"'>";
+                                tr_tds+="<tr class='tr_"+requestHeader.id+"'>";
 
                                 if(flag){
-                                    tr_tds+="<td rowspan='"+orderHeader.orderDetailList.length+"'><input type='checkbox' value='"+orderHeader.id+"' /></td>";
+                                    tr_tds+="<td rowspan='"+requestHeader.requestDetailList.length+"'><input type='checkbox' value='"+requestHeader.id+"' /></td>";
 
-                                    tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.orderNum+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
+                                    tr_tds+= "<td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.reqNo+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.fromOffice.name+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+bizName+"</td>" ;
                                 }
-                                 tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
+                                 tr_tds+="<input title='details_"+requestHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
-                                tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
-                                tr_tds+="<td><input  type='text' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+
+                                tr_tds+= "<td>"+detail.reqQty+"</td><td>"+detail.sendQty+"</td>";
+                                tr_tds+="<td><input  type='text' title='sent_"+requestHeader.id+"' name='' value='0'></td>";
                                 tr_tds+="</tr>";
                                 // alert(detail.skuInfo.buyPrice)
-
-                                sum += parseInt(detail.ordQty)*parseInt($("input[title='sent_"+orderHeader.id+"]"));
-								console.log(sum)
-                                if(orderHeader.orderDetailList.length>1){
+                                if(requestHeader.requestDetailList.length>1){
                                     flag=false;
                                 }
                             });
 
                         });
-                        $("#valuePrice").attr("value",sum);
-                        alert($("#valuePrice").val())
+
                         $("#prodInfo2").append(tr_tds);
                     }
             });
@@ -113,10 +111,7 @@
             $("#ensureData").click(function () {
                     $('input:checkbox:checked').each(function(i) {
                        var t= $(this).val();
-                       // alert(t)
                        var ttp= $(this).parent().parent().parent();
-                        // console.log(ttp)
-                        // alert(JSON.stringify(ttp));
                        var trt= ttp.find($(".tr_"+t))
                         $("#prodInfo").append(trt);
                     });
@@ -136,8 +131,9 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
-
+		<sys:message content="${message}"/>
+		<form:hidden path="ship"/>
+		<form:hidden path="bizStatus"/>
 		<div class="control-group">
 			<label class="control-label">物流商：</label>
 			<div class="controls">
@@ -157,13 +153,13 @@
 							  maxHeight="100"/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">货值：</label>
-			<div class="controls">
-				<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">货值：</label>--%>
+			<%--<div class="controls">--%>
+				<%--<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>--%>
+				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">操作费：</label>
 			<div class="controls">
@@ -231,6 +227,7 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
+
 						<th>申报数量</th>
 						<th>已发货数量</th>
 						<th>发货数量</th>
@@ -254,6 +251,9 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
+						<c:if test="${bizStatus==0}">
+							<th>选择仓库</th>
+						</c:if>
 						<th>申报数量</th>
 						<th>已发货数量</th>
 						<th>发货数量</th>

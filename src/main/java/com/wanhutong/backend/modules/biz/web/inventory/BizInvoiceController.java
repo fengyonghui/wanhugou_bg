@@ -75,13 +75,13 @@ public class BizInvoiceController extends BaseController {
 	
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(BizInvoice bizInvoice,String ship,String bizStatu, HttpServletRequest request, HttpServletResponse response, Model model) {
-	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
-	    bizInvoice.setShip(Integer.parseInt(ship));
+	public String list(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model) {
+//	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
+//	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
 		model.addAttribute("page", page);
-		model.addAttribute("ship",ship);
-		model.addAttribute("bizStatu",bizStatu);
+//		model.addAttribute("ship",ship);
+//		model.addAttribute("bizStatu",bizStatu);
 		return "modules/biz/inventory/bizInvoiceList";
 	}
 
@@ -121,7 +121,8 @@ public class BizInvoiceController extends BaseController {
 //        model.addAttribute("requestList",requestList);
 		model.addAttribute("bizInvoice", bizInvoice);
 		model.addAttribute("bizOrderHeader",new BizOrderHeader());
-		if(bizInvoice.getShip() != null && bizInvoice.getShip()==0 ){
+		if(bizInvoice.getShip() != null && bizInvoice.getShip()==1 ){
+			model.addAttribute("bizRequestHeader",new BizRequestHeader());
 		    return "modules/biz/inventory/bizInvoiceRequestForm";
         }
 		return "modules/biz/inventory/bizInvoiceForm";
@@ -129,11 +130,11 @@ public class BizInvoiceController extends BaseController {
 
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
 	@RequestMapping(value = "save")
-	public String save(BizInvoice bizInvoice,String bizStatu,String ship, Model model, RedirectAttributes redirectAttributes) {
+	public String save(BizInvoice bizInvoice, Model model, RedirectAttributes redirectAttributes) {
 		/*if (!beanValidator(model, bizInvoice)){
 			return form(bizInvoice, model);
 		}*/
-		bizInvoiceService.save(bizInvoice,bizStatu,ship);
+		bizInvoiceService.save(bizInvoice);
 		addMessage(redirectAttributes, "保存发货单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";
 	}
