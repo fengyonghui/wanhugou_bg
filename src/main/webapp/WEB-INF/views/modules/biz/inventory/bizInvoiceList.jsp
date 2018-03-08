@@ -75,7 +75,7 @@
 					<fmt:formatDate value="${bizInvoice.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
-				<td><a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}">发货单详情</a><td>
+				<td><a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}">发货单详情</a><td>
 				<%--<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><td>
     				<a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}">修改</a>
 					<a href="${ctx}/biz/inventory/bizInvoice/delete?id=${bizInvoice.id}" onclick="return confirmx('确认要删除该发货单吗？', this.href)">删除</a>
