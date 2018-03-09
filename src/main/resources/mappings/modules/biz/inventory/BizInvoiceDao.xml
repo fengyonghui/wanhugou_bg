@@ -26,6 +26,7 @@
 	
 	<sql id="bizInvoiceJoins">
 		LEFT JOIN biz_logistics bl ON bl.id = a.logistics_id
+		LEFT JOIN sys_user su on su.id =a.create_id
 	</sql>
     
 	<select id="get" resultType="BizInvoice">
@@ -73,6 +74,9 @@
 			<if test="settlementStatus != null and settlementStatus != ''">
 				AND a.settlement_status = #{settlementStatus}
 			</if>
+            <if test="sqlMap != null and sqlMap.bizInvoice != null and sqlMap.bizInvoice != ''">
+                ${sqlMap.bizInvoice}
+            </if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

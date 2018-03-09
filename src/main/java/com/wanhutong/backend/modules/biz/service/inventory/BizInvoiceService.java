@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -100,7 +101,13 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	}
 	
 	public Page<BizInvoice> findPage(Page<BizInvoice> page, BizInvoice bizInvoice) {
-		return super.findPage(page, bizInvoice);
+		User user=UserUtils.getUser();
+		if(user.isAdmin()){
+            return super.findPage(page, bizInvoice);
+        }else {
+            bizInvoice.getSqlMap().put("bizInvoice", BaseService.dataScopeFilter(user, "", "su"));
+        }
+	    return super.findPage(page, bizInvoice);
 	}
 	
 	@Transactional(readOnly = false)
