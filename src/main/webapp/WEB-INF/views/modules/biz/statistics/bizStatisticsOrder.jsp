@@ -9,6 +9,10 @@
 <body>
 <div>
     <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <select class="input-medium" id="barChartTypeEle">
+        <option value="1" label="销售额">销售额</option>
+        <option value="3" label="订单量">销售额增长率(%)</option>
+    </select>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
     <div id="orderTotalDataChart" style="height: 300px"></div>
 
@@ -33,13 +37,16 @@
 
     function initChart() {
         var dataTypeEle = $("#dataType");
+        var barChartTypeEle = $("#barChartType");
+        var barChartType = barChartTypeEle.find("option:selected").val();
         var dataType = dataTypeEle.find("option:selected").val();
+        var barChartTypeDesc = barChartTypeEle.find("option:selected").html();
         var dataTypeDesc = dataTypeEle.find("option:selected").html();
         var applyDate = $("#applyDate").val();
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/orderData",
-            data: {"month": applyDate, "lineChartType": dataType},
+            data: {"month": applyDate, "lineChartType": dataType, "barChartType": barChartType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {

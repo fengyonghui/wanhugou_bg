@@ -8,6 +8,8 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,13 +74,24 @@ public class BizStatisticsService {
      * @param month         选择的日期
      * @return 封装数据
      */
-    public EchartsSeriesDto genEchartsSeriesDto(Set<String> officeNameSet, Map<String, BizOrderStatisticsDto> dataMap, LocalDateTime month) {
+    public EchartsSeriesDto genEchartsSeriesDto(Set<String> officeNameSet, Map<String, BizOrderStatisticsDto> dataMap, LocalDateTime month, String barChartType) {
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         if (dataMap.size() > 0) {
             List<Object> dataList = Lists.newArrayList();
             officeNameSet.forEach(o -> {
                 BizOrderStatisticsDto bizOrderStatisticsDto = dataMap.get(o);
-                dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getTotalMoney() : 0);
+                switch (OrderStatisticsDataTypeEnum.parse(StringUtils.isNotBlank(barChartType) ? Integer.valueOf(barChartType) : 1)) {
+                    case SALES_GROWTH_RATE:
+                        break;
+                    case SALEROOM:
+                        dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getTotalMoney() : 0);
+                        break;
+                    case ORDER_COUNT:
+                        dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getOrderCount() : 0);
+                        break;
+                    default:
+                        break;
+                }
             });
             echartsSeriesDto.setData(dataList);
             echartsSeriesDto.setName(month.toString(BizStatisticsService.PARAM_DATE_FORMAT));

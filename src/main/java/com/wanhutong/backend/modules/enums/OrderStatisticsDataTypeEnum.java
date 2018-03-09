@@ -11,6 +11,7 @@ public enum  OrderStatisticsDataTypeEnum {
      */
     SALEROOM(1,"销售额"),
     SALES_GROWTH_RATE(2,"销售增长率"),
+    ORDER_COUNT(3,"订单量"),
     ;
     private int code;
     private String desc;

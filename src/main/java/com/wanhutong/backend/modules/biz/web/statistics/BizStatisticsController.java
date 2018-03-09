@@ -103,7 +103,7 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = {"orderData", ""})
     @ResponseBody
-    public String orderData(HttpServletRequest request, String month, String lineChartType) {
+    public String orderData(HttpServletRequest request, String month, String lineChartType, String barChartType) {
         // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
         LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
@@ -138,7 +138,7 @@ public class BizStatisticsController extends BaseController {
         // echarts 数据实体
         ArrayList<EchartsSeriesDto> seriesList = Lists.newArrayList();
         for (int i = dataMap.size() - 1; i >= 0; i--) {
-            seriesList.add(bizStatisticsService.genEchartsSeriesDto(officeNameSet, dataMap.get(monthDateList.get(i)), monthDateList.get(i)));
+            seriesList.add(bizStatisticsService.genEchartsSeriesDto(officeNameSet, dataMap.get(monthDateList.get(i)), monthDateList.get(i), barChartType));
         }
 
         seriesList.removeAll(Collections.singleton(null));
@@ -147,14 +147,13 @@ public class BizStatisticsController extends BaseController {
 
         ArrayList<EchartsSeriesDto> lineSeriesList = Lists.newArrayList();
 
-        switch (OrderStatisticsDataTypeEnum.parse(StringUtils.isNotBlank(lineChartType) ? Integer.valueOf(lineChartType) : 0)) {
+        switch (OrderStatisticsDataTypeEnum.parse(StringUtils.isNotBlank(lineChartType) ? Integer.valueOf(lineChartType) : 1)) {
             case SALEROOM:
                 officeNameSet.forEach(o -> {
                     EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
                     echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
 
                     List<Object> dataList = Lists.newArrayList();
-
                     for (int i = dataMap.size() - 1; i >= 0; i--) {
                         dataList.add(dataMap.get(monthDateList.get(i)).get(o) != null ? dataMap.get(monthDateList.get(i)).get(o).getTotalMoney() : 0);
                     }
