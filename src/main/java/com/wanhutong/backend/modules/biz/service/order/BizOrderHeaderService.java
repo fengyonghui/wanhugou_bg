@@ -107,10 +107,15 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             return orderHeaderPage;
         }else {
             boolean flag=false;
+            boolean roleFlag = false;
             if(user.getRoleList()!=null) {
                 for (Role role : user.getRoleList()) {
                     if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
                         flag = true;
+                        break;
+                    }
+                    if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
+                        roleFlag = true;
                         break;
                     }
                 }
@@ -118,7 +123,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             if(flag){
                 bizOrderHeader.setCenterId(user.getOffice().getId());
             }else {
-                bizOrderHeader.setConsultantId(user.getId());
+                if (roleFlag) {
+                    bizOrderHeader.setConsultantId(user.getId());
+                }else {
+                    bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+                }
             }
             Page<BizOrderHeader> orderHeaderPage=super.findPage(page, bizOrderHeader);
             Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
