@@ -282,6 +282,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             if (invSkuList != null && invSkuList.size() > 0) {
                                 BizInventorySku inventorySku = invSkuList.get(0);
                                 inventorySku.setStockOrdQty(inventorySku.getStockOrdQty() + 1);
+                                bizInventorySkuService.save(inventorySku);
                             }
                         }
                     }

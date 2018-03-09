@@ -92,7 +92,7 @@
                 <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}">${off.name}</a></td>
 				<td>${off.area.name}</td>
 				<td>${off.code}</td>
-				<td>${off.phone}</td>
+				<td>${off.primaryPerson.mobile}</td>
 				<td>
                     ${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
                 </td>

@@ -146,7 +146,7 @@
 					<c:if test="${source=='gh'}">
 					<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
 					</c:if>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=bh">
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">
 						${requestHeader.reqNo}
 					</a></td>
 					<td>
@@ -197,7 +197,7 @@
 					<c:if test="${source=='gh'}">
 						<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
 					</c:if>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=${source}&bizStatu=${bizStatu}&ship=xs">
+					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${orderHeader.id}&source=ghs">
 							${orderHeader.orderNum}
 					</a></td>
 					<td>
