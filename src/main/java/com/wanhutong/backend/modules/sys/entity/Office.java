@@ -42,6 +42,7 @@ public class Office extends TreeEntity<Office> {
 
 	private String source;
 	private String gysFlag;	//用于供应商保存跳转标识
+	private User moblieMoeny;	//用于用户钱包查询手机号
 
 	private Integer consultantId;
 	private Integer centerId;
@@ -276,5 +277,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setGysMobile(String gysMobile) {
 		this.gysMobile = gysMobile;
+	}
+
+	public User getMoblieMoeny() {
+		return moblieMoeny;
+	}
+
+	public void setMoblieMoeny(User moblieMoeny) {
+		this.moblieMoeny = moblieMoeny;
 	}
 }
