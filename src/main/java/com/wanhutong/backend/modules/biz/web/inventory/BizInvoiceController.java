@@ -15,17 +15,21 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizDetailInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,8 +67,11 @@ public class BizInvoiceController extends BaseController {
     private BizRequestDetailService bizRequestDetailService;
 	@Autowired
     private BizDetailInvoiceService bizDetailInvoiceService;
+	@Autowired
+    private BizSkuInfoService bizSkuInfoService;
 
-	
+
+
 	@ModelAttribute
 	public BizInvoice get(@RequestParam(required=false) Integer id) {
 		BizInvoice entity = null;
@@ -133,7 +140,7 @@ public class BizInvoiceController extends BaseController {
 	}
 
     /**
-     * 发货单详情
+     * 订单所属发货单详情
      * @param bizInvoice
      * @param model
      * @return
@@ -145,7 +152,6 @@ public class BizInvoiceController extends BaseController {
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
         List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
-        BizInvoice invoice = new BizInvoice();
         List<BizOrderHeader> orderHeaderList = new ArrayList<>();
         if (DetailInvoiceList != null && !DetailInvoiceList.isEmpty()){
             for (BizDetailInvoice detailInvoice:DetailInvoiceList) {
@@ -154,15 +160,57 @@ public class BizInvoiceController extends BaseController {
                 BizOrderDetail bizOrderDetail = new BizOrderDetail();
                 bizOrderDetail.setOrderHeader(orderHeader);
                 List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-                if (orderDetailList != null && orderDetailList.isEmpty()){
+                if (orderDetailList != null && !orderDetailList.isEmpty()){
+                    for (BizOrderDetail orderDetail:orderDetailList) {
+                        BizSkuInfo sku = bizSkuInfoService.get(orderDetail.getSkuInfo());
+                        BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
+                        orderDetail.setSkuInfo(skuInfo);
+                    }
                     orderHeader.setOrderDetailList(orderDetailList);
                 }
                 orderHeaderList.add(orderHeader);
             }
-            invoice.setOrderHeaderList(orderHeaderList);
         }
+        model.addAttribute("orderHeaderList",orderHeaderList);
         model.addAttribute("bizInvoice", bizInvoice);
         return "modules/biz/inventory/bizInvoiceDeForm";
+    }
+
+    /**
+     * 备货单所属发货单详情
+     * @param bizInvoice
+     * @param model
+     * @return
+     */
+    @RequiresPermissions("biz:inventory:bizInvoice:view")
+    @RequestMapping(value = "invoiceRequestDetail")
+    public String invoiceRequestDetail(BizInvoice bizInvoice, Model model) {
+
+        BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+        bizDetailInvoice.setInvoice(bizInvoice);
+        List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
+        List<BizRequestHeader> requestHeaderList = new ArrayList<>();
+        if (DetailInvoiceList != null && !DetailInvoiceList.isEmpty()){
+            for (BizDetailInvoice detailInvoice:DetailInvoiceList) {
+                BizRequestHeader bizRequestHeader = detailInvoice.getRequestHeader();
+                BizRequestHeader requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
+                BizRequestDetail bizRequestDetail = new BizRequestDetail();
+                bizRequestDetail.setRequestHeader(requestHeader);
+                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+                if (requestDetailList != null && !requestDetailList.isEmpty()){
+                    for (BizRequestDetail requestDetail:requestDetailList) {
+                        BizSkuInfo skuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo());
+                        BizSkuInfo sku = bizSkuInfoService.findListProd(skuInfo);
+                        requestDetail.setSkuInfo(sku);
+                    }
+                    requestHeader.setRequestDetailList(requestDetailList);
+                }
+                requestHeaderList.add(requestHeader);
+            }
+        }
+        model.addAttribute("requestHeaderList",requestHeaderList);
+        model.addAttribute("bizInvoice", bizInvoice);
+        return "modules/biz/inventory/bizInvoiceReqDeForm";
     }
 
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
