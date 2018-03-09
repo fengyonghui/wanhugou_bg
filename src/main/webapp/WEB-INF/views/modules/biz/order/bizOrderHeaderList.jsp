@@ -176,15 +176,18 @@
 				</td>
 				<td>
                     <c:if test="${orderHeader.bizStatus==0}">
-                        <font color="#848484">未支付</font>
+                        <font color="#848484">${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}</font>
                     </c:if>
-                    <c:if test="${orderHeader.bizStatus==5}">
+                    <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
                         <font color="#FF0000">有尾款</font>
                     </c:if>
-                    <c:if test="${orderHeader.bizStatus==10}">
+					<c:if test="${orderHeader.bizStatus ==10 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
+						<font color="#088A29">已结清</font>
+					</c:if>
+                    <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
                         <font color="#088A29">已结清</font>
                     </c:if>
-                    <c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=0}">
+                    <c:if test="${orderHeader.bizStatus !=0 && orderHeader.bizStatus !=5 && orderHeader.bizStatus !=10}">
 					    ${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
                     </c:if>
 				</td>
@@ -212,13 +215,12 @@
 								审核失败
 								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
 							</c:if></a>
-							<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus !=15}">
+							<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15}">
 								${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 							</c:if>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||
-									orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight!=orderHeader.receiveTotal}">
+						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
