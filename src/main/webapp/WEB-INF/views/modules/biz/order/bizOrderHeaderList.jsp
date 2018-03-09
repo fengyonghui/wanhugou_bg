@@ -79,6 +79,10 @@
 			<li><label>采购商电话：</label>
 				<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
+			<li>
+				<label>货架编号：</label>
+				<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
+			</li>
 			<%--<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"--%>
 					<%--labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"--%>
 					<%--title="采购商"  url="/sys/office/queryTreeList?type=6"--%>
@@ -121,6 +125,7 @@
 				<th>交易金额</th>
 				<th>运费</th>
 				<th>应付金额</th>
+				<th>利润</th>
 				<th>发票状态</th>
 				<th>业务状态</th>
 				<th>订单来源</th>
@@ -164,19 +169,25 @@
 					<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 				</font></td>
 				<td>
+					<fmt:formatNumber type="number"  value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
+				</td>
+				<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 				</td>
 				<td>
                     <c:if test="${orderHeader.bizStatus==0}">
-                        <font color="#848484">未支付</font>
+                        <font color="#848484">${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}</font>
                     </c:if>
-                    <c:if test="${orderHeader.bizStatus==5}">
+                    <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
                         <font color="#FF0000">有尾款</font>
                     </c:if>
-                    <c:if test="${orderHeader.bizStatus==10}">
+					<c:if test="${orderHeader.bizStatus ==10 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
+						<font color="#088A29">已结清</font>
+					</c:if>
+                    <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
                         <font color="#088A29">已结清</font>
                     </c:if>
-                    <c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=0}">
+                    <c:if test="${orderHeader.bizStatus !=0 && orderHeader.bizStatus !=5 && orderHeader.bizStatus !=10}">
 					    ${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
                     </c:if>
 				</td>
@@ -193,25 +204,26 @@
 					<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
-							<c:if test="${orderHeader.bizStatus!=OrderHeaderBizStatusEnum.SUPPLYING.state && orderHeader.bizStatus!=OrderHeaderBizStatusEnum.UNAPPROVE.state}">
+							<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 || orderHeader.bizStatus==10}">
 								待审核
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
 							</c:if>
 							<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
 								审核成功
 							</c:if>
 							<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.UNAPPROVE.state}">
 								审核失败
+								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
+							</c:if></a>
+							<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15}">
+								${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 							</c:if>
-						</a>
-						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 ||
-									orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight!=orderHeader.receiveTotal}">
+						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
-
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>

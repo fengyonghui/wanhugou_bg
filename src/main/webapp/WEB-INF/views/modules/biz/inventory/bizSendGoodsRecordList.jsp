@@ -35,6 +35,9 @@
 			<li><label>商品编号：</label>
 				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
+			<li><label>商品货号：</label>
+				<form:input path="skuInfo.itemNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
 			<li><label>仓库名称：</label>
 				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
@@ -49,22 +52,22 @@
 				<c:if test="${bizStatus==0}">
 					<th>仓库名称</th>
 				</c:if>
-                <td>供货单号</td>
 				<th>商品名称</th>
 				<th>商品编号</th>
+				<th>商品货号</th>
 				<th>订单号</th>
 				<th>供货数量</th>
 				<th>客户</th>
-				<c:if test="${bizStatus==1}">
-					<th>物流商</th>
+				<%--<c:if test="${bizStatus==1}">--%>
+					<%--<th>物流商</th>
 					<th>承运人</th>
 					<th>运费</th>
 					<th>操作费</th>
 					<th>货值</th>
 					<th>运费/货值</th>
 					<th>物流结算方式</th>
-					<th>物流信息图</th>
-				</c:if>
+					<th>物流信息图</th>--%>
+				<%--</c:if>--%>
 				<th>供货时间</th>
 				<c:if test="${fns:getUser().isAdmin()}">
 				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th>操作</th></shiro:hasPermission>
@@ -79,14 +82,14 @@
 					</a>${bizSendGoodsRecord.invInfo.name}
 					</td>
 				</c:if>
-                <td>
-                    ${bizSendGoodsRecord.sendNumber}
-                </td>
 				<td>
 					${bizSendGoodsRecord.skuInfo.name}
 				</td>
 				<td>
 					${bizSendGoodsRecord.skuInfo.partNo}
+				</td>
+				<td>
+					${bizSendGoodsRecord.skuInfo.itemNo}
 				</td>
 				<td>
 					<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${bizSendGoodsRecord.bizOrderHeader.id}&source=ghs"></a>--%>
@@ -98,7 +101,7 @@
 				<td>
 					${bizSendGoodsRecord.customer.name}
 				</td>
-				<c:if test="${bizStatus==1}">
+				<%--<c:if test="${bizStatus==1}">
 					<td>
 						${bizSendGoodsRecord.bizLogistics.name}
 					</td>
@@ -125,7 +128,7 @@
 					<td>
 						<img src="${bizSendGoodsRecord.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
 					</td>
-				</c:if>
+				</c:if>--%>
 				<td>
 					<fmt:formatDate value="${bizSendGoodsRecord.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

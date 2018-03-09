@@ -44,6 +44,8 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Boolean ownGenPoOrder; //自己生成采购单
 	private Integer onlyVendor;
 
+	private String itemNo;      //根据sku货号搜索
+	private String partNo;      //根据sku编号搜索
 	private Byte bizStatusStart;
 	private Byte bizStatusEnd; //用于查询业务状态的区间
 
@@ -285,5 +287,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setOnlyVendor(Integer onlyVendor) {
 		this.onlyVendor = onlyVendor;
+	}
+
+	public String getItemNo() {
+		return itemNo;
+	}
+
+	public void setItemNo(String itemNo) {
+		this.itemNo = itemNo;
+	}
+
+	public String getPartNo() {
+		return partNo;
+	}
+
+	public void setPartNo(String partNo) {
+		this.partNo = partNo;
 	}
 }

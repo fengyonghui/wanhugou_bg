@@ -3,25 +3,29 @@
  */
 package com.wanhutong.backend.modules.biz.web.order;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
-import com.wanhutong.backend.modules.enums.BizOrderDiscount;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import com.wanhutong.backend.modules.enums.OrderTransaction;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.BizCustCreditService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -41,7 +45,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Controller
@@ -62,15 +68,18 @@ public class BizOrderHeaderController extends BaseController {
 	private BizOrderHeaderDao bizOrderHeaderDao;
 	@Autowired
     private BizCustCreditService bizCustCreditService;
-
 	@Autowired
 	private BizPayRecordService bizPayRecordService;
-	@Autowired
-	private SysPlatWalletService sysPlatWalletService;
 	@Autowired
 	private BizOrderAddressService bizOrderAddressService;
 	@Autowired
 	private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+	@Autowired
+	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizInventoryInfoService bizInventoryInfoService;
+	@Autowired
+	private BizPoOrderReqService bizPoOrderReqService;
 
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
@@ -93,19 +102,11 @@ public class BizOrderHeaderController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-//			客户专员跳转需要参数
-// 			User user=UserUtils.getUser();
-//			if("check_pending".equals(bizOrderHeader.getFlag())){
-////			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.UNPAY.getState());
-////			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-//			if(user.getId()==bizOrderHeader.getConsultantId()){
-//				bizOrderHeader.setConsultantId(null);
-//			}
-//		}
 		Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
 		model.addAttribute("page", page);
 		return "modules/biz/order/bizOrderHeaderList";
 	}
+
 
 	@RequiresPermissions("biz:order:bizOrderHeader:view")
 	@RequestMapping(value = "form")
@@ -197,12 +198,70 @@ public class BizOrderHeaderController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage&customer.id="+bizOrderHeader.getCustomer().getId();
 	}
 
+    /**
+     *
+     * @param bizOrderHeader
+     * @param flag 0为采购中心出库
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
 	@RequestMapping(value = "findByOrder")
-	public List<BizOrderHeader> findByOrder(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public Map<String,Object> findByOrder(BizOrderHeader bizOrderHeader,String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
+		if(StringUtils.isNotBlank(flag) && "0".equals(flag)){
+			bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+			bizOrderHeader.setSuplyIds("0");
+
+		}else {
+			bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
+			bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+
+		}
+
 		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
-		return list;
+		Map<String,Object> map=new HashMap<String, Object>();
+		List<BizOrderHeader> bizOrderHeaderList=Lists.newArrayList();
+        BizPoOrderReq bizPoOrderReq=null;
+        if(StringUtils.isNotBlank(flag) && !"0".equals(flag)){
+            bizPoOrderReq=new BizPoOrderReq();
+        }
+
+		for (BizOrderHeader orderHeader : list) {
+			List<BizOrderDetail> bizOrderDetailList= Lists.newArrayList();
+			List<BizOrderDetail> orderDetailList=orderHeader.getOrderDetailList();
+            if(StringUtils.isNotBlank(flag) && !"0".equals(flag)){
+                bizPoOrderReq.setOrderHeader(orderHeader);
+            }
+			for (BizOrderDetail orderDetail:orderDetailList){
+                if(StringUtils.isNotBlank(flag) && !"0".equals(flag)) {
+                    bizPoOrderReq.setSoLineNo(orderDetail.getLineNo());
+                    bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
+                    List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+                    if(poOrderReqList!=null && poOrderReqList.size()>0){
+                        BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
+                        orderDetail.setSkuInfo(skuInfo);
+                        bizOrderDetailList.add(orderDetail);
+                    }
+                }else {
+                    BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
+                    orderDetail.setSkuInfo(skuInfo);
+                    bizOrderDetailList.add(orderDetail);
+                }
+
+			}
+			orderHeader.setOrderDetailList(bizOrderDetailList);
+
+			bizOrderHeaderList.add(orderHeader);
+
+		}
+		List<BizInventoryInfo> inventoryInfoList=bizInventoryInfoService.findList(new BizInventoryInfo());
+		map.put("inventoryInfoList",inventoryInfoList);
+		map.put("bizOrderHeaderList",bizOrderHeaderList);
+
+		return map;
 	}
 
 	@ResponseBody

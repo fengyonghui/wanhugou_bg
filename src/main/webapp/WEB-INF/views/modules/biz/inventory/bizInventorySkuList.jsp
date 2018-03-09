@@ -38,6 +38,9 @@
 			<li><label>商品编号：</label>
 				<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>
 			</li>
+			<li><label>商品货号：</label>
+				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
+			</li>
 			<li><label>仓库名称：</label>
 				<form:input path="invInfo.name" htmlEscape="false"  class="input-medium"/>
 				<input id="invInfo.id" type="hidden" name="invInfo.id" value="${invInfo.id}"/>
@@ -60,6 +63,7 @@
 				<th>仓库名称</th>
 				<th>商品名称</th>
 				<th>商品编号</th>
+				<th>商品货号</th>
 				<th>库存数量</th>
 				<c:if test="${zt eq '1' || zt eq '2'}">
 					<th>销售订单数量</th>
@@ -91,6 +95,8 @@
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.partNo}
+				</td><td>
+					${bizInventorySku.skuInfo.itemNo}
 				</td>
 				<td>
 					${bizInventorySku.stockQty}

@@ -90,7 +90,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 				return  officeList;
 			}
-
 			return dao.findByParentIdsLike(office);
 		}
 		return  new ArrayList<Office>();

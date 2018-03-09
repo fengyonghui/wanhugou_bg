@@ -3,33 +3,34 @@
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoDao">
 
 
-    <resultMap id="BizSkuInfoMap" type="com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo">
-        <id column="id" jdbcType="OTHER" property="id"/>
-        <result column="productInfo.id" jdbcType="OTHER" property="productInfo.id"/>
-        <result column="skuType" jdbcType="OTHER" property="skuType"/>
-        <result column="name" jdbcType="OTHER" property="name"/>
-        <result column="partNo" jdbcType="OTHER" property="partNo"/>
-        <result column="itemNo" jdbcType="OTHER" property="itemNo"></result>
-		<result column="basePrice" jdbcType="OTHER" property="basePrice"/>
-        <result column="buyPrice" jdbcType="OTHER" property="buyPrice"/>
-        <result column="delFlag" jdbcType="OTHER" property="delFlag"/>
-        <result column="createBy.id" jdbcType="OTHER" property="createBy.id"/>
-        <result column="createDate" jdbcType="OTHER" property="createDate"/>
-        <result column="uVersion" jdbcType="OTHER" property="uVersion"/>
-        <result column="updateBy.id" jdbcType="OTHER" property="updateBy.id"/>
-        <result column="updateDate" jdbcType="OTHER" property="updateDate"/>
-        <result column="updateBy.name" jdbcType="OTHER" property="updateBy.name"/>
-        <result column="productInfo.name" jdbcType="OTHER" property="productInfo.name"/>
-        <result column="productInfo.imgUrl" jdbcType="OTHER" property="productInfo.imgUrl"/>
-        <result column="productInfo.brandName" jdbcType="OTHER" property="productInfo.brandName"/>
-        <result column="productInfo.prodCode" jdbcType="OTHER" property="productInfo.prodCode"/>
-        <result column="productInfo.office.id" jdbcType="OTHER" property="productInfo.office.id"/>
-        <collection property="skuImgs" ofType="com.wanhutong.backend.modules.biz.entity.common.CommonImg">
-            <id column="img_id" jdbcType="OTHER" property="id"/>
-            <result column="img_server" jdbcType="OTHER" property="imgServer"/>
-            <result column="img_path" jdbcType="OTHER" property="imgPath"/>
-            <result column="img_type" jdbcType="OTHER" property="imgType"/>
-        </collection>
+    <resultMap id="BizSkuInfoMap" type="BizSkuInfo">
+        <id column="id"  property="id"/>
+        <result column="skuType"  property="skuType"/>
+        <result column="name"  property="name"/>
+        <result column="partNo"  property="partNo"/>
+        <result column="itemNo"  property="itemNo"/>
+		<result column="basePrice"  property="basePrice"/>
+        <result column="buyPrice"  property="buyPrice"/>
+        <result column="delFlag"  property="delFlag"/>
+        <result column="createDate"  property="createDate"/>
+        <result column="uVersion"  property="uVersion"/>
+        <result column="updateDate"  property="updateDate"/>
+
+		<association property="productInfo" javaType="BizProductInfo" column="productInfo.id">
+			<id property="id" column="productInfo.id"/>
+			<result property="name" column="productInfo.name"/>
+			<result property="imgUrl" column="productInfo.imgUrl"/>
+			<result column="productInfo.brandName"  property="brandName"/>
+			<result column="productInfo.prodCode" property="prodCode"/>
+			<association property="office" javaType="Office" column="office.id">
+				<id column="office.id"  property="id"/>
+			</association>
+		</association>
+		<collection property="skuPropValueList" ofType="BizSkuPropValue">
+			<id column="skuPropValueList.id"  property="id"/>
+			<result column="skuPropValueList.propValue"  property="propValue"/>
+
+		</collection>
     </resultMap>
 
     <sql id="bizSkuInfoColumns">
@@ -93,6 +94,12 @@
 				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
 			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
 			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
 				AND a.prod_id =#{productInfo.id}
 			</if>
@@ -133,7 +140,82 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
+	<select id="findListByParam" resultMap="BizSkuInfoMap">
+		SELECT
+		<include refid="bizSkuInfoColumns"/>,
+		bspv.id AS "skuPropValueList.id",
+		bspv.prop_value AS "skuPropValueList.propValue"
+		FROM biz_sku_info a
+		LEFT JOIN biz_sku_prop_value bspv on a.id=bspv.sku_id
+		<include refid="bizSkuInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id =#{id}
+			</if>
+			<if test="skuType != null and skuType != ''">
+				AND a.sku_type =#{skuType}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="partNo != null and partNo != ''">
+				AND a.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
+				AND a.prod_id =#{productInfo.id}
+			</if>
+			<if test="productInfo != null and productInfo.name !=null and productInfo.name!=''">
+				AND bpi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.prodCode !=null and productInfo.prodCode!=''">
+				AND bpi.prod_code LIKE
+
+				<if test="dbName == 'oracle'">'%'||#{productInfo.prodCode}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.prodCode}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.prodCode},'%')</if>
+			</if>
+
+			<if test="productInfo != null and productInfo.brandName !=null and productInfo.brandName!=''">
+				AND bpi.brand_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.brandName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.brandName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.brandName},'%')</if>
+			</if>
+			<if test="skuIds!=null and skuIds!='' and skuIds.size()!=0">
+				and a.id in
+				<foreach collection="skuIds" item="skuId" index="index"
+						 open="(" close=")" separator=",">
+					#{skuId}
+				</foreach>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
 	<select id="findAllList" resultType="BizSkuInfo">
 		SELECT 
 			<include refid="bizSkuInfoColumns"/>

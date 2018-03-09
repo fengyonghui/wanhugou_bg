@@ -46,12 +46,6 @@ import javax.annotation.Resource;
 public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRecordDao, BizCollectGoodsRecord> {
 
 	@Resource
-	private BizPoOrderReqService bizPoOrderReqService;
-	@Resource
-	private BizOrderHeaderService bizOrderHeaderService;
-	@Resource
-	private BizSendGoodsRecordService bizSendGoodsRecordService;
-	@Resource
 	private BizRequestDetailService bizRequestDetailService;
 	@Resource
 	private BizSkuInfoService bizSkuInfoService;

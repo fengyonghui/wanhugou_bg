@@ -26,7 +26,6 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	
 	private static final long serialVersionUID = 1L;
-	private String sendNumber;		//供货单号
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
 	private BizInventoryInfo invInfo;		//发货仓库，biz_inventory_info.id
 	private BizOrderHeader bizOrderHeader;		// order_id
@@ -53,14 +52,6 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 
 	public BizSendGoodsRecord(Integer id){
 		super(id);
-	}
-
-	public String getSendNumber() {
-		return sendNumber;
-	}
-
-	public void setSendNumber(String sendNumber) {
-		this.sendNumber = sendNumber;
 	}
 
 	public BizSkuInfo getSkuInfo() {

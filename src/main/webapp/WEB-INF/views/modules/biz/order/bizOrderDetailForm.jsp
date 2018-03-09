@@ -33,6 +33,8 @@
             $("#skuNameCopy").val(skuName);
             var skuCode =$("#skuCode").val();
             $("#skuCodeCopy").val(skuCode);
+            var itemNo = $("#itemNo").val();
+            $("#itemNoCopy").val(itemNo);
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfSku/findOpShelfSku",
@@ -45,6 +47,7 @@
                         trdatas+="<td>"+opShelfSku.opShelfInfo.name+"</td>";
                         trdatas+="<td>"+opShelfSku.skuInfo.name+"</td>";
                         trdatas+="<td>"+opShelfSku.skuInfo.partNo+"</td>";
+                        trdatas+="<td>"+opShelfSku.skuInfo.itemNo+"</td>";
                         var arr=opShelfSku.skuValueList;
                         if(arr!=null){
                             var Attribute="";<%--页面的属性值遍历--%>
@@ -130,6 +133,9 @@
                 <li><label>商品编码：</label>
                     <input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="50" class="input-medium"/>
                 </li>
+                <li><label>商品货号：</label>
+                    <input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="50" class="input-medium"/>
+                </li>
                 <%--<li><label>查询：</label>--%>
                     <%--<select class="input-medium">--%>
                         <%--<option value=""> 请选择 </option>--%>
@@ -151,6 +157,7 @@
                     <th>货架名称</th>
                     <th>商品名称</th>
                     <th>商品编码</th>
+                    <th>商品货号</th>
                     <th>商品属性</th>
                     <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <th>已发货数量</th>
@@ -167,6 +174,7 @@
                             <td>${detail.shelfInfo.opShelfInfo.name}</td>
                             <td>${detail.skuName}</td>
                             <td>${detail.partNo}</td>
+                            <td>${detail.skuInfo.itemNo}</td>
                             <td>
                                 <c:forEach items="${detail.orderSkuValueList}" var="orderDeail">
                                     ${orderDeail.propName}:${orderDeail.propValue},
@@ -192,6 +200,7 @@
                         <th>货架名称</th>
                         <th>商品名称</th>
                         <th>商品编码</th>
+                        <th>商品货号</th>
                         <th>商品属性</th>
                         <th>销售数量区间</th>
                         <th>现价</th>
@@ -218,6 +227,7 @@
 <form:form id="searchForm" modelAttribute="bizOpShelfSku" >
     <form:hidden id="skuNameCopy" path="skuInfo.name"/>
     <form:hidden id="skuCodeCopy" path="skuInfo.partNo"/>
+    <form:hidden id="itemNoCopy" path="skuInfo.itemNo"/>
 </form:form>
 </body>
 </html>

@@ -229,13 +229,16 @@ public class OfficeController extends BaseController {
 	@RequestMapping(value = "supplierTreeData")
 	public List<Map<String, Object>> supplierTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
 			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
+//		List<Map<String, Object>> mapList = Lists.newArrayList();
+//		String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
+//		Office office = new Office();
+//		office.setParentIds("%,"+supplierId+",");
+//		List<Office> list = officeService.findList(office);
+//		Office off = officeService.get(Integer.valueOf(supplierId));
+//		list.add(off);
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
-		Office office = new Office();
-		office.setParentIds("%,"+supplierId+",");
-		List<Office> list = officeService.findList(office);
-		Office off = officeService.get(Integer.valueOf(supplierId));
-		list.add(off);
+
+		List<Office>list = officeService.filerOffice(null,"supplier",OfficeTypeEnum.VENDOR);
 		for (int i=0; i<list.size(); i++){
 			Office e = list.get(i);
 			if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
@@ -359,8 +362,8 @@ public class OfficeController extends BaseController {
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		Integer id = office.getParentId()==0 ? null : office.getParentId();
 		if(office.getGysFlag() !=null && office.getGysFlag().equals("gys_save")){
-			//供应商踢跳转
-			return "redirect:" + adminPath + "/sys/office/supplierList";
+			//供应商保存、修改跳转
+			return "redirect:" + adminPath + "/sys/office/supplierListGys";
 		}else {
 			return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 		}
@@ -445,6 +448,37 @@ public class OfficeController extends BaseController {
 			}
 		}
 		return mapList;
+	}
+
+	@RequiresPermissions("sys:office:view")
+	@RequestMapping(value = "supplierListGys")
+	public String supplierListGys(Office office,HttpServletRequest request, HttpServletResponse response,Model model) {
+//		供应商分页查询
+//		if(office.getId() == null || office.getParentIds() == null){
+//			String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
+//			Office off = officeService.get(Integer.valueOf(supplierId));
+//			office.setParentIds("%,"+supplierId+",");
+//			List<Office> findList = officeService.findList(office);
+//			findList.add(off);
+//			model.addAttribute("list", findList);
+//		}else{
+//			model.addAttribute("list", officeService.findList(office));
+//		}
+		if(office.getId() == null || office.getParentIds() == null){
+			String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
+//			Office off = officeService.get(Integer.valueOf(supplierId));
+			office.setParentIds("%,"+supplierId+",");
+			office.setType(OfficeTypeEnum.VENDOR.getType());
+			if(office.getGysMobile()!=null){
+				office.setGysMobile(office.getGysMobile());//供应商电话查询
+			}
+			Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
+			model.addAttribute("page", page);
+		}else{
+			Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
+			model.addAttribute("page", page);
+		}
+		return "modules/sys/supplierList";
 	}
 
 }

@@ -217,7 +217,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY c.code, o.code, a.name
+				ORDER BY c.code, o.code, a.name,a.update_date desc
 			</otherwise>
 		</choose>
 	</select>
@@ -454,5 +454,19 @@
 		<!--and a.company_id = a.office_id-->
         AND so.type = #{type}
     </select>
+
+	<!-- 系统管理员 在系统设置里添加机构 -->
+	<select id="systemCompany" resultType="User" parameterType="Integer">
+		SELECT
+		a.id,
+		a.company_id,
+		a.office_id,
+		a.login_name,
+		a. NAME
+		FROM sys_user a
+		LEFT JOIN sys_office so on so.id=a.company_id
+		WHERE
+		a.status = 1
+	</select>
 
 </mapper>

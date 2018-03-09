@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.inventory;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao;
 @Service
 @Transactional(readOnly = true)
 public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizInventorySku> {
+	@Autowired
+	private BizInventorySkuDao bizInventorySkuDao;
 
 	public BizInventorySku get(Integer id) {
 		return super.get(id);
@@ -39,7 +42,14 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		if (bizInventorySku.getStockQty()<0){
 			return;
 		}
-		super.save(bizInventorySku);
+        List<BizInventorySku> invSkuList = bizInventorySkuDao.findList(bizInventorySku);
+        BizInventorySku invSku = new BizInventorySku();
+		if (invSkuList != null && !invSkuList.isEmpty()){
+            invSku = invSkuList.get(0);
+            invSku.setStockQty(invSku.getStockQty() + bizInventorySku.getStockQty());
+            super.save(invSku);
+        }
+        super.save(bizInventorySku);
 		/*if (bizInventorySku.getStockQty() == 0){
 			this.delete(bizInventorySku);
 		}*/
@@ -49,5 +59,9 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	public void delete(BizInventorySku bizInventorySku) {
 		super.delete(bizInventorySku);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public void orderSave(BizInventorySku bizInventorySku) {
+		bizInventorySkuDao.orderUpdate(bizInventorySku);
+	}
 }

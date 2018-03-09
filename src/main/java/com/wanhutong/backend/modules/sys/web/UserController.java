@@ -107,8 +107,9 @@ public class UserController extends BaseController {
 					user.setCompany(office);
 					user.setOffice(office);
 				}else {
-					Office parentOffice = officeService.get(office.getParentId());
-					user.setCompany(parentOffice);
+//					Office parentOffice = officeService.get(office.getParentId());
+//					user.setCompany(parentOffice);
+					user.setCompany(office);
 					user.setOffice(office);
 				}
 
@@ -116,7 +117,10 @@ public class UserController extends BaseController {
 				if(user.getConn()!=null && user.getConn().equals("connIndex")){//客户专员标识符
 					user.setCompany(office);
 					user.setOffice(office);
-				}else {
+				}else if(user.getOffice().getId()!=null || user.getCompany().getId()!=null){
+					user.setCompany(user.getCompany());
+					user.setOffice(user.getOffice());
+				}else{
 					user.setCompany(office);
 					user.setOffice(null);
 				}
