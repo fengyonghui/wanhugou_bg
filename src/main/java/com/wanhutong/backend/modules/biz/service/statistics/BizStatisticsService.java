@@ -4,10 +4,7 @@ package com.wanhutong.backend.modules.biz.service.statistics;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
-import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
+import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
@@ -110,5 +107,15 @@ public class BizStatisticsService {
      */
     public List<BizUserStatisticsDto> userStatisticData(String month) {
         return bizOrderHeaderDao.getUserStatisticData(month);
+    }
+
+    /**
+     * 根据月份取用户业绩统计相关数据
+     *
+     * @param month 取数据的月份
+     * @return 根据不同用户分类的统计数据
+     */
+    public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month) {
+        return bizOrderHeaderDao.getUserSaleStatisticData(month);
     }
 }

@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -49,4 +50,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 用户统计数据
      */
     List<BizUserStatisticsDto> getUserStatisticData(String month);
+
+    /**
+     * 根据月份取用户业绩统计相关数据
+     *
+     * @param month 取数据的月份
+     * @return 根据不同用户分类的统计数据
+     */
+    List<BizUserSaleStatisticsDto> getUserSaleStatisticData(String month);
 }

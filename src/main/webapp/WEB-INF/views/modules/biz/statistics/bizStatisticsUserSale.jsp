@@ -4,13 +4,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>用户统计</title>
+    <title>业绩统计</title>
 </head>
 <body>
 <div>
     <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
-    <div id="orderTotalDataChart" style="height: 500px"></div>
+    <div id="orderTotalDataChart" style="height: 300px"></div>
 
 </div>
 
@@ -27,7 +27,7 @@
         var applyDate = $("#applyDate").val();
         $.ajax({
             type: 'GET',
-            url: "${adminPath}/biz/statistics/userData",
+            url: "${adminPath}/biz/statistics/userSaleData",
             data: {"month": applyDate},
             dataType: "json",
             success: function (msg) {
@@ -62,28 +62,22 @@
                     legend: {
                         data: '用户量'
                     },
-                    // grid: {
-                    //     bottom:'60%',
-                    //     left: '10%'
-                    // },
                     xAxis: {
                         data: msg.nameList,
                         axisPointer: {
                             type: 'shadow'
-                        },
-                        // axisLabel: {
-                        //     interval: 0,
-                        //     formatter:function(value)
-                        //     {
-                        //         return value.split("").join("\n");
-                        //     }
-                        // }
+                        }
                     },
                     yAxis: [
                         {
                             type: 'value',
                             scale: true,
-                            name: '用户量',
+                            name: '销售额',
+                            min:0
+                        },{
+                            type: 'value',
+                            scale: true,
+                            name: '订单量',
                             min:0
                         }
                     ],

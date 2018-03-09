@@ -5,10 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
-import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
+import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
@@ -51,6 +48,58 @@ public class BizStatisticsController extends BaseController {
 
 
     /**
+     * 用户业绩相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:userSale:view")
+    @RequestMapping(value = {"userSale", ""})
+    public String userSale(HttpServletRequest request) {
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsUserSale";
+    }
+
+    /**
+     * 用户业绩相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:userSale:view")
+    @RequestMapping(value = {"userSaleData", ""})
+    @ResponseBody
+    public String userSaleData(HttpServletRequest request, String month) {
+        // 月份集合
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month);
+        List<String> nameList = Lists.newArrayList();
+
+        List<Object> seriesDataList = Lists.newArrayList();
+        List<Object> seriesTotalDataList = Lists.newArrayList();
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        EchartsSeriesDto echartsSeriesTotalDto = new EchartsSeriesDto();
+        bizProductStatisticsDtos.forEach(o -> {
+            seriesDataList.add(o.getOrderCount());
+            seriesTotalDataList.add(o.getTotalMoney());
+            nameList.add(o.getName());
+        });
+        echartsSeriesDto.setName("订单量");
+        echartsSeriesDto.setData(seriesDataList);
+
+        echartsSeriesTotalDto.setName("销售额");
+        echartsSeriesTotalDto.setData(seriesTotalDataList);
+        echartsSeriesTotalDto.setyAxisIndex(1);
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto, echartsSeriesTotalDto));
+        paramMap.put("nameList", nameList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
+        return JSONObject.fromObject(paramMap).toString();
+    }
+
+
+ /**
      * 用户相关统计数据
      *
      * @param request
