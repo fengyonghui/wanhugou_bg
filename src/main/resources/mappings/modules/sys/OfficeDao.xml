@@ -89,7 +89,7 @@
 		select *
 		from sys_office a
 		where FIND_IN_SET(id,
-		(select GROUP_CONCAT(parent_ids,'0')
+		(select GROUP_CONCAT(distinct parent_ids,'0')
 		from biz_custom_center_consultant ccc, sys_office so
 		where ccc.cust_id = so.id and ccc.status=1
 		<if test="customs != null and customs.id != null and customs.id != ''">
@@ -118,7 +118,7 @@
 		<if test="parentIds!=null and parentIds !=''">
 			AND so.parent_ids LIKE #{parentIds}
 		</if>
-
+		order by parent_ids
 	</select>
 
 	<select id="findOfficeCustByIdToParent" resultType="Office">
@@ -293,14 +293,23 @@
 		<include refid="officeJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-            <if test="type != null and type != ''">
-                and a.type=#{type}
-            </if>
 			<if test="name != null and name != ''">
 				AND a.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone LIKE
+				<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>
+			</if>
+			<if test="gysMobile != null and gysMobile != ''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{gysMobile}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{gysMobile}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{gysMobile},'%')</if>
 			</if>
 			<if test="consultantId !=null ">
 				and ccc.consultant_id= #{consultantId}
@@ -310,6 +319,12 @@
 			</if>
 			<if test="ccStatus !=null ">
 				and ccc.status= #{ccStatus}
+			</if>
+			<!--<if test="primaryPerson!=null and primaryPerson.id!=null and primaryPerson.id!=''">-->
+				<!--a.primary_person=#{primaryPerson.id}-->
+			<!--</if>-->
+			<if test="type != null and type != ''">
+				and a.type=#{type}
 			</if>
 		</where>
 			<!-- 数据范围过滤 -->
