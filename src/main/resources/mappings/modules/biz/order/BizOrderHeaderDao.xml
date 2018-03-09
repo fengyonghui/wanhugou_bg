@@ -52,9 +52,11 @@
 
         <association property="createBy" javaType="User" column="createBy.id">
             <id property="id" column="createBy.id"/>
+            <id property="name" column="createBy.name"/>
         </association>
         <association property="updateBy" javaType="User" column="updateBy.id">
             <id property="id" column="updateBy.id"/>
+            <id property="name" column="updateBy.name"/>
         </association>
 
         <collection property="orderDetailList" ofType="BizOrderDetail">
