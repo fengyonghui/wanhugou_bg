@@ -81,7 +81,42 @@ public class BizStatisticsController extends BaseController {
     }
 
     /**
-     * 订单相关统计数据
+     * 产品相关统计
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:product:view")
+    @RequestMapping(value = {"product", ""})
+    public String product(HttpServletRequest request) {
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsProduct";
+    }
+
+    /**
+     * 产品相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:product:view")
+    @RequestMapping(value = {"productData", ""})
+    @ResponseBody
+    public String product(HttpServletRequest request, String month) {
+        // 月份集合
+        bizStatisticsService.productStatisticData(month);
+
+
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("rateSeriesList", "");
+        return JSONObject.fromObject(paramMap).toString();
+    }
+
+
+    /**
+     * 订单相关统计
      *
      * @param request
      * @return
@@ -119,7 +154,7 @@ public class BizStatisticsController extends BaseController {
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o, bizStatisticsService.orderStaticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            dataMap.put(o, bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
             monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
@@ -181,7 +216,7 @@ public class BizStatisticsController extends BaseController {
                         // 上个月数据
                         Map<String, BizOrderStatisticsDto> lastDataMap = dataMap.get(lastMonth);
                         if (lastDataMap == null ) {
-                            lastDataMap = bizStatisticsService.orderStaticData(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+                            lastDataMap = bizStatisticsService.orderStatisticData(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
                         }
                         BigDecimal lastData = lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : BigDecimal.valueOf(0);
                         // 增长率

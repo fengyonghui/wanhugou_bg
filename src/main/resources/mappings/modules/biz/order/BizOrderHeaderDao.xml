@@ -533,7 +533,24 @@
 			OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
       		AND date_format(header.create_time, '%Y-%m') = #{month}
       		AND office.type = #{officeType}
-      		GROUP BY office.id;
+      		GROUP BY office.id
+	</select>
+
+	<select id="getProductStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
+		SELECT DISTINCT od.sku_id AS skuId, si.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count
+		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss
+		WHERE oh.id = od.order_id
+		and si.id = od.sku_id
+		and si.prod_id = pi.id
+		and oh.`status` = 1
+		and si.`status` = 1
+		and pi.`status` = 1
+		and ss.`status` = 1
+		and ss.sku_id = si.id
+		AND date_format(header.create_time, '%Y-%m') = #{month}
+		GROUP BY od.sku_id
+		ORDER BY count DESC
+		LIMIT 10
 	</select>
 
 </mapper>

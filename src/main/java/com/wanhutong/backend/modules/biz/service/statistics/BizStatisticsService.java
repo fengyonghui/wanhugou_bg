@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -32,6 +33,7 @@ public class BizStatisticsService {
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
 
+
     /**
      * 请求参数日期格式
      */
@@ -44,9 +46,20 @@ public class BizStatisticsService {
      * @return 用户统计数据
      */
     public String user() {
-
+        // TODO
 
         return null;
+    }
+
+    /**
+     * 根据月份取产品统计相关数据
+     *
+     * @param month 取数据的月份
+     * @return 根据不同机构分类的统计数据
+     */
+    public void productStatisticData (String month) {
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizOrderHeaderDao.getProductStatisticData(month);
+        System.out.println(bizProductStatisticsDtos);
     }
 
 
@@ -56,7 +69,7 @@ public class BizStatisticsService {
      * @param month 取数据的月份
      * @return 根据不同机构分类的统计数据
      */
-    public Map<String, BizOrderStatisticsDto> orderStaticData(String month) {
+    public Map<String, BizOrderStatisticsDto> orderStatisticData(String month) {
         List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonth(month, OrderHeaderBizStatusEnum.VALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
         Map<String, BizOrderStatisticsDto> resultMap = Maps.newHashMap();
         orderTotalAndCountByCreateTimeMonthStatus.forEach(o -> {

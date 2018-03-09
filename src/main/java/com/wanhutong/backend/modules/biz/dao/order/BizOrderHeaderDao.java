@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.order;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +32,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 订单统计数据
      */
     List<BizOrderStatisticsDto> getValidOrderTotalAndCountByCreateTimeMonth(@Param("month")String month, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList, @Param("officeType") String officeType);
+
+    /**
+     * 按月获取订单销售额相关的产品信息
+     *
+     * @param month 月份
+     * @return 产品统计数据
+     */
+    List<BizProductStatisticsDto> getProductStatisticData(String month);
 }
