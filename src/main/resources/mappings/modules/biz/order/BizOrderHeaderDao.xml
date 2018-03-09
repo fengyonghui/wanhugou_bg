@@ -61,7 +61,8 @@
             <id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
 			<result property="sentQty" column="orderDetailList.sentQty" />
-            <association property="skuInfo" javaType="BizSkuInfo" column="skuInfo.id">
+			<result property="lineNo" column="orderDetailList.lineNo" />
+			<association property="skuInfo" javaType="BizSkuInfo" column="skuInfo.id">
                 <id property="id" column="orderDetailList.skuInfo.id"/>
                 <result property="buyPrice" column="orderDetailList.skuInfo.buyPrice" />
                 <result property="itemNo" column="orderDetailList.skuInfo.itemNo"/>
@@ -200,6 +201,7 @@
 		od.unit_price AS "orderDetailList.unitPrice",
 		od.ord_qty AS "orderDetailList.ordQty",
 		od.sent_qty AS "orderDetailList.sentQty",
+		od.line_no AS "orderDetailList.lineNo",
         si.id AS "orderDetailList.skuInfo.id",
         si.buy_price AS "orderDetailList.skuInfo.buyPrice",
         si.item_no AS "orderDetailList.skuInfo.itemNo"

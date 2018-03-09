@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
@@ -22,11 +23,9 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
+import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.enums.BizOrderDiscount;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import com.wanhutong.backend.modules.enums.OrderTransaction;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.BizCustCreditService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -69,11 +68,8 @@ public class BizOrderHeaderController extends BaseController {
 	private BizOrderHeaderDao bizOrderHeaderDao;
 	@Autowired
     private BizCustCreditService bizCustCreditService;
-
 	@Autowired
 	private BizPayRecordService bizPayRecordService;
-	@Autowired
-	private SysPlatWalletService sysPlatWalletService;
 	@Autowired
 	private BizOrderAddressService bizOrderAddressService;
 	@Autowired
@@ -82,6 +78,8 @@ public class BizOrderHeaderController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
+	@Autowired
+	private BizPoOrderReqService bizPoOrderReqService;
 
 	@ModelAttribute
 	public BizOrderHeader get(@RequestParam(required=false) Integer id) {
@@ -200,6 +198,15 @@ public class BizOrderHeaderController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/?repage&customer.id="+bizOrderHeader.getCustomer().getId();
 	}
 
+    /**
+     *
+     * @param bizOrderHeader
+     * @param flag 0为采购中心出库
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
 	@RequestMapping(value = "findByOrder")
@@ -217,13 +224,33 @@ public class BizOrderHeaderController extends BaseController {
 		List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
 		Map<String,Object> map=new HashMap<String, Object>();
 		List<BizOrderHeader> bizOrderHeaderList=Lists.newArrayList();
+        BizPoOrderReq bizPoOrderReq=null;
+        if(StringUtils.isNotBlank(flag) && !"0".equals(flag)){
+            bizPoOrderReq=new BizPoOrderReq();
+        }
+
 		for (BizOrderHeader orderHeader : list) {
 			List<BizOrderDetail> bizOrderDetailList= Lists.newArrayList();
 			List<BizOrderDetail> orderDetailList=orderHeader.getOrderDetailList();
+            if(StringUtils.isNotBlank(flag) && !"0".equals(flag)){
+                bizPoOrderReq.setOrderHeader(orderHeader);
+            }
 			for (BizOrderDetail orderDetail:orderDetailList){
-				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
-				orderDetail.setSkuInfo(skuInfo);
-				bizOrderDetailList.add(orderDetail);
+                if(StringUtils.isNotBlank(flag) && !"0".equals(flag)) {
+                    bizPoOrderReq.setSoLineNo(orderDetail.getLineNo());
+                    bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
+                    List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+                    if(poOrderReqList!=null && poOrderReqList.size()>0){
+                        BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
+                        orderDetail.setSkuInfo(skuInfo);
+                        bizOrderDetailList.add(orderDetail);
+                    }
+                }else {
+                    BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
+                    orderDetail.setSkuInfo(skuInfo);
+                    bizOrderDetailList.add(orderDetail);
+                }
+
 			}
 			orderHeader.setOrderDetailList(bizOrderDetailList);
 

@@ -12,10 +12,12 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
+import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
@@ -53,6 +55,8 @@ public class BizRequestHeaderController extends BaseController {
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizPoOrderReqService bizPoOrderReqService;
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -120,19 +124,27 @@ public class BizRequestHeaderController extends BaseController {
 		bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
 		List<BizRequestHeader> list= bizRequestHeaderService.findList(bizRequestHeader);
 		List<BizRequestHeader> bizRequestHeaderList=Lists.newArrayList();
-
+		BizPoOrderReq bizPoOrderReq=new BizPoOrderReq();
 		for (BizRequestHeader bizRequestHeader1:list) {
 			BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
 			bizRequestDetail1.setRequestHeader(bizRequestHeader1);
 			BizSkuInfo bizSkuInfo =new BizSkuInfo();
 			bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
 			bizRequestDetail1.setSkuInfo(bizSkuInfo);
+
+			bizPoOrderReq.setRequestHeader(bizRequestHeader1);
+
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
 			List<BizRequestDetail> reqDetailList =Lists.newArrayList();
 			for (BizRequestDetail requestDetail:requestDetailList){
-				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
-				requestDetail.setSkuInfo(skuInfo);
-				reqDetailList.add(requestDetail);
+				bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
+				List<BizPoOrderReq> poOrderReqList= bizPoOrderReqService.findList(bizPoOrderReq);
+				if(poOrderReqList!=null && poOrderReqList.size()>0){
+					BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+					requestDetail.setSkuInfo(skuInfo);
+					reqDetailList.add(requestDetail);
+				}
+
 			}
 			if(StringUtils.isNotBlank(bizRequestHeader.getItemNo())){
 				if(requestDetailList!=null && requestDetailList.size()>0){

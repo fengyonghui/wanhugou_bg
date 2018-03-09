@@ -114,7 +114,12 @@
                                     tr_tds += "<td>" + selecttd + "</td>"
                                 }
                                 tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
-                                tr_tds+="<td><input  type='text' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                                if(detail.ordQty==detail.sentQty){
+                                    tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                                }else {
+                                    tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                                }
+
                                 tr_tds+="</tr>";
                                 if(orderHeader.orderDetailList.length>1){
                                     flag=false;
