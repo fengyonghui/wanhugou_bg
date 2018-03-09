@@ -289,7 +289,6 @@
 		<include refid="officeColumns"/>
 		,pp.mobile as "primaryPerson.mobile"
 		FROM sys_office a
-		LEFT JOIN sys_user su on su.company_id=a.id
 		<include refid="officeJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -300,13 +299,13 @@
 				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
 			<if test="phone != null and phone != ''">
-				AND a.phone LIKE
+				AND pp.mobile LIKE
 				<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>
 			</if>
 			<if test="gysMobile != null and gysMobile != ''">
-				AND su.mobile LIKE
+				AND pp.mobile LIKE
 				<if test="dbName == 'oracle'">'%'||#{gysMobile}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{gysMobile}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{gysMobile},'%')</if>
