@@ -542,10 +542,10 @@
 		WHERE oh.id = od.order_id
 		and si.id = od.sku_id
 		and si.prod_id = pi.id
-		and oh.`status` = 1
-		and si.`status` = 1
-		and pi.`status` = 1
-		and ss.`status` = 1
+		and oh.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and si.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and pi.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and ss.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		and ss.sku_id = si.id
 		AND date_format(header.create_time, '%Y-%m') = #{month}
 		GROUP BY od.sku_id
