@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
-
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+
 <html>
 <head>
 	<title>备货清单管理</title>
@@ -80,7 +80,7 @@
 
                                     "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
 								}
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo==null?0:skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
