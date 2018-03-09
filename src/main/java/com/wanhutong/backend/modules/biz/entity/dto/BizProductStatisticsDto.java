@@ -32,6 +32,10 @@ public class BizProductStatisticsDto {
      * 销量
      */
     private Integer count;
+    /**
+     * 点击量
+     */
+    private Integer clickCount;
 
 
     public Integer getSkuId() {
@@ -80,5 +84,13 @@ public class BizProductStatisticsDto {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public Integer getClickCount() {
+        return clickCount;
+    }
+
+    public void setClickCount(Integer clickCount) {
+        this.clickCount = clickCount;
     }
 }

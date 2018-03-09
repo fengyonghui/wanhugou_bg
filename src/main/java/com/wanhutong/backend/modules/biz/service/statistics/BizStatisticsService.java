@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -41,25 +42,13 @@ public class BizStatisticsService {
 
 
     /**
-     * 用户相关统计数据
-     *
-     * @return 用户统计数据
-     */
-    public String user() {
-        // TODO
-
-        return null;
-    }
-
-    /**
      * 根据月份取产品统计相关数据
      *
      * @param month 取数据的月份
-     * @return 根据不同机构分类的统计数据
+     * @return 根据不同产品分类的统计数据
      */
-    public void productStatisticData (String month) {
-        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizOrderHeaderDao.getProductStatisticData(month);
-        System.out.println(bizProductStatisticsDtos);
+    public List<BizProductStatisticsDto> productStatisticData (String month) {
+        return bizOrderHeaderDao.getProductStatisticData(month);
     }
 
 
@@ -113,5 +102,13 @@ public class BizStatisticsService {
         return null;
     }
 
-
+    /**
+     * 根据月份取用户统计相关数据
+     *
+     * @param month 取数据的月份
+     * @return 根据不同机构分类的统计数据
+     */
+    public List<BizUserStatisticsDto> userStatisticData(String month) {
+        return bizOrderHeaderDao.getUserStatisticData(month);
+    }
 }

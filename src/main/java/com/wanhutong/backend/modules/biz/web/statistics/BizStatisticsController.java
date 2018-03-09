@@ -1,12 +1,13 @@
 package com.wanhutong.backend.modules.biz.web.statistics;
 
 
-import com.alibaba.druid.support.json.JSONUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
@@ -58,27 +59,41 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:user:view")
     @RequestMapping(value = {"user", ""})
     public String user(HttpServletRequest request) {
-
-
-        List<String> districtList = Lists.newArrayList("河南信阳", "山东济南", "山东临沂", "山东德州", "山东潍坊");
-        List<Integer> salesVolumeList = Lists.newArrayList(10, 80, 30, 44, 55);
-        List<Integer> yieldRateList = Lists.newArrayList(10, 98, 77, 44, 22);
-
-
-        request.setAttribute("districtlist", JSONUtils.toJSONString(districtList));
-        request.setAttribute("salesVolumeList", JSONUtils.toJSONString(salesVolumeList));
-        request.setAttribute("yieldRateList", JSONUtils.toJSONString(yieldRateList));
-
-
-        List<Integer> novSaleroomList = Lists.newArrayList(100000, 300300, 800000, 1200000, 900000);
-        List<Integer> decSaleroomList = Lists.newArrayList(200000, 700300, 600000, 440000, 500000);
-        List<Integer> janSaleroomList = Lists.newArrayList(900000, 200300, 505000, 100000, 700000);
-
-        request.setAttribute("novSaleroomList", JSONUtils.toJSONString(novSaleroomList));
-        request.setAttribute("decSaleroomList", JSONUtils.toJSONString(decSaleroomList));
-        request.setAttribute("janSaleroomList", JSONUtils.toJSONString(janSaleroomList));
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsUser";
     }
+
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"userData", ""})
+    @ResponseBody
+    public String userData(HttpServletRequest request, String month) {
+        // 月份集合
+        List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userStatisticData(month);
+        List<String> nameList = Lists.newArrayList();
+
+        List<Object> seriesDataList = Lists.newArrayList();
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        bizProductStatisticsDtos.forEach(o -> {
+            seriesDataList.add(o.getCount());
+            nameList.add(o.getName());
+        });
+        echartsSeriesDto.setName("用户量");
+        echartsSeriesDto.setData(seriesDataList);
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("seriesList", echartsSeriesDto);
+        paramMap.put("nameList", nameList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
+        return JSONObject.fromObject(paramMap).toString();
+    }
+
 
     /**
      * 产品相关统计
@@ -105,12 +120,22 @@ public class BizStatisticsController extends BaseController {
     @ResponseBody
     public String product(HttpServletRequest request, String month) {
         // 月份集合
-        bizStatisticsService.productStatisticData(month);
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.productStatisticData(month);
+        List<String> nameList = Lists.newArrayList();
 
-
+        List<Object> seriesDataList = Lists.newArrayList();
+            EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        bizProductStatisticsDtos.forEach(o -> {
+            seriesDataList.add(o.getCount());
+            nameList.add(o.getName().concat("-").concat(o.getItemNo()));
+        });
+        echartsSeriesDto.setName("商品销量");
+        echartsSeriesDto.setData(seriesDataList);
 
         Map<String, Object> paramMap = Maps.newHashMap();
-        paramMap.put("rateSeriesList", "");
+        paramMap.put("seriesList", echartsSeriesDto);
+        paramMap.put("nameList", nameList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
     }
 

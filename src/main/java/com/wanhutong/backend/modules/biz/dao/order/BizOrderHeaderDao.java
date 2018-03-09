@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import org.apache.ibatis.annotations.Param;
@@ -40,4 +41,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 产品统计数据
      */
     List<BizProductStatisticsDto> getProductStatisticData(String month);
+
+    /**
+     * 按月获取用户相关的注册信息
+     *
+     * @param month 月份
+     * @return 用户统计数据
+     */
+    List<BizUserStatisticsDto> getUserStatisticData(String month);
 }
