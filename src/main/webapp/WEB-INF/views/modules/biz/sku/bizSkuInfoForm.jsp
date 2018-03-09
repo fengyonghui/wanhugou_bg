@@ -151,13 +151,13 @@
 			</div>
 		</div>
 
-		<div class="control-group">
-			<label class="control-label">货号：</label>
-			<div class="controls">
-				<form:input path="itemNo"  htmlEscape="false" maxlength="20" class="input-xlarge"/>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">货号：</label>--%>
+			<%--<div class="controls">--%>
+				<%--<form:input path="itemNo"  htmlEscape="false" maxlength="20" class="input-xlarge"/>--%>
 
-			</div>
-		</div>
+			<%--</div>--%>
+		<%--</div>--%>
 
 
 		<div class="control-group">

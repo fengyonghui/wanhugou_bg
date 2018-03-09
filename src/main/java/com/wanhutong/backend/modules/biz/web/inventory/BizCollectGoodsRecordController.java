@@ -60,26 +60,10 @@ public class BizCollectGoodsRecordController extends BaseController {
 
 	@Autowired
 	private BizCollectGoodsRecordService bizCollectGoodsRecordService;
-	@Autowired
-	private BizRequestDetailService bizRequestDetailService;
-	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
-	@Autowired
-	private BizRequestHeaderService bizRequestHeaderService;
-	@Autowired
-    private BizPoHeaderService bizPoHeaderService;
-	@Autowired
-    private BizPoDetailService bizPoDetailService;
+
 	@Autowired
     private BizSendGoodsRecordService bizSendGoodsRecordService;
-	@Autowired
-    private BizInventorySkuService bizInventorySkuService;
-	@Autowired
-	private BizPoOrderReqService bizPoOrderReqService;
-	@Autowired
-	private BizInventoryInfoService bizInventoryInfoService;
-	@Autowired
-	private BizOrderHeaderService bizOrderHeaderService;
+
 
 	
 	@ModelAttribute

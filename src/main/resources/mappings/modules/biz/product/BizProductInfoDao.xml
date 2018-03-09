@@ -13,6 +13,7 @@
 		<result property="description" column="description"/>
 		<result property="minPrice" column="minPrice"/>
 		<result property="maxPrice" column="maxPrice"/>
+		<result property="itemNo" column="itemNo"/>
 		<result property="delFlag" column="status"/>
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
@@ -37,7 +38,6 @@
 		</association>
 		<collection property="categoryInfoList" ofType="BizCategoryInfo">
 			<id property="id" column="categoryInfoList.id" />
-
 		</collection>
 
 	</resultMap>
@@ -59,6 +59,7 @@
 		vi.code AS "bizVarietyInfo.code",
 		a.min_price AS "minPrice",
 		a.max_price AS "maxPrice",
+		a.item_no AS "itemNo",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -100,6 +101,12 @@
 					<if test="dbName == 'oracle'">'%'||#{prodCode}||'%'</if>
 					<if test="dbName == 'mssql'">'%'+#{prodCode}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{prodCode},'%')</if>
+			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
 			</if>
 			<if test="brandName != null and brandName != ''">
 				AND a.brand_name LIKE 
@@ -161,6 +168,7 @@
 				max_price,
 			</if>
 			img_url,
+			item_no,
 			status,
 			create_id,
 			create_time,
@@ -187,6 +195,7 @@
 			#{maxPrice},
 		</if>
 			#{imgUrl},
+			#{itemNo},
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -232,6 +241,7 @@
 			max_price = #{maxPrice},
 		</if>
 			vari_id = #{bizVarietyInfo.id},
+			item_no = #{itemNo},
 			u_version = #{uVersion},
 			update_time = #{updateDate},
 			update_id = #{updateBy.id}

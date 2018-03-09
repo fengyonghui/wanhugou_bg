@@ -7,12 +7,15 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderDetailDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.BizOrderDiscount;
@@ -24,11 +27,13 @@ import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
@@ -41,12 +46,15 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Autowired
     private BizOrderAddressService bizOrderAddressService;
+    @Autowired
+    private BizSkuInfoService bizSkuInfoService;
 //    @Autowired
 //    private BizOrderDetailService bizOrderDetailService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+
 
     public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader) {
         //查询状态 status=0 和 1的所有信息
@@ -82,13 +90,32 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
-            return super.findPage(page, bizOrderHeader);
+
+            Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
+            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+            page.setCount(count);
+            List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
+            Double totalBuyPrice = 0.0;
+            for (BizOrderHeader orderHeader:orderHeaderList) {
+
+                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo()==null?0:orderDetail.getSkuInfo().getBuyPrice()*orderDetail.getOrdQty()).sum();
+                orderHeader.setTotalBuyPrice(totalBuyPrice);
+
+            }
+            orderHeaderPage.setList(orderHeaderList);
+
+            return orderHeaderPage;
         }else {
             boolean flag=false;
+            boolean roleFlag = false;
             if(user.getRoleList()!=null) {
                 for (Role role : user.getRoleList()) {
                     if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
                         flag = true;
+                        break;
+                    }
+                    if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
+                        roleFlag = true;
                         break;
                     }
                 }
@@ -96,11 +123,25 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             if(flag){
                 bizOrderHeader.setCenterId(user.getOffice().getId());
             }else {
-                bizOrderHeader.setConsultantId(user.getId());
+                if (roleFlag) {
+                    bizOrderHeader.setConsultantId(user.getId());
+                }else {
+                    bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+                }
             }
+            Page<BizOrderHeader> orderHeaderPage=super.findPage(page, bizOrderHeader);
+            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+            page.setCount(count);
+            List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
+            Double totalBuyPrice = 0.0;
+            for (BizOrderHeader orderHeader:orderHeaderList) {
 
-         //   bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "ccs"));
-            return super.findPage(page, bizOrderHeader);
+                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo().getBuyPrice()*orderDetail.getOrdQty()).sum();
+                orderHeader.setTotalBuyPrice(totalBuyPrice);
+            }
+            orderHeaderPage.setList(orderHeaderList);
+
+            return orderHeaderPage;
         }
     }
 
@@ -144,6 +185,16 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
         bizOrderHeader.setBizStatus(bizOrderHeader.getBizStatus());
         super.save(bizOrderHeader);
+        //利润
+        BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
+        List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
+        for (BizOrderDetail bizOrderDetail:orderDetailList) {
+            BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+            bizOrderDetail.setSkuInfo(bizSkuInfo);
+        }
+        bizOrderHeader.setOrderDetailList(orderDetailList);
+        super.save(bizOrderHeader);
+
         bizLocation.setId(bizOrderHeader.getBizLocation().getId());
         bizLocation.setOrderHeaderID(bizOrderHeader);
         bizOrderAddressService.save(bizLocation);

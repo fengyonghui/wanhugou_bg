@@ -43,17 +43,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private String oneOrder;		// 首次下单 firstOrder ，非首次下单 endOrder
 	private Double DiscountPrice;		//优惠价格页面显示
 	private Double tobePaid;		//待支付金额
-
+	private Double totalBuyPrice;		//订单总出厂价
 	private String flag;       //标志位
 	private String orderNoEditable;		//页面不可编辑标识符
 	private String orderDetails;		//页面不可编辑标识符2
 	private String clientModify;		//用于客户专员修改跳转
 	private Boolean ownGenPoOrder;
 	private Integer onlyVendor; //该订单的唯一供应商
+	private String itemNo;      //根据sku货号搜索
+	private String partNo;      //根据sku编号搜索
+	private Integer orderCount; //find List中订单总条数据
 
 	private String orderNum2;		//用于删除订单页面传值
     private String localSendIds;
     private Integer orderMark;		//用于订单新增地址返回标记
+	private String suplyIds;       //用于查询本地发货的订单
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -309,5 +313,45 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setCenterId(Integer centerId) {
 		this.centerId = centerId;
+	}
+
+	public Double getTotalBuyPrice() {
+		return totalBuyPrice;
+	}
+
+	public void setTotalBuyPrice(Double totalBuyPrice) {
+		this.totalBuyPrice = totalBuyPrice;
+	}
+
+	public String getItemNo() {
+		return itemNo;
+	}
+
+	public void setItemNo(String itemNo) {
+		this.itemNo = itemNo;
+	}
+
+	public Integer getOrderCount() {
+		return orderCount;
+	}
+
+	public void setOrderCount(Integer orderCount) {
+		this.orderCount = orderCount;
+	}
+
+	public String getPartNo() {
+		return partNo;
+	}
+
+	public void setPartNo(String partNo) {
+		this.partNo = partNo;
+	}
+
+	public String getSuplyIds() {
+		return suplyIds;
+	}
+
+	public void setSuplyIds(String suplyIds) {
+		this.suplyIds = suplyIds;
 	}
 }

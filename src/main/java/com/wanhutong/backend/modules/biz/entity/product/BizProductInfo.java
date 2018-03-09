@@ -60,6 +60,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private SkuProd skuProd;
 
+	private String itemNo;
+
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
 
@@ -352,5 +354,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setBizVarietyInfo(BizVarietyInfo bizVarietyInfo) {
 		this.bizVarietyInfo = bizVarietyInfo;
+	}
+
+	public String getItemNo() {
+		return itemNo;
+	}
+
+	public void setItemNo(String itemNo) {
+		this.itemNo = itemNo;
 	}
 }

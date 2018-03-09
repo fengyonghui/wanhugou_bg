@@ -10,12 +10,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -60,6 +63,8 @@ public class BizSkuInfoController extends BaseController {
 	private CommonImgService commonImgService;
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
+	@Autowired
+	private BizSkuPropValueService bizSkuPropValueService;
 
 	@ModelAttribute
 	public BizSkuInfo get(@RequestParam(required=false) Integer id) {
@@ -172,8 +177,26 @@ public class BizSkuInfoController extends BaseController {
 	@RequestMapping(value = "findSkuInfoList")
 	public Map<String,Object> findSkuInfoList(BizSkuInfo bizSkuInfo,Model model){
         Map<String,Object> map=new HashMap<String, Object>();
-		List<BizSkuInfo> list=bizSkuInfoService.findList(bizSkuInfo);
-        map.put("skuInfoList",list);
+		List<BizSkuInfo> list=bizSkuInfoService.findListByParam(bizSkuInfo);
+		List<BizSkuInfo> skuInfoList=Lists.newArrayList();
+		for(BizSkuInfo skuInfo:list){
+			List<BizSkuPropValue> skuPropValueList=skuInfo.getSkuPropValueList();
+			StringBuffer skuPropName=new StringBuffer();
+			for(BizSkuPropValue skuPropValue:skuPropValueList){
+				skuPropName.append("-");
+				skuPropName.append(skuPropValue.getPropValue());
+			}
+			String propNames="";
+			if(skuPropName.toString().length()>1){
+				propNames =skuPropName.toString().substring(1);
+			}
+
+			skuInfo.setSkuPropertyInfos(propNames);
+
+			skuInfoList.add(skuInfo);
+
+		}
+        map.put("skuInfoList",skuInfoList);
 		List<BizInventoryInfo> inventoryInfoList=bizInventoryInfoService.findList(new BizInventoryInfo());
         map.put("inventoryInfoList",inventoryInfoList);
         List<Dict> dictList=DictUtils.getDictList("inv_type");

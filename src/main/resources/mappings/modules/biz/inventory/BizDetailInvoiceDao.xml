@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizDetailInvoiceDao">
+    
+	<sql id="bizDetailInvoiceColumns">
+		a.id AS "id",
+		a.invoice_id AS "invoice.id",
+		a.order_header_id AS "orderHeader.id",
+		a.request_header_id AS "requestHeader.id"
+	</sql>
+	
+	<sql id="bizDetailInvoiceJoins">
+	</sql>
+    
+	<select id="get" resultType="BizDetailInvoice">
+		SELECT 
+			<include refid="bizDetailInvoiceColumns"/>
+		FROM biz_detail_invoice a
+		<include refid="bizDetailInvoiceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizDetailInvoice">
+		SELECT 
+			<include refid="bizDetailInvoiceColumns"/>
+		FROM biz_detail_invoice a
+		<include refid="bizDetailInvoiceJoins"/>
+		<where>
+			
+			<if test="invoice != null and invoice.id != null and invoice.id != ''">
+				AND a.invoice_id = #{invoice.id}
+			</if>
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				AND a.order_header_id = #{orderHeader.id}
+			</if>
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				AND a.request_header_id = #{requestHeader.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizDetailInvoice">
+		SELECT 
+			<include refid="bizDetailInvoiceColumns"/>
+		FROM biz_detail_invoice a
+		<include refid="bizDetailInvoiceJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_detail_invoice(
+			id,
+			invoice_id,
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				order_header_id
+			</if>
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				request_header_id
+			</if>
+		) VALUES (
+			#{id},
+			#{invoice.id},
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				#{orderHeader.id}
+			</if>
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				#{requestHeader.id}
+			</if>
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_detail_invoice SET 	
+			invoice_id = #{invoice.id},
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				order_header_id = #{orderHeader.id}
+			</if>
+			<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
+				request_header_id = #{requestHeader.id}
+			</if>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_detail_invoice
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

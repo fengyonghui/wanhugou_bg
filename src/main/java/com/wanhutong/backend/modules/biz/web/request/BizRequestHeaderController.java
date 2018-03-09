@@ -8,15 +8,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
+import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,11 +52,11 @@ public class BizRequestHeaderController extends BaseController {
 	@Autowired
 	private BizRequestHeaderService bizRequestHeaderService;
 	@Autowired
-	private BizProductInfoService bizProductInfoService;
-	@Autowired
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+	@Autowired
+	private BizPoOrderReqService bizPoOrderReqService;
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -83,6 +87,7 @@ public class BizRequestHeaderController extends BaseController {
             }
             bizRequestHeader1.setReqQtys(reqQtys.toString());
             bizRequestHeader1.setRecvQtys(recvQtys.toString());
+
         }
         page.setList(list);
         model.addAttribute("page", page);
@@ -110,6 +115,51 @@ public class BizRequestHeaderController extends BaseController {
 
 		return "modules/biz/request/bizRequestHeaderForm";
 	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = "findByRequest")
+	public List<BizRequestHeader> findByRequest(BizRequestHeader bizRequestHeader) {
+		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+		bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+		List<BizRequestHeader> list= bizRequestHeaderService.findList(bizRequestHeader);
+		List<BizRequestHeader> bizRequestHeaderList=Lists.newArrayList();
+		BizPoOrderReq bizPoOrderReq=new BizPoOrderReq();
+		for (BizRequestHeader bizRequestHeader1:list) {
+			BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
+			bizRequestDetail1.setRequestHeader(bizRequestHeader1);
+			BizSkuInfo bizSkuInfo =new BizSkuInfo();
+			bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
+			bizRequestDetail1.setSkuInfo(bizSkuInfo);
+
+			bizPoOrderReq.setRequestHeader(bizRequestHeader1);
+
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
+			List<BizRequestDetail> reqDetailList =Lists.newArrayList();
+			for (BizRequestDetail requestDetail:requestDetailList){
+				bizPoOrderReq.setSoLineNo(requestDetail.getLineNo());
+				List<BizPoOrderReq> poOrderReqList= bizPoOrderReqService.findList(bizPoOrderReq);
+				if(poOrderReqList!=null && poOrderReqList.size()>0){
+					BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+					requestDetail.setSkuInfo(skuInfo);
+					reqDetailList.add(requestDetail);
+				}
+
+			}
+			if(StringUtils.isNotBlank(bizRequestHeader.getItemNo())){
+				if(requestDetailList!=null && requestDetailList.size()>0){
+					bizRequestHeader1.setRequestDetailList(reqDetailList);
+					bizRequestHeaderList.add(bizRequestHeader1);
+				}
+			}else {
+				bizRequestHeader1.setRequestDetailList(reqDetailList);
+				bizRequestHeaderList.add(bizRequestHeader1);
+			}
+		}
+		return bizRequestHeaderList;
+	}
+
+
 
 
 

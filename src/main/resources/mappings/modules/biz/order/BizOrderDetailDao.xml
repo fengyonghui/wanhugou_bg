@@ -13,11 +13,13 @@
 		a.sku_id AS "skuInfo.id",
 		a.suply_id AS "suplyis.id",
 		bsi.name as "skuInfo.name",
+		bsi.buy_price AS "buyPrice",
 		<!--a.quality as "quality",
 		a.color as "color",
 		a.standard as "standard",-->
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
+		bsi.item_no AS "skuInfo.itemNo",
 		a.unit_price AS "unitPrice",
 		a.sent_qty as "sentQty",
 		a.ord_qty AS "ordQty",
@@ -28,7 +30,11 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		off.id AS "vendor.id",
+		off.name AS "vendor.name",
+		us.id AS "primary.id",
+		us.mobile AS "primary.mobile"
 	</sql>
 	
 	<sql id="bizOrderDetailJoins">
@@ -39,6 +45,9 @@
 		Left Join biz_op_shelf_info si on si.id = ois.shelf_id
 		<!--LEFT join biz_order_sku_prop_value ospv on ospv.order_detail_id=a.id-->
 		LEFT join sys_office soo on soo.id=a.suply_id
+		LEFT JOIN biz_product_info pro ON pro.id = bsi.prod_id
+		LEFT JOIN sys_office off ON off.id = pro.vendor_id
+		LEFT JOIN sys_user us ON us.id = off.primary_person
 	</sql>
     
 	<select id="get" resultType="BizOrderDetail">

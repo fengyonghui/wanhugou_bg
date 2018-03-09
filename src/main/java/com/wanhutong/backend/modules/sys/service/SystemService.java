@@ -146,7 +146,11 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 		}else{
 //			添加机构无office.id时，显示主负责人，type=6采购商，type=7供应商
-			list = userDao.findUserByCompany(type);
+			if(type!=null){
+				list = userDao.findUserByCompany(type);
+			}else {
+				list = userDao.systemCompany();
+			}
 		}
 		return list;
 	}

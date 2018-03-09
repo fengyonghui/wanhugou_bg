@@ -54,6 +54,8 @@ public class BizSendGoodsRecordController extends BaseController {
 
 	@Autowired
 	private BizSendGoodsRecordService bizSendGoodsRecordService;
+    @Autowired
+    private BizInventorySkuService bizInventorySkuService;
 
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -96,8 +98,28 @@ public class BizSendGoodsRecordController extends BaseController {
 //		if (!beanValidator(model, bizSendGoodsRecord)){
 //			return form(bizSendGoodsRecord, model);
 //		}
-
-		    bizSendGoodsRecordService.save(bizSendGoodsRecord,bizStatu);
+//      点击确认供货 增加库存销售订单数量
+        /*BizInventorySku inventorySku = new BizInventorySku();//库存
+        List<BizSendGoodsRecord> sendGoodsRecordList = bizSendGoodsRecord.getBizSendGoodsRecordList();//用于判断订单下有没有商品
+        if(sendGoodsRecordList!=null && sendGoodsRecordList.size()!=0){
+            int i=1;
+            for (BizSendGoodsRecord oodsRecord : sendGoodsRecordList) {
+                if(oodsRecord.getBizOrderDetail().getSentQty()!=null && oodsRecord.getBizOrderDetail().getSentQty()==0){//订单中的商品供货数量
+                    inventorySku.setSkuInfo(oodsRecord.getSkuInfo());
+                    List<BizInventorySku> list = bizInventorySkuService.findList(inventorySku);
+                    if(list!=null && list.size()!=0){
+                        for (BizInventorySku bizInventorySku : list) {
+                            inventorySku.setId(bizInventorySku.getId());
+                            inventorySku.setStockOrdQty(bizInventorySku.getStockOrdQty()+i);
+                            bizInventorySkuService.orderSave(inventorySku);
+//                            break;
+                        }
+                    }
+//                    break;
+                }
+            }
+        }*/
+        bizSendGoodsRecordService.save(bizSendGoodsRecord);
 			addMessage(redirectAttributes, "保存供货记录成功");
 //			return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizSendGoodsRecord/?repage&bizStatu="+bizSendGoodsRecord.getBizStatus();
 //		跳回订单发货列表

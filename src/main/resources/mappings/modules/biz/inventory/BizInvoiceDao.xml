@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizInvoiceDao">
+    
+	<sql id="bizInvoiceColumns">
+		a.id AS "id",
+		a.send_number AS "sendNumber",
+		a.logistics_id AS "logistics.id",
+		bl.name AS "logistics.name",
+		a.img_url AS "imgUrl",
+		a.value_price AS "valuePrice",
+		a.operation AS "operation",
+		a.freight AS "freight",
+		a.carrier AS "carrier",
+		a.settlement_status AS "settlementStatus",
+		a.biz_status AS "bizStatus",
+		a.ship AS "ship",
+		a.send_time AS "sendDate",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizInvoiceJoins">
+		LEFT JOIN biz_logistics bl ON bl.id = a.logistics_id
+		LEFT JOIN sys_user su on su.id =a.create_id
+	</sql>
+    
+	<select id="get" resultType="BizInvoice">
+		SELECT 
+			<include refid="bizInvoiceColumns"/>
+		FROM biz_invoice a
+		<include refid="bizInvoiceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizInvoice">
+		SELECT 
+			<include refid="bizInvoiceColumns"/>
+		FROM biz_invoice a
+		<include refid="bizInvoiceJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="sendNumber != null and sendNumber != ''">
+				AND a.send_number LIKE
+				<if test="dbName == 'oracle'">'%'||#{sendNumber}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{sendNumber}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{sendNumber},'%')</if>
+			</if>
+			<if test="logistics != null and logistics.id != null and logistics.id != ''">
+				AND a.logistics_id = #{logistics.id}
+			</if>
+			<if test="bizStatus != null">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="ship != null">
+				AND a.ship = #{ship}
+			</if>
+			<if test="logistics != null and logistics.name != null and logistics.name != ''">
+				AND bl.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{logistics.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{logistics.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{logistics.name},'%')</if>
+			</if>
+			<if test="carrier != null and carrier != ''">
+				AND a.carrier LIKE 
+					<if test="dbName == 'oracle'">'%'||#{carrier}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{carrier}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{carrier},'%')</if>
+			</if>
+			<if test="settlementStatus != null and settlementStatus != ''">
+				AND a.settlement_status = #{settlementStatus}
+			</if>
+            <if test="sqlMap != null and sqlMap.bizInvoice != null and sqlMap.bizInvoice != ''">
+                ${sqlMap.bizInvoice}
+            </if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizInvoice">
+		SELECT 
+			<include refid="bizInvoiceColumns"/>
+		FROM biz_invoice a
+		<include refid="bizInvoiceJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_invoice(
+			id,
+			send_number,
+			<if test="logistics != null and logistics.id != null and logistics.id != ''">
+				logistics_id,
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				img_url,
+			</if>
+			<if test="valuePrice != null and valuePrice != ''">
+				value_price,
+			</if>
+			<if test="operation != null and operation != 0">
+				operation,
+			</if>
+			<if test="freight != null and freight != 0">
+				freight,
+			</if>
+			<if test="carrier != null and carrier != ''">
+				carrier,
+			</if>
+			<if test="settlementStatus != null and settlementStatus != ''">
+				settlement_status,
+			</if>
+			biz_status,
+			ship,
+			send_time,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{sendNumber},
+			<if test="logistics != null and logistics.id != null and logistics.id != ''">
+				#{logistics.id},
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				#{imgUrl},
+			</if>
+			<if test="valuePrice != null and valuePrice != ''">
+				#{valuePrice},
+			</if>
+			<if test="operation != null and operation != 0">
+				#{operation},
+			</if>
+			<if test="freight != null and freight != 0">
+				#{freight},
+			</if>
+			<if test="carrier != null and carrier != ''">
+				#{carrier},
+			</if>
+			<if test="settlementStatus != null and settlementStatus != ''">
+				#{settlementStatus},
+			</if>
+			#{bizStatus},
+			#{ship},
+			#{sendDate},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_invoice SET 	
+			send_number = #{sendNumber},
+			<if test="logistics != null and logistics.id != null and logistics.id != ''">
+				logistics_id = #{logistics.id},
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				img_url = #{imgUrl},
+			</if>
+			<if test="valuePrice != null and valuePrice != ''">
+				value_price = #{valuePrice},
+			</if>
+			<if test="operation != null and operation != 0">
+				operation = #{operation},
+			</if>
+			<if test="freight != null and freight != 0">
+				freight = #{freight},
+			</if>
+			<if test="carrier != null and carrier != ''">
+				carrier = #{carrier},
+			</if>
+			<if test="settlementStatus != null and settlementStatus != ''">
+				settlement_status = #{settlementStatus},
+			</if>
+			biz_status = #{bizStatus},
+			ship = #{ship},
+			send_time = #{sendDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_invoice SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -10,8 +10,16 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
+                    if(window.confirm('你确定要发货吗？')){
+                        // alert("确定");
+                        form.submit();
+                        return true;
+                        loading('正在提交，请稍等...');
+
+                    }else{
+                        //alert("取消");
+                        return false;
+                    }
 				},
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {

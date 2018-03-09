@@ -16,6 +16,11 @@ import java.util.List;
  */
 @MyBatisDao
 public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
-    public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader);
-    public void updateMoney(BizOrderHeader bizOrderHeader);
+     List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader);
+
+     void updateMoney(BizOrderHeader bizOrderHeader);
+
+
+     Integer findCount(BizOrderHeader bizOrderHeader);
+
 }

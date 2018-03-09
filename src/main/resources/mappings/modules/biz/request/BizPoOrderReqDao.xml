@@ -62,6 +62,9 @@
 			<if test="poHeader != null and poHeader.id != null and poHeader.id != ''">
 				AND a.po_id = #{poHeader.id}
 			</if>
+			<if test="soLineNo != null and soLineNo!= ''">
+				AND a.so_line_no = #{soLineNo}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

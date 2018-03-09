@@ -6,26 +6,26 @@
 	<meta name="decorator" content="default"/>
 	<%@include file="/WEB-INF/views/include/treetable.jsp" %>
 	<script type="text/javascript">
-		<%--$(document).ready(function() {--%>
-			<%--// var tpl = $("#treeTableTpl").html().replace(/(\/\/\<!\-\-)|(\/\/\-\->)/g,"");--%>
-			<%--var data = ${fns:toJson(list)}, rootId = "${not empty office.id ? office.id : '0'}";--%>
-			<%--addRow("#treeTableList", tpl, data, rootId, true);--%>
-			<%--$("#treeTable").treeTable({expandLevel : 5});--%>
-		<%--});--%>
-		<%--function addRow(list, tpl, data, pid, root){--%>
-			<%--for (var i=0; i<data.length; i++){--%>
-				<%--var row = data[i];--%>
-				<%--//if ((${fns:jsGetVal('row.parentId')}) == pid){--%>
-				<%--if ((!row ? '': !row.parentId ? 0: row.parentId) == pid){--%>
-					<%--$(list).append(Mustache.render(tpl, {--%>
-						<%--dict: {--%>
-							<%--type: getDictLabel(${fns:toJson(fns:getDictList('sys_office_type'))}, row.type)--%>
-						<%--}, pid: (root?0:pid), row: row--%>
-					<%--}));--%>
-					<%--addRow(list, tpl, data, row.id);--%>
-				<%--}--%>
-			<%--}--%>
-		<%--}--%>
+		$(document).ready(function() {
+			// var tpl = $("#treeTableTpl").html().replace(/(\/\/\<!\-\-)|(\/\/\-\->)/g,"");
+			var data = ${fns:toJson(list)}, rootId = "${not empty office.id ? office.id : '0'}";
+			addRow("#treeTableList", tpl, data, rootId, true);
+			$("#treeTable").treeTable({expandLevel : 5});
+		});
+		function addRow(list, tpl, data, pid, root){
+			for (var i=0; i<data.length; i++){
+				var row = data[i];
+				//if ((${fns:jsGetVal('row.parentId')}) == pid){
+				if ((!row ? '': !row.parentId ? 0: row.parentId) == pid){
+					$(list).append(Mustache.render(tpl, {
+						dict: {
+							type: getDictLabel(${fns:toJson(fns:getDictList('sys_office_type'))}, row.type)
+						}, pid: (root?0:pid), row: row
+					}));
+					addRow(list, tpl, data, row.id);
+				}
+			}
+		}
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -51,9 +51,11 @@
 			<li><label>采购商名称：</label>
 				<sys:treeselect id="office" name="id" value="" labelName="customer.name"
 								labelValue="" notAllowSelectParent="true"
-								title="采购商" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-xlarge"
+								title="采购商" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-medium"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 			</li>
+			<li><label>联系人电话：</label>
+				<form:input path="phone" htmlEscape="false" placeholder="请输入联系人电话"  class="input-medium"/></li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -81,7 +83,7 @@
 	<%--</script>--%>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
 		<thead>
-			<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>机构类型</th><th>备注</th>
+			<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>电话</th><th>机构类型</th><th>备注</th>
 			<shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr>
 		</thead>
 		<tbody>
@@ -90,6 +92,7 @@
                 <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}">${off.name}</a></td>
 				<td>${off.area.name}</td>
 				<td>${off.code}</td>
+				<td>${off.phone}</td>
 				<td>
                     ${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
                 </td>

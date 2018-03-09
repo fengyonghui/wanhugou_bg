@@ -201,6 +201,7 @@
 				<th>品牌名称</th>
 				<th>商品名称</th>
 				<th>商品编码</th>
+				<th>商品货号</th>
 				<c:if test="${bizPoHeader.id!=null}">
 					<th>所属单号</th>
 				</c:if>
@@ -225,6 +226,7 @@
 								<td>${poDetail.skuInfo.productInfo.brandName}</td>
 								<td>${poDetail.skuInfo.name}</td>
 								<td>${poDetail.skuInfo.partNo}</td>
+								<td>${poDetail.skuInfo.itemNo}</td>
 								<c:if test="${bizPoHeader.id!=null}">
 									<td>
 										<c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}" var="orderNumStr" varStatus="orderStatus">
@@ -254,6 +256,7 @@
 					<td>${map.key.productInfo.brandName}</td>
 					<td>${map.key.name}</td>
 					<td>${map.key.partNo}</td>
+					<td>${map.key.itemNo}</td>
 					<td>${map.key.skuPropertyInfos}</td>
 					<td>${map.value.reqQty-map.value.sentQty}
 						<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>

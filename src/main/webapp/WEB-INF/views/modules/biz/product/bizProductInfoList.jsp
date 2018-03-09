@@ -31,6 +31,9 @@
 			<li><label>产品代码：</label>
 				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-medium"/>
 			</li>
+			<li><label>产品货号：</label>
+				<form:input path="itemNo" htmlEscape="false" maxlength="50" class="input-medium"/>
+			</li>
 			<li><label>品牌名称：</label>
 				<form:input path="brandName" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
@@ -48,6 +51,7 @@
 				<th>产品图片</th>
 				<th>产品名称</th>
 				<th>产品代码</th>
+				<th>产品货号</th>
 				<th>品牌名称</th>
 				<th>产品描述</th>
 				<th>供应商</th>
@@ -66,6 +70,9 @@
 				</a></td>
 				<td>
 					${bizProductInfo.prodCode}
+				</td>
+				<td>
+					${bizProductInfo.itemNo}
 				</td>
 				<td>
 					${bizProductInfo.brandName}

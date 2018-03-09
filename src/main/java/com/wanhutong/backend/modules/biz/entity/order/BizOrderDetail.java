@@ -4,11 +4,13 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
@@ -30,20 +32,21 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String partNo;        // 商品编号
     private String skuName;        // 商品名称
     private Double unitPrice;        // 商品单价
+    private Double buyPrice;        //出厂价
     private Integer sentQty;        //发货数量
     private Integer ordQty;        // 采购数量
     private String quality;        //材质
     private String color;        //颜色
     private String standard;    //规格
     private Office suplyis;     //供货中心ID，sys_office.id; 默认本地备货对应采购中心id；其他货架对应供货中心ID；此值由采购专员同意发货前确定
-
+    private Integer sendNum;        //存储页面传入的供货数量
     private Integer ordQtyUpda;        //用于存储修改时的采购数量
     private List<BizOpShelfSku> shelfList;    //用于计算有多少货架
     private String orderDetaIds;        //用于多选商品时传递数据
     private String saleQtys;          //用于采购数量时传递数量
     private String shelfSkus;          //用于多选货架是传递数量
     private List<BizOrderDetail> orderHeaderList;   //用于查询该订单下有多少商品
-
+    private BizInventoryInfo inventoryInfo;     //仓库
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
 
     private String  detailIds;
@@ -52,6 +55,8 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Integer vendorId;
     private String vendorName;
     private String suplyIds;
+    private Office vendor;      //供应商
+    private User primary;       //供应商主联系人
 
     public List<BizOrderDetail> getOrderHeaderList() {
         return orderHeaderList;
@@ -289,5 +294,45 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setSuplyIds(String suplyIds) {
         this.suplyIds = suplyIds;
+    }
+
+    public Double getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(Double buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public Office getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Office vendor) {
+        this.vendor = vendor;
+    }
+
+    public User getPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(User primary) {
+        this.primary = primary;
+    }
+
+    public Integer getSendNum() {
+        return sendNum;
+    }
+
+    public void setSendNum(Integer sendNum) {
+        this.sendNum = sendNum;
+    }
+
+    public BizInventoryInfo getInventoryInfo() {
+        return inventoryInfo;
+    }
+
+    public void setInventoryInfo(BizInventoryInfo inventoryInfo) {
+        this.inventoryInfo = inventoryInfo;
     }
 }
