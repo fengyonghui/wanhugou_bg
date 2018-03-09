@@ -129,7 +129,7 @@
 				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
 			</if>
-			AND ( DATE_FORMAT( a.unshelf_time,'%H:%i') > DATE_FORMAT( NOW(),'%H:%i')
+			AND ( DATE_FORMAT( a.unshelf_time,'%Y~%m~%d %k.%i.%s') > DATE_FORMAT( NOW(),'%Y~%m~%d %k.%i.%s')
 			OR a.unshelf_time is NULL)
 			<!--<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
 				AND a.unshelf_user = #{unshelfUser.id}
