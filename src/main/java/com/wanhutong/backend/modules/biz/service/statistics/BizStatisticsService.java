@@ -10,6 +10,8 @@ import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
+import com.wanhutong.backend.modules.sys.dao.OfficeDao;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class BizStatisticsService {
 
     @Resource
     private BizVarietyInfoDao bizVarietyInfoDao;
+    @Resource
+    private OfficeDao officeDao;
 
     /**
      * 请求参数日期格式
@@ -48,8 +52,8 @@ public class BizStatisticsService {
      * @param month 取数据的月份
      * @return 根据不同产品分类的统计数据
      */
-    public List<BizProductStatisticsDto> productStatisticData (String month, Integer variId) {
-        return bizOrderHeaderDao.getProductStatisticData(month, variId);
+    public List<BizProductStatisticsDto> productStatisticData (String month, Integer variId, Integer purchasingId) {
+        return bizOrderHeaderDao.getProductStatisticData(month, variId, purchasingId);
     }
 
 
@@ -119,8 +123,8 @@ public class BizStatisticsService {
      * @param month 取数据的月份
      * @return 根据不同用户分类的统计数据
      */
-    public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month) {
-        return bizOrderHeaderDao.getUserSaleStatisticData(month);
+    public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month, Integer purchasingId) {
+        return bizOrderHeaderDao.getUserSaleStatisticData(month, purchasingId);
     }
 
     /**
@@ -129,5 +133,14 @@ public class BizStatisticsService {
      */
     public List<BizVarietyInfo> getBizVarietyInfoList() {
         return bizVarietyInfoDao.findAllList(new BizVarietyInfo());
+    }
+    /**
+     * 取所有采购商 type = 8
+     * @return 所有采购商
+     */
+    public List<Office> getBizPurchasingList(String type) {
+        Office office = new Office();
+        office.setType(type);
+        return officeDao.findList(office);
     }
 }

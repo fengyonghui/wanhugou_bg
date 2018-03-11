@@ -56,6 +56,7 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"userSale", ""})
     public String userSale(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsUserSale";
     }
@@ -69,9 +70,9 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:userSale:view")
     @RequestMapping(value = {"userSaleData", ""})
     @ResponseBody
-    public String userSaleData(HttpServletRequest request, String month) {
+    public String userSaleData(HttpServletRequest request, String month, Integer purchasingId) {
         // 月份集合
-        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month);
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
         List<String> nameList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
@@ -154,6 +155,7 @@ public class BizStatisticsController extends BaseController {
     public String product(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("varietyList", bizStatisticsService.getBizVarietyInfoList());
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsProduct";
     }
@@ -167,9 +169,9 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:product:view")
     @RequestMapping(value = {"productData", ""})
     @ResponseBody
-    public String product(HttpServletRequest request, String month, Integer variId, int dataType) {
+    public String product(HttpServletRequest request, String month, Integer variId, int dataType, Integer purchasingId) {
         // 月份集合
-        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.productStatisticData(month, variId);
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.productStatisticData(month, variId, purchasingId);
         List<String> nameList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
