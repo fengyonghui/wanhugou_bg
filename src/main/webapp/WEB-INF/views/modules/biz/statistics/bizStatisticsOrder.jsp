@@ -14,7 +14,6 @@
         <option value="3" label="订单量">订单量</option>
     </select>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
-    <input onclick="switchover()" class="btn btn-primary" type="button" value="图表"/>
     <div id="orderTotalDataChart" style="height: 300px;"></div>
 
 </div>
