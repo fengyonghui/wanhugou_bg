@@ -72,12 +72,12 @@
                         {
                             type: 'value',
                             scale: true,
-                            name: '销售额',
+                            name: '订单量',
                             min:0
                         },{
                             type: 'value',
                             scale: true,
-                            name: '订单量',
+                            name: '销售额',
                             min:0
                         }
                     ],

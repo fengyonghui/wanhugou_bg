@@ -3,7 +3,9 @@ package com.wanhutong.backend.modules.biz.service.statistics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.modules.biz.dao.category.BizVarietyInfoDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -31,6 +33,8 @@ public class BizStatisticsService {
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
 
+    @Resource
+    private BizVarietyInfoDao bizVarietyInfoDao;
 
     /**
      * 请求参数日期格式
@@ -44,8 +48,8 @@ public class BizStatisticsService {
      * @param month 取数据的月份
      * @return 根据不同产品分类的统计数据
      */
-    public List<BizProductStatisticsDto> productStatisticData (String month) {
-        return bizOrderHeaderDao.getProductStatisticData(month);
+    public List<BizProductStatisticsDto> productStatisticData (String month, Integer variId) {
+        return bizOrderHeaderDao.getProductStatisticData(month, variId);
     }
 
 
@@ -117,5 +121,13 @@ public class BizStatisticsService {
      */
     public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month) {
         return bizOrderHeaderDao.getUserSaleStatisticData(month);
+    }
+
+    /**
+     * 取所有商品类别
+     * @return 所有商品类别
+     */
+    public List<BizVarietyInfo> getBizVarietyInfoList() {
+        return bizVarietyInfoDao.findAllList(new BizVarietyInfo());
     }
 }

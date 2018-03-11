@@ -41,7 +41,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param month 月份
      * @return 产品统计数据
      */
-    List<BizProductStatisticsDto> getProductStatisticData(String month);
+    List<BizProductStatisticsDto> getProductStatisticData(@Param("month")String month, @Param("variId")Integer variId);
 
     /**
      * 按月获取用户相关的注册信息

@@ -37,6 +37,19 @@ public class BizProductStatisticsDto {
      */
     private Integer clickCount;
 
+    /**
+     * 销售额
+     */
+    private BigDecimal totalMoney;
+
+
+    public BigDecimal getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(BigDecimal totalMoney) {
+        this.totalMoney = totalMoney;
+    }
 
     public Integer getSkuId() {
         return skuId;
