@@ -194,7 +194,7 @@ public class UserController extends BaseController {
 
 		if(user.getConn().equals("connIndex")){
 //			添加 跳回客户专员管理
-			return "redirect:" + adminPath + "/sys/user/list?company.id="+user.getCompany().getId()+"&company.type="+user.getCompany().getType();
+			return "redirect:" + adminPath + "/sys/user/list?company.type=8&conn="+user.getConn();
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
@@ -217,9 +217,9 @@ public class UserController extends BaseController {
 		if(user.getConn().equals("connIndex")){
 //			跳回客户专员管理
 			if(user.getCompany().getId() !=null){
-				return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType();
+				return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&conn="+user.getConn();
 			}else {
-				return "redirect:" + adminPath + "/sys/user/list";
+				return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&conn="+user.getConn();
 			}
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";

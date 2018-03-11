@@ -20,7 +20,7 @@
 		</div>
 		<div id="openClose" class="close">&nbsp;</div>
 		<div id="right">
-			<iframe id="officeContent" src="${ctx}/sys/user/list" width="100%" height="91%" frameborder="0"></iframe>
+			<iframe id="officeContent" src="${ctx}/sys/user/list?company.type=8" width="100%" height="91%" frameborder="0"></iframe>
 		</div>
 	</div>
 	<script type="text/javascript">

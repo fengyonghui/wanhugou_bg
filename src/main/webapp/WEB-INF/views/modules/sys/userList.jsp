@@ -40,7 +40,7 @@
 	</div>
 	<ul class="nav nav-tabs">
 		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
-			<li class="active"><a href="${ctx}/sys/user/list?office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户列表</a></li>
+			<li class="active"><a href="${ctx}/sys/user/list?company.type=8&office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户列表</a></li>
 			<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户添加</a></li></shiro:hasPermission>
 		</c:if>
 		<c:if test="${empty user.conn}">
@@ -103,7 +103,7 @@
 						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}&office.id=${bizUser.office.id}">关联采购商</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>
 						<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
-						<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+						<a href="${ctx}/sys/user/delete?company.type=8&id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
 					</c:if>
 					<c:if test="${user.conn == null}">
     					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
