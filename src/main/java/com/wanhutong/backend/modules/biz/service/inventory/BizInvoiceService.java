@@ -172,7 +172,10 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         //获取库存数
                         BizInventorySku bizInventorySku = new BizInventorySku();
                         bizInventorySku.setSkuInfo(bizSkuInfo);
-                        bizInventorySku.setInvInfo(orderDetail.getInventoryInfo());
+                        if(odArr.length==3){
+                            BizInventoryInfo inventoryInfo=  bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
+                            bizInventorySku.setInvInfo(inventoryInfo);
+                        }
                         bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
                         List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
                         int stock = 0;
@@ -210,8 +213,6 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                               BizInventoryInfo inventoryInfo=  bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                                 bsgr.setInvInfo(inventoryInfo);
                             }
-
-
                             bsgr.setCustomer(office);
                             bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
                             bsgr.setOrderNum(orderHeader.getOrderNum());

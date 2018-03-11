@@ -188,12 +188,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         //利润
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
-        for (BizOrderDetail bizOrderDetail:orderDetailList) {
-            BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
-            bizOrderDetail.setSkuInfo(bizSkuInfo);
+        if(orderDetailList != null && !orderDetailList.isEmpty()) {
+            for (BizOrderDetail bizOrderDetail : orderDetailList) {
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+                bizOrderDetail.setSkuInfo(bizSkuInfo);
+            }
+            bizOrderHeader.setOrderDetailList(orderDetailList);
+            super.save(bizOrderHeader);
         }
-        bizOrderHeader.setOrderDetailList(orderDetailList);
-        super.save(bizOrderHeader);
 
         bizLocation.setId(bizOrderHeader.getBizLocation().getId());
         bizLocation.setOrderHeaderID(bizOrderHeader);
