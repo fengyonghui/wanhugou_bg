@@ -14,7 +14,7 @@
         <option value="3" label="订单量">订单量</option>
     </select>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
-    <div id="orderTotalDataChart" style="height: 300px"></div>
+    <div id="orderTotalDataChart" style="height: 300px;"></div>
 
 </div>
 <div>
@@ -147,6 +147,7 @@
                     ],
                     series: msg.rateSeriesList
                 });
+
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");
