@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -21,6 +22,9 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * 供应商拓展表Controller
@@ -67,6 +71,21 @@ public class BizVendInfoController extends BaseController {
 		if (!beanValidator(model, bizVendInfo)){
 			return form(bizVendInfo, model);
 		}
+		BizVendInfo vendInfo = bizVendInfoService.get(bizVendInfo.getOffice().getId());
+		if(vendInfo!=null) {
+//			System.out.println("已经有数据,不可重复添加");
+			vendInfo.setInsertNew("insert_new");
+			model.addAttribute("vendInfo", vendInfo);
+			addMessage(redirectAttributes, "已经添加相同的机构，不可重复添加");
+			try {
+				return "redirect:" + Global.getAdminPath() + "/biz/vend/bizVendInfo/form?office.id=" + vendInfo.getOffice().getId() + "&vendName=" +
+						URLEncoder.encode(vendInfo.getVendName(), "utf-8") + "&bizCategoryInfo.id=" + vendInfo.getBizCategoryInfo().getId() + "&cateName=" +
+						URLEncoder.encode(vendInfo.getCateName(), "utf-8") + "&code=" + URLEncoder.encode(vendInfo.getCode(), "utf-8")+"&office.name="+
+						URLEncoder.encode(vendInfo.getOffice().getName(), "utf-8")+"&bizCategoryInfo.name="+URLEncoder.encode(vendInfo.getBizCategoryInfo().getName(), "utf-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
 		bizVendInfoService.save(bizVendInfo);
 		addMessage(redirectAttributes, "保存供应商拓展成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/vend/bizVendInfo/?repage";
@@ -85,6 +104,19 @@ public class BizVendInfoController extends BaseController {
 		bizVendInfoService.recover(bizVendInfo);
 		addMessage(redirectAttributes, "恢复供应商拓展成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/vend/bizVendInfo/?repage";
+	}
+
+	//新增时，先查询有没有这条数据
+	@ResponseBody
+	@RequiresPermissions("biz:vend:bizVendInfo:edit")
+	@RequestMapping(value = "newlyAdded")
+	public String newlyAdded(BizVendInfo bizVendInfo, Model model) {
+		BizVendInfo vendInfo = bizVendInfoService.get(bizVendInfo.getOffice().getId());
+		String insertStatus="Error";
+		if(vendInfo==null){
+			insertStatus="ok";
+		}
+		return insertStatus;
 	}
 
 }
