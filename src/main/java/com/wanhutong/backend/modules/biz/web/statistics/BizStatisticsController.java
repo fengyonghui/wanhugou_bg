@@ -46,7 +46,6 @@ public class BizStatisticsController extends BaseController {
     private static final int DEF_DIV_SCALE = 2;
 
 
-
     /**
      * 用户业绩相关统计数据
      *
@@ -57,6 +56,7 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"userSale", ""})
     public String userSale(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsUserSale";
     }
@@ -70,9 +70,9 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:userSale:view")
     @RequestMapping(value = {"userSaleData", ""})
     @ResponseBody
-    public String userSaleData(HttpServletRequest request, String month) {
+    public String userSaleData(HttpServletRequest request, String month, Integer purchasingId) {
         // 月份集合
-        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month);
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
         List<String> nameList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
@@ -99,7 +99,7 @@ public class BizStatisticsController extends BaseController {
     }
 
 
- /**
+    /**
      * 用户相关统计数据
      *
      * @param request
@@ -154,6 +154,8 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"product", ""})
     public String product(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
+        request.setAttribute("varietyList", bizStatisticsService.getBizVarietyInfoList());
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsProduct";
     }
@@ -167,15 +169,25 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:product:view")
     @RequestMapping(value = {"productData", ""})
     @ResponseBody
-    public String product(HttpServletRequest request, String month) {
+    public String product(HttpServletRequest request, String month, Integer variId, int dataType, Integer purchasingId) {
         // 月份集合
-        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.productStatisticData(month);
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.productStatisticData(month, variId, purchasingId);
         List<String> nameList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
-            EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         bizProductStatisticsDtos.forEach(o -> {
-            seriesDataList.add(o.getCount());
+            switch (OrderStatisticsDataTypeEnum.parse(dataType)) {
+                case SALEROOM:
+                    seriesDataList.add(o.getTotalMoney());
+                    break;
+                case ORDER_COUNT:
+                    seriesDataList.add(o.getCount());
+                    break;
+                default:
+                    break;
+            }
+
             nameList.add(o.getName().concat("-").concat(o.getItemNo()));
         });
         echartsSeriesDto.setName("商品销量");
@@ -199,6 +211,7 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"order", ""})
     public String order(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
+        request.setAttribute("adminPath", adminPath);
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsOrder";
     }
@@ -206,13 +219,27 @@ public class BizStatisticsController extends BaseController {
     /**
      * 订单相关统计数据
      *
-     * @param request
-     * @return
+     * @param month         月份
+     * @param lineChartType 线图数据类型
+     * @param barChartType  柱图数据类型
+     * @return 订单相关统计数据
      */
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = {"orderData", ""})
     @ResponseBody
     public String orderData(HttpServletRequest request, String month, String lineChartType, String barChartType) {
+        return JSONObject.fromObject(getOrderData(month, lineChartType, barChartType)).toString();
+    }
+
+    /**
+     * 订单相关统计数据
+     *
+     * @param month         月份
+     * @param lineChartType 线图数据类型
+     * @param barChartType  柱图数据类型
+     * @return 订单相关统计数据
+     */
+    private Map<String, Object> getOrderData(String month, String lineChartType, String barChartType) {
         // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
         LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
@@ -224,18 +251,18 @@ public class BizStatisticsController extends BaseController {
         }
 
         // 主要数据集合
-        Map<LocalDateTime, Map<String, BizOrderStatisticsDto>> dataMap = Maps.newLinkedHashMap();
+        Map<String, Map<String, BizOrderStatisticsDto>> dataMap = Maps.newLinkedHashMap();
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o, bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
             monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
 
         Set<String> officeNameSet = Sets.newHashSet();
         monthDateList.forEach(o -> {
-            officeNameSet.addAll(dataMap.get(o) != null ? dataMap.get(o).keySet() : CollectionUtils.EMPTY_COLLECTION);
+            officeNameSet.addAll(dataMap.get(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)) != null ? dataMap.get(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)).keySet() : CollectionUtils.EMPTY_COLLECTION);
         });
         officeNameSet.removeAll(Collections.singleton(null));
 
@@ -247,7 +274,7 @@ public class BizStatisticsController extends BaseController {
         // echarts 数据实体
         ArrayList<EchartsSeriesDto> seriesList = Lists.newArrayList();
         for (int i = dataMap.size() - 1; i >= 0; i--) {
-            seriesList.add(bizStatisticsService.genEchartsSeriesDto(officeNameSet, dataMap.get(monthDateList.get(i)), monthDateList.get(i), barChartType));
+            seriesList.add(bizStatisticsService.genEchartsSeriesDto(officeNameSet, dataMap.get(monthDateList.get(i).toString(BizStatisticsService.PARAM_DATE_FORMAT)), monthDateList.get(i), barChartType));
         }
 
         seriesList.removeAll(Collections.singleton(null));
@@ -264,7 +291,7 @@ public class BizStatisticsController extends BaseController {
 
                     List<Object> dataList = Lists.newArrayList();
                     for (int i = dataMap.size() - 1; i >= 0; i--) {
-                        dataList.add(dataMap.get(monthDateList.get(i)).get(o) != null ? dataMap.get(monthDateList.get(i)).get(o).getTotalMoney() : 0);
+                        dataList.add(dataMap.get(monthDateList.get(i).toString(BizStatisticsService.PARAM_DATE_FORMAT)).get(o) != null ? dataMap.get(monthDateList.get(i).toString(BizStatisticsService.PARAM_DATE_FORMAT)).get(o).getTotalMoney() : 0);
                     }
 
                     echartsSeriesDto.setData(dataList);
@@ -284,12 +311,12 @@ public class BizStatisticsController extends BaseController {
                         // 当前月
                         LocalDateTime currentMonth = monthDateList.get(i);
                         // 当前月数据
-                        BigDecimal currentData = dataMap.get(currentMonth).get(o) != null ? dataMap.get(currentMonth).get(o).getTotalMoney() : BigDecimal.valueOf(0);
+                        BigDecimal currentData = dataMap.get(currentMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT)).get(o) != null ? dataMap.get(currentMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT)).get(o).getTotalMoney() : BigDecimal.valueOf(0);
                         // 上个月
                         LocalDateTime lastMonth = currentMonth.minusMonths(i);
                         // 上个月数据
-                        Map<String, BizOrderStatisticsDto> lastDataMap = dataMap.get(lastMonth);
-                        if (lastDataMap == null ) {
+                        Map<String, BizOrderStatisticsDto> lastDataMap = dataMap.get(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+                        if (lastDataMap == null) {
                             lastDataMap = bizStatisticsService.orderStatisticData(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
                         }
                         BigDecimal lastData = lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : BigDecimal.valueOf(0);
@@ -307,8 +334,10 @@ public class BizStatisticsController extends BaseController {
         }
 
         paramMap.put("rateSeriesList", lineSeriesList);
+        paramMap.put("dataMap", dataMap);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesList));
-        return JSONObject.fromObject(paramMap).toString();
+
+        return paramMap;
     }
 
 

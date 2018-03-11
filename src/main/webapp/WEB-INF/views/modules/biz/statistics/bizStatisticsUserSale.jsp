@@ -9,6 +9,14 @@
 <body>
 <div>
     <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <label>
+        <select class="input-medium" id="purchasingId">
+            <option value="0" label="全部"></option>
+            <c:forEach items="${purchasingList}" var="v">
+                <option value="${v.id}" label="${v.name}">${v.name}</option>
+            </c:forEach>
+        </select>
+    </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
     <div id="orderTotalDataChart" style="height: 300px"></div>
 
@@ -25,10 +33,12 @@
         salesVolumeChart.clear();
 
         var applyDate = $("#applyDate").val();
+        var purchasingIdEle = $("#purchasingId");
+        var purchasingId = purchasingIdEle.find("option:selected").val();
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/userSaleData",
-            data: {"month": applyDate},
+            data: {"month": applyDate, "purchasingId" : purchasingId},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -72,12 +82,12 @@
                         {
                             type: 'value',
                             scale: true,
-                            name: '销售额',
+                            name: '订单量',
                             min:0
                         },{
                             type: 'value',
                             scale: true,
-                            name: '订单量',
+                            name: '销售额',
                             min:0
                         }
                     ],

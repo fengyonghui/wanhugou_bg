@@ -25,6 +25,33 @@ public class BizOrderStatisticsDto {
      */
     private String officeName;
 
+    /**
+     * 成本
+     */
+    private BigDecimal buyPrice = new BigDecimal(0);
+
+    /**
+     * 利润
+     */
+    private BigDecimal profitPrice;
+
+
+    public BigDecimal getProfitPrice() {
+        return totalMoney.subtract(buyPrice);
+    }
+
+    public void setProfitPrice(BigDecimal profitPrice) {
+        this.profitPrice = profitPrice;
+    }
+
+    public BigDecimal getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(BigDecimal buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
     public String getOfficeName() {
         return officeName;
     }
