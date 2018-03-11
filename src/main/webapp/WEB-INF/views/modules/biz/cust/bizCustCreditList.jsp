@@ -110,9 +110,9 @@
 				</td>
 				<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><td>
     				<%--<a href="${ctx}/biz/cust/bizCustCredit/form?customer.id=${custCredit.id}">修改</a>--%>
-						<c:if test="${fns:getUser().isAdmin()}">
-					<a href="${ctx}/biz/cust/bizCustCredit/delete?customer.id=${custCredit.id}" onclick="return confirmx('确认要删除该钱包吗？', this.href)">删除</a>
-						</c:if>
+					<c:if test="${fns:getUser().isAdmin()}">
+					<a href="${ctx}/biz/cust/bizCustCredit/delete?customer.id=${custCredit.customer.id}" onclick="return confirmx('确认要删除该钱包吗？', this.href)">删除</a>
+					</c:if>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
