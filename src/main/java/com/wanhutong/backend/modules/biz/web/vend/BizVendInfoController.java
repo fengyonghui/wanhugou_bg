@@ -71,19 +71,21 @@ public class BizVendInfoController extends BaseController {
 		if (!beanValidator(model, bizVendInfo)){
 			return form(bizVendInfo, model);
 		}
-		BizVendInfo vendInfo = bizVendInfoService.get(bizVendInfo.getOffice().getId());
-		if(vendInfo!=null) {
-//			System.out.println("已经有数据,不可重复添加");
-			vendInfo.setInsertNew("insert_new");
-			model.addAttribute("vendInfo", vendInfo);
-			addMessage(redirectAttributes, "已经添加相同的机构，不可重复添加");
-			try {
-				return "redirect:" + Global.getAdminPath() + "/biz/vend/bizVendInfo/form?office.id=" + vendInfo.getOffice().getId() + "&vendName=" +
-						URLEncoder.encode(vendInfo.getVendName(), "utf-8") + "&bizCategoryInfo.id=" + vendInfo.getBizCategoryInfo().getId() + "&cateName=" +
-						URLEncoder.encode(vendInfo.getCateName(), "utf-8") + "&code=" + URLEncoder.encode(vendInfo.getCode(), "utf-8")+"&office.name="+
-						URLEncoder.encode(vendInfo.getOffice().getName(), "utf-8")+"&bizCategoryInfo.name="+URLEncoder.encode(vendInfo.getBizCategoryInfo().getName(), "utf-8");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+		if(bizVendInfo.getId()==null){
+			BizVendInfo vendInfo = bizVendInfoService.get(bizVendInfo.getOffice().getId());
+			if(vendInfo!=null) {
+	//			System.out.println("已经有数据,不可重复添加");
+				vendInfo.setInsertNew("insert_new");
+				model.addAttribute("vendInfo", vendInfo);
+				addMessage(redirectAttributes, "已经添加相同的机构，不可重复添加");
+				try {
+					return "redirect:" + Global.getAdminPath() + "/biz/vend/bizVendInfo/form?office.id=" + vendInfo.getOffice().getId() + "&vendName=" +
+							URLEncoder.encode(vendInfo.getVendName(), "utf-8") + "&bizCategoryInfo.id=" + vendInfo.getBizCategoryInfo().getId() + "&cateName=" +
+							URLEncoder.encode(vendInfo.getCateName(), "utf-8") + "&code=" + URLEncoder.encode(vendInfo.getCode(), "utf-8")+"&office.name="+
+							URLEncoder.encode(vendInfo.getOffice().getName(), "utf-8")+"&bizCategoryInfo.name="+URLEncoder.encode(vendInfo.getBizCategoryInfo().getName(), "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		bizVendInfoService.save(bizVendInfo);
