@@ -97,7 +97,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		ORDER BY updateDate DESC
+		ORDER BY a.update_time DESC
 	</select>
 	
 	<select id="findAllList" resultType="SysOfficeAddress">

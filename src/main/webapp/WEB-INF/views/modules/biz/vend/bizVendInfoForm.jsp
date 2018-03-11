@@ -37,7 +37,7 @@
 			<label class="control-label">机构：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizVendInfo.office.id}" labelName="office.name" labelValue="${bizVendInfo.office.name}"
-					title="部门" url="/sys/office/queryTreeList?type=7" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
+					title="部门" url="/sys/office/queryTreeList?type=7" cssClass="input-xlarge required" allowClear="true"  notAllowSelectParent="true" dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -51,8 +51,10 @@
 		<div class="control-group">
 			<label class="control-label">分类：</label>
 			<div class="controls">
-				<sys:treeselect id="bizCategoryInfo" name="bizCategoryInfo.id" value="${bizCategoryInfo.id}" labelName="bizCategoryInfo.name" labelValue="${bizCategoryInfo.name}"
-								title="分类" url="/biz/category/bizCategoryInfo/treeData" extId="${bizCategoryInfo.id}" cssClass="" allowClear="${bizCategoryInfo.currentUser.admin}"/>
+				<sys:treeselect id="bizCategoryInfo" name="bizCategoryInfo.id" value="${bizVendInfo.bizCategoryInfo.id}" labelName="bizCategoryInfo.name" labelValue="${bizVendInfo.bizCategoryInfo.name}"
+								title="分类" url="/biz/category/bizCategoryInfo/treeData" extId="${bizVendInfo.bizCategoryInfo.id}"
+								cssClass="input-xlarge required" allowClear="${bizCategoryInfo.currentUser.admin}" dataMsgRequired="必填信息"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">

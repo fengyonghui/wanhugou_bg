@@ -35,7 +35,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${flag eq 'ck'}">
-			<li>用户详情</li>
+			<li class="active"><a>用户详情</a></li>
 		</c:if>
 		<c:if test="${flag ne 'ck'}">
 			<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">

@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/cust/bizCustCredit/">钱包列表</a></li>
-		<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><li><a href="${ctx}/biz/cust/bizCustCredit/form">钱包添加</a></li></shiro:hasPermission>
+		<%--<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><li><a href="${ctx}/biz/cust/bizCustCredit/form">钱包添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCustCredit" action="${ctx}/biz/cust/bizCustCredit/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -64,7 +64,9 @@
 				<th>创建时间</th>
 				<th>更新人</th>
 				<th>更新时间</th>
-				<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><th>操作</th></shiro:hasPermission>
+				<c:if test="${fns:getUser().isAdmin()}">
+					<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><th>操作</th></shiro:hasPermission>
+				</c:if>
 			</tr>
 		</thead>
 		<tbody>
@@ -108,12 +110,12 @@
 				<td>
 					<fmt:formatDate value="${custCredit.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><td>
-    				<%--<a href="${ctx}/biz/cust/bizCustCredit/form?customer.id=${custCredit.id}">修改</a>--%>
-					<c:if test="${fns:getUser().isAdmin()}">
-					<a href="${ctx}/biz/cust/bizCustCredit/delete?customer.id=${custCredit.customer.id}" onclick="return confirmx('确认要删除该钱包吗？', this.href)">删除</a>
-					</c:if>
-				</td></shiro:hasPermission>
+				<c:if test="${fns:getUser().isAdmin()}">
+					<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><td>
+						<%--<a href="${ctx}/biz/cust/bizCustCredit/form?customer.id=${custCredit.id}">修改</a>--%>
+						<a href="${ctx}/biz/cust/bizCustCredit/delete?customer.id=${custCredit.customer.id}" onclick="return confirmx('确认要删除该钱包吗？', this.href)">删除</a>
+					</td></shiro:hasPermission>
+				</c:if>
 			</tr>
 		</c:forEach>
 		</tbody>

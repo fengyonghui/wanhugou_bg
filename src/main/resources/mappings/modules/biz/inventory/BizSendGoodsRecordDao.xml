@@ -9,6 +9,7 @@
 		a.inv_id AS "invInfo.id",
 		inv.name AS "invInfo.name",
 		sku.part_no AS "skuInfo.partNo",
+		sku.item_no as "skuInfo.itemNo",
 		a.order_id AS "bizOrderHeader.id",
 		a.request_id AS "bizRequestHeader.id",
 		a.order_num AS "orderNum",

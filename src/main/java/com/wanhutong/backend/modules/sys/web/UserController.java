@@ -219,7 +219,7 @@ public class UserController extends BaseController {
 			if(user.getCompany().getId() !=null){
 				return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType();
 			}else {
-				return "redirect:" + adminPath + "/sys/user/list?company.id=" + user.getCompany().getId() + "&company.type=" + user.getCompany().getType();
+				return "redirect:" + adminPath + "/sys/user/list?company.id=" + user.getCompany().getId();
 			}
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
