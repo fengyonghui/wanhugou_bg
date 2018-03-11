@@ -24,6 +24,7 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	private String cateName;		// cate_name
 	private String code;		// code
 
+	private String insertNew;	//新增时，已有数据不能重复添加
 	
 	public BizVendInfo() {
 		super();
@@ -76,5 +77,13 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 
 	public void setBizCategoryInfo(BizCategoryInfo bizCategoryInfo) {
 		this.bizCategoryInfo = bizCategoryInfo;
+	}
+
+	public String getInsertNew() {
+		return insertNew;
+	}
+
+	public void setInsertNew(String insertNew) {
+		this.insertNew = insertNew;
 	}
 }
