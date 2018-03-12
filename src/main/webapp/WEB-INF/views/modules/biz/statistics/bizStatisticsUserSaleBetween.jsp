@@ -63,8 +63,9 @@
                 }
                 // <option value="0" label="全部"></option>
                 usNameEle.html('');
-                for (var i = 0; i < msg.nameList.length; i++) {
-                    var child = "<option value=\"" + msg.nameList[i] + "\" label=\"" + msg.nameList[i] + "\"></option>";
+                usNameEle.append("<option value=\"" + msg.usName + "\" label=\"" + msg.usName + "\"></option>");
+                for (var i = 0; i < msg.selectNameList.length; i++) {
+                    var child = "<option value=\"" + msg.selectNameList[i] + "\" label=\"" + msg.selectNameList[i] + "\"></option>";
                     usNameEle.append(child);
                 }
 
