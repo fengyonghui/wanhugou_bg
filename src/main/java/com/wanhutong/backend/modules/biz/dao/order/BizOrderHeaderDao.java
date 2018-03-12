@@ -66,4 +66,49 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 根据不同用户分类的统计数据
      */
     List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId, @Param("usId")Integer usId);
+
+
+    /**
+     * 按日获取订单的总金额和订单数量
+     *
+     * @param day 日期
+     * @param statusList 订单状态
+     * @param officeType 机构类型
+     * @return 订单统计数据
+     */
+    List<BizOrderStatisticsDto> getValidOrderTotalAndCountByCreateTimeDay(@Param("day")String day, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList, @Param("officeType") String officeType);
+
+    /**
+     * 按日获取订单销售额相关的产品信息
+     *
+     * @param day 日期
+     * @return 产品统计数据
+     */
+    List<BizProductStatisticsDto> getProductStatisticDataDay(@Param("day")String day, @Param("variId")Integer variId, @Param("purchasingId")Integer purchasingId);
+
+    /**
+     * 按日获取用户相关的注册信息
+     *
+     * @param day 取数据的日期
+     * @return 用户统计数据
+     */
+    List<BizUserStatisticsDto> getUserStatisticDataDay(String day);
+
+    /**
+     * 根据日期取用户业绩统计相关数据
+     *
+     * @param day 取数据的日期
+     * @param purchasingId
+     * @param usId 用户ID
+     * @return 根据不同用户分类的统计数据
+     */
+    List<BizUserSaleStatisticsDto> getUserSaleStatisticDataDay(@Param("day")String day, @Param("purchasingId")Integer purchasingId, @Param("usId")Integer usId);
+
+    /**
+     * 根据用户取用户业绩统计相关数据
+     *
+     * @param day 取数据的日期
+     * @return 根据不同用户分类的统计数据
+     */
+    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticDataDay(@Param("day")String day, @Param("purchasingId")Integer purchasingId, @Param("usId")Integer usId);
 }
