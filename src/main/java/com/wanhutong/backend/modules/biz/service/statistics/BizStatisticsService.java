@@ -124,7 +124,7 @@ public class BizStatisticsService {
      * @return 根据不同用户分类的统计数据
      */
     public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month, Integer purchasingId) {
-        return bizOrderHeaderDao.getUserSaleStatisticData(month, purchasingId);
+        return bizOrderHeaderDao.getUserSaleStatisticData(month, purchasingId, null);
     }
 
     /**
@@ -142,5 +142,13 @@ public class BizStatisticsService {
         Office office = new Office();
         office.setType(type);
         return officeDao.findList(office);
+    }
+
+    /**
+     * 取某一个销售的销售业绩
+     * @param salesmanId 销售员ID
+     */
+    public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(Integer salesmanId) {
+        return bizOrderHeaderDao.getSingleUserSaleStatisticData(null, null, salesmanId);
     }
 }
