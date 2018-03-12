@@ -84,8 +84,8 @@ public class BizStatisticsDayService {
      */
     public EchartsSeriesDto genEchartsSeriesDto(Set<String> officeNameSet, Map<String, BizOrderStatisticsDto> dataMap, LocalDateTime date, String barChartType) {
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
-        if (dataMap.size() > 0) {
             List<Object> dataList = Lists.newArrayList();
+        if (dataMap.size() > 0) {
             officeNameSet.forEach(o -> {
                 BizOrderStatisticsDto bizOrderStatisticsDto = dataMap.get(o);
                 switch (OrderStatisticsDataTypeEnum.parse(StringUtils.isNotBlank(barChartType) ? Integer.valueOf(barChartType) : 1)) {
@@ -102,10 +102,11 @@ public class BizStatisticsDayService {
                 }
             });
             echartsSeriesDto.setData(dataList);
-            echartsSeriesDto.setName(date.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
-            return echartsSeriesDto;
+        }else {
+            echartsSeriesDto.setData(Lists.newArrayList());
         }
-        return null;
+        echartsSeriesDto.setName(date.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
+        return echartsSeriesDto;
     }
 
     /**
