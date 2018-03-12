@@ -24,7 +24,7 @@
             <option value="2" label="销售额增长率">销售额增长率(%)</option>
         </select>
     </label>
-    <input onclick--%>="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>--%>
     <div id="orderRateChart" style="height: 300px"></div>
 </div>
 
