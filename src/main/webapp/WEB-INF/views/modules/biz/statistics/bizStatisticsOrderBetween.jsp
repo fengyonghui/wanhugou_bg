@@ -40,10 +40,11 @@
         var orderRateChart = echarts.init(document.getElementById('orderRateChart'), 'light');
         orderRateChart.clear();
 
-        var dataTypeEle = $("#dataType");
+        // var dataTypeEle = $("#dataType");
         // var dataType = dataTypeEle.find("option:selected").val();
+        // var dataTypeDesc = dataTypeEle.find("option:selected").html();
         var dataType = "1";
-        var dataTypeDesc = dataTypeEle.find("option:selected").html();
+        var dataTypeDesc = "销售额";
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
