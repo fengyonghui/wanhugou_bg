@@ -6,7 +6,7 @@
     <title>订单统计</title>
 </head>
 <body>
-<div>
+<div style="height: 50px">
     <input name="applyDate" id="applyDate" value="${month}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
     <input id="search" class="btn btn-primary" type="button" value="查询1"/>
 
@@ -24,53 +24,109 @@
                 <th>本月订单量</th>
             </tr>
         </thead>
-        <tbody>
-            <c:forEach items="${map}" var="resultSet">
-                <tr>
-                    <td>${resultSet.key}</td>
-                    <td>${resultSet.value.upTotalMoney}</td>
-                    <td>${resultSet.value.totalMoney}</td>
-                    <td>${resultSet.value.upProfitPrice}</td>
-                    <td>${resultSet.value.profitPrice}</td>
-                    <td>${resultSet.value.upOrderCount}</td>
-                    <td>${resultSet.value.orderCount}</td>
-                </tr>
-            </c:forEach>
-                <tr>
-                    <td>合计</td>
-                    <td>合计</td>
-                    <td>合计</td>
-                    <td>合计</td>
-                    <td>合计</td>
-                    <td>合计</td>
-                    <td>合计</td>
-                </tr>
+        <tbody id="orderTable">
+
         </tbody>
     </table>
 </div>
-
-
-</body>
-<script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+<div>
+    <input onclick="window.print();" type="button" class="btn btn-primary" value="打印采购中心订单统计" style="background:#F78181;"/>
+</div>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript">
-    alert(0);
-    $(document).ready(function () {
-        alert(1);
 
-    });
-    $("#search").click(function () {
+    $(document).ready(function () {
         var applyDate = $("#applyDate").val();
-        alert("1")
         $.ajax({
-            type: 'GET',
+            type: 'post',
             url: "${adminPath}/biz/statistics/centOrderTable",
             data: {"month": applyDate},
             dataType: "json",
             success: function (msg) {
-                console.log(msg);
+                $("#orderTable").empty();
+                var orderTable = "";
+                var sumUpTotalMoney = 0;
+                var sumTotalMoney = 0;
+                var sumUpProfitPrice = 0;
+                var sumProfitPrice = 0;
+                var sumUpOrderCount = 0;
+                var sumOrderCount = 0;
+                $.each(msg,function (key,value) {
+                    orderTable += "<tr>";
+                    orderTable += "<td>"+key+"</td>";
+                    orderTable += "<td>"+value.upTotalMoney+"</td>";
+                    orderTable += "<td>"+value.totalMoney+"</td>";
+                    orderTable += "<td>"+value.upProfitPrice+"</td>";
+                    orderTable += "<td>"+value.profitPrice+"</td>";
+                    orderTable += "<td>"+value.upOrderCount+"</td>";
+                    orderTable += "<td>"+value.orderCount+"</td>";
+                    orderTable += "</tr>";
+                    sumUpTotalMoney += value.upTotalMoney;
+                    sumTotalMoney += value.totalMoney;
+                    sumUpProfitPrice += value.upProfitPrice;
+                    sumProfitPrice += value.profitPrice;
+                    sumUpOrderCount += value.upOrderCount;
+                    sumOrderCount += value.orderCount;
+                });
+                orderTable += "<tr>";
+                orderTable += "<td>合计</td>";
+                orderTable += "<td>"+sumUpTotalMoney+"</td>";
+                orderTable += "<td>"+sumTotalMoney+"</td>";
+                orderTable += "<td>"+sumUpProfitPrice+"</td>";
+                orderTable += "<td>"+sumProfitPrice+"</td>";
+                orderTable += "<td>"+sumUpOrderCount+"</td>";
+                orderTable += "<td>"+sumOrderCount+"</td>";
+                orderTable += "</tr>";
+                $("#orderTable").append(orderTable);
+            }
+        })
+    });
+    $("#search").click(function () {
+        var applyDate = $("#applyDate").val();
+        $.ajax({
+            type: 'post',
+            url: "${adminPath}/biz/statistics/centOrderTable",
+            data: {"month": applyDate},
+            dataType: "json",
+            success: function (msg) {
+                $("#orderTable").empty();
+                var orderTable = "";
+                var sumUpTotalMoney = 0;
+                var sumTotalMoney = 0;
+                var sumUpProfitPrice = 0;
+                var sumProfitPrice = 0;
+                var sumUpOrderCount = 0;
+                var sumOrderCount = 0;
+                $.each(msg,function (key,value) {
+                    orderTable += "<tr>";
+                    orderTable += "<td>"+key+"</td>";
+                    orderTable += "<td>"+value.upTotalMoney+"</td>";
+                    orderTable += "<td>"+value.totalMoney+"</td>";
+                    orderTable += "<td>"+value.upProfitPrice+"</td>";
+                    orderTable += "<td>"+value.profitPrice+"</td>";
+                    orderTable += "<td>"+value.upOrderCount+"</td>";
+                    orderTable += "<td>"+value.orderCount+"</td>";
+                    orderTable += "</tr>";
+                    sumUpTotalMoney += value.upTotalMoney;
+                    sumTotalMoney += value.totalMoney;
+                    sumUpProfitPrice += value.upProfitPrice;
+                    sumProfitPrice += value.profitPrice;
+                    sumUpOrderCount += value.upOrderCount;
+                    sumOrderCount += value.orderCount;
+                });
+                orderTable += "<tr>";
+                orderTable += "<td>合计</td>";
+                orderTable += "<td>"+sumUpTotalMoney+"</td>";
+                orderTable += "<td>"+sumTotalMoney+"</td>";
+                orderTable += "<td>"+sumUpProfitPrice+"</td>";
+                orderTable += "<td>"+sumProfitPrice+"</td>";
+                orderTable += "<td>"+sumUpOrderCount+"</td>";
+                orderTable += "<td>"+sumOrderCount+"</td>";
+                orderTable += "</tr>";
+                $("#orderTable").append(orderTable);
             }
         })
     });
 </script>
+</body>
 </html>

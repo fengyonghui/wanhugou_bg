@@ -600,4 +600,27 @@
 	    GROUP BY us.`name`
     </select>
 
+	<select id="getUserTableStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		(SELECT count(1) FROM biz_custom_center_consultant cc WHERE cc.consultant_id = us.id )as custCount,
+		us.name AS name,
+		cent.name AS centName
+		FROM biz_order_header oh
+		LEFT JOIN	sys_office off ON off.id = oh.cust_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
+		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		LEFT JOIN sys_office cent ON cent.id = us.office_id
+		WHERE
+		oh.`status` = 1
+		AND (oh.biz_status IN (15,17,18,19,20,25,30)
+		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		AND date_format(oh.create_time, '%Y-%m') = #{month}
+		<if test="purchasingId != null and purchasingId != 0">
+			AND us.office_id = #{purchasingId}
+		</if>
+		GROUP BY us.`name`
+	</select>
+
 </mapper>

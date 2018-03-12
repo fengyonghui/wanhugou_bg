@@ -126,6 +126,15 @@ public class BizStatisticsService {
     public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month, Integer purchasingId) {
         return bizOrderHeaderDao.getUserSaleStatisticData(month, purchasingId);
     }
+    /**
+     * 根据月份和采购中心取客户专员数据
+     * @param month
+     * @param purchasingId
+     * @return
+     */
+    public List<BizUserSaleStatisticsDto> userTableStatisticData(String month, Integer purchasingId) {
+        return bizOrderHeaderDao.getUserTableStatisticData(month, purchasingId);
+    }
 
     /**
      * 取所有商品类别

@@ -385,16 +385,24 @@ public class BizStatisticsController extends BaseController {
             BizOrderStatisticsDto value = entry.getValue();
             BizOrderStatisticsDto ordStaDto = new BizOrderStatisticsDto();
             ordStaDto.setUpOrderCount(value.getOrderCount());
-            ordStaDto.setUpTotalMoney(value.getTotalMoney());
-            ordStaDto.setUpProfitPrice(value.getProfitPrice());
+            ordStaDto.setUpTotalMoney(value.getTotalMoney()==null?new BigDecimal(0):value.getTotalMoney());
+            ordStaDto.setUpProfitPrice(value.getProfitPrice()==null?new BigDecimal(0):value.getProfitPrice());
             map.put(key,ordStaDto);
         }
         for (Map.Entry<String,BizOrderStatisticsDto> entry:resultMap.entrySet()){
             String key = entry.getKey();
             BizOrderStatisticsDto value = entry.getValue();
-            map.get(key).setOrderCount(value.getOrderCount());
-            map.get(key).setTotalMoney(value.getTotalMoney());
-            map.get(key).setProfitPrice(value.getProfitPrice());
+            if (map.get(key) != null) {
+                map.get(key).setOrderCount(value.getOrderCount());
+                map.get(key).setTotalMoney(value.getTotalMoney()==null?new BigDecimal(0):value.getTotalMoney());
+                map.get(key).setProfitPrice(value.getProfitPrice()==null?new BigDecimal(0):value.getProfitPrice());
+            }else {
+                BizOrderStatisticsDto ordStaDto = new BizOrderStatisticsDto();
+                ordStaDto.setOrderCount(value.getOrderCount());
+                ordStaDto.setTotalMoney(value.getTotalMoney()==null?new BigDecimal(0):value.getTotalMoney());
+                ordStaDto.setProfitPrice(value.getProfitPrice()==null?new BigDecimal(0):value.getProfitPrice());
+                map.put(key,ordStaDto);
+            }
         }
 
         model.addAttribute("map",map);
@@ -416,4 +424,30 @@ public class BizStatisticsController extends BaseController {
         request.setAttribute("productStatisticsList", productStatisticsList);
         return "modules/biz/statistics/bizStatisticsProductTables";
     }
+    /**
+     * 采购顾问表格统计
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "userTable")
+    public String userTable (HttpServletRequest request){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsUserTable";
+    }
+
+    /**
+     * 采购顾问统计表格数据
+     *
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "centUserTable")
+    public List<BizUserSaleStatisticsDto> centUserTable(HttpServletRequest request, String month,Integer purchasingId, Model model){
+        List<BizUserSaleStatisticsDto> bizUserSaleStatisticsDtos = bizStatisticsService.userTableStatisticData(month, purchasingId);
+        return bizUserSaleStatisticsDtos;
+    }
+
 }

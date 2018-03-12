@@ -17,9 +17,18 @@ public class BizUserSaleStatisticsDto {
      */
     private String name;
     /**
+     * 会员量
+     */
+    private Integer custCount;
+    /**
+     * 采购中心名
+     */
+    private String centName;
+    /**
      * 数量
      */
     private Integer orderCount;
+
 
     public BigDecimal getTotalMoney() {
         return totalMoney;
@@ -43,5 +52,21 @@ public class BizUserSaleStatisticsDto {
 
     public void setOrderCount(Integer orderCount) {
         this.orderCount = orderCount;
+    }
+
+    public Integer getCustCount() {
+        return custCount;
+    }
+
+    public void setCustCount(Integer custCount) {
+        this.custCount = custCount;
+    }
+
+    public String getCentName() {
+        return centName;
+    }
+
+    public void setCentName(String centName) {
+        this.centName = centName;
     }
 }
