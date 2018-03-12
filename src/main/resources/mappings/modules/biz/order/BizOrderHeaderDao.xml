@@ -635,5 +635,261 @@
     </select>
 
 
+	<!--================================================================-->
+	<select id="getValidOrderTotalAndCountByCreateTimeDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		office.id AS officeId,
+		office.name AS officeName,
+		sum(sku.buy_price) AS buyPrice
+		FROM biz_order_header AS header
+		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
+		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
+		LEFT JOIN biz_order_detail AS detail ON detail.order_id = header.id
+		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
+		WHERE
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="OR" close=")">
+		biz_status = #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND date_format(header.create_time, '%Y-%m-%d') = #{day}
+		AND office.type = #{officeType}
+		GROUP BY office.id
+	</select>
+
+	<select id="getProductStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
+		SELECT DISTINCT
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
+		WHERE oh.id = od.order_id
+		and si.id = od.sku_id
+		and si.prod_id = pi.id
+		and pi.vari_id = #{variId}
+		and ccc.cust_id = oh.cust_id
+		and oh.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and si.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and pi.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and ss.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and ss.sku_id = si.id
+		AND date_format(oh.create_time, '%Y-%m-%d') = #{day}
+		<if test="purchasingId != null and purchasingId != 0">
+			AND ccc.center_id = #{purchasingId}
+		</if>
+		GROUP BY si.prod_id
+		ORDER BY count DESC
+		LIMIT 10
+	</select>
+
+	<select id="getUserStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
+		SELECT s.name,count(1) as count
+		FROM biz_custom_center_consultant c, sys_office s
+		WHERE c.cust_id = ANY (
+		SELECT s1.id
+		from sys_office AS s1, sys_user AS u1
+		where s1.id = u1.company_id
+		AND s1.type = 6
+		AND date_format(s1.create_date, '%Y-%m-%d') = #{day}
+		AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
+		AND c.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		AND s.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL} and s.id = c.center_id
+		and s.TYPE =8
+		GROUP BY center_id
+	</select>
+
+	<select id="getUserSaleStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		us.name AS name,
+		us.id AS usId,
+		date_format(oh.create_time, '%Y-%m-%d') AS createTime
+		FROM biz_order_header oh
+		LEFT JOIN	sys_office off ON off.id = oh.cust_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
+		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		WHERE
+		oh.`status` = 1
+		AND (oh.biz_status IN (15,17,18,19,20,25,30)
+		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		<if test="day != null and day != ''">
+			AND date_format(oh.create_time, '%Y-%m-%d') = #{day}
+		</if>
+		<if test="purchasingId != null and purchasingId != 0">
+			AND us.office_id = #{purchasingId}
+		</if>
+		<if test="usId != null and usId != 0">
+			AND us.id = #{usId}
+		</if>
+		GROUP BY us.`name`
+	</select>
+
+	<select id="getSingleUserSaleStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		us.name AS name,
+		us.id AS usId,
+		date_format(oh.create_time, '%Y-%m-%d') AS createTime
+		FROM biz_order_header oh
+		LEFT JOIN	sys_office off ON off.id = oh.cust_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
+		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		WHERE
+		oh.`status` = 1
+		AND (oh.biz_status IN (15,17,18,19,20,25,30)
+		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		<if test="day != null and day != ''">
+			AND date_format(oh.create_time, '%Y-%m-%d') = #{day}
+		</if>
+		<if test="purchasingId != null and purchasingId != 0">
+			AND us.office_id = #{purchasingId}
+		</if>
+		<if test="usId != null and usId != 0">
+			AND us.id = #{usId}
+		</if>
+		GROUP BY createTime
+	</select>
+<!--================================================================-->
+	<select id="getValidOrderTotalAndCountByCreateTimeBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		office.id AS officeId,
+		office.name AS officeName,
+		sum(sku.buy_price) AS buyPrice
+		FROM biz_order_header AS header
+		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
+		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
+		LEFT JOIN biz_order_detail AS detail ON detail.order_id = header.id
+		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
+		WHERE
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="OR" close=")">
+		biz_status = #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		<if test="startDate != null and startDate != ''">
+			AND header.create_time >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND #{endDate} >= header.create_time
+		</if>
+		AND office.type = #{officeType}
+		GROUP BY office.id
+	</select>
+
+	<select id="getProductStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
+		SELECT DISTINCT
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
+		WHERE oh.id = od.order_id
+		and si.id = od.sku_id
+		and si.prod_id = pi.id
+		and pi.vari_id = #{variId}
+		and ccc.cust_id = oh.cust_id
+		and oh.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and si.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and pi.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and ss.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		and ss.sku_id = si.id
+		<if test="startDate != null and startDate != ''">
+			AND oh.create_time >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND #{endDate} >= oh.create_time
+		</if>
+		<if test="purchasingId != null and purchasingId != 0">
+			AND ccc.center_id = #{purchasingId}
+		</if>
+		GROUP BY si.prod_id
+		ORDER BY count DESC
+		LIMIT 10
+	</select>
+
+	<select id="getUserStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
+		SELECT s.name,count(1) as count
+		FROM biz_custom_center_consultant c, sys_office s
+		WHERE c.cust_id = ANY (
+		SELECT s1.id
+		from sys_office AS s1, sys_user AS u1
+		where s1.id = u1.company_id
+		AND s1.type = 6
+		<if test="startDate != null and startDate != ''">
+			AND s1.create_date >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND #{endDate} >= s1.create_date
+		</if>
+		AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
+		AND c.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
+		AND s.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL} and s.id = c.center_id
+		and s.TYPE =8
+		GROUP BY center_id
+	</select>
+
+	<select id="getUserSaleStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		us.name AS name,
+		us.id AS usId,
+		date_format(oh.create_time, '%Y-%m-%d') AS createTime
+		FROM biz_order_header oh
+		LEFT JOIN	sys_office off ON off.id = oh.cust_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
+		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		WHERE
+		oh.`status` = 1
+		AND (oh.biz_status IN (15,17,18,19,20,25,30)
+		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		<if test="startDate != null and startDate != ''">
+			AND oh.create_time >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND #{endDate} >= oh.create_time
+		</if>
+		<if test="purchasingId != null and purchasingId != 0">
+			AND us.office_id = #{purchasingId}
+		</if>
+		<if test="usId != null and usId != 0">
+			AND us.id = #{usId}
+		</if>
+		GROUP BY us.`name`
+	</select>
+
+	<select id="getSingleUserSaleStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		us.name AS name,
+		us.id AS usId,
+		date_format(oh.create_time, '%Y-%m-%d') AS createTime
+		FROM biz_order_header oh
+		LEFT JOIN	sys_office off ON off.id = oh.cust_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
+		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		WHERE
+		oh.`status` = 1
+		AND (oh.biz_status IN (15,17,18,19,20,25,30)
+		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		<if test="startDate != null and startDate != ''">
+			AND oh.create_time >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND  #{endDate} >= oh.create_time
+		</if>
+		<if test="purchasingId != null and purchasingId != 0">
+			AND us.office_id = #{purchasingId}
+		</if>
+		<if test="usId != null and usId != 0">
+			AND us.id = #{usId}
+		</if>
+		GROUP BY createTime
+	</select>
+
 
 </mapper>

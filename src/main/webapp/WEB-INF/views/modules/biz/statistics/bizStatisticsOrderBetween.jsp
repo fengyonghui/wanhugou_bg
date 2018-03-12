@@ -8,7 +8,8 @@
 </head>
 <body>
 <div>
-    <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="startDate" value="${startDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input id="endDate" value="${endDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <select class="input-medium" id="barChartType">
         <option value="1" label="销售额">销售额</option>
         <option value="3" label="订单量">订单量</option>
@@ -18,13 +19,13 @@
 
 </div>
 <div>
-    <label>
-        <select class="input-medium" id="dataType">
-            <option value="1" label="销售额">销售额</option>
-            <option value="2" label="销售额增长率">销售额增长率(%)</option>
-        </select>
-    </label>
-    <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <%--<label>--%>
+        <%--<select class="input-medium" id="dataType">--%>
+            <%--<option value="1" label="销售额">销售额</option>--%>
+            <%--<option value="2" label="销售额增长率">销售额增长率(%)</option>--%>
+        <%--</select>--%>
+    <%--</label>--%>
+    <%--<input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>--%>
     <div id="orderRateChart" style="height: 300px"></div>
 </div>
 
@@ -39,19 +40,22 @@
         var orderRateChart = echarts.init(document.getElementById('orderRateChart'), 'light');
         orderRateChart.clear();
 
-        var dataTypeEle = $("#dataType");
-        var dataType = dataTypeEle.find("option:selected").val();
-        var dataTypeDesc = dataTypeEle.find("option:selected").html();
+        // var dataTypeEle = $("#dataType");
+        // var dataType = dataTypeEle.find("option:selected").val();
+        // var dataTypeDesc = dataTypeEle.find("option:selected").html();
+        var dataType = "1";
+        var dataTypeDesc = "销售额";
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
         var barChartTypeDesc = barChartTypeEle.find("option:selected").html();
 
-        var applyDate = $("#applyDate").val();
+        var endDate = $("#endDate").val();
+        var startDate = $("#startDate").val();
         $.ajax({
             type: 'GET',
-            url: "${adminPath}/biz/statistics/orderData",
-            data: {"month": applyDate, "lineChartType": dataType, "barChartType": barChartType},
+            url: "${adminPath}/biz/statistics/between/orderData",
+            data: {"startDate": startDate,"endDate": endDate, "lineChartType": dataType, "barChartType": barChartType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {

@@ -8,7 +8,7 @@
 </head>
 <body>
 <div>
-    <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <select class="input-medium" id="barChartType">
         <option value="1" label="销售额">销售额</option>
         <option value="3" label="订单量">订单量</option>
@@ -18,13 +18,13 @@
 
 </div>
 <div>
-    <label>
+   <%-- <label>
         <select class="input-medium" id="dataType">
             <option value="1" label="销售额">销售额</option>
             <option value="2" label="销售额增长率">销售额增长率(%)</option>
         </select>
     </label>
-    <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>--%>
     <div id="orderRateChart" style="height: 300px"></div>
 </div>
 
@@ -39,9 +39,11 @@
         var orderRateChart = echarts.init(document.getElementById('orderRateChart'), 'light');
         orderRateChart.clear();
 
-        var dataTypeEle = $("#dataType");
-        var dataType = dataTypeEle.find("option:selected").val();
-        var dataTypeDesc = dataTypeEle.find("option:selected").html();
+        // var dataTypeEle = $("#dataType");
+        // var dataType = dataTypeEle.find("option:selected").val();
+        // var dataTypeDesc = dataTypeEle.find("option:selected").html();
+        var dataType = "1";
+        var dataTypeDesc = "销售额";
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
@@ -50,7 +52,7 @@
         var applyDate = $("#applyDate").val();
         $.ajax({
             type: 'GET',
-            url: "${adminPath}/biz/statistics/orderData",
+            url: "${adminPath}/biz/statistics/day/orderData",
             data: {"month": applyDate, "lineChartType": dataType, "barChartType": barChartType},
             dataType: "json",
             success: function (msg) {
