@@ -176,6 +176,7 @@ public class BizStatisticsController extends BaseController {
         // 月份集合
         List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.productStatisticData(month, variId, purchasingId);
         List<String> nameList = Lists.newArrayList();
+        List<String> AllList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
@@ -192,6 +193,8 @@ public class BizStatisticsController extends BaseController {
             }
 
             nameList.add(o.getName().concat("-").concat(o.getItemNo()));
+            AllList.add(o.getVendorName().concat("-").concat(o.getItemNo()).concat("-").concat(o.getCount()+"").concat("-")
+                .concat(o.getTotalMoney()+"").concat("-").concat(o.getClickCount()+""));
         });
         echartsSeriesDto.setName("商品销量");
         echartsSeriesDto.setData(seriesDataList);
@@ -199,6 +202,7 @@ public class BizStatisticsController extends BaseController {
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("seriesList", echartsSeriesDto);
         paramMap.put("nameList", nameList);
+        paramMap.put("AllList", AllList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
     }
@@ -398,4 +402,18 @@ public class BizStatisticsController extends BaseController {
         return map;
     }
 
+    /**
+     * 产品统计（个人）
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "productAnalysisTables")
+    public String productAnalysisTables (HttpServletRequest request, Integer variId, Integer purchasingId){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("varietyList", bizStatisticsService.getBizVarietyInfoList());
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        List<BizProductStatisticsDto> productStatisticsList = bizStatisticsService.productStatisticData(LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT), 1, null);
+        request.setAttribute("productStatisticsList", productStatisticsList);
+        return "modules/biz/statistics/bizStatisticsProductTables";
+    }
 }
