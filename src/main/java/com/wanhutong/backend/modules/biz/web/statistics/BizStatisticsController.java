@@ -73,10 +73,11 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:userSale:view")
     @RequestMapping(value = {"userSaleData", ""})
     @ResponseBody
-    public String userSaleData(HttpServletRequest request, String month, Integer purchasingId) {
+    public String userSaleData(HttpServletRequest request, String month, Integer purchasingId, String usName) {
         // 月份集合
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
         List<String> nameList = Lists.newArrayList();
+        Map<String, Integer> usNameIdMap = Maps.newHashMap();
 
         List<Object> seriesDataList = Lists.newArrayList();
         List<Object> seriesTotalDataList = Lists.newArrayList();
@@ -86,6 +87,7 @@ public class BizStatisticsController extends BaseController {
             seriesDataList.add(o.getOrderCount());
             seriesTotalDataList.add(o.getTotalMoney());
             nameList.add(o.getName());
+            usNameIdMap.put(o.getName(), o.getUsId());
         });
         echartsSeriesDto.setName("订单量");
         echartsSeriesDto.setData(seriesDataList);
@@ -94,8 +96,43 @@ public class BizStatisticsController extends BaseController {
         echartsSeriesTotalDto.setData(seriesTotalDataList);
         echartsSeriesTotalDto.setyAxisIndex(1);
 
+        // 封装某一个用户的业绩图
+        Integer usId = null;
+        if (StringUtils.isNotBlank(usName)) {
+            usId = usNameIdMap.get(usName);
+        }
+        if (usId == null && CollectionUtils.isNotEmpty(bizProductStatisticsDtos)) {
+            usId = bizProductStatisticsDtos.get(0).getUsId();
+            usName = bizProductStatisticsDtos.get(0).getName();
+        }
+        List<BizUserSaleStatisticsDto> bizUserSaleStatisticsDtos = null;
+        if (usId != null) {
+            bizUserSaleStatisticsDtos = bizStatisticsService.singleUserSaleStatisticData(usId);
+        }
+
+        List<Object> singleSeriesDataList = Lists.newArrayList();
+        List<Object> singleSeriesTotalDataList = Lists.newArrayList();
+        EchartsSeriesDto singleEchartsSeriesDto = new EchartsSeriesDto();
+        EchartsSeriesDto singleEchartsSeriesTotalDto = new EchartsSeriesDto();
+        List<String> monthList = Lists.newArrayList();
+        bizUserSaleStatisticsDtos.forEach(o -> {
+            singleSeriesDataList.add(o.getOrderCount());
+            singleSeriesTotalDataList.add(o.getTotalMoney());
+            monthList.add(o.getCreateTime());
+        });
+
+        singleEchartsSeriesDto.setName("订单量");
+        singleEchartsSeriesDto.setData(singleSeriesDataList);
+
+        singleEchartsSeriesTotalDto.setName("销售额");
+        singleEchartsSeriesTotalDto.setData(singleSeriesTotalDataList);
+        singleEchartsSeriesTotalDto.setyAxisIndex(1);
+
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto, echartsSeriesTotalDto));
+        paramMap.put("singleSeriesList", Lists.newArrayList(singleEchartsSeriesDto, singleEchartsSeriesTotalDto));
+        paramMap.put("usName", usName);
+        paramMap.put("monthList", monthList);
         paramMap.put("nameList", nameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();

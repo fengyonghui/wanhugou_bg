@@ -584,7 +584,9 @@
         SELECT
         sum(total_detail + total_exp + freight) AS totalMoney,
 	    count(1) AS orderCount,
-	    us.name AS name
+	    us.name AS name,
+		us.id AS usId,
+		date_format(oh.create_time, '%Y-%m') AS createTime
 	    FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
@@ -593,11 +595,45 @@
 	    oh.`status` = 1
 	    AND (oh.biz_status IN (15,17,18,19,20,25,30)
 	    OR ( oh.biz_status = 40 AND oh.receive_total > 0))
-        AND date_format(oh.create_time, '%Y-%m') = #{month}
+		<if test="month != null and month != ''">
+			AND date_format(oh.create_time, '%Y-%m') = #{month}
+		</if>
 		<if test="purchasingId != null and purchasingId != 0">
 			AND us.office_id = #{purchasingId}
 		</if>
+		<if test="usId != null and usId != 0">
+			AND us.id = #{usId}
+		</if>
 	    GROUP BY us.`name`
     </select>
+
+	<select id="getSingleUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
+        SELECT
+        sum(total_detail + total_exp + freight) AS totalMoney,
+	    count(1) AS orderCount,
+	    us.name AS name,
+		us.id AS usId,
+		date_format(oh.create_time, '%Y-%m') AS createTime
+	    FROM biz_order_header oh
+		LEFT JOIN	sys_office off ON off.id = oh.cust_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
+		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+	    WHERE
+	    oh.`status` = 1
+	    AND (oh.biz_status IN (15,17,18,19,20,25,30)
+	    OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		<if test="month != null and month != ''">
+			AND date_format(oh.create_time, '%Y-%m') = #{month}
+		</if>
+		<if test="purchasingId != null and purchasingId != 0">
+			AND us.office_id = #{purchasingId}
+		</if>
+		<if test="usId != null and usId != 0">
+			AND us.id = #{usId}
+		</if>
+	    GROUP BY createTime
+    </select>
+
+
 
 </mapper>
