@@ -33,8 +33,6 @@
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
 <script type="application/javascript">
-
-
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
