@@ -150,6 +150,11 @@ public class BizStatisticsBetweenController extends BaseController {
 
         paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto, echartsSeriesTotalDto));
         paramMap.put("usName", usName);
+        List<String> selectNameList = Lists.newArrayList(nameList);
+        if (StringUtils.isNotBlank(usName)) {
+            selectNameList.remove(usName);
+        }
+        paramMap.put("selectNameList", selectNameList);
         paramMap.put("nameList", nameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();

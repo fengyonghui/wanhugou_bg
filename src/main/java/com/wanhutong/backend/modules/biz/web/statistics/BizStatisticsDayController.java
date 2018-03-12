@@ -140,6 +140,11 @@ public class BizStatisticsDayController extends BaseController {
         paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto, echartsSeriesTotalDto));
         paramMap.put("usName", usName);
         paramMap.put("nameList", nameList);
+        List<String> selectNameList = Lists.newArrayList(nameList);
+        if (StringUtils.isNotBlank(usName)) {
+            selectNameList.remove(usName);
+        }
+        paramMap.put("selectNameList", selectNameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
     }
