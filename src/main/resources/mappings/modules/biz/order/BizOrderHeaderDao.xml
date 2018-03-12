@@ -542,7 +542,7 @@
 	<select id="getProductStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
-		od.sku_id AS skuId, si.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
+		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
 		and si.id = od.sku_id
@@ -558,7 +558,7 @@
 		<if test="purchasingId != null and purchasingId != 0">
 			AND ccc.center_id = #{purchasingId}
 		</if>
-		GROUP BY od.sku_id
+		GROUP BY si.prod_id
 		ORDER BY count DESC
 		LIMIT 10
 	</select>
@@ -576,6 +576,7 @@
 			AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
 		AND c.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		AND s.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL} and s.id = c.center_id
+		and s.TYPE =8
 		GROUP BY center_id
 	</select>
 

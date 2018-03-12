@@ -48,7 +48,6 @@
 
                     if(window.confirm('你确定要发货吗？') && flag && total > 0){
 						var orderHeaders = $("input[name='orderHeaders']").val();
-						alert(orderHeaders+"============");
 						$.ajax({
 							type:"post",
 							url:"${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders="+encodeURIComponent(orderHeaders),
@@ -279,6 +278,7 @@
 						<th>采购数量</th>
 						<th>已发货数量</th>
 						<th>发货数量</th>
+
 					</tr>
 					</thead>
 					<tbody id="prodInfo2">

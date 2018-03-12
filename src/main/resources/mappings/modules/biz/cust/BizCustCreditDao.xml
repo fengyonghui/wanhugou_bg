@@ -52,7 +52,7 @@
 	
 	<sql id="bizCustCreditJoins">
 		LEFT JOIN sys_office so ON so.id = a.office_id
-		left join sys_user suso on so.id=suso.company_id
+		left join sys_user suso on so.id=suso.company_id and so.primary_person = suso.id
 		left join sys_user su on a.create_id=su.id
 	</sql>
     
