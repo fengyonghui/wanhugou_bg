@@ -9,7 +9,7 @@
 <body>
 <div>
     <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()"
-           onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+           onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <label>
         <select class="input-medium" id="purchasingId">
             <option value="0" label="全部"></option>
@@ -51,8 +51,8 @@
         var usName = usNameEle.find("option:selected").val();
         $.ajax({
             type: 'GET',
-            url: "${adminPath}/biz/statistics/userSaleData",
-            data: {"month": applyDate, "purchasingId": purchasingId, "usName": usName},
+            url: "${adminPath}/biz/statistics/day/userSaleData",
+            data: {"day": applyDate, "purchasingId": purchasingId, "usName": usName},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {

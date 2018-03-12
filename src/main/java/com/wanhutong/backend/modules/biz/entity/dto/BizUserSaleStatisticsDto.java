@@ -29,6 +29,32 @@ public class BizUserSaleStatisticsDto {
      */
     private Integer orderCount;
 
+    /**
+     * 销售员ID
+     */
+    private Integer usId;
+
+    /**
+     * 创建时间
+     */
+    private String createTime;
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public Integer getUsId() {
+        return usId;
+    }
+
+    public void setUsId(Integer usId) {
+        this.usId = usId;
+    }
+
 
     public BigDecimal getTotalMoney() {
         return totalMoney;
