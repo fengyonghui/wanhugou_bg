@@ -14,12 +14,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -340,5 +343,59 @@ public class BizStatisticsController extends BaseController {
         return paramMap;
     }
 
+    /**
+     * 采购中心订单表格统计
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "orderTable")
+    public String orderTable (HttpServletRequest request){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsOrderTable";
+    }
+    /**
+     * 采购中心订单统计表格数据
+     *
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "centOrderTable")
+    public Map<String, BizOrderStatisticsDto> centOrderTable(HttpServletRequest request, String month, Model model) throws ParseException {
+        Calendar c=Calendar.getInstance();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
+        Date nowDate = sdf.parse(month);
+        c.setTime(nowDate);
+        c.add(Calendar.MONTH,-1);
+        Date m = c.getTime();
+        String mon = sdf.format(m);
+        //当前月
+        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsService.orderStatisticData(month);
+        //上个月
+        Map<String, BizOrderStatisticsDto> UpResultMap = bizStatisticsService.orderStatisticData(mon);
+        //合并
+        HashMap<String, BizOrderStatisticsDto> map = new HashMap<>();
+        for (Map.Entry<String,BizOrderStatisticsDto> entry:UpResultMap.entrySet()) {
+            String key = entry.getKey();
+            BizOrderStatisticsDto value = entry.getValue();
+            BizOrderStatisticsDto ordStaDto = new BizOrderStatisticsDto();
+            ordStaDto.setUpOrderCount(value.getOrderCount());
+            ordStaDto.setUpTotalMoney(value.getTotalMoney());
+            ordStaDto.setUpProfitPrice(value.getProfitPrice());
+            map.put(key,ordStaDto);
+        }
+        for (Map.Entry<String,BizOrderStatisticsDto> entry:resultMap.entrySet()){
+            String key = entry.getKey();
+            BizOrderStatisticsDto value = entry.getValue();
+            map.get(key).setOrderCount(value.getOrderCount());
+            map.get(key).setTotalMoney(value.getTotalMoney());
+            map.get(key).setProfitPrice(value.getProfitPrice());
+        }
+
+        model.addAttribute("map",map);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return map;
+    }
 
 }
