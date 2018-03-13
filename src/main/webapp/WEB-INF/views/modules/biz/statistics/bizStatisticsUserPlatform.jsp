@@ -16,11 +16,11 @@
         </select>
     </label>
     <label>
-        <select class="input-medium" id="bizType">
+        <select class="input-medium" id="centerType">
             <option value="0" label="全部"></option>
-            <option value="1" label="采购中心"></option>
-            <option value="2" label="网供"></option>
-            <%--<option value="1" label="配资业务"></option>--%>
+            <option value="8" label="采购中心"></option>
+            <option value="11" label="网供"></option>
+            <option value="10" label="配资业务"></option>
         </select>
     </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>

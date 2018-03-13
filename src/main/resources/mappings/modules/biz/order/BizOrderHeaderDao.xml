@@ -923,15 +923,14 @@
 		<if test="type == 1">
 			AND date_format(so.create_date, '%Y-%m') = #{month}
 		</if>
-		<if test="centerType == 2">
-			and o.name = '网供'
+		<if test="centerType == null or centerType == 0">
+			and o.type in (8, 10, 11)
 		</if>
-		<if test="centerType == 1">
-			and o.name != '网供'
+		<if test="centerType != null and centerType != 0">
+			and o.type = #{centerType}
 		</if>
 		and cc.consultant_id = us.id
 		and so.id = cc.cust_id
-		and o.type = 8
 		and so.`status` = 1
 		and o.status = 1
 		and us.`status` = 1
@@ -952,12 +951,11 @@
 		WHERE cc.consultant_id = u.id
 		and oh.cust_id = cc.cust_id
 		and so.id = u.company_id
-		and so.type = 8
-		<if test="centerType == 2">
-		and so.name = '网供'
+		<if test="centerType == null or centerType == 0">
+		and so.type in (8, 10, 11)
 		</if>
-		<if test="centerType == 1">
-		and so.name != '网供'
+		<if test="centerType != null and centerType != 0">
+		and so.type = #{centerType}
 		</if>
 		and (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 			oh.biz_status != #{item.state}
