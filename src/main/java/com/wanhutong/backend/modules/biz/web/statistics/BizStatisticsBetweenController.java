@@ -41,7 +41,7 @@ public class BizStatisticsBetweenController extends BaseController {
     /**
      * 查询数据月数
      */
-    private static final int DATA_DAY_COUNT = 5;
+    private static final int DATA_DAY_COUNT = 1;
 
     /**
      * 默认除法运算精度
@@ -342,11 +342,6 @@ public class BizStatisticsBetweenController extends BaseController {
         List<LocalDateTime> monthDateList = Lists.newArrayList();
         LocalDateTime selectMonth = StringUtils.isBlank(startDate) ? LocalDateTime.now() : LocalDateTime.parse(startDate);
         monthDateList.add(selectMonth);
-        for (int i = 0; i < DATA_DAY_COUNT; i++) {
-            if (i != 0) {
-                monthDateList.add(selectMonth.minusDays(i * (finalBetweenDays.intValue() + 1)));
-            }
-        }
 
         // 主要数据集合
         Map<String, Map<String, BizOrderStatisticsDto>> dataMap = Maps.newLinkedHashMap();
