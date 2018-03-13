@@ -942,5 +942,20 @@
 		GROUP BY us.`name`
 	</select>
 
+	<select id="getSkuStatisticDataBetween" resultType="java.lang.Integer">
+			SELECT
+				count(1) AS upSkuCount
+			FROM
+			biz_sku_info sku
+			LEFT JOIN biz_product_info pi ON sku.prod_id = pi.id
+			LEFT JOIN biz_variety_info vi ON vi.id = pi.vari_id
+			WHERE
+			<if test="variId != null and variId != 0">
+				vi.id = #{variId} AND
+			</if>
+			sku.create_time BETWEEN #{startDate}
+			AND #{endDate}
+			AND sku.status = 1
+	</select>
 
 </mapper>

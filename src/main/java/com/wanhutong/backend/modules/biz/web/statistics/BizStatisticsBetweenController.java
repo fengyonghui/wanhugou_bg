@@ -8,11 +8,13 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsBetweenService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
+import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.codehaus.groovy.runtime.powerassert.SourceText;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -443,5 +445,84 @@ public class BizStatisticsBetweenController extends BaseController {
         return paramMap;
     }
 
+    /**
+     * 商品新增数量统计
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:sku:view")
+    @RequestMapping(value = {"sku", ""})
+    public String sku(HttpServletRequest request) {
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("varietyList", bizStatisticsBetweenService.getBizVarietyInfoList());
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        /*Calendar cal = Calendar.getInstance();
+        //获取本周一的日期
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        cal.add(Calendar.DAY_OF_MONTH, -7);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+        cal.add(Calendar.DAY_OF_MONTH, 6);
+        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));*/
+        return "modules/biz/statistics/bizStatisticsSkuBetween";
+    }
+
+    /**
+     * 产品相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:sku:view")
+    @RequestMapping(value = {"skuData", ""})
+    @ResponseBody
+    public String sku(HttpServletRequest request, String month, Integer variId) throws ParseException {
+        List<Object> seriesDataList = Lists.newArrayList();
+        // 月份下星期
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(month+"-01",month+"-07",variId));
+        Date firstOpenDate = sdf.parse(month + "-01");
+        Date firstCloseDate =sdf.parse(month + "-07");
+        cal.setTime(firstOpenDate);
+        cal.add(Calendar.DATE,7);
+        String secondStartDate = sdf.format(cal.getTime());
+        cal.setTime(firstCloseDate);
+        cal.add(Calendar.DATE,7);
+        String secondEndDate = sdf.format(cal.getTime());
+        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(secondStartDate,secondEndDate,variId));
+        cal.setTime(sdf.parse(secondStartDate));
+        cal.add(Calendar.DATE,7);
+        String thirdStartDate = sdf.format(cal.getTime());
+        cal.setTime(sdf.parse(secondEndDate));
+        cal.add(Calendar.DATE,7);
+        String thirdEndDate = sdf.format(cal.getTime());
+        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(thirdStartDate,thirdEndDate,variId));
+        cal.setTime(sdf.parse(thirdStartDate));
+        cal.add(Calendar.DATE,7);
+        String fourthStartDate = sdf.format(cal.getTime());
+        cal.setTime(sdf.parse(thirdEndDate));
+        cal.add(Calendar.DATE,7);
+        String fourthEndDate = sdf.format(cal.getTime());
+        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(fourthStartDate,fourthEndDate,variId));
+        cal.setTime(sdf.parse(fourthStartDate));
+        cal.add(Calendar.DATE,7);
+        String fifthStartDate = sdf.format(cal.getTime());
+        cal.setTime(sdf.parse(fourthEndDate));
+        cal.add(Calendar.DATE,7);
+        String fifthEndDate = sdf.format(cal.getTime());
+        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(fifthStartDate,fifthEndDate,variId));
+
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        echartsSeriesDto.setName("商品新增数量");
+        echartsSeriesDto.setData(seriesDataList);
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("seriesList", echartsSeriesDto);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
+        System.out.println(JSONObject.fromObject(paramMap).toString());
+        return JSONObject.fromObject(paramMap).toString();
+    }
 
 }

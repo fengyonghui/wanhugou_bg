@@ -170,4 +170,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return
      */
     List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
+    /**
+     * 按区间获取商品新增数量
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return 产品统计数据
+     */
+    Integer getSkuStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("variId") Integer variId);
 }

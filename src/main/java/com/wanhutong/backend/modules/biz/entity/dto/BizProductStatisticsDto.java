@@ -13,6 +13,10 @@ public class BizProductStatisticsDto {
      */
     private Integer skuId;
     /**
+     *商品新增数量
+     */
+    private Integer upSkuCount;
+    /**
      * 产品名称
      */
     private String name;
@@ -105,5 +109,13 @@ public class BizProductStatisticsDto {
 
     public void setClickCount(Integer clickCount) {
         this.clickCount = clickCount;
+    }
+
+    public Integer getUpSkuCount() {
+        return upSkuCount;
+    }
+
+    public void setUpSkuCount(Integer upSkuCount) {
+        this.upSkuCount = upSkuCount;
     }
 }
