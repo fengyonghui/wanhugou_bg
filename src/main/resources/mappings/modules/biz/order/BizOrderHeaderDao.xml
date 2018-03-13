@@ -610,6 +610,22 @@
 	<select id="getSingleUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
         SELECT
         sum(total_detail + total_exp + freight) AS totalMoney,
+		<!--start-->
+		sum(
+			sku.buy_price * detail.ord_qty
+		) AS buyPrice,
+		(
+			sum(
+			total_detail + total_exp + freight
+			) - sum(sku.buy_price)
+		) AS fright,
+		(SELECT count(1) FROM
+			biz_custom_center_consultant cc WHERE cc.consultant_id = us.id
+		) AS custCount,
+		(SELECT count(1) FROM
+			biz_custom_center_consultant cc WHERE cc.consultant_id = us.id AND date_format(us.create_date, '%Y-%m') = #{month}
+		) AS addCustCount,
+		<!--end-->
 	    count(1) AS orderCount,
 	    us.name AS name,
 		us.id AS usId,
@@ -618,6 +634,10 @@
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		<!--start-->
+		LEFT JOIN biz_order_detail AS detail ON detail.order_id = oh.id
+		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
+		<!--end-->
 	    WHERE
 	    oh.`status` = 1
 	    AND (oh.biz_status IN (15,17,18,19,20,25,30)

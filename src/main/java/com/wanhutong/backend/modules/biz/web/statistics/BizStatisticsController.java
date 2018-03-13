@@ -80,6 +80,7 @@ public class BizStatisticsController extends BaseController {
         Map<String, Integer> usNameIdMap = Maps.newHashMap();
 
         List<Object> seriesDataList = Lists.newArrayList();
+        List<String> userMonthList = Lists.newArrayList();
         List<Object> seriesTotalDataList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         EchartsSeriesDto echartsSeriesTotalDto = new EchartsSeriesDto();
@@ -117,11 +118,14 @@ public class BizStatisticsController extends BaseController {
             EchartsSeriesDto singleEchartsSeriesDto = new EchartsSeriesDto();
             EchartsSeriesDto singleEchartsSeriesTotalDto = new EchartsSeriesDto();
             List<String> monthList = Lists.newArrayList();
-            bizUserSaleStatisticsDtos.forEach(o -> {
-                singleSeriesDataList.add(o.getOrderCount());
-                singleSeriesTotalDataList.add(o.getTotalMoney());
-                monthList.add(o.getCreateTime());
-            });
+
+        bizUserSaleStatisticsDtos.forEach(o -> {
+            singleSeriesDataList.add(o.getOrderCount());
+            singleSeriesTotalDataList.add(o.getTotalMoney());
+            monthList.add(o.getCreateTime());
+            userMonthList.add(o.getCreateTime().concat("+").concat(o.getTotalMoney()+"").concat("+").concat(o.getProfitPrice()+"")
+                    .concat("+").concat(o.getAddCustCount()+"").concat("+").concat(o.getCustCount()+""));
+        });
 
             singleEchartsSeriesDto.setName("订单量");
             singleEchartsSeriesDto.setData(singleSeriesDataList);
@@ -141,6 +145,16 @@ public class BizStatisticsController extends BaseController {
             selectNameList.remove(usName);
         }
         paramMap.put("selectNameList", selectNameList);
+//        singleEchartsSeriesTotalDto.setName("销售额");
+//        singleEchartsSeriesTotalDto.setData(singleSeriesTotalDataList);
+//        singleEchartsSeriesTotalDto.setyAxisIndex(1);
+
+//        Map<String, Object> paramMap = Maps.newHashMap();
+//        paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto, echartsSeriesTotalDto));
+//        paramMap.put("singleSeriesList", Lists.newArrayList(singleEchartsSeriesDto, singleEchartsSeriesTotalDto));
+        paramMap.put("usName", usName);
+//        paramMap.put("monthList", monthList);
+        paramMap.put("userMonthList", userMonthList);
         paramMap.put("nameList", nameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
@@ -456,7 +470,7 @@ public class BizStatisticsController extends BaseController {
     }
 
     /**
-     * 产品统计（个人）
+     * 产品统计（个人 表格数据）
      */
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "productAnalysisTables")
@@ -495,4 +509,20 @@ public class BizStatisticsController extends BaseController {
         return bizUserSaleStatisticsDtos;
     }
 
+
+    /**
+     * 顾问个人订单统计（个人 表格数据）
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "orderTables")
+    public String orderTables (HttpServletRequest request,String month){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        List<BizUserSaleStatisticsDto> productStatisticsTableList = bizStatisticsService.userSaleStatisticData(LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT), null);
+        request.setAttribute("productStatisticsTableList", productStatisticsTableList);
+        String s = userSaleData(null, month, null, null);
+        System.out.println(s);
+        return "modules/biz/statistics/statisticsUserTables";
+    }
 }
