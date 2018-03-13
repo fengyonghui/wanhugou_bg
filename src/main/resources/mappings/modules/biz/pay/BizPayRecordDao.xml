@@ -30,7 +30,8 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		sua.mobile as "customer.moblieMoeny.mobile"
 	</sql>
 	
 	<sql id="bizPayRecordJoins">
@@ -39,6 +40,7 @@
 		LEFT JOIN sys_user s on s.id = a.payer
 		LEFT JOIN sys_office o on o.id = a.account
 	    LEFT JOIN  sys_office f on f.id = a.to_account
+	    LEFT join sys_user sua on sua.company_id=so.id and so.primary_person = sua.id
 	</sql>
     
 	<select id="get" resultType="BizPayRecord">
@@ -80,11 +82,11 @@
 				<if test="dbName == 'mssql'">'%'+#{customer.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{customer.name},'%')</if>
 			</if>
-			<if test="customer != null and customer.phone != null and customer.phone != ''">
-				AND so.phone LIKE
-				<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
+			<if test="customer != null and customer.moblieMoeny.mobile != null and customer.moblieMoeny.mobile != ''">
+				AND sua.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.moblieMoeny.mobile}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.moblieMoeny.mobile}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.moblieMoeny.mobile},'%')</if>
 			</if>
 			<if test="trandStartTime != null and trandStartTime != '' and trandEndTime != null and trandEndTime != ''">
 				AND a.create_time BETWEEN #{trandStartTime} and #{trandEndTime}

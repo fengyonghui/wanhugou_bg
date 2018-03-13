@@ -161,6 +161,15 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 根据不同用户分类的统计数据
      */
     List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId);
+    List<BizUserSaleStatisticsDto> getUserSaleStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
+
+    /**
+     * 根据月份和采购中心取客户专员数据
+     * @param month
+     * @param purchasingId
+     * @return
+     */
+    List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
 
 
     /**
@@ -183,6 +192,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
             @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> validStatus,
             @Param("type") String type, @Param("centerType") String centerType, @Param("orderType") String orderType, @Param("officeId") Integer officeId);
 
+}
     List<BizUserSaleStatisticsDto> getUserSaleStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
 
     /**
@@ -192,4 +202,20 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return
      */
     List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
-}
+    /**
+     * 按区间获取商品新增数量
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return 产品统计数据
+     */
+    Integer getSkuStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("variId") Integer variId);
+    List<BizUserSaleStatisticsDto> getUserSaleStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
+
+    /**
+     * 根据月份和采购中心取客户专员数据
+     * @param month
+     * @param purchasingId
+     * @return
+     */
+    List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);

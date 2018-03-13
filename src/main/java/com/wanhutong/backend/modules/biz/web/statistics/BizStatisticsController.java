@@ -477,7 +477,7 @@ public class BizStatisticsController extends BaseController {
     public String productAnalysisTables (HttpServletRequest request, Integer variId, Integer purchasingId){
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("varietyList", bizStatisticsService.getBizVarietyInfoList());
-        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         List<BizProductStatisticsDto> productStatisticsList = bizStatisticsService.productStatisticData(LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT), 1, null);
         request.setAttribute("productStatisticsList", productStatisticsList);
@@ -490,7 +490,7 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = "userTable")
     public String userTable (HttpServletRequest request){
         request.setAttribute("adminPath", adminPath);
-        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsUserTable";
     }
@@ -517,7 +517,7 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = "orderTables")
     public String orderTables (HttpServletRequest request,String month){
         request.setAttribute("adminPath", adminPath);
-        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         List<BizUserSaleStatisticsDto> productStatisticsTableList = bizStatisticsService.userSaleStatisticData(LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT), null);
         request.setAttribute("productStatisticsTableList", productStatisticsTableList);
