@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.category.BizVarietyInfoDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.dao.totalStatistics.BizTotalStatisticsDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +41,8 @@ public class BizStatisticsService {
     private BizVarietyInfoDao bizVarietyInfoDao;
     @Resource
     private OfficeDao officeDao;
+    @Resource
+    private BizTotalStatisticsDao bizTotalStatisticsDao;
 
     /**
      * 请求参数日期格式
@@ -126,6 +130,15 @@ public class BizStatisticsService {
     public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month, Integer purchasingId) {
         return bizOrderHeaderDao.getUserSaleStatisticData(month, purchasingId, null);
     }
+    /**
+     * 根据月份和采购中心取客户专员数据
+     * @param month
+     * @param purchasingId
+     * @return
+     */
+    public List<BizUserSaleStatisticsDto> userTableStatisticData(String month, Integer purchasingId) {
+        return bizOrderHeaderDao.getUserTableStatisticData(month, purchasingId);
+    }
 
     /**
      * 取所有商品类别
@@ -152,5 +165,19 @@ public class BizStatisticsService {
      */
     public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(Integer salesmanId) {
         return bizOrderHeaderDao.getSingleUserSaleStatisticData(null, null, salesmanId);
+    }
+
+    public BizTotalStatisticsDto getBizTotalStatisticsDto(){
+        BizTotalStatisticsDto totalStatisticsDto = bizTotalStatisticsDao.getTotalStatisticsDto();
+        Integer skuCount = bizTotalStatisticsDao.getTotalSkuCount();
+        Integer custCount = bizTotalStatisticsDao.getTotalCustCount();
+        Integer centCount = bizTotalStatisticsDao.getTotalCentCount();
+        Integer orderCount = totalStatisticsDto.getOrderCount();
+        totalStatisticsDto.setCustCount(custCount);
+        totalStatisticsDto.setCentCount(centCount);
+        totalStatisticsDto.setSkuCount(skuCount);
+        totalStatisticsDto.setAvgPrice(totalStatisticsDto.getReceiveMoney().divide(new BigDecimal(orderCount),2,BigDecimal.ROUND_HALF_UP));
+
+        return totalStatisticsDto;
     }
 }

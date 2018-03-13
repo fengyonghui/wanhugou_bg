@@ -58,6 +58,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String localSendIds;
     private Integer orderMark;		//用于订单新增地址返回标记
 	private String suplyIds;       //用于查询本地发货的订单
+	private String centersName;	//用于订单列表查询采购中心
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -353,5 +354,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setSuplyIds(String suplyIds) {
 		this.suplyIds = suplyIds;
+	}
+
+	public String getCentersName() {
+		return centersName;
+	}
+
+	public void setCentersName(String centersName) {
+		this.centersName = centersName;
 	}
 }

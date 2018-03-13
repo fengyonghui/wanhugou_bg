@@ -83,7 +83,7 @@
 				<form:input path="createBy.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 				<li><label>联系电话：</label>
-					<form:input path="customer.phone" htmlEscape="false" maxlength="12" class="input-medium"/>
+					<form:input path="customer.moblieMoeny.mobile" htmlEscape="false" maxlength="12" class="input-medium"/>
 				</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -128,7 +128,7 @@
 					${bizPayRecord.customer.name}
 				</td>
 				<td>
-					${bizPayRecord.customer.phone}
+					${bizPayRecord.customer.moblieMoeny.mobile}
 				</td>
 				<td>
 					${fns:getDictLabel(bizPayRecord.bizStatus, 'bizStatus', '')}

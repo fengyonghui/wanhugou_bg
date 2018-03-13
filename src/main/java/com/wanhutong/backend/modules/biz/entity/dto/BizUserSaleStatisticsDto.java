@@ -16,6 +16,11 @@ public class BizUserSaleStatisticsDto {
      * 名称
      */
     private String name;
+
+    /**
+     * 采购中心名
+     */
+    private String centName;
     /**
      * 数量
      */
@@ -30,6 +35,42 @@ public class BizUserSaleStatisticsDto {
      * 创建时间
      */
     private String createTime;
+
+    /**
+     * 会员数量
+     */
+    private Integer custCount;
+
+    /**
+     * 会员新增量
+     */
+    private Integer addCustCount;
+
+    /**
+     * 成本
+     */
+    private BigDecimal buyPrice = new BigDecimal(0);
+
+    /**
+     * 利润
+     */
+    private BigDecimal profitPrice;
+
+    public BigDecimal getProfitPrice() {
+        return totalMoney.subtract(buyPrice);
+    }
+
+    public void setProfitPrice(BigDecimal profitPrice) {
+        this.profitPrice = profitPrice;
+    }
+
+    public BigDecimal getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(BigDecimal buyPrice) {
+        this.buyPrice = buyPrice;
+    }
 
     public String getCreateTime() {
         return createTime;
@@ -46,6 +87,7 @@ public class BizUserSaleStatisticsDto {
     public void setUsId(Integer usId) {
         this.usId = usId;
     }
+
 
     public BigDecimal getTotalMoney() {
         return totalMoney;
@@ -69,5 +111,29 @@ public class BizUserSaleStatisticsDto {
 
     public void setOrderCount(Integer orderCount) {
         this.orderCount = orderCount;
+    }
+
+    public String getCentName() {
+        return centName;
+    }
+
+    public void setCentName(String centName) {
+        this.centName = centName;
+    }
+
+    public Integer getCustCount() {
+        return custCount;
+    }
+
+    public void setCustCount(Integer custCount) {
+        this.custCount = custCount;
+    }
+
+    public Integer getAddCustCount() {
+        return addCustCount;
+    }
+
+    public void setAddCustCount(Integer addCustCount) {
+        this.addCustCount = addCustCount;
     }
 }

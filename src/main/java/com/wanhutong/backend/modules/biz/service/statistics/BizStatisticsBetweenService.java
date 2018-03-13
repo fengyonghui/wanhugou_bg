@@ -154,4 +154,16 @@ public class BizStatisticsBetweenService {
     public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(Integer salesmanId) {
         return bizOrderHeaderDao.getSingleUserSaleStatisticDataBetween(null, null, null, salesmanId);
     }
+
+    /**
+     * 根据月份取该月每个星期的商品新增数量
+     *
+     * @param startDate 开始时间
+     * @param endDate 开始时间
+     * @param variId  类别ID
+     * @return 根据不同产品分类的统计数据
+     */
+    public Integer skuStatisticData (String startDate, String endDate, Integer variId) {
+        return bizOrderHeaderDao.getSkuStatisticDataBetween(startDate, endDate, variId);
+    }
 }

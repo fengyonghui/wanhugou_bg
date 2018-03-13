@@ -12,10 +12,14 @@ public class BizOrderStatisticsDto {
      * 总金额
      */
     private BigDecimal totalMoney = new BigDecimal(0);
+    //上月总金额
+    private BigDecimal upTotalMoney = new BigDecimal(0);
     /**
      * 总数量
      */
     private int orderCount;
+    //上月总数量
+    private int upOrderCount;
     /**
      * 机构id
      */
@@ -34,6 +38,8 @@ public class BizOrderStatisticsDto {
      * 利润
      */
     private BigDecimal profitPrice;
+    //上月利润
+    private BigDecimal upProfitPrice = new BigDecimal(0);
 
     /**
      * 日期
@@ -94,6 +100,30 @@ public class BizOrderStatisticsDto {
 
     public void setOfficeId(int officeId) {
         this.officeId = officeId;
+    }
+
+    public BigDecimal getUpTotalMoney() {
+        return upTotalMoney;
+    }
+
+    public void setUpTotalMoney(BigDecimal upTotalMoney) {
+        this.upTotalMoney = upTotalMoney;
+    }
+
+    public int getUpOrderCount() {
+        return upOrderCount;
+    }
+
+    public void setUpOrderCount(int upOrderCount) {
+        this.upOrderCount = upOrderCount;
+    }
+
+    public BigDecimal getUpProfitPrice() {
+        return upProfitPrice;
+    }
+
+    public void setUpProfitPrice(BigDecimal upProfitPrice) {
+        this.upProfitPrice = upProfitPrice;
     }
 
     @Override

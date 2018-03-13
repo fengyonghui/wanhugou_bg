@@ -16,6 +16,7 @@
         <result property="bizType" column="bizType"/>
         <result property="itemNo" column="itemNo"/>
         <result property="delFlag" column="status"/>
+		<result property="centersName" column="centersName"/>
 
         <result property="createDate" column="createDate"/>
         <result property="updateDate" column="updateDate"/>
@@ -108,7 +109,8 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		su.name as "updateBy.name",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		s.name as "centersName"
 	</sql>
 
 	<sql id="bizOrderHeaderJoins">
@@ -226,6 +228,12 @@
             <if test="customer != null and customer.id != null and customer.id!=''">
                 AND a.cust_id = #{customer.id}
             </if>
+			<if test="centersName != null and centersName!=''">
+				AND s.name like
+				<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+			</if>
             <if test="customer != null and customer.phone != null and customer.phone!=''">
                 AND su.mobile LIKE
                 <if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
@@ -616,6 +624,22 @@
 	<select id="getSingleUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
         SELECT
         sum(total_detail + total_exp + freight) AS totalMoney,
+		<!--start-->
+		sum(
+			sku.buy_price * detail.ord_qty
+		) AS buyPrice,
+		(
+			sum(
+			total_detail + total_exp + freight
+			) - sum(sku.buy_price)
+		) AS fright,
+		(SELECT count(1) FROM
+			biz_custom_center_consultant cc WHERE cc.consultant_id = us.id
+		) AS custCount,
+		(SELECT count(1) FROM
+			biz_custom_center_consultant cc WHERE cc.consultant_id = us.id AND date_format(us.create_date, '%Y-%m') = #{month}
+		) AS addCustCount,
+		<!--end-->
 	    count(1) AS orderCount,
 	    us.name AS name,
 		us.id AS usId,
@@ -624,6 +648,10 @@
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		<!--start-->
+		LEFT JOIN biz_order_detail AS detail ON detail.order_id = oh.id
+		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
+		<!--end-->
 	    WHERE
 		oh.order_type = 1 and
 	    oh.`status` = 1
@@ -974,6 +1002,45 @@
 			AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		</if>
 		GROUP BY createDate
+	</select>
+
+	<select id="getUserTableStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		(SELECT count(1) FROM biz_custom_center_consultant cc WHERE cc.consultant_id = us.id )as custCount,
+		us.name AS name,
+		cent.name AS centName
+		FROM biz_order_header oh
+		LEFT JOIN	sys_office off ON off.id = oh.cust_id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
+		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
+		LEFT JOIN sys_office cent ON cent.id = us.office_id
+		WHERE
+		oh.`status` = 1
+		AND (oh.biz_status IN (15,17,18,19,20,25,30)
+		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		AND date_format(oh.create_time, '%Y-%m') = #{month}
+		<if test="purchasingId != null and purchasingId != 0">
+			AND us.office_id = #{purchasingId}
+		</if>
+		GROUP BY us.`name`
+	</select>
+
+	<select id="getSkuStatisticDataBetween" resultType="java.lang.Integer">
+			SELECT
+				count(1) AS upSkuCount
+			FROM
+			biz_sku_info sku
+			LEFT JOIN biz_product_info pi ON sku.prod_id = pi.id
+			LEFT JOIN biz_variety_info vi ON vi.id = pi.vari_id
+			WHERE
+			<if test="variId != null and variId != 0">
+				vi.id = #{variId} AND
+			</if>
+			sku.create_time BETWEEN #{startDate}
+			AND #{endDate}
+			AND sku.status = 1
 	</select>
 
 </mapper>

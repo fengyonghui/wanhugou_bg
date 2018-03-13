@@ -81,6 +81,7 @@ public class OfficeController extends BaseController {
 //			Office off = officeService.get(Integer.valueOf(purchasersId));
 			office.setParentIds("%,"+purchasersId+",");
 			office.setType(OfficeTypeEnum.CUSTOMER.getType());
+			office.setCcStatus(1);
 			Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
 //			findList.add(off);
 //			page.getList().add(off);
