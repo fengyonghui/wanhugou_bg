@@ -161,29 +161,31 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 根据不同用户分类的统计数据
      */
     List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId);
-    List<BizUserSaleStatisticsDto> getUserSaleStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
 
     /**
      * 根据月份和采购中心取客户专员数据
+     *
      * @param month
      * @param purchasingId
      * @return
      */
-    List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
+    List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month") String month, @Param("purchasingId") Integer purchasingId);
 
 
     /**
      * 取平台用户统计数据
-     * @param type 数据类型  年:0/月:1
+     *
+     * @param type  数据类型  年:0/月:1
      * @param month 数据类型  月份
      * @return
      */
-    List<BizUserStatisticsDto> getUserStatisticDataPlatform(@Param("type")String type, @Param("month")String month, @Param("centerType")String centerType);
+    List<BizUserStatisticsDto> getUserStatisticDataPlatform(@Param("type") String type, @Param("month") String month, @Param("centerType") String centerType);
 
 
     /**
      * 用户平台订单统计
-     * @param startDate 时间
+     *
+     * @param startDate   时间
      * @param validStatus
      * @param type
      * @return
@@ -192,30 +194,13 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
             @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> validStatus,
             @Param("type") String type, @Param("centerType") String centerType, @Param("orderType") String orderType, @Param("officeId") Integer officeId);
 
-}
-    List<BizUserSaleStatisticsDto> getUserSaleStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
 
-    /**
-     * 根据月份和采购中心取客户专员数据
-     * @param month
-     * @param purchasingId
-     * @return
-     */
-    List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
     /**
      * 按区间获取商品新增数量
      *
      * @param startDate 开始时间
-     * @param endDate 结束时间
+     * @param endDate   结束时间
      * @return 产品统计数据
      */
     Integer getSkuStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("variId") Integer variId);
-    List<BizUserSaleStatisticsDto> getUserSaleStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
-
-    /**
-     * 根据月份和采购中心取客户专员数据
-     * @param month
-     * @param purchasingId
-     * @return
-     */
-    List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month")String month, @Param("purchasingId")Integer purchasingId);
+}
