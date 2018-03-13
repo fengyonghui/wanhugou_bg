@@ -37,8 +37,6 @@
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
-        var orderRateChart = echarts.init(document.getElementById('orderRateChart'), 'light');
-        orderRateChart.clear();
 
         // var dataTypeEle = $("#dataType");
         // var dataType = dataTypeEle.find("option:selected").val();
@@ -104,50 +102,6 @@
                         }
                     ],
                     series: msg.seriesList
-                });
-
-
-                orderRateChart.setOption({
-                    title: {
-                        text: ''
-                    },
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'cross',
-                            crossStyle: {
-                                color: '#999'
-                            }
-                        }
-                    },
-                    toolbox: {
-                        show: true,
-                        right: 30,
-                        feature: {
-                            saveAsImage: {
-                                show:true,
-                                excludeComponents :['toolbox'],
-                                pixelRatio: 2
-                            }
-                        }
-                    },
-                    legend: {
-                        data: msg.officeNameSet
-                    },
-                    xAxis: {
-                        data: msg.monthList,
-                        axisPointer: {
-                            type: 'shadow'
-                        }
-                    },
-                    yAxis: [
-                        {
-                            type: 'value',
-                            scale: true,
-                            name: dataTypeDesc
-                        }
-                    ],
-                    series: msg.rateSeriesList
                 });
 
             },
