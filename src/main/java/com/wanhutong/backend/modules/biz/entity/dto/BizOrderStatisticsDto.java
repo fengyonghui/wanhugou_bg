@@ -41,6 +41,18 @@ public class BizOrderStatisticsDto {
     //上月利润
     private BigDecimal upProfitPrice = new BigDecimal(0);
 
+    /**
+     * 日期
+     */
+    private String createDate;
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
 
     public BigDecimal getProfitPrice() {
         return totalMoney.subtract(buyPrice);

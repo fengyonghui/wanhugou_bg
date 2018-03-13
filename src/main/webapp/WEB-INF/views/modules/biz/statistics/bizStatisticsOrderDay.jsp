@@ -8,7 +8,7 @@
 </head>
 <body>
 <div>
-    <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input name="applyDate" id="applyDate" value="${month}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <select class="input-medium" id="barChartType">
         <option value="1" label="销售额">销售额</option>
         <option value="3" label="订单量">订单量</option>

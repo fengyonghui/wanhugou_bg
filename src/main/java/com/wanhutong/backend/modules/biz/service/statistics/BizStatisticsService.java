@@ -148,13 +148,15 @@ public class BizStatisticsService {
         return bizVarietyInfoDao.findAllList(new BizVarietyInfo());
     }
     /**
-     * 取所有采购商 type = 8
-     * @return 所有采购商
+     * 根据type取 office
+     * @return office
      */
-    public List<Office> getBizPurchasingList(String type) {
+    public List<Office> getOfficeList(String type) {
         Office office = new Office();
         office.setType(type);
-        return officeDao.findList(office);
+        List<Office> list = officeDao.findList(office);
+        list.removeIf(o -> o.getName().contains("测试".intern()));
+        return list;
     }
 
     /**

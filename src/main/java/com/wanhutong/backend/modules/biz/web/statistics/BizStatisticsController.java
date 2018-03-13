@@ -59,7 +59,7 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"userSale", ""})
     public String userSale(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
-        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsUserSale";
     }
@@ -217,7 +217,7 @@ public class BizStatisticsController extends BaseController {
     public String product(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("varietyList", bizStatisticsService.getBizVarietyInfoList());
-        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsProduct";
     }
