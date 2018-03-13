@@ -555,7 +555,7 @@
 		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
-		oh.order_type = 1 and
+        and oh.order_type = 1
 		and si.id = od.sku_id
 		and si.prod_id = pi.id
 		<if test="variId != null and variId != 0">
@@ -605,8 +605,8 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 	    WHERE
-		oh.order_type = 1 and
-	    oh.`status` = 1
+		oh.order_type = 1
+        and oh.`status` = 1
 	    AND (oh.biz_status IN (15,17,18,19,20,25,30)
 	    OR ( oh.biz_status = 40 AND oh.receive_total > 0))
 		<if test="month != null and month != ''">
@@ -653,8 +653,8 @@
 		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
 		<!--end-->
 	    WHERE
-		oh.order_type = 1 and
-	    oh.`status` = 1
+		oh.order_type = 1
+        and oh.`status` = 1
 	    AND (oh.biz_status IN (15,17,18,19,20,25,30)
 	    OR ( oh.biz_status = 40 AND oh.receive_total > 0))
 		<if test="month != null and month != ''">
@@ -705,7 +705,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-		oh.order_type = 1 and
+        and oh.order_type = 1
 		and ccc.cust_id = oh.cust_id
 		and oh.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		and si.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
@@ -750,8 +750,8 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1 and
-		oh.`status` = 1
+		oh.order_type = 1
+        and	oh.`status` = 1
 		AND (oh.biz_status IN (15,17,18,19,20,25,30)
 		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
 		<if test="day != null and day != ''">
@@ -778,8 +778,8 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1 and
-		oh.`status` = 1
+		oh.order_type = 1
+        and	oh.`status` = 1
 		AND (oh.biz_status IN (15,17,18,19,20,25,30)
 		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
 		<if test="day != null and day != ''">
@@ -833,7 +833,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-		oh.order_type = 1 and
+		and oh.order_type = 1
 		and ccc.cust_id = oh.cust_id
 		and oh.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		and si.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
@@ -888,8 +888,8 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1 and
-		oh.`status` = 1
+		oh.order_type = 1
+        and oh.`status` = 1
 		AND (oh.biz_status IN (15,17,18,19,20,25,30)
 		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
 		<if test="startDate != null and startDate != ''">
@@ -919,8 +919,8 @@
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
-		oh.order_type = 1 and
-		oh.`status` = 1
+		oh.order_type = 1
+        and oh.`status` = 1
 		AND (oh.biz_status IN (15,17,18,19,20,25,30)
 		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
 		<if test="startDate != null and startDate != ''">

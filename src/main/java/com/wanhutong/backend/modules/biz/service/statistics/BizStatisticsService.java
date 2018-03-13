@@ -147,14 +147,13 @@ public class BizStatisticsService {
     public List<BizVarietyInfo> getBizVarietyInfoList() {
         return bizVarietyInfoDao.findAllList(new BizVarietyInfo());
     }
+
     /**
      * 根据type取 office
      * @return office
      */
     public List<Office> getOfficeList(String type) {
-        Office office = new Office();
-        office.setType(type);
-        List<Office> list = officeDao.findList(office);
+        List<Office> list = officeDao.findListByType(type);
         list.removeIf(o -> o.getName().contains("测试".intern()));
         return list;
     }

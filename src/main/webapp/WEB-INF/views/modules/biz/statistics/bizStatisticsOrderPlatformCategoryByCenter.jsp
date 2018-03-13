@@ -19,11 +19,7 @@
     (如查询年报无需选择月份)
     <div id="orderTotalDataChart" style="height: 300px;"></div>
     <div id="orderTotalDataCountChart" style="height: 300px;"></div>
-
-
 </div>
-
-
 </body>
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>

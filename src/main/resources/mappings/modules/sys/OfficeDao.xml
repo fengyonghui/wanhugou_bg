@@ -153,6 +153,14 @@
 		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1)
 
 </select>
+
+	<select id="findListByType" resultType="Office">
+		select *
+		from sys_office
+		where type = #{type}
+		and status = 1;
+	</select>
+
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO sys_office(
 			id,

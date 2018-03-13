@@ -229,17 +229,12 @@ public class BizStatisticsPlatformController extends BaseController {
             e.printStackTrace();
         }
 
-        System.out.println(dateStrList);
-
         String startDateFinal = startDate;
         String endDateFinal = endDate;
         List<EchartsSeriesDto> seriesList = Lists.newArrayList();
         List<EchartsSeriesDto> seriesCountList = Lists.newArrayList();
         bizPurchasingList.forEach(o -> {
             List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = bizStatisticsPlatformService.orderStatisticDataByOffice(startDateFinal, endDateFinal, type, centerType, orderType, o.getId());
-
-
-
 
             EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
             EchartsSeriesDto echartsSeriesCountDto = new EchartsSeriesDto();
