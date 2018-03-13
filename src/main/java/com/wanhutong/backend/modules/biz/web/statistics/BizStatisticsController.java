@@ -525,4 +525,16 @@ public class BizStatisticsController extends BaseController {
         System.out.println(s);
         return "modules/biz/statistics/statisticsUserTables";
     }
+    /**
+     * 统计总的会员数，采购中心数，订单数量，总额、已收货款，商品数量 平均客单价
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "getBizTotalStatisticsDto")
+    public String getBizTotalStatisticsDto(Model model){
+        BizTotalStatisticsDto bizTotalStatisticsDto = bizStatisticsService.getBizTotalStatisticsDto();
+        model.addAttribute("totalStatistics",bizTotalStatisticsDto);
+        return "modules/biz/statistics/bizTotalStatistics";
+    }
+
 }

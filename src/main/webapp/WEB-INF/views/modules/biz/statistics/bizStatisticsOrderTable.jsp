@@ -8,7 +8,7 @@
 <body>
 <div style="height: 50px">
     <input name="applyDate" id="applyDate" value="${month}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
-    <input id="search" class="btn btn-primary" type="button" value="查询1"/>
+    <input id="search" class="btn btn-primary" type="button" value="查询"/>
 
 </div>
 <div>
