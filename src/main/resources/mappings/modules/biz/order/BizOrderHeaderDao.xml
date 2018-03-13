@@ -16,6 +16,7 @@
         <result property="bizType" column="bizType"/>
         <result property="itemNo" column="itemNo"/>
         <result property="delFlag" column="status"/>
+		<result property="centersName" column="centersName"/>
 
         <result property="createDate" column="createDate"/>
         <result property="updateDate" column="updateDate"/>
@@ -108,7 +109,8 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		su.name as "updateBy.name",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		s.name as "centersName"
 	</sql>
 
 	<sql id="bizOrderHeaderJoins">
@@ -226,6 +228,12 @@
             <if test="customer != null and customer.id != null and customer.id!=''">
                 AND a.cust_id = #{customer.id}
             </if>
+			<if test="centersName != null and centersName!=''">
+				AND s.name like
+				<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+			</if>
             <if test="customer != null and customer.phone != null and customer.phone!=''">
                 AND su.mobile LIKE
                 <if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
