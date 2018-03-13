@@ -42,7 +42,7 @@ public class Office extends TreeEntity<Office> {
 
 	private String source;
 	private String gysFlag;	//用于供应商保存跳转标识
-	private User moblieMoeny;	//用于用户钱包查询手机号
+	private User moblieMoeny;	//用于用户钱包查询手机号，采购商手机号，供应商手机号，
 
 	private Integer consultantId;
 	private Integer centerId;
