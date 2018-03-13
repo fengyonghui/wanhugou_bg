@@ -14,12 +14,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -77,6 +80,7 @@ public class BizStatisticsController extends BaseController {
         Map<String, Integer> usNameIdMap = Maps.newHashMap();
 
         List<Object> seriesDataList = Lists.newArrayList();
+        List<String> userMonthList = Lists.newArrayList();
         List<Object> seriesTotalDataList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         EchartsSeriesDto echartsSeriesTotalDto = new EchartsSeriesDto();
@@ -114,11 +118,14 @@ public class BizStatisticsController extends BaseController {
             EchartsSeriesDto singleEchartsSeriesDto = new EchartsSeriesDto();
             EchartsSeriesDto singleEchartsSeriesTotalDto = new EchartsSeriesDto();
             List<String> monthList = Lists.newArrayList();
-            bizUserSaleStatisticsDtos.forEach(o -> {
-                singleSeriesDataList.add(o.getOrderCount());
-                singleSeriesTotalDataList.add(o.getTotalMoney());
-                monthList.add(o.getCreateTime());
-            });
+
+        bizUserSaleStatisticsDtos.forEach(o -> {
+            singleSeriesDataList.add(o.getOrderCount());
+            singleSeriesTotalDataList.add(o.getTotalMoney());
+            monthList.add(o.getCreateTime());
+            userMonthList.add(o.getCreateTime().concat("+").concat(o.getTotalMoney()+"").concat("+").concat(o.getProfitPrice()+"")
+                    .concat("+").concat(o.getAddCustCount()+"").concat("+").concat(o.getCustCount()+""));
+        });
 
             singleEchartsSeriesDto.setName("订单量");
             singleEchartsSeriesDto.setData(singleSeriesDataList);
@@ -138,6 +145,16 @@ public class BizStatisticsController extends BaseController {
             selectNameList.remove(usName);
         }
         paramMap.put("selectNameList", selectNameList);
+//        singleEchartsSeriesTotalDto.setName("销售额");
+//        singleEchartsSeriesTotalDto.setData(singleSeriesTotalDataList);
+//        singleEchartsSeriesTotalDto.setyAxisIndex(1);
+
+//        Map<String, Object> paramMap = Maps.newHashMap();
+//        paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto, echartsSeriesTotalDto));
+//        paramMap.put("singleSeriesList", Lists.newArrayList(singleEchartsSeriesDto, singleEchartsSeriesTotalDto));
+        paramMap.put("usName", usName);
+//        paramMap.put("monthList", monthList);
+        paramMap.put("userMonthList", userMonthList);
         paramMap.put("nameList", nameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
@@ -218,6 +235,7 @@ public class BizStatisticsController extends BaseController {
         // 月份集合
         List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.productStatisticData(month, variId, purchasingId);
         List<String> nameList = Lists.newArrayList();
+        List<String> AllList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
@@ -234,6 +252,8 @@ public class BizStatisticsController extends BaseController {
             }
 
             nameList.add(o.getName().concat("-").concat(o.getItemNo()));
+            AllList.add(o.getVendorName().concat("-").concat(o.getItemNo()).concat("-").concat(o.getCount()+"").concat("-")
+                .concat(o.getTotalMoney()+"").concat("-").concat(o.getClickCount()+""));
         });
         echartsSeriesDto.setName("商品销量");
         echartsSeriesDto.setData(seriesDataList);
@@ -241,6 +261,7 @@ public class BizStatisticsController extends BaseController {
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("seriesList", echartsSeriesDto);
         paramMap.put("nameList", nameList);
+        paramMap.put("AllList", AllList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
     }
@@ -385,5 +406,135 @@ public class BizStatisticsController extends BaseController {
         return paramMap;
     }
 
+    /**
+     * 采购中心订单表格统计
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "orderTable")
+    public String orderTable (HttpServletRequest request){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsOrderTable";
+    }
+    /**
+     * 采购中心订单统计表格数据
+     *
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "centOrderTable")
+    public Map<String, BizOrderStatisticsDto> centOrderTable(HttpServletRequest request, String month, Model model) throws ParseException {
+        Calendar c=Calendar.getInstance();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
+        Date nowDate = sdf.parse(month);
+        c.setTime(nowDate);
+        c.add(Calendar.MONTH,-1);
+        Date m = c.getTime();
+        String mon = sdf.format(m);
+        //当前月
+        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsService.orderStatisticData(month);
+        //上个月
+        Map<String, BizOrderStatisticsDto> UpResultMap = bizStatisticsService.orderStatisticData(mon);
+        //合并
+        HashMap<String, BizOrderStatisticsDto> map = new HashMap<>();
+        for (Map.Entry<String,BizOrderStatisticsDto> entry:UpResultMap.entrySet()) {
+            String key = entry.getKey();
+            BizOrderStatisticsDto value = entry.getValue();
+            BizOrderStatisticsDto ordStaDto = new BizOrderStatisticsDto();
+            ordStaDto.setUpOrderCount(value.getOrderCount());
+            ordStaDto.setUpTotalMoney(value.getTotalMoney()==null?new BigDecimal(0):value.getTotalMoney());
+            ordStaDto.setUpProfitPrice(value.getProfitPrice()==null?new BigDecimal(0):value.getProfitPrice());
+            map.put(key,ordStaDto);
+        }
+        for (Map.Entry<String,BizOrderStatisticsDto> entry:resultMap.entrySet()){
+            String key = entry.getKey();
+            BizOrderStatisticsDto value = entry.getValue();
+            if (map.get(key) != null) {
+                map.get(key).setOrderCount(value.getOrderCount());
+                map.get(key).setTotalMoney(value.getTotalMoney()==null?new BigDecimal(0):value.getTotalMoney());
+                map.get(key).setProfitPrice(value.getProfitPrice()==null?new BigDecimal(0):value.getProfitPrice());
+            }else {
+                BizOrderStatisticsDto ordStaDto = new BizOrderStatisticsDto();
+                ordStaDto.setOrderCount(value.getOrderCount());
+                ordStaDto.setTotalMoney(value.getTotalMoney()==null?new BigDecimal(0):value.getTotalMoney());
+                ordStaDto.setProfitPrice(value.getProfitPrice()==null?new BigDecimal(0):value.getProfitPrice());
+                map.put(key,ordStaDto);
+            }
+        }
+
+        model.addAttribute("map",map);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return map;
+    }
+
+    /**
+     * 产品统计（个人 表格数据）
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "productAnalysisTables")
+    public String productAnalysisTables (HttpServletRequest request, Integer variId, Integer purchasingId){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("varietyList", bizStatisticsService.getBizVarietyInfoList());
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        List<BizProductStatisticsDto> productStatisticsList = bizStatisticsService.productStatisticData(LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT), 1, null);
+        request.setAttribute("productStatisticsList", productStatisticsList);
+        return "modules/biz/statistics/bizStatisticsProductTables";
+    }
+    /**
+     * 采购顾问表格统计
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "userTable")
+    public String userTable (HttpServletRequest request){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsUserTable";
+    }
+
+    /**
+     * 采购顾问统计表格数据
+     *
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "centUserTable")
+    public List<BizUserSaleStatisticsDto> centUserTable(HttpServletRequest request, String month,Integer purchasingId, Model model){
+        List<BizUserSaleStatisticsDto> bizUserSaleStatisticsDtos = bizStatisticsService.userTableStatisticData(month, purchasingId);
+        return bizUserSaleStatisticsDtos;
+    }
+
+
+    /**
+     * 顾问个人订单统计（个人 表格数据）
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "orderTables")
+    public String orderTables (HttpServletRequest request,String month){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsService.getBizPurchasingList("8"));
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        List<BizUserSaleStatisticsDto> productStatisticsTableList = bizStatisticsService.userSaleStatisticData(LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT), null);
+        request.setAttribute("productStatisticsTableList", productStatisticsTableList);
+        String s = userSaleData(null, month, null, null);
+        System.out.println(s);
+        return "modules/biz/statistics/statisticsUserTables";
+    }
+    /**
+     * 统计总的会员数，采购中心数，订单数量，总额、已收货款，商品数量 平均客单价
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "getBizTotalStatisticsDto")
+    public String getBizTotalStatisticsDto(Model model){
+        BizTotalStatisticsDto bizTotalStatisticsDto = bizStatisticsService.getBizTotalStatisticsDto();
+        model.addAttribute("totalStatistics",bizTotalStatisticsDto);
+        return "modules/biz/statistics/bizTotalStatistics";
+    }
 
 }

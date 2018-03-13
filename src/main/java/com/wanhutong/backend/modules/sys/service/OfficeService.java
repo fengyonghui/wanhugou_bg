@@ -238,8 +238,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			}else if(flag){
 				office.setCenterId(user.getCompany().getId());
 			}
-
-			office.setCcStatus(1);
 			//office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 			return super.findPage(page, office);
 		}

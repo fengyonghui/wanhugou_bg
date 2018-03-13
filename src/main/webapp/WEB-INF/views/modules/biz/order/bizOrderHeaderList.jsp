@@ -38,9 +38,9 @@
         <%--禁止后退键 作用于IE、Chrome--%>
         document.onkeydown=banBackSpace;
     </script><%--用于键盘Bcackspace回退BUG问题--%>
-	<script type="text/javascript">
+    <script type="text/javascript">
 		$(document).ready(function() {
-			
+
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -61,8 +61,8 @@
 		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/" method="post" class="breadcrumb form-search">
-		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+        <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+        <input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 		<%--<input id="customer" name="bizOrderHeader.customer.id" type="hidden" value="${bizOrderHeader.customer.id}"/>--%>
 		<form:hidden path="consultantId"/>
@@ -106,6 +106,9 @@
 									allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 				</c:if>
 			</li>
+			<li><label>采购中心：</label>
+				<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<c:if test="${bizOrderHeader.flag=='check_pending'}">
 				<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
@@ -113,13 +116,14 @@
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
-	<sys:message content="${message}"/>
+    <sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
 				<th>订单编号</th>
 				<th>订单类型</th>
 				<th>采购商名称</th>
+				<th>所属采购中心</th>
 				<th>采购商电话</th>
 				<th>商品总价</th>
 				<th>交易金额</th>
@@ -154,6 +158,9 @@
 					${orderHeader.customer.name}
 				</td>
 				<td>
+					${orderHeader.centersName}
+				</td>
+				<td>
 					${orderHeader.customer.phone}
 				</td>
 				<td><font color="#848484">
@@ -184,6 +191,9 @@
 					<c:if test="${orderHeader.bizStatus ==10 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
 						<font color="#088A29">已结清</font>
 					</c:if>
+                    <c:if test="${orderHeader.bizStatus ==10}">
+                        <font color="#088A29">已结清</font>
+                    </c:if>
                     <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
                         <font color="#088A29">已结清</font>
                     </c:if>
@@ -235,6 +245,6 @@
 		</c:forEach>
 		</tbody>
 	</table>
-	<div class="pagination">${page}</div>
+    <div class="pagination">${page}</div>
 </body>
 </html>
