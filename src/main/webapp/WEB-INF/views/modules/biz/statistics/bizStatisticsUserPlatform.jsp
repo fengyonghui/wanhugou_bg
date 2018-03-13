@@ -42,8 +42,8 @@
         var typeEle = $("#type");
         var type = typeEle.find("option:selected").val();
 
-        var bizTypeEle = $("#bizType");
-        var centerType = bizTypeEle.find("option:selected").val();
+        var centerTypeEle = $("#centerType");
+        var centerType = centerTypeEle.find("option:selected").val();
 
         var applyDate = $("#applyDate").val();
 
