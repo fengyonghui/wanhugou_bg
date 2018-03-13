@@ -39,7 +39,7 @@ public class BizOrderStatisticsDto {
      */
     private BigDecimal profitPrice;
     //上月利润
-    private BigDecimal upProfitPrice;
+    private BigDecimal upProfitPrice = new BigDecimal(0);
 
 
     public BigDecimal getProfitPrice() {

@@ -30,7 +30,7 @@ import java.util.Set;
  */
 @Service
 @Transactional(readOnly = true, rollbackFor = Exception.class)
-public class BizStatisticsService {
+public class BizStatisticsDayService {
 
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
@@ -40,31 +40,32 @@ public class BizStatisticsService {
     @Resource
     private OfficeDao officeDao;
 
+
     /**
-     * 请求参数日期格式
+     * 日统计请求参数日期格式
      */
-    public static final String PARAM_DATE_FORMAT = "yyyy-MM";
+    public static final String DAY_PARAM_DATE_FORMAT = "yyyy-MM-dd";
 
 
     /**
      * 根据月份取产品统计相关数据
      *
-     * @param month 取数据的月份
+     * @param date 取数据的月份
      * @return 根据不同产品分类的统计数据
      */
-    public List<BizProductStatisticsDto> productStatisticData (String month, Integer variId, Integer purchasingId) {
-        return bizOrderHeaderDao.getProductStatisticData(month, variId, purchasingId);
+    public List<BizProductStatisticsDto> productStatisticData (String date, Integer variId, Integer purchasingId) {
+        return bizOrderHeaderDao.getProductStatisticDataDay(date, variId, purchasingId);
     }
 
 
     /**
      * 根据月份取订单统计相关数据
      *
-     * @param month 取数据的月份
+     * @param date 取数据的日期
      * @return 根据不同机构分类的统计数据
      */
-    public Map<String, BizOrderStatisticsDto> orderStatisticData(String month) {
-        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonth(month, OrderHeaderBizStatusEnum.VALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
+    public Map<String, BizOrderStatisticsDto> orderStatisticData(String date) {
+        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeDay(date, OrderHeaderBizStatusEnum.VALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
         Map<String, BizOrderStatisticsDto> resultMap = Maps.newHashMap();
         orderTotalAndCountByCreateTimeMonthStatus.forEach(o -> {
             resultMap.putIfAbsent(o.getOfficeName(), o);
@@ -78,13 +79,13 @@ public class BizStatisticsService {
      *
      * @param officeNameSet 所有机构名称
      * @param dataMap       数据集合
-     * @param month         选择的日期
+     * @param date         选择的日期
      * @return 封装数据
      */
-    public EchartsSeriesDto genEchartsSeriesDto(Set<String> officeNameSet, Map<String, BizOrderStatisticsDto> dataMap, LocalDateTime month, String barChartType) {
+    public EchartsSeriesDto genEchartsSeriesDto(Set<String> officeNameSet, Map<String, BizOrderStatisticsDto> dataMap, LocalDateTime date, String barChartType) {
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
-        if (dataMap.size() > 0) {
             List<Object> dataList = Lists.newArrayList();
+        if (dataMap.size() > 0) {
             officeNameSet.forEach(o -> {
                 BizOrderStatisticsDto bizOrderStatisticsDto = dataMap.get(o);
                 switch (OrderStatisticsDataTypeEnum.parse(StringUtils.isNotBlank(barChartType) ? Integer.valueOf(barChartType) : 1)) {
@@ -101,39 +102,31 @@ public class BizStatisticsService {
                 }
             });
             echartsSeriesDto.setData(dataList);
-            echartsSeriesDto.setName(month.toString(BizStatisticsService.PARAM_DATE_FORMAT));
-            return echartsSeriesDto;
+        }else {
+            echartsSeriesDto.setData(Lists.newArrayList());
         }
-        return null;
+        echartsSeriesDto.setName(date.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
+        return echartsSeriesDto;
     }
 
     /**
      * 根据月份取用户统计相关数据
      *
-     * @param month 取数据的月份
+     * @param day 取数据的月份
      * @return 根据不同机构分类的统计数据
      */
-    public List<BizUserStatisticsDto> userStatisticData(String month) {
-        return bizOrderHeaderDao.getUserStatisticData(month);
+    public List<BizUserStatisticsDto> userStatisticData(String day) {
+        return bizOrderHeaderDao.getUserStatisticDataDay(day);
     }
 
     /**
      * 根据月份取用户业绩统计相关数据
      *
-     * @param month 取数据的月份
+     * @param day 取数据的月份
      * @return 根据不同用户分类的统计数据
      */
-    public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month, Integer purchasingId) {
-        return bizOrderHeaderDao.getUserSaleStatisticData(month, purchasingId, null);
-    }
-    /**
-     * 根据月份和采购中心取客户专员数据
-     * @param month
-     * @param purchasingId
-     * @return
-     */
-    public List<BizUserSaleStatisticsDto> userTableStatisticData(String month, Integer purchasingId) {
-        return bizOrderHeaderDao.getUserTableStatisticData(month, purchasingId);
+    public List<BizUserSaleStatisticsDto> userSaleStatisticData(String day, Integer purchasingId) {
+        return bizOrderHeaderDao.getUserSaleStatisticDataDay(day, purchasingId, null);
     }
 
     /**
@@ -158,6 +151,6 @@ public class BizStatisticsService {
      * @param salesmanId 销售员ID
      */
     public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(Integer salesmanId) {
-        return bizOrderHeaderDao.getSingleUserSaleStatisticData(null, null, salesmanId);
+        return bizOrderHeaderDao.getSingleUserSaleStatisticDataDay(null, null, salesmanId);
     }
 }
