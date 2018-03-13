@@ -12,6 +12,7 @@
     <input id="endDate" value="${endDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <label>
         <select class="input-medium" id="variId">
+            <option value="0" label="全部"></option>
             <c:forEach items="${varietyList}" var="v">
                 <option value="${v.id}" label="${v.name}">${v.name}</option>
             </c:forEach>

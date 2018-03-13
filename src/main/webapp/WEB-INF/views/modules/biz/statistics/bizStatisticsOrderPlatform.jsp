@@ -4,35 +4,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>产品统计</title>
+    <title>订单统计</title>
 </head>
 <body>
 <div>
-    <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
-    <label>
-        <select class="input-medium" id="variId">
-            <option value="0" label="全部"></option>
-            <c:forEach items="${varietyList}" var="v">
-                <option value="${v.id}" label="${v.name}">${v.name}</option>
-            </c:forEach>
-        </select>
-    </label>
-    <label>
-        <select class="input-medium" id="dataType">
-            <option value="1" label="销售额">销售额</option>
-            <option value="3" label="订单量">订单量</option>
-        </select>
-    </label>
-    <label>
-        <select class="input-medium" id="purchasingId">
-            <option value="0" label="全部"></option>
-            <c:forEach items="${purchasingList}" var="v">
-                <option value="${v.id}" label="${v.name}">${v.name}</option>
-            </c:forEach>
-        </select>
-    </label>
+    <input name="applyDate" id="applyDate" value="" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <select class="input-medium" id="barChartType">
+        <option value="0" label="年"></option>
+        <option value="1" label="月"></option>
+    </select>
+
+    <select class="input-medium" id="orderType">
+        <option value="0" label="全部"></option>
+        <option value="1" label="普通"></option>
+        <option value="3" label="配资业务"></option>
+    </select>
+
+    <select class="input-medium" id="centerType">
+        <option value="0" label="全部"></option>
+        <option value="1" label="采购中心"></option>
+        <option value="2" label="网供"></option>
+    </select>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
-    <div id="orderTotalDataChart" style="height: 500px"></div>
+    (如查询年报无需选择月份)
+    <div id="orderTotalDataChart" style="height: 300px;"></div>
+
 
 </div>
 
@@ -46,28 +42,33 @@
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
 
+        var barChartTypeEle = $("#barChartType");
+        var barChartType = barChartTypeEle.find("option:selected").val();
+        var barChartTypeDesc = barChartTypeEle.find("option:selected").html();
+
+        var orderTypeEle = $("#orderType");
+        var orderType = orderTypeEle.find("option:selected").val();
+
+        var centerTypeEle = $("#centerType");
+        var centerType = centerTypeEle.find("option:selected").val();
+
         var applyDate = $("#applyDate").val();
 
-        var variIdEle = $("#variId");
-        var variId = variIdEle.find("option:selected").val();
-
-        var dataTypeEle = $("#dataType");
-        var dataType = dataTypeEle.find("option:selected").val();
-        var dataTypeDesc = dataTypeEle.find("option:selected").html();
-
-        var purchasingIdEle = $("#purchasingId");
-        var purchasingId = purchasingIdEle.find("option:selected").val();
-
+        if (barChartType == '1' && (applyDate == '' || applyDate == null)) {
+            alert("请选择日期");
+            return;
+        }
         $.ajax({
             type: 'GET',
-            url: "${adminPath}/biz/statistics/productData",
-            data: {"month": applyDate, "variId" : variId, "dataType" : dataType, "purchasingId" : purchasingId},
+            url: "${adminPath}/biz/statistics/platform/orderData",
+            data: {"startDate" : applyDate, "type" : barChartType, "orderType" : orderType, "centerType" : centerType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
                     return;
                 }
+
                 salesVolumeChart.setOption({
                     title: {
                         text: ''
@@ -93,35 +94,30 @@
                         }
                     },
                     legend: {
-                        data: dataTypeDesc
-                    },
-                    grid: {
-                        bottom:'60%',
-                        left: '10%'
+                        data: '用户量'
                     },
                     xAxis: {
                         data: msg.nameList,
                         axisPointer: {
                             type: 'shadow'
-                        },
-                        axisLabel: {
-                            interval: 0,
-                            formatter:function(value)
-                            {
-                                return value.split("").join("\n");
-                            }
                         }
                     },
                     yAxis: [
                         {
                             type: 'value',
                             scale: true,
-                            name: dataTypeDesc,
+                            name: '销售额',
+                            min:0
+                        },{
+                            type: 'value',
+                            scale: true,
+                            name: '订单量',
                             min:0
                         }
                     ],
                     series: msg.seriesList
                 });
+
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

@@ -8,26 +8,21 @@
 </head>
 <body>
 <div>
-    <input id="startDate" value="${startDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
-    <input id="endDate" value="${endDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input id="startDate" value="" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="endDate" value="" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
     <select class="input-medium" id="barChartType">
-        <option value="1" label="销售额">销售额</option>
-        <option value="3" label="订单量">订单量</option>
+        <option value="0" label="年"></option>
+        <option value="1" label="月"></option>
     </select>
+
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    (如查询年报无需选择月份)
     <div id="orderTotalDataChart" style="height: 300px;"></div>
+    <div id="orderTotalDataCountChart" style="height: 300px;"></div>
+
 
 </div>
-<%--<div>--%>
-    <%--<label>--%>
-        <%--<select class="input-medium" id="dataType">--%>
-            <%--<option value="1" label="销售额">销售额</option>--%>
-            <%--<option value="2" label="销售额增长率">销售额增长率(%)</option>--%>
-        <%--</select>--%>
-    <%--</label>--%>
-    <%--<input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>--%>
-    <%--<div id="orderRateChart" style="height: 300px"></div>--%>
-<%--</div>--%>
+
 
 </body>
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
@@ -36,26 +31,26 @@
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
+        var orderTotalDataCountChart = echarts.init(document.getElementById('orderTotalDataCountChart'), 'light');
         salesVolumeChart.clear();
-        var orderRateChart = echarts.init(document.getElementById('orderRateChart'), 'light');
-        orderRateChart.clear();
-
-        // var dataTypeEle = $("#dataType");
-        // var dataType = dataTypeEle.find("option:selected").val();
-        // var dataTypeDesc = dataTypeEle.find("option:selected").html();
-        var dataType = "1";
-        var dataTypeDesc = "销售额";
+        orderTotalDataCountChart.clear();
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
         var barChartTypeDesc = barChartTypeEle.find("option:selected").html();
 
-        var endDate = $("#endDate").val();
+
         var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
+
+        if (barChartType == '1' && (startDate == '' || startDate == null)) {
+            alert("请选择日期");
+            return;
+        }
         $.ajax({
             type: 'GET',
-            url: "${adminPath}/biz/statistics/between/orderData",
-            data: {"startDate": startDate,"endDate": endDate, "lineChartType": dataType, "barChartType": barChartType},
+            url: "${adminPath}/biz/statistics/platform/orderDataCategoryByCenter",
+            data: {"startDate" : startDate, "endDate" : endDate, "type" : barChartType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -88,10 +83,10 @@
                         }
                     },
                     legend: {
-                        data: msg.monthList
+                        data: ''
                     },
                     xAxis: {
-                        data: msg.officeNameSet,
+                        data: msg.dateStrList,
                         axisPointer: {
                             type: 'shadow'
                         }
@@ -100,18 +95,18 @@
                         {
                             type: 'value',
                             scale: true,
-                            name: barChartTypeDesc
+                            name: '销售额',
+                            min:0
                         }
                     ],
                     series: msg.seriesList
                 });
 
-
-                orderRateChart.setOption({
+                orderTotalDataCountChart.setOption({
                     title: {
                         text: ''
                     },
-                    tooltip : {
+                    tooltip: {
                         trigger: 'axis',
                         axisPointer: {
                             type: 'cross',
@@ -125,17 +120,17 @@
                         right: 30,
                         feature: {
                             saveAsImage: {
-                                show:true,
-                                excludeComponents :['toolbox'],
+                                show: true,
+                                excludeComponents: ['toolbox'],
                                 pixelRatio: 2
                             }
                         }
                     },
                     legend: {
-                        data: msg.officeNameSet
+                        data: ''
                     },
                     xAxis: {
-                        data: msg.monthList,
+                        data: msg.dateStrList,
                         axisPointer: {
                             type: 'shadow'
                         }
@@ -144,11 +139,13 @@
                         {
                             type: 'value',
                             scale: true,
-                            name: dataTypeDesc
+                            name: '订单量',
+                            min:0
                         }
                     ],
-                    series: msg.rateSeriesList
+                    series: msg.seriesCountList
                 });
+
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

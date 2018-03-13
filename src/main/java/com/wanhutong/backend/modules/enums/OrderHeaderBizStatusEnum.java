@@ -17,7 +17,7 @@ public enum OrderHeaderBizStatusEnum {
     }
     public static OrderHeaderBizStatusEnum stateOf(Integer index) {
         for (OrderHeaderBizStatusEnum statusEnum : values()) {
-            if (statusEnum.state==index) {
+            if (statusEnum.state.intValue() == index) {
                 return statusEnum;
             }
         }
@@ -33,16 +33,10 @@ public enum OrderHeaderBizStatusEnum {
     }
 
     /**
-     * 有效订单状态集合
+     * 无效订单状态集合
      * DELETE 状态情况特殊,在订单已支付的情况下也是有效订单
      */
     public static final List<OrderHeaderBizStatusEnum> VALID_STATUS = Lists.newArrayList(
-            SUPPLYING,
-            PURCHASING,
-            ACCOMPLISH_PURCHASE,
-            STOCKING,
-            SEND,
-            RECEIVED,
-            COMPLETE
+            UNAPPROVE,CANCLE,UNPAY
     );
 }
