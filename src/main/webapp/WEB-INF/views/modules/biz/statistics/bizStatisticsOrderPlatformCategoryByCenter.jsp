@@ -8,8 +8,8 @@
 </head>
 <body>
 <div>
-    <input id="startDate" value="" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
-    <input id="endDate" value="" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="startDate" value=""  onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="endDate" value="" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
     <select class="input-medium" id="barChartType">
         <option value="0" label="年"></option>
         <option value="1" label="月"></option>
