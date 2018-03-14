@@ -14,7 +14,7 @@
 			count(1) as 'centCount'
 		FROM sys_office cent
 		WHERE cent.`status`=1
-		AND cent.type = 8
+		AND cent.type = #{type}
 	</select>
 	<select id="getTotalStatisticsDto" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizTotalStatisticsDto">
 		SELECT

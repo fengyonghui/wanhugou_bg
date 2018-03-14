@@ -152,7 +152,7 @@
 					</c:if>
 				</td>
 				<td>
-					${fns:getDictLabel(orderHeader.bizType, 'biz_order_type', '未知状态')}
+					${fns:getDictLabel(orderHeader.orderType, 'biz_order_type', '未知状态')}
 				</td>
 				<td>
 					${orderHeader.customer.name}
@@ -191,9 +191,9 @@
 					<c:if test="${orderHeader.bizStatus ==10 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
 						<font color="#088A29">已结清</font>
 					</c:if>
-                    <c:if test="${orderHeader.bizStatus ==10}">
-                        <font color="#088A29">已结清</font>
-                    </c:if>
+					<%--<c:if test="${orderHeader.bizStatus ==10}">--%>
+						<%--<font color="#088A29">已结清</font>--%>
+					<%--</c:if>--%>
                     <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
                         <font color="#088A29">已结清</font>
                     </c:if>

@@ -17,6 +17,14 @@
     <div class="controls">${totalStatistics.centCount}</div>
 </div>
 <div class="control-group">
+    <label class="control-label">网供（个）：</label>
+    <div class="controls">${totalStatistics.supplyCount}</div>
+</div>
+<div class="control-group">
+    <label class="control-label">配资中心（个）：</label>
+    <div class="controls">${totalStatistics.capitalCount}</div>
+</div>
+<div class="control-group">
     <label class="control-label">订单数量（单）：</label>
     <div class="controls">${totalStatistics.orderCount}</div>
 </div>
