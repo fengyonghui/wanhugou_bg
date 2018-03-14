@@ -102,7 +102,8 @@
                         }
                     },
                     legend: {
-                        data: ['订单量', '销售额']
+                        data: ['订单量', '销售额'],
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.nameList,
@@ -155,7 +156,8 @@
                         }
                     },
                     legend: {
-                        data: ['订单量', '销售额']
+                        data: ['订单量', '销售额'],
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.monthList,

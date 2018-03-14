@@ -97,7 +97,8 @@
                         }
                     },
                     legend: {
-                        data: msg.monthList
+                        data: msg.monthList,
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.officeNameSet,
@@ -146,7 +147,8 @@
                         }
                     },
                     legend: {
-                        data: msg.officeNameSet
+                        data: msg.officeNameSet,
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.monthList,

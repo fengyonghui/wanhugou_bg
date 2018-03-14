@@ -102,7 +102,8 @@
                         }
                     },
                     legend: {
-                        data: '用户量'
+                        data: '用户量',
+                        y : 'bottom'
                     },
                     // grid: {
                     //     bottom:'60%',
