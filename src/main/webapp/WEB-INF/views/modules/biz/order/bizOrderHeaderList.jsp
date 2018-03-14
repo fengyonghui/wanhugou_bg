@@ -152,7 +152,7 @@
 					</c:if>
 				</td>
 				<td>
-					${fns:getDictLabel(orderHeader.bizType, 'biz_order_type', '未知状态')}
+					${fns:getDictLabel(orderHeader.orderType, 'biz_order_type', '未知状态')}
 				</td>
 				<td>
 					${orderHeader.customer.name}
