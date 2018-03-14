@@ -526,7 +526,7 @@ public class BizStatisticsController extends BaseController {
         return "modules/biz/statistics/statisticsUserTables";
     }
     /**
-     * 统计总的会员数，采购中心数，订单数量，总额、已收货款，商品数量 平均客单价
+     * 统计总的会员数，采购中心数，网供数，配资中心数，订单数量，总额、已收货款，商品数量 平均客单价
      * @return
      */
     @RequiresPermissions("biz:statistics:order:view")

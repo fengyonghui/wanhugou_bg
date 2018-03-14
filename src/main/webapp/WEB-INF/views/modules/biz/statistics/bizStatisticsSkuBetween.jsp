@@ -88,7 +88,7 @@
                         }
                     ],
                     series: [{
-                        name:'参加活动人数',
+                        name:'商品新增数量',
                         type:'line',
                         symbolSize:4,   //拐点圆的大小
                         color:['red'],  //折线条的颜色
