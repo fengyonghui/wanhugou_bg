@@ -23,7 +23,7 @@
 
 </head>
 <body>
-<%--<span id="totalCount">11111</span>--%>
+<span id="totalCount"></span>
 <div id="allmap"></div>
 </body>
 </html>
@@ -54,8 +54,8 @@
         url:"${ctx}/sys/viewMap/findOfficeAddress",
         data:{type:7},
         success:function (data) {
-            // $("#totalCount").text(data.length)
-            $.each(data,function (index,offAdress) {
+             $("#totalCount").text(data.ofCount)
+            $.each(data.list,function (index,offAdress) {
                 var vectorMarker = new BMap.Marker(new BMap.Point(offAdress.bizLocation.longitude, offAdress.bizLocation.latitude), {
                     // 指定Marker的icon属性为Symbol
                     icon: new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
