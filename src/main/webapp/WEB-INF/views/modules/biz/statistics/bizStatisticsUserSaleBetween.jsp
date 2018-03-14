@@ -59,6 +59,10 @@
             alert("日期选择错误!");
             return;
         }
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/between/userSaleData",
@@ -79,7 +83,12 @@
 
                 salesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '采购顾问业绩统计(区间)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',
@@ -127,7 +136,12 @@
                 });
                 singleSalesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '采购顾问业绩统计(个人/区间)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',

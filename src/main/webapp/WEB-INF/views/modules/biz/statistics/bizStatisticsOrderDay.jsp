@@ -32,6 +32,7 @@
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
@@ -49,11 +50,16 @@
         var barChartType = barChartTypeEle.find("option:selected").val();
         var barChartTypeDesc = barChartTypeEle.find("option:selected").html();
 
-        var applyDate = $("#applyDate").val();
+        var startDate = $("#applyDate").val();
+
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/day/orderData",
-            data: {"month": applyDate, "lineChartType": dataType, "barChartType": barChartType},
+            data: {"month": startDate, "lineChartType": dataType, "barChartType": barChartType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -63,7 +69,12 @@
 
                 salesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '销售额/订单量统计(近十日)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',
@@ -107,7 +118,12 @@
 
                 orderRateChart.setOption({
                     title: {
-                        text: ''
+                        text: '销售额统计(近十日)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip : {
                         trigger: 'axis',

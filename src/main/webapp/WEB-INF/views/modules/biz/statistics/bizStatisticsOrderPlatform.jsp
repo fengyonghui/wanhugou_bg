@@ -32,6 +32,7 @@
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
@@ -45,16 +46,20 @@
         var centerTypeEle = $("#centerType");
         var centerType = centerTypeEle.find("option:selected").val();
 
-        var applyDate = $("#applyDate").val();
+        var startDate = $("#applyDate").val();
 
-        if (barChartType == '1' && (applyDate == '' || applyDate == null)) {
+        if (barChartType == '1' && (startDate == '' || startDate == null)) {
             alert("请选择日期");
+            return;
+        }
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
             return;
         }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/platform/orderData",
-            data: {"startDate" : applyDate, "type" : barChartType,  "centerType" : centerType},
+            data: {"startDate" : startDate, "type" : barChartType,  "centerType" : centerType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -64,7 +69,12 @@
 
                 salesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '平台销售额/订单量统计',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',

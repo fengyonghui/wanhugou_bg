@@ -44,7 +44,10 @@
             alert("请选择日期");
             return;
         }
-
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/platform/orderDataCategoryByCenter",
@@ -58,7 +61,12 @@
 
                 salesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '分平台销售额统计',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',
@@ -102,7 +110,12 @@
 
                 orderTotalDataCountChart.setOption({
                     title: {
-                        text: ''
+                        text: '分平台订单量统计',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',

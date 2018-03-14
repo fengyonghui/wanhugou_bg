@@ -41,12 +41,13 @@
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
 
-        var applyDate = $("#applyDate").val();
+        var startDate = $("#applyDate").val();
 
         var variIdEle = $("#variId");
         var variId = variIdEle.find("option:selected").val();
@@ -58,10 +59,15 @@
         var purchasingIdEle = $("#purchasingId");
         var purchasingId = purchasingIdEle.find("option:selected").val();
 
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
+
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/productData",
-            data: {"month": applyDate, "variId" : variId, "dataType" : dataType, "purchasingId" : purchasingId},
+            data: {"month": startDate, "variId" : variId, "dataType" : dataType, "purchasingId" : purchasingId},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -70,16 +76,21 @@
                 }
                 salesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '产品销量/销售额统计(月)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',
-                        axisPointer: {
-                            type: 'cross',
-                            crossStyle: {
-                                color: '#999'
-                            }
-                        }
+                        // axisPointer: {
+                        //     type: 'cross',
+                        //     crossStyle: {
+                        //         color: '#999'
+                        //     }
+                        // }
                     },
                     toolbox: {
                         show: true,
@@ -101,15 +112,9 @@
                     },
                     xAxis: {
                         data: msg.nameList,
+                        show:true,
                         axisPointer: {
                             type: 'shadow'
-                        },
-                        axisLabel: {
-                            interval: 0,
-                            formatter:function(value)
-                            {
-                                return value.split("").join("\n");
-                            }
                         }
                     },
                     yAxis: [
