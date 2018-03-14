@@ -67,7 +67,7 @@
 
                 salesVolumeChart.setOption({
                     title: {
-                        text: '销售额/订单量统计(近三月)',
+                        text: '销售额/订单量统计(近三月)\n',
                         textStyle:{
                             fontSize: 16,
                             fontWeight: 'bolder',
@@ -95,7 +95,8 @@
                         }
                     },
                     legend: {
-                        data: msg.monthList
+                        data: msg.monthList,
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.officeNameSet,
@@ -144,7 +145,8 @@
                         }
                     },
                     legend: {
-                        data: msg.officeNameSet
+                        data: msg.officeNameSet,
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.monthList,

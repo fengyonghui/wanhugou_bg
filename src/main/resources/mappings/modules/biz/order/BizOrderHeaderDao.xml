@@ -612,7 +612,7 @@
         WHEN '2017-08'
         THEN '2017-09'
         ELSE date_format(oh.create_time, '%Y-%m')
-        END   createDate
+        END   createTime
 	    FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
@@ -669,7 +669,7 @@
         WHEN '2017-08'
         THEN '2017-09'
         ELSE date_format(oh.create_time, '%Y-%m')
-        END   createDate
+        END   createTime
 	    FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id

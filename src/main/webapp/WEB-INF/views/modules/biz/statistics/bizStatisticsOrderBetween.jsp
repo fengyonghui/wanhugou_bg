@@ -105,7 +105,8 @@
                         }
                     },
                     legend: {
-                        data: '区间'
+                        data: '区间',
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.officeNameSet,

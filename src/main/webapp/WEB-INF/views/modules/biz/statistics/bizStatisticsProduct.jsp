@@ -104,7 +104,8 @@
                         }
                     },
                     legend: {
-                        data: dataTypeDesc
+                        data: dataTypeDesc,
+                        y : 'bottom'
                     },
                     grid: {
                         bottom:'60%',
