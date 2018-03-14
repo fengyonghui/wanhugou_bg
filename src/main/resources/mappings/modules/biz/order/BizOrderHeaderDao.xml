@@ -586,6 +586,7 @@
 			from sys_office AS s1, sys_user AS u1
 			where s1.id = u1.company_id
 			AND s1.type = 6
+			AND s.name NOT LIKE '%测试%'
 			AND u1.name NOT LIKE '%测试%'
 			AND date_format(s1.create_date, '%Y-%m') = #{month}
 			AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}

@@ -115,6 +115,10 @@
                         show:true,
                         axisPointer: {
                             type: 'shadow'
+                        },
+                        axisLabel: {
+                            interval:0,
+                            rotate:-30
                         }
                     },
                     yAxis: [
