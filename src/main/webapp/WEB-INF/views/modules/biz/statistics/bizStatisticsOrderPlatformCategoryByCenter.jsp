@@ -89,7 +89,8 @@
                         }
                     },
                     legend: {
-                        data: ''
+                        data: '',
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.dateStrList,
@@ -138,7 +139,8 @@
                         }
                     },
                     legend: {
-                        data: ''
+                        data: '',
+                        y : 'bottom'
                     },
                     xAxis: {
                         data: msg.dateStrList,
