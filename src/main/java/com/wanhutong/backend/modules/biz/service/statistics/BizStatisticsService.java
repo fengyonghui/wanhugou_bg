@@ -66,7 +66,7 @@ public class BizStatisticsService {
      * @return 根据不同机构分类的统计数据
      */
     public Map<String, BizOrderStatisticsDto> orderStatisticData(String month) {
-        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonth(month, OrderHeaderBizStatusEnum.VALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
+        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonth(month + "%", OrderHeaderBizStatusEnum.INVALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
         Map<String, BizOrderStatisticsDto> resultMap = Maps.newHashMap();
         orderTotalAndCountByCreateTimeMonthStatus.forEach(o -> {
             resultMap.putIfAbsent(o.getOfficeName(), o);
@@ -126,7 +126,7 @@ public class BizStatisticsService {
      * @return 根据不同用户分类的统计数据
      */
     public List<BizUserSaleStatisticsDto> userSaleStatisticData(String month, Integer purchasingId) {
-        return bizOrderHeaderDao.getUserSaleStatisticData(month, purchasingId, null);
+        return bizOrderHeaderDao.getUserSaleStatisticData(StringUtils.isBlank(month) ? null : month + "%", purchasingId, null, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
     /**
      * 根据月份和采购中心取客户专员数据
@@ -135,7 +135,7 @@ public class BizStatisticsService {
      * @return
      */
     public List<BizUserSaleStatisticsDto> userTableStatisticData(String month, Integer purchasingId) {
-        return bizOrderHeaderDao.getUserTableStatisticData(month, purchasingId);
+        return bizOrderHeaderDao.getUserTableStatisticData(month, purchasingId, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
 
     /**
@@ -161,7 +161,7 @@ public class BizStatisticsService {
      * @param salesmanId 销售员ID
      */
     public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(Integer salesmanId) {
-        return bizOrderHeaderDao.getSingleUserSaleStatisticData(null, null, salesmanId);
+        return bizOrderHeaderDao.getSingleUserSaleStatisticData(null, null, salesmanId, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
 
     public Map<String,BizTotalStatisticsDto> getBizTotalStatisticsDto(){

@@ -539,12 +539,14 @@
   			LEFT JOIN biz_order_detail AS detail ON detail.order_id = header.id
   			LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
 		WHERE
-			header.order_type = 1 and
+			header.order_type = 1
+			AND office.name NOT LIKE '%测试%'
+			and
 			(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 				biz_status != #{item.state}
 			</foreach>
 			OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
-      		AND date_format(header.create_time, '%Y-%m') = #{month}
+      		AND header.create_time LIKE #{month}
       		AND office.type = #{officeType}
       		GROUP BY office.id
 	</select>
@@ -584,6 +586,7 @@
 			from sys_office AS s1, sys_user AS u1
 			where s1.id = u1.company_id
 			AND s1.type = 6
+			AND u1.name NOT LIKE '%测试%'
 			AND date_format(s1.create_date, '%Y-%m') = #{month}
 			AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 			AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
@@ -606,11 +609,15 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 	    WHERE
 		oh.order_type = 1
+		AND off.name NOT LIKE '%测试%'
+		AND us.name NOT LIKE '%测试%'
         and oh.`status` = 1
-	    AND (oh.biz_status IN (15,17,18,19,20,25,30)
-	    OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+	    AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		<if test="month != null and month != ''">
-			AND date_format(oh.create_time, '%Y-%m') = #{month}
+			AND oh.create_time LIKE #{month}
 		</if>
 		<if test="purchasingId != null and purchasingId != 0">
 			AND us.office_id = #{purchasingId}
@@ -654,9 +661,13 @@
 		<!--end-->
 	    WHERE
 		oh.order_type = 1
+		AND off.name NOT LIKE '%测试%'
+		AND us.name NOT LIKE '%测试%'
         and oh.`status` = 1
-	    AND (oh.biz_status IN (15,17,18,19,20,25,30)
-	    OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+	    AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		<if test="month != null and month != ''">
 			AND date_format(oh.create_time, '%Y-%m') = #{month}
 		</if>
@@ -690,6 +701,7 @@
 	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		AND date_format(header.create_time, '%Y-%m-%d') = #{day}
+		AND office.name NOT LIKE '%测试%'
 		AND office.type = #{officeType}
 		GROUP BY office.id
 	</select>
@@ -729,12 +741,15 @@
 		from sys_office AS s1, sys_user AS u1
 		where s1.id = u1.company_id
 		AND s1.type = 6
+		AND s1.name NOT LIKE '%测试%'
+		AND u1.name NOT LIKE '%测试%'
 		AND date_format(s1.create_date, '%Y-%m-%d') = #{day}
 		AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
 		AND c.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		AND s.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL} and s.id = c.center_id
 		and s.TYPE =8
+		AND s.name NOT LIKE '%测试%'
 		GROUP BY center_id
 	</select>
 
@@ -751,9 +766,13 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type = 1
+		AND off.name NOT LIKE '%测试%'
+		AND us.name NOT LIKE '%测试%'
         and	oh.`status` = 1
-		AND (oh.biz_status IN (15,17,18,19,20,25,30)
-		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		<if test="day != null and day != ''">
 			AND date_format(oh.create_time, '%Y-%m-%d') = #{day}
 		</if>
@@ -779,9 +798,13 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type = 1
+		AND off.name NOT LIKE '%测试%'
+		AND us.name NOT LIKE '%测试%'
         and	oh.`status` = 1
-		AND (oh.biz_status IN (15,17,18,19,20,25,30)
-		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		<if test="day != null and day != ''">
 			AND date_format(oh.create_time, '%Y-%m-%d') = #{day}
 		</if>
@@ -812,13 +835,9 @@
 		biz_status != #{item.state}
 	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
-		<if test="startDate != null and startDate != ''">
-			AND header.create_time >= #{startDate}
-		</if>
-		<if test="endDate != null and endDate != ''">
-			AND #{endDate} >= header.create_time
-		</if>
+		AND header.create_time BETWEEN #{startDate} AND #{endDate}
 		AND office.type = #{officeType}
+		AND office.name NOT LIKE '%测试%'
 		GROUP BY office.id
 	</select>
 
@@ -840,12 +859,7 @@
 		and pi.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		and ss.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		and ss.sku_id = si.id
-		<if test="startDate != null and startDate != ''">
-			AND oh.create_time >= #{startDate}
-		</if>
-		<if test="endDate != null and endDate != ''">
-			AND #{endDate} >= oh.create_time
-		</if>
+		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		<if test="purchasingId != null and purchasingId != 0">
 			AND ccc.center_id = #{purchasingId}
 		</if>
@@ -861,18 +875,16 @@
 		SELECT s1.id
 		from sys_office AS s1, sys_user AS u1
 		where s1.id = u1.company_id
+		AND s1.name NOT LIKE '%测试%'
+		AND u1.name NOT LIKE '%测试%'
 		AND s1.type = 6
-		<if test="startDate != null and startDate != ''">
-			AND s1.create_date >= #{startDate}
-		</if>
-		<if test="endDate != null and endDate != ''">
-			AND #{endDate} >= s1.create_date
-		</if>
+		AND s1.create_date BETWEEN #{startDate} AND #{endDate}
 		AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		AND u1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL})
 		AND c.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		AND s.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL} and s.id = c.center_id
 		and s.TYPE =8
+		AND s.name NOT LIKE '%测试%'
 		GROUP BY center_id
 	</select>
 
@@ -889,15 +901,14 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type = 1
+		AND us.name NOT LIKE '%测试%'
         and oh.`status` = 1
-		AND (oh.biz_status IN (15,17,18,19,20,25,30)
-		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
-		<if test="startDate != null and startDate != ''">
-			AND oh.create_time >= #{startDate}
-		</if>
-		<if test="endDate != null and endDate != ''">
-			AND #{endDate} >= oh.create_time
-		</if>
+		AND off.name NOT LIKE '%测试%'
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND oh.create_time BETWEEN #{startDate} AND  #{endDate}
 		<if test="purchasingId != null and purchasingId != 0">
 			AND us.office_id = #{purchasingId}
 		</if>
@@ -920,15 +931,14 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type = 1
+		AND us.name NOT LIKE '%测试%'
         and oh.`status` = 1
-		AND (oh.biz_status IN (15,17,18,19,20,25,30)
-		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
-		<if test="startDate != null and startDate != ''">
-			AND oh.create_time >= #{startDate}
-		</if>
-		<if test="endDate != null and endDate != ''">
-			AND  #{endDate} >= oh.create_time
-		</if>
+		AND off.name NOT LIKE '%测试%'
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		<if test="purchasingId != null and purchasingId != 0">
 			AND us.office_id = #{purchasingId}
 		</if>
@@ -939,6 +949,19 @@
 	</select>
 
 <!--=====================================================================================-->
+	<select id="getAllUserStatisticDataPlatform"
+			resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
+		SELECT
+  		count(1)                                AS count,
+  		date_format(so.create_date, '%Y-%m-%d') AS createDate
+		FROM
+  		sys_office so
+		WHERE so.create_date BETWEEN #{startDate} AND #{endDate}
+      	AND so.type = 6
+      	AND so.name NOT LIKE '%测试%'
+      	AND so.`status` = 1
+		GROUP BY createDate
+	</select>
 	<select id="getUserStatisticDataPlatform" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
 		SELECT count(1) AS count,
 		<if test="type == null or type == 0">
@@ -949,6 +972,9 @@
 		</if>
 		FROM sys_office o, sys_user us, biz_custom_center_consultant cc,sys_office so
 		WHERE o.id = us.company_id
+		AND us.name NOT LIKE '%测试%'
+		AND o.name NOT LIKE '%测试%'
+		AND so.name NOT LIKE '%测试%'
 		<if test="type == 1">
 			AND date_format(so.create_date, '%Y-%m') = #{month}
 		</if>
@@ -967,6 +993,19 @@
 		GROUP BY createDate
 	</select>
 
+	<select id="getAllValidOrderTotalAndCount" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		select  count(1) as orderCount,
+		SUM(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		DATE_FORMAT(oh.create_time,'%Y-%m') as createDate
+		FROM biz_order_header oh
+		WHERE oh.`status` = 1
+		and (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		oh.biz_status != #{item.state}
+			</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		GROUP BY createDate
+	</select>
+
 
 
 	<select id="getValidOrderTotalAndCount" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
@@ -981,6 +1020,8 @@
 		from biz_custom_center_consultant cc, sys_user u, biz_order_header oh, sys_office so
 		WHERE cc.consultant_id = u.id
 		and oh.cust_id = cc.cust_id
+		AND so.name NOT LIKE '%测试%'
+		AND u.name NOT LIKE '%测试%'
 		and so.id = u.company_id
 		<if test="centerType == null or centerType == 0">
 		and so.type in (8, 10, 11)
@@ -1021,8 +1062,14 @@
 		LEFT JOIN sys_office cent ON cent.id = us.office_id
 		WHERE
 		oh.`status` = 1
-		AND (oh.biz_status IN (15,17,18,19,20,25,30)
-		OR ( oh.biz_status = 40 AND oh.receive_total > 0))
+		AND us.name NOT LIKE '%测试%'
+		AND office.off NOT LIKE '%测试%'
+		AND office.cent NOT LIKE '%测试%'
+		AND us.name NOT LIKE '%测试%'
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		AND date_format(oh.create_time, '%Y-%m') = #{month}
 		<if test="purchasingId != null and purchasingId != 0">
 			AND us.office_id = #{purchasingId}
