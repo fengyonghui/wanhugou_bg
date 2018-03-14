@@ -17,6 +17,7 @@
 		c.address as "bizLocation.address",
 		c.longitude as "bizLocation.longitude",
 		c.latitude as "bizLocation.latitude",
+		c.pcr_name AS "bizLocation.pcrName",
 		a.receiver as "receiver",
 		a.phone as "phone",
 		a.type AS "type",
@@ -115,6 +116,28 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+	</select>
+
+	<select id="findListByTypes" resultType="SysOfficeAddress">
+		SELECT
+		<include refid="sysOfficeAddressColumns"/>
+		FROM sys_office_address a
+		<include refid="sysOfficeAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			and o2.TYPE in (8,11)
+			<!--<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">-->
+			<!--${sqlMap.officeAddress}-->
+			<!--</if>-->
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		ORDER BY a.update_time DESC
 	</select>
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">

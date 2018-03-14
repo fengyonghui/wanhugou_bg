@@ -48,9 +48,14 @@ public class ViewMapController extends BaseController {
     public List<SysOfficeAddress> findOfficeAddress(String type){
         SysOfficeAddress sysOfficeAddress=new SysOfficeAddress();
         Office office=new Office();
-        office.setType(type);
+
         sysOfficeAddress.setType(2);
         sysOfficeAddress.setOffice(office);
+        if("8".equals(type)){
+            List<SysOfficeAddress> list= sysOfficeAddressService.findListByTypes(sysOfficeAddress);
+            return list;
+         }
+        office.setType(type);
        List<SysOfficeAddress> list= sysOfficeAddressService.findList(sysOfficeAddress);
        return list;
     }

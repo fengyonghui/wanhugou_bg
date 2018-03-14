@@ -64,7 +64,9 @@
                     })
                 });
 
-                var label = new BMap.Label(" "+offAdress.office.name+" ", { offset: new BMap.Size(10, -25) });
+                var oAd=offAdress.office.name+"("+offAdress.receiver+": "+offAdress.phone+")";
+                var oAdress="<br/> 地址："+offAdress.bizLocation.fullAddress;
+                var label = new BMap.Label(oAd+oAdress,{ offset: new BMap.Size(15, -40) });
                 label.setStyle({
                     color: "#fff",
                     border: "0",
@@ -72,7 +74,7 @@
                     display: "none",
                     background: "rgba(66,117,202,0.9)",
                     fontSize: "12px",
-                    height: "20px",
+                    height: "40px",
                     lineHeight: "20px",
                     fontFamily: "微软雅黑"
                 });

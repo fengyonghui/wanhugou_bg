@@ -186,7 +186,7 @@ public class BizStatisticsService {
         one.setCount(totalStatisticsDto.getCustCount().toString());
         map.put("会员总数",one);
         BizTotalStatisticsDto two = new BizTotalStatisticsDto();
-        two.setCount(totalStatisticsDto.getCentCount().toString());
+        two.setCount(((Integer)(totalStatisticsDto.getCentCount()-2)).toString());
         two.setUnit("个");
         map.put("采购中心数",two);
         BizTotalStatisticsDto three = new BizTotalStatisticsDto();

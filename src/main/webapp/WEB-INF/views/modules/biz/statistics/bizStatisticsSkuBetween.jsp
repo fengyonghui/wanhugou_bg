@@ -64,7 +64,12 @@
                 }
                 skuTotalDataChart.setOption({
                     title: {
-                        text: ''
+                        text: '商品新增数量统计',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip : {
                         trigger: 'axis',
@@ -109,12 +114,12 @@
                         symbolSize:4,   //拐点圆的大小
                         color:['red'],  //折线条的颜色
                         data:msg.seriesList.data,
-                        smooth:false,   //关键点，为true是不支持虚线的，实线就用true
+                        smooth:true,   //关键点，为true是不支持虚线的，实线就用true
                         itemStyle:{
                             normal:{
                                 lineStyle:{
                                     width:2,
-                                    type:'dotted'  //'dotted'虚线 'solid'实线
+                                    type:'solid'  //'dotted'虚线 'solid'实线
                                 }
                             }
                         }

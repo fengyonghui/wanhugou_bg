@@ -85,4 +85,8 @@ public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, Sy
 	public List<SysOfficeAddress> orderHeaderfindList(SysOfficeAddress sysOfficeAddress) {
 		return sysOfficeAddressDao.orderHeaderfindList(sysOfficeAddress);
 	}
+
+	public List<SysOfficeAddress> findListByTypes(SysOfficeAddress sysOfficeAddress){
+		return sysOfficeAddressDao.findListByTypes(sysOfficeAddress);
+	}
 }

@@ -32,10 +32,11 @@
 
 
     var map = new BMap.Map("allmap");
-    var point = new BMap.Point(116.376589,39.921108);
+    var point = new BMap.Point(116.063788,39.152988);
     map.centerAndZoom(point, 16);
     map.enableScrollWheelZoom(true);
-
+    var circle = new BMap.Circle(point,1000);
+    map.addOverlay(circle);
     map.setViewport({center:new BMap.Point(116.058727,39.136209),zoom:14})
 
     // 编写自定义函数,创建标注
@@ -63,8 +64,10 @@
                         fillOpacity: 0.8//填充透明度
                     })
                 });
-
-                var label = new BMap.Label(" "+offAdress.office.name+" ", { offset: new BMap.Size(10, -25) });
+                var oAd=offAdress.office.name+"("+offAdress.receiver+": "+offAdress.phone+")";
+                var oAdress="<br/> 地址："+offAdress.bizLocation.fullAddress;
+                var label = new BMap.Label(oAd+oAdress,{ offset: new BMap.Size(15, -40) });
+                // var label = new BMap.Label(oAdress, { offset: new BMap.Size(10, -25) });
                 label.setStyle({
                     color: "#fff",
                     border: "0",
@@ -72,7 +75,7 @@
                     display: "none",
                     background: "rgba(66,117,202,0.9)",
                     fontSize: "12px",
-                    height: "20px",
+                    height: "40px",
                     lineHeight: "20px",
                     fontFamily: "微软雅黑"
                 });
