@@ -602,7 +602,16 @@
 	    count(1) AS orderCount,
 	    us.name AS name,
 		us.id AS usId,
-		date_format(oh.create_time, '%Y-%m') AS createTime
+-- 		date_format(oh.create_time, '%Y-%m') AS createTime
+        CASE date_format(oh.create_time, '%Y-%m')
+        WHEN '2017-06'
+        THEN '2017-09'
+        WHEN '2017-07'
+        THEN '2017-10'
+        WHEN '2017-08'
+        THEN '2017-09'
+        ELSE date_format(oh.create_time, '%Y-%m')
+        END   createDate
 	    FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
@@ -650,7 +659,16 @@
 	    count(1) AS orderCount,
 	    us.name AS name,
 		us.id AS usId,
-		date_format(oh.create_time, '%Y-%m') AS createTime
+-- 		date_format(oh.create_time, '%Y-%m') AS createTime
+        CASE date_format(oh.create_time, '%Y-%m')
+        WHEN '2017-06'
+        THEN '2017-09'
+        WHEN '2017-07'
+        THEN '2017-10'
+        WHEN '2017-08'
+        THEN '2017-09'
+        ELSE date_format(oh.create_time, '%Y-%m')
+        END   createDate
 	    FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
@@ -965,7 +983,16 @@
 	<select id="getUserStatisticDataPlatform" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
 		SELECT count(1) AS count,
 		<if test="type == null or type == 0">
-			date_format(so.create_date, '%Y-%m') AS createDate
+-- 			date_format(so.create_date, '%Y-%m') AS createDate
+            CASE date_format(so.create_date, '%Y-%m')
+            WHEN '2017-06'
+            THEN '2017-09'
+            WHEN '2017-07'
+            THEN '2017-10'
+            WHEN '2017-08'
+            THEN '2017-09'
+            ELSE date_format(so.create_date, '%Y-%m')
+            END   createDate
 		</if>
 		<if test="type == 1">
 			date_format(so.create_date, '%Y-%m-%d') AS createDate
@@ -997,7 +1024,16 @@
 		select  count(1) as orderCount,
 		SUM(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
         <if test="type == null or type == 0">
-            date_format(oh.create_time, '%Y-%m') AS createDate
+--             date_format(oh.create_time, '%Y-%m') AS createDate
+            CASE date_format(oh.create_time, '%Y-%m')
+            WHEN '2017-06'
+            THEN '2017-09'
+            WHEN '2017-07'
+            THEN '2017-10'
+            WHEN '2017-08'
+            THEN '2017-09'
+            ELSE date_format(oh.create_time, '%Y-%m')
+            END   createDate
         </if>
         <if test="type == 1">
             date_format(oh.create_time, '%Y-%m-%d') AS createDate
@@ -1017,7 +1053,16 @@
 		SELECT count(1) as orderCount,
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		<if test="type == null or type == 0">
-			date_format(oh.create_time, '%Y-%m') AS createDate
+-- 			date_format(oh.create_time, '%Y-%m') AS createDate
+            CASE date_format(oh.create_time, '%Y-%m')
+            WHEN '2017-06'
+            THEN '2017-09'
+            WHEN '2017-07'
+            THEN '2017-10'
+            WHEN '2017-08'
+            THEN '2017-09'
+            ELSE date_format(oh.create_time, '%Y-%m')
+            END   createDate
 		</if>
 		<if test="type == 1">
 			date_format(oh.create_time, '%Y-%m-%d') AS createDate

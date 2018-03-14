@@ -19,16 +19,21 @@
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
 
-        var applyDate = $("#applyDate").val();
+        var startDate = $("#applyDate").val();
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/userData",
-            data: {"month": applyDate},
+            data: {"month": startDate},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -37,7 +42,12 @@
                 }
                 salesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '用户量统计(月)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',

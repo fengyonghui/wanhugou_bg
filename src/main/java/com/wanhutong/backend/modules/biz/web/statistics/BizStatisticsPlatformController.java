@@ -63,7 +63,8 @@ public class BizStatisticsPlatformController extends BaseController {
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.add(Calendar.YEAR, -1);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
-        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+//        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+        request.setAttribute("startDate", "2017-09-01"); // TODO 临时代码
         cal.add(Calendar.YEAR, 1);
         cal.add(Calendar.MONTH, 1);
         cal.add(Calendar.DAY_OF_MONTH, -1);

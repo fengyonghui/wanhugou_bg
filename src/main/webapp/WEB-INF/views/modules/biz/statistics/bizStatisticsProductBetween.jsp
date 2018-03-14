@@ -69,6 +69,10 @@
             alert("日期选择错误!");
             return;
         }
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/between/productData",
@@ -81,16 +85,15 @@
                 }
                 salesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '产品销量/销售额统计(区间)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'cross',
-                            crossStyle: {
-                                color: '#999'
-                            }
-                        }
+                        trigger: 'axis'
                     },
                     toolbox: {
                         show: true,
@@ -114,13 +117,6 @@
                         data: msg.nameList,
                         axisPointer: {
                             type: 'shadow'
-                        },
-                        axisLabel: {
-                            interval: 0,
-                            formatter:function(value)
-                            {
-                                return value.split("").join("\n");
-                            }
                         }
                     },
                     yAxis: [

@@ -36,6 +36,7 @@
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('userTotalDataChart'), 'light');
@@ -43,7 +44,13 @@
         salesVolumeChart.clear();
         singleSalesVolumeChart.clear();
 
-        var applyDate = $("#applyDate").val();
+        var startDate = $("#applyDate").val();
+
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
+
         var purchasingIdEle = $("#purchasingId");
         var purchasingId = purchasingIdEle.find("option:selected").val();
 
@@ -52,7 +59,7 @@
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/userSaleData",
-            data: {"month": applyDate, "purchasingId": purchasingId, "usName": usName},
+            data: {"month": startDate, "purchasingId": purchasingId, "usName": usName},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -69,7 +76,12 @@
 
                 salesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '采购顾问业绩统计(月)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',
@@ -117,7 +129,12 @@
                 });
                 singleSalesVolumeChart.setOption({
                     title: {
-                        text: ''
+                        text: '采购顾问业绩统计(个人/月)',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis',

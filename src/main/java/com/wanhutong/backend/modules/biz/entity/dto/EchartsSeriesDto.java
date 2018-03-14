@@ -37,9 +37,23 @@ public class EchartsSeriesDto {
     private String color;
 
     /**
+     * 柱图最大宽度
+     */
+    private Integer barMaxWidth = 30;
+
+    /**
      * 数据集合
      */
     private List<Object> data = Lists.newArrayList();
+
+
+    public Integer getBarMaxWidth() {
+        return barMaxWidth;
+    }
+
+    public void setBarMaxWidth(Integer barMaxWidth) {
+        this.barMaxWidth = barMaxWidth;
+    }
 
     public Integer getyAxisIndex() {
         return yAxisIndex;

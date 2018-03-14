@@ -313,7 +313,10 @@ public class BizStatisticsController extends BaseController {
         monthDateList.add(selectMonth);
         for (int i = 0; i < DATA_MONTH_COUNT; i++) {
             if (i != 0) {
-                monthDateList.add(selectMonth.minusMonths(i));
+                LocalDateTime localDateTime = selectMonth.minusMonths(i);
+                if(localDateTime.isAfter(new LocalDateTime("2017-08-31"))) { // TODO 临时代码
+                    monthDateList.add(localDateTime);
+                }
             }
         }
 
