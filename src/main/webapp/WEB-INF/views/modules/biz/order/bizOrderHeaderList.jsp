@@ -191,9 +191,9 @@
 					<c:if test="${orderHeader.bizStatus ==10 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
 						<font color="#088A29">已结清</font>
 					</c:if>
-                    <c:if test="${orderHeader.bizStatus ==10}">
-                        <font color="#088A29">已结清</font>
-                    </c:if>
+					<%--<c:if test="${orderHeader.bizStatus ==10}">--%>
+						<%--<font color="#088A29">已结清</font>--%>
+					<%--</c:if>--%>
                     <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
                         <font color="#088A29">已结清</font>
                     </c:if>
