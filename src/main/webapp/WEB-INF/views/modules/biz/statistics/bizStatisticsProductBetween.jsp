@@ -42,6 +42,7 @@
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
@@ -60,6 +61,14 @@
         var purchasingIdEle = $("#purchasingId");
         var purchasingId = purchasingIdEle.find("option:selected").val();
 
+        if (startDate == '' || startDate == null || endDate == '' || endDate == null) {
+            alert("请选择日期");
+            return;
+        }
+        if(!$DateUtil.CompareDate(endDate,startDate)) {
+            alert("日期选择错误!");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/between/productData",

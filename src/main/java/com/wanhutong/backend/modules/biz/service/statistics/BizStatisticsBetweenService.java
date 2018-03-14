@@ -55,7 +55,7 @@ public class BizStatisticsBetweenService {
      * @return 根据不同产品分类的统计数据
      */
     public List<BizProductStatisticsDto> productStatisticData (String startDate, String endDate, Integer variId, Integer purchasingId) {
-        return bizOrderHeaderDao.getProductStatisticDataBetween(startDate, endDate, variId, purchasingId);
+        return bizOrderHeaderDao.getProductStatisticDataBetween(startDate, endDate + " 23:59:59", variId, purchasingId);
     }
 
 
@@ -66,7 +66,7 @@ public class BizStatisticsBetweenService {
      * @return 根据不同机构分类的统计数据
      */
     public Map<String, BizOrderStatisticsDto> orderStatisticData(String startDate, String endDate) {
-        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeBetween(startDate, endDate, OrderHeaderBizStatusEnum.VALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
+        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeBetween(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
         Map<String, BizOrderStatisticsDto> resultMap = Maps.newHashMap();
         orderTotalAndCountByCreateTimeMonthStatus.forEach(o -> {
             resultMap.putIfAbsent(o.getOfficeName(), o);
@@ -127,7 +127,7 @@ public class BizStatisticsBetweenService {
      * @return 根据不同用户分类的统计数据
      */
     public List<BizUserSaleStatisticsDto> userSaleStatisticData(String startDate, String endDate, Integer purchasingId) {
-        return bizOrderHeaderDao.getUserSaleStatisticDataBetween(startDate, endDate, purchasingId, null);
+        return bizOrderHeaderDao.getUserSaleStatisticDataBetween(startDate, endDate + " 23:59:59", purchasingId, null, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
 
     /**
@@ -149,10 +149,12 @@ public class BizStatisticsBetweenService {
 
     /**
      * 取某一个销售的销售业绩
+     * @param startDate
+     * @param endDate
      * @param salesmanId 销售员ID
      */
-    public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(Integer salesmanId) {
-        return bizOrderHeaderDao.getSingleUserSaleStatisticDataBetween(null, null, null, salesmanId);
+    public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(String startDate, String endDate, Integer salesmanId) {
+        return bizOrderHeaderDao.getSingleUserSaleStatisticDataBetween(startDate, endDate + " 23:59:59", null, salesmanId, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
 
     /**

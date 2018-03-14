@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
+import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsPlatformService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -57,6 +58,16 @@ public class BizStatisticsPlatformController extends BaseController {
     @RequestMapping(value = {"user", ""})
     public String user(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
+        Calendar cal = Calendar.getInstance();
+        //获取本周一的日期
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.YEAR, -1);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+        cal.add(Calendar.YEAR, 1);
+        cal.add(Calendar.MONTH, 1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
         return "modules/biz/statistics/bizStatisticsUserPlatform";
     }
 
@@ -69,47 +80,47 @@ public class BizStatisticsPlatformController extends BaseController {
     @RequiresPermissions("biz:statistics:user:view")
     @RequestMapping(value = {"userData", ""})
     @ResponseBody
-    public String userData(HttpServletRequest request, String month, String type, String centerType) {
-        List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsPlatformService.userStatisticData(type, month, centerType);
+    public String userData(HttpServletRequest request, String startDate, String endDate, String type, String centerType) {
+        List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsPlatformService.userStatisticData(type, startDate, endDate, centerType);
         List<String> nameList = Lists.newArrayList();
+
+        Date startDateDate = null;
+        Date endDateDate = null;
 
         List<Object> seriesDataList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
-        if ("1".equals(type)) {
-            try {
-                List<String> dayList = Lists.newArrayList();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
-                SimpleDateFormat simpleDateFormatDay = new SimpleDateFormat("yyyy-MM-dd");
-                Date parseDate = simpleDateFormat.parse(month);
-                Calendar c = Calendar.getInstance();
-                c.setTime(parseDate);
-                while (simpleDateFormat.format(c.getTime()).equals(month)) {
+
+        try {
+            List<String> dayList = Lists.newArrayList();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+            SimpleDateFormat simpleDateFormatDay = new SimpleDateFormat("yyyy-MM-dd");
+            startDateDate = simpleDateFormatDay.parse(startDate);
+            endDateDate = simpleDateFormatDay.parse(endDate);
+            Calendar c = Calendar.getInstance();
+            c.setTime(startDateDate);
+            while (c.getTime().getTime() <= endDateDate.getTime()) {
+                if ("1".equals(type)) {
                     dayList.add(simpleDateFormatDay.format(c.getTime()));
                     c.add(Calendar.DAY_OF_MONTH, 1);
+                } else {
+                    dayList.add(simpleDateFormat.format(c.getTime()));
+                    c.add(Calendar.MONTH, 1);
                 }
-
-                dayList.forEach(o -> {
-                    Object value = 0;
-                    for (BizUserStatisticsDto b : bizProductStatisticsDtos) {
-                        if (b.getCreateDate().equals(o)) {
-                            value = b.getCount();
-                        }
-                    }
-                    seriesDataList.add(value);
-                    nameList.add(o);
-                });
-
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
 
-
-
-        }else {
-            bizProductStatisticsDtos.forEach(o -> {
-                seriesDataList.add(o.getCount());
-                nameList.add(o.getCreateDate());
+            dayList.forEach(o -> {
+                Object value = 0;
+                for (BizUserStatisticsDto b : bizProductStatisticsDtos) {
+                    if (b.getCreateDate().equals(o)) {
+                        value = b.getCount();
+                    }
+                }
+                seriesDataList.add(value);
+                nameList.add(o);
             });
+
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
         echartsSeriesDto.setName("用户量");
         echartsSeriesDto.setData(seriesDataList);
@@ -152,7 +163,7 @@ public class BizStatisticsPlatformController extends BaseController {
     /**
      * 订单相关统计数据
      *
-     * @param startDate         月份
+     * @param startDate 月份
      * @return 订单相关统计数据
      */
     @RequiresPermissions("biz:statistics:order:view")
@@ -165,7 +176,7 @@ public class BizStatisticsPlatformController extends BaseController {
     /**
      * 订单相关统计数据
      *
-     * @param startDate         月份
+     * @param startDate 月份
      * @return 订单相关统计数据
      */
     @RequiresPermissions("biz:statistics:order:view")
@@ -176,11 +187,10 @@ public class BizStatisticsPlatformController extends BaseController {
     }
 
 
-
     /**
      * 订单相关统计数据
      *
-     * @param startDate         月份
+     * @param startDate 月份
      * @return 订单相关统计数据
      */
     private Map<String, Object> getOrderDataCategoryByCenter(String startDate, String endDate, String type, String centerType, String orderType) {
@@ -220,7 +230,7 @@ public class BizStatisticsPlatformController extends BaseController {
                 if ("1".equals(type)) {
                     dateStrList.add(simpleDateFormatDay.format(c.getTime()));
                     c.add(Calendar.DAY_OF_MONTH, 1);
-                }else {
+                } else {
                     dateStrList.add(simpleDateFormat.format(c.getTime()));
                     c.add(Calendar.MONTH, 1);
                 }
@@ -267,10 +277,11 @@ public class BizStatisticsPlatformController extends BaseController {
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesList));
         return paramMap;
     }
+
     /**
      * 订单相关统计数据
      *
-     * @param startDate         月份
+     * @param startDate 月份
      * @return 订单相关统计数据
      */
     private Map<String, Object> getOrderData(String startDate, String endDate, String type, String centerType, String orderType) {
@@ -326,7 +337,7 @@ public class BizStatisticsPlatformController extends BaseController {
                 e.printStackTrace();
             }
 
-        }else {
+        } else {
             bizOrderStatisticsDtoList.forEach(o -> {
                 seriesDataList.add(o.getTotalMoney());
                 seriesCountDataList.add(o.getOrderCount());

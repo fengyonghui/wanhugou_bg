@@ -65,7 +65,7 @@ public class BizStatisticsDayService {
      * @return 根据不同机构分类的统计数据
      */
     public Map<String, BizOrderStatisticsDto> orderStatisticData(String date) {
-        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeDay(date, OrderHeaderBizStatusEnum.VALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
+        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeDay(date, OrderHeaderBizStatusEnum.INVALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
         Map<String, BizOrderStatisticsDto> resultMap = Maps.newHashMap();
         orderTotalAndCountByCreateTimeMonthStatus.forEach(o -> {
             resultMap.putIfAbsent(o.getOfficeName(), o);
@@ -126,7 +126,7 @@ public class BizStatisticsDayService {
      * @return 根据不同用户分类的统计数据
      */
     public List<BizUserSaleStatisticsDto> userSaleStatisticData(String day, Integer purchasingId) {
-        return bizOrderHeaderDao.getUserSaleStatisticDataDay(day, purchasingId, null);
+        return bizOrderHeaderDao.getUserSaleStatisticDataDay(day, purchasingId, null, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
 
     /**
@@ -151,6 +151,6 @@ public class BizStatisticsDayService {
      * @param salesmanId 销售员ID
      */
     public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(Integer salesmanId) {
-        return bizOrderHeaderDao.getSingleUserSaleStatisticDataDay(null, null, salesmanId);
+        return bizOrderHeaderDao.getSingleUserSaleStatisticDataDay(null, null, salesmanId, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
 }

@@ -24,6 +24,7 @@
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
@@ -43,6 +44,7 @@
             alert("请选择日期");
             return;
         }
+
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/platform/orderDataCategoryByCenter",

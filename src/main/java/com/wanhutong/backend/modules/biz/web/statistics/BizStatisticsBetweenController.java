@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.biz.web.statistics;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -89,6 +90,10 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequestMapping(value = {"userSaleData", ""})
     @ResponseBody
     public String userSaleData(HttpServletRequest request, String startDate, String endDate, Integer purchasingId, String usName) {
+        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
+            return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
+        }
+
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userSaleStatisticData(startDate, endDate, purchasingId);
         List<String> nameList = Lists.newArrayList();
         Map<String, Integer> usNameIdMap = Maps.newHashMap();
@@ -124,7 +129,7 @@ public class BizStatisticsBetweenController extends BaseController {
 
         List<BizUserSaleStatisticsDto> bizUserSaleStatisticsDtos = null;
         if (usId != null) {
-            bizUserSaleStatisticsDtos = bizStatisticsBetweenService.singleUserSaleStatisticData(usId);
+            bizUserSaleStatisticsDtos = bizStatisticsBetweenService.singleUserSaleStatisticData(startDate, endDate, usId);
             if (bizUserSaleStatisticsDtos.size() > MAX_DATA_LENGTH) {
                 bizUserSaleStatisticsDtos = bizUserSaleStatisticsDtos.subList(0, MAX_DATA_LENGTH);
             }
@@ -194,6 +199,9 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequestMapping(value = {"userData", ""})
     @ResponseBody
     public String userData(HttpServletRequest request, String startDate, String endDate) {
+        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
+            return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
+        }
         List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userStatisticData(startDate, endDate);
         List<String> nameList = Lists.newArrayList();
 
@@ -247,6 +255,9 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequestMapping(value = {"productData", ""})
     @ResponseBody
     public String product(HttpServletRequest request, String startDate, String endDate, Integer variId, int dataType, Integer purchasingId) {
+        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
+            return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
+        }
         // 月份集合
         List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.productStatisticData(startDate, endDate, variId, purchasingId);
         List<String> nameList = Lists.newArrayList();
@@ -288,7 +299,6 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequestMapping(value = {"order", ""})
     public String order(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
-        request.setAttribute("adminPath", adminPath);
         Calendar cal = Calendar.getInstance();
         //获取本周一的日期
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -312,6 +322,9 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequestMapping(value = {"orderData", ""})
     @ResponseBody
     public String orderData(HttpServletRequest request, String startDate, String endDate, String lineChartType, String barChartType) {
+        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
+            return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
+        }
         return JSONObject.fromObject(getOrderData(startDate, endDate, lineChartType, barChartType)).toString();
     }
 

@@ -36,7 +36,7 @@ public enum OrderHeaderBizStatusEnum {
      * 无效订单状态集合
      * DELETE 状态情况特殊,在订单已支付的情况下也是有效订单
      */
-    public static final List<OrderHeaderBizStatusEnum> VALID_STATUS = Lists.newArrayList(
+    public static final List<OrderHeaderBizStatusEnum> INVALID_STATUS = Lists.newArrayList(
             UNAPPROVE,CANCLE,UNPAY
     );
 }

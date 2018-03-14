@@ -8,7 +8,8 @@
 </head>
 <body>
 <div>
-    <input name="applyDate" id="applyDate" value="" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <label>
         <select class="input-medium" id="type">
             <option value="0" label="年"></option>
@@ -34,6 +35,7 @@
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
@@ -45,17 +47,22 @@
         var centerTypeEle = $("#centerType");
         var centerType = centerTypeEle.find("option:selected").val();
 
-        var applyDate = $("#applyDate").val();
+        var endDate = $("#endDate").val();
+        var startDate = $("#startDate").val();
 
-        if (type == '1' && (applyDate == '' || applyDate == null)) {
-            alert("请选择日期");
+        if (startDate == '' || startDate == null || endDate == '' || endDate == null) {
+            alert("请选择日期!");
+            return;
+        }
+        if(!$DateUtil.CompareDate(endDate,startDate)) {
+            alert("日期选择错误!");
             return;
         }
 
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/platform/userData",
-            data: {"month": applyDate, "type" : type, "centerType" : centerType},
+            data: {"startDate": startDate, "endDate": endDate, "type" : type, "centerType" : centerType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
