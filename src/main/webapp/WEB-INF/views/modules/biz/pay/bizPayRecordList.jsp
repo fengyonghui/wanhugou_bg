@@ -99,7 +99,7 @@
 				<th>支付人</th>
 				<th>客户名称</th>
 				<th>联系电话</th>
-				<th>支付状态</th>
+				<%--<th>支付状态</th>--%>
 				<th>支付账号</th>
 				<th>支付到账户</th>
 				<th>交易类型名称</th>
@@ -130,9 +130,9 @@
 				<td>
 					${bizPayRecord.customer.moblieMoeny.mobile}
 				</td>
-				<td>
-					${fns:getDictLabel(bizPayRecord.bizStatus, 'bizStatus', '')}
-				</td>
+				<%--<td>--%>
+					<%--${fns:getDictLabel(bizPayRecord.bizStatus, 'bizStatus', '')}--%>
+				<%--</td>--%>
 				<td>
 					${bizPayRecord.account.name}
 				</td>
