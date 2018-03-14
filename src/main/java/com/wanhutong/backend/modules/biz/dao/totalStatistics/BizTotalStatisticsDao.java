@@ -27,10 +27,10 @@ public interface BizTotalStatisticsDao {
     Integer getTotalCustCount();
 
     /**
-     * 采购中心数
+     * 采购中心数，网供数，配资中心数
      * @return
      */
-    Integer getTotalCentCount();
+    Integer getTotalCentCount(Integer type);
 
     /**
      * 订单数，总额，已收货款

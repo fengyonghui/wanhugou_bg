@@ -170,10 +170,14 @@ public class BizStatisticsService {
         BizTotalStatisticsDto totalStatisticsDto = bizTotalStatisticsDao.getTotalStatisticsDto();
         Integer skuCount = bizTotalStatisticsDao.getTotalSkuCount();
         Integer custCount = bizTotalStatisticsDao.getTotalCustCount();
-        Integer centCount = bizTotalStatisticsDao.getTotalCentCount();
+        Integer centCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.PURCHASINGCENTER.getType()));
+        Integer capitalCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.WITHCAPITAL.getType()));
+        Integer supplyCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.NETWORKSUPPLY.getType()));
         Integer orderCount = totalStatisticsDto.getOrderCount();
         totalStatisticsDto.setCustCount(custCount);
         totalStatisticsDto.setCentCount(centCount);
+        totalStatisticsDto.setCapitalCount(capitalCount);
+        totalStatisticsDto.setSupplyCount(supplyCount);
         totalStatisticsDto.setSkuCount(skuCount);
         totalStatisticsDto.setAvgPrice(totalStatisticsDto.getReceiveMoney().divide(new BigDecimal(orderCount),2,BigDecimal.ROUND_HALF_UP));
 
