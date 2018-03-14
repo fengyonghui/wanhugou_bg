@@ -61,7 +61,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param month 取数据的月份
      * @return 根据不同用户分类的统计数据
      */
-    List<BizUserSaleStatisticsDto> getUserSaleStatisticData(@Param("month") String month, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId);
+    List<BizUserSaleStatisticsDto> getUserSaleStatisticData(@Param("month") String month, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
 
     /**
      * 根据用户取用户业绩统计相关数据
@@ -69,7 +69,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param month 取数据的月份
      * @return 根据不同用户分类的统计数据
      */
-    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticData(@Param("month") String month, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId);
+    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticData(@Param("month") String month, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
 
 
     /**
@@ -106,7 +106,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param usId         用户ID
      * @return 根据不同用户分类的统计数据
      */
-    List<BizUserSaleStatisticsDto> getUserSaleStatisticDataDay(@Param("day") String day, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId);
+    List<BizUserSaleStatisticsDto> getUserSaleStatisticDataDay(@Param("day") String day, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
 
     /**
      * 根据用户取用户业绩统计相关数据
@@ -114,7 +114,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param day 取数据的日期
      * @return 根据不同用户分类的统计数据
      */
-    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticDataDay(@Param("day") String day, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId);
+    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticDataDay(@Param("day") String day, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
 
 
     /**
@@ -152,7 +152,13 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param usId         用户ID
      * @return 根据不同用户分类的统计数据
      */
-    List<BizUserSaleStatisticsDto> getUserSaleStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId);
+    List<BizUserSaleStatisticsDto> getUserSaleStatisticDataBetween(
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("purchasingId") Integer purchasingId,
+            @Param("usId") Integer usId,
+            @Param("statusList") List<OrderHeaderBizStatusEnum> statusList
+    );
 
     /**
      * 根据用户取用户业绩统计相关数据
@@ -160,7 +166,13 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param startDate 开始时间
      * @return 根据不同用户分类的统计数据
      */
-    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId);
+    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticDataBetween(
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("purchasingId") Integer purchasingId,
+            @Param("usId") Integer usId,
+            @Param("statusList") List<OrderHeaderBizStatusEnum> statusList
+    );
 
     /**
      * 根据月份和采购中心取客户专员数据
@@ -169,21 +181,27 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param purchasingId
      * @return
      */
-    List<BizUserSaleStatisticsDto> getUserTableStatisticData(@Param("month") String month, @Param("purchasingId") Integer purchasingId);
+    List<BizUserSaleStatisticsDto> getUserTableStatisticData(
+            @Param("month") String month,
+            @Param("purchasingId") Integer purchasingId,
+            @Param("statusList") List<OrderHeaderBizStatusEnum> statusList
+    );
 
 
     /**
      * 取平台用户统计数据
      *
      * @param type  数据类型  年:0/月:1
-     * @param month 数据类型  月份
+     * @param startDate 数据类型  月份
      * @return
      */
-    List<BizUserStatisticsDto> getUserStatisticDataPlatform(@Param("type") String type, @Param("month") String month, @Param("centerType") String centerType);
+    List<BizUserStatisticsDto> getUserStatisticDataPlatform(@Param("type") String type, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("centerType") String centerType);
+
+    List<BizUserStatisticsDto> getAllUserStatisticDataPlatform(@Param("type") String type, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("centerType") String centerType);
 
 
     /**
-     * 用户平台订单统计
+     * 用户平台订单统计 根据机构区分
      *
      * @param startDate   时间
      * @param validStatus
@@ -191,6 +209,18 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return
      */
     List<BizOrderStatisticsDto> getValidOrderTotalAndCount(
+            @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> validStatus,
+            @Param("type") String type, @Param("centerType") String centerType, @Param("orderType") String orderType, @Param("officeId") Integer officeId);
+
+    /**
+     * 用户平台订单统计 所有数据, 不区分机构
+     *
+     * @param startDate   时间
+     * @param validStatus
+     * @param type
+     * @return
+     */
+    List<BizOrderStatisticsDto> getAllValidOrderTotalAndCount(
             @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> validStatus,
             @Param("type") String type, @Param("centerType") String centerType, @Param("orderType") String orderType, @Param("officeId") Integer officeId);
 
@@ -203,4 +233,5 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 产品统计数据
      */
     Integer getSkuStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("variId") Integer variId);
+
 }

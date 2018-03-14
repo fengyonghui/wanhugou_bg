@@ -31,11 +31,10 @@
 
 </div>
 
-
-</body>
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('userTotalDataChart'), 'light');
@@ -43,14 +42,23 @@
         salesVolumeChart.clear();
         singleSalesVolumeChart.clear();
 
-        var endDate = $("#endDate").val();
-        var startDate = $("#startDate").val();
-
         var purchasingIdEle = $("#purchasingId");
         var purchasingId = purchasingIdEle.find("option:selected").val();
 
         var usNameEle = $("#usName");
         var usName = usNameEle.find("option:selected").val();
+
+        var endDate = $("#endDate").val();
+        var startDate = $("#startDate").val();
+
+        if (startDate == '' || startDate == null || endDate == '' || endDate == null) {
+            alert("请选择日期!");
+            return;
+        }
+        if(!$DateUtil.CompareDate(endDate,startDate)) {
+            alert("日期选择错误!");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/between/userSaleData",
@@ -177,4 +185,5 @@
 
 
 </script>
+</body>
 </html>
