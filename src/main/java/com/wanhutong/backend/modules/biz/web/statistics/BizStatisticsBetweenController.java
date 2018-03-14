@@ -472,48 +472,63 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:sku:view")
     @RequestMapping(value = {"skuData", ""})
     @ResponseBody
-    public String sku(HttpServletRequest request, String month, Integer variId) throws ParseException {
+    public String sku(HttpServletRequest request, String month,String type, Integer variId) throws ParseException {
+
         List<Object> seriesDataList = Lists.newArrayList();
-        // 月份下星期
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(month+"-01",month+"-07",variId));
-        Date firstOpenDate = sdf.parse(month + "-01");
-        Date firstCloseDate =sdf.parse(month + "-07");
-        cal.setTime(firstOpenDate);
-        cal.add(Calendar.DATE,7);
-        String secondStartDate = sdf.format(cal.getTime());
-        cal.setTime(firstCloseDate);
-        cal.add(Calendar.DATE,7);
-        String secondEndDate = sdf.format(cal.getTime());
-        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(secondStartDate,secondEndDate,variId));
-        cal.setTime(sdf.parse(secondStartDate));
-        cal.add(Calendar.DATE,7);
-        String thirdStartDate = sdf.format(cal.getTime());
-        cal.setTime(sdf.parse(secondEndDate));
-        cal.add(Calendar.DATE,7);
-        String thirdEndDate = sdf.format(cal.getTime());
-        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(thirdStartDate,thirdEndDate,variId));
-        cal.setTime(sdf.parse(thirdStartDate));
-        cal.add(Calendar.DATE,7);
-        String fourthStartDate = sdf.format(cal.getTime());
-        cal.setTime(sdf.parse(thirdEndDate));
-        cal.add(Calendar.DATE,7);
-        String fourthEndDate = sdf.format(cal.getTime());
-        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(fourthStartDate,fourthEndDate,variId));
-        cal.setTime(sdf.parse(fourthStartDate));
-        cal.add(Calendar.DATE,7);
-        String fifthStartDate = sdf.format(cal.getTime());
-        cal.setTime(sdf.parse(fourthEndDate));
-        cal.add(Calendar.DATE,7);
-        String fifthEndDate = sdf.format(cal.getTime());
-        seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(fifthStartDate,fifthEndDate,variId));
+        List<String> nameList = Lists.newArrayList();
+        if (type.equals("1")) {
+            String[] week = {"第一周", "第二周", "第三周", "第四周", "第五周"};
+            for (int i = 0; i < week.length; i++) {
+                nameList.add(week[i]);
+            }
+            // 月份下星期
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(month + "-01", month + "-07", variId));
+            Date firstOpenDate = sdf.parse(month + "-01");
+            Date firstCloseDate = sdf.parse(month + "-07");
+            cal.setTime(firstOpenDate);
+            cal.add(Calendar.DATE, 7);
+            String secondStartDate = sdf.format(cal.getTime());
+            cal.setTime(firstCloseDate);
+            cal.add(Calendar.DATE, 7);
+            String secondEndDate = sdf.format(cal.getTime());
+            seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(secondStartDate, secondEndDate, variId));
+            cal.setTime(sdf.parse(secondStartDate));
+            cal.add(Calendar.DATE, 7);
+            String thirdStartDate = sdf.format(cal.getTime());
+            cal.setTime(sdf.parse(secondEndDate));
+            cal.add(Calendar.DATE, 7);
+            String thirdEndDate = sdf.format(cal.getTime());
+            seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(thirdStartDate, thirdEndDate, variId));
+            cal.setTime(sdf.parse(thirdStartDate));
+            cal.add(Calendar.DATE, 7);
+            String fourthStartDate = sdf.format(cal.getTime());
+            cal.setTime(sdf.parse(thirdEndDate));
+            cal.add(Calendar.DATE, 7);
+            String fourthEndDate = sdf.format(cal.getTime());
+            seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(fourthStartDate, fourthEndDate, variId));
+            cal.setTime(sdf.parse(fourthStartDate));
+            cal.add(Calendar.DATE, 7);
+            String fifthStartDate = sdf.format(cal.getTime());
+            cal.setTime(sdf.parse(fourthEndDate));
+            cal.add(Calendar.DATE, 7);
+            String fifthEndDate = sdf.format(cal.getTime());
+            seriesDataList.add(bizStatisticsBetweenService.skuStatisticData(fifthStartDate, fifthEndDate, variId));
+        }else {
+            List<BizProductStatisticsDto> statisticsDtoList = bizStatisticsBetweenService.skuAllStatisticData(variId);
+            for (BizProductStatisticsDto bizProductStatisticsDto:statisticsDtoList) {
+                seriesDataList.add(bizProductStatisticsDto.getUpSkuCount());
+                nameList.add(bizProductStatisticsDto.getMonthDate());
+            }
+        }
 
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         echartsSeriesDto.setName("商品新增数量");
         echartsSeriesDto.setData(seriesDataList);
 
         Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("nameList",nameList);
         paramMap.put("seriesList", echartsSeriesDto);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         System.out.println(JSONObject.fromObject(paramMap).toString());

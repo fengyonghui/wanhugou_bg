@@ -159,11 +159,22 @@ public class BizStatisticsBetweenService {
      * 根据月份取该月每个星期的商品新增数量
      *
      * @param startDate 开始时间
-     * @param endDate 开始时间
+     * @param endDate 结束时间
      * @param variId  类别ID
      * @return 根据不同产品分类的统计数据
      */
     public Integer skuStatisticData (String startDate, String endDate, Integer variId) {
         return bizOrderHeaderDao.getSkuStatisticDataBetween(startDate, endDate, variId);
+    }
+
+    /**
+     * 根据月份取该月每个星期的商品新增数量
+     *
+     * @param variId  类别ID
+     * @return 根据不同产品分类的统计数据skuAllStatisticData
+     */
+    public List<BizProductStatisticsDto> skuAllStatisticData (Integer variId) {
+        List<BizProductStatisticsDto> statisticsDtoList = bizOrderHeaderDao.getSkuAllStatisticData(variId);
+        return statisticsDtoList;
     }
 }

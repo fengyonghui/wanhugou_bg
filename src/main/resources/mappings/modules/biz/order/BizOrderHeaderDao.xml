@@ -1045,5 +1045,30 @@
 			AND #{endDate}
 			AND sku.status = 1
 	</select>
+	<!-- 按月查询全部商品新增数量 -->
+	<select id="getSkuAllStatisticData" parameterType="Integer" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
+		SELECT count(1) AS upSkuCount,
+			CASE date_format(bsi.create_time, '%Y-%m')
+			WHEN '2017-04'
+			THEN '2017-09'
+			WHEN '2017-05'
+			THEN '2017-10'
+			WHEN '2017-06'
+			THEN '2017-11'
+			when '2017-07'
+			then '2017-12'
+			when '2017-08'
+			then '2018-01'
+			ELSE date_format(bsi.create_time, '%Y-%m')
+			END monthDate
+		FROM biz_sku_info bsi
+		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		LEFT JOIN biz_variety_info vi ON vi.id = pi.vari_id
+		WHERE bsi.`status` = 1
+		<if test="variId != null and variId != 0">
+			AND vi.id = #{variId}
+		</if>
+		GROUP BY monthDate
+	</select>
 
 </mapper>

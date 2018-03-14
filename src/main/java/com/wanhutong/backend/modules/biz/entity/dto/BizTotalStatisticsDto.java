@@ -15,13 +15,15 @@ public class BizTotalStatisticsDto {
 	private static final long serialVersionUID = 1L;
 	private Integer custCount;        // 会员数
 	private Integer centCount;        // 采购中心数
-	private Integer supplyCount;		//网供数量
-	private Integer capitalCount;		//配资中心数量
+	/*private Integer supplyCount;		//网供数量
+	private Integer capitalCount;		//配资中心数量*/
+	private String unit;		//单位
 	private Integer orderCount;        // 订单数
 	private BigDecimal totalMoney;      //总额
 	private BigDecimal receiveMoney;		//已收货款
 	private Integer skuCount;		//商品数量
 	private BigDecimal avgPrice;		//平均客单价
+	private String count;		//用来存所有的数量
 
 
 	public BizTotalStatisticsDto() {
@@ -84,7 +86,22 @@ public class BizTotalStatisticsDto {
 		this.receiveMoney = receiveMoney;
 	}
 
-	public Integer getSupplyCount() {
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
+	public String getCount() {
+		return count;
+	}
+
+	public void setCount(String count) {
+		this.count = count;
+	}
+	/*	public Integer getSupplyCount() {
 		return supplyCount;
 	}
 
@@ -98,5 +115,5 @@ public class BizTotalStatisticsDto {
 
 	public void setCapitalCount(Integer capitalCount) {
 		this.capitalCount = capitalCount;
-	}
+	}*/
 }

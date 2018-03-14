@@ -200,7 +200,15 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      *
      * @param startDate 开始时间
      * @param endDate   结束时间
-     * @return 产品统计数据
+     * @return 商品新增数量
      */
     Integer getSkuStatisticDataBetween(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("variId") Integer variId);
+
+    /**
+     * 按区间获取商品新增数量
+     *
+     * @param variId 类别ID
+     * @return 商品新增数量
+     */
+    List<BizProductStatisticsDto> getSkuAllStatisticData(@Param("variId")Integer variId);
 }

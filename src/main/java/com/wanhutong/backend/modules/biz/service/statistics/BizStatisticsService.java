@@ -20,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -166,21 +164,51 @@ public class BizStatisticsService {
         return bizOrderHeaderDao.getSingleUserSaleStatisticData(null, null, salesmanId);
     }
 
-    public BizTotalStatisticsDto getBizTotalStatisticsDto(){
+    public Map<String,BizTotalStatisticsDto> getBizTotalStatisticsDto(){
         BizTotalStatisticsDto totalStatisticsDto = bizTotalStatisticsDao.getTotalStatisticsDto();
         Integer skuCount = bizTotalStatisticsDao.getTotalSkuCount();
         Integer custCount = bizTotalStatisticsDao.getTotalCustCount();
         Integer centCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.PURCHASINGCENTER.getType()));
-        Integer capitalCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.WITHCAPITAL.getType()));
-        Integer supplyCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.NETWORKSUPPLY.getType()));
+        /*Integer capitalCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.WITHCAPITAL.getType()));
+        Integer supplyCount = bizTotalStatisticsDao.getTotalCentCount(Integer.parseInt(OfficeTypeEnum.NETWORKSUPPLY.getType()));*/
         Integer orderCount = totalStatisticsDto.getOrderCount();
         totalStatisticsDto.setCustCount(custCount);
         totalStatisticsDto.setCentCount(centCount);
-        totalStatisticsDto.setCapitalCount(capitalCount);
-        totalStatisticsDto.setSupplyCount(supplyCount);
+        /*totalStatisticsDto.setCapitalCount(capitalCount);
+        totalStatisticsDto.setSupplyCount(supplyCount);*/
         totalStatisticsDto.setSkuCount(skuCount);
         totalStatisticsDto.setAvgPrice(totalStatisticsDto.getReceiveMoney().divide(new BigDecimal(orderCount),2,BigDecimal.ROUND_HALF_UP));
 
-        return totalStatisticsDto;
+        Map<String,BizTotalStatisticsDto> map = new HashMap<>();
+
+        BizTotalStatisticsDto one = new BizTotalStatisticsDto();
+        one.setUnit("个");
+        one.setCount(totalStatisticsDto.getCustCount().toString());
+        map.put("会员总数",one);
+        BizTotalStatisticsDto two = new BizTotalStatisticsDto();
+        two.setCount(totalStatisticsDto.getCentCount().toString());
+        two.setUnit("个");
+        map.put("采购中心数",two);
+        BizTotalStatisticsDto three = new BizTotalStatisticsDto();
+        three.setCount(totalStatisticsDto.getSkuCount().toString());
+        three.setUnit("件");
+        map.put("商品数量",three);
+        BizTotalStatisticsDto four = new BizTotalStatisticsDto();
+        four.setCount(totalStatisticsDto.getOrderCount().toString());
+        four.setUnit("单");
+        map.put("订单数",four);
+        BizTotalStatisticsDto five = new BizTotalStatisticsDto();
+        five.setCount(totalStatisticsDto.getTotalMoney().toString());
+        five.setUnit("元");
+        map.put("总额",five);
+        BizTotalStatisticsDto six = new BizTotalStatisticsDto();
+        six.setCount(totalStatisticsDto.getReceiveMoney().toString());
+        six.setUnit("元");
+        map.put("已收货款",six);
+        BizTotalStatisticsDto seven = new BizTotalStatisticsDto();
+        seven.setCount(totalStatisticsDto.getAvgPrice().toString());
+        seven.setUnit("元");
+        map.put("平均客单价",seven);
+        return map;
     }
 }

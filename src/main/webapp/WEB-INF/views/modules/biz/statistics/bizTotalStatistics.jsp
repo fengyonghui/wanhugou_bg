@@ -6,7 +6,33 @@
     <title>统计总值</title>
 </head>
 <body>
-<form:form id="inputForm"  action="" method="post" class="form-horizontal">
+<div style="height: 50px">
+
+</div>
+<div>
+    <table class="table table-striped table-bordered table-condensed">
+        <caption style="width:100%; height: 50px; text-align:center; color: #9d9d9d; font-size: xx-large">
+            万户通平台总体情况(<fmt:formatDate value="${time}" pattern="yyyy-MM-dd"/>)
+        </caption>
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>单位</th>
+                <th>数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            <c:forEach items="${totalMap}" var="totalSet">
+                <tr>
+                    <td>${totalSet.key}</td>
+                    <td>${totalSet.value.unit}</td>
+                    <td>${totalSet.value.count}</td>
+                </tr>
+            </c:forEach>
+        </tbody>
+    </table>
+</div>
+<%--<form:form id="inputForm"  action="" method="post" class="form-horizontal">
 
 <div class="control-group">
     <label class="control-label">会员总数(人):</label>
@@ -44,7 +70,7 @@
     <label class="control-label">平均客单价：</label>
     <div class="controls">${totalStatistics.avgPrice}</div>
 </div>
-</form:form>
+</form:form>--%>
 <script type="application/javascript">
 
 

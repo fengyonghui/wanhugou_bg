@@ -17,6 +17,10 @@ public class BizProductStatisticsDto {
      */
     private Integer upSkuCount;
     /**
+     * 时间
+     */
+    private String monthDate;
+    /**
      * 产品名称
      */
     private String name;
@@ -117,5 +121,13 @@ public class BizProductStatisticsDto {
 
     public void setUpSkuCount(Integer upSkuCount) {
         this.upSkuCount = upSkuCount;
+    }
+
+    public String getMonthDate() {
+        return monthDate;
+    }
+
+    public void setMonthDate(String monthDate) {
+        this.monthDate = monthDate;
     }
 }

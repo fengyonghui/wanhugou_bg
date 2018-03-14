@@ -10,11 +10,20 @@
 <div>
     <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
     <label>
+        <select class="input-medium" id="type">
+            <option value="0" label="年"></option>
+            <option value="1" label="月"></option>
+        </select>
+    </label>
+    <label>
         <select class="input-medium" id="variId">
             <option value="0" label="全部"></option>
-            <c:forEach items="${varietyList}" var="v">
+            <option value="1" label="拉杆箱"></option>
+            <option value="2" label="双肩包"></option>
+            <option value="3" label="钱包"></option>
+            <%--<c:forEach items="${varietyList}" var="v">
                 <option value="${v.id}" label="${v.name}">${v.name}</option>
-            </c:forEach>
+            </c:forEach>--%>
         </select>
     </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
@@ -33,14 +42,20 @@
         skuTotalDataChart.clear();
         var applyDate = $("#applyDate").val();
 
+        var typeEle = $("#type");
+        var type = typeEle.find("option:selected").val();
+
         var variIdEle = $("#variId");
         var variId = variIdEle.find("option:selected").val();
 
-
+        if (type == '1' && (applyDate == '' || applyDate == null)) {
+            alert("请选择月份");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/between/skuData",
-            data: {"month": applyDate, "variId" : variId},
+            data: {"month": applyDate, "type" : type, "variId" : variId},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -74,8 +89,9 @@
                     /*legend: {
                         data: msg.officeNameSet
                     },*/
+                    //['第一周','第二周','第三周','第四周','第五周']
                     xAxis: {
-                        data: ['第一周','第二周','第三周','第四周','第五周'],
+                        data: msg.nameList,
                         axisPointer: {
                             type: 'shadow'
                         }

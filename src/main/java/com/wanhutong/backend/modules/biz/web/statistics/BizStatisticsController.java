@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Controller;
@@ -532,8 +533,9 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "getBizTotalStatisticsDto")
     public String getBizTotalStatisticsDto(Model model){
-        BizTotalStatisticsDto bizTotalStatisticsDto = bizStatisticsService.getBizTotalStatisticsDto();
-        model.addAttribute("totalStatistics",bizTotalStatisticsDto);
+        Map<String,BizTotalStatisticsDto> totalMap = bizStatisticsService.getBizTotalStatisticsDto();
+        model.addAttribute("totalMap",totalMap);
+        model.addAttribute("time",new Date());
         return "modules/biz/statistics/bizTotalStatistics";
     }
 
