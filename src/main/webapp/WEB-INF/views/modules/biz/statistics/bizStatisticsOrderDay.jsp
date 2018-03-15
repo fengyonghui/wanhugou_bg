@@ -74,7 +74,8 @@
                             fontSize: 16,
                             fontWeight: 'bolder',
                             color: '#6a6a6a'
-                        }
+                        },
+                        x:'center'
                     },
                     tooltip: {
                         trigger: 'axis',
@@ -124,7 +125,8 @@
                             fontSize: 16,
                             fontWeight: 'bolder',
                             color: '#6a6a6a'
-                        }
+                        },
+                        x:'center'
                     },
                     tooltip : {
                         trigger: 'axis',
