@@ -2,78 +2,78 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao">
 
-    <resultMap id="orderHeaderResult" type="BizOrderHeader">
-        <id property="id" column="id"/>
-        <result property="orderNum" column="orderNum"/>
-        <result property="orderType" column="orderType"/>
-        <result property="totalDetail" column="totalDetail"/>
-        <result property="receiveTotal" column="receiveTotal"/>
-        <result property="totalExp" column="totalExp"/>
+	<resultMap id="orderHeaderResult" type="BizOrderHeader">
+		<id property="id" column="id"/>
+		<result property="orderNum" column="orderNum"/>
+		<result property="orderType" column="orderType"/>
+		<result property="totalDetail" column="totalDetail"/>
+		<result property="receiveTotal" column="receiveTotal"/>
+		<result property="totalExp" column="totalExp"/>
 
-        <result property="freight" column="freight"/>
-        <result property="invStatus" column="invStatus"/>
-        <result property="bizStatus" column="bizStatus"/>
-        <result property="bizType" column="bizType"/>
-        <result property="itemNo" column="itemNo"/>
-        <result property="delFlag" column="status"/>
+		<result property="freight" column="freight"/>
+		<result property="invStatus" column="invStatus"/>
+		<result property="bizStatus" column="bizStatus"/>
+		<result property="bizType" column="bizType"/>
+		<result property="itemNo" column="itemNo"/>
+		<result property="delFlag" column="status"/>
 		<result property="centersName" column="centersName"/>
 
-        <result property="createDate" column="createDate"/>
-        <result property="updateDate" column="updateDate"/>
+		<result property="createDate" column="createDate"/>
+		<result property="updateDate" column="updateDate"/>
 
-        <association property="customer" javaType="Office" column="customer.id">
-            <id property="id" column="customer.id"/>
-            <result property="name" column="customer.name"/>
-            <result property="phone" column="customer.phone"/>
-        </association>
+		<association property="customer" javaType="Office" column="customer.id">
+			<id property="id" column="customer.id"/>
+			<result property="name" column="customer.name"/>
+			<result property="phone" column="customer.phone"/>
+		</association>
 
-        <association property="bizLocation" javaType="BizOrderAddress" column="bizLocation.id">
-            <id property="id" column="bizLocation.id"/>
-            <result property="receiver" column="bizLocation.receiver"/>
-            <result property="phone" column="bizLocation.phone"/>
-            <result property="address" column="bizLocation.address"/>
-            <association property="province" javaType="SysRegion" column="province.id">
-                <id property="id" column="province.id"/>
-                <result property="name" column="province.name"/>
-            </association>
-            <association property="city" javaType="SysRegion" column="city.id">
-                <id property="id" column="city.id"/>
-                <result property="name" column="city.name"/>
-            </association>
-            <association property="region" javaType="SysRegion" column="region.id">
-                <id property="id" column="region.id"/>
-                <result property="name" column="region.name"/>
-            </association>
-        </association>
+		<association property="bizLocation" javaType="BizOrderAddress" column="bizLocation.id">
+			<id property="id" column="bizLocation.id"/>
+			<result property="receiver" column="bizLocation.receiver"/>
+			<result property="phone" column="bizLocation.phone"/>
+			<result property="address" column="bizLocation.address"/>
+			<association property="province" javaType="SysRegion" column="province.id">
+				<id property="id" column="province.id"/>
+				<result property="name" column="province.name"/>
+			</association>
+			<association property="city" javaType="SysRegion" column="city.id">
+				<id property="id" column="city.id"/>
+				<result property="name" column="city.name"/>
+			</association>
+			<association property="region" javaType="SysRegion" column="region.id">
+				<id property="id" column="region.id"/>
+				<result property="name" column="region.name"/>
+			</association>
+		</association>
 
-        <association property="platformInfo" javaType="BizPlatformInfo" column="platformInfo.id">
-            <id property="id" column="platformInfo.id"/>
-            <result property="name" column="platformInfo.name"/>
-        </association>
+		<association property="platformInfo" javaType="BizPlatformInfo" column="platformInfo.id">
+			<id property="id" column="platformInfo.id"/>
+			<result property="name" column="platformInfo.name"/>
+		</association>
 
-        <association property="createBy" javaType="User" column="createBy.id">
-            <id property="id" column="createBy.id"/>
-            <id property="name" column="createBy.name"/>
-        </association>
-        <association property="updateBy" javaType="User" column="updateBy.id">
-            <id property="id" column="updateBy.id"/>
-            <id property="name" column="updateBy.name"/>
-        </association>
+		<association property="createBy" javaType="User" column="createBy.id">
+			<id property="id" column="createBy.id"/>
+			<id property="name" column="createBy.name"/>
+		</association>
+		<association property="updateBy" javaType="User" column="updateBy.id">
+			<id property="id" column="updateBy.id"/>
+			<id property="name" column="updateBy.name"/>
+		</association>
 
-        <collection property="orderDetailList" ofType="BizOrderDetail">
-            <id property="id" column="orderDetailList.id" />
+		<collection property="orderDetailList" ofType="BizOrderDetail">
+			<id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
 			<result property="sentQty" column="orderDetailList.sentQty" />
 			<result property="lineNo" column="orderDetailList.lineNo" />
 			<association property="skuInfo" javaType="BizSkuInfo" column="skuInfo.id">
-                <id property="id" column="orderDetailList.skuInfo.id"/>
-                <result property="buyPrice" column="orderDetailList.skuInfo.buyPrice" />
-                <result property="itemNo" column="orderDetailList.skuInfo.itemNo"/>
-            </association>
-        </collection>
+				<id property="id" column="orderDetailList.skuInfo.id"/>
+				<result property="buyPrice" column="orderDetailList.skuInfo.buyPrice" />
+				<result property="itemNo" column="orderDetailList.skuInfo.itemNo"/>
+			</association>
+		</collection>
 
 
-    </resultMap>
+	</resultMap>
 
 
 	<sql id="bizOrderHeaderColumns">
@@ -127,153 +127,153 @@
 
 	<select id="get" resultType="BizOrderHeader">
 		SELECT
-			<include refid="bizOrderHeaderColumns"/>
+		<include refid="bizOrderHeaderColumns"/>
 		FROM biz_order_header a
 		<include refid="bizOrderHeaderJoins"/>
 		WHERE a.id = #{id}
 	</select>
 
 	<!--<select id="findList" resultType="BizOrderHeader">-->
-		<!--SELECT-->
-			<!--<include refid="bizOrderHeaderColumns"/>-->
-            <!--from biz_order_header a-->
-		<!--<include refid="bizOrderHeaderJoins"/>-->
-		<!--<where>-->
-			<!--a.status = #{DEL_FLAG_NORMAL}-->
-			<!--<if test="orderNum != null and orderNum != ''">-->
-				<!--AND a.order_num-->
-				<!--LIKE-->
-				<!--<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>-->
-				<!--<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>-->
-				<!--<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>-->
-			<!--</if>-->
-			<!--<if test="orderType != null and orderType != ''">-->
-				<!--AND a.order_type = #{orderType}-->
-			<!--</if>-->
-			<!--<if test="customer != null and customer.id != null and customer.id!=''">-->
-				<!--AND a.cust_id = #{customer.id}-->
-			<!--</if>-->
-			<!--<if test="customer != null and customer.phone != null and customer.phone!=''">-->
-				<!--AND su.mobile LIKE-->
-				<!--<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>-->
-				<!--<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>-->
-				<!--<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>-->
-			<!--</if>-->
-			<!--<if test="receiveTotal != null and receiveTotal != ''">-->
-				<!--AND a.receive_total = #{receiveTotal}-->
-			<!--</if>-->
-			<!--<if test="bizStatus !=null">-->
-				<!--AND a.biz_status=#{bizStatus}-->
-			<!--</if>-->
-			<!--<if test="bizType !=null and bizType!=''">-->
-				<!--AND a.biz_type=#{bizType}-->
-			<!--</if>-->
-			<!--<if test="bizStatusStart !=null and bizStatusEnd !=null">-->
-				<!--AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}-->
-			<!--</if>-->
-			<!--<if test="invStatus !=null and invStatus!=''">-->
-				<!--AND a.inv_status=#{invStatus}-->
-			<!--</if>-->
-			<!--<if test="consultantId!=null">-->
-				<!--and ccs.consultant_id = #{consultantId}-->
-			<!--</if>-->
+	<!--SELECT-->
+	<!--<include refid="bizOrderHeaderColumns"/>-->
+	<!--from biz_order_header a-->
+	<!--<include refid="bizOrderHeaderJoins"/>-->
+	<!--<where>-->
+	<!--a.status = #{DEL_FLAG_NORMAL}-->
+	<!--<if test="orderNum != null and orderNum != ''">-->
+	<!--AND a.order_num-->
+	<!--LIKE-->
+	<!--<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>-->
+	<!--<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>-->
+	<!--<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>-->
+	<!--</if>-->
+	<!--<if test="orderType != null and orderType != ''">-->
+	<!--AND a.order_type = #{orderType}-->
+	<!--</if>-->
+	<!--<if test="customer != null and customer.id != null and customer.id!=''">-->
+	<!--AND a.cust_id = #{customer.id}-->
+	<!--</if>-->
+	<!--<if test="customer != null and customer.phone != null and customer.phone!=''">-->
+	<!--AND su.mobile LIKE-->
+	<!--<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>-->
+	<!--<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>-->
+	<!--<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>-->
+	<!--</if>-->
+	<!--<if test="receiveTotal != null and receiveTotal != ''">-->
+	<!--AND a.receive_total = #{receiveTotal}-->
+	<!--</if>-->
+	<!--<if test="bizStatus !=null">-->
+	<!--AND a.biz_status=#{bizStatus}-->
+	<!--</if>-->
+	<!--<if test="bizType !=null and bizType!=''">-->
+	<!--AND a.biz_type=#{bizType}-->
+	<!--</if>-->
+	<!--<if test="bizStatusStart !=null and bizStatusEnd !=null">-->
+	<!--AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}-->
+	<!--</if>-->
+	<!--<if test="invStatus !=null and invStatus!=''">-->
+	<!--AND a.inv_status=#{invStatus}-->
+	<!--</if>-->
+	<!--<if test="consultantId!=null">-->
+	<!--and ccs.consultant_id = #{consultantId}-->
+	<!--</if>-->
 
-			<!--<if test="centerId!=null">-->
-				<!--and ccs.center_id = #{centerId}-->
-			<!--</if>-->
+	<!--<if test="centerId!=null">-->
+	<!--and ccs.center_id = #{centerId}-->
+	<!--</if>-->
 
 
-			<!--<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">-->
-				<!--${sqlMap.order}-->
-			<!--</if>-->
-		<!--</where>-->
-		<!--<choose>-->
-			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
-				<!--ORDER BY ${page.orderBy}-->
-			<!--</when>-->
-			<!--<otherwise>-->
-			<!--</otherwise>-->
-		<!--</choose>-->
-		<!--ORDER BY updateDate DESC-->
+	<!--<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">-->
+	<!--${sqlMap.order}-->
+	<!--</if>-->
+	<!--</where>-->
+	<!--<choose>-->
+	<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+	<!--ORDER BY ${page.orderBy}-->
+	<!--</when>-->
+	<!--<otherwise>-->
+	<!--</otherwise>-->
+	<!--</choose>-->
+	<!--ORDER BY updateDate DESC-->
 	<!--</select>-->
 
 
-    <select id="findList" resultMap="orderHeaderResult">
-        SELECT
-        <include refid="bizOrderHeaderColumns"/>,
-        od.id AS "orderDetailList.id",
+	<select id="findList" resultMap="orderHeaderResult">
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>,
+		od.id AS "orderDetailList.id",
 		od.unit_price AS "orderDetailList.unitPrice",
 		od.ord_qty AS "orderDetailList.ordQty",
 		od.sent_qty AS "orderDetailList.sentQty",
 		od.line_no AS "orderDetailList.lineNo",
-        si.id AS "orderDetailList.skuInfo.id",
-        si.buy_price AS "orderDetailList.skuInfo.buyPrice",
-        si.item_no AS "orderDetailList.skuInfo.itemNo"
-        FROM biz_order_header a
-        LEFT JOIN biz_order_detail od ON od.order_id = a.id
-        LEFT JOIN biz_sku_info si ON si.id=od.sku_id
-        <include refid="bizOrderHeaderJoins"/>
-        <where>
-            a.status = #{DEL_FLAG_NORMAL}
-            <if test="orderNum != null and orderNum != ''">
-                AND a.order_num
-                LIKE
-                <if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
-                <if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
-                <if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
-            </if>
-            <if test="orderType != null and orderType != ''">
-                AND a.order_type = #{orderType}
-            </if>
-            <if test="customer != null and customer.id != null and customer.id!=''">
-                AND a.cust_id = #{customer.id}
-            </if>
+		si.id AS "orderDetailList.skuInfo.id",
+		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
+		si.item_no AS "orderDetailList.skuInfo.itemNo"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
+		<include refid="bizOrderHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
+			<if test="customer != null and customer.id != null and customer.id!=''">
+				AND a.cust_id = #{customer.id}
+			</if>
 			<if test="centersName != null and centersName!=''">
 				AND s.name like
 				<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
 			</if>
-            <if test="customer != null and customer.phone != null and customer.phone!=''">
-                AND su.mobile LIKE
-                <if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
-                <if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
-                <if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
-            </if>
-            <if test="receiveTotal != null and receiveTotal != ''">
-                AND a.receive_total = #{receiveTotal}
-            </if>
-            <if test="bizStatus !=null">
-                AND a.biz_status=#{bizStatus}
-            </if>
-            <if test="bizType !=null and bizType!=''">
-                AND a.biz_type=#{bizType}
-            </if>
-            <if test="bizStatusStart !=null and bizStatusEnd !=null">
-                AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
-            </if>
-            <if test="invStatus !=null and invStatus!=''">
-                AND a.inv_status=#{invStatus}
-            </if>
+			<if test="customer != null and customer.phone != null and customer.phone!=''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
+			</if>
+			<if test="receiveTotal != null and receiveTotal != ''">
+				AND a.receive_total = #{receiveTotal}
+			</if>
+			<if test="bizStatus !=null">
+				AND a.biz_status=#{bizStatus}
+			</if>
+			<if test="bizType !=null and bizType!=''">
+				AND a.biz_type=#{bizType}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="invStatus !=null and invStatus!=''">
+				AND a.inv_status=#{invStatus}
+			</if>
 			<if test="suplyIds!=null">
 				and od.suply_id !=0
 			</if>
 
-            <if test="consultantId!=null">
-                and ccs.consultant_id = #{consultantId}
-            </if>
+			<if test="consultantId!=null">
+				and ccs.consultant_id = #{consultantId}
+			</if>
 
-            <if test="centerId!=null">
-                and ccs.center_id = #{centerId}
-            </if>
+			<if test="centerId!=null">
+				and ccs.center_id = #{centerId}
+			</if>
 
-            <if test="itemNo !=null and itemNo !=''">
-                and si.item_no
+			<if test="itemNo !=null and itemNo !=''">
+				and si.item_no
 				LIKE
 				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
-            </if>
+			</if>
 
 			<if test="partNo !=null and partNo !=''">
 				and si.part_no
@@ -283,20 +283,20 @@
 				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
 			</if>
 
-            <if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
-                ${sqlMap.order}
-            </if>
-        </where>
-        <choose>
-            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
-                ORDER BY ${page.orderBy}
-            </when>
-            <otherwise>
--- 				GROUP  BY a.id
-            </otherwise>
-        </choose>
-        ORDER BY updateDate DESC
-    </select>
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				-- 				GROUP  BY a.id
+			</otherwise>
+		</choose>
+		ORDER BY updateDate DESC
+	</select>
 
 	<select id="findCount" resultType="Integer">
 		SELECT count(1) from
@@ -380,8 +380,8 @@
 
 
 
-				GROUP  BY a.id
-				) tmp_count
+		GROUP  BY a.id
+		) tmp_count
 
 
 
@@ -389,13 +389,13 @@
 	</select>
 
 	<select id="findAllList" resultType="BizOrderHeader">
-		SELECT 
-			<include refid="bizOrderHeaderColumns"/>
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>
 		FROM biz_order_header a
 		<include refid="bizOrderHeaderJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-		</where>		
+		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -405,85 +405,85 @@
 		</choose>
 		ORDER BY updateDate DESC
 	</select>
-	
+
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_order_header(
-			id,
-			order_num,
-			order_type,
-			cust_id,
-			total_detail,
+		id,
+		order_num,
+		order_type,
+		cust_id,
+		total_detail,
 		<if test="receiveTotal !=null and receiveTotal !=''">
 			receive_total,
 		</if>
-			total_exp,
-			freight,
+		total_exp,
+		freight,
 		<if test="invStatus !=null and invStatus !=''">
 			inv_status,
 		</if>
 		<if test="bizStatus !=null and bizStatus !=''">
 			biz_status,
 		</if>
-			biz_type,
-			plateform_id,
-			ship_to_addr,
-			status,
-			create_id,
-			create_time,
-			u_version,
-			update_id,
-			update_time
+		biz_type,
+		plateform_id,
+		ship_to_addr,
+		status,
+		create_id,
+		create_time,
+		u_version,
+		update_id,
+		update_time
 		) VALUES (
-			#{id},
-			#{orderNum},
-			#{orderType},
-			#{customer.id},
-			#{totalDetail},
+		#{id},
+		#{orderNum},
+		#{orderType},
+		#{customer.id},
+		#{totalDetail},
 		<if test="receiveTotal !=null and receiveTotal !=''">
 			#{receiveTotal},
 		</if>
-			#{totalExp},
-			#{freight},
+		#{totalExp},
+		#{freight},
 		<if test="invStatus !=null and invStatus !=''">
 			#{invStatus},
 		</if>
 		<if test="bizStatus !=null and bizStatus !=''">
 			#{bizStatus},
 		</if>
-			#{bizType},
-			#{platformInfo.id},
-			#{bizLocation.id},
-			#{delFlag},
-			#{createBy.id},
-			#{createDate},
-			#{uVersion},
-			#{updateBy.id},
-			#{updateDate}
+		#{bizType},
+		#{platformInfo.id},
+		#{bizLocation.id},
+		#{delFlag},
+		#{createBy.id},
+		#{createDate},
+		#{uVersion},
+		#{updateBy.id},
+		#{updateDate}
 		)
 	</insert>
-	
+
 	<update id="update">
 		UPDATE biz_order_header SET
-			order_num = #{orderNum},
-			order_type = #{orderType},
-			cust_id = #{customer.id},
-			total_detail = #{totalDetail},
+		order_num = #{orderNum},
+		order_type = #{orderType},
+		cust_id = #{customer.id},
+		total_detail = #{totalDetail},
 		<if test="receiveTotal !=null and receiveTotal !=''">
 			receive_total = #{receiveTotal},
 		</if>
-			total_exp = #{totalExp},
-			freight = #{freight},
-			inv_status = #{invStatus},
-			biz_status = #{bizStatus},
-			biz_type = #{bizType},
-			plateform_id = #{platformInfo.id},
-			ship_to_addr = #{bizLocation.id},
-			u_version = #{uVersion},
-			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+		total_exp = #{totalExp},
+		freight = #{freight},
+		inv_status = #{invStatus},
+		biz_status = #{bizStatus},
+		biz_type = #{bizType},
+		plateform_id = #{platformInfo.id},
+		ship_to_addr = #{bizLocation.id},
+		u_version = #{uVersion},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
-	
+
 	<update id="delete">
 		UPDATE biz_order_header SET 
 			status = #{DEL_FLAG_DELETE}
@@ -515,7 +515,7 @@
 
 	<update id="updateMoney">
 		UPDATE biz_order_header SET
-			total_detail = #{totalDetail}
+		total_detail = #{totalDetail}
 		<if test="totalExp !=null and totalExp !=''">
 			,total_exp = #{totalExp}
 		</if>
@@ -528,27 +528,27 @@
 	<!--================================================================-->
 	<select id="getValidOrderTotalAndCountByCreateTimeMonth" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
-   			sum(total_detail + total_exp + freight) AS totalMoney,
-  			count(1) AS orderCount,
-  			office.id AS officeId,
-  			office.name AS officeName,
-			sum(sku.buy_price) AS buyPrice
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		office.id AS officeId,
+		office.name AS officeName,
+		sum(sku.buy_price) AS buyPrice
 		FROM biz_order_header AS header
-  			LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
-  			LEFT JOIN sys_office AS office ON consultant.center_id = office.id
-  			LEFT JOIN biz_order_detail AS detail ON detail.order_id = header.id
-  			LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
+		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
+		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
+		LEFT JOIN biz_order_detail AS detail ON detail.order_id = header.id
+		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
 		WHERE
-			header.order_type = 1
-			AND office.name NOT LIKE '%测试%'
-			and
-			(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
-				biz_status != #{item.state}
-			</foreach>
-			OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
-      		AND header.create_time LIKE #{month}
-      		AND office.type = #{officeType}
-      		GROUP BY office.id
+		header.order_type = 1
+		AND office.name NOT LIKE '%测试%'
+		and
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND header.create_time LIKE #{month}
+		AND office.type = #{officeType}
+		GROUP BY office.id
 	</select>
 
 	<select id="getProductStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
@@ -557,7 +557,7 @@
 		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
-        and oh.order_type = 1
+		and oh.order_type = 1
 		and si.id = od.sku_id
 		and si.prod_id = pi.id
 		<if test="variId != null and variId != 0">
@@ -597,34 +597,34 @@
 		GROUP BY center_id
 	</select>
 
-    <select id="getUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
-        SELECT
-        sum(total_detail + total_exp + freight) AS totalMoney,
-	    count(1) AS orderCount,
-	    us.name AS name,
+	<select id="getUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
+		count(1) AS orderCount,
+		us.name AS name,
 		us.id AS usId,
--- 		date_format(oh.create_time, '%Y-%m') AS createTime
-        CASE date_format(oh.create_time, '%Y-%m')
-        WHEN '2017-06'
-        THEN '2017-09'
-        WHEN '2017-07'
-        THEN '2017-10'
-        WHEN '2017-08'
-        THEN '2017-09'
-        ELSE date_format(oh.create_time, '%Y-%m')
-        END   createTime
-	    FROM biz_order_header oh
+		-- 		date_format(oh.create_time, '%Y-%m') AS createTime
+		CASE date_format(oh.create_time, '%Y-%m')
+		WHEN '2017-06'
+		THEN '2017-09'
+		WHEN '2017-07'
+		THEN '2017-10'
+		WHEN '2017-08'
+		THEN '2017-09'
+		ELSE date_format(oh.create_time, '%Y-%m')
+		END   createTime
+		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
-	    WHERE
+		WHERE
 		oh.order_type = 1
 		AND off.name NOT LIKE '%测试%'
 		AND us.name NOT LIKE '%测试%'
-        and oh.`status` = 1
-	    AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		and oh.`status` = 1
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
-		</foreach>
+	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		<if test="month != null and month != ''">
 			AND oh.create_time LIKE #{month}
@@ -635,42 +635,42 @@
 		<if test="usId != null and usId != 0">
 			AND us.id = #{usId}
 		</if>
-	    GROUP BY us.`name`
-    </select>
+		GROUP BY us.`name`
+	</select>
 
 	<select id="getSingleUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
-        SELECT
-        sum(total_detail + total_exp + freight) AS totalMoney,
+		SELECT
+		sum(total_detail + total_exp + freight) AS totalMoney,
 		<!--start-->
 		sum(
-			sku.buy_price * detail.ord_qty
+		sku.buy_price * detail.ord_qty
 		) AS buyPrice,
 		(
-			sum(
-			total_detail + total_exp + freight
-			) - sum(sku.buy_price)
+		sum(
+		total_detail + total_exp + freight
+		) - sum(sku.buy_price)
 		) AS fright,
 		(SELECT count(1) FROM
-			biz_custom_center_consultant cc WHERE cc.consultant_id = us.id
+		biz_custom_center_consultant cc WHERE cc.consultant_id = us.id
 		) AS custCount,
 		(SELECT count(1) FROM
-			biz_custom_center_consultant cc WHERE cc.consultant_id = us.id AND date_format(us.create_date, '%Y-%m') = #{month}
+		biz_custom_center_consultant cc WHERE cc.consultant_id = us.id AND date_format(us.create_date, '%Y-%m') = #{month}
 		) AS addCustCount,
 		<!--end-->
-	    count(1) AS orderCount,
-	    us.name AS name,
+		count(1) AS orderCount,
+		us.name AS name,
 		us.id AS usId,
--- 		date_format(oh.create_time, '%Y-%m') AS createTime
-        CASE date_format(oh.create_time, '%Y-%m')
-        WHEN '2017-06'
-        THEN '2017-09'
-        WHEN '2017-07'
-        THEN '2017-10'
-        WHEN '2017-08'
-        THEN '2017-09'
-        ELSE date_format(oh.create_time, '%Y-%m')
-        END   createTime
-	    FROM biz_order_header oh
+		-- 		date_format(oh.create_time, '%Y-%m') AS createTime
+		CASE date_format(oh.create_time, '%Y-%m')
+		WHEN '2017-06'
+		THEN '2017-09'
+		WHEN '2017-07'
+		THEN '2017-10'
+		WHEN '2017-08'
+		THEN '2017-09'
+		ELSE date_format(oh.create_time, '%Y-%m')
+		END   createTime
+		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
@@ -678,12 +678,12 @@
 		LEFT JOIN biz_order_detail AS detail ON detail.order_id = oh.id
 		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
 		<!--end-->
-	    WHERE
+		WHERE
 		oh.order_type = 1
 		AND off.name NOT LIKE '%测试%'
 		AND us.name NOT LIKE '%测试%'
-        and oh.`status` = 1
-	    AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		and oh.`status` = 1
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
 	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
@@ -696,8 +696,8 @@
 		<if test="usId != null and usId != 0">
 			AND us.id = #{usId}
 		</if>
-	    GROUP BY createTime
-    </select>
+		GROUP BY createTime
+	</select>
 
 
 	<!--================================================================-->
@@ -736,7 +736,7 @@
 		<if test="variId != null and variId != 0">
 			and pi.vari_id = #{variId}
 		</if>
-        and oh.order_type = 1
+		and oh.order_type = 1
 		and ccc.cust_id = oh.cust_id
 		and oh.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		and si.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
@@ -787,10 +787,10 @@
 		oh.order_type = 1
 		AND off.name NOT LIKE '%测试%'
 		AND us.name NOT LIKE '%测试%'
-        and	oh.`status` = 1
+		and	oh.`status` = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
-		</foreach>
+	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		<if test="day != null and day != ''">
 			AND date_format(oh.create_time, '%Y-%m-%d') = #{day}
@@ -819,10 +819,10 @@
 		oh.order_type = 1
 		AND off.name NOT LIKE '%测试%'
 		AND us.name NOT LIKE '%测试%'
-        and	oh.`status` = 1
+		and	oh.`status` = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
-		</foreach>
+	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		<if test="day != null and day != ''">
 			AND date_format(oh.create_time, '%Y-%m-%d') = #{day}
@@ -835,7 +835,7 @@
 		</if>
 		GROUP BY createTime
 	</select>
-<!--================================================================-->
+	<!--================================================================-->
 	<select id="getValidOrderTotalAndCountByCreateTimeBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
@@ -921,11 +921,11 @@
 		WHERE
 		oh.order_type = 1
 		AND us.name NOT LIKE '%测试%'
-        and oh.`status` = 1
+		and oh.`status` = 1
 		AND off.name NOT LIKE '%测试%'
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
-		</foreach>
+	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		AND oh.create_time BETWEEN #{startDate} AND  #{endDate}
 		<if test="purchasingId != null and purchasingId != 0">
@@ -951,7 +951,7 @@
 		WHERE
 		oh.order_type = 1
 		AND us.name NOT LIKE '%测试%'
-        and oh.`status` = 1
+		and oh.`status` = 1
 		AND off.name NOT LIKE '%测试%'
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
@@ -967,7 +967,7 @@
 		GROUP BY createTime
 	</select>
 
-<!--=====================================================================================-->
+	<!--=====================================================================================-->
 	<select id="getAllUserStatisticDataPlatform"
 			resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
 		SELECT
@@ -984,16 +984,16 @@
 	<select id="getUserStatisticDataPlatform" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
 		SELECT count(1) AS count,
 		<if test="type == null or type == 0">
--- 			date_format(so.create_date, '%Y-%m') AS createDate
-            CASE date_format(so.create_date, '%Y-%m')
-            WHEN '2017-06'
-            THEN '2017-09'
-            WHEN '2017-07'
-            THEN '2017-10'
-            WHEN '2017-08'
-            THEN '2017-09'
-            ELSE date_format(so.create_date, '%Y-%m')
-            END   createDate
+			-- 			date_format(so.create_date, '%Y-%m') AS createDate
+			CASE date_format(so.create_date, '%Y-%m')
+			WHEN '2017-06'
+			THEN '2017-09'
+			WHEN '2017-07'
+			THEN '2017-10'
+			WHEN '2017-08'
+			THEN '2017-09'
+			ELSE date_format(so.create_date, '%Y-%m')
+			END   createDate
 		</if>
 		<if test="type == 1">
 			date_format(so.create_date, '%Y-%m-%d') AS createDate
@@ -1024,26 +1024,26 @@
 	<select id="getAllValidOrderTotalAndCount" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		select  count(1) as orderCount,
 		SUM(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
-        <if test="type == null or type == 0">
---             date_format(oh.create_time, '%Y-%m') AS createDate
-            CASE date_format(oh.create_time, '%Y-%m')
-            WHEN '2017-06'
-            THEN '2017-09'
-            WHEN '2017-07'
-            THEN '2017-10'
-            WHEN '2017-08'
-            THEN '2017-09'
-            ELSE date_format(oh.create_time, '%Y-%m')
-            END   createDate
-        </if>
-        <if test="type == 1">
-            date_format(oh.create_time, '%Y-%m-%d') AS createDate
-        </if>
+		<if test="type == null or type == 0">
+			--             date_format(oh.create_time, '%Y-%m') AS createDate
+			CASE date_format(oh.create_time, '%Y-%m')
+			WHEN '2017-06'
+			THEN '2017-09'
+			WHEN '2017-07'
+			THEN '2017-10'
+			WHEN '2017-08'
+			THEN '2017-09'
+			ELSE date_format(oh.create_time, '%Y-%m')
+			END   createDate
+		</if>
+		<if test="type == 1">
+			date_format(oh.create_time, '%Y-%m-%d') AS createDate
+		</if>
 		FROM biz_order_header oh
 		WHERE oh.`status` = 1
 		and (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		oh.biz_status != #{item.state}
-			</foreach>
+	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		GROUP BY createDate
 	</select>
@@ -1054,16 +1054,16 @@
 		SELECT count(1) as orderCount,
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		<if test="type == null or type == 0">
--- 			date_format(oh.create_time, '%Y-%m') AS createDate
-            CASE date_format(oh.create_time, '%Y-%m')
-            WHEN '2017-06'
-            THEN '2017-09'
-            WHEN '2017-07'
-            THEN '2017-10'
-            WHEN '2017-08'
-            THEN '2017-09'
-            ELSE date_format(oh.create_time, '%Y-%m')
-            END   createDate
+			-- 			date_format(oh.create_time, '%Y-%m') AS createDate
+			CASE date_format(oh.create_time, '%Y-%m')
+			WHEN '2017-06'
+			THEN '2017-09'
+			WHEN '2017-07'
+			THEN '2017-10'
+			WHEN '2017-08'
+			THEN '2017-09'
+			ELSE date_format(oh.create_time, '%Y-%m')
+			END   createDate
 		</if>
 		<if test="type == 1">
 			date_format(oh.create_time, '%Y-%m-%d') AS createDate
@@ -1075,18 +1075,18 @@
 		AND u.name NOT LIKE '%测试%'
 		and so.id = u.company_id
 		<if test="centerType == null or centerType == 0">
-		and so.type in (8, 10, 11)
+			and so.type in (8, 10, 11)
 		</if>
 		<if test="centerType != null and centerType != 0">
-		and so.type = #{centerType}
+			and so.type = #{centerType}
 		</if>
 		and (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
-			oh.biz_status != #{item.state}
-			</foreach>
+		oh.biz_status != #{item.state}
+	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		and oh.`status` = 1
 		<if test="orderType != null and orderType != 0">
-		and oh.`order_type` = #{orderType}
+			and oh.`order_type` = #{orderType}
 		</if>
 		and u.`status` = 1
 		and cc.`status` = 1
@@ -1129,36 +1129,36 @@
 	</select>
 
 	<select id="getSkuStatisticDataBetween" resultType="java.lang.Integer">
-			SELECT
-				count(1) AS upSkuCount
-			FROM
-			biz_sku_info sku
-			LEFT JOIN biz_product_info pi ON sku.prod_id = pi.id
-			LEFT JOIN biz_variety_info vi ON vi.id = pi.vari_id
-			WHERE
-			<if test="variId != null and variId != 0">
-				vi.id = #{variId} AND
-			</if>
-			sku.create_time BETWEEN #{startDate}
-			AND #{endDate}
-			AND sku.status = 1
+		SELECT
+		count(1) AS upSkuCount
+		FROM
+		biz_sku_info sku
+		LEFT JOIN biz_product_info pi ON sku.prod_id = pi.id
+		LEFT JOIN biz_variety_info vi ON vi.id = pi.vari_id
+		WHERE
+		<if test="variId != null and variId != 0">
+			vi.id = #{variId} AND
+		</if>
+		sku.create_time BETWEEN #{startDate}
+		AND #{endDate}
+		AND sku.status = 1
 	</select>
 	<!-- 按月查询全部商品新增数量 -->
 	<select id="getSkuAllStatisticData" parameterType="Integer" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
 		SELECT count(1) AS upSkuCount,
-			CASE date_format(bsi.create_time, '%Y-%m')
-			WHEN '2017-04'
-			THEN '2017-09'
-			WHEN '2017-05'
-			THEN '2017-10'
-			WHEN '2017-06'
-			THEN '2017-11'
-			when '2017-07'
-			then '2017-12'
-			when '2017-08'
-			then '2018-01'
-			ELSE date_format(bsi.create_time, '%Y-%m')
-			END monthDate
+		CASE date_format(bsi.create_time, '%Y-%m')
+		WHEN '2017-04'
+		THEN '2017-09'
+		WHEN '2017-05'
+		THEN '2017-10'
+		WHEN '2017-06'
+		THEN '2017-11'
+		when '2017-07'
+		then '2017-12'
+		when '2017-08'
+		then '2018-01'
+		ELSE date_format(bsi.create_time, '%Y-%m')
+		END monthDate
 		FROM biz_sku_info bsi
 		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
 		LEFT JOIN biz_variety_info vi ON vi.id = pi.vari_id

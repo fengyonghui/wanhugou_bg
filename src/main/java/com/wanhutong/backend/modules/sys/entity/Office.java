@@ -42,7 +42,9 @@ public class Office extends TreeEntity<Office> {
 
 	private String source;
 	private String gysFlag;	//用于供应商保存跳转标识
-	private User moblieMoeny;	//用于用户钱包查询手机号，采购商手机号，供应商手机号，
+	private User moblieMoeny;	//用于用户钱包查询手机号，采购商手机号，供应商手机号
+	private String customerTypeTen;   //用于客户专员查询采购中心,type=10
+	private String customerTypeEleven;   //用于客户专员查询采购中心,type=11
 
 	private Integer consultantId;
 	private Integer centerId;
@@ -285,5 +287,21 @@ public class Office extends TreeEntity<Office> {
 
 	public void setMoblieMoeny(User moblieMoeny) {
 		this.moblieMoeny = moblieMoeny;
+	}
+
+	public String getCustomerTypeTen() {
+		return customerTypeTen;
+	}
+
+	public void setCustomerTypeTen(String customerTypeTen) {
+		this.customerTypeTen = customerTypeTen;
+	}
+
+	public String getCustomerTypeEleven() {
+		return customerTypeEleven;
+	}
+
+	public void setCustomerTypeEleven(String customerTypeEleven) {
+		this.customerTypeEleven = customerTypeEleven;
 	}
 }
