@@ -120,7 +120,7 @@ public class BizInvoiceController extends BaseController {
 
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
 	@RequestMapping(value = "form")
-	public String form(BizInvoice bizInvoice, Model model,String ship,String bizStatu) {
+	public String form(BizInvoice bizInvoice, Model model) {
         BizLogistics bizLogistics = new BizLogistics();
 		List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
 		model.addAttribute("logisticsList",logisticsList);
