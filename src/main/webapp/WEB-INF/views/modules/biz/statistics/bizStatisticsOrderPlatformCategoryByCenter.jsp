@@ -31,6 +31,9 @@
         var orderTotalDataCountChart = echarts.init(document.getElementById('orderTotalDataCountChart'), 'light');
         salesVolumeChart.clear();
         orderTotalDataCountChart.clear();
+        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
+        orderTotalDataCountChart.showLoading($Echarts.showLoadingStyle);
+
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
@@ -56,6 +59,8 @@
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
+                    salesVolumeChart.hideLoading();
+                    orderTotalDataCountChart.hideLoading();
                     return;
                 }
 
@@ -109,7 +114,7 @@
                     ],
                     series: msg.seriesList
                 });
-
+                salesVolumeChart.hideLoading();
                 orderTotalDataCountChart.setOption({
                     title: {
                         text: '分平台订单量统计',
@@ -160,7 +165,7 @@
                     ],
                     series: msg.seriesCountList
                 });
-
+                orderTotalDataCountChart.hideLoading();
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

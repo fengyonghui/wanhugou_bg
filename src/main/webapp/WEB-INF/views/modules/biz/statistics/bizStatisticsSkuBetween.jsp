@@ -40,6 +40,8 @@
     function initChart() {
         var skuTotalDataChart = echarts.init(document.getElementById('skuTotalDataChart'), 'light');
         skuTotalDataChart.clear();
+        skuTotalDataChart.showLoading($Echarts.showLoadingStyle);
+
         var applyDate = $("#applyDate").val();
 
         var typeEle = $("#type");
@@ -60,6 +62,7 @@
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
+                    skuTotalDataChart.hideLoading();
                     return;
                 }
                 skuTotalDataChart.setOption({
@@ -126,7 +129,7 @@
                         }
                     }]
                 });
-
+                skuTotalDataChart.hideLoading();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");

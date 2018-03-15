@@ -38,7 +38,7 @@ usingNamespace("Base")["Cache"] = {
         }
         return value;
     },
-    Remove:function (key) {
+    Remove: function (key) {
         $.cookie(key, "");
         window.sessionStorage.removeItem(key);
     }
@@ -46,8 +46,18 @@ usingNamespace("Base")["Cache"] = {
 var $CacheUtil = Base.Cache;
 
 usingNamespace("Base")["Date"] = {
-    CompareDate :function (d1, d2) {
+    CompareDate: function (d1, d2) {
         return ((new Date(d1.replace(/-/g, "\/"))) > (new Date(d2.replace(/-/g, "\/"))));
     }
 };
 var $DateUtil = Base.Date;
+
+var $Echarts = {
+    showLoadingStyle: {
+        type: 'default',
+        text: '正在加载...',
+        color: '#239df5',
+        textColor: '#000000',
+        maskColor: 'rgba(255, 255, 255, 0)'
+    }
+};

@@ -44,6 +44,9 @@
         salesVolumeChart.clear();
         singleSalesVolumeChart.clear();
 
+        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
+        singleSalesVolumeChart.showLoading($Echarts.showLoadingStyle);
+
         var startDate = $("#applyDate").val();
         if($DateUtil.CompareDate('2017-09-01',startDate)) {
             alert("日期选择错误!请选择2017年9月以后的日期");
@@ -62,6 +65,8 @@
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
+                    salesVolumeChart.hideLoading();
+                    singleSalesVolumeChart.hideLoading();
                     return;
                 }
                 // <option value="0" label="全部"></option>
@@ -127,6 +132,7 @@
                     ],
                     series: msg.seriesList
                 });
+                salesVolumeChart.hideLoading();
                 singleSalesVolumeChart.setOption({
                     title: {
                         text: '采购顾问业绩统计(个人/日)',
@@ -182,6 +188,7 @@
                     ],
                     series: msg.singleSeriesList
                 });
+                singleSalesVolumeChart.hideLoading();
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
