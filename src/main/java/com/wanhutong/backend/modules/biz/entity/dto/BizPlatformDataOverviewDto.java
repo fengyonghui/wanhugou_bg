@@ -104,12 +104,12 @@ public class BizPlatformDataOverviewDto {
     }
 
     public String getYieldRate() {
-        return accumulatedSalesMonth.divide(procurement, 2,BigDecimal.ROUND_HALF_UP).multiply(PERCENTAGE).toString().concat("%");
+        return getAccumulatedSalesMonth().divide(getProcurement(), 2,BigDecimal.ROUND_HALF_UP).multiply(PERCENTAGE).toString().concat("%");
     }
 
 
     public BigDecimal getDifferenceTotalMonth() {
-        return accumulatedSalesMonth.subtract(procurement);
+        return getAccumulatedSalesMonth().subtract(getProcurement());
     }
 
 

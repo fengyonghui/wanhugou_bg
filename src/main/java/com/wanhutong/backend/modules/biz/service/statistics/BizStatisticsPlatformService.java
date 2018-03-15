@@ -2,11 +2,15 @@ package com.wanhutong.backend.modules.biz.service.statistics;
 
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.dao.inventory.BizInventoryInfoDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.dao.plan.BizOpPlanDao;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
+import com.wanhutong.backend.modules.biz.entity.plan.BizOpPlan;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +31,15 @@ public class BizStatisticsPlatformService {
 
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
-    
+
     @Resource
     private OfficeDao officeDao;
+
+    @Resource
+    private BizOpPlanDao bizOpPlanDao;
+
+    @Resource
+    private BizInventoryInfoDao bizInventoryInfoDao;
 
     /**
      * 请求参数日期格式
@@ -72,29 +82,43 @@ public class BizStatisticsPlatformService {
     /**
      * 获取平台业务数据
      */
-    public List<BizPlatformDataOverviewDto> getPlatformData(String startDate, String endDate) {
+    public List<BizPlatformDataOverviewDto> getPlatformData(String startDate, String endDate, String currentDate) {
         List<BizPlatformDataOverviewDto> list = Lists.newArrayList();
+        String[] dateStrArr = startDate.split("-");
         List<Office> listByType = officeDao.findListByType("8");
         listByType.removeIf(o -> o.getName().contains("测试"));
         listByType.forEach(o -> {
             List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = orderStatisticDataByOffice(startDate, endDate, null, null, null, o.getId());
-            System.out.println(bizOrderStatisticsDtoList);
-
-
-        });
-
-        for(int i = 0; i < 10; i ++) {
+            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList = orderStatisticDataByOffice(currentDate, currentDate, null, null, null, o.getId());
             BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
+            BizOrderStatisticsDto bizOrderStatisticsDto = null;
+            if (CollectionUtils.isNotEmpty(bizOrderStatisticsDtoList)) {
+                bizOrderStatisticsDto = bizOrderStatisticsDtoList.get(0);
+            }
+            bizPlatformDataOverviewDto.setName(o.getName());
+            // 采购额
+            BizOpPlan bizOpPlan = new BizOpPlan();
+            bizOpPlan.setObjectName("sys_office");
+            bizOpPlan.setObjectId(String.valueOf(o.getId()));
+            bizOpPlan.setYear(dateStrArr[0]);
+            bizOpPlan.setMonth(dateStrArr[1]);
+            bizOpPlan.setDay("0");
+            List<BizOpPlan> planList = bizOpPlanDao.findList(bizOpPlan);
+            if (CollectionUtils.isNotEmpty(planList)) {
+                bizOpPlan = planList.get(0);
+            }
 
-            bizPlatformDataOverviewDto.setProvince("山东");
-            bizPlatformDataOverviewDto.setName("山东临沂");
-            bizPlatformDataOverviewDto.setProcurement(new BigDecimal(1000));
-            bizPlatformDataOverviewDto.setAccumulatedSalesMonth(new BigDecimal(600));
-            bizPlatformDataOverviewDto.setProcurementDay(new BigDecimal(300));
-            bizPlatformDataOverviewDto.setStockAmount(new BigDecimal(400));
-
+            bizPlatformDataOverviewDto.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            bizPlatformDataOverviewDto.setAccumulatedSalesMonth(bizOrderStatisticsDto == null ? BigDecimal.ZERO :bizOrderStatisticsDto.getTotalMoney());
+            bizPlatformDataOverviewDto.setProcurementDay(
+                    CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
+                            BigDecimal.ZERO
+                            : currentBizOrderStatisticsDtoList.get(0).getTotalMoney());
+            // 库存金额
+            StockAmountDto stockAmountByCustId = bizInventoryInfoDao.getStockAmountByCustId(o.getId());
+            bizPlatformDataOverviewDto.setStockAmount(new BigDecimal(stockAmountByCustId == null ? "0" : stockAmountByCustId.getStockAmount()));
             list.add(bizPlatformDataOverviewDto);
-        }
+        });
         return list;
     }
 }

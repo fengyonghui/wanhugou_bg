@@ -72,7 +72,8 @@ public class BizStatisticsPlatformController extends BaseController {
             Date endDate = calendar.getTime();
             list = bizStatisticsPlatformService.getPlatformData(
                     simpleDateFormat.format(startDate),
-                    simpleDateFormat.format(endDate)
+                    simpleDateFormat.format(endDate),
+                    simpleDateFormat.format(parseDate)
             );
 
         } catch (ParseException e) {

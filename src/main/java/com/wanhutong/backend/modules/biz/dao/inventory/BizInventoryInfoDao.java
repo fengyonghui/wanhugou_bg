@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.dao.inventory;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.dto.StockAmountDto;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 
 /**
@@ -14,5 +15,6 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
  */
 @MyBatisDao
 public interface BizInventoryInfoDao extends CrudDao<BizInventoryInfo> {
-	
+
+    StockAmountDto getStockAmountByCustId(Integer custId);
 }
