@@ -1093,9 +1093,7 @@
 		<if test="officeId != null and officeId != 0">
 			and so.id = #{officeId}
 		</if>
-		<if test="type == 1">
-			AND oh.create_time BETWEEN #{startDate} AND #{endDate}
-		</if>
+		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		GROUP BY createDate
 	</select>
 
