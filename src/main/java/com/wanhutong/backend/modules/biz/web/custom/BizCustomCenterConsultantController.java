@@ -44,11 +44,11 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/biz/custom/bizCustomCenterConsultant")
 public class BizCustomCenterConsultantController extends BaseController {
 
-	@Autowired
-	private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+    @Autowired
+    private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 
-	@Autowired
-	private OfficeService officeService;
+    @Autowired
+    private OfficeService officeService;
     @Autowired
     private SystemService systemService;
 
@@ -63,9 +63,14 @@ public class BizCustomCenterConsultantController extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
         BizCustomCenterConsultant BCC = new BizCustomCenterConsultant();
+        User user = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
+        Office office = officeService.get(user.getOffice());
         if(bizCustomCenterConsultant.getConsultants()!=null){
-            User user = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
-            Office office = officeService.get(user.getOffice());
+            if(bizCustomCenterConsultant.getQueryCustomes()!=null && bizCustomCenterConsultant.getQueryCustomes().equals("query_Custome")){
+                if(bizCustomCenterConsultant.getCustoms()!=null){
+                    BCC.setCustoms(bizCustomCenterConsultant.getCustoms());//采购商
+                }
+            }
             BCC.setCenters(office);//采购中心
             BCC.setConsultants(user);//客户专员
             model.addAttribute("bcUser", BCC);
@@ -97,7 +102,7 @@ public class BizCustomCenterConsultantController extends BaseController {
 //        return "modules/biz/custom/bizCustomCenterConsultantList";
 //    }
 
-//    关联采购商
+    //    关联采购商
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = "connOfficeForm")
     public String connOfficeForm(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -108,6 +113,8 @@ public class BizCustomCenterConsultantController extends BaseController {
 //        parentOff.setId(Integer.parseInt(socID));
 //        off.setParent(parentOff);
         off.setType(center);
+        off.setCustomerTypeTen("10");
+        off.setCustomerTypeEleven("11");
         List<Office> officeList = officeService.queryCenterList(off);
         for (int i = 0; i < officeList.size(); i++) {
             if(officeList.get(i).getId().equals(user.getOffice().getId()) ){//关联时，判断采购中心
@@ -132,23 +139,23 @@ public class BizCustomCenterConsultantController extends BaseController {
         return "modules/biz/custom/bizCustomMembershipVolumeDATE";
     }
 
-//    保存状态给 officeController
-	@RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
-	@RequestMapping(value = "save")
-	@ResponseBody
-	public String save(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
-		if(bizCustomCenterConsultant == null || bizCustomCenterConsultant.getCustoms() == null || bizCustomCenterConsultant.getConsultants() == null){
-			return "0";
-		}
+    //    保存状态给 officeController
+    @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
+    @RequestMapping(value = "save")
+    @ResponseBody
+    public String save(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
+        if(bizCustomCenterConsultant == null || bizCustomCenterConsultant.getCustoms() == null || bizCustomCenterConsultant.getConsultants() == null){
+            return "0";
+        }
 //		BizCustomCenterConsultant BCC = bizCustomCenterConsultantService.get(bizCustomCenterConsultant.getCustoms().getId());
 //		if(BCC!=null && BCC.getDelFlag().equals(1)){
 //            bizCustomCenterConsultant.setIsNewRecord(true);//新记录 insert
 //		}else{
 //            bizCustomCenterConsultant.setIsNewRecord(false);//不是新记录,update
 //        }
-		bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
-		return "1";
-	}
+        bizCustomCenterConsultantService.save(bizCustomCenterConsultant);
+        return "1";
+    }
 
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:edit")
     @RequestMapping(value = "delete")
