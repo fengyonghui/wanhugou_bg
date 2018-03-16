@@ -48,20 +48,26 @@
 
                     if(window.confirm('你确定要发货吗？') && flag && total > 0){
 						var orderHeaders = $("input[name='orderHeaders']").val();
-						$.ajax({
-							type:"post",
-							url:"${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders="+encodeURIComponent(orderHeaders),
-							success:(function (data) {
-								if (data == "true"){
-                                    form.submit();
-								    return true;
-                                    loading('正在提交，请稍等...');
-								}else {
-								    alert("库存不足！");
-								    return false;
-								}
-                            })
-						})
+						if(${bizInvoice.bizStatus == 0}){
+							$.ajax({
+								type:"post",
+								url:"${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders="+encodeURIComponent(orderHeaders),
+								success:(function (data) {
+									if (data == "true"){
+										form.submit();
+										return true;
+										loading('正在提交，请稍等...');
+									}else {
+										alert("库存不足！");
+										return false;
+									}
+								})
+							})
+                        }else {
+                            form.submit();
+                            return true;
+                            loading('正在提交，请稍等...');
+                        }
                     }else{
                         //alert("取消");
                         return false;
