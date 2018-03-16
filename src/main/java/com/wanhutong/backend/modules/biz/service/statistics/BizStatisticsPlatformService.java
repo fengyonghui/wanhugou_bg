@@ -2,6 +2,7 @@ package com.wanhutong.backend.modules.biz.service.statistics;
 
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizInventoryInfoDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.plan.BizOpPlanDao;
@@ -9,7 +10,9 @@ import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.entity.plan.BizOpPlan;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
+import com.wanhutong.backend.modules.sys.dao.SysRegionDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -35,6 +39,9 @@ public class BizStatisticsPlatformService {
 
     @Resource
     private OfficeDao officeDao;
+
+    @Resource
+    private SysRegionDao sysRegionDao;
 
     @Resource
     private BizOpPlanDao bizOpPlanDao;
@@ -83,12 +90,14 @@ public class BizStatisticsPlatformService {
     /**
      * 获取平台业务数据
      */
-    public List<BizPlatformDataOverviewDto> getPlatformData(String startDate, String endDate, String currentDate) {
-        List<BizPlatformDataOverviewDto> list = Lists.newArrayList();
+    public Map<String, List<BizPlatformDataOverviewDto>> getPlatformData(String startDate, String endDate, String currentDate) {
         String[] dateStrArr = startDate.split("-");
         List<Office> listByType = officeDao.findListByType("8");
         listByType.removeIf(o -> o.getName().contains("测试"));
+        Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
         listByType.forEach(o -> {
+            SysRegion sysRegion = sysRegionDao.queryOfficeProvinceById(o.getId());
+
             List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = orderStatisticDataByOffice(startDate, endDate, null, null, null, o.getId());
             List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList = orderStatisticDataByOffice(currentDate, currentDate + " 23:59:59", null, null, null, o.getId());
             BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
@@ -118,8 +127,12 @@ public class BizStatisticsPlatformService {
             // 库存金额
             StockAmountDto stockAmountByCustId = bizInventoryInfoDao.getStockAmountByCustId(o.getId());
             bizPlatformDataOverviewDto.setStockAmount(new BigDecimal(stockAmountByCustId == null ? "0" : stockAmountByCustId.getStockAmount()));
-            list.add(bizPlatformDataOverviewDto);
+
+            List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = resultMap.putIfAbsent(sysRegion == null ? "未知" : sysRegion.getName(), Lists.newArrayList(bizPlatformDataOverviewDto));
+            if (bizPlatformDataOverviewDtos != null) {
+                bizPlatformDataOverviewDtos.add(bizPlatformDataOverviewDto);
+            }
         });
-        return list;
+        return resultMap;
     }
 }

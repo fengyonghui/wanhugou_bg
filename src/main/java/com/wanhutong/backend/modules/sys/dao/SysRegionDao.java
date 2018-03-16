@@ -14,5 +14,13 @@ import com.wanhutong.backend.modules.sys.entity.SysRegion;
  */
 @MyBatisDao
 public interface SysRegionDao extends CrudDao<SysRegion> {
+
+
+    /**
+     * 根据ID 取公司地址的省份
+     * @param id
+     * @return
+     */
+    SysRegion queryOfficeProvinceById(Integer id);
 	
 }

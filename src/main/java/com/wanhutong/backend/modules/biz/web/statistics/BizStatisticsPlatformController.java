@@ -61,7 +61,7 @@ public class BizStatisticsPlatformController extends BaseController {
     @RequestMapping(value = {"overview", ""})
     public String overview(HttpServletRequest request, String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
-        List<BizPlatformDataOverviewDto> list = null;
+        Map<String, List<BizPlatformDataOverviewDto>> list = null;
         try {
             Calendar calendar = Calendar.getInstance();
             Date parseDate = StringUtils.isBlank(date) ? new Date() : simpleDateFormat.parse(date);

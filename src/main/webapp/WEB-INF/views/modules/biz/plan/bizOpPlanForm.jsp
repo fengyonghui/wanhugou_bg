@@ -62,7 +62,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">日计划：</label>
+			<label class="control-label">计划所在日：</label>
 			<div class="controls">
 				<form:input path="day" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

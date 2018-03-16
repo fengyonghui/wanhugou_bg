@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <html>
 <head>
     <title>万户通平台业务数据</title>
@@ -42,38 +43,42 @@
     </thead>
     <tbody>
     <c:forEach items="${dataList}" var="dataItme">
-        <tr>
+    <tr>
+        <td rowspan="${fn:length(dataItme.value) + 1}">
+                ${dataItme.key}
+        </td>
+        <c:forEach items="${dataItme.value}" var="item">
+            <tr>
             <td>
-                    ${dataItme.province}
+                    ${item.name}
             </td>
             <td>
-                    ${dataItme.name}
+                    ${item.procurement}
             </td>
             <td>
-                    ${dataItme.procurement}
+                    ${item.accumulatedSalesMonth}
             </td>
             <td>
-                    ${dataItme.accumulatedSalesMonth}
+                    ${item.procurementDay}
             </td>
             <td>
-                    ${dataItme.procurementDay}
+                    ${item.yieldRate}
             </td>
             <td>
-                    ${dataItme.yieldRate}
+                    ${item.differenceTotalMonth}
             </td>
             <td>
-                    ${dataItme.differenceTotalMonth}
+                    ${item.remainingDays}
             </td>
             <td>
-                    ${dataItme.remainingDays}
+                    ${item.dayMinReturned}
             </td>
             <td>
-                    ${dataItme.dayMinReturned}
+                    ${item.stockAmount}
             </td>
-            <td>
-                    ${dataItme.stockAmount}
-            </td>
-        </tr>
+            </tr>
+        </c:forEach>
+    </tr>
     </c:forEach>
     </tbody>
 </table>
