@@ -53,10 +53,10 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private SystemService systemService;
-	
+
 	@Autowired
 	private OfficeService officeService;
-	
+
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
 		if (id!=null){
@@ -65,7 +65,7 @@ public class UserController extends BaseController {
 			return new User();
 		}
 	}
-	
+
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"index"})
 	public String index(User user, Model model) {
@@ -75,11 +75,29 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
+		if(user.getCompany()!=null && user.getCompany().getSource()!=null && user.getCompany().getSource().equals("officeConnIndex")){
+			Office queryOffice = officeService.get(user.getCompany().getId());
+			//属于客户专员左边点击菜单查询
+			if(queryOffice!=null){
+				if(queryOffice.getType().equals("8")){//采购中心8
+					user.getCompany().setType(queryOffice.getType());
+				} else if(queryOffice.getType().equals("10")){ //配资中心 10
+					user.getCompany().setCustomerTypeTen(queryOffice.getType());
+				}else if(queryOffice.getType().equals("11")){	//网供中心 11
+					user.getCompany().setCustomerTypeEleven(queryOffice.getType());
+				}else{
+					user.getCompany().setType("8");
+					user.getCompany().setCustomerTypeTen("10");
+					user.getCompany().setCustomerTypeEleven("11");
+				}
+			}
+		}
+
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
-        model.addAttribute("page", page);
+		model.addAttribute("page", page);
 		return "modules/sys/userList";
 	}
-	
+
 	@ResponseBody
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"listData"})
@@ -127,8 +145,8 @@ public class UserController extends BaseController {
 			}
 		}
 		if (flag != null && !"".equals(flag)){
-		    model.addAttribute("flag",flag);
-        }
+			model.addAttribute("flag",flag);
+		}
 		model.addAttribute("user", user);
 		model.addAttribute("allRoles", systemService.findAllRole());
 //		if(user.getConn().equals("connIndex")){
@@ -152,7 +170,7 @@ public class UserController extends BaseController {
 		}
 		return list;
 	}
-	
+
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "save")
 	public String save(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
@@ -192,13 +210,13 @@ public class UserController extends BaseController {
 		}
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
 
-		if(user.getConn().equals("connIndex")){
+		if(user.getConn()!=null && user.getConn().equals("connIndex")){
 //			添加 跳回客户专员管理
-			return "redirect:" + adminPath + "/sys/user/list?company.type=8&conn="+user.getConn();
+			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
-	
+
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "delete")
 	public String delete(User user, RedirectAttributes redirectAttributes) {
@@ -214,17 +232,14 @@ public class UserController extends BaseController {
 			systemService.deleteUser(user);
 			addMessage(redirectAttributes, "删除用户成功");
 		}
-		if(user.getConn().equals("connIndex")){
+		if(user.getConn() !=null && user.getConn().equals("connIndex")){
 //			跳回客户专员管理
-			if(user.getCompany().getId() !=null){
-				return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&conn="+user.getConn();
-			}else {
-				return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&conn="+user.getConn();
-			}
+			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
+					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
-	
+
 	/**
 	 * 导出用户数据
 	 * @param user
@@ -234,18 +249,18 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("sys:user:view")
-    @RequestMapping(value = "export", method=RequestMethod.POST)
-    public String exportFile(User user, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	@RequestMapping(value = "export", method=RequestMethod.POST)
+	public String exportFile(User user, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
-            String fileName = "用户数据"+DateUtils.getDate("yyyyMMddHHmmss")+".xlsx";
-            Page<User> page = systemService.findUser(new Page<User>(request, response, -1), user);
-    		new ExportExcel("用户数据", User.class).setDataList(page.getList()).write(response, fileName).dispose();
-    		return null;
+			String fileName = "用户数据"+DateUtils.getDate("yyyyMMddHHmmss")+".xlsx";
+			Page<User> page = systemService.findUser(new Page<User>(request, response, -1), user);
+			new ExportExcel("用户数据", User.class).setDataList(page.getList()).write(response, fileName).dispose();
+			return null;
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导出用户失败！失败信息："+e.getMessage());
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
-    }
+	}
 
 	/**
 	 * 导入用户数据
@@ -254,8 +269,8 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("sys:user:edit")
-    @RequestMapping(value = "import", method=RequestMethod.POST)
-    public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
+	@RequestMapping(value = "import", method=RequestMethod.POST)
+	public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
 		if(Global.isDemoMode()){
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/sys/user/list?repage";
@@ -296,8 +311,8 @@ public class UserController extends BaseController {
 			addMessage(redirectAttributes, "导入用户失败！失败信息："+e.getMessage());
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
-    }
-	
+	}
+
 	/**
 	 * 下载导入用户数据模板
 	 * @param response
@@ -305,18 +320,18 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("sys:user:view")
-    @RequestMapping(value = "import/template")
-    public String importFileTemplate(HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	@RequestMapping(value = "import/template")
+	public String importFileTemplate(HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
-            String fileName = "用户数据导入模板.xlsx";
-    		List<User> list = Lists.newArrayList(); list.add(UserUtils.getUser());
-    		new ExportExcel("用户数据", User.class, 2).setDataList(list).write(response, fileName).dispose();
-    		return null;
+			String fileName = "用户数据导入模板.xlsx";
+			List<User> list = Lists.newArrayList(); list.add(UserUtils.getUser());
+			new ExportExcel("用户数据", User.class, 2).setDataList(list).write(response, fileName).dispose();
+			return null;
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导入模板下载失败！失败信息："+e.getMessage());
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
-    }
+	}
 
 	/**
 	 * 验证登录名是否有效
@@ -374,7 +389,7 @@ public class UserController extends BaseController {
 	public User infoData() {
 		return UserUtils.getUser();
 	}
-	
+
 	/**
 	 * 修改个人用户密码
 	 * @param oldPassword
@@ -401,7 +416,7 @@ public class UserController extends BaseController {
 		model.addAttribute("user", user);
 		return "modules/sys/userModifyPwd";
 	}
-	
+
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "treeData")
@@ -418,7 +433,7 @@ public class UserController extends BaseController {
 		}
 		return mapList;
 	}
-    
+
 //	@InitBinder
 //	public void initBinder(WebDataBinder b) {
 //		b.registerCustomEditor(List.class, "roleList", new PropertyEditorSupport(){
@@ -441,27 +456,27 @@ public class UserController extends BaseController {
 //		});
 //	}
 
-//	客户专员管理
+	//	客户专员管理
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"conIndex"})
 	public String conIndex(User user, Model model) {
 		return "modules/sys/conIndex";
 	}
 
-    /**
-     * 会员搜索
-     * flag = ck 查看
-     */
+	/**
+	 * 会员搜索
+	 * flag = ck 查看
+	 */
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "contact")
 	public String contact(User user, HttpServletRequest request, HttpServletResponse response, Model model){
 		Office company = new Office();
 		if (user.getCompany() != null && user.getCompany().getName() != null && !"".equals(user.getCompany().getName())){
-            company.setName(user.getCompany().getName());
-        }
+			company.setName(user.getCompany().getName());
+		}
 		company.setType(OfficeTypeEnum.CUSTOMER.getType());
-        user.setCompany(company);
-        Page<User> page = systemService.contact(new Page<User>(request, response),user);
+		user.setCompany(company);
+		Page<User> page = systemService.contact(new Page<User>(request, response),user);
 		model.addAttribute("page", page);
 		model.addAttribute("flag","ck");
 //		model.addAttribute("userList",userList);

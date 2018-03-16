@@ -72,7 +72,7 @@ public class OfficeController extends BaseController {
 	public String purchasersIndex(Office office, Model model) {
 		return "modules/sys/purchasersIndex";
 	}
-	
+
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "purchasersList")
 	public String purchasersList(Office office, String conn,Integer centers,Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -100,23 +100,23 @@ public class OfficeController extends BaseController {
 //		}
 		return "modules/sys/purchasersList";
 	}
-	
+
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "purchasersForm")
 	public String purchasersForm(Office office, Model model) {
 		User user = UserUtils.getUser();
 		if (office.getParent()==null || office.getParent().getId()==null){
-            if(OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
-                office.setType(office.getType());
-                office.setParent(officeService.get(0));
-            }else {
-                office.setParent(user.getOffice());
-            }
+			if(OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
+				office.setType(office.getType());
+				office.setParent(officeService.get(0));
+			}else {
+				office.setParent(user.getOffice());
+			}
 
 		}
 		if(office.getParent()!=null){
-            office.setParent(officeService.get(office.getParent().getId()));
-        }
+			office.setParent(officeService.get(office.getParent().getId()));
+		}
 
 		if (office.getArea()==null){
 			office.setArea(user.getOffice().getArea());
@@ -141,13 +141,13 @@ public class OfficeController extends BaseController {
 		model.addAttribute("office", office);
 		return "modules/sys/purchasersForm";
 	}
-	
+
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "supplierIndex")
 	public String supplierIndex(Office office, Model model) {
 		return "modules/sys/supplierIndex";
 	}
-	
+
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "supplierList")
 	public String supplierList(Office office,Model model) {
@@ -163,7 +163,7 @@ public class OfficeController extends BaseController {
 		}
 		return "modules/sys/supplierList";
 	}
-	
+
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "supplierForm")
 	public String supplierForm(Office office, Model model) {
@@ -191,40 +191,40 @@ public class OfficeController extends BaseController {
 		model.addAttribute("office", office);
 		return "modules/sys/supplierForm";
 	}
-	
+
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "purchaserTreeData")
 	public List<Map<String, Object>> purchaserTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
-			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
+													   @RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
 
-			List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Map<String, Object>> mapList = Lists.newArrayList();
 
-			List<Office>list = officeService.filerOffice(null,"purchaser",OfficeTypeEnum.CUSTOMER);
-			for (int i=0; i<list.size(); i++){
-				Office e = list.get(i);
-				if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
-						&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
-						&& (grade == null || (grade != null && Integer.parseInt(e.getGrade()) <= grade.intValue()))
-						&& Global.YES.equals(e.getUseable())){
-					Map<String, Object> map = Maps.newHashMap();
-					map.put("id", e.getId());
-					map.put("pId", e.getParentId());
-					map.put("pIds", e.getParentIds());
-					map.put("name", e.getName());
-					mapList.add(map);
-				}
+		List<Office>list = officeService.filerOffice(null,"purchaser",OfficeTypeEnum.CUSTOMER);
+		for (int i=0; i<list.size(); i++){
+			Office e = list.get(i);
+			if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))
+					&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
+					&& (grade == null || (grade != null && Integer.parseInt(e.getGrade()) <= grade.intValue()))
+					&& Global.YES.equals(e.getUseable())){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("pIds", e.getParentIds());
+				map.put("name", e.getName());
+				mapList.add(map);
 			}
+		}
 
 
 		return mapList;
 	}
-	
+
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "supplierTreeData")
 	public List<Map<String, Object>> supplierTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
-			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
+													  @RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
 //		List<Map<String, Object>> mapList = Lists.newArrayList();
 //		String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
 //		Office office = new Office();
@@ -251,7 +251,7 @@ public class OfficeController extends BaseController {
 		}
 		return mapList;
 	}
-	
+
 	@RequiresPermissions("sys:office:edit")
 	@RequestMapping(value = "purchaserSave")
 	public String purchaserSave(Office office, Model model, RedirectAttributes redirectAttributes) {
@@ -282,14 +282,14 @@ public class OfficeController extends BaseController {
 		Integer id = office.getParentId()==0 ? null : office.getParentId();
 		return "redirect:" + adminPath + "/sys/office/purchasersList";
 	}
-	
+
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = {"list"})
 	public String list(Office office, Model model) {
-        model.addAttribute("list", officeService.findList(office));
+		model.addAttribute("list", officeService.findList(office));
 		return "modules/sys/officeList";
 	}
-	
+
 	@RequiresPermissions("sys:office:view")
 	@RequestMapping(value = "form")
 	public String form(Office office, Model model,String flag) {
@@ -323,12 +323,12 @@ public class OfficeController extends BaseController {
 			office.setPrimaryPerson(systemService.getUser(office.getPrimaryPerson().getId()));
 		}
 		if (flag != null && !"".equals(flag)){
-		    model.addAttribute("flag",flag);
-        }
+			model.addAttribute("flag",flag);
+		}
 		model.addAttribute("office", office);
 		return "modules/sys/officeForm";
 	}
-	
+
 	@RequiresPermissions("sys:office:edit")
 	@RequestMapping(value = "save")
 	public String save(Office office, Model model, RedirectAttributes redirectAttributes) {
@@ -340,7 +340,7 @@ public class OfficeController extends BaseController {
 			return form(office, model,null);
 		}
 		officeService.save(office);
-		
+
 		if(office.getChildDeptList()!=null){
 			Office childOffice = null;
 			for(String id : office.getChildDeptList()){
@@ -354,7 +354,7 @@ public class OfficeController extends BaseController {
 				officeService.save(childOffice);
 			}
 		}
-		
+
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		Integer id = office.getParentId()==0 ? null : office.getParentId();
 		if(office.getGysFlag() !=null && office.getGysFlag().equals("gys_save")){
@@ -365,7 +365,7 @@ public class OfficeController extends BaseController {
 		}
 
 	}
-	
+
 	@RequiresPermissions("sys:office:edit")
 	@RequestMapping(value = "delete")
 	public String delete(Office office, RedirectAttributes redirectAttributes) {
@@ -376,9 +376,17 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
-			officeService.delete(office);
-			addMessage(redirectAttributes, "删除机构成功");
+		officeService.delete(office);
+		addMessage(redirectAttributes, "删除机构成功");
 //		}
+		if(office.getSource()!=null && office.getSource().equals("purchListDelete")){
+			//会员列表删除跳转
+			return "redirect:" + adminPath + "/sys/office/purchasersList";
+		}
+		if(office.getGysFlag()!=null && office.getGysFlag().equals("gys_delete")){
+			//供应商列表删除跳转
+			return "redirect:" + adminPath + "/sys/office/supplierListGys";
+		}
 		return "redirect:" + adminPath + "/sys/office/list?id="+office.getParentId()+"&parentIds="+office.getParentIds();
 	}
 
@@ -394,7 +402,7 @@ public class OfficeController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "treeData")
 	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
-			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
+											  @RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		List<Office> list = officeService.findList(isAll);
 		for (int i=0; i<list.size(); i++){
@@ -422,7 +430,12 @@ public class OfficeController extends BaseController {
 	public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type,String source,RedirectAttributes redirectAttributes) {
 		List<Office> list = null;
 		if(StringUtils.isNotBlank(type)){
-			list = officeService.filerOffice(null,source,OfficeTypeEnum.stateOf(type));
+			if(source!=null && source.equals("officeConnIndex")){
+				//属于客户专员查询采购中心方法
+				list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(type));
+			}else {
+				list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(type));
+			}
 		}
 		if(list == null || list.size() == 0){
 			addMessage(redirectAttributes, "列表不存在");

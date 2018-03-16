@@ -71,7 +71,7 @@
         <div class="control-group">
             <label class="control-label">联系电话：</label>
             <div class="controls">
-                <form:input path="phone" htmlEscape="false" maxlength="11" placeholder="请输入联系电话" class="input-xlarge required"/>
+                <form:input path="phone" htmlEscape="false" maxlength="11" onkeyup="value=value.replace(/[^\d]/g,'')" placeholder="请输入联系电话" class="input-xlarge required"/>
                 <span class="help-inline"><font color="red">*</font> </span>
             </div>
         </div>

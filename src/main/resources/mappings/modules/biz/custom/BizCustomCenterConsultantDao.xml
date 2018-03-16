@@ -104,20 +104,21 @@
 		sox.name as "centers.name",
 		a.consultant_id AS "consultants.id",
 		sug.name as "consultants.name",
-		sug.mobile as "consultants.mobile",
 		a.create_time AS "createDate",
 		a.create_id AS "createBy.id",
 		suc.name as "createBy.name",
 		a.update_time AS "updateDate",
 		a.update_id AS "updateBy.id",
-		a.status as "delFlag"
+		a.status as "delFlag",
+		suu.mobile as "consultants.mobile"
 	</sql>
 
 	<sql id="bizCustomCenterConsultantJoins">
-			LEFT JOIN sys_office soc on soc.id=a.cust_id
-			LEFT JOIN sys_office sox on sox.id=a.center_id
-			LEFT JOIN sys_user suc on suc.id=a.create_id
-			LEFT JOIN sys_user sug on sug.id=a.consultant_id
+		LEFT JOIN sys_office soc on soc.id=a.cust_id
+		LEFT JOIN sys_office sox on sox.id=a.center_id
+		LEFT JOIN sys_user suc on suc.id=a.create_id
+		LEFT JOIN sys_user sug on sug.id=a.consultant_id
+		LEFT JOIN sys_user suu on suu.company_id=soc.id and suu.status=1
 	</sql>
 
 	<select id="get" resultType="BizCustomCenterConsultant">
@@ -137,6 +138,12 @@
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="customs != null and customs.id != null and customs.id != ''">
 				AND a.cust_id = #{customs.id}
+			</if>
+			<if test="consultants!= null and consultants.mobile!= null and consultants.mobile!= ''">
+				AND suu.mobile like
+				<if test="dbName == 'oracle'">'%'||#{consultants.mobile}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{consultants.mobile}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{consultants.mobile},'%')</if>
 			</if>
 			<if test="centers != null and centers.id != null and centers.id != ''">
 				AND a.center_id = #{centers.id}
