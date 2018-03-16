@@ -49,8 +49,8 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>采购商名称：</label>
-				<sys:treeselect id="office" name="id" value="" labelName="customer.name"
-								labelValue="" notAllowSelectParent="true"
+				<sys:treeselect id="office" name="id" value="${office.id}" labelName="customer.name"
+								labelValue="${office.name}" notAllowSelectParent="true"
 								title="采购商" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-medium"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 			</li>
