@@ -89,32 +89,28 @@
 	
 	<insert id="insert">
 		INSERT INTO biz_op_plan(
-			id,
 			object_id,
 			object_name,
 			year,
 			month,
 			day,
 			amount,
-			status,
 			create_id,
 			create_time,
 			u_version,
 			update_id,
 			update_time
 		) VALUES (
-			#{id},
 			#{objectId},
 			#{objectName},
 			#{year},
 			#{month},
 			#{day},
 			#{amount},
-			#{status},
-			#{createBy},
+			#{createBy.id},
 			#{createDate},
 			#{uVersion},
-			#{updateBy},
+			#{updateBy.id},
 			#{updateDate}
 		)
 	</insert>
