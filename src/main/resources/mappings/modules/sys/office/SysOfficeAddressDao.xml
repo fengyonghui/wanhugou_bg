@@ -87,9 +87,9 @@
 			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
 				AND a.update_id = #{updateBy.id}
 			</if>
-			<!--<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">-->
-				<!--${sqlMap.officeAddress}-->
-			<!--</if>-->
+			<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">
+				${sqlMap.officeAddress}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

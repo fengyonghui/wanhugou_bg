@@ -281,10 +281,11 @@
 			cent.name AS "cent.name"
 		FROM sys_user u
 		LEFT JOIN sys_office cust ON cust.id = u.company_id
-		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = cust.id
+		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = cust.id AND ccc.status = #{DEL_FLAG_NORMAL}
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		LEFT JOIN sys_office cent ON cent.id = ccc.center_id
 		WHERE u.status = #{DEL_FLAG_NORMAL}
+			AND cust.status = #{DEL_FLAG_NORMAL}
 		<if test="company != null and company.type != null">
 			and cust.type = #{company.type}
 		</if>
