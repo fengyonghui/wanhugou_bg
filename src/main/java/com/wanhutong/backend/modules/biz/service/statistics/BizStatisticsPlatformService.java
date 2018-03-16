@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -89,7 +90,7 @@ public class BizStatisticsPlatformService {
         listByType.removeIf(o -> o.getName().contains("测试"));
         listByType.forEach(o -> {
             List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = orderStatisticDataByOffice(startDate, endDate, null, null, null, o.getId());
-            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList = orderStatisticDataByOffice(currentDate, currentDate, null, null, null, o.getId());
+            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList = orderStatisticDataByOffice(currentDate, currentDate + " 23:59:59", null, null, null, o.getId());
             BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
             BizOrderStatisticsDto bizOrderStatisticsDto = null;
             if (CollectionUtils.isNotEmpty(bizOrderStatisticsDtoList)) {

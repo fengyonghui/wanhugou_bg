@@ -12,11 +12,17 @@
     </style>
 </head>
 <body>
+<span>
+    <label>
+        <input type="text" id="startDate" value="${date}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
+        <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="init();"/>
+    </label>
+</span>
 <table id="contentTable" class="table table-striped table-bordered table-condensed table_text_center">
     <thead>
     <tr>
         <th></th>
-        <th colspan="10">万户通平台业务数据</th>
+        <th colspan="10">万户通平台业务数据 ${date}</th>
     </tr>
     <tr>
         <th rowspan="2">省份</th>
@@ -72,8 +78,9 @@
     </tbody>
 </table>
 <script type="application/javascript">
-    function test() {
-        window.location.href = "baidu.com";
+    function init() {
+        var startDate = $("#startDate").val();
+        window.location.href = "overview?date=" + startDate;
     }
 </script>
 </body>

@@ -59,12 +59,12 @@ public class BizStatisticsPlatformController extends BaseController {
      */
     @RequiresPermissions("biz:statistics:user:view")
     @RequestMapping(value = {"overview", ""})
-    public String overview(HttpServletRequest request, String month) {
+    public String overview(HttpServletRequest request, String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
         List<BizPlatformDataOverviewDto> list = null;
         try {
             Calendar calendar = Calendar.getInstance();
-            Date parseDate = StringUtils.isBlank(month) ? new Date() : simpleDateFormat.parse(month);
+            Date parseDate = StringUtils.isBlank(date) ? new Date() : simpleDateFormat.parse(date);
             calendar.setTime(parseDate);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             Date startDate = calendar.getTime();
@@ -80,8 +80,11 @@ public class BizStatisticsPlatformController extends BaseController {
             e.printStackTrace();
         }
 
-
+        if (StringUtils.isBlank(date)) {
+            date = simpleDateFormat.format(new Date());
+        }
         request.setAttribute("adminPath", adminPath);
+        request.setAttribute("date", date);
         request.setAttribute("dataList", list);
         return "modules/biz/statistics/bizPlatformDataOverview";
     }

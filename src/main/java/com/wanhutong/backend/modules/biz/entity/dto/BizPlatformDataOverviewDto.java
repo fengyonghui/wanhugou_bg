@@ -104,6 +104,9 @@ public class BizPlatformDataOverviewDto {
     }
 
     public String getYieldRate() {
+        if (getProcurement().compareTo(BigDecimal.ZERO) == 0) {
+            return "0";
+        }
         return getAccumulatedSalesMonth().divide(getProcurement(), 2,BigDecimal.ROUND_HALF_UP).multiply(PERCENTAGE).toString().concat("%");
     }
 
