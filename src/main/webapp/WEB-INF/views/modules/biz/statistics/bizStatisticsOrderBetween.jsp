@@ -18,16 +18,6 @@
     <div id="orderTotalDataChart" style="height: 300px;"></div>
 
 </div>
-<%--<div>--%>
-    <%--<label>--%>
-        <%--<select class="input-medium" id="dataType">--%>
-            <%--<option value="1" label="销售额">销售额</option>--%>
-            <%--<option value="2" label="销售额增长率">销售额增长率(%)</option>--%>
-        <%--</select>--%>
-    <%--</label>--%>
-    <%--<input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>--%>
-    <%--<div id="orderRateChart" style="height: 300px"></div>--%>
-<%--</div>--%>
 
 </body>
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
@@ -38,12 +28,9 @@
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
+        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
 
-        // var dataTypeEle = $("#dataType");
-        // var dataType = dataTypeEle.find("option:selected").val();
-        // var dataTypeDesc = dataTypeEle.find("option:selected").html();
         var dataType = "1";
-        var dataTypeDesc = "销售额";
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
@@ -72,6 +59,7 @@
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
+                    salesVolumeChart.hideLoading();
                     return;
                 }
 
@@ -124,7 +112,7 @@
                     ],
                     series: msg.seriesList
                 });
-
+                salesVolumeChart.hideLoading();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");

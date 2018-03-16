@@ -99,5 +99,14 @@
 		DELETE FROM sys_region
 		WHERE id = #{id}
 	</update>
-	
+
+	<select id="queryOfficeProvinceById" resultType="SysRegion">
+		SELECT region.*
+FROM sys_region AS region
+  LEFT JOIN common_location AS location ON location.province_id = region.id
+  LEFT JOIN sys_office_address AS oAddress ON oAddress.addr_id = location.id
+LEFT JOIN sys_office AS office  ON oAddress.office_id = office.id
+  WHERE office.id = #{officeId} AND oAddress.type = 2 limit 1
+	</select>
+
 </mapper>

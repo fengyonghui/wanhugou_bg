@@ -41,6 +41,8 @@
         var singleSalesVolumeChart = echarts.init(document.getElementById('singleUserTotalDataChart'), 'light');
         salesVolumeChart.clear();
         singleSalesVolumeChart.clear();
+        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
+        singleSalesVolumeChart.showLoading($Echarts.showLoadingStyle);
 
         var purchasingIdEle = $("#purchasingId");
         var purchasingId = purchasingIdEle.find("option:selected").val();
@@ -71,6 +73,8 @@
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
+                    salesVolumeChart.hideLoading();
+                    singleSalesVolumeChart.hideLoading();
                     return;
                 }
                 // <option value="0" label="全部"></option>
@@ -136,6 +140,7 @@
                     ],
                     series: msg.seriesList
                 });
+                salesVolumeChart.hideLoading();
                 singleSalesVolumeChart.setOption({
                     title: {
                         text: '采购顾问业绩统计(个人/区间)',
@@ -191,7 +196,7 @@
                     ],
                     series: msg.singleSeriesList
                 });
-
+                singleSalesVolumeChart.hideLoading();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");

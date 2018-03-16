@@ -8,8 +8,8 @@
 </head>
 <body>
 <div>
-    <input id="startDate" value=""  onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
-    <input id="endDate" value="" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="startDate" value="${startDate}"  onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
     <select class="input-medium" id="barChartType">
         <option value="0" label="年"></option>
         <option value="1" label="月"></option>
@@ -31,6 +31,9 @@
         var orderTotalDataCountChart = echarts.init(document.getElementById('orderTotalDataCountChart'), 'light');
         salesVolumeChart.clear();
         orderTotalDataCountChart.clear();
+        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
+        orderTotalDataCountChart.showLoading($Echarts.showLoadingStyle);
+
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
@@ -56,6 +59,8 @@
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
+                    salesVolumeChart.hideLoading();
+                    orderTotalDataCountChart.hideLoading();
                     return;
                 }
 
@@ -109,7 +114,7 @@
                     ],
                     series: msg.seriesList
                 });
-
+                salesVolumeChart.hideLoading();
                 orderTotalDataCountChart.setOption({
                     title: {
                         text: '分平台订单量统计',
@@ -160,7 +165,7 @@
                     ],
                     series: msg.seriesCountList
                 });
-
+                orderTotalDataCountChart.hideLoading();
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

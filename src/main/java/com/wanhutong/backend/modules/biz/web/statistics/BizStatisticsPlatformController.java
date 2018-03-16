@@ -19,8 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -47,6 +50,44 @@ public class BizStatisticsPlatformController extends BaseController {
      * 最大数据长度
      */
     private static final int MAX_DATA_LENGTH = 10;
+
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"overview", ""})
+    public String overview(HttpServletRequest request, String date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        Map<String, List<BizPlatformDataOverviewDto>> list = null;
+        try {
+            Calendar calendar = Calendar.getInstance();
+            Date parseDate = StringUtils.isBlank(date) ? new Date() : simpleDateFormat.parse(date);
+            calendar.setTime(parseDate);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            Date startDate = calendar.getTime();
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getMaximum(Calendar.DAY_OF_MONTH));
+            Date endDate = calendar.getTime();
+            list = bizStatisticsPlatformService.getPlatformData(
+                    simpleDateFormat.format(startDate),
+                    simpleDateFormat.format(endDate),
+                    simpleDateFormat.format(parseDate)
+            );
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (StringUtils.isBlank(date)) {
+            date = simpleDateFormat.format(new Date());
+        }
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("date", date);
+        request.setAttribute("dataList", list);
+        return "modules/biz/statistics/bizPlatformDataOverview";
+    }
 
     /**
      * 用户相关统计数据
@@ -158,6 +199,17 @@ public class BizStatisticsPlatformController extends BaseController {
     @RequestMapping(value = {"orderCategoryByCenter", ""})
     public String orderCategoryByCenter(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
+        Calendar cal = Calendar.getInstance();
+        //获取本周一的日期
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.YEAR, -1);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+//        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+        request.setAttribute("startDate", "2017-09-01"); // TODO 临时代码
+        cal.add(Calendar.YEAR, 1);
+        cal.add(Calendar.MONTH, 1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
         return "modules/biz/statistics/bizStatisticsOrderPlatformCategoryByCenter";
     }
 

@@ -37,6 +37,7 @@
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
+        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
@@ -64,6 +65,7 @@
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
+                    salesVolumeChart.hideLoading();
                     return;
                 }
 
@@ -122,7 +124,7 @@
                     ],
                     series: msg.seriesList
                 });
-
+                salesVolumeChart.hideLoading();
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
