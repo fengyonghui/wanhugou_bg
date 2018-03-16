@@ -18,7 +18,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/product/bizProductInfo/">产品信息表列表</a></li>
+		<li class="active"><a href="${ctx}/biz/product/bizProductInfo/">产品信息表列表</a></li>
 		<shiro:hasPermission name="biz:product:bizProductInfo:edit"><li><a href="${ctx}/biz/product/bizProductInfo/form">产品信息表添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/" method="post" class="breadcrumb form-search">
