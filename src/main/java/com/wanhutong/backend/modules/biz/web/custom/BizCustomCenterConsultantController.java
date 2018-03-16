@@ -63,16 +63,22 @@ public class BizCustomCenterConsultantController extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
         BizCustomCenterConsultant BCC = new BizCustomCenterConsultant();
+        User userBcc = new User();
         User user = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
         Office office = officeService.get(user.getOffice());
         if(bizCustomCenterConsultant.getConsultants()!=null){
             if(bizCustomCenterConsultant.getQueryCustomes()!=null && bizCustomCenterConsultant.getQueryCustomes().equals("query_Custome")){
-                if(bizCustomCenterConsultant.getCustoms()!=null){
+                if(bizCustomCenterConsultant.getCustoms()!=null && bizCustomCenterConsultant.getCustoms().getId()!=null){
                     BCC.setCustoms(bizCustomCenterConsultant.getCustoms());//采购商
+                }
+                if(bizCustomCenterConsultant.getConsultants()!=null && !bizCustomCenterConsultant.getConsultants().getMobile().equals("")){
+                    userBcc.setMobile(bizCustomCenterConsultant.getConsultants().getMobile());
+                    BCC.setConsultants(userBcc);//电话查询
                 }
             }
             BCC.setCenters(office);//采购中心
-            BCC.setConsultants(user);//客户专员
+            userBcc.setId(user.getId());
+            BCC.setConsultants(userBcc);//客户专员
             model.addAttribute("bcUser", BCC);
             List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(BCC);
             if(list.size()!=0){

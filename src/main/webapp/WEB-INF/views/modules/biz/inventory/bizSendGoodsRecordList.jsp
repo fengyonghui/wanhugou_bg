@@ -27,19 +27,19 @@
 		<input id="bizStatus" name="bizStatus" type="hidden" value="${bizStatus}"/>
 		<ul class="ul-form">
 			<li><label>商品名称：</label>
-				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>订单编号：</label>
 				<form:input path="orderNum" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><label>商品编号：</label>
-				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>商品货号：</label>
-				<form:input path="skuInfo.itemNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>仓库名称：</label>
-				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>

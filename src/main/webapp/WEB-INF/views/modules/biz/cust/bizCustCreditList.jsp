@@ -19,15 +19,15 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/cust/bizCustCredit/">钱包列表</a></li>
-		<%--<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><li><a href="${ctx}/biz/cust/bizCustCredit/form">钱包添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCustCredit" action="${ctx}/biz/cust/bizCustCredit/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>客户名称：</label>
-				<sys:treeselect id="customer" name="customer.id" value="" labelName="office.name" labelValue=""
-					title="部门" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+				<sys:treeselect id="customer" name="customer.id" value="${bizCustCredit.customer.id}"
+								labelName="customer.name" labelValue="${bizCustCredit.customer.name}"
+					title="客户" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label>会员类型：</label>
 				<form:select path="level" class="input-medium">
@@ -38,12 +38,6 @@
 			<li><label>手机号：</label>
 				<form:input path="customer.moblieMoeny.mobile" htmlEscape="false" maxlength="15" class="input-medium"/>
 			</li>
-			<%--<li><label>支付宝账号：</label>--%>
-				<%--<form:input path="aliAccount" htmlEscape="false" maxlength="30" class="input-medium"/>--%>
-			<%--</li>--%>
-			<%--<li><label>支付宝用户姓名：</label>--%>
-				<%--<form:input path="aliName" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
-			<%--</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -73,8 +67,6 @@
 		<c:forEach items="${page.list}" var="custCredit">
 			<tr>
 				<td>
-					<%--<a href="${ctx}/biz/cust/bizCustCredit/form?customer.id=${custCredit.id}">--%>
-					<%--${custCredit.customer.name}</a>--%>
 					${custCredit.customer.name}
 				</td>
 				<td>

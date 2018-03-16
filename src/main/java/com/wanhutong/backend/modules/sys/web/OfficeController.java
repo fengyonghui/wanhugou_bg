@@ -379,6 +379,14 @@ public class OfficeController extends BaseController {
 		officeService.delete(office);
 		addMessage(redirectAttributes, "删除机构成功");
 //		}
+		if(office.getSource()!=null && office.getSource().equals("purchListDelete")){
+			//会员列表删除跳转
+			return "redirect:" + adminPath + "/sys/office/purchasersList";
+		}
+		if(office.getGysFlag()!=null && office.getGysFlag().equals("gys_delete")){
+			//供应商列表删除跳转
+			return "redirect:" + adminPath + "/sys/office/supplierListGys";
+		}
 		return "redirect:" + adminPath + "/sys/office/list?id="+office.getParentId()+"&parentIds="+office.getParentIds();
 	}
 
