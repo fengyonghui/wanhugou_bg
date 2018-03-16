@@ -19,7 +19,7 @@
         <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="init();"/>
     </label>
 </span>
-<table id="contentTable" class="table table-striped table-bordered table-condensed table_text_center">
+<table id="contentTable" class="table table-bordered table-condensed table_text_center">
     <thead>
     <tr>
         <th></th>

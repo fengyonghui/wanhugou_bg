@@ -642,14 +642,6 @@
         SELECT
         sum(total_detail + total_exp + freight) AS totalMoney,
 		<!--start-->
-		sum(
-			sku.buy_price * detail.ord_qty
-		) AS buyPrice,
-		(
-			sum(
-			total_detail + total_exp + freight
-			) - sum(sku.buy_price)
-		) AS fright,
 		(SELECT count(1) FROM
 			biz_custom_center_consultant cc WHERE cc.consultant_id = us.id
 		) AS custCount,
@@ -674,10 +666,6 @@
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
-		<!--start-->
-		LEFT JOIN biz_order_detail AS detail ON detail.order_id = oh.id
-		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
-		<!--end-->
 	    WHERE
 		oh.order_type = 1
 		AND off.name NOT LIKE '%测试%'
