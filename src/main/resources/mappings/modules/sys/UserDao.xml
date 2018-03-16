@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.sys.dao.UserDao">
-	
+
 	<!-- <resultMap id="userResult" type="User">
 		<id property="id" column="id" />
 		<result property="company.id" column="company.id" />
@@ -58,14 +58,14 @@
 		</collection>
 	</resultMap> -->
 
-    <sql id="userColumns">
-    	a.id,
-    	a.company_id AS "company.id",
+	<sql id="userColumns">
+		a.id,
+		a.company_id AS "company.id",
 		c.type AS "company.type",
-    	a.office_id AS "office.id",
-    	a.login_name,
-    	a.password,
-    	a.no,
+		a.office_id AS "office.id",
+		a.login_name,
+		a.password,
+		a.no,
 		a.name,
 		a.email,
 		a.phone,
@@ -81,37 +81,37 @@
 		a.update_id AS "updateBy.id",
 		a.update_date,
 		a.status,
-    	c.name AS "company.name",
-    	c.parent_id AS "company.parent.id",
-    	c.parent_ids AS "company.parentIds",
-    	ca.id AS "company.area.id",
-    	ca.name AS "company.area.name",
-    	ca.parent_id AS "company.area.parent.id",
-    	ca.parent_ids AS "company.area.parentIds",
-    	o.name AS "office.name",
-    	o.parent_id AS "office.parent.id",
-    	o.parent_ids AS "office.parentIds",
-    	oa.id AS "office.area.id",
-    	oa.name AS "office.area.name",
-    	oa.parent_id AS "office.area.parent.id",
-    	oa.parent_ids AS "office.area.parentIds",
-    	cu.id AS "company.primaryPerson.id",
-    	cu.name AS "company.primaryPerson.name",
-    	cu2.id AS "company.deputyPerson.id",
-    	cu2.name AS "company.deputyPerson.name",
-    	ou.id AS "office.primaryPerson.id",
-    	ou.name AS "office.primaryPerson.name",
-    	ou2.id AS "office.deputyPerson.id",
-    	ou2.name AS "office.deputyPerson.name"<!-- ,
+		c.name AS "company.name",
+		c.parent_id AS "company.parent.id",
+		c.parent_ids AS "company.parentIds",
+		ca.id AS "company.area.id",
+		ca.name AS "company.area.name",
+		ca.parent_id AS "company.area.parent.id",
+		ca.parent_ids AS "company.area.parentIds",
+		o.name AS "office.name",
+		o.parent_id AS "office.parent.id",
+		o.parent_ids AS "office.parentIds",
+		oa.id AS "office.area.id",
+		oa.name AS "office.area.name",
+		oa.parent_id AS "office.area.parent.id",
+		oa.parent_ids AS "office.area.parentIds",
+		cu.id AS "company.primaryPerson.id",
+		cu.name AS "company.primaryPerson.name",
+		cu2.id AS "company.deputyPerson.id",
+		cu2.name AS "company.deputyPerson.name",
+		ou.id AS "office.primaryPerson.id",
+		ou.name AS "office.primaryPerson.name",
+		ou2.id AS "office.deputyPerson.id",
+		ou2.name AS "office.deputyPerson.name"<!-- ,
         r.id AS "roleList.id",
         r.office_id AS "roleList.office.id",
         r.name AS "roleList.name",
         r.enname AS "roleList.enname",
         r.role_type AS "roleList.roleType",
         r.data_scope AS "roleList.dataScope" -->
-    </sql>
-    
-    <sql id="userJoins">
+	</sql>
+
+	<sql id="userJoins">
 		LEFT JOIN sys_office c ON c.id = a.company_id
 		LEFT JOIN sys_area ca ON ca.id = c.area_id
 		LEFT JOIN sys_office o ON o.id = a.office_id
@@ -122,23 +122,23 @@
 		LEFT JOIN sys_user ou2 ON ou2.id = o.deputy_person<!-- 
 		LEFT JOIN sys_user_role ur ON ur.user_id = a.id
         LEFT JOIN sys_role r ON r.id = ur.role_id -->
-    </sql>
-	
+	</sql>
+
 	<!-- 根据编号获得用户 -->
 	<select id="get" resultType="User">
 		SELECT
-			<include refid="userColumns"/><!-- ,
+		<include refid="userColumns"/><!-- ,
 			ro.office_id AS "roleList.officeList.id" -->
 		FROM sys_user a
 		<include refid="userJoins"/><!-- 
 		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
 		WHERE a.id = #{id}
 	</select>
-	
+
 	<!-- 根据登录名查询用户 -->
 	<select id="getByLoginName" resultType="User" parameterType="User">
 		SELECT
-			<include refid="userColumns"/><!-- ,
+		<include refid="userColumns"/><!-- ,
 			ro.office_id AS "roleList.officeList.id" -->
 		FROM sys_user a
 		<include refid="userJoins"/><!-- 
@@ -149,20 +149,20 @@
 	<!--查询某个部门下的所有用户-->
 	<select id="findYzUser" resultType="User" parameterType="Office">
 		SELECT
-			<include refid="userColumns"/>
+		<include refid="userColumns"/>
 		FROM
-			sys_user a
+		sys_user a
 		<include refid="userJoins"/>
 		WHERE o.parent_ids
 		LIKE
-			<if test="dbName == 'oracle'">('%,'||#{id}||',%')</if>
-			<if test="dbName == 'mssql'">('%,'+#{id}+',%')</if>
-			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+		<if test="dbName == 'oracle'">('%,'||#{id}||',%')</if>
+		<if test="dbName == 'mssql'">('%,'+#{id}+',%')</if>
+		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 	</select>
 	<!-- 分页查询用户信息 -->
 	<select id="findList" resultType="User">
 		SELECT
-			<include refid="userColumns"/>
+		<include refid="userColumns"/>
 		FROM sys_user a
 		<include refid="userJoins"/>
 		<if test="role != null and role.id != null and role.id != ''">
@@ -170,10 +170,10 @@
 		</if>
 		WHERE a.status = #{DEL_FLAG_NORMAL}
 		<if test="company != null and company.id != null and company.id != ''">
-			AND (c.id = #{company.id} OR c.parent_ids LIKE 
-					<if test="dbName == 'oracle'">'%,'||#{company.id}||',%')</if>
-					<if test="dbName == 'mssql'">'%,'+#{company.id}+',%')</if>
-					<if test="dbName == 'mysql'">CONCAT('%,', #{company.id}, ',%'))</if>
+			AND (c.id = #{company.id} OR c.parent_ids LIKE
+			<if test="dbName == 'oracle'">'%,'||#{company.id}||',%')</if>
+			<if test="dbName == 'mssql'">'%,'+#{company.id}+',%')</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{company.id}, ',%'))</if>
 		</if>
 		<if test="mobile != null and mobile != ''">
 			AND a.mobile LIKE
@@ -184,14 +184,21 @@
 
 		<!-- 是否是客户专员 -->
 		<if test="company != null and company.type != null and company.type != ''">
-			AND c.type = #{company.type}
+			AND c.type in (#{company.type}
+			<if test="company != null and company.customerTypeTen != null and company.customerTypeTen != ''">
+				,#{company.customerTypeTen}
+			</if>
+			<if test="company != null and company.customerTypeEleven != null and company.customerTypeEleven != ''">
+				,#{company.customerTypeEleven}
+			</if>
+			)
 		</if>
 
 		<if test="office != null and office.id != null and office.id != ''">
-			AND (o.id = #{office.id} OR o.parent_ids LIKE 
-					<if test="dbName == 'oracle'">'%,'||#{office.id}||',%')</if>
-					<if test="dbName == 'mssql'">'%,'+#{office.id}+',%')</if>
-					<if test="dbName == 'mysql'">CONCAT('%,', #{office.id}, ',%'))</if>
+			AND (o.id = #{office.id} OR o.parent_ids LIKE
+			<if test="dbName == 'oracle'">'%,'||#{office.id}||',%')</if>
+			<if test="dbName == 'mssql'">'%,'+#{office.id}+',%')</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{office.id}, ',%'))</if>
 		</if>
 
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
@@ -199,16 +206,16 @@
 			AND a.id != '1'
 		</if>
 		<if test="loginName != null and loginName != ''">
-			AND a.login_name like 
-					<if test="dbName == 'oracle'">'%'||#{loginName}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{loginName}+'%'</if>
-					<if test="dbName == 'mysql'">CONCAT('%', #{loginName}, '%')</if>
+			AND a.login_name like
+			<if test="dbName == 'oracle'">'%'||#{loginName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{loginName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{loginName}, '%')</if>
 		</if>
 		<if test="name != null and name != ''">
-			AND a.name like 
-					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
-					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			AND a.name like
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 		</if>
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
@@ -221,7 +228,7 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<!-- 根据OfficeId获取用户（树查询用户时用） -->
 	<select id="findUserByOfficeId" resultType="User" useCache="true">
 		SELECT
@@ -231,34 +238,34 @@
 			AND a.office_id = #{office.id}
 		ORDER BY a.name
 	</select>
-	
+
 	<!-- 根据OfficeId获取用户,关联采购顾问与采购商使用 -->
 	<!--<select id="selectUserByOfficeId" resultType="User" >-->
-		<!--SELECT-->
-			<!--a.id, a.name, a.login_name-->
-		<!--FROM sys_user a ,sys_user_role ur , sys_role r-->
-		<!--WHERE a.status = #{DEL_FLAG_NORMAL} AND r.status= #{DEL_FLAG_NORMAL} AND a.office_id = #{office.id} AND a.id=ur.user_id -->
-		<!--AND ur.role_id = #{role.id} AND ur.role_id = r.id-->
-		<!--ORDER BY a.name-->
+	<!--SELECT-->
+	<!--a.id, a.name, a.login_name-->
+	<!--FROM sys_user a ,sys_user_role ur , sys_role r-->
+	<!--WHERE a.status = #{DEL_FLAG_NORMAL} AND r.status= #{DEL_FLAG_NORMAL} AND a.office_id = #{office.id} AND a.id=ur.user_id -->
+	<!--AND ur.role_id = #{role.id} AND ur.role_id = r.id-->
+	<!--ORDER BY a.name-->
 	<!--</select>-->
-    <select id="selectUserByOfficeId" resultType="User" >
+	<select id="selectUserByOfficeId" resultType="User" >
         SELECT
         a.id, a.name, a.login_name
         FROM sys_user a left join sys_user_role ur on a.id=ur.user_id AND ur.role_id = #{role.id}
         WHERE a.status = #{DEL_FLAG_NORMAL} AND a.office_id = #{office.id}
         ORDER BY a.name
     </select>
-	
+
 	<!-- 查询全部用户 -->
 	<select id="findAllList" resultType="User">
 		SELECT
-			<include refid="userColumns"/>
+		<include refid="userColumns"/>
 		FROM sys_user a
 		<include refid="userJoins"/>
 		WHERE a.status = #{DEL_FLAG_NORMAL}
 		ORDER BY c.code, o.code, a.name
 	</select>
-	
+
 	<!-- 查询全部用户数目 -->
 	<select id="findAllCount" resultType="long">
 		SELECT
@@ -269,16 +276,16 @@
 	<!--会员搜索-->
 	<select id="contact" resultType="User">
 		SELECT
-			u.id AS "id",
-			u.name AS "name",
-			u.phone AS "phone",
-			u.mobile AS "mobile",
-			cust.id AS "company.id",
-			cust.name AS "company.name",
-			us.id AS "user.id",
-			us.name AS "user.name",
-			cent.id AS "cent.id",
-			cent.name AS "cent.name"
+		u.id AS "id",
+		u.name AS "name",
+		u.phone AS "phone",
+		u.mobile AS "mobile",
+		cust.id AS "company.id",
+		cust.name AS "company.name",
+		us.id AS "user.id",
+		us.name AS "user.name",
+		cent.id AS "cent.id",
+		cent.name AS "cent.name"
 		FROM sys_user u
 		LEFT JOIN sys_office cust ON cust.id = u.company_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = cust.id AND ccc.status = #{DEL_FLAG_NORMAL}
@@ -323,7 +330,7 @@
 			and ccc.status= #{ccStatus}
 		</if>
 		<!--<if test="sqlMap != null and sqlMap.us != null and sqlMap.us != ''">-->
-			${sqlMap.us}
+		${sqlMap.us}
 		<!--</if>-->
 	</select>
 	<!-- 插入用户 -->
@@ -370,7 +377,7 @@
 			#{delFlag}
 		)
 	</insert>
-	
+
 	<!-- 更新用户 -->
 	<update id="update">
 		UPDATE sys_user SET 
@@ -391,20 +398,20 @@
 			photo = #{photo}
 		WHERE id = #{id}
 	</update>
-	
+
 	<!-- 删除用户和角色关联表数据 -->
 	<delete id="deleteUserRole">
 		DELETE FROM sys_user_role WHERE user_id = #{id}
 	</delete>
-	
+
 	<!-- 插入用户和角色关联表数据 -->
 	<insert id="insertUserRole">
 		INSERT INTO sys_user_role(user_id, role_id) values
 		<foreach item="role" index="key" collection="roleList" open="" separator="," close="">
 			(#{id},#{role.id})
-        </foreach>   
+		</foreach>
 	</insert>
-	
+
 	<!-- 更新用户信息  -->
 	<update id="updateUserInfo">
 		UPDATE sys_user SET 
@@ -417,14 +424,14 @@
 			photo = #{photo}
 		WHERE id = #{id}
 	</update>
-	
+
 	<!-- 更新用户密码 -->
 	<update id="updatePasswordById">
 		UPDATE sys_user SET 
 			password = #{password} 
 		WHERE id = #{id}
 	</update>
-	
+
 	<!-- 更新登录信息，如登录IP、登录时间 -->
 	<update id="updateLoginInfo">
 		UPDATE sys_user SET 
@@ -432,7 +439,7 @@
 			login_Date = #{loginDate} 
 		WHERE id = #{id}
 	</update>
-	
+
 	<!-- 逻辑删除用户 -->
 	<update id="delete">
 		UPDATE sys_user SET 
@@ -440,21 +447,21 @@
 		WHERE id = #{id}
 	</update>
 
-    <!--查询用户 分采购商和供应商-->
-    <select id="findUserByCompany" resultType="User" parameterType="Integer">
-        SELECT
-        a.id,
-        a.company_id,
-        a.office_id,
-        a.login_name,
-        a. NAME
-        FROM sys_user a
-        LEFT JOIN sys_office so on so.id=a.company_id
-        WHERE
-        a.status = 1
+	<!--查询用户 分采购商和供应商-->
+	<select id="findUserByCompany" resultType="User" parameterType="Integer">
+		SELECT
+		a.id,
+		a.company_id,
+		a.office_id,
+		a.login_name,
+		a. NAME
+		FROM sys_user a
+		LEFT JOIN sys_office so on so.id=a.company_id
+		WHERE
+		a.status = 1
 		<!--and a.company_id = a.office_id-->
-        AND so.type = #{type}
-    </select>
+		AND so.type = #{type}
+	</select>
 
 	<!-- 系统管理员 在系统设置里添加机构 -->
 	<select id="systemCompany" resultType="User" parameterType="Integer">

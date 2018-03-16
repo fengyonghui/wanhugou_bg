@@ -10,31 +10,32 @@
 	</style>
 </head>
 <body>
-	<sys:message content="${message}"/>
-	<div id="content" class="row-fluid">
-		<div id="left" class="accordion-group">
-			<div class="accordion-heading">
-		    	<a class="accordion-toggle">组织机构<i class="icon-refresh pull-right" onclick="refreshTree();"></i></a>
-		    </div>
-			<div id="ztree" class="ztree"></div>
+<sys:message content="${message}"/>
+<div id="content" class="row-fluid">
+	<div id="left" class="accordion-group">
+		<div class="accordion-heading">
+			<a class="accordion-toggle">组织机构<i class="icon-refresh pull-right" onclick="refreshTree();"></i></a>
 		</div>
-		<div id="openClose" class="close">&nbsp;</div>
-		<div id="right">
-			<iframe id="officeContent" src="${ctx}/sys/user/list?company.type=8&conn=connIndex" width="100%" height="91%" frameborder="0"></iframe>
-		</div>
+		<div id="ztree" class="ztree"></div>
 	</div>
-	<script type="text/javascript">
+	<div id="openClose" class="close">&nbsp;</div>
+	<div id="right">
+		<iframe id="officeContent" src="${ctx}/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn=connIndex" width="100%" height="91%" frameborder="0"></iframe>
+	</div>
+</div>
+<script type="text/javascript">
 		var setting = {data:{simpleData:{enable:true,idKey:"id",pIdKey:"pId",rootPId:'0'}},
 			callback:{onClick:function(event, treeId, treeNode){
 					var id = treeNode.id == '0' ? '' :treeNode.id;
-					$('#officeContent').attr("src","${ctx}/sys/user/list?company.id="+id+"&company.name="+treeNode.name+"&company.type=8"
+					$('#officeContent').attr("src","${ctx}/sys/user/list?company.id="+id+"&company.name="+treeNode.name+
+												"&company.source=officeConnIndex"
 												+"&office.id="+id+"&office.name="+treeNode.name+"&conn=connIndex");
 				}
 			}
 		};
-		
+
 		function refreshTree(){
-			$.getJSON("${ctx}/sys/office/queryTreeList?type=8&conn=connIndex",function(data){
+			$.getJSON("${ctx}/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex",function(data){
 				$.fn.zTree.init($("#ztree"), setting, data).expandAll(true);
 			});
 		}
@@ -53,6 +54,6 @@
 			$(".ztree").width(leftWidth - 10).height(frameObj.height() - 46);
 		}
 	</script>
-	<script src="${ctxStatic}/common/wsize.min.js" type="text/javascript"></script>
+<script src="${ctxStatic}/common/wsize.min.js" type="text/javascript"></script>
 </body>
 </html>

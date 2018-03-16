@@ -30,90 +30,92 @@
 	</script>
 </head>
 <body>
-	<div id="importBox" class="hide">
-		<form id="importForm" action="${ctx}/sys/user/import" method="post" enctype="multipart/form-data"
-			class="form-search" style="padding-left:20px;text-align:center;" onsubmit="loading('正在导入，请稍等...');"><br/>
-			<input id="uploadFile" name="file" type="file" style="width:330px"/><br/><br/>　　
-			<input id="btnImportSubmit" class="btn btn-primary" type="submit" value="   导    入   "/>
-			<a href="${ctx}/sys/user/import/template">下载模板</a>
-		</form>
-	</div>
-	<ul class="nav nav-tabs">
-		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
-			<li class="active"><a href="${ctx}/sys/user/list?company.type=8&office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户列表</a></li>
-			<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户添加</a></li></shiro:hasPermission>
-		</c:if>
-		<c:if test="${empty user.conn}">
-			<li class="active"><a href="${ctx}/sys/user/list">用户列表</a></li>
-			<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}">用户添加</a></li></shiro:hasPermission>
-		</c:if>
-	</ul>
-	<form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/list" method="post" class="breadcrumb form-search ">
-		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<sys:tableSort id="orderBy" name="orderBy" value="${page.orderBy}" callback="page();"/>
-		<ul class="ul-form">
-			<c:if test="${fns:getUser().isAdmin()}">
-				<li><label>归属公司：</label>
-					<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-									title="公司" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true"/>
+<div id="importBox" class="hide">
+	<form id="importForm" action="${ctx}/sys/user/import" method="post" enctype="multipart/form-data"
+		  class="form-search" style="padding-left:20px;text-align:center;" onsubmit="loading('正在导入，请稍等...');"><br/>
+		<input id="uploadFile" name="file" type="file" style="width:330px"/><br/><br/>　　
+		<input id="btnImportSubmit" class="btn btn-primary" type="submit" value="   导    入   "/>
+		<a href="${ctx}/sys/user/import/template">下载模板</a>
+	</form>
+</div>
+<ul class="nav nav-tabs">
+	<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
+		<li class="active"><a href="${ctx}/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户列表</a></li>
+		<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}&conn=${user.conn}">用户添加</a></li></shiro:hasPermission>
+	</c:if>
+	<c:if test="${empty user.conn}">
+		<li class="active"><a href="${ctx}/sys/user/list">用户列表</a></li>
+		<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}">用户添加</a></li></shiro:hasPermission>
+	</c:if>
+</ul>
+<form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/list" method="post" class="breadcrumb form-search ">
+	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	<sys:tableSort id="orderBy" name="orderBy" value="${page.orderBy}" callback="page();"/>
+	<ul class="ul-form">
+		<c:if test="${fns:getUser().isAdmin()}">
+		<li><label>归属公司：</label>
+			<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
+							title="公司" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true"/>
 			</c:if>
 			<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 				<input type="hidden" name="company.type" value="8">
+				<input type="hidden" name="company.customerTypeTen" value="10">
+				<input type="hidden" name="company.customerTypeEleven" value="11">
 				<input type="hidden" name="conn" value="${user.conn}"></li>
 			</c:if>
 			<c:if test="${empty user.conn}">
 				<input type="hidden" name="company.type" value="">
 			</c:if>
-			<li><label>登录名：</label><form:input path="loginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
-			<li class="clearfix"></li>
-				<c:if test="${fns:getUser().isAdmin()}">
-			<li><label>归属部门：</label><sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}" 
-				title="部门" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/></li>
+		<li><label>登录名：</label><form:input path="loginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
+		<li class="clearfix"></li>
+		<c:if test="${fns:getUser().isAdmin()}">
+			<li><label>归属部门：</label><sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
+													title="部门" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/></li>
+		</c:if>
+		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
+		<li><label>电&nbsp;&nbsp;&nbsp;话：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
+		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="return page();"/>
+			<input id="btnExport" class="btn btn-primary" type="button" value="导出"/>
+			<input id="btnImport" class="btn btn-primary" type="button" value="导入"/></li>
+		<li class="clearfix"></li>
+	</ul>
+</form:form>
+<sys:message content="${message}"/>
+<table id="contentTable" class="table table-striped table-bordered table-condensed">
+	<thead><tr><th>归属公司</th><th>归属部门</th><th class="sort-column login_name">登录名</th><th class="sort-column name">姓名</th>
+		<th>电话</th><th>手机</th><%--<th>角色</th> --%><shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
+	<tbody>
+	<c:forEach items="${page.list}" var="bizUser">
+		<tr>
+			<td>${bizUser.company.name}</td>
+			<td>${bizUser.office.name}</td>
+			<c:if test="${user.conn != null}">
+				<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">${bizUser.loginName}</a></td>
 			</c:if>
-				<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
-			<li><label>电&nbsp;&nbsp;&nbsp;话：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
-			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="return page();"/>
-				<input id="btnExport" class="btn btn-primary" type="button" value="导出"/>
-				<input id="btnImport" class="btn btn-primary" type="button" value="导入"/></li>
-			<li class="clearfix"></li>
-		</ul>
-	</form:form>
-	<sys:message content="${message}"/>
-	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead><tr><th>归属公司</th><th>归属部门</th><th class="sort-column login_name">登录名</th><th class="sort-column name">姓名</th>
-			<th>电话</th><th>手机</th><%--<th>角色</th> --%><shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
-		<tbody>
-		<c:forEach items="${page.list}" var="bizUser">
-			<tr>
-				<td>${bizUser.company.name}</td>
-				<td>${bizUser.office.name}</td>
+			<c:if test="${user.conn == null}">
+				<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">${bizUser.loginName}</a></td>
+			</c:if>
+			<td>${bizUser.name}</td>
+			<td>${bizUser.phone}</td>
+			<td>${bizUser.mobile}</td><%--
+				<td>${user.roleNames}</td> --%>
+			<shiro:hasPermission name="sys:user:edit"><td>
 				<c:if test="${user.conn != null}">
-					<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">${bizUser.loginName}</a></td>
+					<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}&office.id=${bizUser.office.id}">关联采购商</a>
+					<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>
+					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
+					<a href="${ctx}/sys/user/delete?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
 				</c:if>
 				<c:if test="${user.conn == null}">
-					<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">${bizUser.loginName}</a></td>
+					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
+					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
 				</c:if>
-				<td>${bizUser.name}</td>
-				<td>${bizUser.phone}</td>
-				<td>${bizUser.mobile}</td><%--
-				<td>${user.roleNames}</td> --%>
-				<shiro:hasPermission name="sys:user:edit"><td>
-					<c:if test="${user.conn != null}">
-						<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}&office.id=${bizUser.office.id}">关联采购商</a>
-						<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>
-						<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
-						<a href="${ctx}/sys/user/delete?company.type=8&id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
-					</c:if>
-					<c:if test="${user.conn == null}">
-    					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
-						<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
-					</c:if>
-				</td></shiro:hasPermission>
-			</tr>
-		</c:forEach>
-		</tbody>
-	</table>
-	<div class="pagination">${page}</div>
+			</td></shiro:hasPermission>
+		</tr>
+	</c:forEach>
+	</tbody>
+</table>
+<div class="pagination">${page}</div>
 </body>
 </html>

@@ -20,12 +20,14 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  * @version 2018-01-13
  */
 public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsultant> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Office customs;		// 采购商.id ; sys_office.id = sys_user.company_id
 	private Office centers;		// 采购中心ID
 	private User consultants;		// 采购顾问ID sys_user.id
 	private String parentIds;
+
+	private String queryCustomes;	//关联采购商列表查询状态
 
 	private List<BizCustomCenterConsultant> bccList;	//用于存放采购中心和采购顾问下的采购商
 
@@ -77,4 +79,11 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 		this.parentIds = parentIds;
 	}
 
+	public String getQueryCustomes() {
+		return queryCustomes;
+	}
+
+	public void setQueryCustomes(String queryCustomes) {
+		this.queryCustomes = queryCustomes;
+	}
 }
