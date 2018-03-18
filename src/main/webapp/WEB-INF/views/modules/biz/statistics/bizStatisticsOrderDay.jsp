@@ -37,12 +37,11 @@
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
+        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
         var orderRateChart = echarts.init(document.getElementById('orderRateChart'), 'light');
         orderRateChart.clear();
+        orderRateChart.showLoading($Echarts.showLoadingStyle);
 
-        // var dataTypeEle = $("#dataType");
-        // var dataType = dataTypeEle.find("option:selected").val();
-        // var dataTypeDesc = dataTypeEle.find("option:selected").html();
         var dataType = "1";
         var dataTypeDesc = "销售额";
 
@@ -64,6 +63,8 @@
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
+                    salesVolumeChart.hideLoading();
+                    orderRateChart.hideLoading();
                     return;
                 }
 
@@ -116,7 +117,7 @@
                     ],
                     series: msg.seriesList
                 });
-
+                salesVolumeChart.hideLoading();
 
                 orderRateChart.setOption({
                     title: {
@@ -167,7 +168,7 @@
                     ],
                     series: msg.rateSeriesList
                 });
-
+                orderRateChart.hideLoading();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");

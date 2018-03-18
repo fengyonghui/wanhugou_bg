@@ -19,7 +19,6 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/shop/bizShopCart/">购物车列表</a></li>
-		<%--<shiro:hasPermission name="biz:shop:bizShopCart:edit"><li><a href="${ctx}/biz/shop/bizShopCart/form">购物车添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizShopCart" action="${ctx}/biz/shop/bizShopCart/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -30,16 +29,11 @@
 			</li>
 			<li><label>采购商名称：</label>
 				<sys:treeselect id="office" name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"
-					title="部门" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+					title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label>采购商电话：</label>
 				<form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<%--<li><label>客户专员：</label>--%>
-				<%--<sys:treeselect id="user" name="user.id" value="${bizShopCart.user.id}" labelName="user.name" labelValue="${bizShopCart.user.name}"--%>
-                    <%--title="顾问" url="/sys/office/queryTreeList?type=8" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>--%>
-				<%--<form:input path="user.name" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
-			<%--</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -50,7 +44,6 @@
 			<tr>
 				<th>商品货架</th>
 				<th>采购商名称</th>
-				<%--<th>客户专员</th>--%>
 				<th>采购商电话</th>
                 <th>sku名称</th>
 				<th>sku数量</th>
@@ -64,9 +57,7 @@
 		<c:forEach items="${page.list}" var="bizShopCart">
 			<tr>
 				<td>
-                    <%--<a href="${ctx}/biz/shop/bizShopCart/form?id=${bizShopCart.id}">--%>
 					${bizShopCart.skuShelfinfo.opShelfInfo.name}
-				<%--</a>--%>
                 </td>
 				<td>
 					${bizShopCart.office.name}
@@ -77,9 +68,6 @@
                 <td>
                     ${bizShopCart.skuShelfinfo.skuInfo.name}
                 </td>
-				<%--<td>--%>
-					<%--${bizShopCart.user.name}--%>
-				<%--</td>--%>
 				<td>
 					${bizShopCart.skuQty}
 				</td>

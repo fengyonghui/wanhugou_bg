@@ -80,7 +80,6 @@ public class SysOfficeAddressController extends BaseController {
 	public String list(SysOfficeAddress sysOfficeAddress, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<SysOfficeAddress> page = sysOfficeAddressService.findPage(new Page<SysOfficeAddress>(request, response), sysOfficeAddress); 
 		model.addAttribute("page", page);
-//		sysOfficeAddress.setSign(sysOfficeAddress.getOffice().getType());
         if(sysOfficeAddress.getOffice()!=null && StringUtils.isNotBlank(sysOfficeAddress.getOffice().getType())&&sysOfficeAddress.getOffice().getType().equals(OfficeTypeEnum.VENDOR.getType())){
             return"modules/sys/office/sysVendorAddressList";
         }else{

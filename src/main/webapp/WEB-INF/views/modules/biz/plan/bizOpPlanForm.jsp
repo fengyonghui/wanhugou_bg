@@ -34,51 +34,44 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">id in table name：</label>
+			<label class="control-label">关联ID:</label>
 			<div class="controls">
 				<form:input path="objectId" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">table name：</label>
+			<label class="control-label">关联表名:</label>
 			<div class="controls">
 				<form:input path="objectName" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">计划所在年份;在选择年计划时， 一定加入条件：and month=0 and day=0：</label>
+			<label class="control-label">计划所在年份(在选择年计划时， 一定加入条件：and month=0 and day=0)：</label>
 			<div class="controls">
 				<form:input path="year" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">计划所在月份; 选择月计划时，一定加入条件：and day=0：</label>
+			<label class="control-label">计划所在月份(选择月计划时，一定加入条件：and day=0)：</label>
 			<div class="controls">
 				<form:input path="month" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">日计划;：</label>
+			<label class="control-label">计划所在日：</label>
 			<div class="controls">
 				<form:input path="day" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">amount：</label>
+			<label class="control-label">总额：</label>
 			<div class="controls">
 				<form:input path="amount" htmlEscape="false" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">u_version：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
