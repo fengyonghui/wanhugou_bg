@@ -172,11 +172,10 @@
 		<if test="aliName!=null and aliName!=''">
 			ali_name = #{aliName},
 		</if>
-			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
-		WHERE office_id = #{customer.id}
+		WHERE office_id = #{id}
 	</update>
 	
 	<update id="delete">
