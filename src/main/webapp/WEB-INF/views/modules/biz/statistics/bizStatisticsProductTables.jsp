@@ -68,6 +68,7 @@
     </label>
     <label>
         <select class="input-medium" id="variId">
+            <option value="0" label="全部">全部</option>
             <c:forEach items="${varietyList}" var="v">
                 <option value="${v.id}" label="${v.name}">${v.name}</option>
             </c:forEach>
