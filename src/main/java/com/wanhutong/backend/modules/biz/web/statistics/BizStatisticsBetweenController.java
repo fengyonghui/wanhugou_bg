@@ -297,16 +297,16 @@ public class BizStatisticsBetweenController extends BaseController {
      */
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = {"order", ""})
-    public String order(HttpServletRequest request) {
+    public String order(HttpServletRequest request, String startDate, String endDate) {
         request.setAttribute("adminPath", adminPath);
         Calendar cal = Calendar.getInstance();
         //获取本周一的日期
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         cal.add(Calendar.DAY_OF_MONTH, -7);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
-        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+        request.setAttribute("startDate", StringUtils.isBlank(startDate) ? simpleDateFormat.format(cal.getTime()) : startDate);
         cal.add(Calendar.DAY_OF_MONTH, 6);
-        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
+        request.setAttribute("endDate", StringUtils.isBlank(endDate) ? simpleDateFormat.format(cal.getTime()) : endDate);
         return "modules/biz/statistics/bizStatisticsOrderBetween";
     }
 
@@ -554,15 +554,15 @@ public class BizStatisticsBetweenController extends BaseController {
      */
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "orderTable")
-    public String orderTable (HttpServletRequest request){
+    public String orderTable (HttpServletRequest request, String startDate, String endDate){
         request.setAttribute("adminPath", adminPath);  Calendar cal = Calendar.getInstance();
         //获取本周一的日期
         cal.set(Calendar.DAY_OF_MONTH, 1);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
-        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+        request.setAttribute("startDate", StringUtils.isBlank(startDate) ? simpleDateFormat.format(cal.getTime()) : startDate);
         cal.add(Calendar.MONTH, 1);
         cal.add(Calendar.DAY_OF_MONTH, -1);
-        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
+        request.setAttribute("endDate", StringUtils.isBlank(endDate) ? simpleDateFormat.format(cal.getTime()) : endDate);
         return "modules/biz/statistics/bizStatisticsOrderBetweenTable";
     }
 
