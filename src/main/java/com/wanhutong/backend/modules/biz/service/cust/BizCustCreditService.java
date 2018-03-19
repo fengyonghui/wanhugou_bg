@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.cust;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import com.wanhutong.backend.modules.biz.dao.cust.BizCustCreditDao;
 @Service
 @Transactional(readOnly = true)
 public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustCredit> {
+    @Autowired
+    private BizCustCreditDao bizCustCreditDao;
 
 	public BizCustCredit get(Integer id) {
 		return super.get(id);
@@ -39,7 +42,11 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
 	
 	@Transactional(readOnly = false)
 	public void save(BizCustCredit bizCustCredit) {
-		super.save(bizCustCredit);
+        BizCustCredit custCredit = this.get(bizCustCredit.getCustomer().getId());
+        custCredit.setWallet(bizCustCredit.getWallet());
+        custCredit.setMoney(bizCustCredit.getMoney());
+        custCredit.setId(bizCustCredit.getCustomer().getId());
+        super.save(custCredit);
 	}
 	
 	@Transactional(readOnly = false)

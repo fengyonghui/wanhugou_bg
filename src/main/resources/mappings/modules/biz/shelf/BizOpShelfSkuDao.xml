@@ -129,14 +129,7 @@
 				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
 			</if>
-			AND ( DATE_FORMAT( a.unshelf_time,'%Y~%m~%d %k.%i.%s') > DATE_FORMAT( NOW(),'%Y~%m~%d %k.%i.%s')
-			OR a.unshelf_time is NULL)
-			<!--<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
-				AND a.unshelf_user = #{unshelfUser.id}
-			</if>-->
-			<!--<if test="unshelfTime != null and unshelfTime != ''">
-				AND a.unshelf_time = #{unshelfTime}
-			</if>-->
+
 			<if test="sqlMap != null and sqlMap.shelfSku != null and sqlMap.shelfSku != ''">
 				${sqlMap.shelfSku}
 			</if>
@@ -253,9 +246,17 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-
+	<!-- 下架 -->
 	<update id="dateTimeUpdate">
 		UPDATE biz_op_shelf_sku SET
+		unshelf_time = #{unshelfTime}
+		WHERE id = #{id}
+	</update>
+	<!-- 重新上架 -->
+	<update id="shelvesUpdate">
+		UPDATE biz_op_shelf_sku SET
+		shelf_user = #{shelfUser.id},
+		shelf_time = #{shelfTime},
 		unshelf_time = #{unshelfTime}
 		WHERE id = #{id}
 	</update>
