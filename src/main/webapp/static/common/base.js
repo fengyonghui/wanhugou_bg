@@ -52,7 +52,27 @@ usingNamespace("Base")["Date"] = {
 };
 var $DateUtil = Base.Date;
 
-var $Echarts = {
+
+usingNamespace("Base")["Url"] = {
+    getUrlParam: function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    },
+    getUrlParamChinese: function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    },
+    go2Url : function (url) {
+        window.location.href=url;
+    }
+};
+var $Url = Base.Url;
+
+usingNamespace("Base")["Echatrts"] = {
     showLoadingStyle: {
         type: 'default',
         text: '正在加载...',
@@ -61,3 +81,4 @@ var $Echarts = {
         maskColor: 'rgba(255, 255, 255, 0)'
     }
 };
+var $Echarts = Base.Echatrts;

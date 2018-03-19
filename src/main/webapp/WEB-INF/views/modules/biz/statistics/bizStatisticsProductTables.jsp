@@ -68,6 +68,7 @@
     </label>
     <label>
         <select class="input-medium" id="variId">
+            <option value="0" label="全部">全部</option>
             <c:forEach items="${varietyList}" var="v">
                 <option value="${v.id}" label="${v.name}">${v.name}</option>
             </c:forEach>
@@ -82,6 +83,7 @@
     <input onclick="initChart();" class="btn btn-primary" type="button" value="查询"/>
 
 </div>
+<input id="showChart" onclick="$Url.go2Url('${adminPath}/biz/statistics/product')" class="btn btn-primary" type="button" value="查看图表"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
@@ -114,6 +116,7 @@
     </c:forEach>
     </tbody>
 </table>
+<script type="application/javascript" src="/static/common/base.js"></script>
 </body>
 
 

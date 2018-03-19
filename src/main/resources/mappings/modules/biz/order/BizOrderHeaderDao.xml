@@ -1035,6 +1035,7 @@
 		</if>
 		FROM biz_order_header oh
 		WHERE oh.`status` = 1
+        AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		and (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		oh.biz_status != #{item.state}
 	</foreach>
