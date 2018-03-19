@@ -35,9 +35,13 @@
     var point = new BMap.Point(116.063788,39.152988);
     map.centerAndZoom(point, 16);
     map.enableScrollWheelZoom(true);
-    var circle = new BMap.Circle(point,1000);
+
+    var circle = new BMap.Circle(point,400,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
     map.addOverlay(circle);
-    map.setViewport({center:new BMap.Point(116.058727,39.136209),zoom:14})
+
+    // var circle = new BMap.Circle(point,1000);
+    // map.addOverlay(circle);
+    // map.setViewport({center:new BMap.Point(116.058727,39.136209),zoom:14})
 
     // 编写自定义函数,创建标注
     function addMarker(vectorMarker){

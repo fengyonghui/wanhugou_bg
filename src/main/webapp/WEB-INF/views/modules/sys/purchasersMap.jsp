@@ -104,9 +104,55 @@
         success:function (data) {
              $("#totalCount").text(data.length)
             $.each(data.list,function (index,offAdress) {
-                var point2 =   new BMap.Point(offAdress.bizLocation.longitude, offAdress.bizLocation.latitude)
-                var circle = new BMap.Circle(point2,100500);
+
+                var vectorMarker = new BMap.Marker(new BMap.Point(offAdress.bizLocation.longitude, offAdress.bizLocation.latitude), {
+                    // 指定Marker的icon属性为Symbol
+                    icon: new BMap.Symbol(BMap_Symbol_SHAPE_STAR, {
+                        scale: 2,//图标缩放大小
+                        fillColor: "orange",//填充颜色
+                        fillOpacity: 0.5//填充透明度
+                    })
+                });
+                var oAd=offAdress.office.name+"("+offAdress.receiver+": "+offAdress.phone+")";
+                var oAdress="<br/> 地址："+offAdress.bizLocation.fullAddress;
+                var label = new BMap.Label(oAd+oAdress,{ offset: new BMap.Size(15, -40) });
+                // var label = new BMap.Label(oAdress, { offset: new BMap.Size(10, -25) });
+                label.setStyle({
+                    color: "#fff",
+                    border: "0",
+                    padding: "0",
+                    display: "none",
+                    background: "rgba(66,117,202,0.9)",
+                    fontSize: "12px",
+                    height: "40px",
+                    lineHeight: "20px",
+                    fontFamily: "微软雅黑"
+                });
+
+                vectorMarker.setLabel(label);
+                addMarker(vectorMarker);
+
+
+                 var point2 =   new BMap.Point(offAdress.bizLocation.longitude, offAdress.bizLocation.latitude)
+                // var circle = new BMap.Circle(point2,100500);
+                // map.addOverlay(circle);
+
+
+                var circle = new BMap.Circle(point2,60000,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+
                 map.addOverlay(circle);
+
+
+
+                vectorMarker.addEventListener("mouseover", function(){
+                    var label = this.getLabel();
+                    label.setStyle({display:"block"});
+                });
+                vectorMarker.addEventListener("mouseout",function(e){
+                    var label = this.getLabel();
+                    label.setStyle({display:"none"});
+                });
+
             });
 
         }

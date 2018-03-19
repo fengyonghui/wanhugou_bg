@@ -20,7 +20,6 @@
             <option value="0" label="全部"></option>
             <option value="1" label="拉杆箱"></option>
             <option value="2" label="双肩包"></option>
-            <option value="3" label="钱包"></option>
             <%--<c:forEach items="${varietyList}" var="v">
                 <option value="${v.id}" label="${v.name}">${v.name}</option>
             </c:forEach>--%>

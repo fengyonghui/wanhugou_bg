@@ -213,6 +213,11 @@ public class SystemService extends BaseService implements InitializingBean {
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}
+	@Transactional(readOnly = false)
+	public void recovery(User user){
+		userDao.recovery(user);
+		UserUtils.clearCache(user);
+	}
 	
 	@Transactional(readOnly = false)
 	public void updatePasswordById(Integer id, String loginName, String newPassword) {

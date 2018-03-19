@@ -80,7 +80,7 @@
 		a.create_date,
 		a.update_id AS "updateBy.id",
 		a.update_date,
-		a.status,
+		a.status AS "delFlag",
 		c.name AS "company.name",
 		c.parent_id AS "company.parent.id",
 		c.parent_ids AS "company.parentIds",
@@ -168,7 +168,7 @@
 		<if test="role != null and role.id != null and role.id != ''">
 			JOIN sys_user_role ur ON ur.user_id = a.id AND ur.role_id = #{role.id}
 		</if>
-		WHERE a.status = #{DEL_FLAG_NORMAL}
+		WHERE 1=1
 		<if test="company != null and company.id != null and company.id != ''">
 			AND (c.id = #{company.id} OR c.parent_ids LIKE
 			<if test="dbName == 'oracle'">'%,'||#{company.id}||',%')</if>
@@ -444,6 +444,12 @@
 	<update id="delete">
 		UPDATE sys_user SET 
 			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<update id="recovery">
+		UPDATE sys_user SET
+		status = #{DEL_FLAG_NORMAL}
 		WHERE id = #{id}
 	</update>
 
