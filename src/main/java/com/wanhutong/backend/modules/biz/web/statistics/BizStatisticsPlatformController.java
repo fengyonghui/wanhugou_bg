@@ -3,6 +3,7 @@ package com.wanhutong.backend.modules.biz.web.statistics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
@@ -411,6 +412,49 @@ public class BizStatisticsPlatformController extends BaseController {
         paramMap.put("nameList", nameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return paramMap;
+    }
+
+    /**
+     * 采购中心订单表格统计
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "orderTable")
+    public String orderTable (HttpServletRequest request, String startDate, String endDate){
+        request.setAttribute("adminPath", adminPath);  Calendar cal = Calendar.getInstance();
+        //获取本周一的日期
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        request.setAttribute("startDate", StringUtils.isBlank(startDate) ? simpleDateFormat.format(cal.getTime()) : startDate);
+        return "modules/biz/statistics/bizStatisticsOrderPlatformTable";
+    }
+
+    /**
+     * 采购中心订单表格统计
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "orderTableData")
+    @ResponseBody
+    public String orderTableData (HttpServletRequest request, String startDate, String endDate, String type, String centerType, String orderType){
+        // 月份集合
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat simpleDateFormatDay = new SimpleDateFormat("yyyy-MM-dd");
+        String startDateMonth = startDate;
+        if (StringUtils.isNotBlank(startDate)) {
+            startDate = startDate + "-01";
+        }
+        if (StringUtils.isNotBlank(endDate)) {
+            endDate = endDate + "-01";
+        }
+
+        if (StringUtils.isBlank(endDate)) {
+            endDate = simpleDateFormatDay.format(new Date());
+        }
+
+        List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = bizStatisticsPlatformService.orderStatisticData(startDate, endDate, type, centerType, orderType);
+        Map<String, Object> paramMap = Maps.newHashMap();
+
+        paramMap.put("bizOrderStatisticsDtoList", bizOrderStatisticsDtoList);
+        return JSONObject.fromObject(paramMap).toString();
     }
 
 }
