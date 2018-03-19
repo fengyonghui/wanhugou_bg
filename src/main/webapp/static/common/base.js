@@ -52,7 +52,8 @@ usingNamespace("Base")["Date"] = {
 };
 var $DateUtil = Base.Date;
 
-var $Echarts = {
+
+usingNamespace("Base")["Echatrts"] = {
     showLoadingStyle: {
         type: 'default',
         text: '正在加载...',
@@ -61,3 +62,4 @@ var $Echarts = {
         maskColor: 'rgba(255, 255, 255, 0)'
     }
 };
+var $Echarts = Base.Echatrts;
