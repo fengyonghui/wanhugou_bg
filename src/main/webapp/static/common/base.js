@@ -53,6 +53,25 @@ usingNamespace("Base")["Date"] = {
 var $DateUtil = Base.Date;
 
 
+usingNamespace("Base")["Url"] = {
+    getUrlParam: function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    },
+    getUrlParamChinese: function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    },
+    go2Url : function (url) {
+        window.location.href=url;
+    }
+};
+var $Url = Base.Url;
+
 usingNamespace("Base")["Echatrts"] = {
     showLoadingStyle: {
         type: 'default',

@@ -7,12 +7,13 @@
 </head>
 <body>
 <div style="height: 50px">
-    <input name="applyDate" id="applyDate" value="${month}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <input id="search" class="btn btn-primary" type="button" value="查询"/>
 
 </div>
 <div>
-    <input id="showChart" onclick="$Url.go2Url('${adminPath}/biz/statistics/order')" class="btn btn-primary" type="button" value="查看图表"/>
+    <input id="showChart" onclick="$Url.go2Url('${adminPath}/biz/statistics/between/order')" class="btn btn-primary" type="button" value="查看图表"/>
     <table id="contentTable" class="table table-striped table-bordered table-condensed">
         <thead>
             <tr>
@@ -37,12 +38,14 @@
 <script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
 
+    var startDate = $("#startDate").val();
+    var endDate = $("#endDate").val();
+
     $(document).ready(function () {
-        var applyDate = $("#applyDate").val();
         $.ajax({
             type: 'post',
-            url: "${adminPath}/biz/statistics/centOrderTable",
-            data: {"month": applyDate},
+            url: "${adminPath}/biz/statistics/between/centOrderTable",
+            data: {"startDate": startDate,"endDate": endDate},
             dataType: "json",
             success: function (msg) {
                 $("#orderTable").empty();
@@ -84,13 +87,14 @@
         })
     });
     $("#search").click(function () {
-        var applyDate = $("#applyDate").val();
+        alert(1);
         $.ajax({
             type: 'post',
-            url: "${adminPath}/biz/statistics/centOrderTable",
-            data: {"month": applyDate},
+            url: "${adminPath}/biz/statistics/between/centOrderTable",
+            data: {"startDate": startDate,"endDate": endDate},
             dataType: "json",
             success: function (msg) {
+                alert(2);
                 $("#orderTable").empty();
                 var orderTable = "";
                 var sumUpTotalMoney = 0;
@@ -126,6 +130,7 @@
                 orderTable += "<td>"+sumOrderCount+"</td>";
                 orderTable += "</tr>";
                 $("#orderTable").append(orderTable);
+                alert(3);
             }
         })
     });
