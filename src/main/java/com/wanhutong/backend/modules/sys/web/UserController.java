@@ -240,6 +240,16 @@ public class UserController extends BaseController {
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
 
+	@RequiresPermissions("sys:user:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(User user, RedirectAttributes redirectAttributes) {
+		if(Global.isDemoMode()){
+			addMessage(redirectAttributes, "演示模式，不允许操作！");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		systemService.recovery(user);
+		return "redirect:" + adminPath + "/sys/user/list?repage";
+	}
 	/**
 	 * 导出用户数据
 	 * @param user

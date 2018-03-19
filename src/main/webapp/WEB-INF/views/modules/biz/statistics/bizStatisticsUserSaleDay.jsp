@@ -44,8 +44,8 @@
         salesVolumeChart.clear();
         singleSalesVolumeChart.clear();
 
-        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
-        singleSalesVolumeChart.showLoading($Echarts.showLoadingStyle);
+       salesVolumeChart.showLoading($Echarts.showLoadingStyle);
+       singleSalesVolumeChart.showLoading($Echarts.showLoadingStyle);
 
         var startDate = $("#applyDate").val();
         if($DateUtil.CompareDate('2017-09-01',startDate)) {
