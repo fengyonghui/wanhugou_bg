@@ -41,6 +41,7 @@
 		LEFT JOIN sys_user su on su.id=a.create_id
 		LEFT JOIN biz_request_header reheader ON a.order_id = reheader.id
 		LEFT JOIN biz_inventory_info inv ON inv.id = a.inv_id
+		LEFT JOIN sys_office cent ON cent.id = inv.cust_id
 		LEFT JOIN biz_logistics logs ON logs.id = a.logistics_id
 	</sql>
     

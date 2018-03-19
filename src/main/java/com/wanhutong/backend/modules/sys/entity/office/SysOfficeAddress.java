@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.sys.entity.office;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 
 /**
  * 地址管理(公司+详细地址)Entity
@@ -24,6 +25,7 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	private Integer ohId;		//用于添加地址传参
 	private String flag;		//用于传参标记
 	private String sign;     //用于获取机构类型
+	private User con;		//客户专员ID
 
 
 	public String getSign() {
@@ -105,5 +107,13 @@ public class SysOfficeAddress extends DataEntity<SysOfficeAddress> {
 	
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public User getCon() {
+		return con;
+	}
+
+	public void setCon(User con) {
+		this.con = con;
 	}
 }

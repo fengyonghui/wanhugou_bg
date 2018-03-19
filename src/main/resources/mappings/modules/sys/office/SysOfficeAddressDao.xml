@@ -40,6 +40,7 @@
         LEFT JOIN sys_region reg ON c.region_id = reg.id
         LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.office_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
+		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 	</sql>
     
 	<select id="get" resultType="SysOfficeAddress">
@@ -57,6 +58,8 @@
 		<include refid="sysOfficeAddressJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			AND con.status = #{DEL_FLAG_NORMAL}
+			AND ccs.status = #{DEL_FLAG_NORMAL}
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
@@ -77,6 +80,9 @@
 			</if>
 			<if test="office != null and office.type != null and office.type != ''">
 				AND o2.type = #{office.type}
+			</if>
+			<if test="con != null and con.id != null and con.id !=''">
+				AND con.id = #{con.id}
 			</if>
 			<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">
 				${sqlMap.officeAddress}
