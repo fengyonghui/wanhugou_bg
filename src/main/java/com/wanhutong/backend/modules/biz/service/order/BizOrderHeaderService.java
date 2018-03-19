@@ -111,11 +111,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 for (Role role : user.getRoleList()) {
                     if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
                         flag = true;
-                        break;
                     }
                     if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
                         roleFlag = true;
-                        break;
                     }
                 }
             }

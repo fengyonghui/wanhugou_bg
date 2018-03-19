@@ -111,15 +111,15 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 				for(Role role:user.getRoleList()){
 					if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
 						flag=true;
-						break;
+
 					}else if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
 						flagb=true;
-						break;
+
 					}
 				}
 			}
 			BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
-			if(flag && StringUtils.isBlank(source)){
+			if(flag){
 				customCenterConsultant.setCenters(user.getCompany());
 
 				List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
@@ -226,17 +226,17 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 				for(Role role:user.getRoleList()){
 					if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
 						flag=true;
-						break;
+
 					}else if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
 						flagb=true;
-						break;
+
 					}
 				}
 			}
-			if(flagb){
-				office.setConsultantId(user.getId());
-			}else if(flag){
+			if(flag){
 				office.setCenterId(user.getCompany().getId());
+			}else if(flagb){
+				office.setConsultantId(user.getId());
 			}
 			//office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 			return super.findPage(page, office);
