@@ -278,7 +278,6 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"order", ""})
     public String order(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
-        request.setAttribute("adminPath", adminPath);
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         return "modules/biz/statistics/bizStatisticsOrder";
     }

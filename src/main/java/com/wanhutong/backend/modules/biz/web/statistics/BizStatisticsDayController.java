@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -390,5 +391,58 @@ public class BizStatisticsDayController extends BaseController {
         return paramMap;
     }
 
+    /**
+     * 采购中心订单表格统计
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "orderTable")
+    public String orderTable (HttpServletRequest request, String startDate, String endDate){
+        request.setAttribute("adminPath", adminPath);  Calendar cal = Calendar.getInstance();
+        //获取本周一的日期
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        request.setAttribute("startDate", StringUtils.isBlank(startDate) ? simpleDateFormat.format(cal.getTime()) : startDate);
+        return "modules/biz/statistics/bizStatisticsOrderDayTable";
+    }
 
+    /**
+     * 采购中心订单表格统计
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "orderTableData")
+    @ResponseBody
+    public String orderTableData (HttpServletRequest request, String startDate){
+        // 月份集合
+        List<LocalDateTime> monthDateList = Lists.newArrayList();
+        LocalDateTime selectMonth = StringUtils.isBlank(startDate) ? LocalDateTime.now() : LocalDateTime.parse(startDate);
+        monthDateList.add(selectMonth);
+        for (int i = 0; i < DATA_DAY_COUNT; i++) {
+            if (i != 0) {
+                monthDateList.add(selectMonth.minusDays(i));
+            }
+        }
+
+        // 主要数据集合
+        Map<String, Map<String, BizOrderStatisticsDto>> dataMap = Maps.newLinkedHashMap();
+        // 月份字符串集合
+        List<String> monthList = Lists.newArrayList();
+        monthDateList.forEach(o -> {
+            dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), bizStatisticsDayService.orderStatisticData(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)));
+            monthList.add(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
+        });
+        Collections.reverse(monthList);
+
+        Set<String> officeNameSet = Sets.newHashSet();
+        monthDateList.forEach(o -> {
+            officeNameSet.addAll(dataMap.get(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)) != null ? dataMap.get(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)).keySet() : CollectionUtils.EMPTY_COLLECTION);
+        });
+        officeNameSet.removeAll(Collections.singleton(null));
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+
+        paramMap.put("officeNameSet", officeNameSet);
+        paramMap.put("dateList", monthList);
+        paramMap.put("dataMap", dataMap);
+        return JSONObject.fromObject(paramMap).toString();
+    }
 }

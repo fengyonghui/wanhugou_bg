@@ -12,6 +12,7 @@
 
 </div>
 <div>
+    <input id="showChart" onclick="$Url.go2Url('${adminPath}/biz/statistics/order')" class="btn btn-primary" type="button" value="查看图表"/>
     <table id="contentTable" class="table table-striped table-bordered table-condensed">
         <thead>
             <tr>
@@ -33,6 +34,7 @@
     <input onclick="window.print();" type="button" class="btn btn-primary" value="打印采购中心订单统计" style="background:#F78181;"/>
 </div>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
+<script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
 
     $(document).ready(function () {
