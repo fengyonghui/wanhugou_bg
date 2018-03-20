@@ -32,7 +32,10 @@
         </select>
     </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
+
     <div id="orderTotalDataChart" style="height: 500px"></div>
+    <input type="hidden" name="img" id="img" />
 
 </div>
 
@@ -127,6 +130,14 @@
                     series: msg.seriesList
                 });
                 salesVolumeChart.hideLoading();
+                setInterval( function (args) {
+                    var imgUrl = salesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img').val(imgUrl);
+                },1000);
+
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");
@@ -134,7 +145,31 @@
         });
     }
     initChart();
+    function exportTable() {
+        initChart();
 
+        var imgUrl = $('#img').val();
+        console.info(imgUrl);
+        var startDate = $("#applyDate").val();
+
+        //定义一个form表单
+        var myform = $("<form></form>");
+        myform.attr('method','post')
+        myform.attr('action',"${adminPath}/biz/statistics/day/productDataDownload");
+
+        var myProductId = $("<input type='hidden' name='month' />")
+        myProductId.attr('value', startDate);
+
+
+        var myUpdateReason = $("<input type='hidden' name='imgUrl' />")
+        myUpdateReason.attr('value', imgUrl);
+
+
+        myform.append(myProductId);
+        myform.append(myUpdateReason);
+        myform.appendTo('body').submit(); //must add this line for higher html spec
+
+    }
 
 </script>
 </html>
