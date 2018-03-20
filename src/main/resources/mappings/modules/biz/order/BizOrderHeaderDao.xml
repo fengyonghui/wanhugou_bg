@@ -110,7 +110,9 @@
 		a.update_id AS "updateBy.id",
 		su.name as "updateBy.name",
 		a.update_time AS "updateDate",
-		s.name as "centersName"
+		s.name as "centersName",
+		con.id AS "con.id",
+		con.name AS "con.name"
 	</sql>
 
 	<sql id="bizOrderHeaderJoins">
@@ -123,6 +125,7 @@
 		left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
     	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
+		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 	</sql>
 
 	<select id="get" resultType="BizOrderHeader">
@@ -282,6 +285,13 @@
 				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
 			</if>
+			<if test="con !=null and con.name != null and con.name !=''">
+				and con.name
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{con.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
+			</if>
 
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
@@ -377,6 +387,14 @@
 				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+
+			<if test="con !=null and con.name != null and con.name !=''">
+				and con.name
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{con.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
 			</if>
 
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
