@@ -14,16 +14,21 @@ import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import sun.misc.BASE64Decoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -598,9 +603,93 @@ public class BizStatisticsBetweenController extends BaseController {
             }
         }
 
-        model.addAttribute("map",map);
+        model.addAttribute("map",resultMap);
         request.setAttribute("startDate", startDate);
         request.setAttribute("endDate", endDate);
         return map;
+    }
+
+    /**
+     * 采购中心订单统计表格数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "centOrderTableDownload")
+    public void centOrderTableDownload(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String startDate, String endDate,
+            Model model, String imgUrl
+    ) throws ParseException, IOException {
+        //当前月时间
+        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsBetweenService.orderStatisticData(startDate, endDate);
+
+        String fileName = "订单统计.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFSheet sheet = wb.createSheet();
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+        rowIndex ++;
+        HSSFCell hCell = header.createCell(0);
+        hCell.setCellValue("采购中心");
+        HSSFCell hCell1 = header.createCell(1);
+        hCell1.setCellValue("销售额");
+        HSSFCell hCell2 = header.createCell(2);
+        hCell2.setCellValue("利润");
+        HSSFCell hCell3 = header.createCell(3);
+        hCell3.setCellValue("订单量");
+
+       for (String key : resultMap.keySet()) {
+           HSSFRow row = sheet.createRow(rowIndex);
+           rowIndex ++;
+           BizOrderStatisticsDto bizOrderStatisticsDto = resultMap.get(key);
+           HSSFCell cell = row.createCell(0);
+           cell.setCellValue(bizOrderStatisticsDto.getOfficeName());
+           HSSFCell cell1 = row.createCell(1);
+           cell1.setCellValue(bizOrderStatisticsDto.getTotalMoney().toString());
+           HSSFCell cell2 = row.createCell(2);
+           cell2.setCellValue(bizOrderStatisticsDto.getProfitPrice().toString());
+           HSSFCell cell3 = row.createCell(3);
+           cell3.setCellValue(bizOrderStatisticsDto.getOrderCount());
+       }
+
+        int index = 10;
+        HSSFRow row = sheet.createRow(index + 3);
+        HSSFCell headerCell = row.createCell(0);
+        headerCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+        headerCell.setCellValue("图表");
+
+        row = sheet.createRow(index + 6);
+        HSSFCell cells = row.createCell(0);
+        cells.setCellType(HSSFCell.CELL_TYPE_BLANK);
+        // 将图片写入流中
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        BASE64Decoder decoder = new BASE64Decoder();
+
+        try {
+            String[] url = imgUrl.split(",");
+            String u = url[1];
+            //Base64解码
+            byte[] buffer = new BASE64Decoder().decodeBuffer(u);
+            //生成图片
+            outStream.write(buffer);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HSSFPatriarch patri = sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(5, 5, 5, 5,
+                (short) 1, index + 6, (short) 20, 45);
+        patri.createPicture(anchor, wb.addPicture(
+                outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
     }
 }
