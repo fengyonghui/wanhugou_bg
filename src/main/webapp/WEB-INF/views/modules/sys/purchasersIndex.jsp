@@ -20,7 +20,7 @@
 		</div>
 		<div id="openClose" class="close">&nbsp;</div>
 		<div id="right">
-			<iframe id="officeContent" src="${ctx}/sys/office/purchasersList?type=6" width="100%" height="91%" frameborder="0"></iframe>
+			<iframe id="officeContent" src="${ctx}/sys/office/purchasersList" width="100%" height="91%" frameborder="0"></iframe>
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -28,7 +28,7 @@
 			callback:{onClick:function(event, treeId, treeNode){
 					//var id = treeNode.pId == '0' ? '' :treeNode.pId;
 					var id = treeNode.id;
-					$('#officeContent').attr("src","${ctx}/sys/office/purchasersList?type=6&id="+id+"&parentIds="+treeNode.pId);
+					$('#officeContent').attr("src","${ctx}/sys/office/purchasersList?id="+id+"&parentIds="+treeNode.pId);
 				}
 			}
 		};
