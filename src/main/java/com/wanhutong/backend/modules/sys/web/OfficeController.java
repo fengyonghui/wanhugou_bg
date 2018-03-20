@@ -79,7 +79,7 @@ public class OfficeController extends BaseController {
     public String purchasersList(Office office, String conn, Integer centers, Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
         String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
         if (office.getId() != null || office.getParentIds() != null) {
-            office.setParentIds("%," + office.getParentIds()+ ",%");
+            office.setParentIds("%," + office.getId()+ ",%");
         } else {
 //            查所有
             office.setParentIds("%," + purchasersId + ",%");
