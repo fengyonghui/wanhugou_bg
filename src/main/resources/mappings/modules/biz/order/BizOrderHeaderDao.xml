@@ -557,10 +557,22 @@
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
-		(SELECT SUM(od.ord_qty * bsi.buy_price)
-		FROM biz_order_detail od, biz_sku_info bsi
-		WHERE header.id = od.order_id and bsi.id = od.sku_id
-		)                      AS buyPrice
+		(SELECT
+		sum(sku1.buy_price * detail1.ord_qty)
+		FROM
+		biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+		WHERE office.id = office1.id AND header1.order_type = 1
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND
+		header1.create_time LIKE #{month}
+		GROUP BY office.id)                     AS buyPrice
 		FROM biz_order_header AS header
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
@@ -721,10 +733,22 @@
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
-		(SELECT SUM(od.ord_qty * bsi.buy_price)
-		FROM biz_order_detail od, biz_sku_info bsi
-		WHERE header.id = od.order_id and bsi.id = od.sku_id
-		)  AS buyPrice
+		(SELECT
+		sum(sku1.buy_price * detail1.ord_qty)
+		FROM
+		biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+		WHERE office.id = office1.id AND header1.order_type = 1
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND
+		date_format(header1.create_time, '%Y-%m-%d') = #{day}
+		GROUP BY office.id)  AS buyPrice
 		FROM biz_order_header AS header
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
@@ -858,10 +882,22 @@
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
-		(SELECT SUM(od.ord_qty * bsi.buy_price)
-		FROM biz_order_detail od, biz_sku_info bsi
-		WHERE header.id = od.order_id and bsi.id = od.sku_id
-		) AS buyPrice
+		(SELECT
+		sum(sku1.buy_price * detail1.ord_qty)
+		FROM
+		biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+		WHERE office.id = office1.id AND header1.order_type = 1
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND
+		header1.create_time BETWEEN #{startDate} AND #{endDate}
+		GROUP BY office.id) AS buyPrice
 		FROM biz_order_header AS header
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
