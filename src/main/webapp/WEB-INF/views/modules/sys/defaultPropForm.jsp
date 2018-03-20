@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">系统属性值( 一般关联其他表的主键 )：</label>
+			<label class="control-label">系统属性值：</label>
 			<div class="controls">
 				<form:input path="propValue" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -51,31 +51,6 @@
 			<label class="control-label">属性描述：</label>
 			<div class="controls">
 				<form:input path="propDesc" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">创建时间：</label>
-			<div class="controls">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${defaultProp.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">修改人：</label>
-			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">修改时间：</label>
-			<div class="controls">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${defaultProp.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

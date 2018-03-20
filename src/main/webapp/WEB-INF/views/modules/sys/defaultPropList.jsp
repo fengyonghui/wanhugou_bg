@@ -37,10 +37,8 @@
 		<thead>
 			<tr>
 				<th>系统属性键</th>
-				<th>系统属性值( 一般关联其他表的主键 )</th>
+				<th>系统属性值</th>
 				<th>属性描述</th>
-				<th>修改人</th>
-				<th>修改时间</th>
 				<shiro:hasPermission name="sys:defaultProp:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -56,11 +54,6 @@
 				<td>
 					${defaultProp.propDesc}
 				</td>
-				<td>
-					${defaultProp.updateId.id}
-				</td>
-				<td>
-					<fmt:formatDate value="${defaultProp.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="sys:defaultProp:edit"><td>
     				<a href="${ctx}/sys/defaultProp/form?id=${defaultProp.id}">修改</a>
