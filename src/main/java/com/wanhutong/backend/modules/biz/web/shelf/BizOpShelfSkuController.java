@@ -54,13 +54,10 @@ public class BizOpShelfSkuController extends BaseController {
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
-	private BizProductInfoService bizProductInfoService;
-	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private BizSkuPropValueService bizSkuPropValueService;
-	@Autowired
-	private BizOpShelfSkuDao bizOpShelfSkuDao;
+
 	
 	@ModelAttribute
 	public BizOpShelfSku get(@RequestParam(required=false) Integer id) {
@@ -212,7 +209,7 @@ public class BizOpShelfSkuController extends BaseController {
 //		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//格式化时间
 //		System.out.println(df.format(day));
 		bizOpShelfSku.setUnshelfTime(day);
-		bizOpShelfSkuDao.dateTimeUpdate(bizOpShelfSku);
+		bizOpShelfSkuService.updateDateTime(bizOpShelfSku);
 		addMessage(redirectAttributes, "下架成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
 	}
@@ -225,7 +222,7 @@ public class BizOpShelfSkuController extends BaseController {
 	 * @return
 	 */
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
-	@RequestMapping(value = "dateTimeSave")
+	@RequestMapping(value = "shelvesSave")
 	@ResponseBody
 	public String shelvesSave(BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
 		Date day=new Date();//当前时间
@@ -235,7 +232,7 @@ public class BizOpShelfSkuController extends BaseController {
         bizOpShelfSku.setShelfUser(user);
         bizOpShelfSku.setShelfTime(new Date());
         bizOpShelfSku.setUnshelfTime(null);
-		bizOpShelfSkuDao.shelvesUpdate(bizOpShelfSku);
+		bizOpShelfSkuService.updateShelves(bizOpShelfSku);
 		addMessage(redirectAttributes, "上架成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
 	}
