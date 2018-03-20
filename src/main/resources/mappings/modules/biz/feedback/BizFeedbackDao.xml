@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.feedback.BizFeedbackDao">
+    
+	<sql id="bizFeedbackColumns">
+		a.id AS "id",
+		a.user_feedback AS "userFeedback",
+		a.create_id AS "createBy.id",
+		su.name AS  "createBy.name",
+		a.create_time AS "createDate"
+	</sql>
+	
+	<sql id="bizFeedbackJoins">
+        LEFT JOIN sys_user su on su.id = a.create_id
+	</sql>
+    
+	<select id="get" resultType="BizFeedback">
+		SELECT 
+			<include refid="bizFeedbackColumns"/>
+		FROM biz_feedback a
+		<include refid="bizFeedbackJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizFeedback">
+		SELECT 
+			<include refid="bizFeedbackColumns"/>
+		FROM biz_feedback a
+		<include refid="bizFeedbackJoins"/>
+		<where>
+			
+			<if test="userFeedback != null and userFeedback != ''">
+				AND a.user_feedback LIKE 
+					<if test="dbName == 'oracle'">'%'||#{userFeedback}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{userFeedback}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{userFeedback},'%')</if>
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizFeedback">
+		SELECT 
+			<include refid="bizFeedbackColumns"/>
+		FROM biz_feedback a
+		<include refid="bizFeedbackJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_feedback(
+			id,
+			user_feedback,
+			create_id,
+			create_time
+		) VALUES (
+			#{id},
+			#{userFeedback},
+			#{createBy.id},
+			#{createDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_feedback SET 	
+			user_feedback = #{userFeedback},
+			create_time = #{createDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_feedback
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
