@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfInfoDao;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +39,8 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 	private BizProductInfoService bizProductInfoService;
 	@Resource
 	private BizSkuInfoService bizSkuInfoService;
-
+	@Autowired
+	private BizOpShelfSkuDao bizOpShelfSkuDao;
 	public BizOpShelfSku get(Integer id) {
 		return super.get(id);
 	}
@@ -84,5 +88,14 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 	public void delete(BizOpShelfSku bizOpShelfSku) {
 		super.delete(bizOpShelfSku);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public void updateShelves(BizOpShelfSku bizOpShelfSku){
+		bizOpShelfSkuDao.shelvesUpdate(bizOpShelfSku);
+	}
+
+	@Transactional(readOnly = false)
+	public void updateDateTime(BizOpShelfSku bizOpShelfSku){
+		bizOpShelfSkuDao.dateTimeUpdate(bizOpShelfSku);
+	}
 }
