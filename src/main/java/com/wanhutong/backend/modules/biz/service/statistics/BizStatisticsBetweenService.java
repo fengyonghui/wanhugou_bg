@@ -142,9 +142,7 @@ public class BizStatisticsBetweenService {
      * @return 所有采购商
      */
     public List<Office> getBizPurchasingList(String type) {
-        Office office = new Office();
-        office.setType(type);
-        return officeDao.findList(office);
+        return officeDao.findListByType(type);
     }
 
     /**
