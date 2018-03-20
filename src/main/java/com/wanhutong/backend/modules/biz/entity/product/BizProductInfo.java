@@ -10,7 +10,6 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +33,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String name;		// 商品名称
 	private BizVarietyInfo bizVarietyInfo; //
 	private String prodCode;		// 商品代码--厂家定的-或自己定的
-	private Dict dict;		// biz_cate_prop_value.id, 对应品牌分类的属性值ID
+	private PropValue propValue;		// biz_cate_prop_value.id, 对应品牌分类的属性值ID
 	private String brandName;		// 品牌名称，冗余字段，提升查询效率
 	private String description;		// 商品描述
 	private Office office;		// sys_office.id &amp; type= vendor
@@ -160,7 +159,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 
 	public String getProdCode() {
 		return prodCode;
@@ -170,7 +169,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.prodCode = prodCode;
 	}
 
-	
+
 	@Length(min=1, max=50, message="品牌名称，冗余字段，提升查询效率长度必须介于 1 和 50 之间")
 	public String getBrandName() {
 		return brandName;
@@ -179,7 +178,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -341,6 +340,14 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.cateNames = cateNames;
 	}
 
+	public PropValue getPropValue() {
+		return propValue;
+	}
+
+	public void setPropValue(PropValue propValue) {
+		this.propValue = propValue;
+	}
+
 	public BizVarietyInfo getBizVarietyInfo() {
 		return bizVarietyInfo;
 	}
@@ -355,13 +362,5 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setItemNo(String itemNo) {
 		this.itemNo = itemNo;
-	}
-
-	public Dict getDict() {
-		return dict;
-	}
-
-	public void setDict(Dict dict) {
-		this.dict = dict;
 	}
 }
