@@ -18,4 +18,5 @@ import java.util.List;
 public interface SysOfficeAddressDao extends CrudDao<SysOfficeAddress> {
 	public List<SysOfficeAddress> orderHeaderfindList(SysOfficeAddress sysOfficeAddress);
 
+	List<SysOfficeAddress> findListByTypes(SysOfficeAddress sysOfficeAddress);
 }

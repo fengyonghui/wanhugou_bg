@@ -26,16 +26,16 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>仓库名称：</label>
-				<form:input path="invInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>商品名称：</label>
-				<form:input path="skuInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>商品编号：</label>
-				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>订单号：</label>
-				<form:input path="orderNum" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>

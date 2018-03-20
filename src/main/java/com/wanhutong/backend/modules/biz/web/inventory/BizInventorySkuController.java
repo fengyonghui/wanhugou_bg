@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -55,6 +57,8 @@ public class BizInventorySkuController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
     private SystemService systemService;
+	@Autowired
+    private BizOrderDetailService bizOrderDetailService;
 
 
 	@ModelAttribute
@@ -88,14 +92,14 @@ public class BizInventorySkuController extends BaseController {
         if (user.isAdmin()) {
             page= bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         } else {
-        	if(flag){
-				bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+//        	if(flag){
+//				bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
 				Office company = systemService.getUser(user.getId()).getCompany();
 				//根据采购中心取出仓库
 				BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
 				bizInventoryInfo.setCustomer(company);
 				bizInventorySku.setInvInfo(bizInventoryInfo);
-			}
+//			}
 
              page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
 
@@ -104,6 +108,38 @@ public class BizInventorySkuController extends BaseController {
 		model.addAttribute("page", page);
 		return "modules/biz/inventory/bizInventorySkuList";
 	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:inventory:bizInventorySku:view")
+	@RequestMapping(value = "findInvSku")
+	public String findInvSku(String orderHeaders) {
+	    String flag = "false";
+        if(StringUtils.isNotBlank(orderHeaders)) {
+            String[] orders = orderHeaders.split(",".trim());
+            for (int a = 0; a < orders.length; a++) {
+                String[] oheaders = orders[a].split("#".trim());
+                String[] odNumArr = oheaders[1].split("\\*");
+                for (int i = 0; i < odNumArr.length; i++) {
+                    String[] odArr = odNumArr[i].split("-");
+                    BizOrderDetail orderDetail = bizOrderDetailService.get(Integer.parseInt(odArr[0]));
+                    //商品
+                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
+                    BizInventoryInfo inventoryInfo = new BizInventoryInfo();
+                    if(odArr.length==3) {
+                        inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
+                        BizInventorySku bizInventorySku = new BizInventorySku();
+                        bizInventorySku.setInvInfo(inventoryInfo);
+                        bizInventorySku.setSkuInfo(bizSkuInfo);
+                        List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
+                        if (invSkuList != null && invSkuList.size() > 0) {
+                            flag = "true";
+                        }
+                    }
+                }
+            }
+        }
+        return flag;
+    }
 
 	@RequiresPermissions("biz:inventory:bizInventorySku:view")
 	@RequestMapping(value = "form")

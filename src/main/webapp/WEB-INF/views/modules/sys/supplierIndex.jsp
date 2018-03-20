@@ -28,7 +28,7 @@
 			callback:{onClick:function(event, treeId, treeNode){
 					//var id = treeNode.pId == '0' ? '' :treeNode.pId;
 					var id = treeNode.id;
-					$('#officeContent').attr("src","${ctx}/sys/office/supplierList?id="+id+"&parentIds="+treeNode.pIds);
+					$('#officeContent').attr("src","${ctx}/sys/office/supplierListGys?id="+id+"&parentIds="+treeNode.pIds);
 				}
 			}
 		};

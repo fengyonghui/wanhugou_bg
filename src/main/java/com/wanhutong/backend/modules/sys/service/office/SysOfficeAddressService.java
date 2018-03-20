@@ -6,8 +6,12 @@ package com.wanhutong.backend.modules.sys.service.office;
 import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.BeanUtils;
@@ -44,12 +48,34 @@ public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, Sy
 	}
 	
 	public Page<SysOfficeAddress> findPage(Page<SysOfficeAddress> page, SysOfficeAddress sysOfficeAddress) {
-		User user= UserUtils.getUser();
+
+			User user=UserUtils.getUser();
+		boolean flag=false;
+		boolean roleFlag = false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname()) || RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())){
+					flag=true;
+					break;
+				}
+				if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
+					roleFlag = true;
+				}
+			}
+		}
 		if(user.isAdmin()){
 			return super.findPage(page, sysOfficeAddress);
 		}else {
-			sysOfficeAddress.getSqlMap().put("officeAddress", BaseService.dataScopeFilter(user, "s", "su"));
-			return super.findPage(page, sysOfficeAddress);
+			if(sysOfficeAddress.getOffice()!=null && StringUtils.isNotBlank(sysOfficeAddress.getOffice().getType())&&sysOfficeAddress.getOffice().getType().equals(OfficeTypeEnum.VENDOR.getType())){
+				return super.findPage(page, sysOfficeAddress);
+			}else {
+				if(flag) {
+					sysOfficeAddress.getSqlMap().put("officeAddress", BaseService.dataScopeFilter(user, "s", "su"));
+				}else if(roleFlag){
+					sysOfficeAddress.setCon(user);
+				}
+				return super.findPage(page, sysOfficeAddress);
+			}
 		}
 	}
 	
@@ -84,5 +110,9 @@ public class SysOfficeAddressService extends CrudService<SysOfficeAddressDao, Sy
 
 	public List<SysOfficeAddress> orderHeaderfindList(SysOfficeAddress sysOfficeAddress) {
 		return sysOfficeAddressDao.orderHeaderfindList(sysOfficeAddress);
+	}
+
+	public List<SysOfficeAddress> findListByTypes(SysOfficeAddress sysOfficeAddress){
+		return sysOfficeAddressDao.findListByTypes(sysOfficeAddress);
 	}
 }

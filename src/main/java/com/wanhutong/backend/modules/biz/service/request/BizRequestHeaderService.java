@@ -62,17 +62,15 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			for(Role role:user.getRoleList()){
 				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
 					flag=true;
-					break;
 				}
 			}
 		}
 		if (user.isAdmin()) {
 			return super.findList(bizRequestHeader);
 		} else {
-			if(flag){
-				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
-
-			}
+//			if(flag){
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+//			}
 			return super.findList(bizRequestHeader);
 		}
 	}

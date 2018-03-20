@@ -30,7 +30,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/sys/office/list?id=${office.id}&parentIds=${office.parentIds}">机构列表</a></li>
+		<li class="active"><a href="${ctx}/sys/office/list?parentIds=0">机构列表</a></li>
 		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/form?parent.id=${office.id}">机构添加</a></li></shiro:hasPermission>
 	</ul>
 	<sys:message content="${message}"/>

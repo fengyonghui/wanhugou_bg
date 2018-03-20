@@ -83,7 +83,7 @@
                     ${sysOfficeAddress.createBy.name}
             </td>
             <td>
-                <fmt:formatDate value="${sysOfficeAddress.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                <fmt:formatDate value="${sysOfficeAddress.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </td>
             <shiro:hasPermission name="sys:office:sysOfficeAddress:edit"><td>
                 <a href="${ctx}/sys/office/sysOfficeAddress/form?id=${sysOfficeAddress.id}&&sign=vendoradd">修改</a>

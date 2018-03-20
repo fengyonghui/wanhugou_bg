@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 
 import java.util.Date;
 import java.util.List;
@@ -58,6 +59,9 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String localSendIds;
     private Integer orderMark;		//用于订单新增地址返回标记
 	private String suplyIds;       //用于查询本地发货的订单
+	private String centersName;	//用于订单列表查询采购中心
+
+	private User con;		//订单所属客户专员
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -353,5 +357,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
 	public void setSuplyIds(String suplyIds) {
 		this.suplyIds = suplyIds;
+	}
+
+	public String getCentersName() {
+		return centersName;
+	}
+
+	public void setCentersName(String centersName) {
+		this.centersName = centersName;
+	}
+
+	public User getCon() {
+		return con;
+	}
+
+	public void setCon(User con) {
+		this.con = con;
 	}
 }

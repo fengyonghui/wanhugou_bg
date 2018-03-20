@@ -49,13 +49,13 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>采购商名称：</label>
-				<sys:treeselect id="office" name="id" value="" labelName="customer.name"
-								labelValue="" notAllowSelectParent="true"
+				<sys:treeselect id="office" name="id" value="${office.id}" labelName="customer.name"
+								labelValue="${office.name}" notAllowSelectParent="true"
 								title="采购商" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-medium"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 			</li>
 			<li><label>联系人电话：</label>
-				<form:input path="phone" htmlEscape="false" placeholder="请输入联系人电话"  class="input-medium"/></li>
+				<form:input path="moblieMoeny.mobile" htmlEscape="false" placeholder="请输入联系人电话"  class="input-medium"/></li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -92,7 +92,7 @@
                 <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}">${off.name}</a></td>
 				<td>${off.area.name}</td>
 				<td>${off.code}</td>
-				<td>${off.phone}</td>
+				<td>${off.moblieMoeny.mobile}</td>
 				<td>
                     ${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
                 </td>
@@ -100,7 +100,7 @@
                 <shiro:hasPermission name="sys:office:edit"><td>
                     <a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更采购顾问</a>
                     <a href="${ctx}/sys/office/purchasersForm?id=${off.id}">修改</a>
-                    <a href="${ctx}/sys/office/delete?id=${off.id}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
+                    <a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
                     <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}">添加下级机构</a>
                 </td></shiro:hasPermission>
 			</tr>

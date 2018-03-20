@@ -38,9 +38,9 @@
         <%--禁止后退键 作用于IE、Chrome--%>
         document.onkeydown=banBackSpace;
     </script><%--用于键盘Bcackspace回退BUG问题--%>
-	<script type="text/javascript">
+    <script type="text/javascript">
 		$(document).ready(function() {
-			
+
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -61,10 +61,9 @@
 		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/" method="post" class="breadcrumb form-search">
-		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+        <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+        <input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
-		<%--<input id="customer" name="bizOrderHeader.customer.id" type="hidden" value="${bizOrderHeader.customer.id}"/>--%>
 		<form:hidden path="consultantId"/>
 		<ul class="ul-form">
 			<li><label>订单编号：</label>
@@ -83,15 +82,10 @@
 				<label>货架编号：</label>
 				<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-			<%--<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"--%>
-					<%--labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"--%>
-					<%--title="采购商"  url="/sys/office/queryTreeList?type=6"--%>
-					<%--cssClass="input-medium required"--%>
-					<%--allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>--%>
 			<li><label>采购商名称：</label>
 				<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
-					 <sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
-										labelValue="" notAllowSelectParent="true"
+					 <sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
+										labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 										title="采购商"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
 										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
@@ -99,12 +93,18 @@
 					<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
 				</c:if>
 				<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-					<sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
-									labelValue="" notAllowSelectParent="true"
+					<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
+									labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 									title="采购商"  url="/sys/office/queryTreeList?type=6"
 									cssClass="input-medium required"
 									allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 				</c:if>
+			</li>
+			<li><label>采购中心：</label>
+				<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>
+			<li><label>客户专员：</label>
+				<form:input path="con.name" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<c:if test="${bizOrderHeader.flag=='check_pending'}">
@@ -113,13 +113,14 @@
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
-	<sys:message content="${message}"/>
+    <sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
 				<th>订单编号</th>
 				<th>订单类型</th>
 				<th>采购商名称</th>
+				<th>所属采购中心</th>
 				<th>采购商电话</th>
 				<th>商品总价</th>
 				<th>交易金额</th>
@@ -148,10 +149,13 @@
 					</c:if>
 				</td>
 				<td>
-					${fns:getDictLabel(orderHeader.bizType, 'biz_order_type', '未知状态')}
+					${fns:getDictLabel(orderHeader.orderType, 'biz_order_type', '未知状态')}
 				</td>
 				<td>
 					${orderHeader.customer.name}
+				</td>
+				<td>
+					${orderHeader.centersName}
 				</td>
 				<td>
 					${orderHeader.customer.phone}
@@ -175,21 +179,13 @@
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 				</td>
 				<td>
-                    <c:if test="${orderHeader.bizStatus==0}">
-                        <font color="#848484">${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}</font>
+					${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
+                    <c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
+                        <font color="#FF0000">(有尾款)</font>
                     </c:if>
-                    <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
-                        <font color="#FF0000">有尾款</font>
-                    </c:if>
-					<c:if test="${orderHeader.bizStatus ==10 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
-						<font color="#088A29">已结清</font>
-					</c:if>
-                    <c:if test="${orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">
-                        <font color="#088A29">已结清</font>
-                    </c:if>
-                    <c:if test="${orderHeader.bizStatus !=0 && orderHeader.bizStatus !=5 && orderHeader.bizStatus !=10}">
-					    ${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
-                    </c:if>
+					<%--<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight == orderHeader.receiveTotal}">--%>
+						<%--<font color="#088A29">已结清</font>--%>
+					<%--</c:if>--%>
 				</td>
 				<td>
 					${orderHeader.platformInfo.name}
@@ -220,7 +216,7 @@
 							</c:if>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
+						<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
 						</c:if>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
@@ -235,6 +231,6 @@
 		</c:forEach>
 		</tbody>
 	</table>
-	<div class="pagination">${page}</div>
+    <div class="pagination">${page}</div>
 </body>
 </html>

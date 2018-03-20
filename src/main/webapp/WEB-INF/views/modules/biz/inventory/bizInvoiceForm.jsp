@@ -10,19 +10,30 @@
 			$("#inputForm").validate({
 				submitHandler: function(form){
                     var tt="";
+                    var flag = false;
+                    var total = 0;
                     $('input:checkbox:checked').each(function(i) {
                         var t= $(this).val();
                         var detail="";
                         var num ="";
                         var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
                         var iObj=$("#prodInfo").find("select[title='invInfoId']");
+                        sObj.each(function (index) {
+                            total+= parseInt($(this).val());
+                        })
 						if(iObj.length!=0){
+                            iObj.each(function (index) {
+                                if ($(this).val() != ''){
+                                    flag = true;
+                                }
+                            });
                             $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
 
                                 detail+=$(this).val()+"-"+sObj[i].value+"-"+iObj[i].value+"*";
 
                             });
 						}else {
+                            flag = true;
                             $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
                                 detail+=$(this).val()+"-"+sObj[i].value+"*";
 
@@ -35,12 +46,28 @@
                     tt=tt.substring(0,tt.length-1);
                     $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>")
 
-                    if(window.confirm('你确定要发货吗？')){
-
-                       form.submit();
-                        return true;
-                        loading('正在提交，请稍等...');
-
+                    if(window.confirm('你确定要发货吗？') && flag && total > 0){
+						var orderHeaders = $("input[name='orderHeaders']").val();
+						if(${bizInvoice.bizStatus == 0}){
+							$.ajax({
+								type:"post",
+								url:"${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders="+encodeURIComponent(orderHeaders),
+								success:(function (data) {
+									if (data == "true"){
+										form.submit();
+										return true;
+										loading('正在提交，请稍等...');
+									}else {
+										alert("库存不足！");
+										return false;
+									}
+								})
+							})
+                        }else {
+                            form.submit();
+                            return true;
+                            loading('正在提交，请稍等...');
+                        }
                     }else{
                         //alert("取消");
                         return false;
@@ -257,6 +284,7 @@
 						<th>采购数量</th>
 						<th>已发货数量</th>
 						<th>发货数量</th>
+
 					</tr>
 					</thead>
 					<tbody id="prodInfo2">

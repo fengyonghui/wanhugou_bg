@@ -6,6 +6,7 @@
 		a.office_id AS "office.id",
 		a.vend_name AS "vendName",
 		a.cate_id AS "bizCategoryInfo.id",
+		bci.name as "bizCategoryInfo.name",
 		a.cate_name AS "cateName",
 		a.code AS "code",
 		a.status AS "delFlag",
@@ -19,6 +20,7 @@
 	
 	<sql id="bizVendInfoJoins">
 		LEFT JOIN sys_office o1 ON o1.id = a.office_id
+		LEFT join biz_category_info bci on bci.id=a.cate_id
 	</sql>
     
 	<select id="get" resultType="BizVendInfo" parameterType="Integer">
@@ -56,6 +58,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				order by a.update_time desc
 			</otherwise>
 		</choose>
 	</select>
@@ -77,7 +80,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_vend_info(
 			office_id,
 			vend_name,

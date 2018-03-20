@@ -17,6 +17,7 @@
 		c.address as "bizLocation.address",
 		c.longitude as "bizLocation.longitude",
 		c.latitude as "bizLocation.latitude",
+		c.pcr_name AS "bizLocation.pcrName",
 		a.receiver as "receiver",
 		a.phone as "phone",
 		a.type AS "type",
@@ -39,6 +40,7 @@
         LEFT JOIN sys_region reg ON c.region_id = reg.id
         LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.office_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
+		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 	</sql>
     
 	<select id="get" resultType="SysOfficeAddress">
@@ -56,6 +58,8 @@
 		<include refid="sysOfficeAddressJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			AND con.status = #{DEL_FLAG_NORMAL}
+			AND ccs.status = #{DEL_FLAG_NORMAL}
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
@@ -74,21 +78,15 @@
 			<if test="deFaultStatus != null and deFaultStatus != ''">
 				AND a.default_status = #{deFaultStatus}
 			</if>
-			<if test="delFlag != null and delFlag != ''">
-				AND a.status = #{delFlag}
-			</if>
 			<if test="office != null and office.type != null and office.type != ''">
 				AND o2.type = #{office.type}
 			</if>
-			<if test="createBy != null and createBy.id != null and createBy.id != ''">
-				AND a.create_id = #{createBy.id}
+			<if test="con != null and con.id != null and con.id !=''">
+				AND con.id = #{con.id}
 			</if>
-			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
-				AND a.update_id = #{updateBy.id}
+			<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">
+				${sqlMap.officeAddress}
 			</if>
-			<!--<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">-->
-				<!--${sqlMap.officeAddress}-->
-			<!--</if>-->
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -97,7 +95,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		ORDER BY updateDate DESC
+		ORDER BY a.update_time DESC
 	</select>
 	
 	<select id="findAllList" resultType="SysOfficeAddress">
@@ -115,6 +113,28 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+	</select>
+
+	<select id="findListByTypes" resultType="SysOfficeAddress">
+		SELECT
+		<include refid="sysOfficeAddressColumns"/>
+		FROM sys_office_address a
+		<include refid="sysOfficeAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			and o2.TYPE in (8,11)
+			<!--<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">-->
+			<!--${sqlMap.officeAddress}-->
+			<!--</if>-->
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		ORDER BY a.update_time DESC
 	</select>
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">

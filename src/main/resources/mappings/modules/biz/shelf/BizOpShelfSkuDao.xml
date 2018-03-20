@@ -36,7 +36,12 @@
 		bsi.name AS "skuInfo.name",
 		bsi.part_no AS "skuInfo.partNo",
 		bsi.prod_id AS "skuInfo.productInfo.id",
-		bpi.img_url AS "productInfo.imgUrl"
+		bpi.img_url AS "productInfo.imgUrl",
+        CASE  WHEN a.unshelf_time > NOW() THEN '下架'
+        WHEN a.unshelf_time is NULL THEN '下架'
+        WHEN a.unshelf_time &lt;= NOW()THEN '上架'
+        ELSE '其他' END
+        as udshelf
 	</sql>
 	
 	<sql id="bizOpShelfSkuJoins">
@@ -129,14 +134,7 @@
 				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
 			</if>
-			AND ( DATE_FORMAT( a.unshelf_time,'%H:%i') > DATE_FORMAT( NOW(),'%H:%i')
-			OR a.unshelf_time is NULL)
-			<!--<if test="unshelfUser != null and unshelfUser.id != null and unshelfUser.id != ''">
-				AND a.unshelf_user = #{unshelfUser.id}
-			</if>-->
-			<!--<if test="unshelfTime != null and unshelfTime != ''">
-				AND a.unshelf_time = #{unshelfTime}
-			</if>-->
+
 			<if test="sqlMap != null and sqlMap.shelfSku != null and sqlMap.shelfSku != ''">
 				${sqlMap.shelfSku}
 			</if>
@@ -253,9 +251,17 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-
+	<!-- 下架 -->
 	<update id="dateTimeUpdate">
 		UPDATE biz_op_shelf_sku SET
+		unshelf_time = #{unshelfTime}
+		WHERE id = #{id}
+	</update>
+	<!-- 重新上架 -->
+	<update id="shelvesUpdate">
+		UPDATE biz_op_shelf_sku SET
+		shelf_user = #{shelfUser.id},
+		shelf_time = #{shelfTime},
 		unshelf_time = #{unshelfTime}
 		WHERE id = #{id}
 	</update>

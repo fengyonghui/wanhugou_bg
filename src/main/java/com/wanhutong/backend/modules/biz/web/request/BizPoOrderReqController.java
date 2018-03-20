@@ -75,6 +75,7 @@ public class BizPoOrderReqController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(BizPoOrderReq bizPoOrderReq, RedirectAttributes redirectAttributes) {
 		bizPoOrderReqService.delete(bizPoOrderReq);
+
 		addMessage(redirectAttributes, "删除销售采购备货中间表成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizPoOrderReq/?repage";
 	}

@@ -97,4 +97,6 @@ public interface UserDao extends CrudDao<User> {
 	public List<User> findUserByCompany(Integer type);
 
 	public List<User> systemCompany();
+
+	void recovery(User user);
 }

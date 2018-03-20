@@ -56,8 +56,6 @@ public class BizRequestOrderController extends BaseController {
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
-	@Autowired
-	private OfficeService officeService;
 
 
 	@RequiresPermissions("biz:request:selecting:supplier:view")

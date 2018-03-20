@@ -16,4 +16,5 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 @MyBatisDao
 public interface BizOpShelfSkuDao extends CrudDao<BizOpShelfSku> {
 	public void dateTimeUpdate(BizOpShelfSku bizOpShelfSku);
+	void shelvesUpdate(BizOpShelfSku bizOpShelfSku);
 }

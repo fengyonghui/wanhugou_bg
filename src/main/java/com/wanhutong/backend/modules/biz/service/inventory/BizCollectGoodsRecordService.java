@@ -67,22 +67,10 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	
 	public Page<BizCollectGoodsRecord> findPage(Page<BizCollectGoodsRecord> page, BizCollectGoodsRecord bizCollectGoodsRecord) {
 		User user=UserUtils.getUser();
-		boolean flag=false;
-		if(user.getRoleList()!=null){
-			for(Role role:user.getRoleList()){
-				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname()) || RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())){
-					flag=true;
-					break;
-				}
-			}
-		}
 		if(user.isAdmin()){
 			return super.findPage(page, bizCollectGoodsRecord);
 		}else {
-			if(flag){
-				bizCollectGoodsRecord.getSqlMap().put("collectGoodsRecord", BaseService.dataScopeFilter(user, "s", "su"));
-			}
-
+			bizCollectGoodsRecord.getSqlMap().put("collectGoodsRecord", BaseService.dataScopeFilter(user, "cent", "su"));
 			return super.findPage(page, bizCollectGoodsRecord);
 		}
 
@@ -161,6 +149,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			//获取库存信息
 			BizInventorySku bizInventorySku = new BizInventorySku();
 			bizInventorySku.setSkuInfo(bcgr.getSkuInfo());
+			bizInventorySku.setInvInfo(bcgr.getInvInfo());
 			bizInventorySku.setCustomer(bcgr.getCustomer());
 			bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
 			//库存有该商品,增加相应数量

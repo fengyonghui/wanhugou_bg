@@ -213,6 +213,11 @@ public class SystemService extends BaseService implements InitializingBean {
 //		// 清除权限缓存
 //		systemRealm.clearAllCachedAuthorizationInfo();
 	}
+	@Transactional(readOnly = false)
+	public void recovery(User user){
+		userDao.recovery(user);
+		UserUtils.clearCache(user);
+	}
 	
 	@Transactional(readOnly = false)
 	public void updatePasswordById(Integer id, String loginName, String newPassword) {
@@ -461,23 +466,20 @@ public class SystemService extends BaseService implements InitializingBean {
 			for(Role role:nowUser.getRoleList()){
 				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
 					flag=true;
-					break;
 				}else if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
 					flagb=true;
-					break;
 				}
 			}
 		}
         if (nowUser.isAdmin()) {
             contact = userDao.contact(user);
         } else {
-            if (flagb) {
+			if(flag){
+				user.setCenterId(nowUser.getCompany().getId());
+				user.setCcStatus(1);
+			}else if (flagb) {
 //                user.getSqlMap().put("us", BaseService.dataScopeFilter(nowUser, "cent", ""));
 				user.setConsultantId(nowUser.getId());
-				user.setCcStatus(1);
-
-            }else if(flag){
-				user.setCenterId(nowUser.getCompany().getId());
 				user.setCcStatus(1);
 			}
 			contact = userDao.contact(user);

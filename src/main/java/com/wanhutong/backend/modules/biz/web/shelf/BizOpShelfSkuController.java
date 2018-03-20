@@ -18,6 +18,8 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,13 +54,10 @@ public class BizOpShelfSkuController extends BaseController {
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
-	private BizProductInfoService bizProductInfoService;
-	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private BizSkuPropValueService bizSkuPropValueService;
-	@Autowired
-	private BizOpShelfSkuDao bizOpShelfSkuDao;
+
 	
 	@ModelAttribute
 	public BizOpShelfSku get(@RequestParam(required=false) Integer id) {
@@ -210,8 +209,28 @@ public class BizOpShelfSkuController extends BaseController {
 //		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//格式化时间
 //		System.out.println(df.format(day));
 		bizOpShelfSku.setUnshelfTime(day);
-		bizOpShelfSkuDao.dateTimeUpdate(bizOpShelfSku);
+		bizOpShelfSkuService.updateDateTime(bizOpShelfSku);
 		addMessage(redirectAttributes, "下架成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
+	}
+
+	/**
+	 * 商品下架后上架
+	 * @param bizOpShelfSku
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
+	@RequestMapping(value = "shelvesSave")
+	public String shelvesSave(BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
+
+        User user = UserUtils.getUser();
+        bizOpShelfSku.setShelfUser(user);
+        bizOpShelfSku.setShelfTime(new Date());
+        bizOpShelfSku.setUnshelfTime(null);
+		bizOpShelfSkuService.updateShelves(bizOpShelfSku);
+		addMessage(redirectAttributes, "上架成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
 	}
 }

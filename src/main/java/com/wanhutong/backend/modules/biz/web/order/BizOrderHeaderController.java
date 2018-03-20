@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
@@ -17,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
@@ -27,9 +29,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
-import com.wanhutong.backend.modules.sys.service.BizCustCreditService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
-import com.wanhutong.backend.modules.sys.service.SysPlatWalletService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -272,8 +272,7 @@ public class BizOrderHeaderController extends BaseController {
 		Double receiveTotal = orderHeaderMent.getReceiveTotal();
 		Double Totail=bizOrderHeader.getTobePaid();//获取From方法的计算总价
 		BizPayRecord bizPayRecordCredit = new BizPayRecord();//保存客户钱包交易记录
-		Integer customId = orderHeaderMent.getCustomer().getId();//采购商ID
-		BizCustCredit bizCustCredit = bizCustCreditService.get(customId);//客户钱包
+		BizCustCredit bizCustCredit = bizCustCreditService.get(orderHeaderMent.getCustomer().getId());//客户钱包
 		BigDecimal subtract=null;
                 Integer recordBiz=0;//0失败 1成功 支付记录表，支付状态
 		String payMent="error";

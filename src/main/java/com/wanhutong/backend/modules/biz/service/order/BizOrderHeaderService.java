@@ -90,9 +90,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
-
-            Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
             Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+            Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
             page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             Double totalBuyPrice = 0.0;
@@ -112,11 +111,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 for (Role role : user.getRoleList()) {
                     if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
                         flag = true;
-                        break;
                     }
                     if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
                         roleFlag = true;
-                        break;
                     }
                 }
             }
@@ -188,12 +185,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         //利润
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
-        for (BizOrderDetail bizOrderDetail:orderDetailList) {
-            BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
-            bizOrderDetail.setSkuInfo(bizSkuInfo);
+        if(orderDetailList != null && !orderDetailList.isEmpty()) {
+            for (BizOrderDetail bizOrderDetail : orderDetailList) {
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+                bizOrderDetail.setSkuInfo(bizSkuInfo);
+            }
+            bizOrderHeader.setOrderDetailList(orderDetailList);
+            super.save(bizOrderHeader);
         }
-        bizOrderHeader.setOrderDetailList(orderDetailList);
-        super.save(bizOrderHeader);
 
         bizLocation.setId(bizOrderHeader.getBizLocation().getId());
         bizLocation.setOrderHeaderID(bizOrderHeader);

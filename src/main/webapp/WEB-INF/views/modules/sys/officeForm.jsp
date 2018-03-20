@@ -28,7 +28,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${flag eq 'ck'}">
-			<li>会员详情</li>
+			<li class="active"><a>会员详情</a></li>
 		</c:if>
 		<c:if test="${flag ne 'ck'}">
 			<li><a href="${ctx}/sys/office/list?parentIds=0">机构列表</a></li>
