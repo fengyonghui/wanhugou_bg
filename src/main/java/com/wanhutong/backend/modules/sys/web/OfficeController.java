@@ -77,21 +77,19 @@ public class OfficeController extends BaseController {
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "purchasersList")
     public String purchasersList(Office office, String conn, Integer centers, Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
-        if (office.getId() == null || office.getParentIds() == null) {
-            String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
-//			Office off = officeService.get(Integer.valueOf(purchasersId));
-            office.setParentIds("%," + purchasersId + ",");
-            office.setType(OfficeTypeEnum.CUSTOMER.getType());
-            office.setCcStatus(1);
-            Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
-//			findList.add(off);
-//			page.getList().add(off);
-            model.addAttribute("page", page);
+        String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+        if (office.getId() != null || office.getParentIds() != null) {
+            office.setParentIds("%," + office.getParentIds()+ ",%");
         } else {
-            Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
-//			model.addAttribute("list", officeService.findList(office));
-            model.addAttribute("page", page);
+//            查所有
+            office.setParentIds("%," + purchasersId + ",%");
         }
+        Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
+        if (page.getList().size() == 0) {
+//            当点击子节点显示
+            page.getList().add(officeService.get(office.getId()));
+        }
+        model.addAttribute("page", page);
 //		if(conn.equals("connIndex")){
 //			//TODO 客户专员管理页面跳转没解决：添加客户专员跳转，关联采购商跳转，修改跳转
 ////			跳回客户专员管理
@@ -471,18 +469,17 @@ public class OfficeController extends BaseController {
     public String supplierListGys(Office office, HttpServletRequest request, HttpServletResponse response, Model model) {
         String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
         if (office.getId() != null || office.getParentIds() != null) {
-            office.setParentIds("%,"+office.getId()+",%");
-        }else{
+            office.setParentIds("%," + office.getId() + ",%");
+        } else {
 //            查所有
-            office.setParentIds("%,"+supplierId+",%");
+            office.setParentIds("%," + supplierId + ",%");
         }
-        office.setType(OfficeTypeEnum.VENDOR.getType());
         if (office.getGysMobile() != null) {
 //            供应商电话查询
             office.setGysMobile(office.getGysMobile());
         }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
-        if(page.getList().size()==0){
+        if (page.getList().size() == 0) {
 //            当点击子节点显示
             page.getList().add(officeService.get(office.getId()));
         }
