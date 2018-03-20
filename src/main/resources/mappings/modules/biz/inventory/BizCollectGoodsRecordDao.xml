@@ -30,6 +30,7 @@
 		LEFT JOIN sys_user su ON su.id= a.create_id
 		LEFT JOIN biz_request_header reheader ON a.request_id = reheader.id
 		LEFT JOIN biz_inventory_info inv ON a.inv_id = inv.id
+		LEFT JOIN sys_office cent ON cent.id = inv.cust_id
 	</sql>
     
 	<select id="get" resultType="BizCollectGoodsRecord">

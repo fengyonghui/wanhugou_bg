@@ -1,3 +1,4 @@
+<%@ page import="java.util.Date" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
@@ -13,25 +14,6 @@
 			$("#pageSize").val(s);
 			$("#searchForm").submit();
         	return false;
-        }
-        function offShelf() {
-            if(window.confirm("确认要下架吗?")){
-                return true;
-			}else{
-                return false;
-			}
-        }
-        function shelves(index) {
-            if(window.confirm("确认要下架吗?")){
-                return true;
-                $.ajax({
-                    type:"post",
-                    url:"${ctx}/biz/shelf/bizOpShelfSku/shelvesSave?id="+index
-                })
-            }else{
-                return false;
-            }
-
         }
 	</script>
 </head>
@@ -174,17 +156,18 @@
 				<%--<td>--%>
 					<%--${bizOpShelfSku.createBy.name}--%>
 				<%--</td>--%>
-				<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
+
+                <shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
 					<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
 					<c:choose>
-						<c:when test="${bizOpShelfSku.unshelfTime} < ${now}">
-						<a href="#" onclick="shelves(${bizOpShelfSku.id})">上架</a>
+						<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
+						    <a href="${ctx}/biz/shelf/bizOpShelfSku/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
 						</c:when>
 						<c:otherwise>
-							<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="offShelf(${bizOpShelfSku.id})">下架</a>
+							<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
 						</c:otherwise>
 					</c:choose>
-					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该商品上架吗？', this.href)">删除</a>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
