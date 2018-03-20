@@ -36,7 +36,12 @@
 		bsi.name AS "skuInfo.name",
 		bsi.part_no AS "skuInfo.partNo",
 		bsi.prod_id AS "skuInfo.productInfo.id",
-		bpi.img_url AS "productInfo.imgUrl"
+		bpi.img_url AS "productInfo.imgUrl",
+        CASE  WHEN a.unshelf_time > NOW() THEN '下架'
+        WHEN a.unshelf_time is NULL THEN '下架'
+        WHEN a.unshelf_time &lt;= NOW()THEN '上架'
+        ELSE '其他' END
+        as udshelf
 	</sql>
 	
 	<sql id="bizOpShelfSkuJoins">

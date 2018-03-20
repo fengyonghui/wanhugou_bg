@@ -223,11 +223,8 @@ public class BizOpShelfSkuController extends BaseController {
 	 */
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "shelvesSave")
-	@ResponseBody
 	public String shelvesSave(BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
-		Date day=new Date();//当前时间
-//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//格式化时间
-//		System.out.println(df.format(day));
+
         User user = UserUtils.getUser();
         bizOpShelfSku.setShelfUser(user);
         bizOpShelfSku.setShelfTime(new Date());

@@ -42,6 +42,8 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	private Date unshelfTime;		// 下架时间
 	private Integer priority;		// 显示次序
 
+	private String udshelf;		//上下架按钮状态
+
 	private Date shelfStartTime;  //上架开始时间
 	private Date shelfEndTime;  //上架结束时间
 	private List<BizSkuPropValue> skuValueList;		//查询sku下有多少属性值
@@ -250,5 +252,13 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	public void setSkuValueList(List<BizSkuPropValue> skuValueList) {
 		this.skuValueList = skuValueList;
+	}
+
+	public String getUdshelf() {
+		return udshelf;
+	}
+
+	public void setUdshelf(String udshelf) {
+		this.udshelf = udshelf;
 	}
 }

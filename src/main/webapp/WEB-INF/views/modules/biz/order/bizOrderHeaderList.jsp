@@ -103,6 +103,9 @@
 			<li><label>采购中心：</label>
 				<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
+			<li><label>客户专员：</label>
+				<form:input path="con.name" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<c:if test="${bizOrderHeader.flag=='check_pending'}">
 				<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
