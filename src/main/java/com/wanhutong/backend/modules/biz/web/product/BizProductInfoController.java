@@ -7,8 +7,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.UploadUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
@@ -16,6 +20,9 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
+import com.wanhutong.backend.modules.biz.service.category.BizCatePropertyInfoService;
+import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
@@ -23,16 +30,16 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
-import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
-import com.wanhutong.backend.modules.sys.entity.tag.TagInfo;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
-import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
-import com.wanhutong.backend.modules.sys.service.tag.TagInfoService;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,6 +51,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -60,14 +69,20 @@ public class BizProductInfoController extends BaseController {
 	private BizProductInfoService bizProductInfoService;
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
+
 	@Autowired
 	private CommonImgService commonImgService;
 	@Autowired
-	private TagInfoService tagInfoService;
+	private PropValueService propValueService;
+	@Autowired
+	private PropertyInfoService propertyInfoService;
+
+	@Autowired
+	private DefaultPropService defaultPropService;
 	@Autowired
 	private BizVarietyInfoService bizVarietyInfoService;
 	@Autowired
-	private DictService dictService;
+	private BizProdPropertyInfoService bizProdPropertyInfoService;
 
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
@@ -88,7 +103,7 @@ public class BizProductInfoController extends BaseController {
 	@RequiresPermissions("biz:product:bizProductInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizProductInfo> page = bizProductInfoService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo); 
+		Page<BizProductInfo> page = bizProductInfoService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
 		model.addAttribute("page", page);
 		return "modules/biz/product/bizProductInfoList";
 	}
@@ -128,31 +143,29 @@ public class BizProductInfoController extends BaseController {
 				bizProductInfo.setPhotoLists(photoLists);
 			}
 		}
-		List<TagInfo> tagInfos=Lists.newArrayList();
-		List<TagInfo> tagInfoList=tagInfoService.findList(new TagInfo());
-		Dict dict=new Dict();
-		for(TagInfo tagInfo:tagInfoList){
-			if(tagInfo.getDict()!=null && StringUtils.isNotBlank(tagInfo.getDict().getType())){
-				dict.setType(tagInfo.getDict().getType());
-				List<Dict> dictList=dictService.findList(dict);
-				tagInfo.setDictList(dictList);
-				tagInfos.add(tagInfo);
+		List<PropValue> propValues=null;
+		List<DefaultProp> list=defaultPropService.findList(new DefaultProp("prop_brand"));
+			if(list!=null && list.size()>0){
+				PropertyInfo propertyInfo=propertyInfoService.get(Integer.parseInt(list.get(0).getPropValue()));
+				PropValue propValue =new PropValue();
+				propValue.setPropertyInfo(propertyInfo);
+				 propValues=propValueService.findList(propValue);
 			}
 
+		if(bizProductInfo.getId()!=null){
+			BizProdPropertyInfo bizProdPropertyInfo=new BizProdPropertyInfo();
+			bizProdPropertyInfo.setProductInfo(bizProductInfo);
+			Map<String, List<BizProdPropValue>> prodPropValueMap=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
+//			bizCategoryInfo.setCatePropValueMap(catePropValueMap);
+			model.addAttribute("prodPropValueMap",prodPropValueMap);
 		}
-
-//		if(bizProductInfo.getId()!=null){
-//			BizProdPropertyInfo bizProdPropertyInfo=new BizProdPropertyInfo();
-//			bizProdPropertyInfo.setProductInfo(bizProductInfo);
-//			Map<String, List<BizProdPropValue>> prodPropValueMap=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
-//			model.addAttribute("prodPropValueMap",prodPropValueMap);
-//		}
 
 			List<BizVarietyInfo> varietyInfoList=bizVarietyInfoService.findList(new BizVarietyInfo());
 
+			//model.addAttribute("cateList", bizCategoryInfoService.findAllCategory());
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
+			model.addAttribute("propValueList",propValues);
 			model.addAttribute("entity", bizProductInfo);
-			model.addAttribute("tagInfoList",tagInfos);
 			model.addAttribute("varietyInfoList",varietyInfoList);
 		return "modules/biz/product/bizProductInfoForm";
 	}
