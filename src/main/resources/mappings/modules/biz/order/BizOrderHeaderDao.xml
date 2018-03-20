@@ -550,18 +550,20 @@
 	</update>
 
 	<!--================================================================-->
+	<!--计算成本-->
 	<select id="getValidOrderTotalAndCountByCreateTimeMonth" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
-		sum(sku.buy_price) AS buyPrice
+		(SELECT SUM(od.ord_qty * bsi.buy_price)
+		FROM biz_order_detail od, biz_sku_info bsi
+		WHERE header.id = od.order_id and bsi.id = od.sku_id
+		)                      AS buyPrice
 		FROM biz_order_header AS header
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
-		LEFT JOIN biz_order_detail AS detail ON detail.order_id = header.id
-		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
 		WHERE
 		header.order_type = 1
 		AND office.name NOT LIKE '%测试%'
@@ -719,12 +721,13 @@
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
-		sum(sku.buy_price) AS buyPrice
+		(SELECT SUM(od.ord_qty * bsi.buy_price)
+		FROM biz_order_detail od, biz_sku_info bsi
+		WHERE header.id = od.order_id and bsi.id = od.sku_id
+		)  AS buyPrice
 		FROM biz_order_header AS header
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
-		LEFT JOIN biz_order_detail AS detail ON detail.order_id = header.id
-		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
 		WHERE
 		header.order_type = 1 and
 		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
@@ -848,18 +851,20 @@
 		GROUP BY createTime
 	</select>
 	<!--================================================================-->
+	<!--计算成本-->
 	<select id="getValidOrderTotalAndCountByCreateTimeBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
-		sum(sku.buy_price) AS buyPrice
+		(SELECT SUM(od.ord_qty * bsi.buy_price)
+		FROM biz_order_detail od, biz_sku_info bsi
+		WHERE header.id = od.order_id and bsi.id = od.sku_id
+		) AS buyPrice
 		FROM biz_order_header AS header
 		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = header.cust_id
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
-		LEFT JOIN biz_order_detail AS detail ON detail.order_id = header.id
-		LEFT JOIN biz_sku_info AS sku ON sku.id = detail.sku_id
 		WHERE
 		header.order_type = 1 and
 		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
