@@ -32,7 +32,7 @@
     <tr>
         <th>货架名称</th>
         <th>管理员</th>
-        <shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit">
+        <shiro:hasPermission name="biz:shelf:bizShelfUser:edit">
             <th>操作</th>
         </shiro:hasPermission>
     </tr>
@@ -49,10 +49,10 @@
             <td>
                     ${bizShelfUser.user.name}
             </td>
-            <shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit">
+            <shiro:hasPermission name="biz:shelf:bizShelfUser:edit">
                 <td>
                         <%--<a href="${ctx}/biz/shelf/bizOpShelfInfo/shelfManagementForm?id=${bizOpShelfInfo.id}">修改</a>--%>
-                    <a href="${ctx}/biz/shelf/bizOpShelfInfo/deleteShelfUser?id=${bizShelfUser.id}"
+                    <a href="${ctx}/biz/shelf/bizShelfUser/delete?id=${bizShelfUser.id}"
                        onclick="return confirmx('确认要删除该货架管理员吗？', this.href)">删除</a>
                 </td>
             </shiro:hasPermission>

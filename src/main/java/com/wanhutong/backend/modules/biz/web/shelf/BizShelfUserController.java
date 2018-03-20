@@ -76,8 +76,8 @@ public class BizShelfUserController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(BizShelfUser bizShelfUser, RedirectAttributes redirectAttributes) {
 		bizShelfUserService.delete(bizShelfUser);
-		addMessage(redirectAttributes, "删除货架用户中间表成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizShelfUser/?repage";
+		addMessage(redirectAttributes, "删除货架用户关系表成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfInfo/shelfManagementList?repage&id="+bizShelfUser.getShelfInfo().getId();
 	}
 
 }
