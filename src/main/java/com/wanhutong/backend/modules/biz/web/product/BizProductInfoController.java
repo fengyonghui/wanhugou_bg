@@ -9,30 +9,24 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
-import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
-import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.Dict;
-import com.wanhutong.backend.modules.sys.entity.PropValue;
-import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
-import com.wanhutong.backend.modules.sys.entity.tag.TagInfo;
-import com.wanhutong.backend.modules.sys.service.DefaultPropService;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfo;
 import com.wanhutong.backend.modules.sys.service.DictService;
-import com.wanhutong.backend.modules.sys.service.PropValueService;
-import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
-import com.wanhutong.backend.modules.sys.service.tag.TagInfoService;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -64,11 +57,13 @@ public class BizProductInfoController extends BaseController {
 	@Autowired
 	private CommonImgService commonImgService;
 	@Autowired
-	private TagInfoService tagInfoService;
+	private AttributeInfoService attributeInfoService;
 	@Autowired
 	private BizVarietyInfoService bizVarietyInfoService;
 	@Autowired
 	private DictService dictService;
+	@Autowired
+	private BizCategoryInfoService bizCategoryInfoService;
 
 	@ModelAttribute
 	public BizProductInfo get(@RequestParam(required=false) Integer id) {
@@ -129,22 +124,23 @@ public class BizProductInfoController extends BaseController {
 				bizProductInfo.setPhotoLists(photoLists);
 			}
 		}
-		List<TagInfo> tagInfos=Lists.newArrayList();
-		List<TagInfo> tagInfoList=tagInfoService.findList(new TagInfo());
+		List<AttributeInfo> tagInfos=Lists.newArrayList();
+		List<AttributeInfo> skuTagInfos=Lists.newArrayList();
+		List<AttributeInfo> tagInfoList=attributeInfoService.findList(new AttributeInfo());
 		Dict dict=new Dict();
-		List<Dict> dictList=null;
-		for(TagInfo tagInfo:tagInfoList){
-			if(tagInfo.getDict()!=null && StringUtils.isNotBlank(tagInfo.getDict().getType())){
-				dict.setType(tagInfo.getDict().getType());
+		for(AttributeInfo attributeInfo:tagInfoList){
+			List<Dict> dictList=null;
+			if(attributeInfo.getDict()!=null && StringUtils.isNotBlank(attributeInfo.getDict().getType())){
+				dict.setType(attributeInfo.getDict().getType());
 				dictList=dictService.findList(dict);
 			}
-			if(tagInfo.getLevel()!=null && TagInfoEnum.PRODTAG.ordinal()==tagInfo.getLevel()){
-				tagInfo.setDictList(dictList);
-				tagInfos.add(tagInfo);
+			if(attributeInfo.getLevel()!=null && TagInfoEnum.PRODTAG.ordinal()==attributeInfo.getLevel()){
+				attributeInfo.setDictList(dictList);
+				tagInfos.add(attributeInfo);
 			}
-			if(tagInfo.getLevel()!=null && TagInfoEnum.SKUTAG.ordinal()==tagInfo.getLevel()){
-				tagInfo.setDictList(dictList);
-				tagInfos.add(tagInfo);
+			if(attributeInfo.getLevel()!=null && TagInfoEnum.SKUTAG.ordinal()==attributeInfo.getLevel()){
+				attributeInfo.setDictList(dictList);
+				skuTagInfos.add(attributeInfo);
 			}
 
 		}
@@ -155,12 +151,15 @@ public class BizProductInfoController extends BaseController {
 //			Map<String, List<BizProdPropValue>> prodPropValueMap=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
 //			model.addAttribute("prodPropValueMap",prodPropValueMap);
 //		}
+			List<BizCategoryInfo> categoryInfoList=bizCategoryInfoService.findList(new BizCategoryInfo());
 
 			List<BizVarietyInfo> varietyInfoList=bizVarietyInfoService.findList(new BizVarietyInfo());
 
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
 			model.addAttribute("entity", bizProductInfo);
 			model.addAttribute("prodTagList",tagInfos);
+			model.addAttribute("skuTagList",skuTagInfos);
+			model.addAttribute("cateList",convertList(categoryInfoList));
 			model.addAttribute("varietyInfoList",varietyInfoList);
 		return "modules/biz/product/bizProductInfoForm";
 	}
@@ -196,16 +195,28 @@ public class BizProductInfoController extends BaseController {
 		return convertList(list);
 	}
 
-	private List<Map<String, Object>> convertList(List<SkuProd> list){
+	private List<Map<String, Object>> convertList(List<?> list){
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		if(list != null && list.size() > 0 ){
 			for (int i = 0; i < list.size(); i++) {
-				SkuProd e = list.get(i);
-				Map<String, Object> map = Maps.newHashMap();
-				map.put("id", e.getId());
-				map.put("pId", e.getPid());
-				map.put("name", e.getName());
-				mapList.add(map);
+				if(list.get(i)instanceof SkuProd){
+					SkuProd e=(SkuProd)list.get(i);
+					Map<String, Object> map = Maps.newHashMap();
+					map.put("id", e.getId());
+					map.put("pId", e.getPid());
+					map.put("name", e.getName());
+					mapList.add(map);
+				}else if(list.get(i)instanceof BizCategoryInfo){
+					BizCategoryInfo e = (BizCategoryInfo) list.get(i);
+					Map<String, Object> map = Maps.newHashMap();
+					map.put("id", e.getId());
+					map.put("pId", e.getParentId());
+					map.put("name", e.getName());
+					mapList.add(map);
+				}
+
+
+
 			}
 		}
 		return mapList;

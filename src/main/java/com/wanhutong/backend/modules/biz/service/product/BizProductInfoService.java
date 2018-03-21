@@ -100,24 +100,24 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         String brandCode="";
         String prodCode="";
         String cateCode="";
-        if (bizProductInfo.getPropValue() != null && bizProductInfo.getPropValue().getId() != null) {
-            PropValue propValue = propValueService.get(bizProductInfo.getPropValue().getId());
-            if (propValue != null) {
-                bizProductInfo.setBrandName(propValue.getValue());
-                brandCode=addZeroForNum(propValue.getCode(),false,2);
-                Office office=bizProductInfo.getOffice();
-                BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
-                String vCode="0";
-                if(bizVendInfo!=null){
-                    vCode= bizVendInfo.getCode();
-                }
-                prodCode=addZeroForNum(vCode,true,3);
-                BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
-                BizVarietyInfo varietyInfo=bizVarietyInfoService.get(bizVarietyInfo.getId());
-                cateCode=addZeroForNum(varietyInfo.getCode(),true,3);
-            }
-
-        }
+//        if (bizProductInfo.getPropValue() != null && bizProductInfo.getPropValue().getId() != null) {
+//            PropValue propValue = propValueService.get(bizProductInfo.getPropValue().getId());
+//            if (propValue != null) {
+//                bizProductInfo.setBrandName(propValue.getValue());
+//                brandCode=addZeroForNum(propValue.getCode(),false,2);
+//                Office office=bizProductInfo.getOffice();
+//                BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
+//                String vCode="0";
+//                if(bizVendInfo!=null){
+//                    vCode= bizVendInfo.getCode();
+//                }
+//                prodCode=addZeroForNum(vCode,true,3);
+//                BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
+//                BizVarietyInfo varietyInfo=bizVarietyInfoService.get(bizVarietyInfo.getId());
+//                cateCode=addZeroForNum(varietyInfo.getCode(),true,3);
+//            }
+//
+//        }
         super.save(bizProductInfo);
         if(bizProductInfo.getProdCode()==null || "0".equals(bizProductInfo.getProdCode())){
             String partNo=brandCode+prodCode+cateCode+autoGenericCode(bizProductInfo.getId().toString(),6);
