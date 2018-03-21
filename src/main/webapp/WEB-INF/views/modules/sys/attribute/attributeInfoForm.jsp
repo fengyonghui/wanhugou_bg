@@ -41,49 +41,21 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">sys_dict.type; 非空，可选值由字典表取； 空值:此标签需要输入；：</label>
+			<label class="control-label">字典表类型：</label>
 			<div class="controls">
-				<form:input path="dictType" htmlEscape="false" maxlength="25" class="input-xlarge required"/>
+				<form:input path="dict.type" htmlEscape="false" maxlength="25" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">0:系统标签; 1:产品标签; 2:商品标签：</label>
+			<label class="control-label">标签类型：</label>
 			<div class="controls">
-				<form:input path="level" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">create_time：</label>
-			<div class="controls">
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${attributeInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">u_version：</label>
-			<div class="controls">
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_id：</label>
-			<div class="controls">
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">update_time：</label>
-			<div class="controls">
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
-					value="<fmt:formatDate value="${attributeInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+                <form:select path="level"  class="input-xlarge required">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('level')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/>
+                </form:select>
+                <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="form-actions">
