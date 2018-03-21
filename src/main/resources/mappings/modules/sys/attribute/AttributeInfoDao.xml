@@ -5,14 +5,14 @@
 	<sql id="attributeInfoColumns">
 		a.id AS "id",
 		a.name AS "name",
-		a.dict_type AS "dictType",
+		a.dict_type AS "dict.Type",
 		a.level AS "level",
 		a.status AS "status",
-		a.create_id AS "createId.id",
-		a.create_time AS "createTime",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
-		a.update_id AS "updateId.id",
-		a.update_time AS "updateTime"
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
 	</sql>
 	
 	<sql id="attributeInfoJoins">
@@ -83,24 +83,24 @@
 			#{name},
 			#{dictType},
 			#{level},
-			#{status},
-			#{createId.id},
-			#{createTime},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
 			#{uVersion},
-			#{updateId.id},
-			#{updateTime}
+			#{updateBy.id},
+			#{updateDate}
 		)
 	</insert>
 	
 	<update id="update">
 		UPDATE sys_attribute_info SET 	
 			name = #{name},
-			dict_type = #{dictType},
+			dict_type = #{dict.type},
 			level = #{level},
-			create_time = #{createTime},
+			create_time = #{createDate},
 			u_version = #{uVersion},
-			update_id = #{updateId.id},
-			update_time = #{updateTime}
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
 	
