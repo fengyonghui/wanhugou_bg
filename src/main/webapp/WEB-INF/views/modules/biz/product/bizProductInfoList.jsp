@@ -25,11 +25,14 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<li><label>产品品类：</label>
+				<form:input path="bizVarietyInfo.name" htmlEscape="false" class="input-small"/>
+			</li>
 			<li><label>产品名称：</label>
 				<form:input path="name" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><label>产品代码：</label>
-				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-medium"/>
+				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-small"/>
 			</li>
 			<li><label>产品货号：</label>
 				<form:input path="itemNo" htmlEscape="false" maxlength="50" class="input-medium"/>
@@ -49,6 +52,7 @@
 		<thead>
 			<tr>
 				<th>产品图片</th>
+				<th>产品品类</th>
 				<th>产品名称</th>
 				<th>产品代码</th>
 				<th>产品货号</th>
@@ -65,6 +69,9 @@
 		<c:forEach items="${page.list}" var="bizProductInfo">
 			<tr>
 				<td><img src="${bizProductInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+				<td>
+					${bizProductInfo.bizVarietyInfo.name}
+				</td>
 				<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">
 					${bizProductInfo.name}
 				</a></td>
@@ -93,7 +100,7 @@
 					<td>
     				<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">修改</a>
 					<a href="${ctx}/biz/product/bizProductInfo/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>
-						<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">sku商品管理</a>
+					<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">sku商品管理</a>
  				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
