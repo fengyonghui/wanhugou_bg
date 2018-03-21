@@ -158,13 +158,17 @@
 	<insert id="insert">
 		INSERT INTO biz_pay_record(
 			id,
+		<if test="payNum != null and payNum != ''">
 			pay_num,
+		</if>
+		<if test="outTradeNo != null and outTradeNo != ''">
 			out_trade_no,
+		</if>
 			pay_money,
-		<if test="originalAmount !=null and originalAmount!=''">
+		<if test="originalAmount !=null and originalAmount != ''">
 			original_amount,
 		</if>
-		<if test="cashAmount !=null and cashAmount!=''">
+		<if test="cashAmount !=null and cashAmount !=''">
 			cash_amount,
 		</if>
 			payer,
@@ -180,7 +184,9 @@
 			record_type_name,
 			pay_type,
 			pay_type_name,
+		<if test="tradeReason != null and tradeReason != ''">
 			trade_reason,
+		</if>
 			status,
 			create_id,
 			create_time,
@@ -189,8 +195,12 @@
 			update_time
 		) VALUES (
 			#{id},
+		<if test="payNum != null and payNum != ''">
 			#{payNum},
+		</if>
+		<if test="outTradeNo != null and outTradeNo != ''">
 			#{outTradeNo},
+		</if>
 			#{payMoney},
 		<if test="originalAmount !=null and originalAmount!=''">
 			#{originalAmount},
@@ -201,17 +211,19 @@
 			#{payer},
 			#{customer.id},
 			#{bizStatus},
-		<if test="account !=null and account!=''">
-			#{account},
+		<if test="account !=null and account.id != null and account.id != ''">
+			#{account.id},
 		</if>
-		<if test="toAccount !=null and toAccount!=''">
-			#{toAccount},
+		<if test="toAccount !=null and toAccount.id and toAccount.id !=''">
+			#{toAccount.id},
 		</if>
 			#{recordType},
 			#{recordTypeName},
 			#{payType},
 			#{payTypeName},
+		<if test="tradeReason != null and tradeReason != ''">
 			#{tradeReason},
+		</if>
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
