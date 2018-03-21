@@ -592,6 +592,7 @@
 	<select id="getProductStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
@@ -637,11 +638,28 @@
 
 	<select id="getUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
-		sum(receive_total) AS totalMoney,
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
-		-- 		date_format(oh.create_time, '%Y-%m') AS createTime
+		(SELECT
+		sum(sku1.buy_price * detail1.ord_qty)
+		FROM
+		biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+		LEFT JOIN biz_custom_center_consultant ccc1 ON ccc1.cust_id = office1.id
+		LEFT JOIN sys_user us1 ON us1.id = ccc1.consultant_id
+		WHERE us.id = us1.id AND header1.order_type = 1
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND oh.create_time LIKE #{month}
+		GROUP BY us1.name)  AS buyPrice,
 		CASE date_format(oh.create_time, '%Y-%m')
 		WHEN '2017-06'
 		THEN '2017-09'
@@ -662,7 +680,7 @@
 		and oh.`status` = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
-	</foreach>
+		</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		<if test="month != null and month != ''">
 			AND oh.create_time LIKE #{month}
@@ -767,6 +785,7 @@
 	<select id="getProductStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
@@ -916,6 +935,7 @@
 	<select id="getProductStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto">
 		SELECT DISTINCT
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		od.sku_id AS skuId, pi.name, pi.item_no AS itemNo, pi.vendor_name AS vendorName, ss.sale_price AS salePrice, count(1) as count, (SELECT count(1) FROM biz_prod_view_log AS pvLog WHERE pvLog.prod_id = si.prod_id) AS clickCount
 		from biz_order_header oh, biz_order_detail od,biz_sku_info si,biz_product_info pi,biz_op_shelf_sku ss, biz_custom_center_consultant ccc
 		WHERE oh.id = od.order_id
@@ -1077,6 +1097,7 @@
 	<select id="getAllValidOrderTotalAndCount" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		select  count(1) as orderCount,
 		SUM(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		<if test="type == null or type == 0">
 			--             date_format(oh.create_time, '%Y-%m') AS createDate
 			CASE date_format(oh.create_time, '%Y-%m')
@@ -1107,6 +1128,7 @@
 	<select id="getValidOrderTotalAndCount" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT count(1) as orderCount,
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		<if test="type == null or type == 0">
 			-- 			date_format(oh.create_time, '%Y-%m') AS createDate
 			CASE date_format(oh.create_time, '%Y-%m')

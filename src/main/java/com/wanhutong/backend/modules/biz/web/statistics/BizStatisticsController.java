@@ -11,7 +11,6 @@ import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.joda.time.LocalDateTime;
@@ -81,7 +80,6 @@ public class BizStatisticsController extends BaseController {
     @RequestMapping(value = {"userSaleData", ""})
     @ResponseBody
     public String userSaleData(HttpServletRequest request, String month, Integer purchasingId, String usName) {
-        // 月份集合
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
         List<String> nameList = Lists.newArrayList();
         Map<String, Integer> usNameIdMap = Maps.newHashMap();
@@ -500,10 +498,23 @@ public class BizStatisticsController extends BaseController {
      * @param request
      * @return
      */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "centOrderDataDownload")
+    public void centOrderDataDownload(HttpServletRequest request, String month) throws ParseException {
+
+
+
+
+    }    /**
+     * 采购中心订单统计表格数据
+     *
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "centOrderTable")
-    public Map<String, BizOrderStatisticsDto> centOrderTable(HttpServletRequest request, String month, Model model) throws ParseException {
+    public String centOrderTable(HttpServletRequest request, String month) throws ParseException {
         Calendar c=Calendar.getInstance();
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
         Date nowDate = sdf.parse(month);
@@ -533,18 +544,17 @@ public class BizStatisticsController extends BaseController {
                 map.get(key).setOrderCount(value.getOrderCount());
                 map.get(key).setTotalMoney(value.getTotalMoney()==null?new BigDecimal(0):value.getTotalMoney());
                 map.get(key).setProfitPrice(value.getProfitPrice()==null?new BigDecimal(0):value.getProfitPrice());
+                map.get(key).setBuyPrice(value.getBuyPrice()==null?new BigDecimal(0):value.getBuyPrice());
             }else {
                 BizOrderStatisticsDto ordStaDto = new BizOrderStatisticsDto();
                 ordStaDto.setOrderCount(value.getOrderCount());
                 ordStaDto.setTotalMoney(value.getTotalMoney()==null?new BigDecimal(0):value.getTotalMoney());
                 ordStaDto.setProfitPrice(value.getProfitPrice()==null?new BigDecimal(0):value.getProfitPrice());
+                ordStaDto.setBuyPrice(value.getBuyPrice()==null?new BigDecimal(0):value.getBuyPrice());
                 map.put(key,ordStaDto);
             }
         }
-
-        model.addAttribute("map",map);
-        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
-        return map;
+        return JSONObject.fromObject(map).toString();
     }
 
     /**
@@ -727,7 +737,6 @@ public class BizStatisticsController extends BaseController {
         });
         officeNameSet.removeAll(Collections.singleton(null));
 
-
         String fileName = "订单统计.xls";
         HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -881,6 +890,328 @@ public class BizStatisticsController extends BaseController {
         response.setHeader("content-disposition", "attachment;filename="
                 + URLEncoder.encode(fileName, "UTF-8"));
         wb.write(response.getOutputStream());
+    }
+
+
+    /**
+     * 利润统计
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:profit:view")
+    @RequestMapping(value = {"profit", ""})
+    public String profit(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsProfit";
+    }
+
+    /**
+     * 个人利润统计
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:profit:view")
+    @RequestMapping(value = {"singleProfit", ""})
+    public String singleProfit(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsSingleUserProfit";
+    }
+    /**
+     * 利润统计数据
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:profit:view")
+    @RequestMapping(value = {"profitData", ""})
+    @ResponseBody
+    public String profitData(HttpServletRequest request, HttpServletResponse response, String month) {
+// 月份集合
+        List<LocalDateTime> monthDateList = Lists.newArrayList();
+        LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
+        monthDateList.add(selectMonth);
+        for (int i = 0; i < DATA_MONTH_COUNT; i++) {
+            if (i != 0) {
+                LocalDateTime localDateTime = selectMonth.minusMonths(i);
+                if(localDateTime.isAfter(new LocalDateTime("2017-08-31"))) { // TODO 临时代码
+                    monthDateList.add(localDateTime);
+                }
+            }
+        }
+
+        // 主要数据集合
+        Map<String, Map<String, BizOrderStatisticsDto>> dataMap = Maps.newLinkedHashMap();
+        // 月份字符串集合
+        List<String> monthList = Lists.newArrayList();
+        monthDateList.forEach(o -> {
+            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        });
+        Collections.reverse(monthList);
+
+        Set<String> officeNameSet = Sets.newHashSet();
+        monthDateList.forEach(o -> {
+            officeNameSet.addAll(dataMap.get(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)) != null ? dataMap.get(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)).keySet() : CollectionUtils.EMPTY_COLLECTION);
+        });
+        officeNameSet.removeAll(Collections.singleton(null));
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+
+        paramMap.put("officeNameSet", officeNameSet);
+        paramMap.put("monthList", monthList);
+
+        // echarts 数据实体
+        ArrayList<EchartsSeriesDto> seriesList = Lists.newArrayList();
+        for (int i = dataMap.size() - 1; i >= 0; i--) {
+            seriesList.add(
+                    bizStatisticsService.genEchartsSeriesDto(
+                            officeNameSet,
+                            dataMap.get(monthDateList.get(i).toString(BizStatisticsService.PARAM_DATE_FORMAT)),
+                            monthDateList.get(i),
+                            String.valueOf(OrderStatisticsDataTypeEnum.PROFIT.getCode())));
+        }
+
+        seriesList.removeAll(Collections.singleton(null));
+
+        paramMap.put("seriesList", seriesList);
+
+        ArrayList<EchartsSeriesDto> lineSeriesList = Lists.newArrayList();
+
+        officeNameSet.forEach(o -> {
+            EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+            echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+            List<Object> dataList = Lists.newArrayList();
+            for (int i = dataMap.size() - 1; i >= 0; i--) {
+                dataList.add(dataMap.get(
+                        monthDateList.get(i).toString(BizStatisticsService.PARAM_DATE_FORMAT)).get(o) != null ?
+                        dataMap.get(monthDateList.get(i).toString(BizStatisticsService.PARAM_DATE_FORMAT)).get(o).getProfitPrice() : 0);
+            }
+
+            echartsSeriesDto.setData(dataList);
+            echartsSeriesDto.setName(o);
+            lineSeriesList.add(echartsSeriesDto);
+        });
+
+        paramMap.put("rateSeriesList", lineSeriesList);
+        paramMap.put("dataMap", dataMap);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesList));
+
+        return JSONObject.fromObject(paramMap).toString();
+    }
+
+    /**
+     * 利润统计数据下载
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:profit:view")
+    @RequestMapping(value = {"profitDataDownload", ""})
+    public void profitDataDownload(HttpServletRequest request,
+                                   HttpServletResponse response,
+                                   String month,
+                                   String imgUrl,
+                                   String imgUrl1
+    ) throws IOException {
+        // 月份集合
+        List<LocalDateTime> monthDateList = Lists.newArrayList();
+        LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
+        monthDateList.add(selectMonth);
+        for (int i = 0; i < DATA_MONTH_COUNT; i++) {
+            if (i != 0) {
+                LocalDateTime localDateTime = selectMonth.minusMonths(i);
+                if(localDateTime.isAfter(new LocalDateTime("2017-08-31"))) { // TODO 临时代码
+                    monthDateList.add(localDateTime);
+                }
+            }
+        }
+
+        // 主要数据集合
+        Map<String, Map<String, BizOrderStatisticsDto>> dataMap = Maps.newLinkedHashMap();
+        // 月份字符串集合
+        List<String> monthList = Lists.newArrayList();
+        monthDateList.forEach(o -> {
+            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        });
+        Collections.reverse(monthList);
+
+        Set<String> officeNameSet = Sets.newHashSet();
+        monthDateList.forEach(o -> {
+            officeNameSet.addAll(dataMap.get(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)) != null ? dataMap.get(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)).keySet() : CollectionUtils.EMPTY_COLLECTION);
+        });
+        officeNameSet.removeAll(Collections.singleton(null));
+
+        String fileName = "利润统计.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+        rowIndex++;
+        int hCellIndex = 0;
+        HSSFCell hCell = header.createCell(hCellIndex);
+        hCell.setCellValue("采购中心");
+        hCellIndex++;
+
+        for (String o : monthList) {
+            HSSFCell cell = header.createCell(hCellIndex);
+            cell.setCellValue(o);
+            hCellIndex++;
+        }
+
+        for (String officeName : officeNameSet) {
+            HSSFRow row = sheet.createRow(rowIndex);
+            int cellIndex = 0;
+            HSSFCell lCell = row.createCell(cellIndex);
+            cellIndex++;
+            lCell.setCellValue(officeName);
+            for (String o : monthList) {
+                Map<String, BizOrderStatisticsDto> stringBizOrderStatisticsDtoMap = dataMap.get(o);
+                HSSFCell cell = row.createCell(cellIndex);
+                if (stringBizOrderStatisticsDtoMap != null && stringBizOrderStatisticsDtoMap.get(officeName) != null) {
+                    BizOrderStatisticsDto bizOrderStatisticsDto = stringBizOrderStatisticsDtoMap.get(officeName);
+                    cell.setCellValue(bizOrderStatisticsDto.getProfitPrice().toString());
+                } else {
+                    cell.setCellValue("0");
+                }
+                cellIndex++;
+            }
+            rowIndex++;
+        }
+
+        // 将图片写入流中
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outStream1 = new ByteArrayOutputStream();
+        BASE64Decoder decoder = new BASE64Decoder();
+
+        try {
+            String[] url = imgUrl.split(",");
+            String[] url1 = imgUrl1.split(",");
+            String u = url[1];
+            String u1 = url1[1];
+            //Base64解码
+            byte[] buffer = decoder.decodeBuffer(u);
+            byte[] buffer1 = decoder.decodeBuffer(u1);
+            //生成图片
+            outStream.write(buffer);
+            outStream1.write(buffer1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HSSFPatriarch patri = sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(5, 5, 5, 5,
+                (short) 5, 5, (short) 20, 20);
+        patri.createPicture(anchor, wb.addPicture(
+                outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+        HSSFClientAnchor anchor1 = new HSSFClientAnchor(5, 5, 5, 5,
+                (short) 5, 20, (short) 20, 40);
+        patri.createPicture(anchor1, wb.addPicture(
+                outStream1.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
+    }
+
+    /**
+     * 个人利润统计
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:profit:view")
+    @RequestMapping(value = {"singleUserProfit", ""})
+    public String singleUserProfit(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        request.setAttribute("adminPath", adminPath);
+        return "modules/biz/statistics/bizStatisticsSingleUserProfit";
+    }
+
+    /**
+     * 个人利润统计
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:profit:view")
+    @RequestMapping(value = {"singleUserProfitData", ""})
+    @ResponseBody
+    public String singleUserProfitData(HttpServletRequest request, HttpServletResponse response, String month, String usName, Integer purchasingId) {
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
+        List<String> nameList = Lists.newArrayList();
+        Map<String, Integer> usNameIdMap = Maps.newHashMap();
+
+        List<Object> seriesDataList = Lists.newArrayList();
+        List<String> userMonthList = Lists.newArrayList();
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        bizProductStatisticsDtos.forEach(o -> {
+            seriesDataList.add(o.getProfitPrice());
+            nameList.add(o.getName());
+            usNameIdMap.put(o.getName(), o.getUsId());
+        });
+        echartsSeriesDto.setName("利润");
+        echartsSeriesDto.setData(seriesDataList);
+
+
+        // 封装某一个用户的业绩图
+        Integer usId = null;
+        if (StringUtils.isNotBlank(usName)) {
+            usId = usNameIdMap.get(usName);
+        }
+        if (usId == null && CollectionUtils.isNotEmpty(bizProductStatisticsDtos)) {
+            usId = bizProductStatisticsDtos.get(0).getUsId();
+            usName = bizProductStatisticsDtos.get(0).getName();
+        }
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+
+        List<BizUserSaleStatisticsDto> bizUserSaleStatisticsDtos = null;
+        if (usId != null) {
+            bizUserSaleStatisticsDtos = bizStatisticsService.singleUserSaleStatisticData(usId);
+
+            List<Object> singleSeriesDataList = Lists.newArrayList();
+            EchartsSeriesDto singleEchartsSeriesDto = new EchartsSeriesDto();
+            List<String> monthList = Lists.newArrayList();
+
+            bizUserSaleStatisticsDtos.forEach(o -> {
+                singleSeriesDataList.add(o.getProfitPrice());
+                monthList.add(o.getCreateTime());
+                userMonthList.add(o.getCreateTime().concat("+").concat(o.getTotalMoney()+"").concat("+").concat(o.getProfitPrice()+"")
+                        .concat("+").concat(o.getAddCustCount()+"").concat("+").concat(o.getCustCount()+""));
+            });
+
+            singleEchartsSeriesDto.setName("利润");
+            singleEchartsSeriesDto.setData(singleSeriesDataList);
+
+            paramMap.put("singleSeriesList", Lists.newArrayList(singleEchartsSeriesDto));
+            paramMap.put("monthList", monthList);
+
+        }
+
+        paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto));
+        paramMap.put("usName", usName);
+        List<String> selectNameList = Lists.newArrayList(nameList);
+        if (StringUtils.isNotBlank(usName)) {
+            selectNameList.remove(usName);
+        }
+        paramMap.put("selectNameList", selectNameList);
+        paramMap.put("usName", usName);
+        paramMap.put("userMonthList", userMonthList);
+        paramMap.put("nameList", nameList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
+        return JSONObject.fromObject(paramMap).toString();
     }
 
 }
