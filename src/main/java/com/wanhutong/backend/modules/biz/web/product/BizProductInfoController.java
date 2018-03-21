@@ -103,7 +103,7 @@ public class BizProductInfoController extends BaseController {
 	@RequiresPermissions("biz:product:bizProductInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizProductInfo> page = bizProductInfoService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo); 
+		Page<BizProductInfo> page = bizProductInfoService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
 		model.addAttribute("page", page);
 		return "modules/biz/product/bizProductInfoList";
 	}

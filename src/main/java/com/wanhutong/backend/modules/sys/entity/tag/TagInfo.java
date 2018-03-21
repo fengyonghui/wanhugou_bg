@@ -8,6 +8,8 @@ import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
+import java.util.List;
+
 /**
  * 标签属性表Entity
  * @author zx
@@ -25,6 +27,7 @@ public class TagInfo extends DataEntity<TagInfo> {
 	private String name;
 	private Dict dict;
 	private String level;
+	private List<Dict> dictList;
 	
 	public TagInfo() {
 		super();
@@ -59,5 +62,13 @@ public class TagInfo extends DataEntity<TagInfo> {
 	public void setLevel(String level) {
 		this.level = level;
 	}
-	
+
+
+	public List<Dict> getDictList() {
+		return dictList;
+	}
+
+	public void setDictList(List<Dict> dictList) {
+		this.dictList = dictList;
+	}
 }
