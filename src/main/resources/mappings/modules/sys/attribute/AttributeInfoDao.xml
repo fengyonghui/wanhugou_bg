@@ -81,7 +81,7 @@
 		) VALUES (
 			#{id},
 			#{name},
-			#{dictType},
+			#{dict.type},
 			#{level},
 			#{delFlag},
 			#{createBy.id},

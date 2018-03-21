@@ -36,7 +36,9 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>标签名称</th>
+                <th>标签名称</th>
+                <th>字典表类型</th>
+                <th>标签类型</th>
 				<shiro:hasPermission name="sys:attribute:attributeInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -46,6 +48,19 @@
 				<td><a href="${ctx}/sys/attribute/attributeInfo/form?id=${attributeInfo.id}">
 					${attributeInfo.name}
 				</a></td>
+                <td>
+                    <c:choose>
+                        <c:when test="${attributeInfo.dict.type != ''}">
+                            ${attributeInfo.dict.type}
+                        </c:when>
+                        <c:otherwise>
+                            <font>未知值,请进行输入</font>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <td>
+                        ${fns:getDictLabel(attributeInfo.level, 'level', '未知类型')}
+                </td>
 				<shiro:hasPermission name="sys:attribute:attributeInfo:edit"><td>
     				<a href="${ctx}/sys/attribute/attributeInfo/form?id=${attributeInfo.id}">修改</a>
 					<a href="${ctx}/sys/attribute/attributeInfo/delete?id=${attributeInfo.id}" onclick="return confirmx('确认要删除该标签属性吗？', this.href)">删除</a>
