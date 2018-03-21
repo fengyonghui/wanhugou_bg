@@ -13,6 +13,11 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +25,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -89,6 +97,134 @@ public class BizStatisticsPlatformController extends BaseController {
         request.setAttribute("dataList", list);
         return "modules/biz/statistics/bizPlatformDataOverview";
     }
+
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"overviewDownload", ""})
+    public void overviewDownload(HttpServletRequest request, HttpServletResponse response, String date) throws IOException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        Map<String, List<BizPlatformDataOverviewDto>> dataMap = null;
+        try {
+            Calendar calendar = Calendar.getInstance();
+            Date parseDate = StringUtils.isBlank(date) ? new Date() : simpleDateFormat.parse(date);
+            calendar.setTime(parseDate);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            Date startDate = calendar.getTime();
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getMaximum(Calendar.DAY_OF_MONTH));
+            Date endDate = calendar.getTime();
+            dataMap = bizStatisticsPlatformService.getPlatformData(
+                    simpleDateFormat.format(startDate),
+                    simpleDateFormat.format(endDate),
+                    simpleDateFormat.format(parseDate)
+            );
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (StringUtils.isBlank(date)) {
+            date = simpleDateFormat.format(new Date());
+        }
+        request.setAttribute("date", date);
+        request.setAttribute("dataList", dataMap);
+
+
+        String fileName = "平台数据概览.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+
+        HSSFRow header0 = sheet.createRow(0);
+        HSSFRow header1 = sheet.createRow(1);
+        HSSFRow header2 = sheet.createRow(2);
+        HSSFCell hCell0 = header0.createCell(0);
+        hCell0.setCellValue("");
+        HSSFCell hCell1 = header0.createCell(1);
+        hCell1.setCellValue("万户通平台业务数据");
+
+        HSSFCell h1Cell0 = header1.createCell(0);
+        h1Cell0.setCellValue("省份");
+        HSSFCell h1Cell1 = header1.createCell(1);
+        h1Cell1.setCellValue("所属采购中心");
+        HSSFCell h1Cell2 = header1.createCell(2);
+        h1Cell2.setCellValue("目标分析");
+
+        HSSFCell h2Cell2 = header2.createCell(2);
+        h2Cell2.setCellValue("目标采购额(元)");
+        HSSFCell h2Cell3 = header2.createCell(3);
+        h2Cell3.setCellValue("月累计销量");
+        HSSFCell h2Cell4 = header2.createCell(4);
+        h2Cell4.setCellValue("日采购额(元)");
+        HSSFCell h2Cell5 = header2.createCell(5);
+        h2Cell5.setCellValue("达成率");
+        HSSFCell h2Cell6 = header2.createCell(6);
+        h2Cell6.setCellValue("月累计差异");
+        HSSFCell h2Cell7 = header2.createCell(7);
+        h2Cell7.setCellValue("剩余天数");
+        HSSFCell h2Cell8 = header2.createCell(8);
+        h2Cell8.setCellValue("每日最低回款额");
+        HSSFCell h2Cell9 = header2.createCell(9);
+        h2Cell9.setCellValue("库存金额");
+
+
+        // 合并单元格起始行, 终止行, 起始列, 终止列
+        CellRangeAddress h0 =new CellRangeAddress(0, 0, 1, 9);
+        sheet.addMergedRegion(h0);
+         CellRangeAddress h1a =new CellRangeAddress(1, 2, 0, 0);
+        sheet.addMergedRegion(h1a);
+         CellRangeAddress h1b =new CellRangeAddress(1, 2, 1, 1);
+        sheet.addMergedRegion(h1b);
+         CellRangeAddress h1c =new CellRangeAddress(1, 1, 2, 9);
+        sheet.addMergedRegion(h1c);
+        if (dataMap == null || dataMap.size() <= 0) {
+            return;
+        }
+        int rowIndex = 3;
+        int rowMergeIndex = rowIndex;
+        for (String key : dataMap.keySet()){
+            List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = dataMap.get(key);
+            for (BizPlatformDataOverviewDto o : bizPlatformDataOverviewDtos){
+                HSSFRow sRow = sheet.createRow(rowIndex);
+                HSSFCell cell0 = sRow.createCell(0);
+                cell0.setCellValue(key);
+                HSSFCell cell1 = sRow.createCell(1);
+                cell1.setCellValue(o.getName());
+                HSSFCell cell2 = sRow.createCell(2);
+                cell2.setCellValue(o.getProcurement().toString());
+                HSSFCell cell3 = sRow.createCell(3);
+                cell3.setCellValue(o.getAccumulatedSalesMonth().toString());
+                HSSFCell cell4 = sRow.createCell(4);
+                cell4.setCellValue(o.getProcurementDay().toString());
+                HSSFCell cell5 = sRow.createCell(5);
+                cell5.setCellValue(o.getYieldRate());
+                HSSFCell cell6 = sRow.createCell(6);
+                cell6.setCellValue(o.getDifferenceTotalMonth().toString());
+                HSSFCell cell7 = sRow.createCell(7);
+                cell7.setCellValue(o.getRemainingDays());
+                HSSFCell cell8 = sRow.createCell(8);
+                cell8.setCellValue(o.getDayMinReturned().toString());
+                HSSFCell cell9 = sRow.createCell(9);
+                cell9.setCellValue(o.getStockAmount().toString());
+                rowIndex ++;
+            }
+
+            CellRangeAddress cra =new CellRangeAddress(rowMergeIndex, rowIndex - 1, 0, 0);
+            sheet.addMergedRegion(cra);
+            rowMergeIndex = rowIndex;
+        }
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
+    }
+
+
 
     /**
      * 用户相关统计数据

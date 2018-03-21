@@ -149,7 +149,6 @@
         initChart();
 
         var imgUrl = $('#img').val();
-        console.info(imgUrl);
         var startDate = $("#applyDate").val();
 
         //定义一个form表单

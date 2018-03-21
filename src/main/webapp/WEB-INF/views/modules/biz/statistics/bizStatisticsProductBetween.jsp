@@ -33,6 +33,8 @@
         </select>
     </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
+    <input type="hidden" name="img" id="img"/>
     <div id="orderTotalDataChart" style="height: 500px"></div>
 
 </div>
@@ -138,6 +140,13 @@
                     series: msg.seriesList
                 });
                 salesVolumeChart.hideLoading();
+                setInterval( function (args) {
+                    var imgUrl = salesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img').val(imgUrl);
+                },1000);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");
@@ -145,7 +154,57 @@
         });
     }
     initChart();
+    function exportTable() {
+        initChart();
 
+        var imgUrl = $('#img').val();
+        var endDate = $("#endDate").val();
+        var startDate = $("#startDate").val();
+
+        var variIdEle = $("#variId");
+        var variId = variIdEle.find("option:selected").val();
+
+        var dataTypeEle = $("#dataType");
+        var dataType = dataTypeEle.find("option:selected").val();
+        var dataTypeDesc = dataTypeEle.find("option:selected").html();
+
+        var purchasingIdEle = $("#purchasingId");
+        var purchasingId = purchasingIdEle.find("option:selected").val();
+
+        //定义一个form表单
+        var myform = $("<form></form>");
+        myform.attr('method','post')
+        myform.attr('action',"${adminPath}/biz/statistics/between/productDataDownload");
+
+        var myStartDate = $("<input type='hidden' name='startDate' />");
+        myStartDate.attr('value', startDate);
+
+        var myEndDate = $("<input type='hidden' name='endDate' />");
+        myEndDate.attr('value', endDate);
+
+
+        var myUpdateReason = $("<input type='hidden' name='imgUrl' />");
+        myUpdateReason.attr('value', imgUrl);
+
+        var myVariId = $("<input type='hidden' name='variId' />");
+        myVariId.attr('value', variId);
+
+        var myDataType = $("<input type='hidden' name='dataType' />");
+        myDataType.attr('value', dataType);
+
+    var myPurchasingId = $("<input type='hidden' name='purchasingId' />");
+        myPurchasingId.attr('value', purchasingId);
+
+
+        myform.append(myStartDate);
+        myform.append(myEndDate);
+        myform.append(myUpdateReason);
+        myform.append(myVariId);
+        myform.append(myDataType);
+        myform.append(myPurchasingId);
+        myform.appendTo('body').submit(); //must add this line for higher html spec
+
+    }
 
 </script>
 </html>

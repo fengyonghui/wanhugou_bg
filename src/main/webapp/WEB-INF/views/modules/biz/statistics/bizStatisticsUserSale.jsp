@@ -19,6 +19,9 @@
         </select>
     </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
+    <input type="hidden" name="img" id="img"/>
+    <input type="hidden" name="img1" id="img1"/>
     <div id="userTotalDataChart" style="height: 300px"></div>
 
 
@@ -134,6 +137,13 @@
                     series: msg.seriesList
                 });
                 salesVolumeChart.hideLoading();
+                setInterval( function (args) {
+                    var imgUrl = salesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img').val(imgUrl);
+                },1000);
                 singleSalesVolumeChart.setOption({
                     title: {
                         text: '采购顾问业绩统计(个人/月)',
@@ -190,6 +200,13 @@
                     series: msg.singleSeriesList
                 });
                 singleSalesVolumeChart.hideLoading();
+                setInterval( function (args) {
+                    var imgUrl = singleSalesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img1').val(imgUrl);
+                },1000);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");
@@ -198,7 +215,46 @@
     }
 
     initChart();
+    function exportTable() {
+        initChart();
 
+        var imgUrl = $('#img').val();
+        var imgUrl1 = $('#img1').val();
+        var startDate = $("#applyDate").val();
+
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
+
+        var purchasingIdEle = $("#purchasingId");
+        var purchasingId = purchasingIdEle.find("option:selected").val();
+
+
+        //定义一个form表单
+        var myform = $("<form></form>");
+        myform.attr('method','post')
+        myform.attr('action',"${adminPath}/biz/statistics/userSaleDataDownload");
+
+        var myProductId = $("<input type='hidden' name='month' />");
+        myProductId.attr('value', startDate);
+
+        var myWarehouseId = $("<input type='hidden' name='purchasingId' />");
+        myWarehouseId.attr('value', purchasingId);
+
+        var myUpdateReason = $("<input type='hidden' name='imgUrl' />");
+        myUpdateReason.attr('value', imgUrl);
+
+        var myUpdateReason1 = $("<input type='hidden' name='imgUrl1' />");
+        myUpdateReason1.attr('value', imgUrl1);
+
+        myform.append(myProductId);
+        myform.append(myWarehouseId);
+        myform.append(myUpdateReason);
+        myform.append(myUpdateReason1);
+        myform.appendTo('body').submit(); //must add this line for higher html spec
+
+    }
 
 </script>
 </html>

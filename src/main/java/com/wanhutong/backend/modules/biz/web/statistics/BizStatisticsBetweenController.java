@@ -263,7 +263,6 @@ public class BizStatisticsBetweenController extends BaseController {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
             return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
         }
-        // 月份集合
         List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.productStatisticData(startDate, endDate, variId, purchasingId);
         List<String> nameList = Lists.newArrayList();
 
@@ -291,6 +290,78 @@ public class BizStatisticsBetweenController extends BaseController {
         paramMap.put("nameList", nameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
+    }
+
+    /**
+     * 产品相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:product:view")
+    @RequestMapping(value = {"productDataDownload", ""})
+    @ResponseBody
+    public void productDataDownload(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    String imgUrl,
+                                    String startDate,
+                                    String endDate,
+                                    Integer variId,
+                                    Integer purchasingId) throws IOException {
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.productStatisticData(startDate, endDate, variId, purchasingId);
+
+        String fileName = "产品统计.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+        rowIndex++;
+        HSSFCell hCell = header.createCell(0);
+        hCell.setCellValue("产品名称");
+        HSSFCell hCell1 = header.createCell(1);
+        hCell1.setCellValue("销售额");
+        HSSFCell hCell2 = header.createCell(2);
+        hCell2.setCellValue("销量");
+
+
+        for (BizProductStatisticsDto o : bizProductStatisticsDtos) {
+            HSSFRow row = sheet.createRow(rowIndex);
+            rowIndex ++;
+            HSSFCell cell = row.createCell(0);
+            cell.setCellValue(o.getName().concat("-").concat(o.getItemNo()));
+            HSSFCell cell1 = row.createCell(1);
+            cell1.setCellValue(o.getTotalMoney().toString());
+            HSSFCell cell2 = row.createCell(2);
+            cell2.setCellValue(o.getCount());
+        }
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        BASE64Decoder decoder = new BASE64Decoder();
+
+        try {
+            String[] url = imgUrl.split(",");
+            String u = url[1];
+            //Base64解码
+            byte[] buffer = decoder.decodeBuffer(u);
+            //生成图片
+            outStream.write(buffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HSSFPatriarch patri = sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(5, 5, 5, 5,
+                (short) 1, 16, (short) 20, 45);
+        patri.createPicture(anchor, wb.addPicture(
+                outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
     }
 
 
@@ -623,7 +694,6 @@ public class BizStatisticsBetweenController extends BaseController {
             String startDate, String endDate,
             Model model, String imgUrl
     ) throws ParseException, IOException {
-        //当前月时间
         Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsBetweenService.orderStatisticData(startDate, endDate);
 
         String fileName = "订单统计.xls";
@@ -686,6 +756,150 @@ public class BizStatisticsBetweenController extends BaseController {
         patri.createPicture(anchor, wb.addPicture(
                 outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
 
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
+    }
+
+    /**
+     * 用户业绩相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:userSale:view")
+    @RequestMapping(value = {"userSaleDataDownload", ""})
+    public void userSaleDataDownload(HttpServletRequest request,
+                                     HttpServletResponse response,
+                                     String imgUrl,
+                                     String imgUrl1,
+                                     String startDate,
+                                     String endDate,
+                                     Integer purchasingId,
+                                     String usName) throws IOException {
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userSaleStatisticData(startDate, endDate, purchasingId);
+
+
+        String fileName = "业绩统计.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+        rowIndex++;
+        HSSFCell cell0 = header.createCell(0);
+        cell0.setCellValue("姓名");
+        HSSFCell cell1 = header.createCell(1);
+        cell1.setCellValue("销售额");
+        HSSFCell cell2 = header.createCell(2);
+        cell2.setCellValue("订单量");
+
+
+        for (BizUserSaleStatisticsDto o : bizProductStatisticsDtos) {
+            HSSFRow row = sheet.createRow(rowIndex);
+            rowIndex ++;
+            HSSFCell sCell0 = row.createCell(0);
+            sCell0.setCellValue(o.getName());
+            HSSFCell sCell1 = row.createCell(1);
+            sCell1.setCellValue(o.getTotalMoney().toString());
+            HSSFCell sCell2 = row.createCell(2);
+            sCell2.setCellValue(o.getOrderCount());
+        }
+
+        // 将图片写入流中
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outStream1 = new ByteArrayOutputStream();
+        BASE64Decoder decoder = new BASE64Decoder();
+
+        try {
+            String[] url = imgUrl.split(",");
+            String[] url1 = imgUrl1.split(",");
+            String u = url[1];
+            String u1 = url1[1];
+            //Base64解码
+            byte[] buffer = decoder.decodeBuffer(u);
+            byte[] buffer1 = decoder.decodeBuffer(u1);
+            //生成图片
+            outStream.write(buffer);
+            outStream1.write(buffer1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HSSFPatriarch patri = sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(5, 5, 5, 5, (short) 4, 5, (short) 20, 30);
+        patri.createPicture(anchor, wb.addPicture(
+                outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
+    }
+
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"userDataDownload", ""})
+    @ResponseBody
+    public void userDataDownload(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 String startDate,
+                                 String endDate,
+                                 String imgUrl
+    ) throws IOException {
+        List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userStatisticData(startDate, endDate);
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        BASE64Decoder decoder = new BASE64Decoder();
+
+        String fileName = "新增用户统计.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+        rowIndex++;
+        HSSFCell hCell0 = header.createCell(0);
+        hCell0.setCellValue("采购中心");
+        HSSFCell hCell1 = header.createCell(1);
+        hCell1.setCellValue("新增用户");
+
+        for (BizUserStatisticsDto b : bizProductStatisticsDtos) {
+            HSSFRow row = sheet.createRow(rowIndex);
+            HSSFCell cell0 = row.createCell(0);
+            cell0.setCellValue(b.getName());
+            HSSFCell cell1 = row.createCell(1);
+            cell1.setCellValue(b.getCount());
+            rowIndex ++;
+        }
+
+        try {
+            String[] url = imgUrl.split(",");
+            String u = url[1];
+            //Base64解码
+            byte[] buffer = decoder.decodeBuffer(u);
+            //生成图片
+            outStream.write(buffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+        HSSFPatriarch patri = sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(5, 5, 5, 5,
+                (short) 4, 5, (short) 20, 35);
+        patri.createPicture(anchor, wb.addPicture(
+                outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
 
         response.setContentType("application/msexcel;charset=utf-8");
         response.setHeader("content-disposition", "attachment;filename="

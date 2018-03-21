@@ -11,6 +11,8 @@
     <input id="startDate" value="${startDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <input id="endDate" value="${endDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
+    <input type="hidden" name="img" id="img" />
     <div id="orderTotalDataChart" style="height: 500px"></div>
 
 </div>
@@ -115,6 +117,13 @@
                     series: msg.seriesList
                 });
                 salesVolumeChart.hideLoading();
+                setInterval( function (args) {
+                    var imgUrl = salesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img').val(imgUrl);
+                },1000);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");
@@ -122,7 +131,35 @@
         });
     }
     initChart();
+    function exportTable() {
+        initChart();
 
+        var imgUrl = $('#img').val();
+
+        var endDate = $("#endDate").val();
+        var startDate = $("#startDate").val();
+
+        //定义一个form表单
+        var myform = $("<form></form>");
+        myform.attr('method','post')
+        myform.attr('action',"${adminPath}/biz/statistics/between/userDataDownload");
+
+        var myProductId = $("<input type='hidden' name='startDate' />");
+        myProductId.attr('value', startDate);
+     var myEndDate = $("<input type='hidden' name='endDate' />");
+        myEndDate.attr('value', endDate);
+
+
+        var myUpdateReason = $("<input type='hidden' name='imgUrl' />");
+        myUpdateReason.attr('value', imgUrl);
+
+
+        myform.append(myProductId);
+        myform.append(myEndDate);
+        myform.append(myUpdateReason);
+        myform.appendTo('body').submit(); //must add this line for higher html spec
+
+    }
 
 </script>
 </html>
