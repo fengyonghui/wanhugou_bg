@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoServ
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
@@ -131,10 +132,17 @@ public class BizProductInfoController extends BaseController {
 		List<TagInfo> tagInfos=Lists.newArrayList();
 		List<TagInfo> tagInfoList=tagInfoService.findList(new TagInfo());
 		Dict dict=new Dict();
+		List<Dict> dictList=null;
 		for(TagInfo tagInfo:tagInfoList){
 			if(tagInfo.getDict()!=null && StringUtils.isNotBlank(tagInfo.getDict().getType())){
 				dict.setType(tagInfo.getDict().getType());
-				List<Dict> dictList=dictService.findList(dict);
+				dictList=dictService.findList(dict);
+			}
+			if(tagInfo.getLevel()!=null && TagInfoEnum.PRODTAG.ordinal()==tagInfo.getLevel()){
+				tagInfo.setDictList(dictList);
+				tagInfos.add(tagInfo);
+			}
+			if(tagInfo.getLevel()!=null && TagInfoEnum.SKUTAG.ordinal()==tagInfo.getLevel()){
 				tagInfo.setDictList(dictList);
 				tagInfos.add(tagInfo);
 			}
@@ -152,7 +160,7 @@ public class BizProductInfoController extends BaseController {
 
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
 			model.addAttribute("entity", bizProductInfo);
-			model.addAttribute("tagInfoList",tagInfos);
+			model.addAttribute("prodTagList",tagInfos);
 			model.addAttribute("varietyInfoList",varietyInfoList);
 		return "modules/biz/product/bizProductInfoForm";
 	}

@@ -26,7 +26,7 @@ public class TagInfo extends DataEntity<TagInfo> {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private Dict dict;
-	private String level;
+	private Integer level;
 	private List<Dict> dictList;
 	
 	public TagInfo() {
@@ -54,15 +54,13 @@ public class TagInfo extends DataEntity<TagInfo> {
 		this.dict = dict;
 	}
 
-	@Length(min=1, max=4, message="0:系统标签; 1:产品标签; 2:商品标签长度必须介于 1 和 4 之间")
-	public String getLevel() {
+	public Integer getLevel() {
 		return level;
 	}
 
-	public void setLevel(String level) {
+	public void setLevel(Integer level) {
 		this.level = level;
 	}
-
 
 	public List<Dict> getDictList() {
 		return dictList;
