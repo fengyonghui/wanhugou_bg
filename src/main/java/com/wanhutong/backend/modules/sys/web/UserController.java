@@ -207,6 +207,8 @@ public class UserController extends BaseController {
 		if (user.getLoginName().equals(UserUtils.getUser().getLoginName())){
 			UserUtils.clearCache();
 			//UserUtils.getCacheMap().clear();
+		}else {
+			UserUtils.clearCache(user);
 		}
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
 
