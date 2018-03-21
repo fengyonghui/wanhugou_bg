@@ -159,7 +159,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 
 	public String getProdCode() {
 		return prodCode;
@@ -169,7 +169,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.prodCode = prodCode;
 	}
 
-	
+
 	@Length(min=1, max=50, message="品牌名称，冗余字段，提升查询效率长度必须介于 1 和 50 之间")
 	public String getBrandName() {
 		return brandName;
@@ -178,7 +178,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
