@@ -431,21 +431,25 @@ public class BizOrderHeaderController extends BaseController {
 
     /**
      * 导出订单数据
-     *
      * @return ouyang
      * 2018-03-20
      */
     @RequiresPermissions("biz:order:bizOrderDetail:view")
     @RequestMapping(value = "orderHeaderExport", method = RequestMethod.POST)
-    public String orderHeaderExportFile(BizOrderHeader bizOrderHeader, String Identification, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public String orderHeaderExportFile(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         try {
+            BizOrderDetail orderDetail = new BizOrderDetail();
+            BizPayRecord bizPayRecord = new BizPayRecord();
             String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             List<BizOrderHeader> pageList = bizOrderHeaderService.findList(bizOrderHeader);
             pageList.forEach(o -> {
                 o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
+                orderDetail.setOrderHeader(o);
+                o.setOrderDetailList(bizOrderDetailService.findList(orderDetail));
+                bizPayRecord.setPayNum(o.getOrderNum());
+                o.setBizPayRecordList(bizPayRecordService.findList(bizPayRecord));
             });
             new ExportExcel("订单数据", BizOrderHeader.class).setDataList(pageList).write(response, fileName).dispose();
-//            Identification = Identification + "export_ok";
             return null;
         } catch (Exception e) {
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
