@@ -249,6 +249,9 @@
 			<if test="bizStatus !=null">
 				AND a.biz_status=#{bizStatus}
 			</if>
+			<if test="ordrHeaderStartTime !=null and ordrHeaderStartTime !='' and orderHeaderEedTime!=null and orderHeaderEedTime!=''">
+				AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+			</if>
 			<if test="bizType !=null and bizType!=''">
 				AND a.biz_type=#{bizType}
 			</if>

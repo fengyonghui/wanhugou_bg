@@ -4,6 +4,8 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
+import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -18,7 +20,7 @@ import java.util.List;
  * @version 2017-12-20
  */
 public class BizOrderHeader extends DataEntity<BizOrderHeader> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String orderNum;		// 订单编号-由系统生成；唯一
 	private Integer orderType;		// 1: 普通订单 ; 2:帐期采购 3:配资采购
@@ -56,12 +58,30 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	private Integer orderCount; //find List中订单总条数据
 
 	private String orderNum2;		//用于删除订单页面传值
-    private String localSendIds;
-    private Integer orderMark;		//用于订单新增地址返回标记
+	private String localSendIds;
+	private Integer orderMark;		//用于订单新增地址返回标记
 	private String suplyIds;       //用于查询本地发货的订单
 	private String centersName;	//用于订单列表查询采购中心
 
 	private User con;		//订单所属客户专员
+
+
+	private Date ordrHeaderStartTime;    //订单创建开始时间
+	private Date orderHeaderEedTime;    //订单创建结束时间
+	/**
+	 * 以下属性用于订单导出的 列表标题
+	 */
+	private String customePhone;  //采购商电话
+	private Double payableTotail; //应付金额
+	private Double totailProfit;   //利润
+	private Integer bizBusiness;   //业务状态
+	private String bizStae;     //尾款信息
+	private String platformName;   //订单来源
+	private String addreReceiver;        // 收货人姓名
+	private String addrePhone;        // 收货人联系电话
+	private String oderAddress;     //订单收货地址
+	private String createName;     //创建人
+	private String updateName;     //更新人
 
 	public List<BizOrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -79,53 +99,154 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		super(id);
 	}
 
+	@SupCol(isUnique = "true", isHide = "true")
+	@ExcelField(title = "ID", type = 1, align = 2, sort = 1)
+	public Integer getId() {
+		return id;
+	}
+
+	@ExcelField(title = "订单编号", align = 2, sort = 10)
 	public String getOrderNum() {
 		return orderNum;
+	}
+
+	@ExcelField(title = "订单类型", align = 2, sort = 20, dictType = "biz_order_type")
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	@ExcelField(title = "采购商名称", align = 2, sort = 30)
+	public Office getCustomer() {
+		return customer;
+	}
+
+	@ExcelField(title = "所属采购中心", align = 2, sort = 40)
+	public String getCentersName() {
+		return centersName;
+	}
+
+	@ExcelField(title = "采购商电话", align = 2, sort = 50)
+	public String getCustomePhone() {
+		return customePhone = customer.getPhone();
+	}
+
+	@ExcelField(title = "商品总价", align = 2, sort = 60)
+	public Double getTotalDetail() {
+		return totalDetail;
+	}
+
+	@ExcelField(title = "已收货款", align = 2, sort = 70)
+	public Double getReceiveTotal() {
+		return receiveTotal;
+	}
+
+	@ExcelField(title = "交易金额", align = 2, sort = 80)
+	public Double getTotalExp() {
+		return totalExp;
+	}
+
+	@ExcelField(title = "运费", align = 2, sort = 90)
+	public Double getFreight() {
+		return freight;
+	}
+
+	@ExcelField(title = "应付金额", align = 2, sort = 100)
+	public Double getPayableTotail() {
+		return payableTotail = totalDetail + totalExp + freight;
+	}
+
+	@ExcelField(title = "利润", align = 2, sort = 110)
+	public Double getTotailProfit() {
+		return totailProfit = totalDetail + totalExp + freight - totalBuyPrice;
+	}
+
+	@ExcelField(title = "发票状态", align = 2, sort = 120, dictType = "biz_order_invStatus")
+	public Integer getInvStatus() {
+		return invStatus;
+	}
+
+	@ExcelField(title = "业务状态", align = 2, sort = 130, dictType = "biz_order_status")
+	public Integer getBizBusiness() {
+		return bizBusiness = bizStatus;
+	}
+
+	@ExcelField(title = "尾款信息", align = 2, sort = 135)
+	public String getBizStae() {
+		String aa = "";
+		if (bizStatus != 10 && bizStatus != 40 && totalDetail + totalExp + freight != receiveTotal) {
+			bizStae = aa + "有尾款";
+		}
+		return bizStae;
+	}
+
+	@ExcelField(title = "订单来源", align = 2, sort = 140)
+	public String getPlatformName() {
+		return platformName = platformInfo.getName();
+	}
+
+	@ExcelField(title = "收货人", align = 2, sort = 143)
+	public String getAddreReceiver() {
+		return addreReceiver = bizLocation.getReceiver();
+	}
+
+	@ExcelField(title = "联系电话", align = 2, sort = 146)
+	public String getAddrePhone() {
+		return addrePhone = bizLocation.getPhone();
+	}
+
+	@ExcelField(title = "订单收货地址", align = 2, sort = 150)
+	public String getOderAddress() {
+		return oderAddress = bizLocation.getProvince().getName() + "" + bizLocation.getCity().getName() + "" +
+				bizLocation.getRegion().getName() + "" + bizLocation.getAddress() + "";
+	}
+
+	@ExcelField(title = "创建人", align = 2, sort = 160)
+	public String getCreateName() {
+		return createName = createBy.getName();
+	}
+
+	@ExcelField(title = "创建时间", type = 0, align = 2, sort = 170)
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	@ExcelField(title = "更新人", align = 2, sort = 180)
+	public String getUpdateName() {
+		return updateName = updateBy.getName();
+	}
+
+	@ExcelField(title = "更新时间", type = 0, align = 2, sort = 190)
+	public Date getUpdateDate() {
+		return updateDate;
 	}
 
 	public void setOrderNum(String orderNum) {
 		this.orderNum = orderNum;
 	}
 
-	public Office getCustomer() {
-		return customer;
-	}
-
 	public void setCustomer(Office customer) {
 		this.customer = customer;
-	}
-
-	public Double getTotalDetail() {
-		return totalDetail;
 	}
 
 	public void setTotalDetail(Double totalDetail) {
 		this.totalDetail = totalDetail;
 	}
 
-	public Double getTotalExp() {
-		return totalExp;
-	}
-
 	public void setTotalExp(Double totalExp) {
 		this.totalExp = totalExp;
-	}
-
-	public Double getFreight() {
-		return freight;
 	}
 
 	public void setFreight(Double freight) {
 		this.freight = freight;
 	}
 
-    public BizPlatformInfo getPlatformInfo() {
-        return platformInfo;
-    }
+	public BizPlatformInfo getPlatformInfo() {
+		return platformInfo;
+	}
 
-    public void setPlatformInfo(BizPlatformInfo platformInfo) {
-        this.platformInfo = platformInfo;
-    }
+	public void setPlatformInfo(BizPlatformInfo platformInfo) {
+		this.platformInfo = platformInfo;
+	}
 
 	public BizOrderAddress getBizLocation() {
 		return bizLocation;
@@ -135,16 +256,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.bizLocation = bizLocation;
 	}
 
-	public Integer getOrderType() {
-		return orderType;
-	}
-
 	public void setOrderType(Integer orderType) {
 		this.orderType = orderType;
-	}
-
-	public Integer getInvStatus() {
-		return invStatus;
 	}
 
 	public void setInvStatus(Integer invStatus) {
@@ -223,10 +336,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.tobePaid = tobePaid;
 	}
 
-	public Double getReceiveTotal() {
-		return receiveTotal;
-	}
-
 	public void setReceiveTotal(Double receiveTotal) {
 		this.receiveTotal = receiveTotal;
 	}
@@ -247,21 +356,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.consultantId = consultantId;
 	}
 
-    public String getOrderNoEditable() {
-        return orderNoEditable;
-    }
+	public String getOrderNoEditable() {
+		return orderNoEditable;
+	}
 
-    public void setOrderNoEditable(String orderNoEditable) {
-        this.orderNoEditable = orderNoEditable;
-    }
+	public void setOrderNoEditable(String orderNoEditable) {
+		this.orderNoEditable = orderNoEditable;
+	}
 
-    public String getOrderDetails() {
-        return orderDetails;
-    }
+	public String getOrderDetails() {
+		return orderDetails;
+	}
 
-    public void setOrderDetails(String orderDetails) {
-        this.orderDetails = orderDetails;
-    }
+	public void setOrderDetails(String orderDetails) {
+		this.orderDetails = orderDetails;
+	}
 
 	public String getOrderNum2() {
 		return orderNum2;
@@ -271,13 +380,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.orderNum2 = orderNum2;
 	}
 
-    public String getLocalSendIds() {
-        return localSendIds;
-    }
+	public String getLocalSendIds() {
+		return localSendIds;
+	}
 
-    public void setLocalSendIds(String localSendIds) {
-        this.localSendIds = localSendIds;
-    }
+	public void setLocalSendIds(String localSendIds) {
+		this.localSendIds = localSendIds;
+	}
 
 	public Integer getOrderMark() {
 		return orderMark;
@@ -286,11 +395,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	public void setOrderMark(Integer orderMark) {
 		this.orderMark = orderMark;
 	}
-	
+
 	public String getClientModify() {
 		return clientModify;
 	}
-	
+
 	public void setClientModify(String clientModify) {
 		this.clientModify = clientModify;
 	}
@@ -359,10 +468,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 		this.suplyIds = suplyIds;
 	}
 
-	public String getCentersName() {
-		return centersName;
-	}
-
 	public void setCentersName(String centersName) {
 		this.centersName = centersName;
 	}
@@ -374,4 +479,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 	public void setCon(User con) {
 		this.con = con;
 	}
+
+	public Date getOrdrHeaderStartTime() {
+		return ordrHeaderStartTime;
+	}
+
+	public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
+		this.ordrHeaderStartTime = ordrHeaderStartTime;
+	}
+
+	public Date getOrderHeaderEedTime() {
+		return orderHeaderEedTime;
+	}
+
+	public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
+		this.orderHeaderEedTime = orderHeaderEedTime;
+	}
+
 }
