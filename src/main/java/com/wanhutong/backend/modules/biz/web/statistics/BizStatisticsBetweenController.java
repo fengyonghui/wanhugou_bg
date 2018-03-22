@@ -1318,4 +1318,39 @@ public class BizStatisticsBetweenController extends BaseController {
         request.setAttribute("endDate", endDate);
         return "modules/biz/statistics/bizStatisticsSingleUserProfitBetweenTable";
     }
+
+    /**
+     * 用户业绩相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:userSale:view")
+    @RequestMapping(value = {"userSaleDataTable", ""})
+    public String userSaleDataTable(HttpServletRequest request, String startDate, String endDate, Integer purchasingId, String usName) {
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userSaleStatisticData(startDate, endDate, purchasingId);
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
+        request.setAttribute("dataList", bizProductStatisticsDtos);
+        return "modules/biz/statistics/bizStatisticsUserSaleBetweenTable";
+    }
+
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"customTable", ""})
+    public String customTable(HttpServletRequest request, String startDate, String endDate) {
+        List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userStatisticData(startDate, endDate);
+        request.setAttribute("dataList", bizProductStatisticsDtos);
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
+        return "modules/biz/statistics/bizStatisticsCustomBetweenTable";
+    }
+
 }

@@ -167,6 +167,23 @@ public class BizStatisticsController extends BaseController {
 
 
     /**
+     * 用户业绩相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:userSale:view")
+    @RequestMapping(value = {"userSaleDataTable", ""})
+    public String userSaleDataTable(HttpServletRequest request, String month, Integer purchasingId, String usName) {
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", month);
+        request.setAttribute("dataList", bizProductStatisticsDtos);
+        return "modules/biz/statistics/bizStatisticsUserSaleTable";
+    }
+
+
+    /**
      * 用户相关统计数据
      *
      * @param request
@@ -207,6 +224,22 @@ public class BizStatisticsController extends BaseController {
         paramMap.put("nameList", nameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
+    }
+
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"customTable", ""})
+    public String customTable(HttpServletRequest request, String month) {
+        List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userStatisticData(month);
+        request.setAttribute("dataList", bizProductStatisticsDtos);
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", month);
+        return "modules/biz/statistics/bizStatisticsCustomTable";
     }
 
 
@@ -1286,6 +1319,7 @@ public class BizStatisticsController extends BaseController {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
         request.setAttribute("dataList", bizProductStatisticsDtos);
         request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", month);
         return "modules/biz/statistics/bizStatisticsSingleUserProfitTable";
     }
 }

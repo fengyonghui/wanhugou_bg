@@ -807,5 +807,35 @@ public class BizStatisticsDayController extends BaseController {
         wb.write(response.getOutputStream());
     }
 
+    /**
+     * 用户业绩相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:userSale:view")
+    @RequestMapping(value = {"userSaleDataTable", ""})
+    public String userSaleDataTable(HttpServletRequest request, String day, Integer purchasingId, String usName) {
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.userSaleStatisticData(day, purchasingId);
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("day", day);
+        request.setAttribute("dataList", bizProductStatisticsDtos);
+        return "modules/biz/statistics/bizStatisticsUserSaleDayTable";
+    }
 
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"customTable", ""})
+    public String customTable(HttpServletRequest request, String day) {
+        List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.userStatisticData(day);
+        request.setAttribute("dataList", bizProductStatisticsDtos);
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("day", day);
+        return "modules/biz/statistics/bizStatisticsCustomDayTable";
+    }
 }
