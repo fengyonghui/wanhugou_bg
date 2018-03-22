@@ -191,12 +191,14 @@
 					<tbody id="prodInfo">
 					<c:if test="${entity.skuInfo!=null}">
 						<tr class="${entity.skuInfo.id}" id="${entity.id}">
+						<input name="id" value="${entity.id}" type="hidden"/>
 						<td>${entity.invInfo.name}</td>
 						<td>${entity.skuInfo.name}</td>
 						<td>${entity.skuInfo.partNo}</td>
 						<td>${entity.skuInfo.itemNo}</td>
-						<td>${entity.invType}</td>
-						<td>${entity.stockQty}</td>
+						<td>${entity.skuInfo.skuPropertyInfos}</td>
+						<td>${fns:getDictLabel(entity.invType, 'inv_type', '未知状态')}</td>
+						<td><input name="stockQtys" value="${entity.stockQty}" style="width: 40px"/></td>
 							<td><a href='#' onclick="delItem('${entity.id}')">删除</a></td>
 						</tr>
 					</c:if>

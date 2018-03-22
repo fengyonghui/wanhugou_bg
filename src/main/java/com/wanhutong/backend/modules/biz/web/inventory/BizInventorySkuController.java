@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -145,6 +146,26 @@ public class BizInventorySkuController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizInventorySku bizInventorySku,HttpServletRequest request, Model model) {
 	    model.addAttribute("invInfoList",bizInventoryInfoService.findList(new BizInventoryInfo()));
+	    if (bizInventorySku != null && bizInventorySku.getSkuInfo() != null) {
+            BizSkuInfo skuInfo = bizSkuInfoService.get(bizInventorySku.getSkuInfo().getId());
+            List<BizSkuInfo> list = bizSkuInfoService.findListByParam(skuInfo);
+            for (BizSkuInfo sku : list) {
+                List<BizSkuPropValue> skuPropValueList = sku.getSkuPropValueList();
+                StringBuffer skuPropName = new StringBuffer();
+                for (BizSkuPropValue skuPropValue : skuPropValueList) {
+                    skuPropName.append("-");
+                    skuPropName.append(skuPropValue.getPropValue());
+                }
+                String propNames = "";
+                if (skuPropName.toString().length() > 1) {
+                    propNames = skuPropName.toString().substring(1);
+                }
+
+                skuInfo.setSkuPropertyInfos(propNames);
+                bizInventorySku.setSkuInfo(skuInfo);
+            }
+        }
+
         BizInventoryInfo bizInventoryInfo2 = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
 		bizInventorySku.setInvInfo(bizInventoryInfo2);
 		String zt = request.getParameter("zt");
@@ -174,7 +195,12 @@ public class BizInventorySkuController extends BaseController {
 				bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
 				bizInventorySkuService.save(bizInventorySku);
 			}
-		}
+		}else if (bizInventorySkus!=null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")){
+            BizInventorySku bizInventorySku = bizInventorySkuService.get(bizInventorySkus.getId());
+            bizInventorySku.setStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));
+            bizInventorySkuService.save(bizInventorySku);
+        }
+
 
 
 
