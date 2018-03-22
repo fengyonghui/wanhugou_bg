@@ -262,7 +262,7 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:product:view")
     @RequestMapping(value = {"productData", ""})
     @ResponseBody
-    public String product(HttpServletRequest request, String startDate, String endDate, Integer variId, int dataType, Integer purchasingId) {
+    public String product(HttpServletRequest request, String startDate, String endDate, Integer variId, Integer dataType, Integer purchasingId) {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
             return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
         }
@@ -270,6 +270,7 @@ public class BizStatisticsBetweenController extends BaseController {
         List<String> nameList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
+        List<Object> allList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         bizProductStatisticsDtos.forEach(o -> {
             switch (OrderStatisticsDataTypeEnum.parse(dataType)) {
@@ -282,8 +283,9 @@ public class BizStatisticsBetweenController extends BaseController {
                 default:
                     break;
             }
-
             nameList.add(o.getName().concat("-").concat(o.getItemNo()));
+            allList.add(o.getVendorName().concat("-").concat(o.getItemNo()).concat("-").concat(o.getCount()+"").concat("-")
+                    .concat(o.getTotalMoney()+"").concat("-").concat(o.getClickCount()+""));
         });
         echartsSeriesDto.setName("商品销量");
         echartsSeriesDto.setData(seriesDataList);
@@ -291,6 +293,7 @@ public class BizStatisticsBetweenController extends BaseController {
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("seriesList", echartsSeriesDto);
         paramMap.put("nameList", nameList);
+        paramMap.put("AllList", allList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
     }
@@ -1353,4 +1356,19 @@ public class BizStatisticsBetweenController extends BaseController {
         return "modules/biz/statistics/bizStatisticsCustomBetweenTable";
     }
 
+    /**
+     * 产品统计（个人 表格数据）
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "productAnalysisTables")
+    public String productAnalysisTables (HttpServletRequest request, Integer variId, Integer purchasingId, String startDate, String endDate){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("varietyList", bizStatisticsService.getBizVarietyInfoList());
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
+        List<BizProductStatisticsDto> productStatisticsList = bizStatisticsService.productStatisticData(startDate, 1, null);
+        request.setAttribute("productStatisticsList", productStatisticsList);
+        return "modules/biz/statistics/bizStatisticsProductBetweenTables";
+    }
 }

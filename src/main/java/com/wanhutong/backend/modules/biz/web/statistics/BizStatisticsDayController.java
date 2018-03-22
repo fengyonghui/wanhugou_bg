@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
+import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -42,6 +43,8 @@ public class BizStatisticsDayController extends BaseController {
 
     @Resource
     private BizStatisticsDayService bizStatisticsDayService;
+    @Resource
+    private BizStatisticsService bizStatisticsService;
 
     /**
      * 查询数据月数
@@ -376,11 +379,11 @@ public class BizStatisticsDayController extends BaseController {
     @RequestMapping(value = {"productData", ""})
     @ResponseBody
     public String product(HttpServletRequest request, String month, Integer variId, int dataType, Integer purchasingId) {
-        // 月份集合
         List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.productStatisticData(month, variId, purchasingId);
         List<String> nameList = Lists.newArrayList();
 
         List<Object> seriesDataList = Lists.newArrayList();
+        List<Object> allList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         bizProductStatisticsDtos.forEach(o -> {
             switch (OrderStatisticsDataTypeEnum.parse(dataType)) {
@@ -395,6 +398,8 @@ public class BizStatisticsDayController extends BaseController {
             }
 
             nameList.add(o.getName().concat("-").concat(o.getItemNo()));
+            allList.add(o.getVendorName().concat("-").concat(o.getItemNo()).concat("-").concat(o.getCount()+"").concat("-")
+                    .concat(o.getTotalMoney()+"").concat("-").concat(o.getClickCount()+""));
         });
         echartsSeriesDto.setName("商品销量");
         echartsSeriesDto.setData(seriesDataList);
@@ -402,6 +407,7 @@ public class BizStatisticsDayController extends BaseController {
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("seriesList", echartsSeriesDto);
         paramMap.put("nameList", nameList);
+        paramMap.put("AllList", allList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
     }
@@ -837,5 +843,21 @@ public class BizStatisticsDayController extends BaseController {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("day", day);
         return "modules/biz/statistics/bizStatisticsCustomDayTable";
+    }
+
+    /**
+     * 产品统计（个人 表格数据）
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "productAnalysisTables")
+    public String productAnalysisTables (HttpServletRequest request, Integer variId, Integer purchasingId){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("varietyList", bizStatisticsDayService.getBizVarietyInfoList());
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
+        String month = LocalDateTime.now().toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        request.setAttribute("month", month);
+        List<BizProductStatisticsDto> bizProductStatisticsDtos = bizStatisticsDayService.productStatisticData(month, variId, purchasingId);
+        request.setAttribute("productStatisticsList", bizProductStatisticsDtos);
+        return "modules/biz/statistics/bizStatisticsProductDayTables";
     }
 }
