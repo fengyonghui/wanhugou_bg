@@ -908,19 +908,6 @@ public class BizStatisticsController extends BaseController {
     }
 
     /**
-     * 个人利润统计
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"singleProfit", ""})
-    public String singleProfit(HttpServletRequest request, HttpServletResponse response) {
-        request.setAttribute("adminPath", adminPath);
-        request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
-        return "modules/biz/statistics/bizStatisticsSingleUserProfit";
-    }
-    /**
      * 利润统计数据
      * @param request
      * @param response
@@ -1136,6 +1123,7 @@ public class BizStatisticsController extends BaseController {
     public String singleUserProfit(HttpServletRequest request, HttpServletResponse response) {
         request.setAttribute("month", LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
         request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         return "modules/biz/statistics/bizStatisticsSingleUserProfit";
     }
 
@@ -1188,7 +1176,7 @@ public class BizStatisticsController extends BaseController {
             bizUserSaleStatisticsDtos.forEach(o -> {
                 singleSeriesDataList.add(o.getProfitPrice());
                 monthList.add(o.getCreateTime());
-                userMonthList.add(o.getCreateTime().concat("+").concat(o.getTotalMoney()+"").concat("+").concat(o.getProfitPrice()+"")
+                userMonthList.add(o.getCreateTime().concat("+").concat(o.getProfitPrice()+"").concat("+").concat(o.getProfitPrice()+"")
                         .concat("+").concat(o.getAddCustCount()+"").concat("+").concat(o.getCustCount()+""));
             });
 
@@ -1214,4 +1202,90 @@ public class BizStatisticsController extends BaseController {
         return JSONObject.fromObject(paramMap).toString();
     }
 
+
+    /**
+     * 用户销售利润相关统计数据下载
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:userSale:view")
+    @RequestMapping(value = {"singleUserProfitDataDownload", ""})
+    public void singleUserProfitDataDownload(HttpServletRequest request,
+                                     HttpServletResponse response,
+                                     String imgUrl,
+                                     String imgUrl1,
+                                     String month,
+                                     Integer purchasingId) throws IOException {
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
+
+        String fileName = "利润统计.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+        rowIndex++;
+        HSSFCell cell0 = header.createCell(0);
+        cell0.setCellValue("姓名");
+        HSSFCell cell1 = header.createCell(1);
+        cell1.setCellValue("利润");
+
+
+        for (BizUserSaleStatisticsDto o : bizProductStatisticsDtos) {
+            HSSFRow row = sheet.createRow(rowIndex);
+            rowIndex ++;
+            HSSFCell sCell0 = row.createCell(0);
+            sCell0.setCellValue(o.getName());
+            HSSFCell sCell1 = row.createCell(1);
+            sCell1.setCellValue(o.getProfitPrice().toString());
+        }
+
+        // 将图片写入流中
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outStream1 = new ByteArrayOutputStream();
+        BASE64Decoder decoder = new BASE64Decoder();
+
+        try {
+            String[] url = imgUrl.split(",");
+            String[] url1 = imgUrl1.split(",");
+            String u = url[1];
+            String u1 = url1[1];
+            //Base64解码
+            byte[] buffer = decoder.decodeBuffer(u);
+            byte[] buffer1 = decoder.decodeBuffer(u1);
+            //生成图片
+            outStream.write(buffer);
+            outStream1.write(buffer1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HSSFPatriarch patri = sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(5, 5, 5, 5, (short) 4, 5, (short) 20, 30);
+        patri.createPicture(anchor, wb.addPicture(
+                outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+//        HSSFClientAnchor anchor1 = new HSSFClientAnchor(5, 5, 5, 5, (short) 20, 21, (short) 25, 35);
+//        patri.createPicture(anchor1, wb.addPicture(
+//                outStream1.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
+    }
+
+    /**
+     * 个人销售利润表格
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:userSale:view")
+    @RequestMapping(value = {"singleUserProfitDataTable", ""})
+    public String singleUserProfitDataTable(String month, HttpServletResponse response, HttpServletRequest request, Integer purchasingId) {
+        List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
+        request.setAttribute("dataList", bizProductStatisticsDtos);
+        request.setAttribute("adminPath", adminPath);
+        return "modules/biz/statistics/bizStatisticsSingleUserProfitTable";
+    }
 }

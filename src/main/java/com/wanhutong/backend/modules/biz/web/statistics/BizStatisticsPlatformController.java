@@ -81,7 +81,7 @@ public class BizStatisticsPlatformController extends BaseController {
             Date endDate = calendar.getTime();
             list = bizStatisticsPlatformService.getPlatformData(
                     simpleDateFormat.format(startDate),
-                    simpleDateFormat.format(endDate),
+                    simpleDateFormat.format(parseDate),
                     simpleDateFormat.format(parseDate)
             );
 
@@ -119,7 +119,7 @@ public class BizStatisticsPlatformController extends BaseController {
             Date endDate = calendar.getTime();
             dataMap = bizStatisticsPlatformService.getPlatformData(
                     simpleDateFormat.format(startDate),
-                    simpleDateFormat.format(endDate),
+                    simpleDateFormat.format(parseDate),
                     simpleDateFormat.format(parseDate)
             );
 
@@ -155,11 +155,11 @@ public class BizStatisticsPlatformController extends BaseController {
         h1Cell2.setCellValue("目标分析");
 
         HSSFCell h2Cell2 = header2.createCell(2);
-        h2Cell2.setCellValue("目标采购额(元)");
+        h2Cell2.setCellValue("月计划采购额(元)");
         HSSFCell h2Cell3 = header2.createCell(3);
         h2Cell3.setCellValue("月累计销量");
         HSSFCell h2Cell4 = header2.createCell(4);
-        h2Cell4.setCellValue("日采购额(元)");
+        h2Cell4.setCellValue("日销售额(元)");
         HSSFCell h2Cell5 = header2.createCell(5);
         h2Cell5.setCellValue("达成率");
         HSSFCell h2Cell6 = header2.createCell(6);

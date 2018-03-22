@@ -164,7 +164,7 @@ public class BizStatisticsService {
      * @param salesmanId 销售员ID
      */
     public List<BizUserSaleStatisticsDto> singleUserSaleStatisticData(Integer salesmanId) {
-        return bizOrderHeaderDao.getSingleUserSaleStatisticData(null, null, salesmanId, OrderHeaderBizStatusEnum.INVALID_STATUS);
+        return bizOrderHeaderDao.getSingleUserSaleStatisticData(null, salesmanId, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
 
     public Map<String,BizTotalStatisticsDto> getBizTotalStatisticsDto(){

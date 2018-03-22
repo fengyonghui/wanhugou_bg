@@ -643,23 +643,26 @@
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
-		(SELECT
-		sum(sku1.buy_price * detail1.ord_qty)
-		FROM
-		biz_order_header AS header1
+		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		FROM biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
-		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
 		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
-		LEFT JOIN biz_custom_center_consultant ccc1 ON ccc1.cust_id = office1.id
-		LEFT JOIN sys_user us1 ON us1.id = ccc1.consultant_id
+		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
 		WHERE us.id = us1.id AND header1.order_type = 1
-		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
-		biz_status != #{item.state}
+		AND header1.status = 1
+		AND sku1.status = 1
+		AND us1.status = 1
+		AND consultant1.status = 1
+		AND
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		header1.biz_status != #{item.state}
 		</foreach>
-		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
-		AND oh.create_time LIKE #{month}
-		GROUP BY us1.name)  AS buyPrice,
+		OR (header1.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		<if test="month != null and month != ''">
+		AND header1.create_time LIKE #{month}
+		</if>
+		GROUP BY us1.name)   AS buyPrice,
 		CASE date_format(oh.create_time, '%Y-%m')
 		WHEN '2017-06'
 		THEN '2017-09'
@@ -696,18 +699,34 @@
 
 	<select id="getSingleUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
-		sum(receive_total) AS totalMoney,
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		<!--start-->
 		(SELECT count(1) FROM
 		biz_custom_center_consultant cc WHERE cc.consultant_id = us.id
 		) AS custCount,
-		(SELECT count(1) FROM
-		biz_custom_center_consultant cc WHERE cc.consultant_id = us.id AND date_format(us.create_date, '%Y-%m') = #{month}
-		) AS addCustCount,
 		<!--end-->
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
+		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		FROM biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
+		WHERE us.id = us1.id AND header1.order_type = 1
+		AND header1.status = 1
+		AND sku1.status = 1
+		AND us1.status = 1
+		AND consultant1.status = 1
+		AND date_format(header1.create_time, '%Y-%m') = date_format(oh.create_time, '%Y-%m')
+		AND
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		header1.biz_status != #{item.state}
+		</foreach>
+		OR (header1.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		GROUP BY us1.name)   AS buyPrice,
 		-- 		date_format(oh.create_time, '%Y-%m') AS createTime
 		CASE date_format(oh.create_time, '%Y-%m')
 		WHEN '2017-06'
@@ -731,9 +750,6 @@
 		biz_status != #{item.state}
 	</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
-		<if test="month != null and month != ''">
-			AND date_format(oh.create_time, '%Y-%m') = #{month}
-		</if>
 		<if test="purchasingId != null and purchasingId != 0">
 			AND us.office_id = #{purchasingId}
 		</if>
@@ -832,7 +848,8 @@
 
 	<select id="getUserSaleStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
-		sum(receive_total) AS totalMoney,
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
@@ -864,7 +881,8 @@
 
 	<select id="getSingleUserSaleStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
-		sum(receive_total) AS totalMoney,
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
@@ -982,11 +1000,30 @@
 
 	<select id="getUserSaleStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
-		sum(receive_total) AS totalMoney,
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
-		date_format(oh.create_time, '%Y-%m-%d') AS createTime
+		date_format(oh.create_time, '%Y-%m-%d') AS createTime,
+		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		FROM biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
+		WHERE us.id = us1.id AND header1.order_type = 1
+		AND header1.status = 1
+		AND sku1.status = 1
+		AND us1.status = 1
+		AND consultant1.status = 1
+		AND
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		header1.biz_status != #{item.state}
+	</foreach>
+		OR (header1.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND header1.create_time BETWEEN #{startDate} AND  #{endDate}
+		GROUP BY us1.name)   AS buyPrice
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
@@ -1012,7 +1049,8 @@
 
 	<select id="getSingleUserSaleStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
-		sum(receive_total) AS totalMoney,
+		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
