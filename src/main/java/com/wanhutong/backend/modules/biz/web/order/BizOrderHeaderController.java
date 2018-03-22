@@ -442,14 +442,20 @@ public class BizOrderHeaderController extends BaseController {
             BizPayRecord bizPayRecord = new BizPayRecord();
             String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             List<BizOrderHeader> pageList = bizOrderHeaderService.findList(bizOrderHeader);
+            ExportExcel headerExcel = new ExportExcel("订单数据", BizOrderDetail.class);
             pageList.forEach(o -> {
                 o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
                 orderDetail.setOrderHeader(o);
-                o.setOrderDetailList(bizOrderDetailService.findList(orderDetail));
+                List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
+                list.forEach(deil->{
+                    deil.setOrderHeader(o);
+                });
+                o.setOrderDetailList(list);
                 bizPayRecord.setPayNum(o.getOrderNum());
                 o.setBizPayRecordList(bizPayRecordService.findList(bizPayRecord));
+                headerExcel.setDataList(o.getOrderDetailList());
             });
-            new ExportExcel("订单数据", BizOrderHeader.class).setDataList(pageList).write(response, fileName).dispose();
+            headerExcel.write(response, fileName).dispose();
             return null;
         } catch (Exception e) {
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
