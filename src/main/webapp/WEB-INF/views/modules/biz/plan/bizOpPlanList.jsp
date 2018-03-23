@@ -25,11 +25,8 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>关联ID：</label>
-				<form:input path="objectId" htmlEscape="false" maxlength="50" class="input-medium"/>
-			</li>
-			<li><label>关联表名：</label>
-				<form:input path="objectName" htmlEscape="false" maxlength="50" class="input-medium"/>
+			<li><label>名称：</label>
+				<form:input path="objectName1" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>年：</label>
 				<form:input path="year" htmlEscape="false" maxlength="50" class="input-medium"/>
@@ -49,8 +46,7 @@
 		<thead>
 			<tr>
 				<th>id</th>
-				<th>关联ID</th>
-				<th>关联表名</th>
+				<th>名称</th>
 				<th>年</th>
 				<th>月</th>
 				<th>日</th>
@@ -62,13 +58,19 @@
 		<c:forEach items="${page.list}" var="bizOpPlan">
 			<tr>
 				<td>
-					${bizOpPlan.id}
-				</td>
-				<td>
-					${bizOpPlan.objectId}
-				</td>
-				<td>
 					${bizOpPlan.objectName}
+				</td>
+				<td>
+					<c:choose>
+					<c:when test="${bizOpPlan.objectName == 'sys_office'}">
+						${bizOpPlan.objectName1}
+					</c:when>
+					<c:when test="${bizOpPlan.objectName == 'sys_user'}">
+						${bizOpPlan.objectName2}
+					</c:when>
+					<c:otherwise>
+					</c:otherwise>
+					</c:choose>
 				</td>
 				<td>
 					${bizOpPlan.year}

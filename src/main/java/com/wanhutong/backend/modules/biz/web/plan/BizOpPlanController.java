@@ -48,7 +48,7 @@ public class BizOpPlanController extends BaseController {
 	@RequiresPermissions("biz:plan:bizOpPlan:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizOpPlan bizOpPlan, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizOpPlan> page = bizOpPlanService.findPage(new Page<BizOpPlan>(request, response), bizOpPlan); 
+		Page<BizOpPlan> page = bizOpPlanService.findPage(new Page<BizOpPlan>(request, response), bizOpPlan);
 		model.addAttribute("page", page);
 		return "modules/biz/plan/bizOpPlanList";
 	}

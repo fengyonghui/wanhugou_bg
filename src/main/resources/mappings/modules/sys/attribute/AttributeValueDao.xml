@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.sys.dao.attribute.AttributeValueDao">
+    
+	<sql id="attributeValueColumns">
+		a.id AS "id",
+		a.tag_id AS "tagId",
+		a.object_name AS "objectName",
+		a.object_id AS "objectId",
+		a.value AS "value",
+		a.code AS "code",
+		a.status AS "status",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="attributeValueJoins">
+	</sql>
+    
+	<select id="get" resultType="AttributeValue">
+		SELECT 
+			<include refid="attributeValueColumns"/>
+		FROM sys_attribute_value a
+		<include refid="attributeValueJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="AttributeValue">
+		SELECT 
+			<include refid="attributeValueColumns"/>
+		FROM sys_attribute_value a
+		<include refid="attributeValueJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="tagId != null and tagId != ''">
+				AND a.tag_id = #{tagId}
+			</if>
+			<if test="objectName != null and objectName != ''">
+				AND a.object_name = #{objectName}
+			</if>
+			<if test="objectId != null and objectId != ''">
+				AND a.object_id = #{objectId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="AttributeValue">
+		SELECT 
+			<include refid="attributeValueColumns"/>
+		FROM sys_attribute_value a
+		<include refid="attributeValueJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_attribute_value(
+			id,
+			tag_id,
+			object_name,
+			object_id,
+			value,
+			code,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{tagId},
+			#{objectName},
+			#{objectId},
+			#{value},
+			#{code},
+			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_attribute_value SET 	
+			tag_id = #{tagId},
+			object_name = #{objectName},
+			object_id = #{objectId},
+			value = #{value},
+			code = #{code},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_attribute_value SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

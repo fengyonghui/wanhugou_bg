@@ -3,6 +3,8 @@
  */
 package com.wanhutong.backend.modules.biz.entity.plan;
 
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -21,8 +23,12 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	private String month;		// 计划所在月份; 选择月计划时，一定加入条件：and day=0
 	private String day;		// 日计划;
 	private String amount;		// amount
-	private String status;		// status
-	private String uVersion;		// u_version
+	private String objectName1;  //office中的id对应名称
+	private String objectName2;  //user 中的id对应名称
+	private Office centerOffice;   //采购中心id
+	private User user; //采购专员
+//	private String status;		// status
+//	private String uVersion;		// u_version
 	
 	public BizOpPlan() {
 		super();
@@ -84,23 +90,55 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-	
-	@Length(min=1, max=4, message="status长度必须介于 1 和 4 之间")
-	public String getStatus() {
-		return status;
+
+	public String getObjectName1() {
+		return objectName1;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	
-	@Length(min=1, max=4, message="u_version长度必须介于 1 和 4 之间")
-	public String getUVersion() {
-		return uVersion;
+	public void setObjectName1(String objectName1) {
+		this.objectName1 = objectName1;
 	}
 
-	public void setUVersion(String uVersion) {
-		this.uVersion = uVersion;
+	public String getObjectName2() {
+		return objectName2;
 	}
+
+	public void setObjectName2(String objectName2) {
+		this.objectName2 = objectName2;
+	}
+
+	public Office getCenterOffice() {
+		return centerOffice;
+	}
+
+	public void setCenterOffice(Office centerOffice) {
+		this.centerOffice = centerOffice;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	//	@Length(min=1, max=4, message="status长度必须介于 1 和 4 之间")
+//	public String getStatus() {
+//		return status;
+//	}
+//
+//	public void setStatus(String status) {
+//		this.status = status;
+//	}
+//
+//	@Length(min=1, max=4, message="u_version长度必须介于 1 和 4 之间")
+//	public String getUVersion() {
+//		return uVersion;
+//	}
+//
+//	public void setUVersion(String uVersion) {
+//		this.uVersion = uVersion;
+//	}
 	
 }

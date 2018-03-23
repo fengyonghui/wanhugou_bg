@@ -92,6 +92,14 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Date crDate;    //创建时间
     private String updateName;     //更新人
     private Date upDate; //更新时间
+    private BizOrderDetail orderDaillist;//商品
+    public BizOrderDetail getOrderDaillist() {
+        return orderDaillist;
+    }
+
+    public void setOrderDaillist(BizOrderDetail orderDaillist) {
+        this.orderDaillist = orderDaillist;
+    }
 
     public List<BizOrderDetail> getOrderHeaderList() {
         return orderHeaderList;
@@ -104,193 +112,107 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     @SupCol(isUnique = "true", isHide = "true")
     @ExcelField(title = "ID", type = 1, align = 2, sort = 1)
     public Integer getHeadeId() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                headeId = orderHeader.getOrderDetailList().get(i).getOrderHeader().getId();
-            }
-        }
-        return headeId;
+        return headeId = orderHeader.getId();
+
     }
 
     @ExcelField(title = "订单编号", align = 2, sort = 10)
     public String getOrderHNum() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                orderHNum = orderHeader.getOrderDetailList().get(i).getOrderHeader().getOrderNum();
-            }
-        }
-        return orderHNum;
+        return orderHNum = orderHeader.getOrderNum();
     }
 
     @ExcelField(title = "订单类型", align = 2, sort = 20, dictType = "biz_order_type")
     public Integer getHeaderType() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                headerType = orderHeader.getOrderDetailList().get(i).getOrderHeader().getOrderType();
-            }
-        }
-        return headerType;
+        return headerType = orderHeader.getOrderType();
     }
 
     @ExcelField(title = "采购商名称（电话）", align = 2, sort = 30)
     public String getCustomePhone() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                customePhone = orderHeader.getOrderDetailList().get(i).getOrderHeader().getCustomer().getName() + "(" +
-                        orderHeader.getOrderDetailList().get(i).getOrderHeader().getCustomer().getPhone() + ")";
-            }
-        }
-        return customePhone;
+        return customePhone = orderHeader.getCustomer().getName() + "(" + orderHeader.getCustomer().getPhone() + ")";
     }
 
     @ExcelField(title = "所属采购中心", align = 2, sort = 40)
     public String getCentersName() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                centersName = orderHeader.getOrderDetailList().get(i).getOrderHeader().getCentersName();
-            }
-        }
-        return centersName;
+        return centersName = orderHeader.getCentersName();
     }
 
     @ExcelField(title = "商品名称（编号）", align = 2, sort = 50)
     public String getOrderDeilList() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                orderDeilList = orderHeader.getOrderDetailList().get(i).getSkuName() + "(" + orderHeader.getOrderDetailList().get(i).getPartNo() + ")";
-            }
+        if (orderDaillist != null) {
+            orderDeilList = orderDaillist.getSkuName() + "(" + orderDaillist.getPartNo() + ")";
         }
         return orderDeilList;
     }
 
     @ExcelField(title = "商品单价", align = 2, sort = 60)
     public Double getSkuPrice() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                skuPrice = orderHeader.getOrderDetailList().get(i).getUnitPrice();
-            }
+        if (orderDaillist != null) {
+            skuPrice = orderDaillist.getUnitPrice();
         }
         return skuPrice;
     }
 
     @ExcelField(title = "采购数量", align = 2, sort = 70)
     public Integer getOrderDeilleng() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                orderDeilleng = orderHeader.getOrderDetailList().get(i).getOrdQty();
-            }
+        if (orderDaillist != null) {
+            orderDeilleng = orderDaillist.getOrdQty();
         }
         return orderDeilleng;
     }
 
     @ExcelField(title = "订单_商品总价", align = 2, sort = 80)
     public Double getSkuTotail() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                skuTotail = orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalDetail();
-            }
-        }
-        return skuTotail;
+        return skuTotail = orderHeader.getTotalDetail();
     }
 
     @ExcelField(title = "订单_已收货款", align = 2, sort = 90)
     public Double getCeiveTotal() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                ceiveTotal = orderHeader.getOrderDetailList().get(i).getOrderHeader().getReceiveTotal();
-            }
-        }
-        return ceiveTotal;
+        return ceiveTotal = orderHeader.getReceiveTotal();
     }
 
     @ExcelField(title = "订单_交易金额", align = 2, sort = 100)
     public Double getTotalExp() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                totalExp = orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalExp();
-            }
-        }
-        return totalExp;
+        return totalExp = orderHeader.getTotalExp();
     }
 
     @ExcelField(title = "运费", align = 2, sort = 110)
     public Double getFreight() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                freight = orderHeader.getOrderDetailList().get(i).getOrderHeader().getFreight();
-            }
-        }
-        return freight;
+        return freight = orderHeader.getFreight();
     }
 
     @ExcelField(title = "应付金额", align = 2, sort = 120)
     public Double getPayableTotail() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                payableTotail = orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalDetail() + orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalExp() +
-                        orderHeader.getOrderDetailList().get(i).getOrderHeader().getFreight();
-            }
-        }
-        return payableTotail;
+        return payableTotail = orderHeader.getTotalDetail() + orderHeader.getTotalExp() + orderHeader.getFreight();
     }
 
     @ExcelField(title = "利润", align = 2, sort = 130)
     public Double getTotailProfit() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                totailProfit = orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalDetail() + orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalExp() +
-                        orderHeader.getOrderDetailList().get(i).getOrderHeader().getFreight() - orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalBuyPrice();
-            }
-        }
-        return totailProfit;
+        return totailProfit = orderHeader.getTotalDetail() + orderHeader.getTotalExp() + orderHeader.getFreight() - orderHeader.getTotalBuyPrice();
     }
 
     @ExcelField(title = "发票状态", align = 2, sort = 130, dictType = "biz_order_invStatus")
     public Integer getInvStatus() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                invStatus = orderHeader.getOrderDetailList().get(i).getOrderHeader().getInvStatus();
-            }
-        }
-        return invStatus;
+        return invStatus = orderHeader.getInvStatus();
     }
 
     @ExcelField(title = "业务状态", align = 2, sort = 140, dictType = "biz_order_status")
     public Integer getBizBusiness() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                bizBusiness = orderHeader.getOrderDetailList().get(i).getOrderHeader().getBizStatus();
-            }
-        }
-        return bizBusiness;
+        return bizBusiness = orderHeader.getBizStatus();
     }
 
     @ExcelField(title = "尾款信息", align = 2, sort = 150)
     public String getBizStae() {
         String aa = "";
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                Integer bizStatus = orderHeader.getOrderDetailList().get(i).getOrderHeader().getBizStatus();
-                Double totalDetail = orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalDetail();
-                Double totalExp = orderHeader.getOrderDetailList().get(i).getOrderHeader().getTotalExp();
-                Double freight = orderHeader.getOrderDetailList().get(i).getOrderHeader().getFreight();
-                Double receiveTotal = orderHeader.getOrderDetailList().get(i).getOrderHeader().getReceiveTotal();
-                if (bizStatus != 10 && bizStatus != 40 && totalDetail + totalExp + freight != receiveTotal) {
-                    bizStae = aa + "有尾款";
-                }
-            }
+        if (orderHeader.getBizStatus() != 10 && orderHeader.getBizStatus() != 40 &&
+                orderHeader.getTotalDetail() + orderHeader.getTotalExp() + orderHeader.getFreight() != orderHeader.getReceiveTotal()) {
+            bizStae = aa + "有尾款";
         }
         return bizStae;
     }
 
     @ExcelField(title = "订单来源", align = 2, sort = 160)
     public String getPlatformName() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                platformName = orderHeader.getOrderDetailList().get(i).getOrderHeader().getPlatformInfo().getName();
-            }
-        }
-        return platformName;
+        return platformName = orderHeader.getPlatformInfo().getName();
     }
 
     @ExcelField(title = "支付类型", align = 2, sort = 170, dictType = "payType")
@@ -316,75 +238,38 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     @ExcelField(title = "收货人", align = 2, sort = 190)
     public String getAddreReceiver() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int j = 0; j < orderHeader.getOrderDetailList().size(); j++) {
-                addreReceiver = orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getReceiver();
-            }
-        }
-        return addreReceiver;
+        return addreReceiver = orderHeader.getBizLocation().getReceiver();
     }
 
     @ExcelField(title = "联系电话", align = 2, sort = 200)
     public String getAddrePhone() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int j = 0; j < orderHeader.getOrderDetailList().size(); j++) {
-                addrePhone = orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getPhone();
-            }
-        }
-        return addrePhone;
+        return addrePhone = orderHeader.getBizLocation().getPhone();
     }
 
     @ExcelField(title = "订单收货地址", align = 2, sort = 210)
     public String getOderAddress() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int j = 0; j < orderHeader.getOrderDetailList().size(); j++) {
-                oderAddress = orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getProvince().getName() + "" +
-                        orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getCity().getName() + "" +
-                        orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getRegion().getName() + "" +
-                        orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getAddress() + "";
-            }
-        }
-        return oderAddress;
+        return oderAddress = orderHeader.getBizLocation().getProvince().getName() + "" + orderHeader.getBizLocation().getCity().getName() + "" +
+                orderHeader.getBizLocation().getRegion().getName() + "" + orderHeader.getBizLocation().getAddress() + "";
     }
 
     @ExcelField(title = "创建人", align = 2, sort = 220)
     public String getCreateName() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                createName = orderHeader.getOrderDetailList().get(i).getOrderHeader().getCreateBy().getName();
-            }
-        }
-        return createName;
+        return createName = orderHeader.getCreateBy().getName();
     }
 
     @ExcelField(title = "创建时间", type = 0, align = 2, sort = 230)
     public Date getCrDate() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                crDate = orderHeader.getOrderDetailList().get(i).getOrderHeader().getCreateDate();
-            }
-        }
-        return crDate;
+        return crDate = orderHeader.getCreateDate();
     }
 
     @ExcelField(title = "更新人", align = 2, sort = 240)
     public String getUpdateName() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                updateName = orderHeader.getOrderDetailList().get(i).getOrderHeader().getUpdateBy().getName();
-            }
-        }
-        return updateName;
+        return updateName = orderHeader.getUpdateBy().getName();
     }
 
     @ExcelField(title = "更新时间", type = 0, align = 2, sort = 250)
     public Date getUpDate() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                upDate = orderHeader.getOrderDetailList().get(i).getOrderHeader().getUpdateDate();
-            }
-        }
-        return upDate;
+        return upDate = orderHeader.getUpdateDate();
     }
 
     public BizOpShelfSku getShelfInfo() {

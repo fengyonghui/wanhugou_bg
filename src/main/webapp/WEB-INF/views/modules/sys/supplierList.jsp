@@ -42,7 +42,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/sys/office/supplierListGys">机构列表</a></li>
-		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/supplierForm?parent.id=${office.id}&gysFlag=gys_save">机构添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/supplierForm?parent.id=12&gysFlag=gys_save">机构添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="office" action="${ctx}/sys/office/supplierListGys" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

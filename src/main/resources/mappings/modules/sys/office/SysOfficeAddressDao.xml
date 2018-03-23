@@ -38,9 +38,9 @@
 		 LEFT JOIN sys_region province ON c.province_id = province.id
         LEFT JOIN sys_region city ON c.city_id = city.id
         LEFT JOIN sys_region reg ON c.region_id = reg.id
-        LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.office_id
+        LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.office_id AND ccs.status = #{DEL_FLAG_NORMAL}
 		LEFT JOIN sys_office s on s.id=ccs.center_id
-		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
+		LEFT JOIN sys_user con ON con.id = ccs.consultant_id AND con.status = #{DEL_FLAG_NORMAL}
 	</sql>
     
 	<select id="get" resultType="SysOfficeAddress">
@@ -58,8 +58,6 @@
 		<include refid="sysOfficeAddressJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			AND con.status = #{DEL_FLAG_NORMAL}
-			AND ccs.status = #{DEL_FLAG_NORMAL}
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
