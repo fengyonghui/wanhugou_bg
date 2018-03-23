@@ -52,7 +52,6 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
-
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
         <div class="controls">
@@ -60,7 +59,7 @@
                 <%--<form:option value="" label="请选择品牌"/>--%>
                 <%--<form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>--%>
             <%--</form:select>--%>
-                <form:select path="dict.id" class="js-example-basic-multiple">
+                <form:select path="dict.name" class="js-example-basic-multiple">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="value"
                                   htmlEscape="false"/></form:select>
@@ -238,7 +237,7 @@
                             </div>
                         </c:when>
                         <c:otherwise>
-                            <input style="margin-bottom: 5px" type="text" class="input-medium"/>
+                            <input style="margin-bottom: 5px" type="text" class="input-medium" onchange="skuAttrChange(this)" customType="skuAttr"/>
                         </c:otherwise>
                     </c:choose>
 
@@ -247,11 +246,38 @@
 
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label">销售规格：</label>
+        <div class="controls">
+            <input class="btn" type="button" value="预 览" onclick="initSkuTable()"/>
+            批量设置价格:
+            <input type="text" value="" id="batchPrice"/>
+            <input onclick="setBatchPrice()" class="btn" type="button" value="确 定"/>
+        </div>
+        <br/>
+        <div class="controls">
+           <table class="table table-striped table-bordered table-condensed" id="skuTable">
+               <thead>
+               <tr>
+                    <th>尺寸</th>
+                    <th>颜色</th>
+                    <th>价格</th>
+                    <th>操作</th>
+               </tr>
+               </thead>
+               <tbody id="skuTableData">
+               <tr>
+               </tr>
+               </tbody>
+           </table>
+
+        </div>
+    </div>
 
     <div class="form-actions">
         <shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary"
-                                                                           type="submit"
-                                                                           value="保 存"/>&nbsp;</shiro:hasPermission>
+                                                                           type="button"
+                                                                           value="保 存" onclick="submitCustomForm()"/>&nbsp;</shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 </form:form>
@@ -259,13 +285,79 @@
 <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
 <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
 <script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
-<link href="${ctxStatic}/jquery-select2/3.5.3/select2.css" rel="stylesheet" />
 <script src="${ctxStatic}/jquery-select2/3.5.3/select2.js" type="text/javascript"></script>
 <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
 
 <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+    function initSkuTable() {
+        var skuTableData = $("#skuTableData");
+        skuTableData.empty();
+        var tableHtml = "<tr customType=\"skuTr\">" +
+            "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
+            "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
+            "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
+            "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
+            "               </tr>";
+
+        var search_3_to = $("#search_3_to");
+        var selectedColorArr = [];
+        search_3_to.find("option").each(function(){
+            selectedColorArr.push($(this).text());
+        });
+
+        var customTypeAttr = $("[customType]");
+        var selectedSizeArr = [];
+
+        customTypeAttr.each(function () {
+            if ($(this).val() != null && $(this).val() != "") {
+                selectedSizeArr.push($(this).val());
+            }
+        });
+
+        for (var i = 0; i < selectedSizeArr.length; i ++) {
+            for (var j = 0; j < selectedColorArr.length; j ++) {
+                skuTableData.append(tableHtml.replace("$size", selectedSizeArr[i]).replace("$color", selectedColorArr[j]).replace("$price", ""));
+            }
+        }
+
+    }
+
+    function submitCustomForm() {
+        var skuTrArr = $("[customType='skuTr']");
+        var inputForm = $("#inputForm");
+        var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
+        skuTrArr.each(function () {
+            var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).attr("value");
+            var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
+            var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).attr("value");
+            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput));
+        });
+        inputForm.submit();
+    }
+    
+    function deleteParentEle(that) {
+        $(that).parent().remove();
+    }
+    function setBatchPrice() {
+        var priceInput = $("[customInput = 'priceInput']");
+        priceInput.val($("#batchPrice").val());
+        priceInput.attr("value", $("#batchPrice").val());
+    }
+
+    function skuAttrChange(that) {
+        var skuAttrHtmlText = " <input style=\"margin-bottom: 5px\" type=\"text\" class=\"input-medium\" onchange=\"skuAttrChange(this)\" customType=\"skuAttr\"/>";
+        var parent = $(that).parent();
+        var childArr = parent.children("input");
+        childArr.each(function () {
+            if ($(this).val() == null || $(this).val() == "") {
+                $(this).remove();
+            }
+        });
+        parent.append(skuAttrHtmlText);
+    }
+
     $(document).ready(function() {
 
         <%--window.prettyPrint && prettyPrint();--%>
@@ -284,7 +376,11 @@
             searchable: true
         });
 
+        initSkuTable();
+
     });
+
 </script>
+
 </body>
 </html>

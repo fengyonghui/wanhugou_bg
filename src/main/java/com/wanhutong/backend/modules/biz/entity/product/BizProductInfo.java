@@ -29,6 +29,27 @@ import java.util.Map;
  */
 public class BizProductInfo extends DataEntity<BizProductInfo> {
 
+
+//            vari_id
+//    name
+//            prod_code
+//    brand_id
+//            brand_name
+//    marketing_date
+//            img_url
+//    description
+//            vendor_id
+//    vendor_name
+//            min_price
+//    max_price
+//            status
+//    create_id
+//            create_time
+//    u_version
+//            update_time
+//    update_id
+//            item_no
+
 	private static final long serialVersionUID = 1L;
 	private CommonImg commonImg;
 	private String name;		// 商品名称
@@ -63,6 +84,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String itemNo;
 
+	private List<String> skuAttrStrList;
+
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
 
@@ -76,6 +99,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String source;
 
 
+	public List<String> getSkuAttrStrList() {
+		return skuAttrStrList;
+	}
+
+	public void setSkuAttrStrList(List<String> skuAttrStrList) {
+		this.skuAttrStrList = skuAttrStrList;
+	}
 
 	public List<Integer> getCateIdList() {
 		List<Integer> cateIdList = Lists.newArrayList();
@@ -364,4 +394,6 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setDict(Dict dict) {
 		this.dict = dict;
 	}
+
+
 }

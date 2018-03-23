@@ -148,12 +148,10 @@
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_product_info(
-			id,
 			`name`,
             <if test="prodCode!=null and prodCode!=''">
                 prod_code,
             </if>
-
 			brand_id,
 			brand_name,
 			description,
@@ -169,19 +167,17 @@
 			</if>
 			img_url,
 			item_no,
-			status,
 			create_id,
 			create_time,
 			u_version,
 			update_time,
 			update_id
 		) VALUES (
-			#{id},
 			#{name},
         <if test="prodCode!=null and prodCode!=''">
 			#{prodCode},
         </if>
-			#{propValue.id},
+			#{brandId},
 			#{brandName},
 			#{description},
 			#{office.id},
@@ -196,7 +192,6 @@
 		</if>
 			#{imgUrl},
 			#{itemNo},
-			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
