@@ -66,10 +66,9 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     /**
      * 根据用户取用户业绩统计相关数据
      *
-     * @param month 取数据的月份
      * @return 根据不同用户分类的统计数据
      */
-    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticData(@Param("month") String month, @Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
+    List<BizUserSaleStatisticsDto> getSingleUserSaleStatisticData(@Param("purchasingId") Integer purchasingId, @Param("usId") Integer usId, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
 
 
     /**

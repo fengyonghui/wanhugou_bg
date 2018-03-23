@@ -1,7 +1,10 @@
 package com.wanhutong.backend.modules.biz.entity.dto;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * 平台数据概览DTO
@@ -11,7 +14,7 @@ import java.util.Calendar;
 public class BizPlatformDataOverviewDto {
 
     private static final BigDecimal PERCENTAGE = new BigDecimal(100);
-
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * 省份
@@ -62,6 +65,19 @@ public class BizPlatformDataOverviewDto {
      * 库存金额
      */
     private BigDecimal stockAmount;
+
+    /**
+     * 当前日期
+     */
+    private String currentDate;
+
+    public String getCurrentDate() {
+        return currentDate;
+    }
+
+    public void setCurrentDate(String currentDate) {
+        this.currentDate = currentDate;
+    }
 
     public String getProvince() {
         return province;
@@ -115,14 +131,21 @@ public class BizPlatformDataOverviewDto {
         return getAccumulatedSalesMonth().subtract(getProcurement());
     }
 
-
     public Integer getRemainingDays() {
-        Calendar c = Calendar.getInstance();
-        //获取当前天数
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        //获取本月最大天数
-        int max = c.getActualMaximum(Calendar.DAY_OF_MONTH);
-        return max - day;
+        try {
+            Date parse = SIMPLE_DATE_FORMAT.parse(currentDate);
+            Calendar c = Calendar.getInstance();
+            c.setTime(parse);
+            //获取当前天数
+            int day = c.get(Calendar.DAY_OF_MONTH);
+            //获取本月最大天数
+            int max = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+            return max - day;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+
     }
 
     public BigDecimal getDayMinReturned() {

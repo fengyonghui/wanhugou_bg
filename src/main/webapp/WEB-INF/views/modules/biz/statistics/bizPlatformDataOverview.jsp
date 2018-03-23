@@ -17,6 +17,7 @@
     <label>
         <input type="text" id="startDate" value="${date}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
         <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="init();"/>
+        <input id="exportTable"  onclick="exportTable()" class="btn btn-primary" type="submit" value="导出表格"/>
     </label>
 </span>
 <table id="contentTable" class="table table-bordered table-condensed table_text_center">
@@ -31,9 +32,9 @@
         <th colspan="9">目标分析</th>
     </tr>
     <tr>
-        <th>采购额(元)</th>
+        <th>月计划采购额(元)</th>
         <th>月累计销量</th>
-        <th>日采购额(元)</th>
+        <th>日销售额(元)</th>
         <th>达成率</th>
         <th>月累计差异</th>
         <th>剩余天数</th>
@@ -87,6 +88,22 @@
         var startDate = $("#startDate").val();
         window.location.href = "overview?date=" + startDate;
     }
+    function exportTable() {
+        var startDate = $("#applyDate").val();
+        //定义一个form表单
+        var myform = $("<form></form>");
+        myform.attr('method','post')
+        myform.attr('action',"${adminPath}/biz/statistics/platform/overviewDownload");
+
+        var myProductId = $("<input type='hidden' name='date' />");
+        myProductId.attr('value', startDate);
+
+        myform.append(myProductId);
+
+        myform.appendTo('body').submit();
+
+    }
+
 </script>
 </body>
 </html>

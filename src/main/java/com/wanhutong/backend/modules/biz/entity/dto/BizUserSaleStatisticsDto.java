@@ -56,6 +56,19 @@ public class BizUserSaleStatisticsDto {
      */
     private BigDecimal profitPrice;
 
+    /**
+     * 已收货款
+     */
+    private BigDecimal receiveTotal;
+
+    public BigDecimal getReceiveTotal() {
+        return receiveTotal;
+    }
+
+    public void setReceiveTotal(BigDecimal receiveTotal) {
+        this.receiveTotal = receiveTotal;
+    }
+
     public BigDecimal getProfitPrice() {
         return totalMoney.subtract(buyPrice);
     }
