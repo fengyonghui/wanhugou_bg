@@ -307,7 +307,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				-- 				GROUP  BY a.id
+				GROUP  BY a.id
 			</otherwise>
 		</choose>
 		ORDER BY updateDate DESC

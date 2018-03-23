@@ -102,9 +102,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
-            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+           // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
-            page.setCount(count);
+          // page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             Double totalBuyPrice = 0.0;
             for (BizOrderHeader orderHeader:orderHeaderList) {
