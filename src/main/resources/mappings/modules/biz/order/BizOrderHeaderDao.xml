@@ -67,6 +67,8 @@
 			<result property="lineNo" column="orderDetailList.lineNo" />
 			<association property="skuInfo" javaType="BizSkuInfo" column="skuInfo.id">
 				<id property="id" column="orderDetailList.skuInfo.id"/>
+				<result property="name" column="orderDetailList.skuInfo.name"/>
+				<result property="partNo" column="orderDetailList.skuInfo.partNo"/>
 				<result property="buyPrice" column="orderDetailList.skuInfo.buyPrice" />
 				<result property="itemNo" column="orderDetailList.skuInfo.itemNo"/>
 			</association>
@@ -248,6 +250,9 @@
 			</if>
 			<if test="bizStatus !=null">
 				AND a.biz_status=#{bizStatus}
+			</if>
+			<if test="ordrHeaderStartTime !=null and ordrHeaderStartTime !='' and orderHeaderEedTime!=null and orderHeaderEedTime!=''">
+				AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 			</if>
 			<if test="bizType !=null and bizType!=''">
 				AND a.biz_type=#{bizType}
