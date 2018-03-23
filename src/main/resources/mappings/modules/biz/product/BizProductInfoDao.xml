@@ -90,7 +90,7 @@
 		FROM biz_product_info a
 		<include refid="bizProductInfoJoins"/>
 		<where>
-			 a.status = #{DEL_FLAG_NORMAL}
+			  a.status = #{DEL_FLAG_NORMAL}
 			<if test="bizVarietyInfo != '' and bizVarietyInfo != null and  bizVarietyInfo.name != ''">
 				AND vi.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{bizVarietyInfo.name}||'%'</if>
