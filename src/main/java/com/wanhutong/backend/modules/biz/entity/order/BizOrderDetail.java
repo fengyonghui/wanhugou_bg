@@ -92,6 +92,14 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Date crDate;    //创建时间
     private String updateName;     //更新人
     private Date upDate; //更新时间
+    private BizOrderDetail orderDaillist;//商品
+    public BizOrderDetail getOrderDaillist() {
+        return orderDaillist;
+    }
+
+    public void setOrderDaillist(BizOrderDetail orderDaillist) {
+        this.orderDaillist = orderDaillist;
+    }
 
     public List<BizOrderDetail> getOrderHeaderList() {
         return orderHeaderList;
@@ -130,30 +138,24 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     @ExcelField(title = "商品名称（编号）", align = 2, sort = 50)
     public String getOrderDeilList() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                orderDeilList = orderHeader.getOrderDetailList().get(i).getSkuName() + "(" + orderHeader.getOrderDetailList().get(i).getPartNo() + ")";
-            }
+        if (orderDaillist != null) {
+            orderDeilList = orderDaillist.getSkuName() + "(" + orderDaillist.getPartNo() + ")";
         }
         return orderDeilList;
     }
 
     @ExcelField(title = "商品单价", align = 2, sort = 60)
     public Double getSkuPrice() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                skuPrice = orderHeader.getOrderDetailList().get(i).getUnitPrice();
-            }
+        if (orderDaillist != null) {
+            skuPrice = orderDaillist.getUnitPrice();
         }
         return skuPrice;
     }
 
     @ExcelField(title = "采购数量", align = 2, sort = 70)
     public Integer getOrderDeilleng() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int i = 0; i < orderHeader.getOrderDetailList().size(); i++) {
-                orderDeilleng = orderHeader.getOrderDetailList().get(i).getOrdQty();
-            }
+        if (orderDaillist != null) {
+            orderDeilleng = orderDaillist.getOrdQty();
         }
         return orderDeilleng;
     }
@@ -246,16 +248,8 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     @ExcelField(title = "订单收货地址", align = 2, sort = 210)
     public String getOderAddress() {
-        if (orderHeader.getOrderDetailList().size() != 0) {
-            for (int j = 0; j < orderHeader.getOrderDetailList().size(); j++) {
-                oderAddress = orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getProvince().getName() + "" +
-                        orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getCity().getName() + "" +
-                        orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getRegion().getName() + "" +
-                        orderHeader.getOrderDetailList().get(j).getOrderHeader().getBizLocation().getAddress() + "";
-                break;
-            }
-        }
-        return oderAddress;
+        return oderAddress = orderHeader.getBizLocation().getProvince().getName() + "" + orderHeader.getBizLocation().getCity().getName() + "" +
+                orderHeader.getBizLocation().getRegion().getName() + "" + orderHeader.getBizLocation().getAddress() + "";
     }
 
     @ExcelField(title = "创建人", align = 2, sort = 220)
