@@ -14,6 +14,9 @@
         <option value="3" label="订单量">订单量</option>
     </select>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
+    <input type="hidden" name="img" id="img" />
+    <input type="hidden" name="img1" id="img1" />
     <div id="orderTotalDataChart" style="height: 300px;"></div>
 
 </div>
@@ -129,7 +132,13 @@
                     series: msg.seriesList
                 });
                 salesVolumeChart.hideLoading();
-
+                setInterval( function (args) {
+                    var imgUrl = salesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img').val(imgUrl);
+                },1000);
 
                 orderRateChart.setOption({
                     title: {
@@ -181,7 +190,13 @@
                     series: msg.rateSeriesList
                 });
                 orderRateChart.hideLoading();
-
+                setInterval( function (args) {
+                    var imgUrl = orderRateChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img1').val(imgUrl);
+                },1000);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");
@@ -189,7 +204,52 @@
         });
     }
     initChart();
+    function exportTable() {
+        initChart();
 
+        var imgUrl = $('#img').val();
+        var imgUrl1 = $('#img1').val();
+
+        var dataTypeEle = $("#dataType");
+        var dataType = dataTypeEle.find("option:selected").val();
+        var dataTypeDesc = dataTypeEle.find("option:selected").html();
+
+        var barChartTypeEle = $("#barChartType");
+        var barChartType = barChartTypeEle.find("option:selected").val();
+        var barChartTypeDesc = barChartTypeEle.find("option:selected").html();
+
+        var startDate = $("#applyDate").val();
+
+        // data: {"month": startDate, "lineChartType": dataType, "barChartType": barChartType},
+
+        //定义一个form表单
+        var myform = $("<form></form>");
+        myform.attr('method','post')
+        myform.attr('action',"${adminPath}/biz/statistics/orderTableDataDownload");
+
+        var myProductId = $("<input type='hidden' name='month' />");
+        myProductId.attr('value', startDate);
+
+        var myWarehouseId = $("<input type='hidden' name='dataType' />");
+        myWarehouseId.attr('value', dataType);
+
+        var myBarChartType = $("<input type='hidden' name='barChartType' />");
+        myWarehouseId.attr('value', barChartType);
+
+        var myUpdateReason = $("<input type='hidden' name='imgUrl' />");
+        myUpdateReason.attr('value', imgUrl);
+
+        var myUpdateReason1 = $("<input type='hidden' name='imgUrl1' />");
+        myUpdateReason1.attr('value', imgUrl1);
+
+        myform.append(myProductId);
+        myform.append(myWarehouseId);
+        myform.append(myBarChartType);
+        myform.append(myUpdateReason);
+        myform.append(myUpdateReason1);
+        myform.appendTo('body').submit();
+
+    }
 
 </script>
 </html>
