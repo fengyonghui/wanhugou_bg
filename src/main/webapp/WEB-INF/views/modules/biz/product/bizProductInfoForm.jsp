@@ -5,7 +5,8 @@
 <head>
     <title>产品信息表管理</title>
     <meta name="decorator" content="default"/>
-    <%--<%@include file="/WEB-INF/views/include/treeview.jsp" %>--%>
+    <link rel="stylesheet" href="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.min.css">
+
     <script type="text/javascript">
         $(document).ready(function () {
             //$("#name").focus();
@@ -24,35 +25,6 @@
                     }
                 }
             });
-            <%--var setting = {check:{enable:true,nocheckInherit:true},view:{selectedMulti:false},--%>
-                <%--data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){--%>
-                        <%--tree.checkNode(node, !node.checked, true, true);--%>
-                        <%--return false;--%>
-                    <%--}}};--%>
-            <%--&lt;%&ndash;// 分类--菜单&ndash;%&gt;--%>
-            <%--var zNodes = [--%>
-                <%--<c:forEach items="${cateList}" var="cate">{--%>
-                <%--id: "${cate.id}",--%>
-                <%--pId: "${not empty cate.parent.id?cate.parent.id:0}",--%>
-                <%--name: "${not empty cate.parent.id?cate.name:'分类列表'}"--%>
-            <%--},--%>
-            <%--</c:forEach>];--%>
-            <%--// 初始化树结构--%>
-            <%--var tree = $.fn.zTree.init($("#cateTree"), setting, zNodes);--%>
-            <%--// 不选择父节点--%>
-                <%--tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};--%>
-            <%--// 默认选择节点--%>
-                <%--var ids = "${entity.cateIds}".split(",");--%>
-                <%--for (var i = 0; i < ids.length; i++) {--%>
-                <%--var node = tree.getNodeByParam("id", ids[i]);--%>
-                <%--try {--%>
-                <%--tree.checkNode(node, true, false);--%>
-                <%--tree.checkNode(node.getParentNode(), true, false);--%>
-                <%--} catch (e) {--%>
-                <%--}--%>
-            <%--}--%>
-            <%--// 默认展开全部节点--%>
-            <%--tree.expandAll(true);--%>
         })
 
 
@@ -71,7 +43,6 @@
 <form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/save" method="post"
            class="form-horizontal">
     <form:hidden path="id"/>
-    <%--<input type="hidden" id="cateValueId" value="${bizProductInfo.catePropValue.id}"/>--%>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -89,7 +60,7 @@
                 <%--<form:option value="" label="请选择品牌"/>--%>
                 <%--<form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>--%>
             <%--</form:select>--%>
-                <form:select path="dict.id" class="input-xlarge" disabled="true">
+                <form:select path="dict.id" class="js-example-basic-multiple">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="value"
                                   htmlEscape="false"/></form:select>
@@ -169,21 +140,11 @@
     <div class="control-group">
         <label class="control-label">请选择产品标签：</label>
         <div class="controls">
-
-            <select  title="search"  id="search" class="input-xlarge" multiple="multiple" size="8">
+            <select id="test-select-2" multiple="multiple" class="input-medium">
                 <c:forEach items="${cateList}" var="cate">
-                        <option data-section="${cate.pId}" value='1'>${cate.name}</option>
-                        <%--<option value='2' selected>Obiwan</option>--%>
-
-
+                    <option data-section="${cate.parentNames}" value="${cate.id}">${cate.id}-${cate.name}</option>
                 </c:forEach>
-
-
             </select>
-
-
-            <%--<div id="cateTree" class="ztree" style="margin-top:3px;float:left;"></div>--%>
-            <%--<form:hidden path="cateIds"/>--%>
         </div>
     </div>
 
@@ -297,8 +258,13 @@
 
 <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
 <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
+<script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
+<link href="${ctxStatic}/jquery-select2/3.5.3/select2.css" rel="stylesheet" />
+<script src="${ctxStatic}/jquery-select2/3.5.3/select2.js" type="text/javascript"></script>
 <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
-<%--<script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>--%>
+
+<script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+
 <script type="text/javascript">
     $(document).ready(function() {
 
@@ -314,6 +280,10 @@
                 return value.length >=0 ;
             }
         });
+        var tree2 = $("#test-select-2").treeMultiselect({
+            searchable: true
+        });
+
     });
 </script>
 </body>

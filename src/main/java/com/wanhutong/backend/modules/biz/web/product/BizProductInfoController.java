@@ -38,8 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 产品信息表Controller
@@ -144,22 +143,50 @@ public class BizProductInfoController extends BaseController {
 			}
 
 		}
+			List<BizCategoryInfo> categoryInfoList=bizCategoryInfoService.findAllList();
+			List<BizCategoryInfo> categoryInfos=Lists.newArrayList();
+			Set<Integer> parentSet = new HashSet<>();
+			 for(BizCategoryInfo categoryInfo:categoryInfoList){
+				 String[] parentIds = categoryInfo.getParentIds().split(",");
+				 for (String id : parentIds) {
+					 parentSet.add(Integer.valueOf(id));
+				 }
+			 }
 
-//		if(bizProductInfo.getId()!=null){
-//			BizProdPropertyInfo bizProdPropertyInfo=new BizProdPropertyInfo();
-//			bizProdPropertyInfo.setProductInfo(bizProductInfo);
-//			Map<String, List<BizProdPropValue>> prodPropValueMap=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
-//			model.addAttribute("prodPropValueMap",prodPropValueMap);
-//		}
-			List<BizCategoryInfo> categoryInfoList=bizCategoryInfoService.findList(new BizCategoryInfo());
+			for(BizCategoryInfo categoryInfo:categoryInfoList){
+				StringBuilder pStr= new StringBuilder();
+				BizCategoryInfo bizCategoryInfo=new BizCategoryInfo();
+				Integer id = categoryInfo.getId();
+				if (!parentSet.contains(id)){
+					bizCategoryInfo.setId(categoryInfo.getId());
+					bizCategoryInfo.setName(categoryInfo.getName());
+					String[] parentIds = categoryInfo.getParentIds().split(",");
+					for (String pid : parentIds) {
+						if(Integer.parseInt(pid)!=0){
+							BizCategoryInfo categoryInfo1=bizCategoryInfoService.get(Integer.parseInt(pid));
+							pStr.append(categoryInfo1.getName()).append("/");
+						}
 
+					}
+					if(StringUtils.isNotBlank(pStr)){
+						bizCategoryInfo.setParentNames(pStr.toString().substring(0,pStr.length()-1));
+					}else {
+						bizCategoryInfo.setParentNames(pStr.toString());
+					}
+
+				}
+				if(StringUtils.isNotBlank(bizCategoryInfo.getName())){
+					categoryInfos.add(bizCategoryInfo);
+				}
+
+			}
 			List<BizVarietyInfo> varietyInfoList=bizVarietyInfoService.findList(new BizVarietyInfo());
 
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
 			model.addAttribute("entity", bizProductInfo);
 			model.addAttribute("prodTagList",tagInfos);
 			model.addAttribute("skuTagList",skuTagInfos);
-			model.addAttribute("cateList",convertList(categoryInfoList));
+			model.addAttribute("cateList",categoryInfos);
 			model.addAttribute("varietyInfoList",varietyInfoList);
 		return "modules/biz/product/bizProductInfoForm";
 	}
