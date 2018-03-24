@@ -31,6 +31,8 @@ public class BizCustCredit extends DataEntity<BizCustCredit> {
 	private String aliAccount;		// 支付宝账号
 	private String aliName;		// 支付宝用户姓名
 
+	private String custFalg;	//标识符
+
 	private String CgsType;	//查询类型
 
 	public BizCustCredit() {
@@ -113,4 +115,11 @@ public class BizCustCredit extends DataEntity<BizCustCredit> {
 		CgsType = cgsType;
 	}
 
+	public String getCustFalg() {
+		return custFalg;
+	}
+
+	public void setCustFalg(String custFalg) {
+		this.custFalg = custFalg;
+	}
 }

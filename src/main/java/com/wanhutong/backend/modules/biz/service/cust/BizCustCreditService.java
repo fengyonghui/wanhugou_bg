@@ -21,6 +21,7 @@ import com.wanhutong.backend.modules.biz.dao.cust.BizCustCreditDao;
 
 /**
  * 用户钱包Service
+ *
  * @author Ouyang
  * @version 2018-03-09
  */
@@ -37,51 +38,63 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
     @Autowired
     private BizPayRecordService bizPayRecordService;
 
-	public BizCustCredit get(Integer id) {
-		return super.get(id);
-	}
-	
-	public List<BizCustCredit> findList(BizCustCredit bizCustCredit) {
-		return super.findList(bizCustCredit);
-	}
-	
-	public Page<BizCustCredit> findPage(Page<BizCustCredit> page, BizCustCredit bizCustCredit) {
-		if(bizCustCredit.getCustomer()!=null){
-			bizCustCredit.getCustomer().getMoblieMoeny().setMobile(bizCustCredit.getCustomer().getMoblieMoeny().getMobile());
-		}
-		return super.findPage(page, bizCustCredit);
-	}
-	
-	@Transactional(readOnly = false)
-	public void save(BizCustCredit bizCustCredit) {
+    public BizCustCredit get(Integer id) {
+        return super.get(id);
+    }
+
+    public List<BizCustCredit> findList(BizCustCredit bizCustCredit) {
+        return super.findList(bizCustCredit);
+    }
+
+    public Page<BizCustCredit> findPage(Page<BizCustCredit> page, BizCustCredit bizCustCredit) {
+        if (bizCustCredit.getCustomer() != null) {
+            bizCustCredit.getCustomer().getMoblieMoeny().setMobile(bizCustCredit.getCustomer().getMoblieMoeny().getMobile());
+        }
+        return super.findPage(page, bizCustCredit);
+    }
+
+    @Transactional(readOnly = false)
+    public void save(BizCustCredit bizCustCredit) {
         User user = UserUtils.getUser();
         BizCustCredit custCredit = this.get(bizCustCredit.getCustomer().getId());
-        //原金额
-        BigDecimal wallet = custCredit.getWallet();
-        custCredit.setWallet(bizCustCredit.getWallet());
-        custCredit.setMoney(bizCustCredit.getMoney());
-        custCredit.setId(bizCustCredit.getCustomer().getId());
-        super.save(custCredit);
-        BizPayRecord bizPayRecord = new BizPayRecord();
-        bizPayRecord.setPayNum("P_000000");
-        bizPayRecord.setPayMoney(bizCustCredit.getWallet().subtract(wallet).doubleValue());
-        bizPayRecord.setOriginalAmount(wallet);
-        bizPayRecord.setCashAmount(bizCustCredit.getWallet());
-        bizPayRecord.setPayer(user.getId());
-        bizPayRecord.setCustomer(custCredit.getCustomer());
-        bizPayRecord.setBizStatus(BIZSTATUS);
-        bizPayRecord.setAccount(user.getCompany());
-        bizPayRecord.setToAccount(custCredit.getCustomer());
-        bizPayRecord.setRecordType(RECORDTYPE);
-        bizPayRecord.setRecordTypeName("充值");
-        bizPayRecord.setPayType(PAYTYPE);
-        bizPayRecord.setPayTypeName("平台付款");
-        bizPayRecordService.save(bizPayRecord);
-	}
-	
-	@Transactional(readOnly = false)
-	public void delete(BizCustCredit bizCustCredit) {
-		super.delete(bizCustCredit);
-	}
-	
+        if (custCredit != null) {
+            //原金额
+            BigDecimal wallet = custCredit.getWallet();
+            custCredit.setWallet(bizCustCredit.getWallet());
+            custCredit.setMoney(bizCustCredit.getMoney());
+            custCredit.setId(bizCustCredit.getCustomer().getId());
+            super.save(custCredit);
+            if (bizCustCredit.getCustFalg() != null && bizCustCredit.getCustFalg().equals("officeCust")) {
+
+            } else {
+                /**
+                 * 当用户钱包修改金额时创建交易记录
+                 * */
+                BizPayRecord bizPayRecord = new BizPayRecord();
+                bizPayRecord.setPayNum("P_000000");
+                bizPayRecord.setPayMoney(bizCustCredit.getWallet().subtract(wallet).doubleValue());
+                bizPayRecord.setOriginalAmount(wallet);
+                bizPayRecord.setCashAmount(bizCustCredit.getWallet());
+                bizPayRecord.setPayer(user.getId());
+                bizPayRecord.setCustomer(custCredit.getCustomer());
+                bizPayRecord.setBizStatus(BIZSTATUS);
+                bizPayRecord.setAccount(user.getCompany());
+                bizPayRecord.setToAccount(custCredit.getCustomer());
+                bizPayRecord.setRecordType(RECORDTYPE);
+                bizPayRecord.setRecordTypeName("充值");
+                bizPayRecord.setPayType(PAYTYPE);
+                bizPayRecord.setPayTypeName("平台付款");
+                bizPayRecordService.save(bizPayRecord);
+            }
+        } else {
+            super.save(bizCustCredit);
+        }
+
+    }
+
+    @Transactional(readOnly = false)
+    public void delete(BizCustCredit bizCustCredit) {
+        super.delete(bizCustCredit);
+    }
+
 }
