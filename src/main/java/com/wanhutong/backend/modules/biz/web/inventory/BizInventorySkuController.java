@@ -83,7 +83,7 @@ public class BizInventorySkuController extends BaseController {
 		boolean flag=false;
 		if(user.getRoleList()!=null){
 			for(Role role:user.getRoleList()){
-				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+				if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
 					flag=true;
 					break;
 				}
@@ -93,17 +93,16 @@ public class BizInventorySkuController extends BaseController {
         if (user.isAdmin()) {
             page= bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         } else {
-//        	if(flag){
-//				bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+        	if(flag){
 				Office company = systemService.getUser(user.getId()).getCompany();
 				//根据采购中心取出仓库
 				BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
 				bizInventoryInfo.setCustomer(company);
 				bizInventorySku.setInvInfo(bizInventoryInfo);
-//			}
-
+			}else {
+				bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+			}
              page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
-
         }
         model.addAttribute("zt",zt);
 		model.addAttribute("page", page);

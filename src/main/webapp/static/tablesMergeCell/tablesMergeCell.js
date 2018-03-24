@@ -6,7 +6,6 @@
             rows: null
         };
         var opts = $.extend(defaultsettings, options);
-        console.info(opts);
         return this.each(function() {
             var cols = opts.cols,
                 rows = opts.rows;

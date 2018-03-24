@@ -67,6 +67,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
+        Double totalBuyPrice = 0.0;
         boolean flag=false;
         if(user.getRoleList()!=null){
             for(Role role:user.getRoleList()){
@@ -77,22 +78,33 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }
         }
         if(user.isAdmin()){
-            return super.findList(bizOrderHeader);
+            List<BizOrderHeader> headerList = super.findList(bizOrderHeader);
+            //用于订单导出的利润
+            for (BizOrderHeader orderHeader : headerList) {
+                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo() == null ? 0 : orderDetail.getSkuInfo().getBuyPrice() * orderDetail.getOrdQty()).sum();
+                orderHeader.setTotalBuyPrice(totalBuyPrice);
+            }
+            return headerList;
         }else {
             if(flag){
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
-
-            return super.findList(bizOrderHeader);
+            List<BizOrderHeader> headerList = super.findList(bizOrderHeader);
+            //用于订单导出的利润
+            for (BizOrderHeader orderHeader : headerList) {
+                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo() == null ? 0 : orderDetail.getSkuInfo().getBuyPrice() * orderDetail.getOrdQty()).sum();
+                orderHeader.setTotalBuyPrice(totalBuyPrice);
+            }
+            return headerList;
         }
     }
 
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
-            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+           // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
-            page.setCount(count);
+          // page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             Double totalBuyPrice = 0.0;
             for (BizOrderHeader orderHeader:orderHeaderList) {

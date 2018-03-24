@@ -422,7 +422,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
             for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
                 Integer propId = entry.getKey();
-
+                bizProdPropertyInfo.setId(null);
                 PropertyInfo propertyInfo = propertyInfoService.get(propId);
                 bizProdPropertyInfo.setPropName(propertyInfo.getName());
                 bizProdPropertyInfo.setPropDescription(propertyInfo.getDescription());

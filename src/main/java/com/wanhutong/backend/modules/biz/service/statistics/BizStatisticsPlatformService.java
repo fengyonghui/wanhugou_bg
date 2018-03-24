@@ -98,7 +98,7 @@ public class BizStatisticsPlatformService {
         listByType.forEach(o -> {
             SysRegion sysRegion = sysRegionDao.queryOfficeProvinceById(o.getId());
 
-            List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = orderStatisticDataByOffice(startDate, endDate, null, null, null, o.getId());
+            List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = orderStatisticDataByOffice(startDate, endDate + " 23:59:59", null, null, null, o.getId());
             List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList = orderStatisticDataByOffice(currentDate, currentDate + " 23:59:59", null, null, null, o.getId());
             BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
             BizOrderStatisticsDto bizOrderStatisticsDto = null;
@@ -127,7 +127,7 @@ public class BizStatisticsPlatformService {
             // 库存金额
             StockAmountDto stockAmountByCustId = bizInventoryInfoDao.getStockAmountByCustId(o.getId());
             bizPlatformDataOverviewDto.setStockAmount(new BigDecimal(stockAmountByCustId == null ? "0" : stockAmountByCustId.getStockAmount()));
-
+            bizPlatformDataOverviewDto.setCurrentDate(endDate);
             List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = resultMap.putIfAbsent(sysRegion == null ? "未知" : sysRegion.getName(), Lists.newArrayList(bizPlatformDataOverviewDto));
             if (bizPlatformDataOverviewDtos != null) {
                 bizPlatformDataOverviewDtos.add(bizPlatformDataOverviewDto);

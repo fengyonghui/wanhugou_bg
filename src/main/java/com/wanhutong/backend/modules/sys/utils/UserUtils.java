@@ -39,7 +39,7 @@ public class UserUtils {
 	public static final String USER_CACHE_ID_ = "id_";
 	public static final String USER_CACHE_LOGIN_NAME_ = "ln";
 	public static final String USER_CACHE_LIST_BY_OFFICE_ID_ = "oid_";
-	public static final String USER_CACHE_LIST_BY_COMPANY_ID_ = "cid_";
+    public static final String USER_CACHE_LIST_BY_COMPANY_ID_ = "cid_";
 
 	public static final String USER_CACHE_HOU="wht_users";
 	public static final String USER_CACHE_HOU_LOGIN_NAME_ ="user_";

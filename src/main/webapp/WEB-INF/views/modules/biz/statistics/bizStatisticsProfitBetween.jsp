@@ -4,50 +4,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>用户统计</title>
+    <title>订单统计</title>
 </head>
 <body>
 <div>
-    <input id="startDate" value="${startDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
-    <input id="endDate" value="${endDate}" onchange="initChart()" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input name="startDate" id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input name="endDate" id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
     <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
     <input type="hidden" name="img" id="img" />
-    <div id="orderTotalDataChart" style="height: 500px"></div>
+    <input type="hidden" name="img1" id="img1" />
+    <div id="orderTotalDataChart" style="height: 300px;"></div>
 
 </div>
-
+<div>
+    <div id="orderRateChart" style="height: 300px"></div>
+</div>
 
 </body>
 <script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
-<script type="application/javascript" src="/static/common/base.js"></script>
+<script type="application/javascript" src="${ctxStatic}/common/base.js"></script>
 <script type="application/javascript">
     function initChart() {
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
         salesVolumeChart.showLoading($Echarts.showLoadingStyle);
 
-        var endDate = $("#endDate").val();
         var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
 
-        if (startDate == '' || startDate == null || endDate == '' || endDate == null) {
-            alert("请选择日期");
-            return;
-        }
-        if(!$DateUtil.CompareDate(endDate,startDate)) {
-            alert("日期选择错误!");
-            return;
-        }
         if($DateUtil.CompareDate('2017-09-01',startDate)) {
             alert("日期选择错误!请选择2017年9月以后的日期");
             return;
         }
         $.ajax({
             type: 'GET',
-            url: "${adminPath}/biz/statistics/between/userData",
-            data: {"startDate": startDate,"endDate": endDate},
+            url: "${adminPath}/biz/statistics/between/profitData",
+            data: {"startDate": startDate, "endDate": endDate},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -55,9 +50,10 @@
                     salesVolumeChart.hideLoading();
                     return;
                 }
+
                 salesVolumeChart.setOption({
                     title: {
-                        text: '用户量统计(区间)',
+                        text: '销售利润统计(区间,默认前一周)',
                         textStyle:{
                             fontSize: 16,
                             fontWeight: 'bolder',
@@ -88,38 +84,26 @@
                                 title: '显示表格',
                                 icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
                                 onclick: function (){
-                                    window.location.href="${adminPath}/biz/statistics/between/customTable?startDate=" + startDate + "&endDate=" + endDate;
+                                    window.location.href="${adminPath}/biz/statistics/between/orderTable?startDate=" + startDate + "&endDate=" + endDate
                                 }
                             }
                         }
                     },
                     legend: {
-                        data: '用户量',
+                        data: msg.monthList,
                         y : 'bottom'
                     },
-                    // grid: {
-                    //     bottom:'60%',
-                    //     left: '10%'
-                    // },
                     xAxis: {
-                        data: msg.nameList,
+                        data: msg.officeNameSet,
                         axisPointer: {
                             type: 'shadow'
-                        },
-                        // axisLabel: {
-                        //     interval: 0,
-                        //     formatter:function(value)
-                        //     {
-                        //         return value.split("").join("\n");
-                        //     }
-                        // }
+                        }
                     },
                     yAxis: [
                         {
                             type: 'value',
                             scale: true,
-                            name: '用户量',
-                            min:0
+                            name: '利润'
                         }
                     ],
                     series: msg.seriesList
@@ -144,28 +128,29 @@
 
         var imgUrl = $('#img').val();
 
-        var endDate = $("#endDate").val();
         var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
+
+        // data: {"month": startDate, "lineChartType": dataType, "barChartType": barChartType},
 
         //定义一个form表单
         var myform = $("<form></form>");
         myform.attr('method','post')
-        myform.attr('action',"${adminPath}/biz/statistics/between/userDataDownload");
+        myform.attr('action',"${adminPath}/biz/statistics/between/profitDataDownload");
 
         var myProductId = $("<input type='hidden' name='startDate' />");
         myProductId.attr('value', startDate);
-     var myEndDate = $("<input type='hidden' name='endDate' />");
+        var myEndDate = $("<input type='hidden' name='endDate' />");
         myEndDate.attr('value', endDate);
-
 
         var myUpdateReason = $("<input type='hidden' name='imgUrl' />");
         myUpdateReason.attr('value', imgUrl);
 
 
         myform.append(myProductId);
-        myform.append(myEndDate);
         myform.append(myUpdateReason);
-        myform.appendTo('body').submit(); //must add this line for higher html spec
+        myform.append(myEndDate);
+        myform.appendTo('body').submit();
 
     }
 
