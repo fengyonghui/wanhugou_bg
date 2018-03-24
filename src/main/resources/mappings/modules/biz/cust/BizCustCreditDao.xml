@@ -52,7 +52,7 @@
 	
 	<sql id="bizCustCreditJoins">
 		LEFT JOIN sys_office so ON so.id = a.office_id
-		left join sys_user suso on so.id=suso.company_id and so.primary_person = suso.id
+		left join sys_user suso on so.id=suso.company_id and so.primary_person = suso.id and suso.`status`=#{DEL_FLAG_NORMAL}
 		left join sys_user su on a.create_id=su.id
 	</sql>
     
@@ -70,7 +70,7 @@
 		FROM biz_cust_credit a
 		<include refid="bizCustCreditJoins"/>
 		<where>
-			a.status = #{DEL_FLAG_NORMAL} and suso.`status`=#{DEL_FLAG_NORMAL}
+			a.status = #{DEL_FLAG_NORMAL}
 			<if test="customer != null and customer.id != null and customer.id != ''">
 				AND a.office_id = #{customer.id}
 			</if>
@@ -147,7 +147,7 @@
 		<if test="aliName!=null and aliName!=''">
 			#{aliName},
 		</if>
-			#{status},
+			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},

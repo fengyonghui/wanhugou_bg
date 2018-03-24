@@ -198,9 +198,11 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		super.save(office);
 		if(bizCustCredit.getId()== null){
 			if(bizCustCredit != null ){
-				bizCustCredit.setId(office.getId());
+//				bizCustCredit.setId(office.getId());
+				bizCustCredit.setCustomer(office);
 				bizCustCredit.setPayPwd(SystemService.entryptPassword(DictUtils.getDictValue("密码", "payment_password", "")));
 				bizCustCredit.setuVersion(1);
+				bizCustCredit.setCustFalg("officeCust");
 				bizCustCreditService.save(bizCustCredit);
 			}
 		}else{

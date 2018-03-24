@@ -449,6 +449,7 @@ public class BizOrderHeaderController extends BaseController {
                 List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
                 list.forEach(deil->{
                     deil.setOrderHeader(o);
+                    deil.setOrderDaillist(deil);//商品，重要
                 });
                 o.setOrderDetailList(list);
                 bizPayRecord.setPayNum(o.getOrderNum());

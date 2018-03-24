@@ -44,6 +44,7 @@
 
 	<sql id="bizProductInfoColumns">
 		a.id AS "id",
+		vi.name as "bizVarietyInfo.name",
 		a.name AS "name",
 		a.prod_code AS "prodCode",
 		a.brand_id AS "propValue.id",
@@ -89,7 +90,13 @@
 		FROM biz_product_info a
 		<include refid="bizProductInfoJoins"/>
 		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+			  a.status = #{DEL_FLAG_NORMAL}
+			<if test="bizVarietyInfo != '' and bizVarietyInfo != null and  bizVarietyInfo.name != ''">
+				AND vi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{bizVarietyInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{bizVarietyInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{bizVarietyInfo.name},'%')</if>
+			</if>
 			<if test="name != null and name != ''">
 				AND a.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
