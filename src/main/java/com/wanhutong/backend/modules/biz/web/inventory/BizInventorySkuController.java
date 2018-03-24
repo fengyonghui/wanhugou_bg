@@ -191,10 +191,18 @@ public class BizInventorySkuController extends BaseController {
 				bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
 				bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
 				bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
-				bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
-				bizInventorySkuService.save(bizInventorySku);
+				//查询是否有已删除的该商品库存
+                BizInventorySku only = bizInventorySkuService.findOnly(bizInventorySku);
+                if (only == null) {
+                    bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
+                    bizInventorySkuService.save(bizInventorySku);
+                }else {
+                    only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
+                    bizInventorySkuService.save(only);
+                }
 			}
-		}else if (bizInventorySkus!=null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")){
+		}//修改
+		else if (bizInventorySkus!=null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")){
             BizInventorySku bizInventorySku = bizInventorySkuService.get(bizInventorySkus.getId());
             bizInventorySku.setStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));
             bizInventorySkuService.save(bizInventorySku);

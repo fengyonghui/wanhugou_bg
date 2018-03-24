@@ -328,4 +328,15 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 	}
 
+    /**
+     *取所有的供应商
+     * @param id
+     * @return
+     */
+	public List<Office> findVendor(String id){
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(",").append(id).append(",");
+        String parentIds = stringBuffer.toString();
+        return  officeDao.findVent(parentIds);
+	}
 }
