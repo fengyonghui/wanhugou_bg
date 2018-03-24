@@ -59,9 +59,9 @@
                 <%--<form:option value="" label="请选择品牌"/>--%>
                 <%--<form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>--%>
             <%--</form:select>--%>
-                <form:select path="dict.name" class="js-example-basic-multiple">
+                <form:select path="brandId" class="js-example-basic-multiple">
                     <form:option value="" label="请选择"/>
-                    <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="value"
+                    <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
                                   htmlEscape="false"/></form:select>
 
             <span class="help-inline"><font color="red">*</font> </span>
@@ -116,8 +116,8 @@
     <div class="control-group">
         <label class="control-label">请选择供应商：</label>
         <div class="controls">
-            <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.name"
-                            labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+            <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.id"
+                            labelValue="${entity.office.id}" notAllowSelectRoot="true" notAllowSelectParent="true"
                             title="供应商" url="/sys/office/queryTreeList?type=7" extId="${office.id}"
                             cssClass="input-xlarge required"
                             allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
@@ -155,36 +155,10 @@
                     <span  style="float:left;width:60px;padding-top:3px">${tagInfo.name}：</span>
                     <c:choose>
                         <c:when test="${tagInfo.dictList!=null}">
-                            <div style="float: left">
-
-                                <select  title="search"  id="search_${tagInfo.id}" class="input-xlarge" multiple="multiple" size="8">
-                                    <c:forEach items="${tagInfo.dictList}" var="dict">
-                                        <%--<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}--%>
-                                        <option value="${dict.value}">${dict.label}</option>
-                                    </c:forEach>
-
-
-                                </select>
-
-                            </div>
-                            <div  style="width: 20%;margin-left:10px;float: left">
-                                <button type="button" id="search_${tagInfo.id}_rightAll" class="btn-block"><i class="icon-forward"></i></button>
-
-                                <button type="button" id="search_${tagInfo.id}_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>
-
-                                <button type="button" id="search_${tagInfo.id}_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>
-
-                                <button type="button" id="search_${tagInfo.id}_leftAll" class="btn-block"><i class="icon-backward"></i></button>
-                            </div>
-                            <div style="margin-left:10px;float: left">
-
-                                <select name="aaa"  id="search_${tagInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
-                                        <%--<c:forEach items="${bizCategoryInfo.catePropValueMap[propertyInfo.id]}" var="propValue">--%>
-                                        <%--&lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;--%>
-                                        <%--<option value="${propertyInfo.id}-${propValue.propertyValueId}">${propValue.value}</option>--%>
-                                        <%--</c:forEach>--%>
-                                </select>
-                            </div>
+                            <form:select path="textureStr" class="input-medium required">
+                                <form:option value="" label="请选择"/>
+                                <form:options items="${tagInfo.dictList}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+                            </form:select>
                         </c:when>
                         <c:otherwise>
                             <input type="text" class="input-medium"/>
@@ -228,12 +202,7 @@
 
                             <div style="margin-left:10px;float: left">
 
-                                <select name="aaa"  id="search_${tagInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
-                                        <%--<c:forEach items="${bizCategoryInfo.catePropValueMap[propertyInfo.id]}" var="propValue">--%>
-                                        <%--&lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;--%>
-                                        <%--<option value="${propertyInfo.id}-${propValue.propertyValueId}">${propValue.value}</option>--%>
-                                        <%--</c:forEach>--%>
-                                </select>
+                                <select name="aaa"  id="search_${tagInfo.id}_to" class="input-xlarge" size="8" multiple="multiple"></select>
                             </div>
                         </c:when>
                         <c:otherwise>
@@ -323,7 +292,7 @@
         }
 
     }
-
+    
     function submitCustomForm() {
         var skuTrArr = $("[customType='skuTr']");
         var inputForm = $("#inputForm");
@@ -334,12 +303,21 @@
             var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).attr("value");
             inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput));
         });
+
+        var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
+        var testSelect2 = $("#test-select-2");
+        var tagSelected = testSelect2.parent().children(".tree-multiselect").children(".selected").children("div");
+        tagSelected.each(function () {
+            inputForm.append(tagFormHtml.replace("$value", $(this).attr("data-value")));
+        });
+
         inputForm.submit();
     }
     
     function deleteParentEle(that) {
         $(that).parent().remove();
     }
+
     function setBatchPrice() {
         var priceInput = $("[customInput = 'priceInput']");
         priceInput.val($("#batchPrice").val());
@@ -369,7 +347,7 @@
             }
             ,
             fireSearch: function(value) {
-                return value.length >=0 ;
+                return value.length >=1 ;
             }
         });
         var tree2 = $("#test-select-2").treeMultiselect({

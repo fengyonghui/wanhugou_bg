@@ -74,11 +74,10 @@
 	<insert id="insert">
 		INSERT INTO sys_attribute_value(
 			id,
-			tag_id,
+			attr_id,
 			object_name,
 			object_id,
 			value,
-			code,
 			status,
 			create_id,
 			create_time,
@@ -87,23 +86,22 @@
 			update_time
 		) VALUES (
 			#{id},
-			#{tagId},
+			#{attributeInfo.id},
 			#{objectName},
 			#{objectId},
 			#{value},
-			#{code},
-			#{status},
+			${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
 			#{updateDate}
-		)
+		) on duplicate KEY UPDATE value = #{value}
 	</insert>
 	
 	<update id="update">
 		UPDATE sys_attribute_value SET 	
-			tag_id = #{tagId},
+			attr_id = #{attributeInfo.id},
 			object_name = #{objectName},
 			object_id = #{objectId},
 			value = #{value},
@@ -114,6 +112,14 @@
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
+
+	<!--<update id="updateByObj">-->
+		<!--UPDATE sys_attribute_value SET-->
+			<!--value = #{value},-->
+			<!--update_id = #{updateBy.id},-->
+			<!--update_time = #{updateDate}-->
+		<!--WHERE attr_id = #{attributeInfo.id} AND object_name = #{objectName} AND object_id = #{objectId}-->
+	<!--</update>-->
 	
 	<update id="delete">
 		UPDATE sys_attribute_value SET 

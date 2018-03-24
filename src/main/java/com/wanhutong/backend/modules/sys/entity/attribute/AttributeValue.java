@@ -3,9 +3,8 @@
  */
 package com.wanhutong.backend.modules.sys.entity.attribute;
 
-import org.hibernate.validator.constraints.Length;
-
 import com.wanhutong.backend.common.persistence.DataEntity;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * 标签属性值Entity

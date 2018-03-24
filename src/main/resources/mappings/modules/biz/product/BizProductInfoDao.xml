@@ -149,9 +149,7 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_product_info(
 			`name`,
-            <if test="prodCode!=null and prodCode!=''">
-                prod_code,
-            </if>
+            prod_code,
 			brand_id,
 			brand_name,
 			description,
@@ -174,9 +172,7 @@
 			update_id
 		) VALUES (
 			#{name},
-        <if test="prodCode!=null and prodCode!=''">
 			#{prodCode},
-        </if>
 			#{brandId},
 			#{brandName},
 			#{description},
@@ -207,9 +203,6 @@
 		</if>
 		<if test="prodCode!=null and prodCode!=''">
 			prod_code = #{prodCode},
-		</if>
-		<if test="propValue!=null and propValue.id!=null and propValue.id!=''">
-			brand_id = #{propValue.id},
 		</if>
 		<if test="brandName!=null and brandName!=''">
 			brand_name = #{brandName},

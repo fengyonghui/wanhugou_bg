@@ -3,40 +3,38 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
-import java.io.*;
-import java.net.URLDecoder;
-import java.util.*;
-
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
-import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
-import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
-import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
+import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.SkuTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
-import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfo;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
+import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import net.sf.ehcache.util.ProductInfo;
-import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +42,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import org.springframework.web.filter.CharacterEncodingFilter;
-
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
 
 
 /**
@@ -78,67 +74,104 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     private BizVendInfoService bizVendInfoService;
     @Autowired
     private BizVarietyInfoService bizVarietyInfoService;
+    @Resource
+    private DictService dictService;
+    @Resource
+    private OfficeService officeService;
+    @Resource
+    private BizCategoryInfoService bizCategoryInfoService;
+    @Resource
+    private AttributeValueService attributeValueService;
 
+    /**
+     * 材质ID 临时解决文案 需优化
+     */
+    private static final Integer MATERIAL_ATTR_ID = 1;
+    private static final String PRODUCT_TABLE = "biz_product_info";
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
-
+    @Override
     public BizProductInfo get(Integer id) {
         return super.get(id);
     }
 
+    @Override
     public List<BizProductInfo> findList(BizProductInfo bizProductInfo) {
         return super.findList(bizProductInfo);
     }
 
+    @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
         return super.findPage(page, bizProductInfo);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Override
     public void save(BizProductInfo bizProductInfo) {
-        String brandCode="";
-        String prodCode="";
-        String cateCode="";
-//        if (bizProductInfo.getPropValue() != null && bizProductInfo.getPropValue().getId() != null) {
-//            PropValue propValue = propValueService.get(bizProductInfo.getPropValue().getId());
-//            if (propValue != null) {
-//                bizProductInfo.setBrandName(propValue.getValue());
-//                brandCode=addZeroForNum(propValue.getCode(),false,2);
-//                Office office=bizProductInfo.getOffice();
-//                BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
-//                String vCode="0";
-//                if(bizVendInfo!=null){
-//                    vCode= bizVendInfo.getCode();
-//                }
-//                prodCode=addZeroForNum(vCode,true,3);
-//                BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
-//                BizVarietyInfo varietyInfo=bizVarietyInfoService.get(bizVarietyInfo.getId());
-//                cateCode=addZeroForNum(varietyInfo.getCode(),true,3);
-//            }
+        // 材质
+//        if (StringUtils.isNotBlank(bizProductInfo.getTextureStr())) {
+//            String[] textureValues = bizProductInfo.getTextureStr().split("\\|");
+//            bizProductInfo.setTextureStr(StringUtils.EMPTY);
+//            for (String value : textureValues) {
 //
+//                save(bizProductInfo);
+//            }
+//            return;
 //        }
+
+        // 取BRAND NAME
+        Dict brand = dictService.get(Integer.valueOf(bizProductInfo.getBrandId()));
+        bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getValue());
+
+        String brandPinYin = HanyuPinyinHelper.getFirstLetters(bizProductInfo.getBrandName() , HanyuPinyinCaseType.UPPERCASE);
+        String brandCode = addZeroForNum(brandPinYin.substring(0, Math.min(brandPinYin.length(), 4)), false, 2);
+
+        Office office = officeService.get(bizProductInfo.getOffice().getId());
+        bizProductInfo.getOffice().setName(office.getName());
+        BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
+        String vCode = bizVendInfo != null ? bizVendInfo.getCode() : "0";
+        vCode = addZeroForNum(vCode, true, 3);
+
+        BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
+        BizVarietyInfo varietyInfo = bizVarietyInfoService.get(bizVarietyInfo.getId());
+        String cateCode = addZeroForNum(varietyInfo.getCode(), true, 3);
+        bizProductInfo.setProdCode(StringUtils.EMPTY);
         super.save(bizProductInfo);
-        if(bizProductInfo.getProdCode()==null || "0".equals(bizProductInfo.getProdCode())){
-            String partNo=brandCode+prodCode+cateCode+autoGenericCode(bizProductInfo.getId().toString(),6);
-            bizProductInfo.setProdCode(partNo);
+        if (StringUtils.isBlank(bizProductInfo.getProdCode())) {
+            String prodCode = brandCode + vCode + cateCode + autoGenericCode(bizProductInfo.getId().toString(), 6);
+            bizProductInfo.setProdCode(prodCode);
             super.save(bizProductInfo);
         }
 
+        //保存产品图片
+        saveCommonImg(bizProductInfo);
+
+        // 标签
+        if(StringUtils.isNotBlank(bizProductInfo.getTagStr())) {
+            List<BizCategoryInfo> byIds = bizCategoryInfoService.findByIds(bizProductInfo.getTagStr());
+            bizProductInfo.setCategoryInfoList(byIds);
+        }
         if (bizProductInfo.getCategoryInfoList() != null && bizProductInfo.getCategoryInfoList().size() > 0) {
             bizProductInfoDao.deleteProdCate(bizProductInfo);
             bizProductInfoDao.insertProdCate(bizProductInfo);
         }
-        /**
-         * 保存商品分类属性与属性值
-         */
-        saveCatePropAndValue(bizProductInfo);
-        /**
-         * 商品特有属性与值
-         */
-        saveOwnProp(bizProductInfo);
-        //保存产品图片
-        saveCommonImg(bizProductInfo);
+
+        // 材质
+        if (StringUtils.isNotBlank(bizProductInfo.getTextureStr())) {
+            AttributeValue attributeValue = new AttributeValue();
+            attributeValue.setValue(bizProductInfo.getTextureStr());
+            attributeValue.setObjectName(PRODUCT_TABLE);
+            attributeValue.setObjectId(bizProductInfo.getId());
+            AttributeInfo attributeInfo = new AttributeInfo();
+            attributeInfo.setId(MATERIAL_ATTR_ID);
+            attributeValue.setAttributeInfo(attributeInfo);
+            attributeValueService.save(attributeValue);
+        }
+
+        // TODO 属性 SKU
+
+
     }
 
     private String autoGenericCode(String code, int num) {
@@ -289,6 +322,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         }
     }
 
+    /**
+     * 商品特有属性与值
+     */
     private void saveOwnProp(BizProductInfo bizProductInfo) {
         if (bizProductInfo.getPropOwnValues() != null && !"".equals(bizProductInfo.getPropOwnValues())) {
             String[] valuesArr = bizProductInfo.getPropOwnValues().split("_");
@@ -355,6 +391,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         }
     }
 
+    /**
+     * 保存商品分类属性与属性值
+     */
     private void saveCatePropAndValue(BizProductInfo bizProductInfo) {
         BizProdPropValue prodPropValue = new BizProdPropValue();
         bizProductInfoDao.deleteProdPropInfoReal(bizProductInfo);
