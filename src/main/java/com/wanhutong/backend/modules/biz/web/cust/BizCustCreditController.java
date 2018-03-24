@@ -53,7 +53,7 @@ public class BizCustCreditController extends BaseController {
 	@RequiresPermissions("biz:cust:bizCustCredit:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizCustCredit bizCustCredit, HttpServletRequest request, HttpServletResponse response, Model model) {
-		bizCustCredit.setCgsType(OfficeTypeEnum.CUSTOMER.getType());//采购商电话查询类型，采购商
+//		bizCustCredit.setCgsType(OfficeTypeEnum.CUSTOMER.getType());//采购商电话查询类型，采购商
 		Page<BizCustCredit> page = bizCustCreditService.findPage(new Page<BizCustCredit>(request, response), bizCustCredit);
 		model.addAttribute("page", page);
 		return "modules/biz/cust/bizCustCreditList";
