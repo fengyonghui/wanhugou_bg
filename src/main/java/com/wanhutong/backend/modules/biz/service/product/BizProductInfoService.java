@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.service.product;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
@@ -16,10 +17,12 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -82,12 +85,17 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     private BizCategoryInfoService bizCategoryInfoService;
     @Resource
     private AttributeValueService attributeValueService;
+    @Resource
+    private BizSkuInfoService bizSkuInfoService;
 
     /**
      * 材质ID 临时解决文案 需优化
      */
     private static final Integer MATERIAL_ATTR_ID = 1;
+    private static final Integer SIZE_ATTR_ID = 1;
+    private static final Integer COLOR_ATTR_ID = 1;
     private static final String PRODUCT_TABLE = "biz_product_info";
+    private static final String SKU_TABLE = "biz_sku_info";
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -109,17 +117,6 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
     public void save(BizProductInfo bizProductInfo) {
-        // 材质
-//        if (StringUtils.isNotBlank(bizProductInfo.getTextureStr())) {
-//            String[] textureValues = bizProductInfo.getTextureStr().split("\\|");
-//            bizProductInfo.setTextureStr(StringUtils.EMPTY);
-//            for (String value : textureValues) {
-//
-//                save(bizProductInfo);
-//            }
-//            return;
-//        }
-
         // 取BRAND NAME
         Dict brand = dictService.get(Integer.valueOf(bizProductInfo.getBrandId()));
         bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getValue());
@@ -169,7 +166,46 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
             attributeValueService.save(attributeValue);
         }
 
-        // TODO 属性 SKU
+        // 属性 SKU
+        List<String> skuAttrStrList = bizProductInfo.getSkuAttrStrList();
+        Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
+        int index = 0;
+        for(String s : skuAttrStrSet) {
+            String[] split = s.split("\\|");
+            String size = split[0];
+            String color = split[1];
+            String price = split[2];
+            String type = split[3];
+
+            BizSkuInfo bizSkuInfo = new BizSkuInfo();
+            bizSkuInfo.setProductInfo(bizProductInfo);
+            bizSkuInfo.setBuyPrice(Double.valueOf(price));
+            bizSkuInfo.setSkuType(Integer.valueOf(type));
+            bizSkuInfo.setName(bizProductInfo.getName());
+            bizSkuInfo.setSort(String.valueOf(index));
+            bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
+            bizSkuInfoService.save(bizSkuInfo);
+
+            AttributeValue sizeAttrVal = new AttributeValue();
+            sizeAttrVal.setValue(size);
+            sizeAttrVal.setObjectName(SKU_TABLE);
+            sizeAttrVal.setObjectId(bizSkuInfo.getId());
+            AttributeInfo sizeAttributeInfo = new AttributeInfo();
+            sizeAttributeInfo.setId(SIZE_ATTR_ID);
+            sizeAttrVal.setAttributeInfo(sizeAttributeInfo);
+            attributeValueService.save(sizeAttrVal);
+
+            AttributeValue colorAttrVal = new AttributeValue();
+            colorAttrVal.setValue(color);
+            colorAttrVal.setObjectName(SKU_TABLE);
+            colorAttrVal.setObjectId(bizSkuInfo.getId());
+            AttributeInfo colorAttributeInfo = new AttributeInfo();
+            colorAttributeInfo.setId(COLOR_ATTR_ID);
+            colorAttrVal.setAttributeInfo(colorAttributeInfo);
+            attributeValueService.save(colorAttrVal);
+
+            index ++;
+        }
 
 
     }

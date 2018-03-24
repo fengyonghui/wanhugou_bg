@@ -73,4 +73,32 @@ public class AttributeInfo extends DataEntity<AttributeInfo> {
 	public void setDictList(List<Dict> dictList) {
 		this.dictList = dictList;
 	}
+
+	public enum Level {
+		SYS(0, "系统标签", ""),
+		PRODUCT(1, "产品标签", "biz_product_info"),
+		SKU(2, "商品标签", "biz_sku_info"),
+		;
+		private int level;
+		private String desc;
+		private String tableName;
+
+		public int getLevel() {
+			return level;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
+
+		public String getTableName() {
+			return tableName;
+		}
+
+		Level(int level, String desc, String tableName) {
+			this.level = level;
+			this.desc = desc;
+			this.tableName = tableName;
+		}
+	}
 }

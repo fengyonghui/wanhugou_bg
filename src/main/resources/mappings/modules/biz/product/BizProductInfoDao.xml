@@ -22,9 +22,9 @@
 			<result property="name" column="office.name"/>
 			<result property="type" column="office.type"/>
 		</association>
-		<association property="propValue" javaType="PropValue" column="propValue.id">
-			<id property="id" column="propValue.id"/>
-		</association>
+		<!--<association property="propValue" javaType="PropValue" column="propValue.id">-->
+			<!--<id property="id" column="propValue.id"/>-->
+		<!--</association>-->
 		<association property="bizVarietyInfo" javaType="BizVarietyInfo" column="bizVarietyInfo.id">
 			<id property="id" column="bizVarietyInfo.id"/>
 			<result property="name" column="bizVarietyInfo.name"/>
@@ -47,7 +47,7 @@
 		vi.name as "bizVarietyInfo.name",
 		a.name AS "name",
 		a.prod_code AS "prodCode",
-		a.brand_id AS "propValue.id",
+		a.brand_id AS "brandId",
 		a.brand_name AS "brandName",
 		a.img_url AS "imgUrl",
 		so.name AS "office.name",

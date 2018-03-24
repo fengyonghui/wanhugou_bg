@@ -231,6 +231,7 @@
                     <th>尺寸</th>
                     <th>颜色</th>
                     <th>价格</th>
+                    <th>类型</th>
                     <th>操作</th>
                </tr>
                </thead>
@@ -263,10 +264,23 @@
     function initSkuTable() {
         var skuTableData = $("#skuTableData");
         skuTableData.empty();
+
+        var typeSelector = "<th><select customInput=\"skuTypeSelect\">";
+        var typeSelectorItem = "<option value='$value' label='$label'>$text</option>";
+        typeSelector += typeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
+        typeSelector += typeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+        typeSelector += typeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+        typeSelector += "</select></th>";
+
+        // OWN_PRODUCT((byte)1,"自选商品"),
+        // MADE_PRODUCT((byte)2,"定制商品"),
+        // COMMON_PRODUCT((byte)3,"非自选商品");
+
         var tableHtml = "<tr customType=\"skuTr\">" +
             "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
+            typeSelector +
             "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
             "               </tr>";
 
@@ -301,7 +315,8 @@
             var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).attr("value");
             var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
             var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).attr("value");
-            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput));
+            var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
+            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect));
         });
 
         var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";

@@ -26,11 +26,11 @@
 				<id column="office.id"  property="id"/>
 			</association>
 		</association>
-		<collection property="skuPropValueList" ofType="BizSkuPropValue">
-			<id column="skuPropValueList.id"  property="id"/>
-			<result column="skuPropValueList.propValue"  property="propValue"/>
+		<!--<collection property="skuPropValueList" ofType="BizSkuPropValue">-->
+			<!--<id column="skuPropValueList.id"  property="id"/>-->
+			<!--<result column="skuPropValueList.propValue"  property="propValue"/>-->
 
-		</collection>
+		<!--</collection>-->
     </resultMap>
 
     <sql id="bizSkuInfoColumns">
@@ -143,9 +143,7 @@
 
 	<select id="findListByParam" resultMap="BizSkuInfoMap">
 		SELECT
-		<include refid="bizSkuInfoColumns"/>,
-		bspv.id AS "skuPropValueList.id",
-		bspv.prop_value AS "skuPropValueList.propValue"
+		<include refid="bizSkuInfoColumns"/>
 		FROM biz_sku_info a
 		LEFT JOIN biz_sku_prop_value bspv on a.id=bspv.sku_id
 		<include refid="bizSkuInfoJoins"/>

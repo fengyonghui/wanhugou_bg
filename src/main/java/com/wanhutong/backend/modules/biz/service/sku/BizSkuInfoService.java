@@ -77,10 +77,8 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	private OfficeService officeService;
 	@Autowired
 	private PropertyInfoService propertyInfoService;
-	@Autowired
-	private BizProductInfoService bizProductInfoService;
 
-	protected Logger log = LoggerFactory.getLogger(getClass());//日志
+	protected Logger log = LoggerFactory.getLogger(BizSkuInfoService.class);//日志
 
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
@@ -194,7 +192,7 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	@Transactional(readOnly = false)
 	public void save(BizSkuInfo bizSkuInfo) {
 
- 	 	BizProductInfo bizProductInfo=bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
+		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
 //		PropValue brandValue = propValueService.get(bizProductInfo.getPropValue().getId());
 //		if (brandValue != null) {
 //			bizProductInfo.setBrandName(brandValue.getValue());
@@ -266,6 +264,9 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 
 	@Transactional(readOnly = false)
 	public void saveCommonImg(BizSkuInfo bizSkuInfo) {
+		if (StringUtils.isBlank(bizSkuInfo.getPhotos())) {
+			return;
+		}
 		String photos=null;
 		try {
 			photos = URLDecoder.decode(bizSkuInfo.getPhotos(), "utf-8");//SKU商品图片转换编码

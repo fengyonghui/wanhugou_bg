@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.product;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
@@ -22,6 +23,7 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfo;
@@ -182,12 +184,18 @@ public class BizProductInfoController extends BaseController {
 			}
 			List<BizVarietyInfo> varietyInfoList=bizVarietyInfoService.findList(new BizVarietyInfo());
 
+			 List<Map<String, Object>> skuTypeLit = Lists.newArrayList();
+			for (SkuTypeEnum v : SkuTypeEnum.values()) {
+				skuTypeLit.add(ImmutableMap.of("type", v.getName(), "code", v.getCode()));
+			}
+
 			model.addAttribute("prodPropertyInfo",new BizProdPropertyInfo());
 			model.addAttribute("entity", bizProductInfo);
 			model.addAttribute("prodTagList",tagInfos);
 			model.addAttribute("skuTagList",skuTagInfos);
 			model.addAttribute("cateList",categoryInfos);
 			model.addAttribute("varietyInfoList",varietyInfoList);
+			model.addAttribute("skuTypeLit", skuTypeLit);
 		return "modules/biz/product/bizProductInfoForm";
 	}
 
