@@ -117,7 +117,18 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
+	<!--查询唯一库存商品-->
+	<select id="findOnly" resultType="BizInventorySku">
+		select
+		<include refid="bizInventorySkuColumns"/>
+		from biz_inventory_sku a
+		<include refid="bizInventorySkuJoins"/>
+		WHERE a.sku_id = #{skuInfo.id}
+		AND a.inv_id = #{invInfo.id}
+		AND a.inv_type = #{invType}
+	</select>
+
 	<insert id="insert">
 		INSERT INTO biz_inventory_sku(
 			id,
@@ -190,7 +201,8 @@
 			</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+			status = 1
 		WHERE id = #{id}
 	</update>
 	

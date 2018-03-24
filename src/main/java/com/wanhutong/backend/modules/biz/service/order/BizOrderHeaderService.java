@@ -86,9 +86,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }
             return headerList;
         }else {
-            if(flag){
+//            if(flag){
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
-            }
+//            }
             List<BizOrderHeader> headerList = super.findList(bizOrderHeader);
             //用于订单导出的利润
             for (BizOrderHeader orderHeader : headerList) {

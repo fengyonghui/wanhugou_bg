@@ -78,8 +78,9 @@ public class OfficeController extends BaseController {
     @RequestMapping(value = "purchasersList")
     public String purchasersList(Office office, String conn, Integer centers, Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
         String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+        Office customer = new Office();
         if (office.getId() != null || office.getParentIds() != null) {
-            office.setParentIds("%," + office.getId()+ ",%");
+            customer.setParent(office);
         } else {
 //            查所有
             office.setParentIds("%," + purchasersId + ",%");
@@ -232,8 +233,10 @@ public class OfficeController extends BaseController {
 //		Office off = officeService.get(Integer.valueOf(supplierId));
 //		list.add(off);
         List<Map<String, Object>> mapList = Lists.newArrayList();
+//        List<Office> list = officeService.filerOffice(null, "supplier", OfficeTypeEnum.VENDOR);
 
-        List<Office> list = officeService.filerOffice(null, "supplier", OfficeTypeEnum.VENDOR);
+        String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
+        List<Office> list = officeService.findVendor(supplierId);
         for (int i = 0; i < list.size(); i++) {
             Office e = list.get(i);
             if ((StringUtils.isBlank(extId) || (extId != null && !extId.equals(e.getId()) && e.getParentIds().indexOf("," + extId + ",") == -1))
@@ -468,17 +471,18 @@ public class OfficeController extends BaseController {
     @RequestMapping(value = "supplierListGys")
     public String supplierListGys(Office office, HttpServletRequest request, HttpServletResponse response, Model model) {
         String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
-        if (office.getId() != null || office.getParentIds() != null) {
-            office.setParentIds("%," + office.getId() + ",%");
+        Office vendor = new Office();
+        if (office.getId() != null) {
+            vendor.setParent(office);
         } else {
 //            查所有
-            office.setParentIds("%," + supplierId + ",%");
+            vendor.setParentIds("%," + supplierId + ",%");
         }
         if (office.getGysMobile() != null) {
 //            供应商电话查询
-            office.setGysMobile(office.getGysMobile());
+            vendor.setGysMobile(office.getGysMobile());
         }
-        Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
+        Page<Office> page = officeService.findPage(new Page<Office>(request, response), vendor);
         if (page.getList().size() == 0) {
 //            当点击子节点显示
             page.getList().add(officeService.get(office.getId()));
