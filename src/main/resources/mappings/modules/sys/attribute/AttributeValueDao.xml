@@ -4,7 +4,8 @@
     
 	<sql id="attributeValueColumns">
 		a.id AS "id",
-		a.tag_id AS "tagId",
+		a.attr_id AS "attributeInfo.id",
+		a.attr_id AS "attrId",
 		a.object_name AS "objectName",
 		a.object_id AS "objectId",
 		a.value AS "value",
@@ -35,8 +36,8 @@
 		<include refid="attributeValueJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="tagId != null and tagId != ''">
-				AND a.tag_id = #{tagId}
+			<if test="attrId != null and attrId != 0">
+				AND a.attr_id = #{attrId}
 			</if>
 			<if test="objectName != null and objectName != ''">
 				AND a.object_name = #{objectName}

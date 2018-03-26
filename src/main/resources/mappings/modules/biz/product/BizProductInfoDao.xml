@@ -7,6 +7,7 @@
 		<result property="name" column="name"/>
 		<result property="prodCode" column="prodCode"/>
 		<result property="marketingDate" column="marketingDate"/>
+		<result property="brandId" column="brandId"/>
 		<result property="brandName" column="brandName"/>
 		<result property="vendorName" column="vendorName"/>
 		<result property="imgUrl" column="imgUrl"/>
@@ -38,6 +39,7 @@
 		</association>
 		<collection property="categoryInfoList" ofType="BizCategoryInfo">
 			<id property="id" column="categoryInfoList.id" />
+			<id property="name" column="categoryInfoList.name" />
 		</collection>
 
 	</resultMap>

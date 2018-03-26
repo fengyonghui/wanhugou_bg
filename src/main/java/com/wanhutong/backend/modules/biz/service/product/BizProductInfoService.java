@@ -178,7 +178,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                 String color = split[1];
                 String price = split[2];
                 String type = split[3];
-                String img = split[4];
+                String img = split.length >= 5 ? split[4] : StringUtils.EMPTY;
 
                 BizSkuInfo bizSkuInfo = new BizSkuInfo();
                 bizSkuInfo.setProductInfo(bizProductInfo);
@@ -207,13 +207,17 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                 colorAttrVal.setAttributeInfo(colorAttributeInfo);
                 attributeValueService.save(colorAttrVal);
 
-                CommonImg commonImg = new CommonImg();
-                commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-                commonImg.setImg(img);
-                commonImg.setObjectId(bizSkuInfo.getId());
-                sizeAttrVal.setObjectName(SKU_TABLE);
-                commonImgService.save(commonImg);
-
+                if(split.length >= 5) {
+                    CommonImg commonImg = new CommonImg();
+                    commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+                    commonImg.setImg(img);
+                    commonImg.setObjectId(bizSkuInfo.getId());
+                    commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
+                    commonImg.setImgSort(index);
+                    commonImg.setImgServer(DsConfig.getImgServer());
+                    commonImg.setImgPath(img.replaceAll(DsConfig.getImgServer(), ""));
+                    commonImgService.save(commonImg);
+                }
                 index ++;
             }
         }

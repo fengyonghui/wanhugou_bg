@@ -60,7 +60,7 @@
                 <%--<form:option value="" label="请选择品牌"/>--%>
                 <%--<form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>--%>
             <%--</form:select>--%>
-                <form:select title="choose" path="brandId" class="js-example-basic-multiple">
+                <form:select title="choose" path="brandId" class="input-xlarge required">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
                                   htmlEscape="false"/></form:select>
@@ -117,8 +117,8 @@
     <div class="control-group">
         <label class="control-label">请选择供应商：</label>
         <div class="controls">
-            <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.id"
-                            labelValue="${entity.office.id}" notAllowSelectRoot="true" notAllowSelectParent="true"
+            <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.name"
+                            labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                             title="供应商" url="/sys/office/queryTreeList?type=7" extId="${office.id}"
                             cssClass="input-xlarge required"
                             allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
@@ -142,7 +142,7 @@
         <div class="controls">
             <select id="test-select-2" multiple="multiple" class="input-medium">
                 <c:forEach items="${cateList}" var="cate">
-                    <option data-section="${cate.parentNames}" value="${cate.id}">${cate.id}-${cate.name}</option>
+                    <option data-section="${cate.parentNames}" value="${cate.id}">${cate.name}</option>
                 </c:forEach>
             </select>
         </div>
@@ -157,7 +157,6 @@
                     <c:choose>
                         <c:when test="${tagInfo.dictList!=null}">
                             <form:select title="choose" path="textureStr" class="input-medium required">
-                                <form:option value="" label="请选择"/>
                                 <form:options items="${tagInfo.dictList}" itemLabel="label" itemValue="value" htmlEscape="false"/>
                             </form:select>
                         </c:when>
@@ -224,11 +223,7 @@
                     <th>操作</th>
                </tr>
                </thead>
-               <tbody id="uploadPicTableData">
-               <tr>
-
-               </tr>
-               </tbody>
+               <tbody id="uploadPicTableData"></tbody>
            </table>
 
         </div>
@@ -333,7 +328,7 @@
         }
 
     }
-    
+
     function submitCustomForm() {
         var skuTrArr = $("[customType='skuTr']");
         var inputForm = $("#inputForm");
@@ -356,7 +351,7 @@
 
         inputForm.submit();
     }
-    
+
     function deleteParentEle(that) {
         $(that).parent().remove();
     }
@@ -477,7 +472,27 @@
 
         $('select[title="choose"]').searchableSelect();
 
-        initSkuTable();
+        var testSelect2 = $("#test-select-2");
+        var treeMultiselect = testSelect2.parent().find(".tree-multiselect")[0];
+        var selections = $($(treeMultiselect).find(".selections")[0]).children();
+
+        $(selections).each(function () {
+            if ($(this).hasClass("item")) {
+                    var that = $(this);
+                if (true) {
+                    $($(that).find(".option")).click();
+                }
+            }
+            if ($(this).hasClass("section")) {
+                var itemArr = $(this).find(".item");
+                if (true) {
+                    itemArr.each(function () {
+                        var that = $(this);
+                        $($(that).find(".option")).click();
+                    })
+                }
+            }
+        });
 
     });
 

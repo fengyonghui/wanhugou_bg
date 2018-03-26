@@ -14,13 +14,21 @@ import org.hibernate.validator.constraints.Length;
 public class AttributeValue extends DataEntity<AttributeValue> {
 	
 	private static final long serialVersionUID = 1L;
+	private Integer attrId;		// 标签Id
 	private AttributeInfo attributeInfo;		// 标签Id
 	private String objectName;		// 对象名称，表名称
 	private Integer objectId;		// 对应表的主键
 	private String value;		// 记录该属性值
 	private String code;		// code
 
-	
+	public Integer getAttrId() {
+		return attrId;
+	}
+
+	public void setAttrId(Integer attrId) {
+		this.attrId = attrId;
+	}
+
 	public AttributeValue() {
 		super();
 	}
