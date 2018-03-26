@@ -6,20 +6,48 @@
 <html>
 <head>
 	<title>商品上架管理</title>
-
 	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
 	<script type="text/javascript">
         $(document).ready(function() {
+            var flag = true;
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
-                    $("input[name='unshelfTimes']").each(function () {
-                        if($(this).val()==''){
-                            $(this).val(0)
+
+                    $("#tbody").find("td").each(function () {
+                        if ($(this).attr("style") == "display: none;") {
+                            var skuTitle = $(this).find("input").attr("about");
+                            var skuTitles = $("input[about='" + skuTitle + "']");
+                            skuTitles.each(function (i) {
+                                if ($(this).val() == '') {
+                                    $(this).val($(skuTitles[0]).val());
+                                }
+                            });
                         }
-                    })
-                    loading('正在提交，请稍等...');
-                    form.submit();
+                        $(this).find("input[name!='unshelfTimes']").each(function () {
+                            if ($(this).val() == '') {
+                                $(this).next().show();
+                                $(this).next().text("必填信息");
+                                flag = false;
+                                return;
+                            }
+                        });
+                    }) ;
+                        if(flag) {
+                            $("#tbody").find("td").each(function () {
+                                if ($(this).attr("style") == "display: none;") {
+                                    $(this).removeAttr("style");
+                                }
+
+                            });
+                            loading('正在提交，请稍等...');
+                            form.submit();
+                        }
+
+
+                    if(flag){
+
+					}
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function(error, element) {
@@ -152,17 +180,17 @@
                         var htmlInfo = "";
                         $.each(data,function(index,item) {
                             htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
-                                "<td><input id='shQtys"+item.id+"' name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/></td>"+
-                                "<td><input name='orgPrices"+item.id+"' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
-                                "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/></td>"+
-                                "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
-                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
-                                "<td><input id='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+                                "<td><input about='shQtys"+item.id+"' name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
+                                "<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
+                                "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+                                "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
+                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+                                "<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
                                 "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
-                                "<td><input id='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+                                "<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
                                 "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-                                "<td><input id='prioritys"+item.id+"' name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/></td>"+
+                                "<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
                                 "<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
                         });
                         $("#tbody").append(htmlInfo);
@@ -256,8 +284,9 @@
 		<div class="controls">
 			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
 							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
-							title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge " dataMsgRequired="必填信息">
+							title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 			</sys:treeselect>
+			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
 	<%--<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">--%>
@@ -320,7 +349,7 @@
 					<th>出厂价(元)：</th>
 					<th>销售单价(元)</th>
 					<th>最低销售数量(个)：</th>
-					<th>最高销售数量(个,0:不限制)：</th>
+					<th>最高销售数量(个)：</th>
 					<th>上架时间：</th>
 						<%--<c:if test="${bizOpShelfSku.id != null}">--%>
 						<%--<th>下架人：</th>--%>

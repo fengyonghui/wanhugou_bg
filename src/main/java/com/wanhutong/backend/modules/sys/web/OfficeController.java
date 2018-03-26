@@ -83,9 +83,9 @@ public class OfficeController extends BaseController {
             customer.setParent(office);
         } else {
 //            查所有
-            office.setParentIds("%," + purchasersId + ",%");
+            customer.setParentIds("%," + purchasersId + ",%");
         }
-        Page<Office> page = officeService.findPage(new Page<Office>(request, response), office);
+        Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
         if (page.getList().size() == 0) {
 //            当点击子节点显示
             page.getList().add(officeService.get(office.getId()));
