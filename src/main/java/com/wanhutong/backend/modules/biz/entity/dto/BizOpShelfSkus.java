@@ -32,7 +32,7 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 	private String orgPrices;		// 原价
 	private String salePrices;		// 销售单价-现价
 	private String minQtys;		// 此单价所对应的最低销售数量；
-	private String maxQtys;		// 此单价所对应的最高销售数量；0：不限制
+	private String maxQtys;		// 此单价所对应的最高销售数量；9999：不限制
 	private String shelfTimes;		// 上架时间
 	private User unshelfUser;		// 下架人
 	private String unshelfTimes;		// 下架时间
