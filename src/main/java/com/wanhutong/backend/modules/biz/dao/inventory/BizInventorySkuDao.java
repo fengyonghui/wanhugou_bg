@@ -15,4 +15,11 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 @MyBatisDao
 public interface BizInventorySkuDao extends CrudDao<BizInventorySku> {
     void orderUpdate(BizInventorySku bizInventorySku);
+
+    /**
+     * 查询唯一商品库存
+     * @param bizInventorySku
+     * @return
+     */
+    BizInventorySku findOnly(BizInventorySku bizInventorySku);
 }

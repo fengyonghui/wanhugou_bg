@@ -32,4 +32,11 @@ public interface OfficeDao extends TreeDao<Office> {
      * @return
      */
     List<Office> findListByType(String type);
+
+    /**
+     * 取所有的供应商
+     * @param parentIds
+     * @return
+     */
+    List<Office> findVent(String parentIds);
 }

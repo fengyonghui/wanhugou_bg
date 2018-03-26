@@ -36,7 +36,7 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	private Double orgPrice;		// 原价
 	private Double salePrice;		// 销售单价-现价
 	private Integer minQty;		// 此单价所对应的最低销售数量；
-	private Integer maxQty;		// 此单价所对应的最高销售数量；0：不限制
+	private Integer maxQty;		// 此单价所对应的最高销售数量；9999：不限制
 	private Date shelfTime;		// 上架时间
 	private User unshelfUser;		// 下架人
 	private Date unshelfTime;		// 下架时间

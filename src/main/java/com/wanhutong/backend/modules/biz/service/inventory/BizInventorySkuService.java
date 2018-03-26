@@ -64,4 +64,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	public void orderSave(BizInventorySku bizInventorySku) {
 		bizInventorySkuDao.orderUpdate(bizInventorySku);
 	}
+
+	public BizInventorySku findOnly(BizInventorySku inventorySku){
+		return bizInventorySkuDao.findOnly(inventorySku);
+	}
 }
