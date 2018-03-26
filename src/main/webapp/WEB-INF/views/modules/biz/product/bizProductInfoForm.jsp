@@ -6,6 +6,7 @@
     <title>产品信息表管理</title>
     <meta name="decorator" content="default"/>
     <link rel="stylesheet" href="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.min.css">
+    <link rel="stylesheet" href="${ctxStatic}/jquery-plugin/jquery.searchableSelect.css">
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -54,12 +55,12 @@
     </div>
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
-        <div class="controls">
+        <div style="margin-left: 180px">
             <%--<form:select path="propValue.id" class="input-xlarge required" id="propValueId">--%>
                 <%--<form:option value="" label="请选择品牌"/>--%>
                 <%--<form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>--%>
             <%--</form:select>--%>
-                <form:select path="brandId" class="js-example-basic-multiple">
+                <form:select title="choose" path="brandId" class="js-example-basic-multiple">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
                                   htmlEscape="false"/></form:select>
@@ -127,8 +128,8 @@
 
     <div class="control-group">
         <label class="control-label">请选择产品分类：</label>
-        <div class="controls">
-            <form:select path="bizVarietyInfo.id" class="input-medium required">
+        <div style="margin-left: 180px">
+            <form:select title="choose" path="bizVarietyInfo.id" class="input-medium required">
                 <form:option value="" label="请选择"/>
                 <form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
             </form:select>
@@ -149,13 +150,13 @@
 
     <div class="control-group">
         <label class="control-label">产品属性：</label>
-        <div id="cateProp" class="controls">
+        <div id="cateProp" style="margin-left: 180px">
             <c:forEach items="${prodTagList}" var="tagInfo">
                 <div  style="width: 100%;display: inline-block">
                     <span  style="float:left;width:60px;padding-top:3px">${tagInfo.name}：</span>
                     <c:choose>
                         <c:when test="${tagInfo.dictList!=null}">
-                            <form:select path="textureStr" class="input-medium required">
+                            <form:select title="choose" path="textureStr" class="input-medium required">
                                 <form:option value="" label="请选择"/>
                                 <form:options items="${tagInfo.dictList}" itemLabel="label" itemValue="value" htmlEscape="false"/>
                             </form:select>
@@ -182,26 +183,18 @@
 
                                 <select  title="search"  id="search_${tagInfo.id}" class="input-xlarge" multiple="multiple" size="8">
                                     <c:forEach items="${tagInfo.dictList}" var="dict">
-                                        <%--<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}--%>
                                         <option value="${dict.value}">${dict.label}</option>
                                     </c:forEach>
-
-
                                 </select>
 
                             </div>
                             <div  style="width: 20%;margin-left:10px;float: left">
                                 <button type="button" id="search_${tagInfo.id}_rightAll" class="btn-block"><i class="icon-forward"></i></button>
-
                                 <button type="button" id="search_${tagInfo.id}_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>
-
                                 <button type="button" id="search_${tagInfo.id}_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>
-
                                 <button type="button" id="search_${tagInfo.id}_leftAll" class="btn-block"><i class="icon-backward"></i></button>
                             </div>
-
                             <div style="margin-left:10px;float: left">
-
                                 <select name="aaa"  id="search_${tagInfo.id}_to" class="input-xlarge" size="8" multiple="multiple"></select>
                             </div>
                         </c:when>
@@ -212,6 +205,31 @@
 
                 </div>
             </c:forEach>
+
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">上传颜色图片：</label>
+        <div class="controls">
+            <input class="btn" type="button" value="上传图片" onclick="uploadPic()"/>
+        </div>
+        <br/>
+        <div class="controls">
+           <table class="table table-striped table-bordered table-condensed" id="uploadPicTable">
+               <thead>
+               <tr>
+                    <th>颜色</th>
+                    <th>图片</th>
+                    <th>图片操作</th>
+                    <th>操作</th>
+               </tr>
+               </thead>
+               <tbody id="uploadPicTableData">
+               <tr>
+
+               </tr>
+               </tbody>
+           </table>
 
         </div>
     </div>
@@ -231,6 +249,7 @@
                     <th>尺寸</th>
                     <th>颜色</th>
                     <th>价格</th>
+                    <th>图片地址</th>
                     <th>类型</th>
                     <th>操作</th>
                </tr>
@@ -257,7 +276,8 @@
 <script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
 <script src="${ctxStatic}/jquery-select2/3.5.3/select2.js" type="text/javascript"></script>
 <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
-
+<script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
+<script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
 <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -280,15 +300,12 @@
             "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
+            "                   <td><input type=\"text\" value=\"$img\" customInput=\"imgInput\" readonly/></td>" +
             typeSelector +
             "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
             "               </tr>";
 
-        var search_3_to = $("#search_3_to");
-        var selectedColorArr = [];
-        search_3_to.find("option").each(function(){
-            selectedColorArr.push($(this).text());
-        });
+        var colorTrArr = $("[customType='colorTr']");
 
         var customTypeAttr = $("[customType]");
         var selectedSizeArr = [];
@@ -300,9 +317,19 @@
         });
 
         for (var i = 0; i < selectedSizeArr.length; i ++) {
-            for (var j = 0; j < selectedColorArr.length; j ++) {
-                skuTableData.append(tableHtml.replace("$size", selectedSizeArr[i]).replace("$color", selectedColorArr[j]).replace("$price", ""));
-            }
+            colorTrArr.each(function () {
+                var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
+                var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("src");
+                if (!imgInput) {
+                    imgInput = "";
+                }
+                skuTableData.append(
+                    tableHtml.replace("$size", selectedSizeArr[i])
+                        .replace("$color", colorInput)
+                        .replace("$price", "")
+                        .replace("$img", imgInput)
+                );
+            });
         }
 
     }
@@ -315,8 +342,9 @@
             var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).attr("value");
             var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
             var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).attr("value");
+            var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
             var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
-            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect));
+            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|" + imgInput));
         });
 
         var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
@@ -351,9 +379,87 @@
         parent.append(skuAttrHtmlText);
     }
 
-    $(document).ready(function() {
+    //新建或编辑 保存提交
+    function submitPic(id){
+        var f = $("#" + id).val();
+        if(f==null||f==""){
+            alert("错误提示:上传文件不能为空,请重新选择文件");
+            return false;
+        }else{
+            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
+            extname = extname.toLowerCase();//处理了大小写
+            if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
+                $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+                return false;
+            }
+        }
+        var file = document.getElementById(id).files;
+        var size = file[0].size;
+        if(size>2097152){
+            alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
+            return false;
+        }
+        ajaxFileUploadPic(id);
+    }
 
-        <%--window.prettyPrint && prettyPrint();--%>
+    function ajaxFileUploadPic(id) {
+        $.ajaxFileUpload({
+            url : '${ctx}/biz/product/bizProductInfo/saveColorImg', //用于文件上传的服务器端请求地址
+            secureuri : false, //一般设置为false
+            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            type : 'POST',
+            dataType : 'text', //返回值类型 一般设置为json
+            success : function(data, status) {
+                //服务器成功响应处理函数
+                var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
+                var msgJSON = JSON.parse(msg);
+
+                var img = $("#" + id + "Img");
+                img.attr("src", msgJSON.fullName);
+            },
+            error : function(data, status, e) {
+                //服务器响应失败处理函数
+               alert("上传失败");
+            }
+        });
+        return false;
+    }
+
+    function deletePic(id) {
+        var f = $("#" + id);
+        f.attr("src", "");
+    }
+
+    function uploadPic() {
+        var selectedColorArr = [];
+        var search_3_to = $("#search_3_to");
+        search_3_to.find("option").each(function(){
+            selectedColorArr.push($(this).text());
+        });
+
+        var uploadPicTableData = $("#uploadPicTableData");
+        uploadPicTableData.empty();
+        var tableHtml = "<tr customType=\"colorTr\">" +
+            "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
+            "                   <td><img id=\"colorImg$idImg\" customInput=\"imgInput\"/></td>" +
+            "                   <td>" +
+            "                       <input type=\"file\" name=\"colorImg\" id=\"colorImg$id\" value=\"上传\"/>" +
+            "                       <input type=\"button\" value=\"提交\" onclick=\"submitPic('colorImg$id')\"/>" +
+            "                       <input type=\"button\" value=\"删除\"  onclick=\"deletePic('colorImg$idImg')\"/>" +
+            "                   </td>" +
+            "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
+            "               </tr>";
+        for (var j = 0; j < selectedColorArr.length; j ++) {
+            uploadPicTableData.append(
+                tableHtml.replace("$color", selectedColorArr[j])
+                    .replace("$id", j + "")
+                    .replace("$id", j + "")
+                    .replace("$id", j + "")
+                    .replace("$id", j + ""));
+        }
+    }
+
+    $(document).ready(function() {
 
         $('select[title="search"]').multiselect({
             search: {
@@ -368,6 +474,8 @@
         var tree2 = $("#test-select-2").treeMultiselect({
             searchable: true
         });
+
+        $('select[title="choose"]').searchableSelect();
 
         initSkuTable();
 

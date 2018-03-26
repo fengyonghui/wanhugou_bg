@@ -39,6 +39,7 @@ import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueService
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,43 +169,53 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
 
         // 属性 SKU
         List<String> skuAttrStrList = bizProductInfo.getSkuAttrStrList();
-        Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
-        int index = 0;
-        for(String s : skuAttrStrSet) {
-            String[] split = s.split("\\|");
-            String size = split[0];
-            String color = split[1];
-            String price = split[2];
-            String type = split[3];
+        if (CollectionUtils.isNotEmpty(skuAttrStrList)) {
+            Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
+            int index = 0;
+            for(String s : skuAttrStrSet) {
+                String[] split = s.split("\\|");
+                String size = split[0];
+                String color = split[1];
+                String price = split[2];
+                String type = split[3];
+                String img = split[4];
 
-            BizSkuInfo bizSkuInfo = new BizSkuInfo();
-            bizSkuInfo.setProductInfo(bizProductInfo);
-            bizSkuInfo.setBuyPrice(Double.valueOf(price));
-            bizSkuInfo.setSkuType(Integer.valueOf(type));
-            bizSkuInfo.setName(bizProductInfo.getName());
-            bizSkuInfo.setSort(String.valueOf(index));
-            bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
-            bizSkuInfoService.save(bizSkuInfo);
+                BizSkuInfo bizSkuInfo = new BizSkuInfo();
+                bizSkuInfo.setProductInfo(bizProductInfo);
+                bizSkuInfo.setBuyPrice(Double.valueOf(price));
+                bizSkuInfo.setSkuType(Integer.valueOf(type));
+                bizSkuInfo.setName(bizProductInfo.getName());
+                bizSkuInfo.setSort(String.valueOf(index));
+                bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
+                bizSkuInfoService.save(bizSkuInfo);
 
-            AttributeValue sizeAttrVal = new AttributeValue();
-            sizeAttrVal.setValue(size);
-            sizeAttrVal.setObjectName(SKU_TABLE);
-            sizeAttrVal.setObjectId(bizSkuInfo.getId());
-            AttributeInfo sizeAttributeInfo = new AttributeInfo();
-            sizeAttributeInfo.setId(SIZE_ATTR_ID);
-            sizeAttrVal.setAttributeInfo(sizeAttributeInfo);
-            attributeValueService.save(sizeAttrVal);
+                AttributeValue sizeAttrVal = new AttributeValue();
+                sizeAttrVal.setValue(size);
+                sizeAttrVal.setObjectName(SKU_TABLE);
+                sizeAttrVal.setObjectId(bizSkuInfo.getId());
+                AttributeInfo sizeAttributeInfo = new AttributeInfo();
+                sizeAttributeInfo.setId(SIZE_ATTR_ID);
+                sizeAttrVal.setAttributeInfo(sizeAttributeInfo);
+                attributeValueService.save(sizeAttrVal);
 
-            AttributeValue colorAttrVal = new AttributeValue();
-            colorAttrVal.setValue(color);
-            colorAttrVal.setObjectName(SKU_TABLE);
-            colorAttrVal.setObjectId(bizSkuInfo.getId());
-            AttributeInfo colorAttributeInfo = new AttributeInfo();
-            colorAttributeInfo.setId(COLOR_ATTR_ID);
-            colorAttrVal.setAttributeInfo(colorAttributeInfo);
-            attributeValueService.save(colorAttrVal);
+                AttributeValue colorAttrVal = new AttributeValue();
+                colorAttrVal.setValue(color);
+                colorAttrVal.setObjectName(SKU_TABLE);
+                colorAttrVal.setObjectId(bizSkuInfo.getId());
+                AttributeInfo colorAttributeInfo = new AttributeInfo();
+                colorAttributeInfo.setId(COLOR_ATTR_ID);
+                colorAttrVal.setAttributeInfo(colorAttributeInfo);
+                attributeValueService.save(colorAttrVal);
 
-            index ++;
+                CommonImg commonImg = new CommonImg();
+                commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+                commonImg.setImg(img);
+                commonImg.setObjectId(bizSkuInfo.getId());
+                sizeAttrVal.setObjectName(SKU_TABLE);
+                commonImgService.save(commonImg);
+
+                index ++;
+            }
         }
 
 
