@@ -52,6 +52,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private BizInventoryInfo inventoryInfo;     //仓库
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
 
+
     private String detailIds;
     private Integer totalReqQty;
     private Integer totalSendQty;
