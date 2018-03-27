@@ -251,7 +251,8 @@
                     <th>尺寸</th>
                     <th>颜色</th>
                     <th>价格</th>
-                    <th>图片地址</th>
+                    <th>图片</th>
+                    <th style="display: none">图片地址</th>
                     <th>类型</th>
                     <th>操作</th>
                </tr>
@@ -262,7 +263,8 @@
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
-                       <td><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
+                       <td><img style="width: 100px" src="${v.defaultImg}"></td>
+                       <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
                        <th><select customInput="skuTypeSelect">
                             <c:if test="${v.skuType == 1}">
                                 <option value='1' label='自选商品'>自选商品</option>
@@ -326,7 +328,8 @@
             "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
-            "                   <td><input type=\"text\" value=\"$img\" customInput=\"imgInput\" readonly/></td>" +
+            "                   <td><img src=\"$img\"></td>" +
+            "                   <td style=\"display: none\"><input type=\"text\" value=\"$img\" customInput=\"imgInput\" readonly/></td>" +
             typeSelector +
             "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
             "               </tr>";
@@ -342,6 +345,12 @@
             }
         });
 
+        if (colorTrArr.length <= 0) {
+            uploadPic();
+            initSkuTable();
+            return;
+        }
+
         for (var i = 0; i < selectedSizeArr.length; i ++) {
             colorTrArr.each(function () {
                 var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
@@ -354,10 +363,10 @@
                         .replace("$color", colorInput)
                         .replace("$price", "")
                         .replace("$img", imgInput)
+                        .replace("$img", imgInput)
                 );
             });
         }
-
     }
 
     function submitCustomForm() {
@@ -467,10 +476,10 @@
         uploadPicTableData.empty();
         var tableHtml = "<tr customType=\"colorTr\">" +
             "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
-            "                   <td><img id=\"colorImg$idImg\" customInput=\"imgInput\"/></td>" +
+            "                   <td><img id=\"colorImg$idImg\" customInput=\"imgInput\" style='width: 150px'/></td>" +
             "                   <td>" +
             "                       <input type=\"file\" name=\"colorImg\" id=\"colorImg$id\" value=\"上传\"/>" +
-            "                       <input type=\"button\" value=\"提交\" onclick=\"submitPic('colorImg$id')\"/>" +
+            "                       <input type=\"button\" value=\"上传\" onclick=\"submitPic('colorImg$id')\"/>" +
             "                       <input type=\"button\" value=\"删除\"  onclick=\"deletePic('colorImg$idImg')\"/>" +
             "                   </td>" +
             "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
