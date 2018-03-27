@@ -52,6 +52,7 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private BizInventoryInfo inventoryInfo;     //仓库
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
 
+
     private String detailIds;
     private Integer totalReqQty;
     private Integer totalSendQty;
@@ -61,38 +62,8 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private Office vendor;      //供应商
     private User primary;       //供应商主联系人
 
-
-    /**
-     * 以下属性用于订单导出的 列表标题
-     */
-    private Integer headeId; //订单id
-    private String orderHNum;   //订单编号
-    private Integer headerType;//订单类型
-    private String customePhone;  //采购商名称/电话
-    private String centersName;//所属采购中心
-    private Double payableTotail; //应付金额
-    private String orderDeilList;   //商品名称
-    private Double skuPrice;    //商品单价
-    private Integer orderDeilleng;   //采购数量
-    private Double skuTotail;//商品总价
-    private Double ceiveTotal;//已收货款
-    private Double totalExp;//交易金额
-    private Double freight;//运费
-    private Double totailProfit;   //利润
-    private Integer invStatus;//发票状态
-    private Integer bizBusiness;   //业务状态
-    private String bizStae;     //尾款信息
-    private String platformName;   //订单来源
-    private Integer RecodList;    //交易记录
-    private String addreReceiver;        // 收货人姓名
-    private String addrePhone;        // 收货人联系电话
-    private String recodLoop;   //记录凭证
-    private String oderAddress;     //订单收货地址
-    private String createName;     //创建人
-    private Date crDate;    //创建时间
-    private String updateName;     //更新人
-    private Date upDate; //更新时间
     private BizOrderDetail orderDaillist;//商品
+
     public BizOrderDetail getOrderDaillist() {
         return orderDaillist;
     }
@@ -107,169 +78,6 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setOrderHeaderList(List<BizOrderDetail> orderHeaderList) {
         this.orderHeaderList = orderHeaderList;
-    }
-
-    @SupCol(isUnique = "true", isHide = "true")
-    @ExcelField(title = "ID", type = 1, align = 2, sort = 1)
-    public Integer getHeadeId() {
-        return headeId = orderHeader.getId();
-
-    }
-
-    @ExcelField(title = "订单编号", align = 2, sort = 10)
-    public String getOrderHNum() {
-        return orderHNum = orderHeader.getOrderNum();
-    }
-
-    @ExcelField(title = "订单类型", align = 2, sort = 20, dictType = "biz_order_type")
-    public Integer getHeaderType() {
-        return headerType = orderHeader.getOrderType();
-    }
-
-    @ExcelField(title = "采购商名称（电话）", align = 2, sort = 30)
-    public String getCustomePhone() {
-        return customePhone = orderHeader.getCustomer().getName() + "(" + orderHeader.getCustomer().getPhone() + ")";
-    }
-
-    @ExcelField(title = "所属采购中心", align = 2, sort = 40)
-    public String getCentersName() {
-        return centersName = orderHeader.getCentersName();
-    }
-
-    @ExcelField(title = "商品名称（编号）", align = 2, sort = 50)
-    public String getOrderDeilList() {
-        if (orderDaillist != null) {
-            orderDeilList = orderDaillist.getSkuName() + "(" + orderDaillist.getPartNo() + ")";
-        }
-        return orderDeilList;
-    }
-
-    @ExcelField(title = "商品单价", align = 2, sort = 60)
-    public Double getSkuPrice() {
-        if (orderDaillist != null) {
-            skuPrice = orderDaillist.getUnitPrice();
-        }
-        return skuPrice;
-    }
-
-    @ExcelField(title = "采购数量", align = 2, sort = 70)
-    public Integer getOrderDeilleng() {
-        if (orderDaillist != null) {
-            orderDeilleng = orderDaillist.getOrdQty();
-        }
-        return orderDeilleng;
-    }
-
-    @ExcelField(title = "订单_商品总价", align = 2, sort = 80)
-    public Double getSkuTotail() {
-        return skuTotail = orderHeader.getTotalDetail();
-    }
-
-    @ExcelField(title = "订单_已收货款", align = 2, sort = 90)
-    public Double getCeiveTotal() {
-        return ceiveTotal = orderHeader.getReceiveTotal();
-    }
-
-    @ExcelField(title = "订单_交易金额", align = 2, sort = 100)
-    public Double getTotalExp() {
-        return totalExp = orderHeader.getTotalExp();
-    }
-
-    @ExcelField(title = "运费", align = 2, sort = 110)
-    public Double getFreight() {
-        return freight = orderHeader.getFreight();
-    }
-
-    @ExcelField(title = "应付金额", align = 2, sort = 120)
-    public Double getPayableTotail() {
-        return payableTotail = orderHeader.getTotalDetail() + orderHeader.getTotalExp() + orderHeader.getFreight();
-    }
-
-    @ExcelField(title = "利润", align = 2, sort = 130)
-    public Double getTotailProfit() {
-        return totailProfit = orderHeader.getTotalDetail() + orderHeader.getTotalExp() + orderHeader.getFreight() - orderHeader.getTotalBuyPrice();
-    }
-
-    @ExcelField(title = "发票状态", align = 2, sort = 130, dictType = "biz_order_invStatus")
-    public Integer getInvStatus() {
-        return invStatus = orderHeader.getInvStatus();
-    }
-
-    @ExcelField(title = "业务状态", align = 2, sort = 140, dictType = "biz_order_status")
-    public Integer getBizBusiness() {
-        return bizBusiness = orderHeader.getBizStatus();
-    }
-
-    @ExcelField(title = "尾款信息", align = 2, sort = 150)
-    public String getBizStae() {
-        String aa = "";
-        if (orderHeader.getBizStatus() != 10 && orderHeader.getBizStatus() != 40 &&
-                orderHeader.getTotalDetail() + orderHeader.getTotalExp() + orderHeader.getFreight() != orderHeader.getReceiveTotal()) {
-            bizStae = aa + "有尾款";
-        }
-        return bizStae;
-    }
-
-    @ExcelField(title = "订单来源", align = 2, sort = 160)
-    public String getPlatformName() {
-        return platformName = orderHeader.getPlatformInfo().getName();
-    }
-
-    @ExcelField(title = "支付类型", align = 2, sort = 170, dictType = "payType")
-    public Integer getRecodList() {
-        if (orderHeader.getBizPayRecordList().size() != 0) {
-            for (int j = 0; j < orderHeader.getBizPayRecordList().size(); j++) {
-                RecodList = orderHeader.getBizPayRecordList().get(j).getPayType();
-            }
-        }
-        return RecodList;
-    }
-
-    @ExcelField(title = "业务流水号", align = 2, sort = 180)
-    public String getRecodLoop() {
-        String a = "";
-        if (orderHeader.getBizPayRecordList().size() != 0) {
-            for (int j = 0; j < orderHeader.getBizPayRecordList().size(); j++) {
-                a += orderHeader.getBizPayRecordList().get(j).getOutTradeNo() + "，";
-            }
-        }
-        return recodLoop = a;
-    }
-
-    @ExcelField(title = "收货人", align = 2, sort = 190)
-    public String getAddreReceiver() {
-        return addreReceiver = orderHeader.getBizLocation().getReceiver();
-    }
-
-    @ExcelField(title = "联系电话", align = 2, sort = 200)
-    public String getAddrePhone() {
-        return addrePhone = orderHeader.getBizLocation().getPhone();
-    }
-
-    @ExcelField(title = "订单收货地址", align = 2, sort = 210)
-    public String getOderAddress() {
-        return oderAddress = orderHeader.getBizLocation().getProvince().getName() + "" + orderHeader.getBizLocation().getCity().getName() + "" +
-                orderHeader.getBizLocation().getRegion().getName() + "" + orderHeader.getBizLocation().getAddress() + "";
-    }
-
-    @ExcelField(title = "创建人", align = 2, sort = 220)
-    public String getCreateName() {
-        return createName = orderHeader.getCreateBy().getName();
-    }
-
-    @ExcelField(title = "创建时间", type = 0, align = 2, sort = 230)
-    public Date getCrDate() {
-        return crDate = orderHeader.getCreateDate();
-    }
-
-    @ExcelField(title = "更新人", align = 2, sort = 240)
-    public String getUpdateName() {
-        return updateName = orderHeader.getUpdateBy().getName();
-    }
-
-    @ExcelField(title = "更新时间", type = 0, align = 2, sort = 250)
-    public Date getUpDate() {
-        return upDate = orderHeader.getUpdateDate();
     }
 
     public BizOpShelfSku getShelfInfo() {

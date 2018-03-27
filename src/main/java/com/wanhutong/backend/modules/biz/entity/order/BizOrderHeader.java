@@ -66,8 +66,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String centersName;    //用于订单列表查询采购中心
 
     private User con;        //订单所属客户专员
-
-
     private Date ordrHeaderStartTime;    //订单创建开始时间
     private Date orderHeaderEedTime;    //订单创建结束时间
 
