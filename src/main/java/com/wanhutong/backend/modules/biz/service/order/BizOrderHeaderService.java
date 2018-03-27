@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.BizOrderDiscount;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -67,13 +68,20 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
-//        Double totalBuyPrice = 0.0;
-        boolean flag=false;
-        if(user.getRoleList()!=null){
+//        boolean flag=false;
+        boolean oflag = false;
+        /*if(user.getRoleList()!=null){
             for(Role role:user.getRoleList()){
                 if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
                     flag=true;
                     break;
+                }
+            }
+        }*/
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
                 }
             }
         }
@@ -83,10 +91,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
             return headerList;
         }else {
-//            if(flag){
+            if(oflag){
+
+            }else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
-//            }
-            List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
+            }
+                List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
             //用于订单导出的利润
             List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
             return headerList;
