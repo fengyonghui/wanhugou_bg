@@ -26,11 +26,12 @@
 			<label class="control-label">物流商：</label>
 			<div class="controls">
 				<%--<form:input path="logistics.name" htmlEscape="false" class="input-xlarge "/>--%>
-				<select id="bizLogistics" name="logistics.id" onmouseout="" class="input-medium">
-					<c:forEach items="${logisticsList}" var="bizLogistics">
-						<option value="${bizLogistics.id}"/>${bizLogistics.name}
-					</c:forEach>
-				</select>
+				<form:select id="bizLogistics" path="logistics.id" onmouseout="" class="input-medium">
+					<%--<c:forEach items="${logisticsList}" var="bizLogistics">--%>
+						<form:option value="${bizLogistics.id}"/>${bizLogistics.name}
+						<form:options items="${logisticsList}" itemLabel="name" itemValue="id"/>
+					<%--</c:forEach>--%>
+				</form:select>
 			</div>
 		</div>
 		<div class="control-group">
@@ -120,7 +121,9 @@
 		</div>
 		<div class="form-actions">
 			<input onclick="window.print();" type="button" class="btn btn-primary" value="打印发货单" style="background:#F78181;"/>
-			<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<c:if test="${source ne 'xq'}">
+				<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			</c:if>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
