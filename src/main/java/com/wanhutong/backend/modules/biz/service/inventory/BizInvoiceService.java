@@ -112,6 +112,17 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	
 	@Transactional(readOnly = false)
 	public void save(BizInvoice bizInvoice) {
+	    //修改发货单
+	    if (bizInvoice.getId() != null){
+            BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
+            invoice.setLogistics(bizInvoice.getLogistics());
+            invoice.setOperation(bizInvoice.getOperation());
+            invoice.setFreight(bizInvoice.getFreight());
+            invoice.setCarrier(bizInvoice.getCarrier());
+            invoice.setSettlementStatus(bizInvoice.getSettlementStatus());
+            bizInvoiceDao.update(invoice);
+            return;
+        }
         boolean flagRequest = true;		//备货单完成状态
         boolean flagOrder = true;		//销售单完成状态
         boolean flagPo = true;     //采购单完成状态
