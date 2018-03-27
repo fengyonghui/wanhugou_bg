@@ -327,9 +327,24 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 		commonImg.setImgType(imgType);
 		return commonImgService.findList(commonImg);
 	}
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Override
 	public void delete(BizSkuInfo bizSkuInfo) {
 		super.delete(bizSkuInfo);
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(bizSkuInfo.getId());
+        commonImg.setObjectName("biz_sku_info");
+        commonImgService.delete(commonImg);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void physicalDeleteByProd(BizSkuInfo bizSkuInfo) {
+        bizSkuInfoDao.physicalDeleteByProd(bizSkuInfo.getProductInfo().getId());
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(bizSkuInfo.getId());
+        commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
+        commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+        commonImgService.deleteCommonImg(commonImg);
 	}
 
 	

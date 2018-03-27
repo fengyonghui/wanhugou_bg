@@ -239,7 +239,16 @@ public class BizProductInfoController extends BaseController {
             }
         }
 
+        List<String> prodCategoryIdList = Lists.newArrayList();
+        List<BizCategoryInfo> prodCategoryList = bizProductInfo.getCategoryInfoList();
+        if (CollectionUtils.isNotEmpty(prodCategoryList)) {
+            for (BizCategoryInfo b :prodCategoryList) {
+                prodCategoryIdList.add(String.valueOf(b.getId()));
+            }
+        }
+
         model.addAttribute("prodPropertyInfo", new BizProdPropertyInfo());
+        model.addAttribute("prodCategoryIdList", prodCategoryIdList);
         model.addAttribute("entity", bizProductInfo);
         model.addAttribute("prodTagList", tagInfos);
         model.addAttribute("skuTagList", skuTagInfos);

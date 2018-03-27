@@ -320,6 +320,10 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+	<update id="physicalDeleteByProd">
+		DELETE FROM biz_sku_info
+		WHERE prod_id = #{prodId}
+	</update>
 
 	<delete id="deleteSkuPropInfoReal">
 		DELETE FROM biz_sku_prop_value

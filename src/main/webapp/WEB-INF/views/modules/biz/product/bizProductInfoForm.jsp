@@ -264,7 +264,21 @@
                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
                        <td><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
                        <th><select customInput="skuTypeSelect">
-                           <option value='$value' label='$label'>$text</option>
+                            <c:if test="${v.skuType == 1}">
+                                <option value='1' label='自选商品'>自选商品</option>
+                                <option value='2' label='定制商品'>定制商品</option>
+                                <option value='3' label='非自选商品'>非自选商品</option>
+                            </c:if>
+                           <c:if test="${v.skuType == 2}">
+                                <option value='2' label='定制商品'>定制商品</option>
+                                <option value='1' label='自选商品'>自选商品</option>
+                                <option value='3' label='非自选商品'>非自选商品</option>
+                            </c:if>
+                           <c:if test="${v.skuType == 3}">
+                                <option value='3' label='非自选商品'>非自选商品</option>
+                                <option value='1' label='自选商品'>自选商品</option>
+                                <option value='2' label='定制商品'>定制商品</option>
+                            </c:if>
                        </select></th>
                        <td onclick='deleteParentEle(this)'><input class="btn" type="button" value="删除"/></td>
                    </tr>
@@ -351,9 +365,9 @@
         var inputForm = $("#inputForm");
         var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
         skuTrArr.each(function () {
-            var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).attr("value");
-            var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
-            var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).attr("value");
+            var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
+            var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
+            var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
             var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
             var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
             inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|" + imgInput));
@@ -493,26 +507,22 @@
         var treeMultiselect = testSelect2.parent().find(".tree-multiselect")[0];
         var selections = $($(treeMultiselect).find(".selections")[0]).children();
 
+        var cateIdListArr = ${prodCategoryIdList};
         $(selections).each(function () {
-            if ($(this).hasClass("item")) {
-                    var that = $(this);
-                if (true) {
-                    $($(that).find(".option")).click();
-                }
+            if ($(this).hasClass("item") && cateIdListArr.indexOf(Number($(this).attr("data-value"))) >= 0) {
+                var that = $(this);
+                $($(that).find(".option")).click();
             }
             if ($(this).hasClass("section")) {
                 var itemArr = $(this).find(".item");
-                if (true) {
-                    itemArr.each(function () {
-                        var that = $(this);
+                itemArr.each(function () {
+                    var that = $(this);
+                    if (cateIdListArr.indexOf(Number($(that).attr("data-value"))) >= 0) {
                         $($(that).find(".option")).click();
-                    })
-                }
+                    }
+                })
             }
         });
-
-        <%--var sizeJsonStr = ${};--%>
-
     });
 
 </script>

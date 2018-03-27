@@ -21,4 +21,6 @@ public interface BizSkuInfoDao extends CrudDao<BizSkuInfo> {
    void deleteSkuPropInfoReal(BizSkuInfo bizSkuInfo);
 
    List<BizSkuInfo> findListByParam(BizSkuInfo bizSkuInfo);
+
+    void physicalDeleteByProd(Integer prodId);
 }

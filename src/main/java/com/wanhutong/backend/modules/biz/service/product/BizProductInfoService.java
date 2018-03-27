@@ -170,6 +170,11 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         // 属性 SKU
         List<String> skuAttrStrList = bizProductInfo.getSkuAttrStrList();
         if (CollectionUtils.isNotEmpty(skuAttrStrList)) {
+//            删除 旧 SKU
+            BizSkuInfo oldBizSkuInfo = new BizSkuInfo();
+            oldBizSkuInfo.setProductInfo(bizProductInfo);
+            bizSkuInfoService.physicalDeleteByProd(oldBizSkuInfo);
+
             Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
             int index = 0;
             for(String s : skuAttrStrSet) {
