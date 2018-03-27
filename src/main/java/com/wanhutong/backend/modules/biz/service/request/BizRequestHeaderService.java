@@ -12,6 +12,7 @@ import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
@@ -57,6 +58,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	
 	public List<BizRequestHeader> findList(BizRequestHeader bizRequestHeader) {
 		User user = UserUtils.getUser();
+		boolean oflag = false;
 		boolean flag=false;
 		if(user.getRoleList()!=null){
 			for(Role role:user.getRoleList()){
@@ -65,12 +67,21 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 				}
 			}
 		}
+		if (UserUtils.getOfficeList() != null){
+			for (Office office:UserUtils.getOfficeList()){
+				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+					oflag = true;
+				}
+			}
+		}
 		if (user.isAdmin()) {
 			return super.findList(bizRequestHeader);
 		} else {
-//			if(flag){
+			if(oflag){
+
+			}else {
 				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
-//			}
+			}
 			return super.findList(bizRequestHeader);
 		}
 	}

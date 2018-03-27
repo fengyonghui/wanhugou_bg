@@ -16,6 +16,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -81,6 +82,7 @@ public class BizInventorySkuController extends BaseController {
 		//取出用户所属采购中心
         User user = UserUtils.getUser();
 		boolean flag=false;
+		boolean oflag = false;
 		if(user.getRoleList()!=null){
 			for(Role role:user.getRoleList()){
 				if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
@@ -89,6 +91,13 @@ public class BizInventorySkuController extends BaseController {
 				}
 			}
 		}
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
+                }
+            }
+        }
         Page<BizInventorySku> page =null;
         if (user.isAdmin()) {
             page= bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
@@ -100,7 +109,11 @@ public class BizInventorySkuController extends BaseController {
 				bizInventoryInfo.setCustomer(company);
 				bizInventorySku.setInvInfo(bizInventoryInfo);
 			}else {
-				bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+        	    if (oflag){
+
+                }else {
+                    bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+                }
 			}
              page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         }
