@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.Collections3;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -150,7 +149,7 @@ public class BizProductInfoController extends BaseController {
         attributeValue.setObjectId(bizProductInfo.getId());
         attributeValue.setObjectName(AttributeInfo.Level.PRODUCT.getTableName());
         List<AttributeValue> attributeValueList = attributeValueService.findList(attributeValue);
-        for(AttributeValue a : attributeValueList) {
+        for (AttributeValue a : attributeValueList) {
             bizProductInfo.setTextureStr(a.getValue());
         }
 
@@ -215,10 +214,36 @@ public class BizProductInfoController extends BaseController {
             skuTypeLit.add(ImmutableMap.of("type", v.getName(), "code", v.getCode()));
         }
 
+        List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
+        Map<Integer, List<String>> skuAttrMap = Maps.newHashMap();
+        if (CollectionUtils.isNotEmpty(skuInfosList)) {
+            for (BizSkuInfo b : skuInfosList) {
+                AttributeValue av = new AttributeValue();
+                av.setObjectId(b.getId());
+                av.setObjectName(AttributeInfo.Level.SKU.getTableName());
+                List<AttributeValue> avList = attributeValueService.findList(av);
+                for (AttributeValue a : avList) {
+                    List<String> attrList = skuAttrMap.putIfAbsent(a.getAttrId(), Lists.newArrayList(a.getValue()));
+                    if (attrList != null) {
+                        boolean hasNoValue = true;
+                        for (String atbv : attrList) {
+                            if (atbv.equals(a.getValue())) {
+                                hasNoValue = false;
+                            }
+                        }
+                        if (hasNoValue) {
+                            attrList.add(a.getValue());
+                        }
+                    }
+                }
+            }
+        }
+
         model.addAttribute("prodPropertyInfo", new BizProdPropertyInfo());
         model.addAttribute("entity", bizProductInfo);
         model.addAttribute("prodTagList", tagInfos);
         model.addAttribute("skuTagList", skuTagInfos);
+        model.addAttribute("skuAttrMap", skuAttrMap);
         model.addAttribute("cateList", categoryInfos);
         model.addAttribute("varietyInfoList", varietyInfoList);
         model.addAttribute("skuTypeLit", skuTypeLit);

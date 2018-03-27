@@ -31,6 +31,19 @@
 			<!--<result column="skuPropValueList.propValue"  property="propValue"/>-->
 
 		<!--</collection>-->
+
+		<collection property="skuImgs" ofType="CommonImg">
+			<id column="skuImgs.id"  property="id"/>
+			<result column="ciId"  property="id"/>
+			<result column="object_name"  property="objectName"/>
+			<result column="object_id"  property="objectId"/>
+			<result column="img_type"  property="imgType"/>
+			<result column="img_sort"  property="imgSort"/>
+			<result column="img_server"  property="imgServer"/>
+			<result column="img_path"  property="imgPath"/>
+			<result column="img_link"  property="imgLink"/>
+			<result column="comment"  property="comment"/>
+		</collection>
     </resultMap>
 
     <sql id="bizSkuInfoColumns">
@@ -53,12 +66,23 @@
 		bpi.img_url AS "productInfo.imgUrl",
 		bpi.brand_name AS "productInfo.brandName",
 		bpi.prod_code AS "productInfo.prodCode",
-		bpi.vendor_id AS "productInfo.office.id"
+		bpi.vendor_id AS "productInfo.office.id",
+		ci.id AS ciId,
+		ci.object_name,
+		ci.object_id ,
+		ci.img_type ,
+		ci.img_sort,
+		ci.img_server,
+		ci.img_path,
+		ci.img_link,
+		ci.comment,
+		ci.status
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
 		LEFT join sys_user su on a.update_id = su.id
-		 join biz_product_info bpi on bpi.id = a.prod_id
+		LEFT join common_img ci on (ci.object_name = 'biz_sku_info' AND ci.object_id = a.id)
+				 join biz_product_info bpi on bpi.id = a.prod_id
 	</sql>
     
 	<select id="get" resultType="BizSkuInfo">
@@ -69,7 +93,7 @@
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="BizSkuInfo">
+	<select id="findList" resultMap="BizSkuInfoMap">
 		SELECT 
 			<include refid="bizSkuInfoColumns"/>
 		FROM biz_sku_info a

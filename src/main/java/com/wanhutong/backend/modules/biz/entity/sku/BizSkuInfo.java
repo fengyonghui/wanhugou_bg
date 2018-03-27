@@ -3,20 +3,16 @@
  */
 package com.wanhutong.backend.modules.biz.entity.sku;
 
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
+
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import com.wanhutong.backend.common.persistence.DataEntity;
-import com.wanhutong.backend.common.persistence.TreeEntity;
 
 /**
  * 商品skuEntity
@@ -59,12 +55,23 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 
 	private int sign;//sku删除返回的标志
+
+
 	public BizSkuInfo() {
 		super();
 	}
 
 	public BizSkuInfo(Integer id){
 		super(id);
+	}
+
+
+	public List<CommonImg> getSkuImgs() {
+		return skuImgs;
+	}
+
+	public void setSkuImgs(List<CommonImg> skuImgs) {
+		this.skuImgs = skuImgs;
 	}
 
 	public BizProductInfo getProductInfo() {
@@ -205,6 +212,9 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	}
 
 	public String getDefaultImg() {
+		if (StringUtils.isBlank(defaultImg) && CollectionUtils.isNotEmpty(skuImgs)) {
+			return skuImgs.get(0).getImgServer().concat(skuImgs.get(0).getImgPath()) ;
+		}
 		return defaultImg;
 	}
 

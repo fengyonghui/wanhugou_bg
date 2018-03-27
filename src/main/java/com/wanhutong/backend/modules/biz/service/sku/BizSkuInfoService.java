@@ -3,53 +3,41 @@
  */
 package com.wanhutong.backend.modules.biz.service.sku;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.*;
-
-import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
-import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
-import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.product.BizProdCate;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.product.BizProdCateService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
-import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
-import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoDao;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
 
 /**
  * 商品skuService
@@ -129,7 +117,6 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 						+productInfo.getProdCode()+","+productInfo.getOffice().getName()+","+productInfo.getBrandName();
 
 			}
-							;
 			listMap.put(sKey,map.get(productInfo));
 		}
 

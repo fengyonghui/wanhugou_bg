@@ -182,7 +182,7 @@
 
                                 <select  title="search"  id="search_${tagInfo.id}" class="input-xlarge" multiple="multiple" size="8">
                                     <c:forEach items="${tagInfo.dictList}" var="dict">
-                                        <option value="${dict.value}">${dict.label}</option>
+                                            <option value="${dict.value}">${dict.label}</option>
                                     </c:forEach>
                                 </select>
 
@@ -194,10 +194,17 @@
                                 <button type="button" id="search_${tagInfo.id}_leftAll" class="btn-block"><i class="icon-backward"></i></button>
                             </div>
                             <div style="margin-left:10px;float: left">
-                                <select name="aaa"  id="search_${tagInfo.id}_to" class="input-xlarge" size="8" multiple="multiple"></select>
+                                <select name="aaa"  id="search_${tagInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
+                                    <c:forEach items="${skuAttrMap[tagInfo.id]}" var="v">
+                                        <option value="${v}">${v}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </c:when>
                         <c:otherwise>
+                            <c:forEach items="${skuAttrMap[tagInfo.id]}" var="v">
+                                <input style="margin-bottom: 5px" type="text" class="input-medium" onchange="skuAttrChange(this)" customType="skuAttr" value="${v}"/>
+                            </c:forEach>
                             <input style="margin-bottom: 5px" type="text" class="input-medium" onchange="skuAttrChange(this)" customType="skuAttr"/>
                         </c:otherwise>
                     </c:choose>
@@ -250,8 +257,18 @@
                </tr>
                </thead>
                <tbody id="skuTableData">
-               <tr>
-               </tr>
+               <c:forEach items="${entity.skuInfosList}" var="v">
+                   <tr customType="skuTr">
+                       <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
+                       <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
+                       <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
+                       <td><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
+                       <th><select customInput="skuTypeSelect">
+                           <option value='$value' label='$label'>$text</option>
+                       </select></th>
+                       <td onclick='deleteParentEle(this)'><input class="btn" type="button" value="删除"/></td>
+                   </tr>
+               </c:forEach>
                </tbody>
            </table>
 
@@ -493,6 +510,8 @@
                 }
             }
         });
+
+        <%--var sizeJsonStr = ${};--%>
 
     });
 

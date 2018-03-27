@@ -3,16 +3,11 @@
  */
 package com.wanhutong.backend.modules.sys.entity.attribute;
 
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
+
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import com.wanhutong.backend.common.persistence.DataEntity;
 
 /**
  * 标签属性Entity
@@ -32,6 +27,7 @@ public class AttributeInfo extends DataEntity<AttributeInfo> {
 	private Dict dict;
 	private Integer level;
 	private List<Dict> dictList;
+	private List<AttributeValue> attributeValueList;
 
 	public AttributeInfo() {
 		super();
@@ -72,6 +68,14 @@ public class AttributeInfo extends DataEntity<AttributeInfo> {
 
 	public void setDictList(List<Dict> dictList) {
 		this.dictList = dictList;
+	}
+
+	public List<AttributeValue> getAttributeValueList() {
+		return attributeValueList;
+	}
+
+	public void setAttributeValueList(List<AttributeValue> attributeValueList) {
+		this.attributeValueList = attributeValueList;
 	}
 
 	public enum Level {
