@@ -457,37 +457,39 @@ public class BizOrderHeaderController extends BaseController {
             //1订单
             List<List<String>> data = new ArrayList<List<String>>();
             //2商品
-            List<List<String>> DetailData = new ArrayList<List<String>>();
+            List<List<String>> detailData = new ArrayList<List<String>>();
             //3交易记录
             List<List<String>> payData = new ArrayList<List<String>>();
-            pageList.forEach(o -> {
+            for (BizOrderHeader o : pageList) {
                 orderDetail.setOrderHeader(o);
                 List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
-                list.forEach(d -> {
-                    d.setOrderHeader(o);
-                    o.setOrderDetailList(list);
-                    List detailData = new ArrayList();
-                    //ID
-                    detailData.add(String.valueOf(d.getId()));
-                    //订单编号
-                    detailData.add(String.valueOf(d.getOrderHeader().getOrderNum()));
-                    //商品名称
-                    detailData.add(String.valueOf(d.getSkuName()));
-                    //商品编码
-                    detailData.add(String.valueOf(d.getPartNo()));
-                    //供应商
-                    detailData.add(String.valueOf(d.getVendor().getName()));
-                    //商品单价
-                    detailData.add(String.valueOf(d.getUnitPrice()));
-                    //采购数量
-                    detailData.add(String.valueOf(d.getOrdQty()));
-                    //商品总价
-                    detailData.add(String.valueOf(d.getUnitPrice() * d.getOrdQty()));
-                    DetailData.add(detailData);
-                });
+                if (list.size() != 0) {
+                    for (BizOrderDetail d : list) {
+                        d.setOrderHeader(o);
+                        o.setOrderDetailList(list);
+                        List<String> detailListData = new ArrayList();
+                        //ID
+                        detailListData.add(String.valueOf(d.getId()));
+                        //订单编号
+                        detailListData.add(String.valueOf(d.getOrderHeader().getOrderNum()));
+                        //商品名称
+                        detailListData.add(String.valueOf(d.getSkuName()));
+                        //商品编码
+                        detailListData.add(String.valueOf(d.getPartNo()));
+                        //供应商
+                        detailListData.add(String.valueOf(d.getVendor().getName()));
+                        //商品单价
+                        detailListData.add(String.valueOf(d.getUnitPrice()));
+                        //采购数量
+                        detailListData.add(String.valueOf(d.getOrdQty()));
+                        //商品总价
+                        detailListData.add(String.valueOf(d.getUnitPrice() * d.getOrdQty()));
+                        detailData.add(detailListData);
+                    }
+                }
                 //地址查询
                 o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
-                List rowData = new ArrayList();
+                List<String> rowData = new ArrayList();
                 //id
                 rowData.add(String.valueOf(o.getId()));
                 //订单编号
@@ -497,7 +499,7 @@ public class BizOrderHeaderController extends BaseController {
                 dict.setDescription("订单类型");
                 dict.setType("biz_order_type");
                 List<Dict> dictList = dictService.findList(dict);
-                for(Dict di:dictList){
+                for (Dict di : dictList) {
                     if (di.getValue().equals(String.valueOf(o.getOrderType()))) {
                         //订单类型
                         rowData.add(String.valueOf(di.getLabel()));
@@ -524,7 +526,7 @@ public class BizOrderHeaderController extends BaseController {
                 dictInv.setDescription("发票状态");
                 dictInv.setType("biz_order_invStatus");
                 List<Dict> dictListInv = dictService.findList(dictInv);
-                for(Dict dinv:dictListInv){
+                for (Dict dinv : dictListInv) {
                     if (dinv.getValue().equals(String.valueOf(o.getInvStatus()))) {
                         //发票状态
                         rowData.add(String.valueOf(dinv.getLabel()));
@@ -535,7 +537,7 @@ public class BizOrderHeaderController extends BaseController {
                 dictBiz.setDescription("业务状态");
                 dictBiz.setType("biz_order_status");
                 List<Dict> dictListBiz = dictService.findList(dictBiz);
-                for(Dict dbiz:dictListBiz){
+                for (Dict dbiz : dictListBiz) {
                     if (dbiz.getValue().equals(String.valueOf(o.getBizStatus()))) {
                         //业务状态
                         rowData.add(String.valueOf(dbiz.getLabel()));
@@ -544,21 +546,27 @@ public class BizOrderHeaderController extends BaseController {
                 }
                 //订单来源
                 rowData.add(String.valueOf(o.getPlatformInfo().getName()));
-                Integer Ten = 10, Forty = 40;
-                if (!o.getBizStatus().equals(Ten) && !o.getBizStatus().equals(Forty) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
+                Integer ten = 10, forTy = 40;
+                if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
                     //尾款信息
                     rowData.add("有尾款");
                 } else {
                     //尾款信息
                     rowData.add("");
                 }
-                //收货人
-                rowData.add(String.valueOf(o.getBizLocation().getReceiver()));
-                //联系电话
-                rowData.add(String.valueOf(o.getBizLocation().getPhone()));
-                //订单收货地址
-                rowData.add(String.valueOf(o.getBizLocation().getProvince().getName() + o.getBizLocation().getCity().getName() +
-                        o.getBizLocation().getRegion().getName() + o.getBizLocation().getAddress()));
+                if (o.getBizLocation() != null) {
+                    //收货人
+                    rowData.add(String.valueOf(o.getBizLocation().getReceiver()));
+                    //联系电话
+                    rowData.add(String.valueOf(o.getBizLocation().getPhone()));
+                    //订单收货地址
+                    rowData.add(String.valueOf(o.getBizLocation().getProvince().getName() + o.getBizLocation().getCity().getName() +
+                            o.getBizLocation().getRegion().getName() + o.getBizLocation().getAddress()));
+                } else {
+                    rowData.add("");
+                    rowData.add("");
+                    rowData.add("");
+                }
                 //创建人
                 rowData.add(String.valueOf(o.getCreateBy().getName()));
                 //创建时间
@@ -570,24 +578,26 @@ public class BizOrderHeaderController extends BaseController {
                 data.add(rowData);
                 bizPayRecord.setPayNum(o.getOrderNum());
                 List<BizPayRecord> payList = bizPayRecordService.findList(bizPayRecord);
-                payList.forEach(p -> {
-                    o.setBizPayRecordList(payList);
-                    List payRow = new ArrayList();
-                    //ID
-                    payRow.add(String.valueOf(p.getId()));
-                    //订单编号
-                    payRow.add(String.valueOf(p.getPayNum()));
-                    //支付类型名称
-                    payRow.add(String.valueOf(p.getPayTypeName()));
-                    //业务流水号
-                    payRow.add(String.valueOf(p.getOutTradeNo()));
-                    //支付金额
-                    payRow.add(String.valueOf(p.getPayMoney()));
-                    //交易时间
-                    payRow.add(String.valueOf(sdf.format(p.getCreateDate())));
-                    payData.add(payRow);
-                });
-            });
+                if (payList.size() != 0) {
+                    payList.forEach(p -> {
+                        o.setBizPayRecordList(payList);
+                        List<String> payRow = new ArrayList();
+                        //ID
+                        payRow.add(String.valueOf(p.getId()));
+                        //订单编号
+                        payRow.add(String.valueOf(p.getPayNum()));
+                        //支付类型名称
+                        payRow.add(String.valueOf(p.getPayTypeName()));
+                        //业务流水号
+                        payRow.add(String.valueOf(p.getOutTradeNo()));
+                        //支付金额
+                        payRow.add(String.valueOf(p.getPayMoney()));
+                        //交易时间
+                        payRow.add(String.valueOf(sdf.format(p.getCreateDate())));
+                        payData.add(payRow);
+                    });
+                }
+            }
             String[] headers = {"ID", "订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价", "已收货款", "交易金额", "运费",
                     "应付金额", "利润", "发票状态", "业务状态", "订单来源", "尾款信息", "收货人", "联系电话", "收货地址", "创建人", "创建时间", "更新人", "更新时间"};
             String[] details = {"ID", "订单编号", "商品名称", "商品编码", "供应商", "商品单价", "采购数量", "商品总价"};
@@ -596,11 +606,12 @@ public class BizOrderHeaderController extends BaseController {
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "订单数据", headers, data, fileName);
             eeu.exportExcel(workbook, 1, "交易记录", pays, payData, fileName);
-            eeu.exportExcel(workbook, 2, "商品数据", details, DetailData, fileName);
+            eeu.exportExcel(workbook, 2, "商品数据", details, detailData, fileName);
             response.reset();
             response.setContentType("application/octet-stream; charset=utf-8");
             response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
             workbook.write(response.getOutputStream());
+            workbook.dispose();
             return null;
         } catch (Exception e) {
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());

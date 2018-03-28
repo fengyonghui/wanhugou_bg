@@ -17,21 +17,24 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 import javax.servlet.http.HttpServletResponse;
 
 public class ExportExcelUtils {
+
     /**
-     * 工作薄对象
+     * 工作表对象
      */
-    private SXSSFWorkbook wb;
+    private Sheet sheet;
+
     /**
      * @param workbook
      * @param sheetNum   (sheet的位置，0表示第一个表格中的第一个sheet)
      * @param sheetTitle （sheet的名称）
      * @param headers    （表格的标题）
      * @param result     （表格的数据）
-     * @param fileName        （输出流）
+     * @param fileName   （输出流）
      * @throws Exception
      * @Title: exportExcel
      * @Description: 导出Excel的方法
@@ -41,7 +44,7 @@ public class ExportExcelUtils {
                             String sheetTitle, String[] headers, List<List<String>> result,
                             String fileName) throws Exception {
         // 生成一个表格  
-        Sheet sheet = workbook.createSheet();
+        sheet = workbook.createSheet();
         workbook.setSheetName(sheetNum, sheetTitle
 //                ,HSSFWorkbook.ENCODING_UTF_16
         );
@@ -59,6 +62,7 @@ public class ExportExcelUtils {
         style.setAlignment(CellStyle.ALIGN_CENTER);
         // 生成一个字体  
         Font font = workbook.createFont();
+        font.setFontName("Arial");
         font.setColor(IndexedColors.WHITE.getIndex());
         font.setFontHeightInPoints((short) 12);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
@@ -70,11 +74,11 @@ public class ExportExcelUtils {
 
         // 产生表格标题行  
         Row row = sheet.createRow(0);
+        row.setHeightInPoints(16);
         for (int i = 0; i < headers.length; i++) {
             Cell cell = row.createCell(i);
-
             cell.setCellStyle(style);
-            HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+            XSSFRichTextString text = new XSSFRichTextString(headers[i]);
             cell.setCellValue(text.toString());
         }
         // 遍历集合数据，产生数据行  
