@@ -27,6 +27,7 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 	protected Date updateDate;	// 更新日期
 	protected String delFlag; 	// 删除标记（1：正常；0：删除；2：审核）
 	protected Integer uVersion;  //版本控制
+	protected String dataStatus; //数据状态
 	public DataEntity() {
 		super();
 		this.delFlag = DEL_FLAG_NORMAL;
@@ -131,4 +132,11 @@ public abstract class DataEntity<T> extends BaseEntity<T> {
 		this.delFlag = delFlag;
 	}
 
+	public String getDataStatus() {
+		return dataStatus;
+	}
+
+	public void setDataStatus(String dataStatus) {
+		this.dataStatus = dataStatus;
+	}
 }
