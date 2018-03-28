@@ -32,6 +32,9 @@
 			<li><label>商品货号：</label>
 				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
 			</li>
+			<li><label>供应商：</label>
+				<form:input path="productInfo.vendorName" htmlEscape="false"  class="input-medium"/>
+			</li>
 			<li><label>商品编号：</label>
 				<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>
 			</li>
@@ -84,6 +87,7 @@
 				<th>商品货号</th>
 				<th>货架名称</th>
 				<th>采购中心</th>
+				<th>供应商</th>
 				<%--<th>上架数量(个)</th>--%>
 				<th>原价(元)</th>
 				<th>现价(元)</th>
@@ -122,6 +126,9 @@
 							${bizOpShelfSku.centerOffice.name}
 				</c:otherwise>
 				</c:choose>
+				</td>
+				<td>
+					${bizOpShelfSku.productInfo.vendorName}
 				</td>
 				<%--<td>--%>
 					<%--${bizOpShelfSku.shelfQty}--%>
