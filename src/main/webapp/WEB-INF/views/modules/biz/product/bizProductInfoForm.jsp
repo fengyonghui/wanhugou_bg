@@ -221,7 +221,7 @@
         </div>
         <br/>
         <div class="controls">
-           <table class="table table-striped table-bordered table-condensed" id="uploadPicTable">
+           <table class="table  table-bordered table-condensed" id="uploadPicTable">
                <thead>
                <tr>
                     <th>颜色</th>
@@ -245,7 +245,7 @@
         </div>
         <br/>
         <div class="controls">
-           <table class="table table-striped table-bordered table-condensed" id="skuTable">
+           <table class="table  table-bordered table-condensed" id="skuTable">
                <thead>
                <tr>
                     <th>货号</th>
