@@ -184,7 +184,7 @@
                                 "<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
                                 "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
                                 "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
-                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this.value,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
+                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
                                 "<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
                                 "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
@@ -228,14 +228,24 @@
         }
 
         function addOne(item,skuId) {
-            alert(item);
+            alert(item.value);
             alert(skuId);
-            var first = $("#tbody").find("tr:first");
-            var second = $("tr+tr").html();
-            alert(second);
-            alert(first.html());
-            var minQty = parseInt(item) + 1;
-            $("input[name='minQtys']").val(minQty);
+            alert(item.sectionRowIndex);
+            var trIndex = parseInt(item.sectionRowIndex) + 1;
+            // var first = $("#tbody").find("tr:first");
+            var second = $("#tbody").find("tr:eq("+trIndex+")");
+            // var second = $("tr+tr").html();
+            alert(second.html());
+            alert($(second).attr("class"));
+            if ($(second).attr("class")==skuId){
+				$(second).find("td").each(function () {
+					$(this).find("input[name='minQtys']").val(parseInt(item.value) + 1);
+				});
+            }
+            // if(){
+            //
+			// }
+            // $("input[name='minQtys']").val(parseInt(item) + 1);
 
         }
 	</script>
