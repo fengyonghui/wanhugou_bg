@@ -7,8 +7,10 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcel;
+import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
@@ -33,6 +35,7 @@ import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,6 +47,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -333,7 +338,9 @@ public class BizOrderHeaderController extends BaseController {
     }
 
 
-    //    用于客户专员页面-订单管理列表中的待审核验证
+    /**
+     * 用于客户专员页面-订单管理列表中的待审核验证
+     **/
     @ResponseBody
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "Commissioner")
@@ -432,31 +439,136 @@ public class BizOrderHeaderController extends BaseController {
     /**
      * 导出订单数据
      * @return ouyang
-     * 2018-03-20
+     * 2018-03-27
      */
-    @RequiresPermissions("biz:order:bizOrderDetail:view")
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "orderHeaderExport", method = RequestMethod.POST)
     public String orderHeaderExportFile(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         try {
             BizOrderDetail orderDetail = new BizOrderDetail();
             BizPayRecord bizPayRecord = new BizPayRecord();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             List<BizOrderHeader> pageList = bizOrderHeaderService.findList(bizOrderHeader);
-            ExportExcel headerExcel = new ExportExcel("订单数据", BizOrderDetail.class);
+            //1订单
+            List<List<String>> data = new ArrayList<List<String>>();
+            //2商品
+            List<List<String>> DetailData = new ArrayList<List<String>>();
+            //3交易记录
+            List<List<String>> payData = new ArrayList<List<String>>();
             pageList.forEach(o -> {
-                o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
                 orderDetail.setOrderHeader(o);
                 List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
-                list.forEach(deil->{
-                    deil.setOrderHeader(o);
-                    deil.setOrderDaillist(deil);//商品，重要
+                list.forEach(d -> {
+                    d.setOrderHeader(o);
+                    o.setOrderDetailList(list);
+                    List detailData = new ArrayList();
+                    //ID
+                    detailData.add(String.valueOf(d.getId()));
+                    //订单编号
+                    detailData.add(String.valueOf(d.getOrderHeader().getOrderNum()));
+                    //商品名称
+                    detailData.add(String.valueOf(d.getSkuName()));
+                    //商品编码
+                    detailData.add(String.valueOf(d.getPartNo()));
+                    //供应商
+                    detailData.add(String.valueOf(d.getVendor().getName()));
+                    //商品单价
+                    detailData.add(String.valueOf(d.getUnitPrice()));
+                    //采购数量
+                    detailData.add(String.valueOf(d.getOrdQty()));
+                    //商品总价
+                    detailData.add(String.valueOf(d.getUnitPrice() * d.getOrdQty()));
+                    DetailData.add(detailData);
                 });
-                o.setOrderDetailList(list);
+                //地址查询
+                o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
+                List rowData = new ArrayList();
+                //id
+                rowData.add(String.valueOf(o.getId()));
+                //订单编号
+                rowData.add(String.valueOf(o.getOrderNum()));
+                //订单类型
+                rowData.add("");
+                //采购商名称/电话
+                rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
+                //所属采购中心
+                rowData.add(String.valueOf(o.getCentersName()));
+                //商品总价
+                rowData.add(String.valueOf(o.getTotalDetail()));
+                //已收货款
+                rowData.add(String.valueOf(o.getReceiveTotal()));
+                //交易金额
+                rowData.add(String.valueOf(o.getTotalExp()));
+                //运费
+                rowData.add(String.valueOf(o.getFreight()));
+                //应付金额
+                rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight()));
+                //利润
+                rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - o.getTotalBuyPrice()));
+                //发票状态
+                rowData.add("");
+                //业务状态
+                rowData.add("");
+                //订单来源
+                rowData.add(String.valueOf(o.getPlatformInfo().getName()));
+                Integer Ten = 10, Forty = 40;
+                if (!o.getBizStatus().equals(Ten) && !o.getBizStatus().equals(Forty) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
+                    //尾款信息
+                    rowData.add("有尾款");
+                } else {
+                    //尾款信息
+                    rowData.add("");
+                }
+                //收货人
+                rowData.add(String.valueOf(o.getBizLocation().getReceiver()));
+                //联系电话
+                rowData.add(String.valueOf(o.getBizLocation().getPhone()));
+                //订单收货地址
+                rowData.add(String.valueOf(o.getBizLocation().getProvince().getName() + o.getBizLocation().getCity().getName() +
+                        o.getBizLocation().getRegion().getName() + o.getBizLocation().getAddress()));
+                //创建人
+                rowData.add(String.valueOf(o.getCreateBy().getName()));
+                //创建时间
+                rowData.add(String.valueOf(sdf.format(o.getCreateDate())));
+                //更新人
+                rowData.add(String.valueOf(o.getUpdateBy().getName()));
+                //更新时间
+                rowData.add(String.valueOf(sdf.format(o.getUpdateDate())));
+                data.add(rowData);
                 bizPayRecord.setPayNum(o.getOrderNum());
-                o.setBizPayRecordList(bizPayRecordService.findList(bizPayRecord));
-                headerExcel.setDataList(o.getOrderDetailList());
+                List<BizPayRecord> payList = bizPayRecordService.findList(bizPayRecord);
+                payList.forEach(p -> {
+                    o.setBizPayRecordList(payList);
+                    List payRow = new ArrayList();
+                    //ID
+                    payRow.add(String.valueOf(p.getId()));
+                    //订单编号
+                    payRow.add(String.valueOf(p.getPayNum()));
+                    //支付类型名称
+                    payRow.add(String.valueOf(p.getPayTypeName()));
+                    //业务流水号
+                    payRow.add(String.valueOf(p.getOutTradeNo()));
+                    //支付金额
+                    payRow.add(String.valueOf(p.getPayMoney()));
+                    //交易时间
+                    payRow.add(String.valueOf(sdf.format(p.getCreateDate())));
+                    payData.add(payRow);
+                });
             });
-            headerExcel.write(response, fileName).dispose();
+            String[] headers = {"ID", "订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价", "已收货款", "交易金额", "运费",
+                    "应付金额", "利润", "发票状态", "业务状态", "订单来源", "尾款信息", "收货人", "联系电话", "收货地址", "创建人", "创建时间", "更新人", "更新时间"};
+            String[] details = {"ID", "订单编号", "商品名称", "供应商", "商品单价", "采购数量", "商品总价"};
+            String[] pays = {"ID", "订单编号", "支付类型名称", "业务流水号", "支付金额", "交易时间"};
+            ExportExcelUtils eeu = new ExportExcelUtils();
+            SXSSFWorkbook workbook = new SXSSFWorkbook();
+            eeu.exportExcel(workbook, 0, "订单数据", headers, data, fileName);
+            eeu.exportExcel(workbook, 1, "交易记录", pays, payData, fileName);
+            eeu.exportExcel(workbook, 2, "商品数据", details, DetailData, fileName);
+            response.reset();
+            response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+            workbook.write(response.getOutputStream());
             return null;
         } catch (Exception e) {
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
