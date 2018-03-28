@@ -248,6 +248,7 @@
            <table class="table table-striped table-bordered table-condensed" id="skuTable">
                <thead>
                <tr>
+                    <th>货号</th>
                     <th>尺寸</th>
                     <th>颜色</th>
                     <th>价格</th>
@@ -260,6 +261,7 @@
                <tbody id="skuTableData">
                <c:forEach items="${entity.skuInfosList}" var="v">
                    <tr customType="skuTr">
+                       <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
@@ -338,18 +340,8 @@
         }
         skuTableData.empty();
 
-        var typeSelector = "<th><select customInput=\"skuTypeSelect\">";
-        var typeSelectorItem = "<option value='$value' label='$label'>$text</option>";
-        typeSelector += typeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
-        typeSelector += typeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
-        typeSelector += typeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
-        typeSelector += "</select></th>";
-
-        // OWN_PRODUCT((byte)1,"自选商品"),
-        // MADE_PRODUCT((byte)2,"定制商品"),
-        // COMMON_PRODUCT((byte)3,"非自选商品");
-
         var tableHtml = "<tr customType=\"skuTr\">" +
+            "                   <td><input type=\"text\" value=\"$imteNo\" customInput=\"itemNoInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
@@ -416,8 +408,10 @@
                 if (!imgInput) {
                     imgInput = "";
                 }
+                var itemNo = $("#itemNo").val();
                 skuTableData.append(
-                    tableHtml.replace("$size", sizeInput)
+                    tableHtml.replace("$imteNo", itemNo + "/" + sizeInput + "/" + colorInput)
+                        .replace("$size", sizeInput)
                         .replace("$color", colorInput)
                         .replace("$price", priceInput)
                         .replace("$img", imgInput)
