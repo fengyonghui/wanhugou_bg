@@ -263,7 +263,7 @@
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
-                       <td><img style="width: 100px" src="${v.defaultImg}"></td>
+                       <td><img customInput="imgInputLab" style="width: 100px" src="${v.defaultImg}"></td>
                        <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
                        <th><select customInput="skuTypeSelect">
                             <c:if test="${v.skuType == 1}">
@@ -282,7 +282,10 @@
                                 <option value='2' label='定制商品'>定制商品</option>
                             </c:if>
                        </select></th>
-                       <td onclick='deleteParentEle(this)'><input class="btn" type="button" value="删除"/></td>
+                       <td>
+                           <input onclick='deleteImgEle(this)' class="btn" type="button" value="删除图片"/>
+                           <input onclick='deleteParentEle(this)' class="btn" type="button" value="删除"/>
+                       </td>
                    </tr>
                </c:forEach>
                </tbody>
@@ -350,10 +353,11 @@
             "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
-            "                   <td><img src=\"$img\"></td>" +
+            "                   <td><img customInput=\"imgInputLab\" src=\"$img\" style=\"width: 100px\"></td>" +
             "                   <td style=\"display: none\"><input type=\"text\" value=\"$img\" customInput=\"imgInput\" readonly/></td>" +
             "$typeSelector" +
-            "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
+            "                   <td><input onclick='deleteImgEle(this)' class=\"btn\" type=\"button\" value=\"删除图片\"/>" +
+            "                   <input onclick='deleteParentEle(this)' class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
             "               </tr>";
 
         var customTypeAttr = $("[customType]");
@@ -422,6 +426,16 @@
                 );
             });
         }
+    }
+    
+    function deleteImgEle(that) {
+        var p = $(that).parent().parent();
+        var imgInput = $($(p).find("[customInput = 'imgInput']"));
+        var imgInputLab = $($(p).find("[customInput = 'imgInputLab']"));
+
+        imgInput.val("");
+        imgInput.attr("value", "");
+        imgInputLab.attr("src", "");
     }
 
     function submitCustomForm() {

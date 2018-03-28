@@ -88,6 +88,7 @@ public class BizProductInfoController extends BaseController {
             BizSkuInfo bizSkuInfo = new BizSkuInfo();
             bizSkuInfo.setProductInfo(entity);
             List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
+            Collections.reverse(skuInfosList);
             entity.setSkuInfosList(skuInfosList);
         }
         if (entity == null) {
