@@ -127,7 +127,7 @@
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+		<%--<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>--%>
 		<c:if test="${bizOrderHeader.flag=='check_pending'}">
 			<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
 		</c:if>
