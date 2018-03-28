@@ -53,6 +53,7 @@
 								labelValue="${office.name}" notAllowSelectParent="true"
 								title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
+				<input type="hidden" name="queryMemberGys" value="query">
 			</li>
 			<li><label>联系人电话：</label>
 				<form:input path="moblieMoeny.mobile" htmlEscape="false" placeholder="请输入供应商联系人电话"  class="input-medium"/></li>

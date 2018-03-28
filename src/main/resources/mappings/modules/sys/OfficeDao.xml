@@ -313,6 +313,9 @@
 			<if test="parentId != null and parentId != ''">
 				AND a.parent_id = #{parentId}
 			</if>
+			<if test="queryMemberGys!=null and queryMemberGys!=''">
+				AND a.id LIKE #{queryMemberGys}
+			</if>
 			<if test="moblieMoeny != null and moblieMoeny.mobile != null and moblieMoeny.mobile != ''">
 				AND sua.mobile LIKE
 				<if test="dbName == 'oracle'">'%'||#{moblieMoeny.mobile}||'%'</if>
