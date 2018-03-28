@@ -307,10 +307,32 @@
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
 <script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
 <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     function initSkuTable() {
         var skuTableData = $("#skuTableData");
+        var skuTableDataTr = skuTableData.find("tr");
+
+        var colorTrArr = $("[customType='colorTr']");
+        if (colorTrArr.length <= 0) {
+            uploadPic();
+            initSkuTable();
+            return;
+        }
+
+        var oldDataMap= $Map.Map();
+        if (skuTableDataTr.length > 0) {
+            skuTableDataTr.each(function () {
+                var oldSizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
+                var oldColorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
+                var oldPriceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
+                var oldImgInput = $($(this).find("[customInput = 'imgInput']")[0]).val();
+                var oldSkuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").val();
+                var oldData = oldSizeInput + "|" + oldColorInput + "|" + oldPriceInput + "|" + oldImgInput + "|" + oldSkuTypeSelect;
+                oldDataMap.put(oldSizeInput + oldColorInput, oldData);
+            });
+        }
         skuTableData.empty();
 
         var typeSelector = "<th><select customInput=\"skuTypeSelect\">";
@@ -330,11 +352,9 @@
             "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
             "                   <td><img src=\"$img\"></td>" +
             "                   <td style=\"display: none\"><input type=\"text\" value=\"$img\" customInput=\"imgInput\" readonly/></td>" +
-            typeSelector +
+            "$typeSelector" +
             "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
             "               </tr>";
-
-        var colorTrArr = $("[customType='colorTr']");
 
         var customTypeAttr = $("[customType]");
         var selectedSizeArr = [];
@@ -345,25 +365,60 @@
             }
         });
 
-        if (colorTrArr.length <= 0) {
-            uploadPic();
-            initSkuTable();
-            return;
-        }
-
         for (var i = 0; i < selectedSizeArr.length; i ++) {
             colorTrArr.each(function () {
+                var sizeInput = selectedSizeArr[i];
                 var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
                 var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("src");
+                var priceInput = "";
+
+                var oldDataStr = oldDataMap.get(selectedSizeArr[i] + colorInput);
+
+                var custTypeSelector = "<th><select customInput=\"skuTypeSelect\">";
+                var custTypeSelectorItem = "<option value='$value' label='$label'>$text</option>";
+
+
+                if (!$String.isNullOrBlank(oldDataStr)) {
+                    var dataArr = oldDataStr.split("|");
+
+                    sizeInput = $String.isNullOrBlank(sizeInput) ?  dataArr[0] : sizeInput;
+                    colorInput = $String.isNullOrBlank(colorInput) ?  dataArr[1] : colorInput;
+                    priceInput = $String.isNullOrBlank(priceInput) ?  dataArr[2] : priceInput;
+                    imgInput = $String.isNullOrBlank(imgInput) ?  dataArr[3] : imgInput;
+                    var oldSkuTypeSelect = dataArr[4];
+
+
+                    if (oldSkuTypeSelect == "2") {
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                    }else if (oldSkuTypeSelect == "3") {
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+                    }else {
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                    }
+
+                }else {
+                    custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
+                    custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+                    custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                }
+                custTypeSelector += "</select></th>";
+
                 if (!imgInput) {
                     imgInput = "";
                 }
                 skuTableData.append(
-                    tableHtml.replace("$size", selectedSizeArr[i])
+                    tableHtml.replace("$size", sizeInput)
                         .replace("$color", colorInput)
-                        .replace("$price", "")
+                        .replace("$price", priceInput)
                         .replace("$img", imgInput)
                         .replace("$img", imgInput)
+                        .replace("$typeSelector", custTypeSelector)
                 );
             });
         }
@@ -372,6 +427,7 @@
     function submitCustomForm() {
         var skuTrArr = $("[customType='skuTr']");
         var inputForm = $("#inputForm");
+
         var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
         skuTrArr.each(function () {
             var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
