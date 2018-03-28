@@ -33,6 +33,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
+import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -85,6 +86,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
     private BizPoOrderReqService bizPoOrderReqService;
+    @Autowired
+    private DictService dictService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -438,6 +441,7 @@ public class BizOrderHeaderController extends BaseController {
 
     /**
      * 导出订单数据
+     *
      * @return ouyang
      * 2018-03-27
      */
@@ -488,8 +492,18 @@ public class BizOrderHeaderController extends BaseController {
                 rowData.add(String.valueOf(o.getId()));
                 //订单编号
                 rowData.add(String.valueOf(o.getOrderNum()));
-                //订单类型
-                rowData.add("");
+                //描述
+                Dict dict = new Dict();
+                dict.setDescription("订单类型");
+                dict.setType("biz_order_type");
+                List<Dict> dictList = dictService.findList(dict);
+                for(Dict di:dictList){
+                    if (di.getValue().equals(String.valueOf(o.getOrderType()))) {
+                        //订单类型
+                        rowData.add(String.valueOf(di.getLabel()));
+                        break;
+                    }
+                }
                 //采购商名称/电话
                 rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
                 //所属采购中心
@@ -506,10 +520,28 @@ public class BizOrderHeaderController extends BaseController {
                 rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight()));
                 //利润
                 rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - o.getTotalBuyPrice()));
-                //发票状态
-                rowData.add("");
-                //业务状态
-                rowData.add("");
+                Dict dictInv = new Dict();
+                dictInv.setDescription("发票状态");
+                dictInv.setType("biz_order_invStatus");
+                List<Dict> dictListInv = dictService.findList(dictInv);
+                for(Dict dinv:dictListInv){
+                    if (dinv.getValue().equals(String.valueOf(o.getInvStatus()))) {
+                        //发票状态
+                        rowData.add(String.valueOf(dinv.getLabel()));
+                        break;
+                    }
+                }
+                Dict dictBiz = new Dict();
+                dictBiz.setDescription("业务状态");
+                dictBiz.setType("biz_order_status");
+                List<Dict> dictListBiz = dictService.findList(dictBiz);
+                for(Dict dbiz:dictListBiz){
+                    if (dbiz.getValue().equals(String.valueOf(o.getBizStatus()))) {
+                        //业务状态
+                        rowData.add(String.valueOf(dbiz.getLabel()));
+                        break;
+                    }
+                }
                 //订单来源
                 rowData.add(String.valueOf(o.getPlatformInfo().getName()));
                 Integer Ten = 10, Forty = 40;
@@ -558,7 +590,7 @@ public class BizOrderHeaderController extends BaseController {
             });
             String[] headers = {"ID", "订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价", "已收货款", "交易金额", "运费",
                     "应付金额", "利润", "发票状态", "业务状态", "订单来源", "尾款信息", "收货人", "联系电话", "收货地址", "创建人", "创建时间", "更新人", "更新时间"};
-            String[] details = {"ID", "订单编号", "商品名称", "供应商", "商品单价", "采购数量", "商品总价"};
+            String[] details = {"ID", "订单编号", "商品名称", "商品编码", "供应商", "商品单价", "采购数量", "商品总价"};
             String[] pays = {"ID", "订单编号", "支付类型名称", "业务流水号", "支付金额", "交易时间"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();

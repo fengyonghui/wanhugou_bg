@@ -31,7 +31,7 @@ public class ExportExcelUtils {
      * @param sheetTitle （sheet的名称）
      * @param headers    （表格的标题）
      * @param result     （表格的数据）
-     * @param out        （输出流）
+     * @param fileName        （输出流）
      * @throws Exception
      * @Title: exportExcel
      * @Description: 导出Excel的方法
