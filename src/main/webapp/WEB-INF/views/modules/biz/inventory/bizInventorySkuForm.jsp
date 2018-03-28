@@ -29,6 +29,8 @@
                 $("#skuNameCopy").val(skuName);
                 var skuCode =$("#skuCode").val();
                 $("#skuCodeCopy").val(skuCode);
+                var vendorName = $("#vendorName").val();
+                $("#vendorNameCopy").val(vendorName);
                 var itemNo = $("#itemNo").val();
                 $("#itemNoCopy").val(itemNo);
                 $.ajax({
@@ -58,8 +60,9 @@
                                 trdatas+= "<tr class='"+skuInfo.id+"' id='"+skuInfo.id+"'>";
                                 trdatas+="<td id='invInfoId_"+skuInfo.id+"'>"+selecttd+"</td>";
                                 trdatas+="<td><input type='hidden' id='skuInfoIds_"+skuInfo.id+"' value='"+skuInfo.id+"'/>"+skuInfo.name+"</td>";
-                                trdatas+="<td>"+skuInfo.partNo+"</td>";
-                                trdatas+="<td>"+skuInfo.itemNo+"</td>";
+                                trdatas+="<td>"+(skuInfo.partNo==undefined?"":skuInfo.partNo)+"</td>";
+                                trdatas+="<td>"+(skuInfo.itemNo==undefined?"":skuInfo.itemNo)+"</td>";
+                                trdatas+="<td>"+(skuInfo.productInfo.vendorName==undefined?"":skuInfo.productInfo.vendorName)+"</td>";
                                 trdatas+="<td>"+skuInfo.skuPropertyInfos+"</td>";
                                 trdatas+="<td id='invType_"+skuInfo.id+"'>"+selectInvTypetd+"</td>";
                                 trdatas+="<td><input  type='text' class='input-mini' id='saleQty_"+skuInfo.id+"'/></td>";
@@ -182,6 +185,7 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
+						<th>供应商</th>
 						<th>商品属性</th>
 						<th>库存类型</th>
 						<th>入库数量</th>
@@ -196,6 +200,7 @@
 						<td>${entity.skuInfo.name}</td>
 						<td>${entity.skuInfo.partNo}</td>
 						<td>${entity.skuInfo.itemNo}</td>
+						<td>${entity.skuInfo.productInfo.vendorName}</td>
 						<td>${entity.skuInfo.skuPropertyInfos}</td>
 						<td>${fns:getDictLabel(entity.invType, 'inv_type', '未知状态')}</td>
 						<td><input name="stockQtys" value="${entity.stockQty}" style="width: 40px"/></td>
@@ -211,6 +216,7 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
+						<th>供应商</th>
 						<th>商品属性</th>
 						<th>库存类型</th>
 						<th>入库数量</th>
