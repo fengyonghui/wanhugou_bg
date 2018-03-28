@@ -93,7 +93,7 @@ public class OfficeController extends BaseController {
             if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && !office.getMoblieMoeny().getMobile().equals("")) {
                 //列表页输入2个条件查询时
                 Office officeUser = new Office();
-                officeUser.setQueryMemberGys(office.getId()+"");
+                officeUser.setQueryMemberGys(office.getName()+"");
                 officeUser.setMoblieMoeny(office.getMoblieMoeny());
                 page = officeService.findPage(new Page<Office>(request, response), officeUser);
             } else {
@@ -495,10 +495,10 @@ public class OfficeController extends BaseController {
         }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), vendor);
         if (page.getList().size() == 0) {
-            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && !office.getMoblieMoeny().getMobile().equals("")) {
+            if (office.getQueryMemberGys() != null && !office.getMoblieMoeny().getMobile().equals("") && office.getQueryMemberGys().equals("query")) {
                 //列表页输入2个条件查询时
                 Office officeUser = new Office();
-                officeUser.setQueryMemberGys(office.getId()+"");
+                officeUser.setQueryMemberGys(office.getName()+"");
                 officeUser.setMoblieMoeny(office.getMoblieMoeny());
                 page = officeService.findPage(new Page<Office>(request, response), officeUser);
             } else {
