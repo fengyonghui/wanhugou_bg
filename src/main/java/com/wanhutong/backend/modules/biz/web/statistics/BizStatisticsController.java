@@ -647,6 +647,7 @@ public class BizStatisticsController extends BaseController {
         System.out.println(s);
         return "modules/biz/statistics/statisticsUserTables";
     }
+
     /**
      * 统计总的会员数，采购中心数，网供数，配资中心数，订单数量，总额、已收货款，商品数量 平均客单价
      * @return
@@ -658,6 +659,36 @@ public class BizStatisticsController extends BaseController {
         model.addAttribute("totalMap",totalMap);
         model.addAttribute("time",new Date());
         return "modules/biz/statistics/bizTotalStatistics";
+    }
+    /**
+     * 统计总的会员数，采购中心数，网供数，配资中心数，订单数量，总额、已收货款，商品数量 平均客单价
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "bizTotalStatisticsDtoDownload")
+    public void bizTotalStatisticsDtoDownload(Model model, HttpServletResponse response) throws IOException {
+        Map<String,BizTotalStatisticsDto> totalMap = bizStatisticsService.getBizTotalStatisticsDto();
+        String fileName = "万户通平台总体情况.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+
+        for (String key : totalMap.keySet()) {
+            HSSFCell hCell = header.createCell(rowIndex);
+            HSSFCell vCell = header.createCell(rowIndex);
+            hCell.setCellValue(key);
+            vCell.setCellValue(totalMap.get(key).getCount() + totalMap.get(key).getUnit());
+            rowIndex++;
+        }
+
+
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
     }
 
     /**
