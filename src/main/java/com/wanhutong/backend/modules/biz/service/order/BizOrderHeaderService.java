@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.BizOrderDiscount;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -48,8 +49,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderAddressService bizOrderAddressService;
     @Autowired
     private BizSkuInfoService bizSkuInfoService;
-//    @Autowired
-//    private BizOrderDetailService bizOrderDetailService;
+    @Autowired @Lazy
+    private BizOrderDetailService bizOrderDetailService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired
@@ -67,41 +68,50 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
-        boolean flag=false;
-        if(user.getRoleList()!=null){
+//        boolean flag=false;
+        boolean oflag = false;
+        /*if(user.getRoleList()!=null){
             for(Role role:user.getRoleList()){
                 if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
                     flag=true;
                     break;
                 }
             }
+        }*/
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
+                }
+            }
         }
         if(user.isAdmin()){
-            return super.findList(bizOrderHeader);
+            List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
+            //用于订单导出的利润
+            List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
+            return headerList;
         }else {
-            if(flag){
+            if(oflag){
+
+            }else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
-
-            return super.findList(bizOrderHeader);
+                List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
+            //用于订单导出的利润
+            List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
+            return headerList;
         }
     }
 
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
-            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+           // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
-            page.setCount(count);
+          // page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
-            Double totalBuyPrice = 0.0;
-            for (BizOrderHeader orderHeader:orderHeaderList) {
-
-                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo()==null?0:orderDetail.getSkuInfo().getBuyPrice()*orderDetail.getOrdQty()).sum();
-                orderHeader.setTotalBuyPrice(totalBuyPrice);
-
-            }
-            orderHeaderPage.setList(orderHeaderList);
+            List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
+            orderHeaderPage.setList(bizOrderHeaderList);
 
             return orderHeaderPage;
         }else {
@@ -130,13 +140,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
-            Double totalBuyPrice = 0.0;
-            for (BizOrderHeader orderHeader:orderHeaderList) {
-
-                totalBuyPrice = orderHeader.getOrderDetailList().stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo().getBuyPrice()*orderDetail.getOrdQty()).sum();
-                orderHeader.setTotalBuyPrice(totalBuyPrice);
-            }
-            orderHeaderPage.setList(orderHeaderList);
+            List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
+            orderHeaderPage.setList(bizOrderHeaderList);
 
             return orderHeaderPage;
         }
@@ -182,7 +187,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
         bizOrderHeader.setBizStatus(bizOrderHeader.getBizStatus());
         super.save(bizOrderHeader);
-        //利润
+
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
         if(orderDetailList != null && !orderDetailList.isEmpty()) {
@@ -217,6 +222,29 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     @Transactional(readOnly = false)
     public void saveOrderHea(BizOrderHeader bizOrderHeader) {
 
+    }
+
+    /**
+     * 计算订单利润
+     * @param orderHeaderList
+     * @return
+     */
+    public List<BizOrderHeader> getTotalBuyPrice(List<BizOrderHeader> orderHeaderList){
+        for (BizOrderHeader orderHeader:orderHeaderList) {
+            Double totalBuyPrice = 0.0;
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(orderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            if (orderDetailList != null && orderDetailList.size() > 0){
+                for (BizOrderDetail orderDetail:orderDetailList){
+                    BizSkuInfo skuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
+                    totalBuyPrice += skuInfo.getBuyPrice() * orderDetail.getOrdQty();
+                }
+            }
+//                totalBuyPrice = orderDetailList.stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo() == null ? 0 : orderDetail.getSkuInfo().getBuyPrice() * orderDetail.getOrdQty()).sum();
+            orderHeader.setTotalBuyPrice(totalBuyPrice);
+        }
+        return orderHeaderList;
     }
 
 }

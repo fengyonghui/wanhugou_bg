@@ -19,6 +19,9 @@
         </select>
     </label>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
+    <input type="hidden" name="img" id="img"/>
+    <input type="hidden" name="img1" id="img1"/>
     <div id="userTotalDataChart" style="height: 300px"></div>
 
 
@@ -112,6 +115,14 @@
                                 show: true,
                                 excludeComponents: ['toolbox'],
                                 pixelRatio: 2
+                            },
+                            myShowTable: {
+                                show: true,
+                                title: '显示表格',
+                                icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
+                                onclick: function (){
+                                    window.location.href="${adminPath}/biz/statistics/between/userSaleDataTable?startDate=" + startDate + "&endDate=" + endDate;
+                                }
                             }
                         }
                     },
@@ -141,6 +152,13 @@
                     series: msg.seriesList
                 });
                 salesVolumeChart.hideLoading();
+                setInterval( function (args) {
+                    var imgUrl = salesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img').val(imgUrl);
+                },1000);
                 singleSalesVolumeChart.setOption({
                     title: {
                         text: '采购顾问业绩统计(个人/区间)',
@@ -197,6 +215,13 @@
                     series: msg.singleSeriesList
                 });
                 singleSalesVolumeChart.hideLoading();
+                setInterval( function (args) {
+                    var imgUrl = singleSalesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img1').val(imgUrl);
+                },1000);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");
@@ -205,7 +230,47 @@
     }
 
     initChart();
+    function exportTable() {
+        initChart();
 
+        var imgUrl = $('#img').val();
+        var imgUrl1 = $('#img1').val();
+
+        var purchasingIdEle = $("#purchasingId");
+        var purchasingId = purchasingIdEle.find("option:selected").val();
+
+
+        var endDate = $("#endDate").val();
+        var startDate = $("#startDate").val();
+
+
+        //定义一个form表单
+        var myform = $("<form></form>");
+        myform.attr('method','post')
+        myform.attr('action',"${adminPath}/biz/statistics/between/userSaleDataDownload");
+
+        var myProductId = $("<input type='hidden' name='startDate' />");
+        myProductId.attr('value', startDate);
+        var myEndDate = $("<input type='hidden' name='endDate' />");
+        myEndDate.attr('value', endDate);
+
+        var myWarehouseId = $("<input type='hidden' name='purchasingId' />");
+        myWarehouseId.attr('value', purchasingId);
+
+        var myUpdateReason = $("<input type='hidden' name='imgUrl' />");
+        myUpdateReason.attr('value', imgUrl);
+
+        var myUpdateReason1 = $("<input type='hidden' name='imgUrl1' />");
+        myUpdateReason1.attr('value', imgUrl1);
+
+        myform.append(myProductId);
+        myform.append(myWarehouseId);
+        myform.append(myUpdateReason);
+        myform.append(myUpdateReason1);
+        myform.append(myEndDate);
+        myform.appendTo('body').submit(); //must add this line for higher html spec
+
+    }
 
 </script>
 </body>

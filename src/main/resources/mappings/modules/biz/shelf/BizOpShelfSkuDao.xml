@@ -37,6 +37,7 @@
 		bsi.part_no AS "skuInfo.partNo",
 		bsi.prod_id AS "skuInfo.productInfo.id",
 		bpi.img_url AS "productInfo.imgUrl",
+		bpi.vendor_name AS "productInfo.vendorName",
         CASE  WHEN a.unshelf_time > NOW() THEN '下架'
         WHEN a.unshelf_time is NULL THEN '下架'
         WHEN a.unshelf_time &lt;= NOW()THEN '上架'
@@ -87,6 +88,12 @@
 				<if test="dbName == 'oracle'">'%'||#{skuInfo.itemNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{skuInfo.itemNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.itemNo},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.vendorName != null and productInfo.vendorName != '' ">
+				AND bpi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.vendorName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
 			</if>
 			<if test="skuInfo != null and skuInfo.partNo != null and skuInfo.partNo != '' ">
 			<!--AND bsi.part_no = #{skuInfo.partNo}-->

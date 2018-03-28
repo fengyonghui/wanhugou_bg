@@ -98,6 +98,9 @@ public class BizStatisticsBetweenService {
                     case ORDER_COUNT:
                         dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getOrderCount() : 0);
                         break;
+                    case PROFIT:
+                        dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getProfitPrice() : 0);
+                        break;
                     default:
                         break;
                 }
@@ -142,9 +145,7 @@ public class BizStatisticsBetweenService {
      * @return 所有采购商
      */
     public List<Office> getBizPurchasingList(String type) {
-        Office office = new Office();
-        office.setType(type);
-        return officeDao.findList(office);
+        return officeDao.findListByType(type);
     }
 
     /**

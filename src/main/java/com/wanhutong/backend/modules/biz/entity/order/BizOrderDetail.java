@@ -4,6 +4,8 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
+import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
@@ -13,6 +15,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,7 +52,8 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private BizInventoryInfo inventoryInfo;     //仓库
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
 
-    private String  detailIds;
+
+    private String detailIds;
     private Integer totalReqQty;
     private Integer totalSendQty;
     private Integer vendorId;
@@ -57,6 +61,16 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String suplyIds;
     private Office vendor;      //供应商
     private User primary;       //供应商主联系人
+
+    private BizOrderDetail orderDaillist;//商品
+
+    public BizOrderDetail getOrderDaillist() {
+        return orderDaillist;
+    }
+
+    public void setOrderDaillist(BizOrderDetail orderDaillist) {
+        this.orderDaillist = orderDaillist;
+    }
 
     public List<BizOrderDetail> getOrderHeaderList() {
         return orderHeaderList;

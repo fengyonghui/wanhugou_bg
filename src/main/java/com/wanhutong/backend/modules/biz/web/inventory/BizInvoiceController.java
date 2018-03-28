@@ -147,7 +147,7 @@ public class BizInvoiceController extends BaseController {
      */
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = "invoiceOrderDetail")
-    public String invoiceOrderDetail(BizInvoice bizInvoice, Model model) {
+    public String invoiceOrderDetail(BizInvoice bizInvoice,String source, Model model) {
 
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
@@ -171,6 +171,10 @@ public class BizInvoiceController extends BaseController {
                 orderHeaderList.add(orderHeader);
             }
         }
+        BizLogistics bizLogistics = new BizLogistics();
+        List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+        model.addAttribute("logisticsList",logisticsList);
+        model.addAttribute("source",source);
         model.addAttribute("orderHeaderList",orderHeaderList);
         model.addAttribute("bizInvoice", bizInvoice);
         return "modules/biz/inventory/bizInvoiceDeForm";
@@ -184,7 +188,7 @@ public class BizInvoiceController extends BaseController {
      */
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = "invoiceRequestDetail")
-    public String invoiceRequestDetail(BizInvoice bizInvoice, Model model) {
+    public String invoiceRequestDetail(BizInvoice bizInvoice,String source, Model model) {
 
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
@@ -208,6 +212,10 @@ public class BizInvoiceController extends BaseController {
                 requestHeaderList.add(requestHeader);
             }
         }
+        BizLogistics bizLogistics = new BizLogistics();
+        List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+        model.addAttribute("logisticsList",logisticsList);
+        model.addAttribute("source",source);
         model.addAttribute("requestHeaderList",requestHeaderList);
         model.addAttribute("bizInvoice", bizInvoice);
         return "modules/biz/inventory/bizInvoiceReqDeForm";

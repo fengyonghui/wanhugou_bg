@@ -4,7 +4,10 @@
 package com.wanhutong.backend.modules.biz.entity.order;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
+import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
+import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -14,110 +17,138 @@ import java.util.List;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Entity
+ *
  * @author OuyangXiutian
  * @version 2017-12-20
  */
 public class BizOrderHeader extends DataEntity<BizOrderHeader> {
-	
-	private static final long serialVersionUID = 1L;
-	private String orderNum;		// 订单编号-由系统生成；唯一
-	private Integer orderType;		// 1: 普通订单 ; 2:帐期采购 3:配资采购
-	private Office customer;		// 客户ID sys_office.id &amp;  type=customer
-	private Double totalDetail;		// 订单详情总价
-	private Double receiveTotal;	//订单已收货款
-	private Double totalExp;		// 订单总费用
-	private Double freight;			// 运费
-	private Integer invStatus;		// 0 不开发票 1 未开发票 3 已开发票
-	private Integer bizStatus;		// 业务状态 0未支付；1首付款支付 2全部支付 3同意发货 4已发货 5客户已收货 6 已完成
-	private Integer bizType;		//订单运营类型: 1专营订单 2非专营订单
-	private BizPlatformInfo platformInfo;		// 订单来源； biz_platform_info.id
-	private BizOrderAddress bizLocation;		// 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
 
-	private CommonLocation location;          //订单交货地址
-	private List<BizOrderDetail> orderDetailList;	//查询有多少订单
+    private static final long serialVersionUID = 1L;
+    private String orderNum;        // 订单编号-由系统生成；唯一
+    private Integer orderType;        // 1: 普通订单 ; 2:帐期采购 3:配资采购
+    private Office customer;        // 客户ID sys_office.id &amp;  type=customer
+    private Double totalDetail;        // 订单详情总价
+    private Double receiveTotal;    //订单已收货款
+    private Double totalExp;        // 订单总费用
+    private Double freight;            // 运费
+    private Integer invStatus;        // 0 不开发票 1 未开发票 3 已开发票
+    private Integer bizStatus;        // 业务状态 0未支付；1首付款支付 2全部支付 3同意发货 4已发货 5客户已收货 6 已完成
+    private Integer bizType;        //订单运营类型: 1专营订单 2非专营订单
+    private BizPlatformInfo platformInfo;        // 订单来源； biz_platform_info.id
+    private BizOrderAddress bizLocation;        // 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
 
-	private Integer bizStatusStart;
-	private Integer bizStatusEnd;
-	private Integer consultantId ;    //采购顾问ID，用于查询
-	private Integer centerId;         //采购中心
-	private Date deliveryDate; 		//预计到货日期
-	private String oneOrder;		// 首次下单 firstOrder ，非首次下单 endOrder
-	private Double DiscountPrice;		//优惠价格页面显示
-	private Double tobePaid;		//待支付金额
-	private Double totalBuyPrice;		//订单总出厂价
-	private String flag;       //标志位
-	private String orderNoEditable;		//页面不可编辑标识符
-	private String orderDetails;		//页面不可编辑标识符2
-	private String clientModify;		//用于客户专员修改跳转
-	private Boolean ownGenPoOrder;
-	private Integer onlyVendor; //该订单的唯一供应商
-	private String itemNo;      //根据sku货号搜索
-	private String partNo;      //根据sku编号搜索
-	private Integer orderCount; //find List中订单总条数据
+    private CommonLocation location;          //订单交货地址
+    private List<BizOrderDetail> orderDetailList;    //查询有多少订单
 
-	private String orderNum2;		//用于删除订单页面传值
+    private Integer bizStatusStart;
+    private Integer bizStatusEnd;
+    private Integer consultantId;    //采购顾问ID，用于查询
+    private Integer centerId;         //采购中心
+    private Date deliveryDate;        //预计到货日期
+    private String oneOrder;        // 首次下单 firstOrder ，非首次下单 endOrder
+    private Double DiscountPrice;        //优惠价格页面显示
+    private Double tobePaid;        //待支付金额
+    private Double totalBuyPrice;        //订单总出厂价
+    private String flag;       //标志位
+    private String orderNoEditable;        //页面不可编辑标识符
+    private String orderDetails;        //页面不可编辑标识符2
+    private String clientModify;        //用于客户专员修改跳转
+    private Boolean ownGenPoOrder;
+    private Integer onlyVendor; //该订单的唯一供应商
+    private String itemNo;      //根据sku货号搜索
+    private String partNo;      //根据sku编号搜索
+    private Integer orderCount; //find List中订单总条数据
+
+    private String orderNum2;        //用于删除订单页面传值
     private String localSendIds;
-    private Integer orderMark;		//用于订单新增地址返回标记
-	private String suplyIds;       //用于查询本地发货的订单
-	private String centersName;	//用于订单列表查询采购中心
+    private Integer orderMark;        //用于订单新增地址返回标记
+    private String suplyIds;       //用于查询本地发货的订单
+    private String centersName;    //用于订单列表查询采购中心
 
-	private User con;		//订单所属客户专员
+    private User con;        //订单所属客户专员
+    private Date ordrHeaderStartTime;    //订单创建开始时间
+    private Date orderHeaderEedTime;    //订单创建结束时间
 
-	public List<BizOrderDetail> getOrderDetailList() {
-		return orderDetailList;
-	}
+    /**
+     * 用于订单导出查询平台交易记录
+     */
+    private List<BizPayRecord> BizPayRecordList;
 
-	public void setOrderDetailList(List<BizOrderDetail> orderDetailList) {
-		this.orderDetailList = orderDetailList;
-	}
+    public List<BizPayRecord> getBizPayRecordList() {
+        return BizPayRecordList;
+    }
 
-	public BizOrderHeader() {
-		super();
-	}
+    public void setBizPayRecordList(List<BizPayRecord> bizPayRecordList) {
+        BizPayRecordList = bizPayRecordList;
+    }
 
-	public BizOrderHeader(Integer id){
-		super(id);
-	}
+    public List<BizOrderDetail> getOrderDetailList() {
+        return orderDetailList;
+    }
 
-	public String getOrderNum() {
-		return orderNum;
-	}
+    public void setOrderDetailList(List<BizOrderDetail> orderDetailList) {
+        this.orderDetailList = orderDetailList;
+    }
 
-	public void setOrderNum(String orderNum) {
-		this.orderNum = orderNum;
-	}
+    public BizOrderHeader() {
+        super();
+    }
 
-	public Office getCustomer() {
-		return customer;
-	}
+    public BizOrderHeader(Integer id) {
+        super(id);
+    }
 
-	public void setCustomer(Office customer) {
-		this.customer = customer;
-	}
+    public Integer getOrderType() {
+        return orderType;
+    }
 
-	public Double getTotalDetail() {
-		return totalDetail;
-	}
+    public String getCentersName() {
+        return centersName;
+    }
 
-	public void setTotalDetail(Double totalDetail) {
-		this.totalDetail = totalDetail;
-	}
+    public Double getTotalDetail() {
+        return totalDetail;
+    }
 
-	public Double getTotalExp() {
-		return totalExp;
-	}
+    public Double getReceiveTotal() {
+        return receiveTotal;
+    }
 
-	public void setTotalExp(Double totalExp) {
-		this.totalExp = totalExp;
-	}
+    public Double getTotalExp() {
+        return totalExp;
+    }
 
-	public Double getFreight() {
-		return freight;
-	}
+    public Double getFreight() {
+        return freight;
+    }
 
-	public void setFreight(Double freight) {
-		this.freight = freight;
-	}
+    public Integer getInvStatus() {
+        return invStatus;
+    }
+
+    public String getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(String orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public void setCustomer(Office customer) {
+        this.customer = customer;
+    }
+
+    public void setTotalDetail(Double totalDetail) {
+        this.totalDetail = totalDetail;
+    }
+
+    public void setTotalExp(Double totalExp) {
+        this.totalExp = totalExp;
+    }
+
+    public void setFreight(Double freight) {
+        this.freight = freight;
+    }
 
     public BizPlatformInfo getPlatformInfo() {
         return platformInfo;
@@ -127,125 +158,113 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.platformInfo = platformInfo;
     }
 
-	public BizOrderAddress getBizLocation() {
-		return bizLocation;
-	}
+    public BizOrderAddress getBizLocation() {
+        return bizLocation;
+    }
 
-	public void setBizLocation(BizOrderAddress bizLocation) {
-		this.bizLocation = bizLocation;
-	}
+    public void setBizLocation(BizOrderAddress bizLocation) {
+        this.bizLocation = bizLocation;
+    }
 
-	public Integer getOrderType() {
-		return orderType;
-	}
+    public void setOrderType(Integer orderType) {
+        this.orderType = orderType;
+    }
 
-	public void setOrderType(Integer orderType) {
-		this.orderType = orderType;
-	}
+    public void setInvStatus(Integer invStatus) {
+        this.invStatus = invStatus;
+    }
 
-	public Integer getInvStatus() {
-		return invStatus;
-	}
+    public Integer getBizStatus() {
+        return bizStatus;
+    }
 
-	public void setInvStatus(Integer invStatus) {
-		this.invStatus = invStatus;
-	}
+    public void setBizStatus(Integer bizStatus) {
+        this.bizStatus = bizStatus;
+    }
 
-	public Integer getBizStatus() {
-		return bizStatus;
-	}
+    public Integer getBizStatusStart() {
+        return bizStatusStart;
+    }
 
-	public void setBizStatus(Integer bizStatus) {
-		this.bizStatus = bizStatus;
-	}
+    public void setBizStatusStart(Integer bizStatusStart) {
+        this.bizStatusStart = bizStatusStart;
+    }
 
-	public Integer getBizStatusStart() {
-		return bizStatusStart;
-	}
+    public Integer getBizStatusEnd() {
+        return bizStatusEnd;
+    }
 
-	public void setBizStatusStart(Integer bizStatusStart) {
-		this.bizStatusStart = bizStatusStart;
-	}
+    public void setBizStatusEnd(Integer bizStatusEnd) {
+        this.bizStatusEnd = bizStatusEnd;
+    }
 
-	public Integer getBizStatusEnd() {
-		return bizStatusEnd;
-	}
+    public Date getDeliveryDate() {
+        return deliveryDate;
+    }
 
-	public void setBizStatusEnd(Integer bizStatusEnd) {
-		this.bizStatusEnd = bizStatusEnd;
-	}
+    public void setDeliveryDate(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
 
-	public Date getDeliveryDate() {
-		return deliveryDate;
-	}
+    public Integer getBizType() {
+        return bizType;
+    }
 
-	public void setDeliveryDate(Date deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
+    }
 
-	public Integer getBizType() {
-		return bizType;
-	}
+    public String getOneOrder() {
+        return oneOrder;
+    }
 
-	public void setBizType(Integer bizType) {
-		this.bizType = bizType;
-	}
+    public void setOneOrder(String oneOrder) {
+        this.oneOrder = oneOrder;
+    }
 
-	public String getOneOrder() {
-		return oneOrder;
-	}
+    public Double getDiscountPrice() {
+        return DiscountPrice;
+    }
 
-	public void setOneOrder(String oneOrder) {
-		this.oneOrder = oneOrder;
-	}
+    public void setDiscountPrice(Double discountPrice) {
+        DiscountPrice = discountPrice;
+    }
 
-	public Double getDiscountPrice() {
-		return DiscountPrice;
-	}
+    public String getFlag() {
+        return flag;
+    }
 
-	public void setDiscountPrice(Double discountPrice) {
-		DiscountPrice = discountPrice;
-	}
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
 
-	public String getFlag() {
-		return flag;
-	}
+    public Double getTobePaid() {
+        return tobePaid;
+    }
 
-	public void setFlag(String flag) {
-		this.flag = flag;
-	}
+    public void setTobePaid(Double tobePaid) {
+        this.tobePaid = tobePaid;
+    }
 
-	public Double getTobePaid() {
-		return tobePaid;
-	}
+    public void setReceiveTotal(Double receiveTotal) {
+        this.receiveTotal = receiveTotal;
+    }
 
-	public void setTobePaid(Double tobePaid) {
-		this.tobePaid = tobePaid;
-	}
+    public CommonLocation getLocation() {
+        return location;
+    }
 
-	public Double getReceiveTotal() {
-		return receiveTotal;
-	}
+    public void setLocation(CommonLocation location) {
+        this.location = location;
+    }
 
-	public void setReceiveTotal(Double receiveTotal) {
-		this.receiveTotal = receiveTotal;
-	}
+    public Integer getConsultantId() {
+        return consultantId;
+    }
 
-	public CommonLocation getLocation() {
-		return location;
-	}
-
-	public void setLocation(CommonLocation location) {
-		this.location = location;
-	}
-
-	public Integer getConsultantId() {
-		return consultantId;
-	}
-
-	public void setConsultantId(Integer consultantId) {
-		this.consultantId = consultantId;
-	}
+    public void setConsultantId(Integer consultantId) {
+        this.consultantId = consultantId;
+    }
 
     public String getOrderNoEditable() {
         return orderNoEditable;
@@ -263,13 +282,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.orderDetails = orderDetails;
     }
 
-	public String getOrderNum2() {
-		return orderNum2;
-	}
+    public String getOrderNum2() {
+        return orderNum2;
+    }
 
-	public void setOrderNum2(String orderNum2) {
-		this.orderNum2 = orderNum2;
-	}
+    public void setOrderNum2(String orderNum2) {
+        this.orderNum2 = orderNum2;
+    }
 
     public String getLocalSendIds() {
         return localSendIds;
@@ -279,99 +298,115 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.localSendIds = localSendIds;
     }
 
-	public Integer getOrderMark() {
-		return orderMark;
-	}
+    public Integer getOrderMark() {
+        return orderMark;
+    }
 
-	public void setOrderMark(Integer orderMark) {
-		this.orderMark = orderMark;
-	}
-	
-	public String getClientModify() {
-		return clientModify;
-	}
-	
-	public void setClientModify(String clientModify) {
-		this.clientModify = clientModify;
-	}
+    public void setOrderMark(Integer orderMark) {
+        this.orderMark = orderMark;
+    }
 
-	public Boolean getOwnGenPoOrder() {
-		return ownGenPoOrder;
-	}
+    public String getClientModify() {
+        return clientModify;
+    }
 
-	public void setOwnGenPoOrder(Boolean ownGenPoOrder) {
-		this.ownGenPoOrder = ownGenPoOrder;
-	}
+    public void setClientModify(String clientModify) {
+        this.clientModify = clientModify;
+    }
 
-	public Integer getOnlyVendor() {
-		return onlyVendor;
-	}
+    public Boolean getOwnGenPoOrder() {
+        return ownGenPoOrder;
+    }
 
-	public void setOnlyVendor(Integer onlyVendor) {
-		this.onlyVendor = onlyVendor;
-	}
+    public void setOwnGenPoOrder(Boolean ownGenPoOrder) {
+        this.ownGenPoOrder = ownGenPoOrder;
+    }
 
-	public Integer getCenterId() {
-		return centerId;
-	}
+    public Integer getOnlyVendor() {
+        return onlyVendor;
+    }
 
-	public void setCenterId(Integer centerId) {
-		this.centerId = centerId;
-	}
+    public void setOnlyVendor(Integer onlyVendor) {
+        this.onlyVendor = onlyVendor;
+    }
 
-	public Double getTotalBuyPrice() {
-		return totalBuyPrice;
-	}
+    public Integer getCenterId() {
+        return centerId;
+    }
 
-	public void setTotalBuyPrice(Double totalBuyPrice) {
-		this.totalBuyPrice = totalBuyPrice;
-	}
+    public void setCenterId(Integer centerId) {
+        this.centerId = centerId;
+    }
 
-	public String getItemNo() {
-		return itemNo;
-	}
+    public Double getTotalBuyPrice() {
+        return totalBuyPrice;
+    }
 
-	public void setItemNo(String itemNo) {
-		this.itemNo = itemNo;
-	}
+    public void setTotalBuyPrice(Double totalBuyPrice) {
+        this.totalBuyPrice = totalBuyPrice;
+    }
 
-	public Integer getOrderCount() {
-		return orderCount;
-	}
+    public String getItemNo() {
+        return itemNo;
+    }
 
-	public void setOrderCount(Integer orderCount) {
-		this.orderCount = orderCount;
-	}
+    public void setItemNo(String itemNo) {
+        this.itemNo = itemNo;
+    }
 
-	public String getPartNo() {
-		return partNo;
-	}
+    public Integer getOrderCount() {
+        return orderCount;
+    }
 
-	public void setPartNo(String partNo) {
-		this.partNo = partNo;
-	}
+    public void setOrderCount(Integer orderCount) {
+        this.orderCount = orderCount;
+    }
 
-	public String getSuplyIds() {
-		return suplyIds;
-	}
+    public String getPartNo() {
+        return partNo;
+    }
 
-	public void setSuplyIds(String suplyIds) {
-		this.suplyIds = suplyIds;
-	}
+    public void setPartNo(String partNo) {
+        this.partNo = partNo;
+    }
 
-	public String getCentersName() {
-		return centersName;
-	}
+    public String getSuplyIds() {
+        return suplyIds;
+    }
 
-	public void setCentersName(String centersName) {
-		this.centersName = centersName;
-	}
+    public void setSuplyIds(String suplyIds) {
+        this.suplyIds = suplyIds;
+    }
 
-	public User getCon() {
-		return con;
-	}
+    public void setCentersName(String centersName) {
+        this.centersName = centersName;
+    }
 
-	public void setCon(User con) {
-		this.con = con;
-	}
+    public User getCon() {
+        return con;
+    }
+
+    public void setCon(User con) {
+        this.con = con;
+    }
+
+    public Date getOrdrHeaderStartTime() {
+        return ordrHeaderStartTime;
+    }
+
+    public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
+        this.ordrHeaderStartTime = ordrHeaderStartTime;
+    }
+
+    public Date getOrderHeaderEedTime() {
+        return orderHeaderEedTime;
+    }
+
+    public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
+        this.orderHeaderEedTime = orderHeaderEedTime;
+    }
+
+    public Office getCustomer() {
+        return customer;
+    }
 }

@@ -133,7 +133,9 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
 			bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
 			bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
-			bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+			if (unShelfTimeArr.length > 0) {
+                bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+            }
 			bizOpShelfSkuService.save(bizOpShelfSku);
 
 		}
