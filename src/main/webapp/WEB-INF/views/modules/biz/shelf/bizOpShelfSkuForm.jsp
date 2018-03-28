@@ -38,21 +38,16 @@
                             }
                         });
                     }) ;
-                        if(flag) {
-                            $("#tbody").find("td").each(function () {
-                                if ($(this).attr("style") == "display: none;") {
-                                    $(this).removeAttr("style");
-                                }
+                    if(flag) {
+                        $("#tbody").find("td").each(function () {
+                            if ($(this).attr("style") == "display: none;") {
+                                $(this).removeAttr("style");
+                            }
 
-                            });
-                            loading('正在提交，请稍等...');
-                            form.submit();
-                        }
-
-
-                    if(flag){
-
-					}
+                        });
+                        loading('正在提交，请稍等...');
+                        form.submit();
+                    }
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function(error, element) {
@@ -189,7 +184,7 @@
                                 "<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
                                 "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
                                 "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
-                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this.value,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
                                 "<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
                                 "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
@@ -219,17 +214,29 @@
                 })
 
             });
-/*
-            $("#contentTable2").tablesMergeCell({
-                // automatic: true,
-                // 是否根据内容来合并
-                cols:[0,3]
-                // rows:[0,2]
-            });*/
+            /*
+                        $("#contentTable2").tablesMergeCell({
+                            // automatic: true,
+                            // 是否根据内容来合并
+                            cols:[0,3]
+                            // rows:[0,2]
+                        });*/
 
         });
         function removeItem(obj) {
             $("."+obj).remove();
+        }
+
+        function addOne(item,skuId) {
+            alert(item);
+            alert(skuId);
+            var first = $("#tbody").find("tr:first");
+            var second = $("tr+tr").html();
+            alert(second);
+            alert(first.html());
+            var minQty = parseInt(item) + 1;
+            $("input[name='minQtys']").val(minQty);
+
         }
 	</script>
 	<script type="text/javascript">
