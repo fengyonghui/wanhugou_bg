@@ -49,10 +49,11 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>采购商名称：</label>
-				<sys:treeselect id="office" name="id" value="${office.id}" labelName="customer.name"
-								labelValue="${office.name}" notAllowSelectParent="true"
+				<sys:treeselect id="office" name="id" value="" labelName="name"
+								labelValue="" notAllowSelectParent="true"
 								title="采购商" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-medium"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
+				<input type="hidden" name="queryMemberGys" value="query">
 			</li>
 			<li><label>联系人电话：</label>
 				<form:input path="moblieMoeny.mobile" htmlEscape="false" placeholder="请输入联系人电话"  class="input-medium"/></li>
