@@ -6,10 +6,10 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
         $(document).ready(function() {
-            if ($("#id").val() != '') {
-                var bcID = $("#bcID").val();
-                changeSelect(bcID);
-            }
+            <%--if ($("#id").val() != '') {--%>
+                <%--var bcID = $("#bcID").val();--%>
+                <%--changeSelect(bcID);--%>
+            <%--}--%>
         });
 		function changeSelect(id){
 			 $("#adviserId").html("");
@@ -108,7 +108,7 @@
 			<label class="control-label">归属采购顾问:</label>
 			<div class="controls">
 				<select name="consultantId" id="adviserId" style="width: 18%">
-                     <c:if test="${buyerAdviser.consultantName != null }">
+                     <c:if test="${buyerAdviser!=null && buyerAdviser.consultantName != null }">
                      	<option value="${buyerAdviser.consultantId}" selected = 'selected'>${buyerAdviser.consultantName}</option>
                      </c:if>
                      <c:if test="${buyerAdviser == null || buyerAdviser.consultantName==null}">
@@ -117,7 +117,7 @@
                  </select>
 			</div>
 		</div>
-		
+
 		<div class="form-actions">
 			<shiro:hasPermission name="sys:office:edit"><input id="btnSubmit" class="btn btn-primary" type="button" onclick="submitData()" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

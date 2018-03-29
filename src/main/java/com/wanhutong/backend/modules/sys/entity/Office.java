@@ -39,6 +39,7 @@ public class Office extends TreeEntity<Office> {
 	private List<String> childDeptList;//快速添加子部门
 	private String level; //钱包等级
 	private String gysMobile;	//供应商联系方式
+	private String queryMemberGys;	//列表查询列表 供应商、会员
 
 	private String source;
 	private String gysFlag;	//用于供应商保存跳转标识
@@ -304,4 +305,13 @@ public class Office extends TreeEntity<Office> {
 	public void setCustomerTypeEleven(String customerTypeEleven) {
 		this.customerTypeEleven = customerTypeEleven;
 	}
+
+	public String getQueryMemberGys() {
+		return queryMemberGys;
+	}
+
+	public void setQueryMemberGys(String queryMemberGys) {
+		this.queryMemberGys = queryMemberGys;
+	}
+
 }

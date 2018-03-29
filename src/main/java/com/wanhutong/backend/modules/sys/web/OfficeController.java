@@ -85,10 +85,21 @@ public class OfficeController extends BaseController {
 //            查所有
             customer.setParentIds("%," + purchasersId + ",%");
         }
+        if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+            customer.setMoblieMoeny(office.getMoblieMoeny());
+        }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), customer);
         if (page.getList().size() == 0) {
-//            当点击子节点显示
-            page.getList().add(officeService.get(office.getId()));
+            if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && !office.getMoblieMoeny().getMobile().equals("")) {
+                //列表页输入2个条件查询时
+                Office officeUser = new Office();
+                officeUser.setQueryMemberGys(office.getName()+"");
+                officeUser.setMoblieMoeny(office.getMoblieMoeny());
+                page = officeService.findPage(new Page<Office>(request, response), officeUser);
+            } else {
+                //当点击子节点显示
+                page.getList().add(officeService.get(office.getId()));
+            }
         }
         model.addAttribute("page", page);
 //		if(conn.equals("connIndex")){
@@ -478,14 +489,22 @@ public class OfficeController extends BaseController {
 //            查所有
             vendor.setParentIds("%," + supplierId + ",%");
         }
-        if (office.getGysMobile() != null) {
-//            供应商电话查询
-            vendor.setGysMobile(office.getGysMobile());
+        if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+            //输入手机号查询
+            vendor.setMoblieMoeny(office.getMoblieMoeny());
         }
         Page<Office> page = officeService.findPage(new Page<Office>(request, response), vendor);
         if (page.getList().size() == 0) {
-//            当点击子节点显示
-            page.getList().add(officeService.get(office.getId()));
+            if (office.getQueryMemberGys() != null && !office.getMoblieMoeny().getMobile().equals("") && office.getQueryMemberGys().equals("query")) {
+                //列表页输入2个条件查询时
+                Office officeUser = new Office();
+                officeUser.setQueryMemberGys(office.getName()+"");
+                officeUser.setMoblieMoeny(office.getMoblieMoeny());
+                page = officeService.findPage(new Page<Office>(request, response), officeUser);
+            } else {
+                //当点击子节点显示
+                page.getList().add(officeService.get(office.getId()));
+            }
         }
         model.addAttribute("page", page);
         return "modules/sys/supplierList";
