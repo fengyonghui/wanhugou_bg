@@ -206,6 +206,16 @@ public class BizOrderHeaderController extends BaseController {
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
+
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        bizOrderHeaderService.delete(bizOrderHeader);
+        addMessage(redirectAttributes, "恢复订单信息成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
+    }
+
+
     /**
      * @param bizOrderHeader
      * @param flag           0为采购中心出库

@@ -218,6 +218,7 @@
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
+				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag==1}">
 				<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
@@ -247,6 +248,10 @@
 						</c:if>
 					</c:otherwise>
 				</c:choose>
+				</c:if >
+				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag==0}">
+					<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
+				</c:if>
 			</td></shiro:hasPermission>
 		</tr>
 	</c:forEach>
