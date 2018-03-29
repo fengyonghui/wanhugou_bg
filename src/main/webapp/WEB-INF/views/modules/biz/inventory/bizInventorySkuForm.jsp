@@ -30,6 +30,17 @@
 					}
 				}
 			});
+			var invInfoId = $("#invInfoId").val();
+			$.ajax({
+				url:"${ctx}/biz/inventory/bizInventoryInfo/findInventorySku",
+				type:"post",
+				data:{invInfoId:invInfoId},
+				success:function (data) {
+					if (data.customer.type==10){
+
+                    }
+                }
+			});
             $("#searchData").click(function () {
                 var skuName=$("#skuName").val();
                 $("#skuNameCopy").val(skuName);
