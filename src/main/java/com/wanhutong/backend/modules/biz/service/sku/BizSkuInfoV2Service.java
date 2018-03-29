@@ -25,9 +25,11 @@ import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +68,8 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	private OfficeService officeService;
 	@Autowired
 	private PropertyInfoService propertyInfoService;
+	@Autowired
+	private AttributeValueService attributeValueService;
 
 	protected Logger log = LoggerFactory.getLogger(BizSkuInfoV2Service.class);//日志
 
@@ -135,13 +139,17 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		}
 		Integer prodId=	skuInfo.getProductInfo().getId();
 		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
-		BizSkuPropValue bizSkuPropValue=new BizSkuPropValue();
-        bizSkuPropValue.setSkuInfo(skuInfo);
-        List<BizSkuPropValue> skuPropValueList=bizSkuPropValueService.findList(bizSkuPropValue);
+		AttributeValue attributeValue =new AttributeValue();
+		attributeValue.setObjectId(skuInfo.getId());
+		attributeValue.setObjectName("biz_sku_info");
+		List<AttributeValue>skuPropValueList= attributeValueService.findList(attributeValue);
+//		BizSkuPropValue bizSkuPropValue=new BizSkuPropValue();
+//        bizSkuPropValue.setSkuInfo(skuInfo);
+//        List<BizSkuPropValue> skuPropValueList=bizSkuPropValueService.findList(bizSkuPropValue);
         StringBuffer skuPropName=new StringBuffer();
-        for(BizSkuPropValue skuPropValue:skuPropValueList){
+        for(AttributeValue skuPropValue:skuPropValueList){
             skuPropName.append("-");
-            skuPropName.append(skuPropValue.getPropValue());
+            skuPropName.append(skuPropValue.getValue());
         }
         String propNames="";
         if(skuPropName.toString().length()>1){

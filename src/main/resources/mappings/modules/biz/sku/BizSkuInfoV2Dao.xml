@@ -28,11 +28,11 @@
 				<id column="office.id"  property="id"/>
 			</association>
 		</association>
-		<!--<collection property="skuPropValueList" ofType="BizSkuPropValue">-->
-			<!--<id column="skuPropValueList.id"  property="id"/>-->
-			<!--<result column="skuPropValueList.propValue"  property="propValue"/>-->
+		<collection property="attrValueList" ofType="AttributeValue">
+			<id column="attrValueList.id"  property="id"/>
+			<result column="attrValueList.value"  property="value"/>
 
-		<!--</collection>-->
+		</collection>
 
 		<collection property="skuImgs" ofType="CommonImg" select="findImgList"  column="id">
 			<id column="id"  property="id"/>
@@ -179,11 +179,11 @@
 	<select id="findListByParam" resultMap="BizSkuInfoMap">
 		SELECT
 		<include refid="bizSkuInfoColumns"/>,
-		bspv.id AS "skuPropValueList.id",
-		bspv.prop_value AS "skuPropValueList.propValue",
+		sav.id AS "skuPropValueList.id",
+		sav.value AS "attrValueList.value",
 		bpi.vendor_name AS "productInfo.vendorName"
 		FROM biz_sku_info a
-		LEFT JOIN biz_sku_prop_value bspv on a.id=bspv.sku_id
+		LEFT JOIN sys_attribute_value sav on sav.object_id=a.id and sav.object_name='biz_sku_info'
 		<include refid="bizSkuInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
