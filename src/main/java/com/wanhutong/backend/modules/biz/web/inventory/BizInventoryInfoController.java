@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -34,6 +38,8 @@ public class BizInventoryInfoController extends BaseController {
 
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
+	@Autowired
+    private OfficeService officeService;
 	
 	@ModelAttribute
 	public BizInventoryInfo get(@RequestParam(required=false) Integer id) {
@@ -84,6 +90,24 @@ public class BizInventoryInfoController extends BaseController {
 		bizInventoryInfoService.delete(bizInventoryInfo);
 		addMessage(redirectAttributes, "删除仓库信息成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventoryInfo/?repage";
+	}
+
+    /**
+     * 用于配资中心仓库查询采购商
+     * @param invInfoId
+     * @return
+     */
+	@ResponseBody
+	@RequiresPermissions("biz:inventory:bizInventoryInfo:view")
+	@RequestMapping(value = "findInventorySku")
+	public BizInventoryInfo findInventorySku(Integer invInfoId){
+        BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+		if (invInfoId != null) {
+            bizInventoryInfo = bizInventoryInfoService.get(invInfoId);
+            Office cent = officeService.get(bizInventoryInfo.getCustomer().getId());
+            bizInventoryInfo.setCustomer(cent);
+        }
+        return bizInventoryInfo;
 	}
 
 }
