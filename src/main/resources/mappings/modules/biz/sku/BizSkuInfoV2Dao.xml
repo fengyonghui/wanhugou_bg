@@ -28,7 +28,7 @@
 				<id column="office.id"  property="id"/>
 			</association>
 		</association>
-		<collection property="attrValueList" ofType="AttributeValue">
+		<collection property="attrValueList" ofType="AttributeValueV2">
 			<id column="attrValueList.id"  property="id"/>
 			<result column="attrValueList.value"  property="value"/>
 

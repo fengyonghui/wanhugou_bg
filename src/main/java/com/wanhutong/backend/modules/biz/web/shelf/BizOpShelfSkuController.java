@@ -19,6 +19,9 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueService;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +59,7 @@ public class BizOpShelfSkuController extends BaseController {
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
-	private BizSkuPropValueService bizSkuPropValueService;
+	private AttributeValueV2Service attributeValueService;
 
 	
 	@ModelAttribute
@@ -153,7 +156,7 @@ public class BizOpShelfSkuController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "findOpShelfSku")
 	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku){
-		BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();//sku商品属性表
+		AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
 		List<BizOpShelfSku> list=null;
 		boolean emptyName = bizOpShelfSku.getSkuInfo().getName().isEmpty();//商品名称
 		boolean emptyPart = bizOpShelfSku.getSkuInfo().getPartNo().isEmpty();//商品编码
@@ -165,8 +168,9 @@ public class BizOpShelfSkuController extends BaseController {
 		}
 		if(list!=null){
 			for (BizOpShelfSku skuValue : list) {
-				bizSkuPropValue.setSkuInfo(skuValue.getSkuInfo());//sku_Id
-				List<BizSkuPropValue> skuValueList = bizSkuPropValueService.findList(bizSkuPropValue);
+				bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
+				bizSkuPropValue.setObjectName("biz_sku_info");
+				List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
 				if(skuValueList.size()!=0){
 					skuValue.setSkuValueList(skuValueList);
 				}
