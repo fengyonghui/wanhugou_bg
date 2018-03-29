@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 商品上架管理DAO接口
@@ -17,4 +18,6 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 public interface BizOpShelfSkuDao extends CrudDao<BizOpShelfSku> {
 	public void dateTimeUpdate(BizOpShelfSku bizOpShelfSku);
 	void shelvesUpdate(BizOpShelfSku bizOpShelfSku);
+
+    void updateSkuIdById(@Param("id") Integer id, @Param("skuId")Integer skuId);
 }

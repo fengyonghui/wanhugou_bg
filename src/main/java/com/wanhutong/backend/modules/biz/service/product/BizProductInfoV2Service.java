@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.service.product;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
@@ -17,11 +18,13 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -88,6 +91,9 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
     private AttributeValueV2Service attributeValueV2Service;
     @Resource
     private BizSkuInfoV2Service bizSkuInfoV2Service;
+    @Resource
+    private BizOpShelfSkuService bizOpShelfSkuService;
+
 
     /**
      * 材质ID 临时解决文案 需优化
@@ -170,6 +176,18 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         // 属性 SKU
         List<String> skuAttrStrList = bizProductInfo.getSkuAttrStrList();
         if (CollectionUtils.isNotEmpty(skuAttrStrList)) {
+            // 查询已经上架的SKU
+            BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+            bizOpShelfSku.setProductInfo(new BizProductInfo(bizProductInfo.getId()));
+            List<BizOpShelfSku> ossList = bizOpShelfSkuService.findList(bizOpShelfSku);
+            Map<String, BizOpShelfSku> oldOssMap = Maps.newHashMap();
+            for (BizOpShelfSku b : ossList) {
+                BizSkuInfo skuInfo = b.getSkuInfo();
+                if (skuInfo != null && StringUtils.isNotBlank(skuInfo.getItemNo())) {
+                    oldOssMap.put(skuInfo.getItemNo(), b);
+                }
+            }
+
 //            删除 旧 SKU
             BizSkuInfo oldBizSkuInfo = new BizSkuInfo();
             oldBizSkuInfo.setProductInfo(bizProductInfo);
@@ -193,6 +211,10 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 bizSkuInfo.setSort(String.valueOf(index));
                 bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
                 bizSkuInfoV2Service.save(bizSkuInfo);
+
+                if (oldOssMap.get(bizSkuInfo.getItemNo()) != null) {
+                    bizOpShelfSkuService.updateSkuIdById(oldOssMap.get(bizSkuInfo.getItemNo()).getId(), bizSkuInfo.getId());
+                }
 
                 AttributeValueV2 sizeAttrVal = new AttributeValueV2();
                 sizeAttrVal.setValue(size);
