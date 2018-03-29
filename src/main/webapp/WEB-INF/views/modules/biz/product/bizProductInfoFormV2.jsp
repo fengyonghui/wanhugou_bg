@@ -286,7 +286,7 @@
                        </select></th>
                        <td>
                            <input onclick='deleteImgEle(this)' class="btn" type="button" value="删除图片"/>
-                           <input onclick='deleteParentEle(this)' class="btn" type="button" value="删除"/>
+                           <input onclick='deleteParentParentEle(this)' class="btn" type="button" value="删除"/>
                        </td>
                    </tr>
                </c:forEach>
@@ -349,7 +349,7 @@
             "                   <td style=\"display: none\"><input type=\"text\" value=\"$img\" customInput=\"imgInput\" readonly/></td>" +
             "$typeSelector" +
             "                   <td><input onclick='deleteImgEle(this)' class=\"btn\" type=\"button\" value=\"删除图片\"/>" +
-            "                   <input onclick='deleteParentEle(this)' class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
+            "                   <input onclick='deleteParentParentEle(this)' class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
             "               </tr>";
 
         var customTypeAttr = $("[customType]");
@@ -456,8 +456,8 @@
         inputForm.submit();
     }
 
-    function deleteParentEle(that) {
-        $(that).parent().remove();
+    function deleteParentParentEle(that) {
+        $(that).parent().parent().remove();
     }
 
     function setBatchPrice() {
@@ -546,7 +546,7 @@
             "                       <input type=\"button\" value=\"上传\" onclick=\"submitPic('colorImg$id')\"/>" +
             "                       <input type=\"button\" value=\"删除\"  onclick=\"deletePic('colorImg$idImg')\"/>" +
             "                   </td>" +
-            "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
+            "                   <td onclick='deleteParentParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
             "               </tr>";
         for (var j = 0; j < selectedColorArr.length; j ++) {
             uploadPicTableData.append(
