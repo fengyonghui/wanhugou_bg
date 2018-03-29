@@ -3,54 +3,53 @@
  */
 package com.wanhutong.backend.modules.biz.service.product;
 
-import java.io.*;
-import java.net.URLDecoder;
-import java.util.*;
-
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
-import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
-import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
-import com.wanhutong.backend.modules.biz.service.category.BizCatePropValueService;
+import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.SkuTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
-import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import net.sf.ehcache.util.ProductInfo;
-import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import org.springframework.web.filter.CharacterEncodingFilter;
-
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
 
 
 /**
@@ -61,7 +60,7 @@ import javax.annotation.Resource;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizProductInfoService extends CrudService<BizProductInfoDao, BizProductInfo> {
+public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizProductInfo> {
 
     @Resource
     private PropertyInfoService propertyInfoService;
@@ -79,67 +78,156 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
     private BizVendInfoService bizVendInfoService;
     @Autowired
     private BizVarietyInfoService bizVarietyInfoService;
+    @Resource
+    private DictService dictService;
+    @Resource
+    private OfficeService officeService;
+    @Resource
+    private BizCategoryInfoV2Service bizCategoryInfoV2Service;
+    @Resource
+    private AttributeValueV2Service attributeValueV2Service;
+    @Resource
+    private BizSkuInfoV2Service bizSkuInfoV2Service;
 
+    /**
+     * 材质ID 临时解决文案 需优化
+     */
+    private static final Integer MATERIAL_ATTR_ID = 1;
+    private static final Integer SIZE_ATTR_ID = 2;
+    private static final Integer COLOR_ATTR_ID = 3;
+    private static final String PRODUCT_TABLE = "biz_product_info";
+    private static final String SKU_TABLE = "biz_sku_info";
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
-
+    @Override
     public BizProductInfo get(Integer id) {
         return super.get(id);
     }
 
+    @Override
     public List<BizProductInfo> findList(BizProductInfo bizProductInfo) {
         return super.findList(bizProductInfo);
     }
 
+    @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
         return super.findPage(page, bizProductInfo);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Override
     public void save(BizProductInfo bizProductInfo) {
-        String brandCode="";
-        String prodCode="";
-        String cateCode="";
-        if (bizProductInfo.getPropValue() != null && bizProductInfo.getPropValue().getId() != null) {
-            PropValue propValue = propValueService.get(bizProductInfo.getPropValue().getId());
-            if (propValue != null) {
-                bizProductInfo.setBrandName(propValue.getValue());
-                brandCode=addZeroForNum(propValue.getCode(),false,2);
-                Office office=bizProductInfo.getOffice();
-                BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
-                String vCode="0";
-                if(bizVendInfo!=null){
-                    vCode= bizVendInfo.getCode();
-                }
-                prodCode=addZeroForNum(vCode,true,3);
-                BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
-                BizVarietyInfo varietyInfo=bizVarietyInfoService.get(bizVarietyInfo.getId());
-                cateCode=addZeroForNum(varietyInfo.getCode(),true,3);
-            }
+        // 取BRAND NAME
+        Dict brand = dictService.get(Integer.valueOf(bizProductInfo.getBrandId()));
+        bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getValue());
 
-        }
+        String brandPinYin = HanyuPinyinHelper.getFirstLetters(bizProductInfo.getBrandName() , HanyuPinyinCaseType.UPPERCASE);
+        String brandCode = addZeroForNum(brandPinYin.substring(0, Math.min(brandPinYin.length(), 4)), false, 2);
+
+        Office office = officeService.get(bizProductInfo.getOffice().getId());
+        bizProductInfo.getOffice().setName(office.getName());
+        BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
+        String vCode = bizVendInfo != null ? bizVendInfo.getCode() : "0";
+        vCode = addZeroForNum(vCode, true, 3);
+
+        BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
+        BizVarietyInfo varietyInfo = bizVarietyInfoService.get(bizVarietyInfo.getId());
+        String cateCode = addZeroForNum(varietyInfo.getCode(), true, 3);
+        bizProductInfo.setProdCode(StringUtils.EMPTY);
         super.save(bizProductInfo);
-        if(bizProductInfo.getProdCode()==null || "0".equals(bizProductInfo.getProdCode())){
-            String partNo=brandCode+prodCode+cateCode+autoGenericCode(bizProductInfo.getId().toString(),6);
-            bizProductInfo.setProdCode(partNo);
+        if (StringUtils.isBlank(bizProductInfo.getProdCode())) {
+            String prodCode = brandCode + vCode + cateCode + autoGenericCode(bizProductInfo.getId().toString(), 6);
+            bizProductInfo.setProdCode(prodCode);
             super.save(bizProductInfo);
         }
 
+        //保存产品图片
+        saveCommonImg(bizProductInfo);
+
+        // 标签
+        if(StringUtils.isNotBlank(bizProductInfo.getTagStr())) {
+            List<BizCategoryInfo> byIds = bizCategoryInfoV2Service.findByIds(bizProductInfo.getTagStr());
+            bizProductInfo.setCategoryInfoList(byIds);
+        }
         if (bizProductInfo.getCategoryInfoList() != null && bizProductInfo.getCategoryInfoList().size() > 0) {
             bizProductInfoDao.deleteProdCate(bizProductInfo);
             bizProductInfoDao.insertProdCate(bizProductInfo);
         }
-        /**
-         * 保存商品分类属性与属性值
-         */
-        saveCatePropAndValue(bizProductInfo);
-        /**
-         * 商品特有属性与值
-         */
-        saveOwnProp(bizProductInfo);
-        //保存产品图片
-        saveCommonImg(bizProductInfo);
+
+        // 材质
+        if (StringUtils.isNotBlank(bizProductInfo.getTextureStr())) {
+            AttributeValueV2 attributeValue = new AttributeValueV2();
+            attributeValue.setValue(bizProductInfo.getTextureStr());
+            attributeValue.setObjectName(PRODUCT_TABLE);
+            attributeValue.setObjectId(bizProductInfo.getId());
+            AttributeInfoV2 attributeInfo = new AttributeInfoV2();
+            attributeInfo.setId(MATERIAL_ATTR_ID);
+            attributeValue.setAttributeInfo(attributeInfo);
+            attributeValueV2Service.save(attributeValue);
+        }
+
+        // 属性 SKU
+        List<String> skuAttrStrList = bizProductInfo.getSkuAttrStrList();
+        if (CollectionUtils.isNotEmpty(skuAttrStrList)) {
+//            删除 旧 SKU
+            BizSkuInfo oldBizSkuInfo = new BizSkuInfo();
+            oldBizSkuInfo.setProductInfo(bizProductInfo);
+            bizSkuInfoV2Service.physicalDeleteByProd(oldBizSkuInfo);
+
+            Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
+            int index = 0;
+            for(String s : skuAttrStrSet) {
+                String[] split = s.split("\\|");
+                String size = split[0];
+                String color = split[1];
+                String price = split[2];
+                String type = split[3];
+                String img = split.length >= 5 ? split[4] : StringUtils.EMPTY;
+
+                BizSkuInfo bizSkuInfo = new BizSkuInfo();
+                bizSkuInfo.setProductInfo(bizProductInfo);
+                bizSkuInfo.setBuyPrice(StringUtils.isBlank(price) ? 0 : Double.valueOf(price));
+                bizSkuInfo.setSkuType(Integer.valueOf(type));
+                bizSkuInfo.setName(bizProductInfo.getName());
+                bizSkuInfo.setSort(String.valueOf(index));
+                bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
+                bizSkuInfoV2Service.save(bizSkuInfo);
+
+                AttributeValueV2 sizeAttrVal = new AttributeValueV2();
+                sizeAttrVal.setValue(size);
+                sizeAttrVal.setObjectName(SKU_TABLE);
+                sizeAttrVal.setObjectId(bizSkuInfo.getId());
+                AttributeInfoV2 sizeAttributeInfo = new AttributeInfoV2();
+                sizeAttributeInfo.setId(SIZE_ATTR_ID);
+                sizeAttrVal.setAttributeInfo(sizeAttributeInfo);
+                attributeValueV2Service.save(sizeAttrVal);
+
+                AttributeValueV2 colorAttrVal = new AttributeValueV2();
+                colorAttrVal.setValue(color);
+                colorAttrVal.setObjectName(SKU_TABLE);
+                colorAttrVal.setObjectId(bizSkuInfo.getId());
+                AttributeInfoV2 colorAttributeInfo = new AttributeInfoV2();
+                colorAttributeInfo.setId(COLOR_ATTR_ID);
+                colorAttrVal.setAttributeInfo(colorAttributeInfo);
+                attributeValueV2Service.save(colorAttrVal);
+
+                if(split.length >= 5) {
+                    CommonImg commonImg = new CommonImg();
+                    commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+                    commonImg.setImg(img);
+                    commonImg.setObjectId(bizSkuInfo.getId());
+                    commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
+                    commonImg.setImgSort(index);
+                    commonImg.setImgServer(DsConfig.getImgServer());
+                    commonImg.setImgPath(img.replaceAll(DsConfig.getImgServer(), ""));
+                    commonImgService.save(commonImg);
+                }
+                index ++;
+            }
+        }
+
+
     }
 
     private String autoGenericCode(String code, int num) {
@@ -290,6 +378,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         }
     }
 
+    /**
+     * 商品特有属性与值
+     */
     private void saveOwnProp(BizProductInfo bizProductInfo) {
         if (bizProductInfo.getPropOwnValues() != null && !"".equals(bizProductInfo.getPropOwnValues())) {
             String[] valuesArr = bizProductInfo.getPropOwnValues().split("_");
@@ -356,6 +447,9 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         }
     }
 
+    /**
+     * 保存商品分类属性与属性值
+     */
     private void saveCatePropAndValue(BizProductInfo bizProductInfo) {
         BizProdPropValue prodPropValue = new BizProdPropValue();
         bizProductInfoDao.deleteProdPropInfoReal(bizProductInfo);
@@ -363,7 +457,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         /**
          * 选择分类属性（属性和值）
          */
-        if (StringUtils.isNotBlank(bizProductInfo.getProdPropertyInfos())) {
+        if (bizProductInfo.getProdPropertyInfos() != null) {
             String[] propInfoValue=bizProductInfo.getProdPropertyInfos().split(",");
             BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
             Map<Integer,List<String>> map=new HashMap<>();
@@ -398,15 +492,15 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                     Integer propValueId = Integer.parseInt(prodPropertyValueList.get(i).trim());
                     PropValue propValue = propValueService.get(propValueId);
                     prodPropValue.setId(null);
-                    prodPropValue.setPropertyInfo(propertyInfo);
-                    prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
-                    prodPropValue.setSource("sys");
-                    prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
-                    prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
-                    prodPropValue.setPropValue(propValue.getValue());
-                    prodPropValue.setCode(propValue.getCode());
-                    prodPropValue.setSysPropValue(propValue);
-                    bizProdPropValueService.save(prodPropValue);
+                        prodPropValue.setPropertyInfo(propertyInfo);
+                        prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
+                        prodPropValue.setSource("sys");
+                        prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
+                        prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+                        prodPropValue.setPropValue(propValue.getValue());
+                        prodPropValue.setCode(propValue.getCode());
+                        prodPropValue.setSysPropValue(propValue);
+                        bizProdPropValueService.save(prodPropValue);
                 }
 
             }

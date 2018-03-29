@@ -6,7 +6,6 @@ package com.wanhutong.backend.modules.biz.dao.sku;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import sun.util.resources.cldr.en.CalendarData_en_BZ;
 
 import java.util.List;
 
@@ -16,9 +15,11 @@ import java.util.List;
  * @version 2017-12-07
  */
 @MyBatisDao
-public interface BizSkuInfoDao extends CrudDao<BizSkuInfo> {
+public interface BizSkuInfoV2Dao extends CrudDao<BizSkuInfo> {
 
    void deleteSkuPropInfoReal(BizSkuInfo bizSkuInfo);
 
    List<BizSkuInfo> findListByParam(BizSkuInfo bizSkuInfo);
+
+    void physicalDeleteByProd(Integer prodId);
 }

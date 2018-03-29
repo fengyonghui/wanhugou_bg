@@ -10,6 +10,7 @@ import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoDao;
+import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV2Dao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
@@ -46,7 +47,7 @@ import java.util.*;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
+public class BizSkuInfoV2Service extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	@Resource
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	@Resource
@@ -56,7 +57,7 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	@Resource
 	private CommonImgService commonImgService;
 	@Autowired
-	private BizSkuInfoDao bizSkuInfoDao;
+	private BizSkuInfoV2Dao bizSkuInfoDao;
 	@Autowired
 	private BizProductInfoDao bizProductInfoDao;
 	@Resource
@@ -66,7 +67,7 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
 	@Autowired
 	private PropertyInfoService propertyInfoService;
 
-	protected Logger log = LoggerFactory.getLogger(BizSkuInfoService.class);//日志
+	protected Logger log = LoggerFactory.getLogger(BizSkuInfoV2Service.class);//日志
 
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
@@ -335,6 +336,16 @@ public class BizSkuInfoService extends CrudService<BizSkuInfoDao, BizSkuInfo> {
         commonImg.setObjectId(bizSkuInfo.getId());
         commonImg.setObjectName("biz_sku_info");
         commonImgService.delete(commonImg);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void physicalDeleteByProd(BizSkuInfo bizSkuInfo) {
+        bizSkuInfoDao.physicalDeleteByProd(bizSkuInfo.getProductInfo().getId());
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(bizSkuInfo.getId());
+        commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
+        commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+        commonImgService.deleteCommonImg(commonImg);
 	}
 
 	

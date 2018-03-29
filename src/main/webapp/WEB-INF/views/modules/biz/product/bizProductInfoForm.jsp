@@ -5,14 +5,31 @@
 <head>
     <title>产品信息表管理</title>
     <meta name="decorator" content="default"/>
-    <link rel="stylesheet" href="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.min.css">
-    <link rel="stylesheet" href="${ctxStatic}/jquery-plugin/jquery.searchableSelect.css">
-
+    <%@include file="/WEB-INF/views/include/treeview.jsp" %>
+    <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var tree="";
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function (form) {
+                    var ids = [], nodes = tree.getCheckedNodes(true);
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (!nodes[i].isParent) {
+                            ids.push(nodes[i].id);
+                        }
+                    }
+
+                    $("#cateIds").val(ids);
+
+                    var str="";
+                    $("select[name='propertys']").find("option").each(function(){
+
+                        str+=$(this).val()+",";
+                    });
+                    str=str.substring(0,str.length-1);
+                    $("input[name='prodPropertyInfos']").val(str);
                     loading('正在提交，请稍等...');
                     form.submit();
                 },
@@ -26,7 +43,302 @@
                     }
                 }
             });
-        })
+
+            var prodId=$("#id").val();
+            if ($("#id").val() != '') {
+                var ids = "${entity.cateIds}";//后台获取的分类id集合
+                var  brandId=$("#propValueId").val();
+                ajaxFindCateByBrand(brandId);
+
+                var cateValueId = $("#cateValueId").val();
+                //   ajaxGetPropInfoBrand(ids);
+                t = setTimeout(function () {
+                    ajaxGetPropInfo(ids,prodId);
+
+                }, 100);
+                t = setTimeout(function () {
+                    ajaxGetProdOwnPropInfo($("#id").val());
+                }, 100);
+
+
+            }
+            /*$('.select_all').live('click', function () {
+                var obj = $(this).attr("id");
+                var choose = $(".value_" + obj);
+                if ($(this).attr('checked')) {
+                    choose.attr('checked', true);
+                } else {
+                    choose.attr('checked', false);
+                }
+            });*/
+
+
+
+
+
+
+
+
+
+
+            <%--// 分类--菜单--%>
+            <%--var zNodes = [--%>
+            <%--<c:forEach items="${cateList}" var="cate">{--%>
+            <%--id: "${cate.id}",--%>
+            <%--pId: "${not empty cate.parent.id?cate.parent.id:0}",--%>
+            <%--name: "${not empty cate.parent.id?cate.name:'分类列表'}"--%>
+            <%--},--%>
+            <%--</c:forEach>];--%>
+            <%--// 初始化树结构--%>
+            <%--var tree = $.fn.zTree.init($("#cateTree"), setting, zNodes);--%>
+            <%--// 不选择父节点--%>
+            <%--tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};--%>
+            <%--// 默认选择节点--%>
+            <%--var ids = "${entity.cateIds}".split(",");--%>
+            <%--for (var i = 0; i < ids.length; i++) {--%>
+            <%--var node = tree.getNodeByParam("id", ids[i]);--%>
+            <%--try {--%>
+            <%--tree.checkNode(node, true, false);--%>
+            <%--tree.checkNode(node.getParentNode(), true, false);--%>
+            <%--} catch (e) {--%>
+            <%--}--%>
+            <%--}--%>
+            <%--// 默认展开全部节点--%>
+            <%--tree.expandAll(true);--%>
+
+            var i = 0;
+            $("#addPropValue").click(function () {
+                if ($("#prodPropValueList" + i).val() == '') {
+                    alert('属性不能为空');
+                    return false;
+                }
+                i++;
+                $("#propValues").append("<input type='text' id='prodPropValueList" + i + "' name=\"prodPropValueList[" + i + "].value\"  maxlength=\"512\" class=\"input-small\"/>")
+            });
+
+            /**
+             * 弹出框保存
+             */
+            $("#but_sub").click(function () {
+                var propName = $("#propName").val();
+                //  var propDescription=$("#propDescription").val();
+                var propValues = $("#propValues input");
+                if (propName != '') {
+                    $("#ownPropInfo").append("<input title='" + str[a] + "' style='margin-bottom: 10px' onblur='cancelValue($(this),\"" + str[a] + "\");' class='input-mini' type='text' name='propNames' value='" + propName + "'/>:<input type='hidden'  name='propNames' value='" + str[a] + "_'/>");
+                    propValues.each(function () {
+                        var v = $(this).val();
+                        if (v != "") {
+                            $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' class='" + str[a] + "' type='text' name='propOwnValues' value='" + v + "'/><input type='hidden'  name='propOwnValues' value='" + str[a] + "_'>")
+                        }
+                    })
+                    $("#ownPropInfo").append("<button id='id_" + str[a] + "' onclick='addPropValueInfo(\"" + str[a] + "\")'  type=\"button\" class=\"btn btn-default\"><span class=\"icon-plus\"></span></button><br/>");
+                }
+                a++;
+                $('#myModal').modal('hide');
+            });
+
+            $("#propValueId").change(function () {
+                var brandId=$(this).val();
+                ajaxFindCateByBrand(brandId);
+            });
+
+            function ajaxFindCateByBrand(brandId) {
+                $.post("${ctx}/biz/category/bizCategoryInfo/findListByBrandId",
+                    {brandId: brandId, ranNum: Math.random()},
+                    function (data, status) {
+                        treeNodes = data;   //把后台封装好的简单Json格式赋给treeNodes
+                        var setting = {
+                            check: {enable: true, nocheckInherit: true}, view: {selectedMulti: false},
+                            data: {simpleData: {enable: true}}, callback: {
+                                beforeClick: function (id, node) {
+                                    tree.checkNode(node, !node.checked, true, true);
+                                    return false;
+                                }, onCheck: zTreeOnCheck
+                            }
+                        };
+                        tree= $.fn.zTree.init($("#cateTree"), setting, treeNodes);
+                        // 不选择父节点
+                        tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
+
+                        //ztree 复选框操作控制函数
+                        function zTreeOnCheck(event, treeId, treeNode) {
+                            var ids = [], nodes = tree.getCheckedNodes(true);
+                            for (var i = 0; i < nodes.length; i++) {
+                                if (!nodes[i].isParent) {
+                                    ids.push(nodes[i].id);
+                                }
+                            }
+                            ajaxGetPropInfo(ids,prodId);
+
+
+                        };
+
+
+                        // 默认选择节点
+                        var ids = "${entity.cateIds}".split(",");
+                        for (var i = 0; i < ids.length; i++) {
+                            var node = tree.getNodeByParam("id", ids[i]);
+                            try {
+                                tree.checkNode(node, true, false);
+                                tree.checkNode(node.getParentNode(), true, false);
+                            } catch (e) {
+                            }
+                        }
+                        // 默认展开全部节点
+                        tree.expandAll(true);
+                    });
+
+            }
+
+        });
+
+
+
+
+
+
+        function addPropValueInfo(va) {
+            var t = $("input[title=" + va + "]").val();
+            if (t == '') {
+                alert("属性不能为空");
+                return;
+            }
+            var flag = true;
+            $("." + va).each(function (pv) {
+                if ($(this).val() == '') {
+                    flag = false;
+                    return false;
+                }
+            });
+            if (!flag) {
+                alert("属性值不能为空");
+                return false;
+            } else {
+                $("#id_" + va).before("<input class='" + va + "' style=\"width: 60px;margin-bottom: 10px\" type=\"text\" name=\"propOwnValues\" /><input type=\"hidden\" name=\"propOwnValues\" value=" + va + "_>")
+            }
+
+        }
+        /**
+         * 通过分类获取分类属性
+         * @param ids
+         */
+        function ajaxGetPropInfo(ids,prodId) {
+
+            $.post("${ctx}/biz/product/bizProdCate/findCatePropInfoMap",
+                {catIds: ids.toString(),prodId:prodId},
+                function (data, status) {
+
+                    $("#cateProp").empty();
+                    $.each(data.map, function (keys, values) {
+                        var propKeys = keys.split(",");
+                        var propId = propKeys[0];
+                        if (propId != $("#brandDefId").val()) {
+                            var propName = propKeys[1];
+
+                            //  $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
+
+                            var  str ='<div  style="width: 100%;display: inline-block">' +
+                                '<span  style="float:left;width:60px;padding-top:3px">' +propName +'</span>'+
+                                '<div style="float: left">' +
+                                '<select  title="search"   id="search_'+propId+'" class="input-xlarge" multiple="multiple" size="8">';
+
+                            for (var p in values) {
+                                if (values[p].value != null) {
+                                    str+=' <option value="'+propId+'-' + values[p].propertyValueId + '">'+values[p].value+'</option>'
+                                    // $("#span_" + propId).append('<input id="value_' + values[p].propertyValueId + '" class="value_' + propId + '" name="propertyMap[' + propId + '].prodPropertyValues" type="checkbox" value="' + values[p].propertyValueId + '" />' + values[p].value + '')
+                                }
+                            }
+                            str+='</select></div>'
+
+                            str+=' <div  style="width: 20%;margin-left:10px;float: left">' +
+                                '<button type="button" id="search_'+propId+'_rightAll" class="btn-block"><i class="icon-forward"></i></button>' +
+                                '<button type="button" id="search_'+propId+'_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>' +
+                                '<button type="button" id="search_'+propId+'_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>' +
+                                '<button type="button" id="search_'+propId+'_leftAll" class="btn-block"><i class="icon-backward"></i></button>' +
+                                '</div>';
+
+
+
+                            str+='<div style="margin-left:10px;float: left">'+
+                                '<select name="propertys"  id="search_'+propId+'_to" class="input-xlarge" size="8" multiple="multiple">';
+                            if(prodId!=''){
+                                var prodValues=data.prodPropValueMap[keys];
+                                for(var t in prodValues){
+                                    str+=' <option value="'+propId+'-' + prodValues[t].sysPropValue.id + '">'+prodValues[t].propValue+'</option>'
+                                }
+                            }
+
+                            str+=    '</select></div>';
+
+                        }
+
+
+                        $("#cateProp").append(str);
+
+
+                    });
+                    $("#cateProp").append('<input type="hidden" name="prodPropertyInfos" value=""/>');
+                    $('select[title="search"]').multiselect({
+                        search: {
+                            left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
+                            right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
+                        }
+                        // ,
+                        // fireSearch: function(value) {
+                        //     return value.length >=1 ;
+                        // }
+                    });
+                    // if ($("#id").val() != '' && status == 'success') {
+                    //     ajaxGetProdPropInfo($("#id").val());
+                    // }
+
+
+                })
+        }
+
+        function ajaxGetProdPropInfo(prodId) {
+            $.post("${ctx}/biz/product/bizProdPropertyInfo/findProdPropertyList",
+                {prodId: prodId, ranNum: Math.random()},
+                function (data, status) {
+                    $.each(data, function (index, prodPropertyInfo) {
+                        $.each(prodPropertyInfo.prodPropValueList, function (index, prodPropValue) {
+                            console.log("prodPropValue===" + prodPropValue);
+                            $("#" + prodPropValue.propertyInfoId).attr('checked', true)
+                            $("#value_" + prodPropValue.propertyValueId).attr('checked', true)
+                        });
+                    });
+                });
+        }
+
+        var a = 0;
+        var str = ["a", "b", "c", "d", "e", "f", "g", "h", "j", "k", "l", "m", "n"];
+
+        function ajaxGetProdOwnPropInfo(prodId) {
+            $.post("${ctx}/biz/product/bizProdPropValue/findList",
+                {prodId: prodId, source: "prod", ranNum: Math.random()},
+                function (data, status) {
+                    $.each(data, function (keys, values) {
+                        var propKeys = keys.split(",");
+                        var propName = propKeys[0];
+                        var propDesc = propKeys[1]
+                        $("#ownPropInfo").append("<input title='" + str[a] + "' style='margin-bottom: 10px' onblur='cancelValue($(this),\"" + str[a] + "\");' class='input-mini' type='text' name='propNames' value='" + propName + "'/>:<input type='hidden'  name='propNames' value='" + str[a] + "_'/>");
+                        for (var p in values) {
+                            $("#ownPropInfo").append("<input style='width: 60px;margin-bottom: 10px' class='" + str[a] + "' type='text' name='propOwnValues' value='" + values[p].propValue + "'/><input type='hidden'  name='propOwnValues' value='" + str[a] + "_'>")
+
+
+                        }
+                        $("#ownPropInfo").append("<button id='id_" + str[a] + "' onclick='addPropValueInfo(\"" + str[a] + "\")'  type=\"button\" class=\"btn btn-default\"><span class=\"icon-plus\"></span></button><br/>");
+                        a++;
+                    });
+                });
+        };
+
+        function cancelValue(obj, k) {
+            if (obj.val() == '') {
+                obj.parent().children("." + k).remove();
+            }
+
+        }
 
 
     </script>
@@ -44,6 +356,7 @@
 <form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfo/save" method="post"
            class="form-horizontal">
     <form:hidden path="id"/>
+    <%--<input type="hidden" id="cateValueId" value="${bizProductInfo.catePropValue.id}"/>--%>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -53,18 +366,17 @@
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
+
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
-        <div style="margin-left: 180px">
-            <%--<form:select path="propValue.id" class="input-xlarge required" id="propValueId">--%>
-                <%--<form:option value="" label="请选择品牌"/>--%>
-                <%--<form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>--%>
-            <%--</form:select>--%>
-                <form:select title="choose" path="brandId" class="input-xlarge required">
-                    <form:option value="" label="请选择"/>
-                    <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
-                                  htmlEscape="false"/></form:select>
-
+        <div class="controls">
+                <%--<form:select items="${propValueList}" id="propValueId" path="propValue.id" class="input-xlarge required" itemLabel="value" itemValue="id">--%>
+                <%--<from:option value="">请选择</from:option>--%>
+                <%--</form:select>--%>
+            <form:select path="propValue.id" class="input-xlarge required" id="propValueId">
+                <form:option value="" label="请选择品牌"/>
+                <form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>
+            </form:select>
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
@@ -128,8 +440,8 @@
 
     <div class="control-group">
         <label class="control-label">请选择产品分类：</label>
-        <div style="margin-left: 180px">
-            <form:select title="choose" path="bizVarietyInfo.id" class="input-medium required">
+        <div class="controls">
+            <form:select path="bizVarietyInfo.id" class="input-medium required">
                 <form:option value="" label="请选择"/>
                 <form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
             </form:select>
@@ -140,465 +452,219 @@
     <div class="control-group">
         <label class="control-label">请选择产品标签：</label>
         <div class="controls">
-            <select id="test-select-2" multiple="multiple" class="input-medium">
-                <c:forEach items="${cateList}" var="cate">
-                    <option data-section="${cate.parentNames}" value="${cate.id}">${cate.name}</option>
-                </c:forEach>
-            </select>
+            <div id="cateTree" class="ztree" style="margin-top:3px;float:left;"></div>
+            <form:hidden path="cateIds"/>
+                <%--<span class="help-inline"><font color="red">*</font> </span>--%>
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label">产品属性：</label>
-        <div id="cateProp" style="margin-left: 180px">
-            <c:forEach items="${prodTagList}" var="tagInfo">
-                <div  style="width: 100%;display: inline-block">
-                    <span  style="float:left;width:60px;padding-top:3px">${tagInfo.name}：</span>
-                    <c:choose>
-                        <c:when test="${tagInfo.dictList!=null}">
-                            <form:select title="choose" path="textureStr" class="input-medium required">
-                                <form:options items="${tagInfo.dictList}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-                            </form:select>
-                        </c:when>
-                        <c:otherwise>
-                            <input type="text" class="input-medium"/>
-                        </c:otherwise>
-                    </c:choose>
+        <div id="cateProp" class="controls">
+                <%--<c:forEach items="${propertyInfoList}" var="propertyInfo">
+                    <div  style="width: 100%;display: inline-block">
+                        <span  style="float:left;width:60px;padding-top:3px">${propertyInfo.name}：</span>
+                        <div style="float: left">
+                            <select title="search"  id="search_${propertyInfo.id}" class="input-xlarge" multiple="multiple" size="8">
+                                <c:forEach items="${map[propertyInfo.id]}" var="propValue">
+                                    <option value="${propValue.id}">${propValue.value}</option>
+                                </c:forEach>
 
-                </div>
-            </c:forEach>
-        </div>
-    </div>
 
-    <div class="control-group">
-        <label class="control-label">商品属性：</label>
-        <div class="controls">
-            <c:forEach items="${skuTagList}" var="tagInfo">
-                <div  style="width: 100%;display: inline-block">
-                    <span  style="float:left;width:60px;padding-top:3px">${tagInfo.name}：</span>
-                    <c:choose>
-                        <c:when test="${tagInfo.dictList!=null}">
-                            <div style="float: left">
+                            </select>
+                        </div>
+                            &lt;%&ndash;<span class="icon-chevron-right"></span>&ndash;%&gt;
+                        <div  style="width: 20%;margin-left:10px;float: left">
+                            <button type="button" id="search_${propertyInfo.id}_rightAll" class="btn-block"><i class="icon-forward"></i></button>
 
-                                <select  title="search"  id="search_${tagInfo.id}" class="input-xlarge" multiple="multiple" size="8">
-                                    <c:forEach items="${tagInfo.dictList}" var="dict">
-                                            <option value="${dict.value}">${dict.label}</option>
-                                    </c:forEach>
-                                </select>
+                            <button type="button" id="search_${propertyInfo.id}_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>
 
-                            </div>
-                            <div  style="width: 20%;margin-left:10px;float: left">
-                                <button type="button" id="search_${tagInfo.id}_rightAll" class="btn-block"><i class="icon-forward"></i></button>
-                                <button type="button" id="search_${tagInfo.id}_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>
-                                <button type="button" id="search_${tagInfo.id}_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>
-                                <button type="button" id="search_${tagInfo.id}_leftAll" class="btn-block"><i class="icon-backward"></i></button>
-                            </div>
-                            <div style="margin-left:10px;float: left">
-                                <select name="aaa"  id="search_${tagInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
-                                    <c:forEach items="${skuAttrMap[tagInfo.id]}" var="v">
-                                        <option value="${v}">${v}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            <c:forEach items="${skuAttrMap[tagInfo.id]}" var="v">
-                                <input style="margin-bottom: 5px" type="text" class="input-medium" onchange="skuAttrChange(this)" customType="skuAttr" value="${v}"/>
-                            </c:forEach>
-                            <input style="margin-bottom: 5px" type="text" class="input-medium" onchange="skuAttrChange(this)" customType="skuAttr"/>
-                        </c:otherwise>
-                    </c:choose>
+                            <button type="button" id="search_${propertyInfo.id}_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>
 
-                </div>
-            </c:forEach>
+                            <button type="button" id="search_${propertyInfo.id}_leftAll" class="btn-block"><i class="icon-backward"></i></button>
+                        </div>
 
+                        <div style="margin-left:10px;float: left">
+                            <select name="propertyMap[${propertyInfo.id}].catePropertyValues" id="search_${propertyInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
+                                <c:forEach items="${catePropValueMap[propertyInfo.id]}" var="propValue">
+                                    &lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;
+                                    <option value="${propValue.propertyValueId}">${propValue.value}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                </c:forEach>--%>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">上传颜色图片：</label>
+        <label class="control-label">增加特有属性：</label>
         <div class="controls">
-            <input class="btn" type="button" value="上传图片" onclick="uploadPic()"/>
-        </div>
-        <br/>
-        <div class="controls">
-           <table class="table  table-bordered table-condensed" id="uploadPicTable">
-               <thead>
-               <tr>
-                    <th>颜色</th>
-                    <th>图片</th>
-                    <th>图片操作</th>
-                    <th>操作</th>
-               </tr>
-               </thead>
-               <tbody id="uploadPicTableData"></tbody>
-           </table>
-
+					<span id="ownPropInfo" style="margin-bottom: 10px">
+					</span>
+            <button data-toggle="modal" data-target="#myModal" type="button" class="btn btn-default">
+                <span class="icon-plus"></span>
+            </button>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">销售规格：</label>
-        <div class="controls">
-            <input class="btn" type="button" value="预 览" onclick="initSkuTable()"/>
-            批量设置价格:
-            <input type="text" value="" id="batchPrice"/>
-            <input onclick="setBatchPrice()" class="btn" type="button" value="确 定"/>
-        </div>
-        <br/>
-        <div class="controls">
-           <table class="table  table-bordered table-condensed" id="skuTable">
-               <thead>
-               <tr>
-                    <th>货号</th>
-                    <th>尺寸</th>
-                    <th>颜色</th>
-                    <th>价格</th>
-                    <th>图片</th>
-                    <th style="display: none">图片地址</th>
-                    <th>类型</th>
-                    <th>操作</th>
-               </tr>
-               </thead>
-               <tbody id="skuTableData">
-               <c:forEach items="${entity.skuInfosList}" var="v">
-                   <tr customType="skuTr">
-                       <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
-                       <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
-                       <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
-                       <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
-                       <td><img customInput="imgInputLab" style="width: 100px" src="${v.defaultImg}"></td>
-                       <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
-                       <th><select customInput="skuTypeSelect">
-                            <c:if test="${v.skuType == 1}">
-                                <option value='1' label='自选商品'>自选商品</option>
-                                <option value='2' label='定制商品'>定制商品</option>
-                                <option value='3' label='非自选商品'>非自选商品</option>
-                            </c:if>
-                           <c:if test="${v.skuType == 2}">
-                                <option value='2' label='定制商品'>定制商品</option>
-                                <option value='1' label='自选商品'>自选商品</option>
-                                <option value='3' label='非自选商品'>非自选商品</option>
-                            </c:if>
-                           <c:if test="${v.skuType == 3}">
-                                <option value='3' label='非自选商品'>非自选商品</option>
-                                <option value='1' label='自选商品'>自选商品</option>
-                                <option value='2' label='定制商品'>定制商品</option>
-                            </c:if>
-                       </select></th>
-                       <td>
-                           <input onclick='deleteImgEle(this)' class="btn" type="button" value="删除图片"/>
-                           <input onclick='deleteParentEle(this)' class="btn" type="button" value="删除"/>
-                       </td>
-                   </tr>
-               </c:forEach>
-               </tbody>
-           </table>
-
-        </div>
-    </div>
-
     <div class="form-actions">
         <shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary"
-                                                                           type="button"
-                                                                           value="保 存" onclick="submitCustomForm()"/>&nbsp;</shiro:hasPermission>
+                                                                           type="submit"
+                                                                           value="保 存"/>&nbsp;</shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 </form:form>
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    属性与属性值
+                </h4>
+            </div>
+            <%--&lt;%&ndash;@elvariable id="prodPropertyInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo"&ndash;%&gt;--%>
+            <%--<form:form id="inputForm2" modelAttribute="prodPropertyInfo" action="${ctx}/biz/product/bizProdPropertyInfo/savePropInfo" method="post" class="form-horizontal">--%>
 
-<script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
+            <div class="modal-body">
+                <div class="control-group">
+                    <label class="control-label">属性名称：</label>
+                    <div class="controls">
+                        <input type="text" id="propName" maxlength="30" class="input-xlarge required"/>
+                        <span class="help-inline"><font color="red">*</font> </span>
+                    </div>
+                </div>
+                <%--<div class="control-group">--%>
+                <%--<label class="control-label">属性描述：</label>--%>
+                <%--<div class="controls">--%>
+                <%--<input type="text" id="propDescription" maxlength="200" class="input-xlarge required"/>--%>
+                <%--</div>--%>
+                <%--</div>--%>
+                <div class="control-group">
+                    <label class="control-label">属性值：</label>
+                    <div class="controls">
+						<span id="propValues">
+							<input id="prodPropValueList0" type="text" maxlength="512" class="input-small"/>
+						</span>
+                        <button id="addPropValue" type="button" class="btn btn-default">
+                            <span class="icon-plus"></span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <shiro:hasPermission name="biz:category:bizCatePropertyInfo:edit">
+                    <button id="but_sub" type="button" class="btn btn-primary">
+                        保存
+                    </button>
+                </shiro:hasPermission>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<sys:message content="${message}"/>
+<table id="contentTable" class="table table-striped table-bordered table-condensed">
+    <thead>
+    <tr>
+        <%--<th>商品产品Id</th>--%>
+        <th>商品图片</th>
+        <th>商品名称</th>
+        <th>商品类型</th>
+        <th>商品编码</th>
+        <th>商品货号</th>
+        <th>基础售价</th>
+        <th>采购价格</th>
+        <th>更新人</th>
+        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+            <th>操作</th>
+        </shiro:hasPermission>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach items="${entity.skuInfosList}" var="bizSkuInfo">
+        <tr>
+                <%--<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizSkuInfo.id}">
+                        ${bizSkuInfo.id}</a>
+                </td>--%>
+            <td>
+                <img src="${bizSkuInfo.productInfo.imgUrl}" width="80px" height="80px"/>
+            </td>
+            <td><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">
+                    ${bizSkuInfo.name}
+            </a>
+            </td>
+            <td>
+                    ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}
+            </td>
+            <td>
+                    ${bizSkuInfo.partNo}
+            </td>
+            <td>    ${bizSkuInfo.itemNo}</td>
+            <td>
+                    ${bizSkuInfo.basePrice}
+            </td>
+            <td>
+                    ${bizSkuInfo.buyPrice}
+            </td>
+            <td>
+                    ${bizSkuInfo.updateBy.name}
+            </td>
+            <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+                <td>
+                    <a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>
+                    <a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=1"
+                       onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
+                </td>
+            </shiro:hasPermission>
+        </tr>
+    </c:forEach>
+    </tbody>
+</table>
+
+<div class="form-actions">
+    <c:if test="${entity.id !=null && entity.id!='' }">
+        <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+            <c:choose>
+                <c:when test="${entity.skuInfosList.size()==0}">
+                    <input type="button" onclick="javascript:window.location.href='${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}&sort=01';" class="btn btn-primary" value="商品信息添加"/>
+                </c:when>
+                <c:otherwise>
+                    <input type="button" onclick="javascript:window.location.href='${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.id=${bizProductInfo.id}&sort=0${entity.skuInfosList.size()+1}';" class="btn btn-primary" value="商品信息添加"/>
+                </c:otherwise>
+            </c:choose>
+
+
+        </shiro:hasPermission>
+
+
+    </c:if>
+</div>
 <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
-<script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
-<script src="${ctxStatic}/jquery-select2/3.5.3/select2.js" type="text/javascript"></script>
 <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
-<script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
-<script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
-<script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-    function initSkuTable() {
-        var skuTableData = $("#skuTableData");
-        var skuTableDataTr = skuTableData.find("tr");
-
-        var colorTrArr = $("[customType='colorTr']");
-        if (colorTrArr.length <= 0) {
-            uploadPic();
-            initSkuTable();
-            return;
-        }
-
-        var oldDataMap= $Map.Map();
-        if (skuTableDataTr.length > 0) {
-            skuTableDataTr.each(function () {
-                var oldSizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
-                var oldColorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
-                var oldPriceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
-                var oldImgInput = $($(this).find("[customInput = 'imgInput']")[0]).val();
-                var oldSkuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").val();
-                var oldData = oldSizeInput + "|" + oldColorInput + "|" + oldPriceInput + "|" + oldImgInput + "|" + oldSkuTypeSelect;
-                oldDataMap.put(oldSizeInput + oldColorInput, oldData);
-            });
-        }
-        skuTableData.empty();
-
-        var tableHtml = "<tr customType=\"skuTr\">" +
-            "                   <td><input type=\"text\" value=\"$imteNo\" customInput=\"itemNoInput\" readonly/></td>" +
-            "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
-            "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
-            "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
-            "                   <td><img customInput=\"imgInputLab\" src=\"$img\" style=\"width: 100px\"></td>" +
-            "                   <td style=\"display: none\"><input type=\"text\" value=\"$img\" customInput=\"imgInput\" readonly/></td>" +
-            "$typeSelector" +
-            "                   <td><input onclick='deleteImgEle(this)' class=\"btn\" type=\"button\" value=\"删除图片\"/>" +
-            "                   <input onclick='deleteParentEle(this)' class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
-            "               </tr>";
-
-        var customTypeAttr = $("[customType]");
-        var selectedSizeArr = [];
-
-        customTypeAttr.each(function () {
-            if ($(this).val() != null && $(this).val() != "") {
-                selectedSizeArr.push($(this).val());
-            }
-        });
-
-        for (var i = 0; i < selectedSizeArr.length; i ++) {
-            colorTrArr.each(function () {
-                var sizeInput = selectedSizeArr[i];
-                var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
-                var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("src");
-                var priceInput = "";
-
-                var oldDataStr = oldDataMap.get(selectedSizeArr[i] + colorInput);
-
-                var custTypeSelector = "<th><select customInput=\"skuTypeSelect\">";
-                var custTypeSelectorItem = "<option value='$value' label='$label'>$text</option>";
-
-
-                if (!$String.isNullOrBlank(oldDataStr)) {
-                    var dataArr = oldDataStr.split("|");
-
-                    sizeInput = $String.isNullOrBlank(sizeInput) ?  dataArr[0] : sizeInput;
-                    colorInput = $String.isNullOrBlank(colorInput) ?  dataArr[1] : colorInput;
-                    priceInput = $String.isNullOrBlank(priceInput) ?  dataArr[2] : priceInput;
-                    imgInput = $String.isNullOrBlank(imgInput) ?  dataArr[3] : imgInput;
-                    var oldSkuTypeSelect = dataArr[4];
-
-
-                    if (oldSkuTypeSelect == "2") {
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
-                    }else if (oldSkuTypeSelect == "3") {
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
-                    }else {
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
-                        custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
-                    }
-
-                }else {
-                    custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
-                    custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
-                    custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
-                }
-                custTypeSelector += "</select></th>";
-
-                if (!imgInput) {
-                    imgInput = "";
-                }
-                var itemNo = $("#itemNo").val();
-                skuTableData.append(
-                    tableHtml.replace("$imteNo", itemNo + "/" + sizeInput + "/" + colorInput)
-                        .replace("$size", sizeInput)
-                        .replace("$color", colorInput)
-                        .replace("$price", priceInput)
-                        .replace("$img", imgInput)
-                        .replace("$img", imgInput)
-                        .replace("$typeSelector", custTypeSelector)
-                );
-            });
-        }
-    }
-    
-    function deleteImgEle(that) {
-        var p = $(that).parent().parent();
-        var imgInput = $($(p).find("[customInput = 'imgInput']"));
-        var imgInputLab = $($(p).find("[customInput = 'imgInputLab']"));
-
-        imgInput.val("");
-        imgInput.attr("value", "");
-        imgInputLab.attr("src", "");
-    }
-
-    function submitCustomForm() {
-        var skuTrArr = $("[customType='skuTr']");
-        var inputForm = $("#inputForm");
-
-        var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
-        skuTrArr.each(function () {
-            var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
-            var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
-            var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
-            var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
-            var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
-            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|" + imgInput));
-        });
-
-        var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
-        var testSelect2 = $("#test-select-2");
-        var tagSelected = testSelect2.parent().children(".tree-multiselect").children(".selected").children("div");
-        tagSelected.each(function () {
-            inputForm.append(tagFormHtml.replace("$value", $(this).attr("data-value")));
-        });
-
-        inputForm.submit();
-    }
-
-    function deleteParentEle(that) {
-        $(that).parent().remove();
-    }
-
-    function setBatchPrice() {
-        var priceInput = $("[customInput = 'priceInput']");
-        priceInput.val($("#batchPrice").val());
-        priceInput.attr("value", $("#batchPrice").val());
-    }
-
-    function skuAttrChange(that) {
-        var skuAttrHtmlText = " <input style=\"margin-bottom: 5px\" type=\"text\" class=\"input-medium\" onchange=\"skuAttrChange(this)\" customType=\"skuAttr\"/>";
-        var parent = $(that).parent();
-        var childArr = parent.children("input");
-        childArr.each(function () {
-            if ($(this).val() == null || $(this).val() == "") {
-                $(this).remove();
-            }
-        });
-        parent.append(skuAttrHtmlText);
-    }
-
-    //新建或编辑 保存提交
-    function submitPic(id){
-        var f = $("#" + id).val();
-        if(f==null||f==""){
-            alert("错误提示:上传文件不能为空,请重新选择文件");
-            return false;
-        }else{
-            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
-            extname = extname.toLowerCase();//处理了大小写
-            if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
-                $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
-                return false;
-            }
-        }
-        var file = document.getElementById(id).files;
-        var size = file[0].size;
-        if(size>2097152){
-            alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
-            return false;
-        }
-        ajaxFileUploadPic(id);
-    }
-
-    function ajaxFileUploadPic(id) {
-        $.ajaxFileUpload({
-            url : '${ctx}/biz/product/bizProductInfo/saveColorImg', //用于文件上传的服务器端请求地址
-            secureuri : false, //一般设置为false
-            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
-            type : 'POST',
-            dataType : 'text', //返回值类型 一般设置为json
-            success : function(data, status) {
-                //服务器成功响应处理函数
-                var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
-                var msgJSON = JSON.parse(msg);
-
-                var img = $("#" + id + "Img");
-                img.attr("src", msgJSON.fullName);
-            },
-            error : function(data, status, e) {
-                //服务器响应失败处理函数
-               alert("上传失败");
-            }
-        });
-        return false;
-    }
-
-    function deletePic(id) {
-        var f = $("#" + id);
-        f.attr("src", "");
-    }
-
-    function uploadPic() {
-        var selectedColorArr = [];
-        var search_3_to = $("#search_3_to");
-        search_3_to.find("option").each(function(){
-            selectedColorArr.push($(this).text());
-        });
-
-        var uploadPicTableData = $("#uploadPicTableData");
-        uploadPicTableData.empty();
-        var tableHtml = "<tr customType=\"colorTr\">" +
-            "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
-            "                   <td><img id=\"colorImg$idImg\" customInput=\"imgInput\" style='width: 150px'/></td>" +
-            "                   <td>" +
-            "                       <input type=\"file\" name=\"colorImg\" id=\"colorImg$id\" value=\"上传\"/>" +
-            "                       <input type=\"button\" value=\"上传\" onclick=\"submitPic('colorImg$id')\"/>" +
-            "                       <input type=\"button\" value=\"删除\"  onclick=\"deletePic('colorImg$idImg')\"/>" +
-            "                   </td>" +
-            "                   <td onclick='deleteParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
-            "               </tr>";
-        for (var j = 0; j < selectedColorArr.length; j ++) {
-            uploadPicTableData.append(
-                tableHtml.replace("$color", selectedColorArr[j])
-                    .replace("$id", j + "")
-                    .replace("$id", j + "")
-                    .replace("$id", j + "")
-                    .replace("$id", j + ""));
-        }
-    }
-
     $(document).ready(function() {
 
-        $('select[title="search"]').multiselect({
-            search: {
-                left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
-                right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
-            }
-            ,
-            fireSearch: function(value) {
-                return value.length >=1 ;
-            }
-        });
-        var tree2 = $("#test-select-2").treeMultiselect({
-            searchable: true
-        });
+        <%--window.prettyPrint && prettyPrint();--%>
 
-        $('select[title="choose"]').searchableSelect();
-
-        var testSelect2 = $("#test-select-2");
-        var treeMultiselect = testSelect2.parent().find(".tree-multiselect")[0];
-        var selections = $($(treeMultiselect).find(".selections")[0]).children();
-
-        var cateIdListArr = ${prodCategoryIdList};
-        $(selections).each(function () {
-            if ($(this).hasClass("item") && cateIdListArr.indexOf(Number($(this).attr("data-value"))) >= 0) {
-                var that = $(this);
-                $($(that).find(".option")).click();
-            }
-            if ($(this).hasClass("section")) {
-                var itemArr = $(this).find(".item");
-                itemArr.each(function () {
-                    var that = $(this);
-                    if (cateIdListArr.indexOf(Number($(that).attr("data-value"))) >= 0) {
-                        $($(that).find(".option")).click();
-                    }
-                })
-            }
-        });
+        // $('select[title="search"]').multiselect({
+        //     search: {
+        //         left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
+        //         right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
+        //     }
+        //     // ,
+        //     // fireSearch: function(value) {
+        //     //     return value.length >=1 ;
+        //     // }
+        // });
     });
-
 </script>
-
 </body>
 </html>
