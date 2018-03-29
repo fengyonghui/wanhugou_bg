@@ -495,4 +495,19 @@ public class UserController extends BaseController {
 //		model.addAttribute("userList",userList);
 		return "modules/sys/office/sysOfficeContact";
 	}
+
+	/**
+	 * 运营计划
+	 * flag = ck 查看
+	 */
+	@ResponseBody
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = "bizOpPlanUser")
+	public List<User> bizOpPlanUser(@RequestParam(required = false) Integer officeId, @RequestParam(required = false) Integer type, HttpServletResponse response) {
+		List<User> list = null;
+		if (officeId != null) {
+			list = systemService.findUserByOfficeId(officeId, type);
+		}
+		return list;
+	}
 }

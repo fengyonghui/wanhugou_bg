@@ -22,6 +22,7 @@
 			<result property="imgUrl" column="productInfo.imgUrl"/>
 			<result column="productInfo.brandName"  property="brandName"/>
 			<result column="productInfo.prodCode" property="prodCode"/>
+			<result column="productInfo.vendorName" property="vendorName"/>
 			<association property="office" javaType="Office" column="office.id">
 				<id column="office.id"  property="id"/>
 			</association>
@@ -167,7 +168,10 @@
 
 	<select id="findListByParam" resultMap="BizSkuInfoMap">
 		SELECT
-		<include refid="bizSkuInfoColumns"/>
+		<include refid="bizSkuInfoColumns"/>,
+		bspv.id AS "skuPropValueList.id",
+		bspv.prop_value AS "skuPropValueList.propValue",
+		bpi.vendor_name AS "productInfo.vendorName"
 		FROM biz_sku_info a
 		LEFT JOIN biz_sku_prop_value bspv on a.id=bspv.sku_id
 		<include refid="bizSkuInfoJoins"/>
@@ -196,6 +200,12 @@
 				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.vendorName != null and productInfo.vendorName != ''">
+				AND bpi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.vendorName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
 			</if>
 			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
 				AND a.prod_id =#{productInfo.id}

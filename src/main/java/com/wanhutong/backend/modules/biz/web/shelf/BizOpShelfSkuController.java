@@ -108,10 +108,10 @@ public class BizOpShelfSkuController extends BaseController {
 		String[] shelfQtyArr=bizOpShelfSkus.getShelfQtys().split(",");
 		String[] shelfTimeArr=bizOpShelfSkus.getShelfTimes().split(",");
 		String[] unShelfTimeArr=bizOpShelfSkus.getUnshelfTimes().split(",");
-		BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
 		boolean flag = false;
 		for(int i=0;i<skuIdArr.length;i++){
-		    if(bizOpShelfSkus.getId()!=null){
+			BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+			if(bizOpShelfSkus.getId()!=null){
                 bizOpShelfSku.setId(bizOpShelfSkus.getId());
 				if (flag) {
 					bizOpShelfSku.setId(null);
@@ -133,7 +133,11 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
 			bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
 			bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
-			bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+			if (unShelfTimeArr.length > 0) {
+				if (!unShelfTimeArr[i].equals("0")) {
+					bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+				}
+            }
 			bizOpShelfSkuService.save(bizOpShelfSku);
 
 		}
