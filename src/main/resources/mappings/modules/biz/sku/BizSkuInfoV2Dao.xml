@@ -15,6 +15,7 @@
         <result column="createDate"  property="createDate"/>
         <result column="uVersion"  property="uVersion"/>
         <result column="updateDate"  property="updateDate"/>
+        <result column="defaultImg"  property="defaultImg"/>
 
 		<association property="productInfo" javaType="BizProductInfo" column="productInfo.id">
 			<id property="id" column="productInfo.id"/>
@@ -33,8 +34,8 @@
 
 		<!--</collection>-->
 
-		<collection property="skuImgs" ofType="CommonImg">
-			<id column="skuImgs.id"  property="id"/>
+		<collection property="skuImgs" ofType="CommonImg" select="findImgList"  column="id">
+			<id column="id"  property="id"/>
 			<result column="ciId"  property="id"/>
 			<result column="object_name"  property="objectName"/>
 			<result column="object_id"  property="objectId"/>
@@ -67,7 +68,24 @@
 		bpi.img_url AS "productInfo.imgUrl",
 		bpi.brand_name AS "productInfo.brandName",
 		bpi.prod_code AS "productInfo.prodCode",
-		bpi.vendor_id AS "productInfo.office.id",
+		bpi.vendor_id AS "productInfo.office.id"
+	</sql>
+	
+	<sql id="bizSkuInfoJoins">
+		LEFT join sys_user su on a.update_id = su.id
+		join biz_product_info bpi on bpi.id = a.prod_id
+	</sql>
+    
+	<select id="get" resultType="BizSkuInfo">
+		SELECT 
+			<include refid="bizSkuInfoColumns"/>
+		FROM biz_sku_info a
+		<include refid="bizSkuInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findImgList" resultType="CommonImg" parameterType="int" >
+		select
 		ci.id AS ciId,
 		ci.object_name,
 		ci.object_id ,
@@ -78,28 +96,20 @@
 		ci.img_link,
 		ci.comment,
 		ci.status
-	</sql>
-	
-	<sql id="bizSkuInfoJoins">
-		LEFT join sys_user su on a.update_id = su.id
-		LEFT join common_img ci on (ci.object_name = 'biz_sku_info' AND ci.object_id = a.id)
-				 join biz_product_info bpi on bpi.id = a.prod_id
-	</sql>
-    
-	<select id="get" resultType="BizSkuInfo">
-		SELECT 
-			<include refid="bizSkuInfoColumns"/>
-		FROM biz_sku_info a
-		<include refid="bizSkuInfoJoins"/>
-		WHERE a.id = #{id}
+		FROM common_img ci
+		WHERE ci.object_name = 'biz_sku_info' AND ci.object_id = #{id}
 	</select>
-	
-	<select id="findList" resultMap="BizSkuInfoMap">
+
+	<select id="findList" resultType="BizSkuInfo">
 		SELECT 
-			<include refid="bizSkuInfoColumns"/>
+			<include refid="bizSkuInfoColumns"/>,
+		(select
+		concat(ci.img_server, ci.img_path)
+		FROM common_img ci
+		WHERE ci.status = #{DEL_FLAG_NORMAL} AND ci.object_name = 'biz_sku_info' AND ci.object_id = a.id limit 1) AS defaultImg
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
-        <where>
+		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="id != null and id != ''">
 				AND a.id =#{id}

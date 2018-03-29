@@ -3,18 +3,18 @@
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoDao">
 
 
-    <resultMap id="BizSkuInfoMap" type="BizSkuInfo">
-        <id column="id"  property="id"/>
-        <result column="skuType"  property="skuType"/>
-        <result column="name"  property="name"/>
-        <result column="partNo"  property="partNo"/>
-        <result column="itemNo"  property="itemNo"/>
+	<resultMap id="BizSkuInfoMap" type="BizSkuInfo">
+		<id column="id"  property="id"/>
+		<result column="skuType"  property="skuType"/>
+		<result column="name"  property="name"/>
+		<result column="partNo"  property="partNo"/>
+		<result column="itemNo"  property="itemNo"/>
 		<result column="basePrice"  property="basePrice"/>
-        <result column="buyPrice"  property="buyPrice"/>
-        <result column="delFlag"  property="delFlag"/>
-        <result column="createDate"  property="createDate"/>
-        <result column="uVersion"  property="uVersion"/>
-        <result column="updateDate"  property="updateDate"/>
+		<result column="buyPrice"  property="buyPrice"/>
+		<result column="delFlag"  property="delFlag"/>
+		<result column="createDate"  property="createDate"/>
+		<result column="uVersion"  property="uVersion"/>
+		<result column="updateDate"  property="updateDate"/>
 
 		<association property="productInfo" javaType="BizProductInfo" column="productInfo.id">
 			<id property="id" column="productInfo.id"/>
@@ -27,27 +27,14 @@
 				<id column="office.id"  property="id"/>
 			</association>
 		</association>
-		<!--<collection property="skuPropValueList" ofType="BizSkuPropValue">-->
-			<!--<id column="skuPropValueList.id"  property="id"/>-->
-			<!--<result column="skuPropValueList.propValue"  property="propValue"/>-->
+		<collection property="skuPropValueList" ofType="BizSkuPropValue">
+			<id column="skuPropValueList.id"  property="id"/>
+			<result column="skuPropValueList.propValue"  property="propValue"/>
 
-		<!--</collection>-->
-
-		<collection property="skuImgs" ofType="CommonImg">
-			<id column="skuImgs.id"  property="id"/>
-			<result column="ciId"  property="id"/>
-			<result column="object_name"  property="objectName"/>
-			<result column="object_id"  property="objectId"/>
-			<result column="img_type"  property="imgType"/>
-			<result column="img_sort"  property="imgSort"/>
-			<result column="img_server"  property="imgServer"/>
-			<result column="img_path"  property="imgPath"/>
-			<result column="img_link"  property="imgLink"/>
-			<result column="comment"  property="comment"/>
 		</collection>
-    </resultMap>
+	</resultMap>
 
-    <sql id="bizSkuInfoColumns">
+	<sql id="bizSkuInfoColumns">
 		a.id AS "id",
 		a.prod_id AS "productInfo.id",
 		a.sku_type AS "skuType",
@@ -67,52 +54,41 @@
 		bpi.img_url AS "productInfo.imgUrl",
 		bpi.brand_name AS "productInfo.brandName",
 		bpi.prod_code AS "productInfo.prodCode",
-		bpi.vendor_id AS "productInfo.office.id",
-		ci.id AS ciId,
-		ci.object_name,
-		ci.object_id ,
-		ci.img_type ,
-		ci.img_sort,
-		ci.img_server,
-		ci.img_path,
-		ci.img_link,
-		ci.comment,
-		ci.status
+		bpi.vendor_id AS "productInfo.office.id"
 	</sql>
-	
+
 	<sql id="bizSkuInfoJoins">
 		LEFT join sys_user su on a.update_id = su.id
-		LEFT join common_img ci on (ci.object_name = 'biz_sku_info' AND ci.object_id = a.id)
-				 join biz_product_info bpi on bpi.id = a.prod_id
+		join biz_product_info bpi on bpi.id = a.prod_id
 	</sql>
-    
+
 	<select id="get" resultType="BizSkuInfo">
-		SELECT 
-			<include refid="bizSkuInfoColumns"/>
+		SELECT
+		<include refid="bizSkuInfoColumns"/>
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
 		WHERE a.id = #{id}
 	</select>
-	
-	<select id="findList" resultMap="BizSkuInfoMap">
-		SELECT 
-			<include refid="bizSkuInfoColumns"/>
+
+	<select id="findList" resultType="BizSkuInfo">
+		SELECT
+		<include refid="bizSkuInfoColumns"/>
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
-        <where>
+		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="id != null and id != ''">
 				AND a.id =#{id}
 			</if>
-            <if test="skuType != null and skuType != ''">
-                AND a.sku_type =#{skuType}
-            </if>
-            <if test="name != null and name != ''">
-                AND a.name LIKE
-                <if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
-                <if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
-                <if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
-            </if>
+			<if test="skuType != null and skuType != ''">
+				AND a.sku_type =#{skuType}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
 			<if test="partNo != null and partNo != ''">
 				AND a.part_no LIKE
 				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
@@ -131,8 +107,8 @@
 			<if test="productInfo != null and productInfo.name !=null and productInfo.name!=''">
 				AND bpi.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
-			<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
-			<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
 			</if>
 			<if test="productInfo != null and productInfo.prodCode !=null and productInfo.prodCode!=''">
 				AND bpi.prod_code LIKE
@@ -249,13 +225,13 @@
 	</select>
 
 	<select id="findAllList" resultType="BizSkuInfo">
-		SELECT 
-			<include refid="bizSkuInfoColumns"/>
+		SELECT
+		<include refid="bizSkuInfoColumns"/>
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-		</where>		
+		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -264,75 +240,71 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_sku_info(
-			id,
-			prod_id,
-			sku_type,
-			`name`,
-			<if test="partNo != null">
-				part_no,
-			</if>
-			<if test="basePrice != null">
-				base_price,
-			</if>
-			item_no,
-			buy_price,
-			status,
-			create_id,
-			create_time,
-			u_version,
-			update_id,
-			update_time
+		id,
+		prod_id,
+		sku_type,
+		`name`,
+		<if test="partNo != null">
+			part_no,
+		</if>
+		<if test="basePrice != null">
+			base_price,
+		</if>
+		item_no,
+		buy_price,
+		status,
+		create_id,
+		create_time,
+		u_version,
+		update_id,
+		update_time
 		) VALUES (
-			#{id},
-			#{productInfo.id},
-			#{skuType},
-			#{name},
-			<if test="partNo != null">
-				#{partNo},
-			</if>
-			<if test="basePrice != null">
-				#{basePrice},
-			</if>
-			#{itemNo},
-			#{buyPrice},
-			#{delFlag},
-			#{createBy.id},
-			#{createDate},
-			#{uVersion},
-			#{updateBy.id},
-			#{updateDate}
+		#{id},
+		#{productInfo.id},
+		#{skuType},
+		#{name},
+		<if test="partNo != null">
+			#{partNo},
+		</if>
+		<if test="basePrice != null">
+			#{basePrice},
+		</if>
+		#{itemNo},
+		#{buyPrice},
+		#{delFlag},
+		#{createBy.id},
+		#{createDate},
+		#{uVersion},
+		#{updateBy.id},
+		#{updateDate}
 		)
 	</insert>
-	
+
 	<update id="update">
-		UPDATE biz_sku_info SET 	
-			prod_id = #{productInfo.id},
-			sku_type = #{skuType},
-			name = #{name},
-			part_no = #{partNo},
-			<if test="basePrice != null">
-				base_price = #{basePrice},
-			</if>
-			buy_price = #{buyPrice},
-			item_no = #{itemNo},
-			create_time = #{createDate},
-			u_version = #{uVersion},
-			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+		UPDATE biz_sku_info SET
+		prod_id = #{productInfo.id},
+		sku_type = #{skuType},
+		name = #{name},
+		part_no = #{partNo},
+		<if test="basePrice != null">
+			base_price = #{basePrice},
+		</if>
+		buy_price = #{buyPrice},
+		item_no = #{itemNo},
+		create_time = #{createDate},
+		u_version = #{uVersion},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
-	
+
 	<update id="delete">
-		UPDATE biz_sku_info SET 
+		UPDATE biz_sku_info SET
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
-	</update>
-	<update id="physicalDeleteByProd">
-		DELETE FROM biz_sku_info
-		WHERE prod_id = #{prodId}
 	</update>
 
 	<delete id="deleteSkuPropInfoReal">
@@ -340,5 +312,5 @@
 		WHERE
 		biz_sku_prop_value.sku_id = #{id}
 	</delete>
-	
+
 </mapper>

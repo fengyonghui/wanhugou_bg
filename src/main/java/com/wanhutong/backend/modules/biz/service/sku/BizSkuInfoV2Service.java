@@ -47,7 +47,7 @@ import java.util.*;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizSkuInfoV2Service extends CrudService<BizSkuInfoDao, BizSkuInfo> {
+public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo> {
 	@Resource
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	@Resource
