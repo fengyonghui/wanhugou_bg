@@ -14,6 +14,7 @@ import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
@@ -72,7 +73,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	/**
 	 *	材质
 	 */
-	private AttributeValue materialAttributeValue;
+	private AttributeValueV2 materialAttributeValue;
 
 	/**
 	 * 标签ID集合
@@ -97,11 +98,11 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String source;
 
 
-	public AttributeValue getMaterialAttributeValue() {
+	public AttributeValueV2 getMaterialAttributeValue() {
 		return materialAttributeValue;
 	}
 
-	public void setMaterialAttributeValue(AttributeValue materialAttributeValue) {
+	public void setMaterialAttributeValue(AttributeValueV2 materialAttributeValue) {
 		this.materialAttributeValue = materialAttributeValue;
 	}
 

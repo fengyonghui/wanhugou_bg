@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
@@ -32,6 +34,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private Double buyPrice;   //采购价格
 	private List<CommonImg> skuImgs;
 	private List<BizSkuPropValue> skuPropValueList;
+	private List<AttributeValueV2> attrValueList;
 	private String itemNo;
 
 	private String sort; //生成part_no排序
@@ -240,6 +243,14 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public List<BizSkuPropValue> getSkuPropValueList() {
 		return skuPropValueList;
+	}
+
+	public List<AttributeValueV2> getAttrValueList() {
+		return attrValueList;
+	}
+
+	public void setAttrValueList(List<AttributeValueV2> attrValueList) {
+		this.attrValueList = attrValueList;
 	}
 
 	public void setSkuPropValueList(List<BizSkuPropValue> skuPropValueList) {

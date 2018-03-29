@@ -87,9 +87,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
         if(user.isAdmin()){
             List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
-            //用于订单导出的利润
-            List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
-            return headerList;
+
+            return bizOrderHeaderList;
         }else {
             if(oflag){
 
@@ -97,9 +96,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
                 List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
-            //用于订单导出的利润
-            List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
-            return headerList;
+
+            return bizOrderHeaderList;
         }
     }
 
