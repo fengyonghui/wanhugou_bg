@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -65,8 +66,8 @@ public class BuyerAdviserController extends BaseController {
 //		parentOff.setId(Integer.valueOf(socID));
 //		off.setParent(parentOff);
 		off.setType(center);
-		off.setCustomerTypeTen("10");
-		off.setCustomerTypeEleven("11");
+		off.setCustomerTypeTen(OfficeTypeEnum.WITHCAPITAL.getType());
+		off.setCustomerTypeEleven(OfficeTypeEnum.NETWORKSUPPLY.getType());
 		List<Office> officeList = officeService.queryCenterList(off);
 		office = officeService.get(office.getId());
 		officeService.get(office);

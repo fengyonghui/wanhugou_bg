@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.plan.BizOpPlanDao">
-    
+
 	<sql id="bizOpPlanColumns">
 		a.id AS "id",
 		a.object_id AS "objectId",
@@ -12,42 +12,45 @@
 		a.month AS "month",
 		a.day AS "day",
 		a.amount AS "amount",
-		a.status AS "status",
+		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
 	</sql>
-	
+
 	<sql id="bizOpPlanJoins">
-			LEFT JOIN  sys_office s on s.id = a.object_id
-			LEFT JOIN  sys_user su on su.id = a.object_id
+		LEFT JOIN  sys_office s on s.id = a.object_id
+		LEFT JOIN  sys_user su on su.id = a.object_id
 	</sql>
-    
+
 	<select id="get" resultType="BizOpPlan">
-		SELECT 
-			<include refid="bizOpPlanColumns"/>
+		SELECT
+		<include refid="bizOpPlanColumns"/>
 		FROM biz_op_plan a
 		<include refid="bizOpPlanJoins"/>
 		WHERE a.id = #{id}
 	</select>
-	
+
 	<select id="findList" resultType="BizOpPlan">
-		SELECT 
-			<include refid="bizOpPlanColumns"/>
+		SELECT
+		<include refid="bizOpPlanColumns"/>
 		FROM biz_op_plan a
 		<include refid="bizOpPlanJoins"/>
 		<where>
-			1 = 1
-			<if test="delFlag != null and delFlag != ''">
-			AND a.status = #{DEL_FLAG_NORMAL}
-			</if>
+			a.status = #{DEL_FLAG_NORMAL}
 			<if test="objectName1 != null and objectName1 != ''">
-					AND s.name = #{bizOpPlan.objectName1}
-				<!--<if test="${bizOpPlan.objectName == 'sys_user'}">-->
-					<!--AND su.name = #{objectName2}-->
-				<!--</if>-->
+				AND s.name like
+				<if test="dbName == 'oracle'">'%'||#{objectName1}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{objectName1}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{objectName1},'%')</if>
+			</if>
+			<if test="objectName2 !=null and objectName2 !=''">
+				AND su.name like
+				<if test="dbName == 'oracle'">'%'||#{objectName2}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{objectName2}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{objectName2},'%')</if>
 			</if>
 			<if test="year != null and year != ''">
 				AND a.year = #{year}
@@ -61,9 +64,6 @@
 			<if test="amount != null and amount != 0">
 				AND a.amount = #{amount}
 			</if>
-			<if test="uVersion != null and uVersion != ''">
-				AND a.u_version = #{uVersion}
-			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -73,15 +73,15 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<select id="findAllList" resultType="BizOpPlan">
-		SELECT 
-			<include refid="bizOpPlanColumns"/>
+		SELECT
+		<include refid="bizOpPlanColumns"/>
 		FROM biz_op_plan a
 		<include refid="bizOpPlanJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-		</where>		
+		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -90,62 +90,56 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<insert id="insert">
 		INSERT INTO biz_op_plan(
-			object_id,
-			object_name,
-			year,
-			month,
-			day,
-			amount,
-			create_id,
-			create_time,
-			u_version,
-			update_id,
-			update_time
+		id,
+		object_id,
+		object_name,
+		year,
+		month,
+		day,
+		amount,
+		status,
+		create_id,
+		create_time,
+		u_version,
+		update_id,
+		update_time
 		) VALUES (
-			<if test="centerOffice != null and centerOffice != '' and user == null">
-			#{centerOffice.id},
-			'sys_office',
-			</if>
-			<if test="user != null and user != ''">
-			#{user.id},
-			'sys_user',
-			</if>
-			#{year},
-			#{month},
-			#{day},
-			#{amount},
-			#{createBy.id},
-			#{createDate},
-			#{uVersion},
-			#{updateBy.id},
-			#{updateDate}
+		#{id},
+		#{objectId},
+		#{objectName},
+		#{year},
+		#{month},
+		#{day},
+		#{amount},
+		#{delFlag},
+		#{createBy.id},
+		#{createDate},
+		#{uVersion},
+		#{updateBy.id},
+		#{updateDate}
 		)
 	</insert>
-	
+
 	<update id="update">
-		UPDATE biz_op_plan SET 	
-			object_id = #{objectId},
-			object_name = #{objectName},
-			year = #{year},
-			month = #{month},
-			day = #{day},
-			amount = #{amount},
-			create_time = #{createDate},
-			u_version = #{uVersion},
-			update_id = #{updateBy},
-			update_time = #{updateDate}
+		UPDATE biz_op_plan SET
+		object_id = #{objectId},
+		object_name = #{objectName},
+		`year` = #{year},
+		`month` = #{month},
+		`day` = #{day},
+		amount = #{amount},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>
-	
+
 	<update id="delete">
-		UPDATE biz_op_plan SET 
-			status = #{DEL_FLAG_DELETE}
+		UPDATE biz_op_plan SET
+		status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 
-
-	
 </mapper>

@@ -69,9 +69,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Date ordrHeaderStartTime;    //订单创建开始时间
     private Date orderHeaderEedTime;    //订单创建结束时间
 
-    /**
-     * 用于订单导出查询平台交易记录
-     */
     private List<BizPayRecord> BizPayRecordList;
 
     public List<BizPayRecord> getBizPayRecordList() {
