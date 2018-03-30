@@ -9,11 +9,18 @@
 	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
 	<script type="text/javascript">
         $(document).ready(function() {
-            var flag = true;
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
-
+                    var shelfSkuId = $("#bizOpShelfSkuId").val();
+                    var shelfInfoId = $("#shelfInfoId").val();
+                    var flag = true;
+                    var vflag = false;
+                    var checkFlag = false;
+                    var checkMassege = "";
+                    var skuInfoIds = "";
+                    var minQtys = "";
+                    var maxQtys = "";
                     $("#tbody").find("td").each(function () {
                         if ($(this).attr("style") == "display: none;") {
                             var skuTitle = $(this).find("input").attr("about");
@@ -24,11 +31,6 @@
                                 }
                             });
                         }
-                        $(this).find("input[name='unshelfTimes']").each(function () {
-							if ($(this).val()==''){
-							    $(this).val("0");
-							}
-                        })
                         $(this).find("input[name!='unshelfTimes']").each(function () {
                             if ($(this).val() == '') {
                                 $(this).next().show();
@@ -38,21 +40,49 @@
                             }
                         });
                     }) ;
-                        if(flag) {
-                            $("#tbody").find("td").each(function () {
-                                if ($(this).attr("style") == "display: none;") {
-                                    $(this).removeAttr("style");
-                                }
-
-                            });
-                            loading('正在提交，请稍等...');
-                            form.submit();
+                    $("#tbody").find("td").each(function () {
+                        var skuId = $(this).find("input[name='skuInfoIds']").val();
+                        var minQty = $(this).find("input[name='minQtys']").val();
+                        var maxQty = $(this).find("input[name='maxQtys']").val();
+                        if (skuId != undefined){
+                            skuInfoIds += skuId+",";
                         }
+                        if (minQty != undefined){
+                            minQtys += minQty+",";
+						}
+                        if (maxQty != undefined){
+                            maxQtys += maxQty+",";
+                        }
+                    });
+                        $.ajax({
+							url:"${ctx}/biz/shelf/bizOpShelfSku/checkNum",
+							type:"post",
+							cache:false,
+							data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId},
+							success:function(data){
+								if (data=="false"){
+								    checkFlag = true;
+								    checkMassege = "您添加的商品在该阶梯价已经存在，请查询后再添加";
+                                }
+                                if (data=="true"){
+								    vflag = true;
+                                }
+                                if(checkFlag) {
+                                    alert(checkMassege);
+                                }
+                                if(flag && vflag) {
+                                    $("#tbody").find("td").each(function () {
+                                        if ($(this).attr("style") == "display: none;") {
+                                            $(this).removeAttr("style");
+                                        }
+                                    });
+                                    loading('正在提交，请稍等...');
+                                    form.submit();
+                                }
+							}
+						});
 
 
-                    if(flag){
-
-					}
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function(error, element) {
@@ -189,7 +219,7 @@
                                 "<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
                                 "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
                                 "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
-                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
                                 "<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
                                 "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
@@ -219,17 +249,27 @@
                 })
 
             });
-/*
-            $("#contentTable2").tablesMergeCell({
-                // automatic: true,
-                // 是否根据内容来合并
-                cols:[0,3]
-                // rows:[0,2]
-            });*/
+            /*
+                        $("#contentTable2").tablesMergeCell({
+                            // automatic: true,
+                            // 是否根据内容来合并
+                            cols:[0,3]
+                            // rows:[0,2]
+                        });*/
 
         });
         function removeItem(obj) {
             $("."+obj).remove();
+        }
+
+        function addOne(item,skuId) {
+            var trIndex = parseInt($(item).parent("td").parent("tr").index()) + 1;
+            var second = $("#tbody").find("tr:eq("+trIndex+")");
+            if ($(second).attr("class")==skuId){
+                $(second).find("td").each(function () {
+                    $(this).find("input[name='minQtys']").val(parseInt(item.value) + 1);
+                });
+            }
         }
 	</script>
 	<script type="text/javascript">
@@ -368,7 +408,7 @@
 				<c:if test="${bizOpShelfSku.id != null}">
 					<tr>
 						<td>
-							<input name="id" value="${bizOpShelfSku.id}" class="input-medium required" type="hidden"/>
+							<input id="bizOpShelfSkuId" name="id" value="${bizOpShelfSku.id}" class="input-medium required" type="hidden"/>
 							<input name="skuInfoIds" value="${bizOpShelfSku.skuInfo.id}" class="input-medium required" type="hidden"/>${bizOpShelfSku.skuInfo.name}
 						</td>
 							<%--<td><input name="createBy.name" value="${bizOpShelfSku.shelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="number" placeholder="必填！"/></td>--%>
