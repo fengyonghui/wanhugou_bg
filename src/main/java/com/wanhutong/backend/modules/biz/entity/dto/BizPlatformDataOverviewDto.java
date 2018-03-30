@@ -150,7 +150,7 @@ public class BizPlatformDataOverviewDto {
 
     public BigDecimal getDayMinReturned() {
         if (getRemainingDays() == 0) {
-            return getDifferenceTotalMonth();
+            return getDifferenceTotalMonth().abs();
         }
         if (getDifferenceTotalMonth().compareTo(BigDecimal.ZERO) < 0) {
             return getDifferenceTotalMonth().divide(BigDecimal.valueOf(getRemainingDays()), 2,BigDecimal.ROUND_HALF_UP).abs();
