@@ -176,8 +176,8 @@
                             <td>${detail.partNo}</td>
                             <td>${detail.skuInfo.itemNo}</td>
                             <td>
-                                <c:forEach items="${valueList}" var="skuvalue">
-                                    ${skuvalue.attributeInfo.name}:${skuvalue.value},
+                                <c:forEach items="${detail.orderSkuValueList}" var="skuvalue">
+                                    ${skuvalue.propName}:${skuvalue.propValue},
                                 </c:forEach>
                             </td>
                             <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
