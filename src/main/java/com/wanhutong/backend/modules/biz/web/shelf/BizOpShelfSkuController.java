@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
@@ -108,10 +109,10 @@ public class BizOpShelfSkuController extends BaseController {
 		String[] shelfQtyArr=bizOpShelfSkus.getShelfQtys().split(",");
 		String[] shelfTimeArr=bizOpShelfSkus.getShelfTimes().split(",");
 		String[] unShelfTimeArr=bizOpShelfSkus.getUnshelfTimes().split(",");
-		BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
 		boolean flag = false;
 		for(int i=0;i<skuIdArr.length;i++){
-		    if(bizOpShelfSkus.getId()!=null){
+			BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+			if(bizOpShelfSkus.getId()!=null){
                 bizOpShelfSku.setId(bizOpShelfSkus.getId());
 				if (flag) {
 					bizOpShelfSku.setId(null);
@@ -134,7 +135,9 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
 			bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
 			if (unShelfTimeArr.length > 0) {
-                bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+				if (!unShelfTimeArr[i].equals("0")) {
+					bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+				}
             }
 			bizOpShelfSkuService.save(bizOpShelfSku);
 
@@ -235,5 +238,47 @@ public class BizOpShelfSkuController extends BaseController {
 		addMessage(redirectAttributes, "上架成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
 	}
+
+    /**
+     * 验证上架数量区间是否已经存在
+     * @param skuInfoIds
+     * @param minQtys
+     * @param maxQtys
+     * @return
+     */
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+    @RequestMapping(value = "checkNum")
+	public String checkNum(String skuInfoIds,String minQtys,String maxQtys,Integer shelfSkuId,Integer shelfInfoId){
+	    String flag = "true";
+        String[] skuIdArr=skuInfoIds.split(",");
+        String[] maxQtyArr=maxQtys.split(",");
+        String[] minQtyArr=minQtys.split(",");
+        for(int i=0;i<skuIdArr.length;i++){
+            if (!skuIdArr[i].equals("")){
+                BizSkuInfo skuInfo = new BizSkuInfo();
+                skuInfo.setId(Integer.parseInt(skuIdArr[i]));
+                BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+                bizOpShelfSku.setSkuInfo(skuInfo);
+                BizOpShelfInfo bizOpShelfInfo = new BizOpShelfInfo();
+                bizOpShelfInfo.setId(shelfInfoId);
+                bizOpShelfSku.setOpShelfInfo(bizOpShelfInfo);
+                List<BizOpShelfSku> list = bizOpShelfSkuService.findList(bizOpShelfSku);
+                if (shelfSkuId != null){
+                    BizOpShelfSku opShelfSku = bizOpShelfSkuService.get(shelfSkuId);
+                    list.remove(opShelfSku);
+                }
+                for(BizOpShelfSku opShelfSku:list){
+                    int minQty = opShelfSku.getMinQty();
+                    int maxQty = opShelfSku.getMaxQty();
+                    if (minQty >= Integer.parseInt(minQtyArr[i]) && maxQty <= Integer.parseInt(maxQtyArr[i]) ||
+                            minQty <= Integer.parseInt(maxQtyArr[i]) && maxQty >= Integer.parseInt(minQtyArr[i])){
+                        flag = "false";
+                    }
+                }
+            }
+        }
+        return flag;
+    }
 }
 

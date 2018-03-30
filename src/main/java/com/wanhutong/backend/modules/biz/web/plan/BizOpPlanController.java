@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.plan;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +34,10 @@ public class BizOpPlanController extends BaseController {
 
 	@Autowired
 	private BizOpPlanService bizOpPlanService;
+	@Autowired
+	private OfficeService officeService;
+	@Autowired
+	private SystemService systemService;
 	
 	@ModelAttribute
 	public BizOpPlan get(@RequestParam(required=false) Integer id) {
@@ -56,6 +62,13 @@ public class BizOpPlanController extends BaseController {
 	@RequiresPermissions("biz:plan:bizOpPlan:view")
 	@RequestMapping(value = "form")
 	public String form(BizOpPlan bizOpPlan, Model model) {
+		if (bizOpPlan.getId() != null) {
+			if (bizOpPlan.getObjectName() != null && bizOpPlan.getObjectName().equals("sys_office")) {
+				officeService.get(Integer.parseInt(bizOpPlan.getObjectId()));
+			} else if (bizOpPlan.getObjectName() != null && bizOpPlan.getObjectName().equals("sys_user")) {
+				systemService.getUser(Integer.parseInt(bizOpPlan.getObjectId()));
+			}
+		}
 		model.addAttribute("bizOpPlan", bizOpPlan);
 		return "modules/biz/plan/bizOpPlanForm";
 	}
