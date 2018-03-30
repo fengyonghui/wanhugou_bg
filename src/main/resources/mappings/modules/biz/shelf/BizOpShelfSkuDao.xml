@@ -36,6 +36,7 @@
 		bsi.name AS "skuInfo.name",
 		bsi.part_no AS "skuInfo.partNo",
 		bsi.prod_id AS "skuInfo.productInfo.id",
+		bpi.name AS "productInfo.name",
 		bpi.img_url AS "productInfo.imgUrl",
 		bpi.vendor_name AS "productInfo.vendorName",
         CASE  WHEN a.unshelf_time > NOW() THEN '下架'
@@ -95,6 +96,15 @@
 				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
 			</if>
+			<if test="productInfo != null and productInfo.id != null and productInfo.id != 0 ">
+				AND a.prod_id = #{productInfo.id}
+			</if>
+            <if test="productInfo != null and productInfo.name != null and productInfo.name != '' ">
+                AND bpi.name LIKE
+                <if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+            </if>
 			<if test="skuInfo != null and skuInfo.partNo != null and skuInfo.partNo != '' ">
 			<!--AND bsi.part_no = #{skuInfo.partNo}-->
             AND bsi.part_no LIKE
@@ -270,6 +280,12 @@
 		shelf_user = #{shelfUser.id},
 		shelf_time = #{shelfTime},
 		unshelf_time = #{unshelfTime}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateSkuIdById">
+		UPDATE biz_op_shelf_sku SET
+		sku_id = ${skuId}
 		WHERE id = #{id}
 	</update>
 </mapper>

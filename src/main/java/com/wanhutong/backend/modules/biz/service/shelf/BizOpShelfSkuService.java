@@ -98,4 +98,8 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 	public void updateDateTime(BizOpShelfSku bizOpShelfSku){
 		bizOpShelfSkuDao.dateTimeUpdate(bizOpShelfSku);
 	}
+
+	public void updateSkuIdById(Integer id, Integer skuId) {
+		bizOpShelfSkuDao.updateSkuIdById(id,skuId);
+	}
 }

@@ -26,11 +26,11 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  *level：0:系统标签; 1:产品标签; 2:商品标签
  */
 public class AttributeInfo extends DataEntity<AttributeInfo> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private Dict dict;
-	private String level;
+	private Integer level;
 	private List<Dict> dictList;
 
 	public AttributeInfo() {
@@ -59,11 +59,11 @@ public class AttributeInfo extends DataEntity<AttributeInfo> {
 	}
 
 	@Length(min=1, max=4, message="0:系统标签; 1:产品标签; 2:商品标签长度必须介于 1 和 4 之间")
-	public String getLevel() {
+	public Integer getLevel() {
 		return level;
 	}
 
-	public void setLevel(String level) {
+	public void setLevel(Integer level) {
 		this.level = level;
 	}
 

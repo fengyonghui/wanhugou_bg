@@ -7,9 +7,7 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.TreeService;
-import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
-import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.category.BizCategoryInfoDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
@@ -21,14 +19,13 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
-import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
-import org.omg.PortableInterceptor.INACTIVE;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +33,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 垂直商品类目表Service
@@ -75,6 +74,9 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 			return dao.findByParentIdsLike(bizCategoryInfo);
 		}
 		return  new ArrayList<BizCategoryInfo>();
+	}
+	public List<BizCategoryInfo> findAllList(){
+		return super.findList(new BizCategoryInfo());
 	}
 	public List<BizCategoryInfo> findListInfo(BizCatelogInfo catelogInfo){
 		return UserUtils.getCategoryInfoList(catelogInfo);
@@ -181,6 +183,7 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	}
 	
 	@Transactional(readOnly = false)
+	@Override
 	public void delete(BizCategoryInfo bizCategoryInfo) {
 		super.delete(bizCategoryInfo);
 		UserUtils.removeCache(UserUtils.CACHE_CATEGORYINFO_LIST);
@@ -189,5 +192,21 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	public List<BizCategoryInfo> findListByBrandId(BizCategoryInfo bizCategoryInfo){
 		return bizCategoryInfoDao.findListByBrandId(bizCategoryInfo);
 	}
-	
+
+	public List<BizCategoryInfo> findByIds(String tagIdStr) {
+		String[] tagIdArr = tagIdStr.split(",");
+		@SuppressWarnings("unchecked")
+		List<BizCategoryInfo> categoryInfoList = (List<BizCategoryInfo>)UserUtils.getCache(UserUtils.CACHE_CATEGORYINFO_LIST);
+		if (categoryInfoList == null) {
+			categoryInfoList = bizCategoryInfoDao.findAllList(new BizCategoryInfo());
+			UserUtils.putCache(UserUtils.CACHE_CATEGORYINFO_LIST, categoryInfoList);
+		}
+		List<BizCategoryInfo> result = Lists.newArrayList();
+		for (BizCategoryInfo b : categoryInfoList) {
+			if (ArrayUtils.contains(tagIdArr, String.valueOf(b.getId()))) {
+				result.add(b);
+			}
+		}
+		return result;
+	}
 }

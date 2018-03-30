@@ -1,6 +1,3 @@
-/**
- * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
- */
 package com.wanhutong.backend.modules.sys.entity.tag;
 
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -28,7 +25,7 @@ public class TagInfo extends DataEntity<TagInfo> {
 	private Dict dict;
 	private String level;
 	private List<Dict> dictList;
-	
+
 	public TagInfo() {
 		super();
 	}
