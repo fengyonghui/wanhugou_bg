@@ -48,7 +48,6 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>
 	<tr>
-		<th>id</th>
 		<th>名称</th>
 		<th>年</th>
 		<th>月</th>
@@ -60,9 +59,6 @@
 	<tbody>
 	<c:forEach items="${page.list}" var="bizOpPlan">
 		<tr>
-			<td>
-					${bizOpPlan.objectName}
-			</td>
 			<td>
 				<c:choose>
 					<c:when test="${bizOpPlan.objectName == 'sys_office'}">

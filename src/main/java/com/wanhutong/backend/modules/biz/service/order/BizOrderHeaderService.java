@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
+ *
  * @author OuyangXiutian
  * @version 2017-12-20
  */
@@ -49,7 +50,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderAddressService bizOrderAddressService;
     @Autowired
     private BizSkuInfoService bizSkuInfoService;
-    @Autowired @Lazy
+    @Autowired
+    @Lazy
     private BizOrderDetailService bizOrderDetailService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
@@ -67,7 +69,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
-        User user= UserUtils.getUser();
+        User user = UserUtils.getUser();
 //        boolean flag=false;
         boolean oflag = false;
         /*if(user.getRoleList()!=null){
@@ -78,66 +80,64 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
         }*/
-        if (UserUtils.getOfficeList() != null){
-            for (Office office:UserUtils.getOfficeList()){
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
                     oflag = true;
                 }
             }
         }
-        if(user.isAdmin()){
+        if (user.isAdmin()) {
             List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
-            //用于订单导出的利润
             List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
             return headerList;
-        }else {
-            if(oflag){
+        } else {
+            if (oflag) {
 
-            }else {
+            } else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
-                List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
-            //用于订单导出的利润
+            List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
             List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
             return headerList;
         }
     }
 
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
-        User user= UserUtils.getUser();
-        if(user.isAdmin()){
-           // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+        User user = UserUtils.getUser();
+        if (user.isAdmin()) {
+            // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
-          // page.setCount(count);
+            // page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
             orderHeaderPage.setList(bizOrderHeaderList);
 
             return orderHeaderPage;
-        }else {
-            boolean flag=false;
+        } else {
+            boolean flag = false;
             boolean roleFlag = false;
-            if(user.getRoleList()!=null) {
+            if (user.getRoleList() != null) {
                 for (Role role : user.getRoleList()) {
                     if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
                         flag = true;
                     }
-                    if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
+                    if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())) {
                         roleFlag = true;
                     }
                 }
             }
-            if(flag){
+            if (flag) {
                 bizOrderHeader.setCenterId(user.getOffice().getId());
-            }else {
+            } else {
                 if (roleFlag) {
                     bizOrderHeader.setConsultantId(user.getId());
-                }else {
+                } else {
                     bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
                 }
             }
-            Page<BizOrderHeader> orderHeaderPage=super.findPage(page, bizOrderHeader);
-            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+            Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
+            Integer count = bizOrderHeaderDao.findCount(bizOrderHeader);
             page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
@@ -149,10 +149,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     @Transactional(readOnly = false)
     public void save(BizOrderHeader bizOrderHeader) {
-        if(bizOrderHeader.getBizType()==null){
+        if (bizOrderHeader.getBizType() == null) {
             bizOrderHeader.setBizType(1);//订单商品类型默认 2非专营      ----1专营
         }
-        if(bizOrderHeader.getOrderType()==null){
+        if (bizOrderHeader.getOrderType() == null) {
             bizOrderHeader.setOrderType(1);//订单类型，默认选中  1普通订单
         }
         BizOrderAddress bizLocation = bizOrderHeader.getBizLocation();
@@ -160,29 +160,29 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizLocation.setRegion(new SysRegion());
         }
         bizOrderAddressService.save(bizLocation);
-        if(bizOrderHeader.getId()==null || bizOrderHeader.getId()==0){
-            BizOrderHeader orderHeader=new BizOrderHeader();
+        if (bizOrderHeader.getId() == null || bizOrderHeader.getId() == 0) {
+            BizOrderHeader orderHeader = new BizOrderHeader();
             orderHeader.setCustomer(bizOrderHeader.getCustomer());
             orderHeader.setOrderType(Integer.parseInt(OrderTypeEnum.SO.getOrderType()));
-            List<BizOrderHeader> bizOrderHeaderList= bizOrderHeaderDao.findList(orderHeader);
-            int s=0;
-            if(bizOrderHeaderList!=null && bizOrderHeaderList.size()>0){
-                s=bizOrderHeaderList.size();
+            List<BizOrderHeader> bizOrderHeaderList = bizOrderHeaderDao.findList(orderHeader);
+            int s = 0;
+            if (bizOrderHeaderList != null && bizOrderHeaderList.size() > 0) {
+                s = bizOrderHeaderList.size();
             }
-            BizCustomCenterConsultant centerConsultant=bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
-            int c=0;
-            if(centerConsultant!=null){
-                c=centerConsultant.getCenters().getId();
+            BizCustomCenterConsultant centerConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+            int c = 0;
+            if (centerConsultant != null) {
+                c = centerConsultant.getCenters().getId();
             }
-            String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), c, bizOrderHeader.getCustomer().getId(),s+1);
+            String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), c, bizOrderHeader.getCustomer().getId(), s + 1);
             bizOrderHeader.setOrderNum(orderNum);
-        }else{
+        } else {
             bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());
         }
         bizOrderHeader.setBizLocation(bizLocation);
-        if(bizOrderHeader.getTotalDetail()==null){
+        if (bizOrderHeader.getTotalDetail() == null) {
             bizOrderHeader.setTotalDetail(0.0);
-        }else{
+        } else {
             bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
         }
         bizOrderHeader.setBizStatus(bizOrderHeader.getBizStatus());
@@ -190,7 +190,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
-        if(orderDetailList != null && !orderDetailList.isEmpty()) {
+        if (orderDetailList != null && !orderDetailList.isEmpty()) {
             for (BizOrderDetail bizOrderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
                 bizOrderDetail.setSkuInfo(bizSkuInfo);
@@ -226,17 +226,18 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     /**
      * 计算订单利润
+     *
      * @param orderHeaderList
      * @return
      */
-    public List<BizOrderHeader> getTotalBuyPrice(List<BizOrderHeader> orderHeaderList){
-        for (BizOrderHeader orderHeader:orderHeaderList) {
+    public List<BizOrderHeader> getTotalBuyPrice(List<BizOrderHeader> orderHeaderList) {
+        for (BizOrderHeader orderHeader : orderHeaderList) {
             Double totalBuyPrice = 0.0;
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(orderHeader);
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-            if (orderDetailList != null && orderDetailList.size() > 0){
-                for (BizOrderDetail orderDetail:orderDetailList){
+            if (orderDetailList != null && orderDetailList.size() > 0) {
+                for (BizOrderDetail orderDetail : orderDetailList) {
                     BizSkuInfo skuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                     totalBuyPrice += skuInfo.getBuyPrice() * orderDetail.getOrdQty();
                 }

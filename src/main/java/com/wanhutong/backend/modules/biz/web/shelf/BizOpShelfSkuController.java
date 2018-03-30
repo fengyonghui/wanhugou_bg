@@ -20,6 +20,10 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfo;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoService;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +62,11 @@ public class BizOpShelfSkuController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private BizSkuPropValueService bizSkuPropValueService;
+	@Autowired
+	private AttributeInfoService attributeInfoService;
+	@Autowired
+	private AttributeValueService attributeValueService;
 
-	
 	@ModelAttribute
 	public BizOpShelfSku get(@RequestParam(required=false) Integer id) {
 		BizOpShelfSku entity = null;

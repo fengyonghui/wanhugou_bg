@@ -97,4 +97,13 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
         super.delete(bizCustCredit);
     }
 
+
+    /**
+     * 用于订单支付保存 原有金额减去 输入的支付金额
+     */
+    @Transactional(readOnly = false)
+    public void orderHeaderSave(BizCustCredit bizCustCredit) {
+        super.save(bizCustCredit);
+    }
+
 }
