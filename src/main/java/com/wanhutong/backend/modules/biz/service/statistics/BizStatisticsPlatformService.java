@@ -62,9 +62,9 @@ public class BizStatisticsPlatformService {
      * @return 根据不同机构分类的统计数据
      */
     public List<BizOrderStatisticsDto> orderStatisticData(String startDate, String endDate, String type, String centerType, String orderType) {
-        if (StringUtils.isBlank(centerType) || Integer.valueOf(centerType) == 0) {
-            return bizOrderHeaderDao.getAllValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null);
-        }
+//        if (StringUtils.isBlank(centerType) || Integer.valueOf(centerType) == 0) {
+//            return bizOrderHeaderDao.getAllValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null);
+//        }
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null);
     }
 

@@ -1047,6 +1047,7 @@ public class BizStatisticsController extends BaseController {
 
             echartsSeriesDto.setData(dataList);
             echartsSeriesDto.setName(o);
+
             lineSeriesList.add(echartsSeriesDto);
         });
 

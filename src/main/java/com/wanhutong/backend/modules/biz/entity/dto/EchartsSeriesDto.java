@@ -46,6 +46,7 @@ public class EchartsSeriesDto {
      */
     private List<Object> data = Lists.newArrayList();
 
+    private ItemStyle itemStyle;
 
     public Integer getBarMaxWidth() {
         return barMaxWidth;
@@ -95,6 +96,14 @@ public class EchartsSeriesDto {
         this.data = data;
     }
 
+    public ItemStyle getItemStyle() {
+        return itemStyle;
+    }
+
+    public void setItemStyle(ItemStyle itemStyle) {
+        this.itemStyle = itemStyle;
+    }
+
     /**
      * 图表类型枚举
      */
@@ -117,6 +126,65 @@ public class EchartsSeriesDto {
 
         public String getDesc() {
             return desc;
+        }
+    }
+
+    public static class ItemStyle {
+        private Normal normal;
+
+        public Normal getNormal() {
+            return normal;
+        }
+
+        public void setNormal(Normal normal) {
+            this.normal = normal;
+        }
+    }
+
+    public static class Normal {
+        private Label label;
+
+        public Label getLabel() {
+            return label;
+        }
+
+        public void setLabel(Label label) {
+            this.label = label;
+        }
+    }
+
+    public static class Label {
+        /**
+         * 是否展示
+         */
+        private boolean show = Boolean.FALSE;
+        private String position = "top";
+
+        private String textStyle;
+
+
+        public String getPosition() {
+            return position;
+        }
+
+        public void setPosition(String position) {
+            this.position = position;
+        }
+
+        public String getTextStyle() {
+            return textStyle;
+        }
+
+        public void setTextStyle(String textStyle) {
+            this.textStyle = textStyle;
+        }
+
+        public boolean isShow() {
+            return show;
+        }
+
+        public void setShow(boolean show) {
+            this.show = show;
         }
     }
 }

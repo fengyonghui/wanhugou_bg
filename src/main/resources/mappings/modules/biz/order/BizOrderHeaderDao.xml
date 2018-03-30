@@ -1141,6 +1141,32 @@
 		select  count(1) as orderCount,
 		SUM(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
+		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		FROM biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+		WHERE header1.order_type = 1
+		and header1.`status` = 1
+		and office1.`status` = 1
+		and sku1.`status` = 1
+		<if test="centerType == null or centerType == 0">
+			and office1.type in (8, 10, 11)
+		</if>
+		<if test="centerType != null and centerType != 0">
+			and office1.type = #{centerType}
+		</if>
+		AND office1.name NOT LIKE '%测试%'
+		AND
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		oh.biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND
+		header1.create_time BETWEEN #{startDate} AND #{endDate}
+		)   AS buyPrice,
+
 		<if test="type == null or type == 0">
 			--             date_format(oh.create_time, '%Y-%m') AS createDate
 			CASE date_format(oh.create_time, '%Y-%m')
@@ -1156,8 +1182,18 @@
 		<if test="type == 1">
 			date_format(oh.create_time, '%Y-%m-%d') AS createDate
 		</if>
+
 		FROM biz_order_header oh
+		LEFT JOIN biz_custom_center_consultant AS consultant ON consultant.cust_id = oh.cust_id
+		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE oh.`status` = 1
+		<if test="centerType == null or centerType == 0">
+			and office.type in (8, 10, 11)
+		</if>
+		<if test="centerType != null and centerType != 0">
+			and office.type = #{centerType}
+		</if>
+		AND office.name NOT LIKE '%测试%'
         AND oh.create_time BETWEEN #{startDate} AND #{endDate}
 		and (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		oh.biz_status != #{item.state}
@@ -1172,8 +1208,45 @@
 		SELECT count(1) as orderCount,
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
+		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		FROM biz_order_header AS header1
+		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
+		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+		WHERE header1.order_type = 1
+		and header1.`status` = 1
+		and office1.`status` = 1
+		and sku1.`status` = 1
+		AND office1.name NOT LIKE '%测试%'
+		<if test="centerType == null or centerType == 0">
+			and office1.type in (8, 10, 11)
+		</if>
+		<if test="centerType != null and centerType != 0">
+			and office1.type = #{centerType}
+		</if>
+		AND
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		header1.biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND
+		header1.create_time BETWEEN #{startDate} AND #{endDate}
+		<if test="type == 1">
+		AND date_format(oh.create_time, '%Y-%m-%d') = date_format(header1.create_time, '%Y-%m-%d')
+		</if>
+		<if test="type != 1">
+		AND date_format(oh.create_time, '%Y-%m') = date_format(header1.create_time, '%Y-%m')
+		</if>
+
+		<if test="type == 1">
+			GROUP BY date_format(header1.create_time, '%Y-%m-%d')
+		</if>
+		<if test="type != 1">
+			GROUP BY date_format(header1.create_time, '%Y-%m')
+		</if>
+		)  AS buyPrice,
 		<if test="type == null or type == 0">
-			-- 			date_format(oh.create_time, '%Y-%m') AS createDate
 			CASE date_format(oh.create_time, '%Y-%m')
 			WHEN '2017-06'
 			THEN '2017-09'

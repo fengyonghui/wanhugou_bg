@@ -111,6 +111,19 @@ public class BizStatisticsService {
             });
             echartsSeriesDto.setData(dataList);
             echartsSeriesDto.setName(month.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+
+            EchartsSeriesDto.ItemStyle itemStyle = new EchartsSeriesDto.ItemStyle();
+            EchartsSeriesDto.Normal normal = new EchartsSeriesDto.Normal();
+            EchartsSeriesDto.Label label = new EchartsSeriesDto.Label();
+            label.setShow(true);
+            label.setTextStyle(
+                    "fontWeight:'bolder'," +
+                            "fontSize : '12'," +
+                            "position : 'top'," +
+                            "fontFamily : '微软雅黑'");
+            normal.setLabel(label);
+            itemStyle.setNormal(normal);
+            echartsSeriesDto.setItemStyle(itemStyle);
             return echartsSeriesDto;
         }
         return null;
