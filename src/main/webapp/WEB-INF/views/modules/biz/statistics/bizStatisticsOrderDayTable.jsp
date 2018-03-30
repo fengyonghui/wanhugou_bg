@@ -8,6 +8,11 @@
 <body>
 <div style="height: 50px">
     <input id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <select class="input-medium" id="centerType">
+        <option value="8" label="采购中心">采购中心</option>
+        <option value="11" label="网供">网供</option>
+        <option value="10" label="配资业务">配资业务</option>
+    </select>
     <input id="search" onclick="initTable()" class="btn btn-primary" type="button" value="查询"/>
 
 </div>
@@ -47,10 +52,13 @@
     function initTable() {
         var startDate = $("#startDate").val();
         var endDate = $("#endDate").val();
+        var centerTypeEle = $("#centerType");
+        var centerType = centerTypeEle.find("option:selected").val();
+
         $.ajax({
             type: 'post',
             url: "${adminPath}/biz/statistics/day/orderTableData",
-            data: {"startDate": startDate, "endDate": endDate},
+            data: {"startDate": startDate, "endDate": endDate, "centerType": centerType},
             dataType: "json",
             success: function (msg) {
                 $("#orderTable").empty();

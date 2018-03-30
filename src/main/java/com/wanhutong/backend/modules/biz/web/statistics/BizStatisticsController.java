@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -399,8 +400,8 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = {"orderData", ""})
     @ResponseBody
-    public String orderData(HttpServletRequest request, String month, String lineChartType, String barChartType) {
-        return JSONObject.fromObject(getOrderData(month, lineChartType, barChartType)).toString();
+    public String orderData(HttpServletRequest request, String month, String lineChartType, String barChartType, String centerType) {
+        return JSONObject.fromObject(getOrderData(month, lineChartType, barChartType, centerType)).toString();
     }
 
     /**
@@ -411,7 +412,7 @@ public class BizStatisticsController extends BaseController {
      * @param barChartType  柱图数据类型
      * @return 订单相关统计数据
      */
-    private Map<String, Object> getOrderData(String month, String lineChartType, String barChartType) {
+    private Map<String, Object> getOrderData(String month, String lineChartType, String barChartType, String centerType) {
         // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
         LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
@@ -430,7 +431,7 @@ public class BizStatisticsController extends BaseController {
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), centerType));
             monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
@@ -492,7 +493,7 @@ public class BizStatisticsController extends BaseController {
                         // 上个月数据
                         Map<String, BizOrderStatisticsDto> lastDataMap = dataMap.get(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
                         if (lastDataMap == null) {
-                            lastDataMap = bizStatisticsService.orderStatisticData(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+                            lastDataMap = bizStatisticsService.orderStatisticData(lastMonth.toString(BizStatisticsService.PARAM_DATE_FORMAT), centerType);
                         }
                         BigDecimal lastData = lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : BigDecimal.valueOf(0);
                         // 增长率
@@ -547,7 +548,7 @@ public class BizStatisticsController extends BaseController {
     @ResponseBody
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "centOrderTable")
-    public String centOrderTable(HttpServletRequest request, String month) throws ParseException {
+    public String centOrderTable(HttpServletRequest request, String month, String centerType) throws ParseException {
         Calendar c=Calendar.getInstance();
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
         Date nowDate = sdf.parse(month);
@@ -556,9 +557,9 @@ public class BizStatisticsController extends BaseController {
         Date m = c.getTime();
         String mon = sdf.format(m);
         //当前月
-        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsService.orderStatisticData(month);
+        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsService.orderStatisticData(month, centerType);
         //上个月
-        Map<String, BizOrderStatisticsDto> UpResultMap = bizStatisticsService.orderStatisticData(mon);
+        Map<String, BizOrderStatisticsDto> UpResultMap = bizStatisticsService.orderStatisticData(mon, centerType);
         //合并
         HashMap<String, BizOrderStatisticsDto> map = new HashMap<>();
         for (Map.Entry<String,BizOrderStatisticsDto> entry:UpResultMap.entrySet()) {
@@ -646,6 +647,7 @@ public class BizStatisticsController extends BaseController {
         System.out.println(s);
         return "modules/biz/statistics/statisticsUserTables";
     }
+
     /**
      * 统计总的会员数，采购中心数，网供数，配资中心数，订单数量，总额、已收货款，商品数量 平均客单价
      * @return
@@ -657,6 +659,36 @@ public class BizStatisticsController extends BaseController {
         model.addAttribute("totalMap",totalMap);
         model.addAttribute("time",new Date());
         return "modules/biz/statistics/bizTotalStatistics";
+    }
+    /**
+     * 统计总的会员数，采购中心数，网供数，配资中心数，订单数量，总额、已收货款，商品数量 平均客单价
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "bizTotalStatisticsDtoDownload")
+    public void bizTotalStatisticsDtoDownload(Model model, HttpServletResponse response) throws IOException {
+        Map<String,BizTotalStatisticsDto> totalMap = bizStatisticsService.getBizTotalStatisticsDto();
+        String fileName = "万户通平台总体情况.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+
+        for (String key : totalMap.keySet()) {
+            HSSFCell hCell = header.createCell(rowIndex);
+            HSSFCell vCell = header.createCell(rowIndex);
+            hCell.setCellValue(key);
+            vCell.setCellValue(totalMap.get(key).getCount() + totalMap.get(key).getUnit());
+            rowIndex++;
+        }
+
+
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
     }
 
     /**
@@ -739,7 +771,8 @@ public class BizStatisticsController extends BaseController {
                                        String month,
                                        String dataType,
                                        String imgUrl,
-                                       String imgUrl1
+                                       String imgUrl1,
+                                       String centerType
     ) throws IOException {
         // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
@@ -759,7 +792,7 @@ public class BizStatisticsController extends BaseController {
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), centerType));
             monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
@@ -949,7 +982,7 @@ public class BizStatisticsController extends BaseController {
     @RequiresPermissions("biz:statistics:profit:view")
     @RequestMapping(value = {"profitData", ""})
     @ResponseBody
-    public String profitData(HttpServletRequest request, HttpServletResponse response, String month) {
+    public String profitData(HttpServletRequest request, HttpServletResponse response, String month, String centerType) {
 // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
         LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
@@ -968,7 +1001,7 @@ public class BizStatisticsController extends BaseController {
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), centerType));
             monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
@@ -1014,6 +1047,7 @@ public class BizStatisticsController extends BaseController {
 
             echartsSeriesDto.setData(dataList);
             echartsSeriesDto.setName(o);
+
             lineSeriesList.add(echartsSeriesDto);
         });
 
@@ -1036,7 +1070,8 @@ public class BizStatisticsController extends BaseController {
                                    HttpServletResponse response,
                                    String month,
                                    String imgUrl,
-                                   String imgUrl1
+                                   String imgUrl1,
+                                   String centerType
     ) throws IOException {
         // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
@@ -1056,7 +1091,7 @@ public class BizStatisticsController extends BaseController {
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT)));
+            dataMap.put(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), bizStatisticsService.orderStatisticData(o.toString(BizStatisticsService.PARAM_DATE_FORMAT), centerType));
             monthList.add(o.toString(BizStatisticsService.PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);

@@ -13,6 +13,11 @@
         <option value="1" label="销售额">销售额</option>
         <option value="3" label="订单量">订单量</option>
     </select>
+    <select class="input-medium" id="centerType">
+        <option value="8" label="采购中心">采购中心</option>
+        <option value="11" label="网供">网供</option>
+        <option value="10" label="配资业务">配资业务</option>
+    </select>
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
     <input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>
     <div id="orderTotalDataChart" style="height: 300px;"></div>
@@ -41,6 +46,9 @@
         var dataType = "1";
         var dataTypeDesc = "销售额";
 
+        var centerTypeEle = $("#centerType");
+        var centerType = centerTypeEle.find("option:selected").val();
+
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
         var barChartTypeDesc = barChartTypeEle.find("option:selected").html();
@@ -54,7 +62,7 @@
         $.ajax({
             type: 'GET',
             url: "${adminPath}/biz/statistics/day/orderData",
-            data: {"month": startDate, "lineChartType": dataType, "barChartType": barChartType},
+            data: {"month": startDate, "lineChartType": dataType, "barChartType": barChartType, "centerType": centerType},
             dataType: "json",
             success: function (msg) {
                 if (!Boolean(msg.ret)) {
@@ -206,6 +214,9 @@
         var barChartType = barChartTypeEle.find("option:selected").val();
         var barChartTypeDesc = barChartTypeEle.find("option:selected").html();
 
+        var centerTypeEle = $("#centerType");
+        var centerType = centerTypeEle.find("option:selected").val();
+
         var startDate = $("#applyDate").val();
 
         //定义一个form表单
@@ -225,10 +236,14 @@
         var myUpdateReason1 = $("<input type='hidden' name='imgUrl1' />")
         myUpdateReason1.attr('value', imgUrl1);
 
+        var mycenterType = $("<input type='hidden' name='centerType' />")
+        mycenterType.attr('value', centerType);
+
         myform.append(myProductId);
         myform.append(myWarehouseId);
         myform.append(myUpdateReason);
         myform.append(myUpdateReason1);
+        myform.append(mycenterType);
         myform.appendTo('body').submit(); //must add this line for higher html spec
 
     }

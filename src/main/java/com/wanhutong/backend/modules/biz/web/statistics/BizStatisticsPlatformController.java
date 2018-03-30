@@ -9,8 +9,10 @@ import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsPlatformService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
+import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import net.sf.json.JSONObject;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -27,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -593,4 +596,115 @@ public class BizStatisticsPlatformController extends BaseController {
         return JSONObject.fromObject(paramMap).toString();
     }
 
+
+    /**
+     * 利润统计
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:profit:view")
+    @RequestMapping(value = {"profit", ""})
+    public String profit(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("month", org.joda.time.LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
+        return "modules/biz/statistics/bizStatisticsProfitPlatform";
+    }
+
+    /**
+     * 利润统计数据
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:profit:view")
+    @RequestMapping(value = {"profitData", ""})
+    @ResponseBody
+    public String profitData(HttpServletRequest request, HttpServletResponse response, String startDate, String endDate, String centerType, String type) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat simpleDateFormatDay = new SimpleDateFormat("yyyy-MM-dd");
+        String startDateMonth = startDate;
+        if (StringUtils.isNotBlank(startDate)) {
+            startDate = startDate + "-01";
+        }
+        if (StringUtils.isNotBlank(endDate)) {
+            endDate = endDate + "-01";
+        }
+
+        if (StringUtils.isBlank(endDate)) {
+            endDate = simpleDateFormatDay.format(new Date());
+        }
+
+        List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = bizStatisticsPlatformService.orderStatisticData(startDate, endDate, type, centerType, StringUtils.EMPTY);
+
+        List<String> nameList = Lists.newArrayList();
+
+        List<Object> seriesDataList = Lists.newArrayList();
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        if ("1".equals(type)) {
+            try {
+                List<String> dayList = Lists.newArrayList();
+
+                Date parseDate = simpleDateFormat.parse(startDateMonth);
+                Calendar c = Calendar.getInstance();
+                c.setTime(parseDate);
+                while (simpleDateFormat.format(c.getTime()).equals(startDateMonth)) {
+                    dayList.add(simpleDateFormatDay.format(c.getTime()));
+                    c.add(Calendar.DAY_OF_MONTH, 1);
+                }
+
+                dayList.forEach(o -> {
+                    Object value = 0;
+                    for (BizOrderStatisticsDto b : bizOrderStatisticsDtoList) {
+                        if (b.getCreateDate().equals(o)) {
+                            value = b.getProfitPrice();
+                            System.out.println(b.getBuyPrice());
+                        }
+                    }
+                    seriesDataList.add(value);
+                    nameList.add(o);
+                });
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            bizOrderStatisticsDtoList.forEach(o -> {
+                seriesDataList.add(o.getProfitPrice());
+                nameList.add(o.getCreateDate());
+            });
+        }
+        echartsSeriesDto.setName("利润");
+        echartsSeriesDto.setData(seriesDataList);
+        echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+        EchartsSeriesDto.ItemStyle itemStyle = new EchartsSeriesDto.ItemStyle();
+        EchartsSeriesDto.Normal normal = new EchartsSeriesDto.Normal();
+        EchartsSeriesDto.Label label = new EchartsSeriesDto.Label();
+        label.setShow(true);
+        label.setTextStyle(
+                "fontWeight:'bolder'," +
+                "fontSize : '12'," +
+                "position : 'top'," +
+                "fontFamily : '微软雅黑'");
+        normal.setLabel(label);
+        itemStyle.setNormal(normal);
+        echartsSeriesDto.setItemStyle(itemStyle);
+
+        EchartsSeriesDto barSeriesList = null;
+        try {
+            barSeriesList = (EchartsSeriesDto)BeanUtils.cloneBean(echartsSeriesDto);
+            barSeriesList.setType(EchartsSeriesDto.SeriesTypeEnum.BAR.getCode());
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("seriesList", echartsSeriesDto);
+        paramMap.put("barSeriesList", barSeriesList);
+        paramMap.put("nameList", nameList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
+        return JSONObject.fromObject(paramMap).toString();
+    }
 }
