@@ -130,6 +130,7 @@ public class BizRequestHeaderController extends BaseController {
 			bizRequestDetail1.setRequestHeader(bizRequestHeader1);
 			BizSkuInfo bizSkuInfo =new BizSkuInfo();
 			bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
+			bizSkuInfo.setPartNo(bizRequestHeader.getPartNo());
 			bizRequestDetail1.setSkuInfo(bizSkuInfo);
 
 			bizPoOrderReq.setRequestHeader(bizRequestHeader1);
@@ -146,12 +147,22 @@ public class BizRequestHeaderController extends BaseController {
 				}
 
 			}
-			if(StringUtils.isNotBlank(bizRequestHeader.getItemNo())){
+			if(StringUtils.isNotBlank(bizRequestHeader.getItemNo())&& StringUtils.isNotBlank(bizRequestHeader.getPartNo())){
 				if(requestDetailList!=null && requestDetailList.size()>0){
 					bizRequestHeader1.setRequestDetailList(reqDetailList);
 					bizRequestHeaderList.add(bizRequestHeader1);
 				}
-			}else {
+			}else if(StringUtils.isNotBlank(bizRequestHeader.getItemNo())){
+				if(requestDetailList!=null && requestDetailList.size()>0){
+					bizRequestHeader1.setRequestDetailList(reqDetailList);
+					bizRequestHeaderList.add(bizRequestHeader1);
+				}
+			}else if(StringUtils.isNotBlank(bizRequestHeader.getPartNo())){
+				if(requestDetailList!=null && requestDetailList.size()>0){
+					bizRequestHeader1.setRequestDetailList(reqDetailList);
+					bizRequestHeaderList.add(bizRequestHeader1);
+				}
+			} else {
 				bizRequestHeader1.setRequestDetailList(reqDetailList);
 				bizRequestHeaderList.add(bizRequestHeader1);
 			}
