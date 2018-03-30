@@ -297,8 +297,8 @@ public class BizOrderHeaderController extends BaseController {
                     //   以上输出结果是：-1小于、0等于、1大于
                     if (subtract.compareTo(new BigDecimal(0)) == 1) {
                         bizCustCredit.setWallet(subtract);
-                        bizCustCreditService.save(bizCustCredit);
-
+                        bizCustCredit.setId(orderHeaderMent.getCustomer().getId());
+                        bizCustCreditService.orderHeaderSave(bizCustCredit);
                         bizPayRecordCredit.setOriginalAmount(bizCustCredit.getWallet());//原金额
                         bizPayRecordCredit.setCashAmount(subtract);//现金额
                         if (payMentOne.equals(Totail)) {

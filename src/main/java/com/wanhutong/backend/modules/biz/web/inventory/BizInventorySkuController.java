@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
@@ -18,19 +21,19 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.config.Global;
@@ -40,10 +43,13 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 商品库存详情Controller
+ *
  * @author 张腾飞
  * @version 2017-12-29
  */
@@ -51,83 +57,85 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/biz/inventory/bizInventorySku")
 public class BizInventorySkuController extends BaseController {
 
-	@Autowired
-	private BizInventorySkuService bizInventorySkuService;
-	@Autowired
-	private BizInventoryInfoService bizInventoryInfoService;
-	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
-	@Autowired
+    @Autowired
+    private BizInventorySkuService bizInventorySkuService;
+    @Autowired
+    private BizInventoryInfoService bizInventoryInfoService;
+    @Autowired
+    private BizSkuInfoService bizSkuInfoService;
+    @Autowired
     private SystemService systemService;
-	@Autowired
+    @Autowired
     private BizOrderDetailService bizOrderDetailService;
+    @Autowired
+    private DictService dictService;
 
 
-	@ModelAttribute
-	public BizInventorySku get(@RequestParam(required=false) Integer id) {
-		BizInventorySku entity = null;
-		if (id!=null){
-			entity = bizInventorySkuService.get(id);
-		}
-		if (entity == null){
-			entity = new BizInventorySku();
-		}
-		return entity;
-	}
-	
-	@RequiresPermissions("biz:inventory:bizInventorySku:view")
-	@RequestMapping(value = {"list", ""})
-	public String list(BizInventorySku bizInventorySku, HttpServletRequest request, HttpServletResponse response, Model model) {
-		String zt = request.getParameter("zt");
-		//取出用户所属采购中心
+    @ModelAttribute
+    public BizInventorySku get(@RequestParam(required = false) Integer id) {
+        BizInventorySku entity = null;
+        if (id != null) {
+            entity = bizInventorySkuService.get(id);
+        }
+        if (entity == null) {
+            entity = new BizInventorySku();
+        }
+        return entity;
+    }
+
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = {"list", ""})
+    public String list(BizInventorySku bizInventorySku, HttpServletRequest request, HttpServletResponse response, Model model) {
+        String zt = request.getParameter("zt");
+        //取出用户所属采购中心
         User user = UserUtils.getUser();
-		boolean flag=false;
-		boolean oflag = false;
-		if(user.getRoleList()!=null){
-			for(Role role:user.getRoleList()){
-				if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
-					flag=true;
-					break;
-				}
-			}
-		}
-        if (UserUtils.getOfficeList() != null){
-            for (Office office:UserUtils.getOfficeList()){
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+        boolean flag = false;
+        boolean oflag = false;
+        if (user.getRoleList() != null) {
+            for (Role role : user.getRoleList()) {
+                if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
                     oflag = true;
                 }
             }
         }
-        Page<BizInventorySku> page =null;
+        Page<BizInventorySku> page = null;
         if (user.isAdmin()) {
-            page= bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+            page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         } else {
-        	if(flag){
-				Office company = systemService.getUser(user.getId()).getCompany();
-				//根据采购中心取出仓库
-				BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-				bizInventoryInfo.setCustomer(company);
-				bizInventorySku.setInvInfo(bizInventoryInfo);
-			}else {
-        	    if (oflag){
+            if (flag) {
+                Office company = systemService.getUser(user.getId()).getCompany();
+                //根据采购中心取出仓库
+                BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+                bizInventoryInfo.setCustomer(company);
+                bizInventorySku.setInvInfo(bizInventoryInfo);
+            } else {
+                if (oflag) {
 
-                }else {
+                } else {
                     bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
                 }
-			}
-             page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+            }
+            page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         }
-        model.addAttribute("zt",zt);
-		model.addAttribute("page", page);
-		return "modules/biz/inventory/bizInventorySkuList";
-	}
+        model.addAttribute("zt", zt);
+        model.addAttribute("page", page);
+        return "modules/biz/inventory/bizInventorySkuList";
+    }
 
-	@ResponseBody
-	@RequiresPermissions("biz:inventory:bizInventorySku:view")
-	@RequestMapping(value = "findInvSku")
-	public String findInvSku(String orderHeaders) {
-	    String flag = "false";
-        if(StringUtils.isNotBlank(orderHeaders)) {
+    @ResponseBody
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "findInvSku")
+    public String findInvSku(String orderHeaders) {
+        String flag = "false";
+        if (StringUtils.isNotBlank(orderHeaders)) {
             String[] orders = orderHeaders.split(",".trim());
             for (int a = 0; a < orders.length; a++) {
                 String[] oheaders = orders[a].split("#".trim());
@@ -138,7 +146,7 @@ public class BizInventorySkuController extends BaseController {
                     //商品
                     BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                     BizInventoryInfo inventoryInfo = new BizInventoryInfo();
-                    if(odArr.length==3) {
+                    if (odArr.length == 3) {
                         inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                         BizInventorySku bizInventorySku = new BizInventorySku();
                         bizInventorySku.setInvInfo(inventoryInfo);
@@ -154,11 +162,11 @@ public class BizInventorySkuController extends BaseController {
         return flag;
     }
 
-	@RequiresPermissions("biz:inventory:bizInventorySku:view")
-	@RequestMapping(value = "form")
-	public String form(BizInventorySku bizInventorySku,HttpServletRequest request, Model model) {
-	    model.addAttribute("invInfoList",bizInventoryInfoService.findList(new BizInventoryInfo()));
-	    if (bizInventorySku != null && bizInventorySku.getSkuInfo() != null) {
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "form")
+    public String form(BizInventorySku bizInventorySku, HttpServletRequest request, Model model) {
+        model.addAttribute("invInfoList", bizInventoryInfoService.findList(new BizInventoryInfo()));
+        if (bizInventorySku != null && bizInventorySku.getSkuInfo() != null) {
             BizSkuInfo skuInfo = bizSkuInfoService.get(bizInventorySku.getSkuInfo().getId());
             List<BizSkuInfo> list = bizSkuInfoService.findListByParam(skuInfo);
             for (BizSkuInfo sku : list) {
@@ -179,78 +187,146 @@ public class BizInventorySkuController extends BaseController {
         }
 
         BizInventoryInfo bizInventoryInfo2 = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
-		bizInventorySku.setInvInfo(bizInventoryInfo2);
-		String zt = request.getParameter("zt");
-		model.addAttribute("zt",zt);
-		model.addAttribute("entity", bizInventorySku);
-		model.addAttribute("bizSkuInfo",new BizSkuInfo());
-		return "modules/biz/inventory/bizInventorySkuForm";
-	}
+        bizInventorySku.setInvInfo(bizInventoryInfo2);
+        String zt = request.getParameter("zt");
+        model.addAttribute("zt", zt);
+        model.addAttribute("entity", bizInventorySku);
+        model.addAttribute("bizSkuInfo", new BizSkuInfo());
+        return "modules/biz/inventory/bizInventorySkuForm";
+    }
 
-	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
-	@RequestMapping(value = "save")
-	public String save(BizInventorySkus bizInventorySkus, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    @RequiresPermissions("biz:inventory:bizInventorySku:edit")
+    @RequestMapping(value = "save")
+    public String save(BizInventorySkus bizInventorySkus, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 //		if (!beanValidator(model, bizInventorySku)){
 //			return form(bizInventorySku,request,model);
 //		}
-		if(bizInventorySkus!=null && bizInventorySkus.getSkuInfoIds()!=null ){
-			String[] invInfoIdArr =bizInventorySkus.getInvInfoIds().split(",");
-			String[] invTypeArr=bizInventorySkus.getInvTypes().split(",");
-			String[] skuInfoIdArr=bizInventorySkus.getSkuInfoIds().split(",");
-			String[] stockQtyArr=bizInventorySkus.getStockQtys().split(",");
-			BizInventorySku bizInventorySku=new BizInventorySku();
-			for(int i=0;i<skuInfoIdArr.length;i++){
-				bizInventorySku.setId(null);
-				bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
-				bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
-				bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
-				//查询是否有已删除的该商品库存
+        if (bizInventorySkus != null && bizInventorySkus.getSkuInfoIds() != null) {
+            String[] invInfoIdArr = bizInventorySkus.getInvInfoIds().split(",");
+            String[] invTypeArr = bizInventorySkus.getInvTypes().split(",");
+            String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
+            String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
+            BizInventorySku bizInventorySku = new BizInventorySku();
+            for (int i = 0; i < skuInfoIdArr.length; i++) {
+                bizInventorySku.setId(null);
+                bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
+                bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
+                bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
+                //查询是否有已删除的该商品库存
                 BizInventorySku only = bizInventorySkuService.findOnly(bizInventorySku);
                 if (only == null) {
                     bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
                     bizInventorySkuService.save(bizInventorySku);
-                }else {
+                } else {
                     only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
                     bizInventorySkuService.save(only);
                 }
-			}
-		}//修改
-		else if (bizInventorySkus!=null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")){
+            }
+        }//修改
+        else if (bizInventorySkus != null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")) {
             BizInventorySku bizInventorySku = bizInventorySkuService.get(bizInventorySkus.getId());
             bizInventorySku.setStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));
             bizInventorySkuService.save(bizInventorySku);
         }
 
 
+        String zt = request.getParameter("zt");
+        addMessage(redirectAttributes, "保存商品库存详情成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
+    }
+
+    @RequiresPermissions("biz:inventory:bizInventorySku:edit")
+    @RequestMapping(value = "delete")
+    public String delete(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        bizInventorySkuService.delete(bizInventorySku);
+        String zt = request.getParameter("zt");
+        addMessage(redirectAttributes, "删除商品库存详情成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:inventory:bizInventorySku:edit")
+    @RequestMapping(value = "delItem")
+    public String delItem(BizInventorySku bizInventorySku, RedirectAttributes redirectAttributes) {
+        String data = "ok";
+        try {
+            bizInventorySkuService.delete(bizInventorySku);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            data = "error";
+        }
+        return data;
+    }
 
 
-		String zt = request.getParameter("zt");
-		addMessage(redirectAttributes, "保存商品库存详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage&zt="+zt;
-	}
-	
-	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
-	@RequestMapping(value = "delete")
-	public String delete(BizInventorySku bizInventorySku,HttpServletRequest request, RedirectAttributes redirectAttributes) {
-		bizInventorySkuService.delete(bizInventorySku);
-		String zt = request.getParameter("zt");
-		addMessage(redirectAttributes, "删除商品库存详情成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInventorySku/?repage&zt="+zt;
-	}
-
-	@ResponseBody
-	@RequiresPermissions("biz:inventory:bizInventorySku:edit")
-	@RequestMapping(value = "delItem")
-	public String delItem(BizInventorySku bizInventorySku, RedirectAttributes redirectAttributes) {
-		String data="ok";
-		try {
-			bizInventorySkuService.delete(bizInventorySku);
-		}catch (Exception e){
-			logger.error(e.getMessage());
-			data="error"; }
-		return data;
-
-
-	}
+    /**
+     * 用于库存盘点表格导出
+     */
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = "torySkuExport", method = RequestMethod.POST)
+    public String torySkuExport(BizInventorySku bizInventorySku, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String fileName = "库存盘点数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+            Page<BizInventorySku> page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+            //1库存盘点信息
+            List<List<String>> data = new ArrayList<List<String>>();
+            page.getList().forEach(tory -> {
+                List<String> rowData = new ArrayList();
+                //ID
+                rowData.add(String.valueOf(tory.getId()));
+                Dict dict = new Dict();
+                dict.setDescription("库存中SKU类型");
+                dict.setType("inv_type");
+                List<Dict> dictList = dictService.findList(dict);
+                for (Dict d : dictList) {
+                    if (d.getValue().equals(String.valueOf(tory.getInvType()))) {
+                        //库存类型
+                        rowData.add(String.valueOf(d.getLabel()));
+                        break;
+                    }
+                }
+                //仓库名称
+                rowData.add(String.valueOf(tory.getInvInfo().getName()));
+                //商品名称
+                rowData.add(String.valueOf(tory.getSkuInfo().getName()));
+                //商品编号
+                rowData.add(String.valueOf(tory.getSkuInfo().getPartNo()));
+                //商品货号
+                rowData.add(String.valueOf(tory.getSkuInfo().getItemNo()));
+                //库存数量
+                rowData.add(String.valueOf(tory.getStockQty()));
+                //销售订单数量
+                rowData.add(String.valueOf(tory.getStockOrdQty()));
+                //调入数量
+                rowData.add(String.valueOf(tory.getTransInQty()));
+                //调出数量
+                rowData.add(String.valueOf(tory.getTransOutQty()));
+                //创建人
+                rowData.add(String.valueOf(tory.getCreateBy().getName()));
+                //创建时间
+                rowData.add(String.valueOf(sdf.format(tory.getCreateDate())));
+                //更新人
+                rowData.add(String.valueOf(tory.getUpdateBy().getName()));
+                //更新时间
+                rowData.add(String.valueOf(sdf.format(tory.getUpdateDate())));
+                data.add(rowData);
+            });
+            String[] toryHeads = {"ID", "库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "库存数量", "销售订单数量", "调入数量",
+                    "调出数量", "创建人", "创建时间", "更新人", "更新时间"};
+            ExportExcelUtils eeu = new ExportExcelUtils();
+            SXSSFWorkbook workbook = new SXSSFWorkbook();
+            eeu.exportExcel(workbook, 0, "库存盘点数据", toryHeads, data, fileName);
+            response.reset();
+            response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+            workbook.write(response.getOutputStream());
+            workbook.dispose();
+            return null;
+        } catch (Exception e) {
+            addMessage(redirectAttributes, "导出库存盘点数据失败！失败信息：" + e.getMessage());
+        }
+        return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/";
+    }
 
 }
