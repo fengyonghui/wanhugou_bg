@@ -11,24 +11,25 @@
 </div>
 <div>
     <table class="table table-striped table-bordered table-condensed">
+        <input type="button" onclick="downloadExcel()" value="EXCEL导出"/>
         <caption style="width:100%; height: 50px; text-align:center; color: #9d9d9d; font-size: xx-large">
             万户通平台总体情况(<fmt:formatDate value="${time}" pattern="yyyy-MM-dd"/>)
         </caption>
         <thead>
-            <tr>
-                <th>名称</th>
-                <th>单位</th>
-                <th>数量</th>
-            </tr>
+        <tr>
+            <th>名称</th>
+            <th>单位</th>
+            <th>数量</th>
+        </tr>
         </thead>
         <tbody>
-            <c:forEach items="${totalMap}" var="totalSet">
-                <tr>
-                    <td>${totalSet.key}</td>
-                    <td>${totalSet.value.unit}</td>
-                    <td>${totalSet.value.count}</td>
-                </tr>
-            </c:forEach>
+        <c:forEach items="${totalMap}" var="totalSet">
+            <tr>
+                <td>${totalSet.key}</td>
+                <td>${totalSet.value.unit}</td>
+                <td>${totalSet.value.count}</td>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
 </div>
@@ -72,8 +73,9 @@
 </div>
 </form:form>--%>
 <script type="application/javascript">
-
-
+    function downloadExcel() {
+        window.location.href = "${ctx}/biz/statistics/bizTotalStatisticsDtoDownload";
+    }
 </script>
 </body>
 </html>

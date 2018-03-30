@@ -65,8 +65,12 @@ public class BizStatisticsService {
      * @param month 取数据的月份
      * @return 根据不同机构分类的统计数据
      */
-    public Map<String, BizOrderStatisticsDto> orderStatisticData(String month) {
-        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonth(month + "%", OrderHeaderBizStatusEnum.INVALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
+    public Map<String, BizOrderStatisticsDto> orderStatisticData(String month, String centerType) {
+        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeMonth(
+                month + "%",
+                OrderHeaderBizStatusEnum.INVALID_STATUS,
+                centerType
+        );
         Map<String, BizOrderStatisticsDto> resultMap = Maps.newHashMap();
         orderTotalAndCountByCreateTimeMonthStatus.forEach(o -> {
             resultMap.putIfAbsent(o.getOfficeName(), o);
@@ -107,6 +111,19 @@ public class BizStatisticsService {
             });
             echartsSeriesDto.setData(dataList);
             echartsSeriesDto.setName(month.toString(BizStatisticsService.PARAM_DATE_FORMAT));
+
+            EchartsSeriesDto.ItemStyle itemStyle = new EchartsSeriesDto.ItemStyle();
+            EchartsSeriesDto.Normal normal = new EchartsSeriesDto.Normal();
+            EchartsSeriesDto.Label label = new EchartsSeriesDto.Label();
+            label.setShow(true);
+            label.setTextStyle(
+                    "fontWeight:'bolder'," +
+                            "fontSize : '12'," +
+                            "position : 'top'," +
+                            "fontFamily : '微软雅黑'");
+            normal.setLabel(label);
+            itemStyle.setNormal(normal);
+            echartsSeriesDto.setItemStyle(itemStyle);
             return echartsSeriesDto;
         }
         return null;

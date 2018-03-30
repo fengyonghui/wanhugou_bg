@@ -509,8 +509,8 @@ public class BizStatisticsDayController extends BaseController {
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = {"orderData", ""})
     @ResponseBody
-    public String orderData(HttpServletRequest request, String month, String lineChartType, String barChartType) {
-        return JSONObject.fromObject(getOrderData(month, lineChartType, barChartType)).toString();
+    public String orderData(HttpServletRequest request, String month, String lineChartType, String barChartType, String centerType) {
+        return JSONObject.fromObject(getOrderData(month, lineChartType, barChartType, centerType)).toString();
     }
 
     /**
@@ -521,7 +521,7 @@ public class BizStatisticsDayController extends BaseController {
      * @param barChartType  柱图数据类型
      * @return 订单相关统计数据
      */
-    private Map<String, Object> getOrderData(String month, String lineChartType, String barChartType) {
+    private Map<String, Object> getOrderData(String month, String lineChartType, String barChartType, String centerType) {
         // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
         LocalDateTime selectMonth = StringUtils.isBlank(month) ? LocalDateTime.now() : LocalDateTime.parse(month);
@@ -537,7 +537,7 @@ public class BizStatisticsDayController extends BaseController {
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), bizStatisticsDayService.orderStatisticData(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)));
+            dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), bizStatisticsDayService.orderStatisticData(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), centerType));
             monthList.add(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
@@ -599,7 +599,7 @@ public class BizStatisticsDayController extends BaseController {
                         // 前一天数据
                         Map<String, BizOrderStatisticsDto> lastDataMap = dataMap.get(lastMonth.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
                         if (lastDataMap == null) {
-                            lastDataMap = bizStatisticsDayService.orderStatisticData(lastMonth.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
+                            lastDataMap = bizStatisticsDayService.orderStatisticData(lastMonth.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), centerType);
                         }
                         BigDecimal lastData = lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : BigDecimal.valueOf(0);
                         // 增长率
@@ -643,7 +643,7 @@ public class BizStatisticsDayController extends BaseController {
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "orderTableData")
     @ResponseBody
-    public String orderTableData(HttpServletRequest request, String startDate) {
+    public String orderTableData(HttpServletRequest request, String startDate, String centerType) {
         // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
         LocalDateTime selectMonth = StringUtils.isBlank(startDate) ? LocalDateTime.now() : LocalDateTime.parse(startDate);
@@ -659,7 +659,7 @@ public class BizStatisticsDayController extends BaseController {
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), bizStatisticsDayService.orderStatisticData(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)));
+            dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), bizStatisticsDayService.orderStatisticData(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), centerType));
             monthList.add(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
@@ -688,7 +688,8 @@ public class BizStatisticsDayController extends BaseController {
                                        String startDate,
                                        String dataType,
                                        String imgUrl,
-                                       String imgUrl1
+                                       String imgUrl1,
+                                       String centerType
     ) throws IOException {
         // 月份集合
         List<LocalDateTime> monthDateList = Lists.newArrayList();
@@ -705,7 +706,7 @@ public class BizStatisticsDayController extends BaseController {
         // 月份字符串集合
         List<String> monthList = Lists.newArrayList();
         monthDateList.forEach(o -> {
-            dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), bizStatisticsDayService.orderStatisticData(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)));
+            dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), bizStatisticsDayService.orderStatisticData(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT), centerType));
             monthList.add(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);

@@ -10,6 +10,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsBetweenService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -403,11 +404,11 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = {"orderData", ""})
     @ResponseBody
-    public String orderData(HttpServletRequest request, String startDate, String endDate, String lineChartType, String barChartType) {
+    public String orderData(HttpServletRequest request, String startDate, String endDate, String lineChartType, String barChartType, String centerType) {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
             return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
         }
-        return JSONObject.fromObject(getOrderData(startDate, endDate, lineChartType, barChartType)).toString();
+        return JSONObject.fromObject(getOrderData(startDate, endDate, lineChartType, barChartType, centerType)).toString();
     }
 
     /**
@@ -418,7 +419,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @param barChartType  柱图数据类型
      * @return 订单相关统计数据
      */
-    private Map<String, Object> getOrderData(String startDate, String endDate, String lineChartType, String barChartType) {
+    private Map<String, Object> getOrderData(String startDate, String endDate, String lineChartType, String barChartType, String centerType) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Long betweenDays = 6L;
         try {
@@ -448,7 +449,9 @@ public class BizStatisticsBetweenController extends BaseController {
             dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
                     bizStatisticsBetweenService.orderStatisticData(
                             o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
-                            o.plusDays(finalBetweenDays.intValue()).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)));
+                            o.plusDays(finalBetweenDays.intValue()).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
+                            centerType
+                    ));
             monthList.add(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
@@ -512,7 +515,9 @@ public class BizStatisticsBetweenController extends BaseController {
                         if (lastDataMap == null) {
                             lastDataMap = bizStatisticsBetweenService.orderStatisticData(
                                     lastMonth.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
-                                    lastMonth.plusDays(finalBetweenDays.intValue()).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
+                                    lastMonth.plusDays(finalBetweenDays.intValue()).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
+                                    centerType
+                            );
                         }
                         BigDecimal lastData = lastDataMap.get(o) != null ? lastDataMap.get(o).getTotalMoney() : BigDecimal.valueOf(0);
                         // 增长率
@@ -658,9 +663,9 @@ public class BizStatisticsBetweenController extends BaseController {
     @ResponseBody
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "centOrderTable")
-    public Map<String, BizOrderStatisticsDto> centOrderTable(HttpServletRequest request, String startDate, String endDate, Model model) throws ParseException {
+    public Map<String, BizOrderStatisticsDto> centOrderTable(HttpServletRequest request, String startDate, String endDate, String centerType, Model model) throws ParseException {
         //当前月时间
-        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsBetweenService.orderStatisticData(startDate, endDate);
+        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsBetweenService.orderStatisticData(startDate, endDate, centerType);
 
         //合并
         HashMap<String, BizOrderStatisticsDto> map = new HashMap<>();
@@ -701,9 +706,9 @@ public class BizStatisticsBetweenController extends BaseController {
             HttpServletRequest request,
             HttpServletResponse response,
             String startDate, String endDate,
-            Model model, String imgUrl
+            Model model, String imgUrl, String centerType
     ) throws ParseException, IOException {
-        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsBetweenService.orderStatisticData(startDate, endDate);
+        Map<String, BizOrderStatisticsDto> resultMap = bizStatisticsBetweenService.orderStatisticData(startDate, endDate, centerType);
 
         String fileName = "订单统计.xls";
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -930,7 +935,8 @@ public class BizStatisticsBetweenController extends BaseController {
                                    String startDate,
                                    String endDate,
                                    String imgUrl,
-                                   String imgUrl1
+                                   String imgUrl1,
+                                   String centerType
     ) throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Long betweenDays = 6L;
@@ -961,7 +967,9 @@ public class BizStatisticsBetweenController extends BaseController {
             dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
                     bizStatisticsBetweenService.orderStatisticData(
                             o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
-                            o.plusDays(finalBetweenDays.intValue()).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)));
+                            o.plusDays(finalBetweenDays.intValue()).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
+                            centerType
+                    ));
             monthList.add(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
@@ -1067,7 +1075,7 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:profit:view")
     @RequestMapping(value = {"profitData", ""})
     @ResponseBody
-    public String profitData(HttpServletRequest request, HttpServletResponse response, String startDate, String endDate) {
+    public String profitData(HttpServletRequest request, HttpServletResponse response, String startDate, String endDate, String centerType) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Long betweenDays = 6L;
         try {
@@ -1097,7 +1105,9 @@ public class BizStatisticsBetweenController extends BaseController {
             dataMap.put(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
                     bizStatisticsBetweenService.orderStatisticData(
                             o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
-                            o.plusDays(finalBetweenDays.intValue()).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)));
+                            o.plusDays(finalBetweenDays.intValue()).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT),
+                            centerType
+                            ));
             monthList.add(o.toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT));
         });
         Collections.reverse(monthList);
