@@ -52,6 +52,12 @@
 				<if test="dbName == 'mssql'">'%'+#{objectName2}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{objectName2},'%')</if>
 			</if>
+			<if test="objectId != null and objectId != ''">
+				AND a.object_id = #{objectId}
+			</if>
+			<if test="objectName != null and objectName != ''">
+				AND a.object_Name = #{objectName}
+			</if>
 			<if test="year != null and year != ''">
 				AND a.year = #{year}
 			</if>
