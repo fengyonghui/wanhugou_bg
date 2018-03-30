@@ -7,6 +7,7 @@
 		<result property="name" column="name"/>
 		<result property="prodCode" column="prodCode"/>
 		<result property="marketingDate" column="marketingDate"/>
+		<result property="brandId" column="brandId"/>
 		<result property="brandName" column="brandName"/>
 		<result property="vendorName" column="vendorName"/>
 		<result property="imgUrl" column="imgUrl"/>
@@ -22,9 +23,9 @@
 			<result property="name" column="office.name"/>
 			<result property="type" column="office.type"/>
 		</association>
-		<association property="propValue" javaType="PropValue" column="propValue.id">
-			<id property="id" column="propValue.id"/>
-		</association>
+		<!--<association property="propValue" javaType="PropValue" column="propValue.id">-->
+			<!--<id property="id" column="propValue.id"/>-->
+		<!--</association>-->
 		<association property="bizVarietyInfo" javaType="BizVarietyInfo" column="bizVarietyInfo.id">
 			<id property="id" column="bizVarietyInfo.id"/>
 			<result property="name" column="bizVarietyInfo.name"/>
@@ -38,6 +39,7 @@
 		</association>
 		<collection property="categoryInfoList" ofType="BizCategoryInfo">
 			<id property="id" column="categoryInfoList.id" />
+			<id property="name" column="categoryInfoList.name" />
 		</collection>
 
 	</resultMap>
@@ -47,7 +49,7 @@
 		vi.name as "bizVarietyInfo.name",
 		a.name AS "name",
 		a.prod_code AS "prodCode",
-		a.brand_id AS "propValue.id",
+		a.brand_id AS "brandId",
 		a.brand_name AS "brandName",
 		a.img_url AS "imgUrl",
 		so.name AS "office.name",
@@ -155,12 +157,8 @@
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_product_info(
-			id,
 			`name`,
-            <if test="prodCode!=null and prodCode!=''">
-                prod_code,
-            </if>
-
+            prod_code,
 			brand_id,
 			brand_name,
 			description,
@@ -176,19 +174,15 @@
 			</if>
 			img_url,
 			item_no,
-			status,
 			create_id,
 			create_time,
 			u_version,
 			update_time,
 			update_id
 		) VALUES (
-			#{id},
 			#{name},
-        <if test="prodCode!=null and prodCode!=''">
 			#{prodCode},
-        </if>
-			#{propValue.id},
+			#{brandId},
 			#{brandName},
 			#{description},
 			#{office.id},
@@ -203,7 +197,6 @@
 		</if>
 			#{imgUrl},
 			#{itemNo},
-			#{delFlag},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -219,9 +212,6 @@
 		</if>
 		<if test="prodCode!=null and prodCode!=''">
 			prod_code = #{prodCode},
-		</if>
-		<if test="propValue!=null and propValue.id!=null and propValue.id!=''">
-			brand_id = #{propValue.id},
 		</if>
 		<if test="brandName!=null and brandName!=''">
 			brand_name = #{brandName},

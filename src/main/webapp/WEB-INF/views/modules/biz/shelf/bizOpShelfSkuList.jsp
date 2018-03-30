@@ -29,8 +29,14 @@
 			<li><label>商品名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false"  class="input-medium" maxlength="20px"/>
 			</li>
+			<li><label>产品名称：</label>
+				<form:input path="productInfo.name" htmlEscape="false"  class="input-medium" maxlength="20px"/>
+			</li>
 			<li><label>商品货号：</label>
 				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
+			</li>
+			<li><label>供应商：</label>
+				<form:input path="productInfo.vendorName" htmlEscape="false"  class="input-medium"/>
 			</li>
 			<li><label>商品编号：</label>
 				<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>
@@ -81,9 +87,11 @@
 			<tr>
 				<th>商品图片</th>
 				<th>商品名称</th>
+				<th>产品名称</th>
 				<th>商品货号</th>
 				<th>货架名称</th>
 				<th>采购中心</th>
+				<th>供应商</th>
 				<%--<th>上架数量(个)</th>--%>
 				<th>原价(元)</th>
 				<th>现价(元)</th>
@@ -107,6 +115,9 @@
 				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
 					${bizOpShelfSku.skuInfo.name}
 				</a></td>
+				<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizOpShelfSku.productInfo.id}">
+					${bizOpShelfSku.productInfo.name}
+				</a></td>
 				<td>
 					${bizOpShelfSku.skuInfo.itemNo}
 				</td>
@@ -122,6 +133,9 @@
 							${bizOpShelfSku.centerOffice.name}
 				</c:otherwise>
 				</c:choose>
+				</td>
+				<td>
+					${bizOpShelfSku.productInfo.vendorName}
 				</td>
 				<%--<td>--%>
 					<%--${bizOpShelfSku.shelfQty}--%>

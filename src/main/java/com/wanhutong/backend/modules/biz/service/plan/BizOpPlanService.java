@@ -36,6 +36,11 @@ public class BizOpPlanService extends CrudService<BizOpPlanDao, BizOpPlan> {
 	
 	@Transactional(readOnly = false)
 	public void save(BizOpPlan bizOpPlan) {
+		if(bizOpPlan.getUser()!=null && bizOpPlan.getUser().getId()!=null){
+			bizOpPlan.setObjectName("sys_user");
+		}else{
+			bizOpPlan.setObjectName("sys_office");
+		}
 		super.save(bizOpPlan);
 	}
 	
