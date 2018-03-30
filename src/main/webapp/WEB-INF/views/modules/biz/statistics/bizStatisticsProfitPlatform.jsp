@@ -186,8 +186,7 @@
                         {
                             type: 'value',
                             scale: true,
-                            name: '利润',
-                            min:0
+                            name: '利润'
                         }
                     ],
                     series: msg.barSeriesList
