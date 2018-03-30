@@ -52,13 +52,9 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
     private Date shelfStartTime;  //上架开始时间
     private Date shelfEndTime;  //上架结束时间
 
-    /**
-     * 获取sku属性值
-     */
-    private List<AttributeValue> skuValueList;
-
     private Date unShelfStartTime; //下架查询开始时间
     private Date unShelfEndTime; //下架查询结束时间
+    private List<BizSkuPropValue> skuValueList;		//查询sku下有多少属性值
 
     private int shelfSign; //货架删除返回标志
 
@@ -263,11 +259,11 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
         this.udshelf = udshelf;
     }
 
-    public List<AttributeValue> getSkuValueList() {
+    public List<BizSkuPropValue> getSkuValueList() {
         return skuValueList;
     }
 
-    public void setSkuValueList(List<AttributeValue> skuValueList) {
+    public void setSkuValueList(List<BizSkuPropValue> skuValueList) {
         this.skuValueList = skuValueList;
     }
 }

@@ -173,23 +173,10 @@ public class BizOpShelfSkuController extends BaseController {
 		}
 		if(list!=null){
 			for (BizOpShelfSku skuValue : list) {
-//				bizSkuPropValue.setSkuInfo(skuValue.getSkuInfo());//sku_Id
-//				List<BizSkuPropValue> skuValueList = bizSkuPropValueService.findList(bizSkuPropValue);
-				AttributeValue attributeValue = new AttributeValue();
-				attributeValue.setObjectName("biz_sku_info");
-				attributeValue.setObjectId(skuValue.getSkuInfo().getId());
-				List<AttributeValue> valueList = attributeValueService.findList(attributeValue);
-				if(valueList.size()!=0){
-					valueList.forEach(value -> {
-						//获取属性名
-						AttributeInfo attributeInfo = attributeInfoService.get(value.getTagId());
-						//判断级别属于商品标签，level=2
-						if (attributeInfo != null && attributeInfo.getLevel().equals(2)) {
-							//存属性名
-							value.setAttributeInfo(attributeInfo);
-						}
-					});
-					skuValue.setSkuValueList(valueList);
+				bizSkuPropValue.setSkuInfo(skuValue.getSkuInfo());//sku_Id
+				List<BizSkuPropValue> skuValueList = bizSkuPropValueService.findList(bizSkuPropValue);
+				if(skuValueList.size()!=0){
+					skuValue.setSkuValueList(skuValueList);
 				}
 			}
 		}
