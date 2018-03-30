@@ -11,7 +11,7 @@
 </div>
 <div>
     <table class="table table-striped table-bordered table-condensed">
-        <input type="button" onclick="downloadExcel()"/>
+        <input type="button" onclick="downloadExcel()" value="EXCEL导出"/>
         <caption style="width:100%; height: 50px; text-align:center; color: #9d9d9d; font-size: xx-large">
             万户通平台总体情况(<fmt:formatDate value="${time}" pattern="yyyy-MM-dd"/>)
         </caption>
