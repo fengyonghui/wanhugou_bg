@@ -56,10 +56,6 @@
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
         <div style="margin-left: 180px">
-            <%--<form:select path="propValue.id" class="input-xlarge required" id="propValueId">--%>
-                <%--<form:option value="" label="请选择品牌"/>--%>
-                <%--<form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>--%>
-            <%--</form:select>--%>
                 <form:select title="choose" path="brandId" class="input-xlarge required">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
@@ -77,21 +73,24 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">产品主图:</label>
+        <label class="control-label">产品主图:
+            <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
+            <p style="opacity: 0.5;">图片建议比例为1:1</p>
+        </label>
         <div class="controls">
             <form:hidden id="prodMaxImg" path="photos" htmlEscape="false" maxlength="255" class="input-xlarge"/>
             <sys:ckfinder input="prodMaxImg" type="images" uploadPath="/prod/main" selectMultiple="true" maxWidth="100"
                           maxHeight="100"/>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">产品列表图:</label>
-        <div class="controls">
-            <form:hidden id="prodListImg" path="photoLists" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-            <sys:ckfinder input="prodListImg" type="images" uploadPath="/prod/item" selectMultiple="true" maxWidth="100"
-                          maxHeight="100"/>
-        </div>
-    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">产品列表图:</label>--%>
+        <%--<div class="controls">--%>
+            <%--<form:hidden id="prodListImg" path="photoLists" htmlEscape="false" maxlength="255" class="input-xlarge"/>--%>
+            <%--<sys:ckfinder input="prodListImg" type="images" uploadPath="/prod/item" selectMultiple="true" maxWidth="100"--%>
+                          <%--maxHeight="100"/>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <div class="control-group">
         <label class="control-label">产品货号：</label>
         <div class="controls">
@@ -546,7 +545,7 @@
             "                       <input type=\"button\" value=\"上传\" onclick=\"submitPic('colorImg$id')\"/>" +
             "                       <input type=\"button\" value=\"删除\"  onclick=\"deletePic('colorImg$idImg')\"/>" +
             "                   </td>" +
-            "                   <td onclick='deleteParentParentEle(this)'><input class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
+            "                   <td><input onclick='deleteParentParentEle(this)' class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
             "               </tr>";
         for (var j = 0; j < selectedColorArr.length; j ++) {
             uploadPicTableData.append(

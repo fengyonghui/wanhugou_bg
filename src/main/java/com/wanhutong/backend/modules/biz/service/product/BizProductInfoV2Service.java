@@ -310,14 +310,15 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
             photoDetails = URLDecoder.decode(bizProductInfo.getPhotoDetails(), "utf-8");//列表图转换编码
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            log.error("列表图转换编码异常." + e.getMessage(), e);
+            log.error("详情图转换编码异常." + e.getMessage(), e);
         }
         String photoLists = null;
         try {
-            photoLists = URLDecoder.decode(bizProductInfo.getPhotoLists(), "utf-8");//详情图转换编码
+//            photoLists = URLDecoder.decode(bizProductInfo.getPhotoLists(), "utf-8");//详情图转换编码
+            photoLists = URLDecoder.decode(bizProductInfo.getPhotoDetails(), "utf-8").split("\\|")[0];
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            log.error("详情图转换编码异常." + e.getMessage(), e);
+            log.error("列表图转换编码异常." + e.getMessage(), e);
         }
 
         if (photos != null) {
