@@ -672,15 +672,16 @@ public class BizStatisticsController extends BaseController {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         sheet.autoSizeColumn(1, true);
-        int rowIndex = 0;
-        HSSFRow header = sheet.createRow(rowIndex);
+        HSSFRow header = sheet.createRow(0);
+        HSSFRow vRow = sheet.createRow(1);
 
+        int cIndex = 0;
         for (String key : totalMap.keySet()) {
-            HSSFCell hCell = header.createCell(rowIndex);
-            HSSFCell vCell = header.createCell(rowIndex);
+            HSSFCell hCell = header.createCell(cIndex);
+            HSSFCell vCell = vRow.createCell(cIndex);
             hCell.setCellValue(key);
             vCell.setCellValue(totalMap.get(key).getCount() + totalMap.get(key).getUnit());
-            rowIndex++;
+            cIndex++;
         }
 
 
