@@ -17,6 +17,7 @@
                     var flag = true;
                     var vflag = false;
                     var checkFlag = false;
+                    var numFlag = true;
                     var checkMassege = "";
                     var skuInfoIds = "";
                     var minQtys = "";
@@ -40,6 +41,15 @@
                             }
                         });
                     }) ;
+                    $("#tbody").find("tr").each(function () {
+                        var minQty = $(this).find("td").find("input[name='minQtys']").val();
+                        var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
+                        if (minQty >= maxQty){
+                            alert("最高销售数量必须大于最低销售数量");
+                            numFlag = false;
+                            return;
+                        }
+                    });
                     $("#tbody").find("td").each(function () {
                         var skuId = $(this).find("input[name='skuInfoIds']").val();
                         var minQty = $(this).find("input[name='minQtys']").val();
@@ -70,7 +80,7 @@
                                 if(checkFlag) {
                                     alert(checkMassege);
                                 }
-                                if(flag && vflag) {
+                                if(flag && vflag && numFlag) {
                                     $("#tbody").find("td").each(function () {
                                         if ($(this).attr("style") == "display: none;") {
                                             $(this).removeAttr("style");
