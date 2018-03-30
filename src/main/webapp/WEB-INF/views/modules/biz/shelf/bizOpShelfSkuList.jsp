@@ -29,6 +29,9 @@
 			<li><label>商品名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false"  class="input-medium" maxlength="20px"/>
 			</li>
+			<li><label>产品名称：</label>
+				<form:input path="productInfo.name" htmlEscape="false"  class="input-medium" maxlength="20px"/>
+			</li>
 			<li><label>商品货号：</label>
 				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
 			</li>
@@ -84,6 +87,7 @@
 			<tr>
 				<th>商品图片</th>
 				<th>商品名称</th>
+				<th>产品名称</th>
 				<th>商品货号</th>
 				<th>货架名称</th>
 				<th>采购中心</th>
@@ -110,6 +114,9 @@
 				</td>
 				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
 					${bizOpShelfSku.skuInfo.name}
+				</a></td>
+				<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizOpShelfSku.productInfo.id}">
+					${bizOpShelfSku.productInfo.name}
 				</a></td>
 				<td>
 					${bizOpShelfSku.skuInfo.itemNo}
