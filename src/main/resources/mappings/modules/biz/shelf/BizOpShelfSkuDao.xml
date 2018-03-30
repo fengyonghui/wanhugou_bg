@@ -96,6 +96,9 @@
 				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
 			</if>
+			<if test="productInfo != null and productInfo.id != null and productInfo.id != 0 ">
+				AND a.prod_id = #{productInfo.id}
+			</if>
             <if test="productInfo != null and productInfo.name != null and productInfo.name != '' ">
                 AND bpi.name LIKE
                 <if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
@@ -277,6 +280,12 @@
 		shelf_user = #{shelfUser.id},
 		shelf_time = #{shelfTime},
 		unshelf_time = #{unshelfTime}
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateSkuIdById">
+		UPDATE biz_op_shelf_sku SET
+		sku_id = ${skuId}
 		WHERE id = #{id}
 	</update>
 </mapper>

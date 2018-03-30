@@ -210,6 +210,7 @@ public class UserController extends BaseController {
 		}else {
 			UserUtils.clearCache(user);
 		}
+
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
 
 		if(user.getConn()!=null && user.getConn().equals("connIndex")){

@@ -3,27 +3,19 @@
  */
 package com.wanhutong.backend.modules.biz.web.shelf;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
-import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuDao;
+import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
-import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
-import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
-import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfo;
-import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
-import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoService;
-import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueService;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
-import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -61,12 +46,9 @@ public class BizOpShelfSkuController extends BaseController {
 	@Autowired
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
-	private BizSkuPropValueService bizSkuPropValueService;
-	@Autowired
-	private AttributeInfoService attributeInfoService;
-	@Autowired
-	private AttributeValueService attributeValueService;
+	private AttributeValueV2Service attributeValueService;
 
+	
 	@ModelAttribute
 	public BizOpShelfSku get(@RequestParam(required=false) Integer id) {
 		BizOpShelfSku entity = null;
@@ -161,7 +143,7 @@ public class BizOpShelfSkuController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "findOpShelfSku")
 	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku){
-		BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();//sku商品属性表
+		AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
 		List<BizOpShelfSku> list=null;
 		boolean emptyName = bizOpShelfSku.getSkuInfo().getName().isEmpty();//商品名称
 		boolean emptyPart = bizOpShelfSku.getSkuInfo().getPartNo().isEmpty();//商品编码
@@ -173,8 +155,9 @@ public class BizOpShelfSkuController extends BaseController {
 		}
 		if(list!=null){
 			for (BizOpShelfSku skuValue : list) {
-				bizSkuPropValue.setSkuInfo(skuValue.getSkuInfo());//sku_Id
-				List<BizSkuPropValue> skuValueList = bizSkuPropValueService.findList(bizSkuPropValue);
+				bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
+				bizSkuPropValue.setObjectName("biz_sku_info");
+				List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
 				if(skuValueList.size()!=0){
 					skuValue.setSkuValueList(skuValueList);
 				}

@@ -3,25 +3,23 @@
  */
 package com.wanhutong.backend.modules.biz.web.sku;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
-import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +29,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,15 +48,15 @@ import java.util.Map;
 public class BizSkuInfoController extends BaseController {
 
 	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
+	private BizSkuInfoV2Service bizSkuInfoService;
 	@Autowired
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	@Autowired
 	private CommonImgService commonImgService;
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
-	@Autowired
-	private BizSkuPropValueService bizSkuPropValueService;
+
+
 
 	@ModelAttribute
 	public BizSkuInfo get(@RequestParam(required=false) Integer id) {
@@ -180,11 +172,11 @@ public class BizSkuInfoController extends BaseController {
 		List<BizSkuInfo> list=bizSkuInfoService.findListByParam(bizSkuInfo);
 		List<BizSkuInfo> skuInfoList=Lists.newArrayList();
 		for(BizSkuInfo skuInfo:list){
-			List<BizSkuPropValue> skuPropValueList=skuInfo.getSkuPropValueList();
+			List<AttributeValueV2> skuPropValueList=skuInfo.getAttrValueList();
 			StringBuffer skuPropName=new StringBuffer();
-			for(BizSkuPropValue skuPropValue:skuPropValueList){
+			for(AttributeValueV2 skuPropValue:skuPropValueList){
 				skuPropName.append("-");
-				skuPropName.append(skuPropValue.getPropValue());
+				skuPropName.append(skuPropValue.getValue());
 			}
 			String propNames="";
 			if(skuPropName.toString().length()>1){

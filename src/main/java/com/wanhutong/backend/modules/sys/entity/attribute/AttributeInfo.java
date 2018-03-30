@@ -26,7 +26,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  *level：0:系统标签; 1:产品标签; 2:商品标签
  */
 public class AttributeInfo extends DataEntity<AttributeInfo> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private Dict dict;

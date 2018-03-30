@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
@@ -50,15 +49,15 @@
                         trdatas+="<td>"+opShelfSku.skuInfo.itemNo+"</td>";
                         var arr=opShelfSku.skuValueList;
                         if(arr!=null){
-                            var Attribute="";<%--页面的属性值遍历--%>
+                            var attribute="";<%--页面的属性值遍历--%>
                             for(var jj=0;jj<arr.length;jj++){
-                               var items=arr[jj].attributeInfo.name+":"+arr[jj].value+",";
-                               Attribute+=items;
+                               var items=arr[jj].value+",";
+                               attribute+=items;
                             }
                         }else{
-                            var Attribute="";
+                            var attribute="";
                         }
-                        trdatas+="<td>"+Attribute+"</td>";
+                        trdatas+="<td>"+attribute+"</td>";
                         trdatas+="<td><input type='hidden' id='maxQty_"+opShelfSku.id+"' value='"+opShelfSku.maxQty+"'/>"+opShelfSku.minQty+"-"+opShelfSku.maxQty+"</td>";
                         trdatas+="<td>"+opShelfSku.salePrice+"</td>";
                         trdatas+="<td><input type='number' class='input-mini' id='saleQty_"+opShelfSku.id+"' style='width:58px;' min='1' max='99999' /></td>";
@@ -176,8 +175,8 @@
                             <td>${detail.partNo}</td>
                             <td>${detail.skuInfo.itemNo}</td>
                             <td>
-                                <c:forEach items="${detail.orderSkuValueList}" var="skuvalue">
-                                    ${skuvalue.propName}:${skuvalue.propValue},
+                                <c:forEach items="${detail.orderSkuValueList}" var="orderDeail">
+                                    ${orderDeail.propName}:${orderDeail.propValue},
                                 </c:forEach>
                             </td>
                             <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
