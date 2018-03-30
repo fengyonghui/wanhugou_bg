@@ -43,9 +43,9 @@
 			<li><label>备货单号：</label>
 				<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
-			<li><label>货号：</label>
-				<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>
-			</li>
+			<%--<li><label>货号：</label>--%>
+				<%--<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
+			<%--</li>--%>
 			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
 								labelValue="${entity.fromOffice.name}"
