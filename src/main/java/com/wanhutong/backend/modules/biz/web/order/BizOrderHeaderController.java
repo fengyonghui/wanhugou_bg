@@ -463,10 +463,12 @@ public class BizOrderHeaderController extends BaseController {
             for (BizOrderHeader o : pageList) {
                 orderDetail.setOrderHeader(o);
                 List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
+                Double dou=0.0;
                 if (list.size() != 0) {
                     for (BizOrderDetail d : list) {
                         d.setOrderHeader(o);
                         o.setOrderDetailList(list);
+                        dou+=d.getBuyPrice()*d.getOrdQty();
                         List<String> detailListData = new ArrayList();
                         //ID
                         detailListData.add(String.valueOf(d.getId()));
@@ -486,6 +488,7 @@ public class BizOrderHeaderController extends BaseController {
                         detailListData.add(String.valueOf(d.getUnitPrice() * d.getOrdQty()));
                         detailData.add(detailListData);
                     }
+                    o.setTotalBuyPrice(dou);
                 }
                 //地址查询
                 o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
@@ -614,6 +617,7 @@ public class BizOrderHeaderController extends BaseController {
             workbook.dispose();
             return null;
         } catch (Exception e) {
+           e.printStackTrace();
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/order/bizOrderHeader/";
