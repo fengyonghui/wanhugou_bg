@@ -98,7 +98,20 @@ public class SystemService extends BaseService implements InitializingBean {
 	
 	public Page<User> findUser(Page<User> page, User user) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+        boolean flag = false;
+        if(user.getCurrentUser().getRoleList()!=null) {
+            for (Role role : user.getCurrentUser().getRoleList()) {
+                if (RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())) {
+                    flag = true;
+                }
+            }
+        }
+
+        if (flag){
+            user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "", "a"));
+        }else {
+            user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+        }
 		// 设置分页参数
 		user.setPage(page);
 		// 执行分页查询
