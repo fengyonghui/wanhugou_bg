@@ -92,57 +92,57 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	@Transactional(readOnly = false)
 	public void save(BizCategoryInfo bizCategoryInfo) {
 		super.save(bizCategoryInfo);
-		BizCatePropValue catePropValue = new BizCatePropValue();
-			bizCategoryInfoDao.deleteCatePropInfoReal(bizCategoryInfo);
+//		BizCatePropValue catePropValue = new BizCatePropValue();
+//			bizCategoryInfoDao.deleteCatePropInfoReal(bizCategoryInfo);
 
-		if (bizCategoryInfo.getCatePropertyInfos() != null) {
-			String[] propInfoValue=bizCategoryInfo.getCatePropertyInfos().split(",");
-			BizCatePropertyInfo bizCatePropertyInfo =new BizCatePropertyInfo();
-			Map<Integer,List<String>> map=new HashMap<>();
-			for(int i=0;i<propInfoValue.length;i++) {
-				String[] infoValue = propInfoValue[i].split("-");
-				Integer key = Integer.parseInt(infoValue[0]);
-				if (map.containsKey(key)) {
-					List<String> list = map.get(key);
-					map.remove(key);
-					list.add(infoValue[1]);
-					map.put(key, list);
-				} else {
-					List<String> list = Lists.newArrayList();
-					list.add(infoValue[1]);
-					map.put(Integer.parseInt(infoValue[0]), list);
-				}
-			}
-
-			for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
-				Integer propId = entry.getKey();
-				PropertyInfo propertyInfo = propertyInfoService.get(propId);
-				bizCatePropertyInfo.setId(null);
-				bizCatePropertyInfo.setName(propertyInfo.getName());
-				bizCatePropertyInfo.setDescription(propertyInfo.getDescription());
-				bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
-				bizCatePropertyInfoService.save(bizCatePropertyInfo);
-
-				List<String> catePropertyValueList=entry.getValue();
-
-				for(int i=0;i<catePropertyValueList.size();i++){
-					Integer propValueId = Integer.parseInt(catePropertyValueList.get(i).trim());
-					PropValue propValue = propValueService.get(propValueId);
-					catePropValue.setPropertyInfo(propertyInfo);
-					catePropValue.setSource("sys");
-					catePropValue.setPropName(bizCatePropertyInfo.getName());
-					catePropValue.setCatePropertyInfo(bizCatePropertyInfo);
-					catePropValue.setValue(propValue.getValue());
-					String code= HanyuPinyinHelper.getFirstLetters(propValue.getValue(), HanyuPinyinCaseType.UPPERCASE);
-					catePropValue.setCode(code);
-					catePropValue.setPropValue(propValue);
-					bizCatePropValueService.save(catePropValue);
-				}
-
-			}
-
-
-		}
+//		if (bizCategoryInfo.getCatePropertyInfos() != null) {
+//			String[] propInfoValue=bizCategoryInfo.getCatePropertyInfos().split(",");
+//			BizCatePropertyInfo bizCatePropertyInfo =new BizCatePropertyInfo();
+//			Map<Integer,List<String>> map=new HashMap<>();
+//			for(int i=0;i<propInfoValue.length;i++) {
+//				String[] infoValue = propInfoValue[i].split("-");
+//				Integer key = Integer.parseInt(infoValue[0]);
+//				if (map.containsKey(key)) {
+//					List<String> list = map.get(key);
+//					map.remove(key);
+//					list.add(infoValue[1]);
+//					map.put(key, list);
+//				} else {
+//					List<String> list = Lists.newArrayList();
+//					list.add(infoValue[1]);
+//					map.put(Integer.parseInt(infoValue[0]), list);
+//				}
+//			}
+//
+//			for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
+//				Integer propId = entry.getKey();
+//				PropertyInfo propertyInfo = propertyInfoService.get(propId);
+//				bizCatePropertyInfo.setId(null);
+//				bizCatePropertyInfo.setName(propertyInfo.getName());
+//				bizCatePropertyInfo.setDescription(propertyInfo.getDescription());
+//				bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
+//				bizCatePropertyInfoService.save(bizCatePropertyInfo);
+//
+//				List<String> catePropertyValueList=entry.getValue();
+//
+//				for(int i=0;i<catePropertyValueList.size();i++){
+//					Integer propValueId = Integer.parseInt(catePropertyValueList.get(i).trim());
+//					PropValue propValue = propValueService.get(propValueId);
+//					catePropValue.setPropertyInfo(propertyInfo);
+//					catePropValue.setSource("sys");
+//					catePropValue.setPropName(bizCatePropertyInfo.getName());
+//					catePropValue.setCatePropertyInfo(bizCatePropertyInfo);
+//					catePropValue.setValue(propValue.getValue());
+//					String code= HanyuPinyinHelper.getFirstLetters(propValue.getValue(), HanyuPinyinCaseType.UPPERCASE);
+//					catePropValue.setCode(code);
+//					catePropValue.setPropValue(propValue);
+//					bizCatePropValueService.save(catePropValue);
+//				}
+//
+//			}
+//
+//
+//		}
 		CommonImg commonImg=null;
 		if(bizCategoryInfo.getImgId()==null){
 			commonImg=new CommonImg();

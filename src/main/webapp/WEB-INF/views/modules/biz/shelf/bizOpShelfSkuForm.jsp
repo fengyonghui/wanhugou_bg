@@ -44,7 +44,7 @@
                     $("#tbody").find("tr").each(function () {
                         var minQty = $(this).find("td").find("input[name='minQtys']").val();
                         var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
-                        if (minQty >= maxQty){
+                        if (parseInt(minQty) >= parseInt(maxQty)){
                             alert("最高销售数量必须大于最低销售数量");
                             numFlag = false;
                             return;
