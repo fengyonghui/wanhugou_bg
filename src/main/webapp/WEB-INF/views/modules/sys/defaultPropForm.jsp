@@ -34,14 +34,14 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">系统属性键：</label>
+			<label class="control-label">系统属性标签：</label>
 			<div class="controls">
 				<form:input path="propKey" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">系统属性值：</label>
+			<label class="control-label">系统属性值(ID)：</label>
 			<div class="controls">
 				<form:input path="propValue" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

@@ -38,6 +38,12 @@
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_id = #{createBy.id}
 			</if>
+			<if test="createBy != null and createBy.name != null and createBy.name != ''">
+				AND su.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{createBy.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{createBy.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{createBy.name},'%')</if>
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
