@@ -40,6 +40,7 @@
 							title="采购商"  url="/sys/office/queryTreeList?type=6"
 							cssClass="input-medium required"
 							allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 		<div class="control-group">
 			<label class="control-label">商铺面积：</label>

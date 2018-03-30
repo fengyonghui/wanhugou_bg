@@ -29,7 +29,7 @@
 				<form:input path="userFeedback" htmlEscape="false" maxlength="200" class="input-medium	"/>
 			</li>
 			<li><label>创建人：</label>
-				<form:input path="createBy.id" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="createBy.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
