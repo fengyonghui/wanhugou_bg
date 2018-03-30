@@ -52,7 +52,7 @@
                         if(arr!=null){
                             var Attribute="";<%--页面的属性值遍历--%>
                             for(var jj=0;jj<arr.length;jj++){
-                               var items=arr[jj].propName+":"+arr[jj].propValue+",";
+                               var items=arr[jj].attributeInfo.name+":"+arr[jj].value+",";
                                Attribute+=items;
                             }
                         }else{
@@ -176,8 +176,8 @@
                             <td>${detail.partNo}</td>
                             <td>${detail.skuInfo.itemNo}</td>
                             <td>
-                                <c:forEach items="${detail.orderSkuValueList}" var="orderDeail">
-                                    ${orderDeail.propName}:${orderDeail.propValue},
+                                <c:forEach items="${detail.orderSkuValueList}" var="skuvalue">
+                                    ${skuvalue.propName}:${skuvalue.propValue},
                                 </c:forEach>
                             </td>
                             <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
