@@ -264,7 +264,7 @@
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
-                       <td><img customInput="imgInputLab" style="width: 100px" src="${v.defaultImg}"></td>
+                       <td><img customInput="imgInputLab" style="width: 160px" src="${v.defaultImg}"></td>
                        <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
                        <th><select customInput="skuTypeSelect">
                             <c:if test="${v.skuType == 1}">
