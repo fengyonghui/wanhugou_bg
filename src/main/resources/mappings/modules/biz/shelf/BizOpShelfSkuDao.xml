@@ -111,10 +111,13 @@
             <if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
             <if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
             <if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
-        </if>
-        <if test="centerOffice != null and centerOffice.name != null and centerOffice.name != ''">
-            AND so.name = #{centerOffice.name}
-        </if>
+        	</if>
+			<if test="centerOffice != null and centerOffice.id != null and centerOffice.id != ''">
+				AND a.center_id = #{centerOffice.id}
+			</if>
+			<if test="centerOffice != null and centerOffice.name != null and centerOffice.name != ''">
+				AND so.name = #{centerOffice.name}
+			</if>
         <!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">
             AND a.shelf_user = #{shelfUser.id}
         </if>-->
