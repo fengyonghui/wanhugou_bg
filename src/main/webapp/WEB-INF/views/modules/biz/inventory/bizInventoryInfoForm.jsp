@@ -55,11 +55,11 @@
 			<div class="controls">
 				<sys:treeselect id="centerOffice" name="customer.id" value="${bizInventoryInfo.customer.id}" labelName="customer.name"
 								labelValue="${bizInventoryInfo.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8" extId="${centerOffice.id}"
-								cssClass="input-xlarge "
+								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" extId="${centerOffice.id}"
+								cssClass="input-xlarge required"
 								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
 				</sys:treeselect>
-				<span class="help-inline"> </span>
+				<span class="help-inline"><font color="red">*</font> </span>
 
 			</div>
 		</div>

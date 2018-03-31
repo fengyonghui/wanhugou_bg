@@ -108,6 +108,9 @@
 		<if test="user != null and user.id != null and user.id != ''">
 			AND u.id = #{user.id}
 		</if>
+		<if test="enname != null and enname != ''">
+			AND a.enname = #{enname}
+		</if>
 		<if test="user != null and user.loginName != null and user.loginName != ''">
 			AND u.login_name = #{user.loginName}
 		</if>
