@@ -13,6 +13,7 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
@@ -239,7 +240,7 @@ public class BizOpShelfSkuController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
     @RequestMapping(value = "checkNum")
-	public String checkNum(String skuInfoIds,String minQtys,String maxQtys,Integer shelfSkuId,Integer shelfInfoId){
+	public String checkNum(String skuInfoIds,String minQtys,String maxQtys,Integer shelfSkuId,Integer shelfInfoId,Integer centId){
 	    String flag = "true";
         String[] skuIdArr=skuInfoIds.split(",");
         String[] maxQtyArr=maxQtys.split(",");
@@ -253,6 +254,11 @@ public class BizOpShelfSkuController extends BaseController {
                 BizOpShelfInfo bizOpShelfInfo = new BizOpShelfInfo();
                 bizOpShelfInfo.setId(shelfInfoId);
                 bizOpShelfSku.setOpShelfInfo(bizOpShelfInfo);
+                if (centId != null){
+                    Office center = new Office();
+                    center.setId(centId);
+                    bizOpShelfSku.setCenterOffice(center);
+                }
                 List<BizOpShelfSku> list = bizOpShelfSkuService.findList(bizOpShelfSku);
                 if (shelfSkuId != null){
                     BizOpShelfSku opShelfSku = bizOpShelfSkuService.get(shelfSkuId);

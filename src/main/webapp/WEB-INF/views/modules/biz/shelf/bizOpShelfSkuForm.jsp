@@ -14,6 +14,7 @@
                 submitHandler: function(form){
                     var shelfSkuId = $("#bizOpShelfSkuId").val();
                     var shelfInfoId = $("#shelfInfoId").val();
+                    var centId = $("#centerOfficeId").val();
                     var flag = true;
                     var vflag = false;
                     var checkFlag = false;
@@ -68,7 +69,7 @@
 							url:"${ctx}/biz/shelf/bizOpShelfSku/checkNum",
 							type:"post",
 							cache:false,
-							data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId},
+							data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId,centId:centId},
 							success:function(data){
 								if (data=="false"){
 								    checkFlag = true;
@@ -294,6 +295,7 @@
                         $("#PurchaseID").css("display","block");
                     }else{
                         $("#PurchaseID").css("display","none");
+                        $("#centerOfficeId").prop("value","");
                     }
                 }
             });
