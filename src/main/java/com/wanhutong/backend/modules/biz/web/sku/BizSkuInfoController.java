@@ -20,6 +20,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,8 @@ public class BizSkuInfoController extends BaseController {
 	private CommonImgService commonImgService;
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
+	@Autowired
+	private AttributeValueV2Service attributeValueV2Service;
 
 
 
@@ -92,15 +95,17 @@ public class BizSkuInfoController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizSkuInfo bizSkuInfo, Model model) {
 		model.addAttribute("bizSkuInfo", bizSkuInfo);
-		BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
-		bizProdPropertyInfo.setProductInfo(bizSkuInfo.getProductInfo());
-	//	List<BizProdPropertyInfo> prodPropertyInfoList= bizProdPropertyInfoService.findList(bizProdPropertyInfo);
+//		BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
+//		bizProdPropertyInfo.setProductInfo(bizSkuInfo.getProductInfo());
+		//Map<String,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
+		AttributeValueV2 attributeValueV2 =new AttributeValueV2();
+		attributeValueV2.setObjectId(bizSkuInfo.getId());
+		attributeValueV2.setObjectName("biz_sku_info");
+		List<AttributeValueV2> attributeValueList=attributeValueV2Service.findList(attributeValueV2);
 
-		Map<String,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
-
-	//	model.addAttribute("prodPropInfoList", prodPropertyInfoList);
-		model.addAttribute("map", map);
-		return "modules/biz/sku/bizSkuInfoForm";
+	//	model.addAttribute("map", map);
+		model.addAttribute("attributeValueList",attributeValueList);
+		return "modules/biz/sku/bizSkuInfoFormV2";
 	}
 
 	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
