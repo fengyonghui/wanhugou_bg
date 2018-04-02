@@ -91,8 +91,6 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
     private AttributeValueV2Service attributeValueV2Service;
     @Resource
     private BizSkuInfoV2Service bizSkuInfoV2Service;
-    @Resource
-    private BizOpShelfSkuService bizOpShelfSkuService;
 
 
     /**
@@ -231,22 +229,20 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 colorAttrVal.setAttributeInfo(colorAttributeInfo);
                 attributeValueV2Service.save(colorAttrVal);
 
-                if(StringUtils.isNotBlank(img)) {
-                    CommonImg commonImg = new CommonImg();
-                    commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-                    commonImg.setObjectId(bizSkuInfo.getId());
-                    commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
-                    List<CommonImg> list = commonImgService.findList(commonImg);
-                    commonImg.setImg(img);
-                    commonImg.setImgSort(index);
-                    commonImg.setImgServer(DsConfig.getImgServer());
-                    commonImg.setImgPath(img.replaceAll(DsConfig.getImgServer(), ""));
+                CommonImg commonImg = new CommonImg();
+                commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+                commonImg.setObjectId(bizSkuInfo.getId());
+                commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
+                List<CommonImg> list = commonImgService.findList(commonImg);
+                commonImg.setImg(img);
+                commonImg.setImgSort(index);
+                commonImg.setImgServer(StringUtils.isBlank(img) ? StringUtils.EMPTY : DsConfig.getImgServer());
+                commonImg.setImgPath(img.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY));
 
-                    if (CollectionUtils.isNotEmpty(list)) {
-                        commonImg.setId(list.get(0).getId());
-                    }
-                    commonImgService.save(commonImg);
+                if (CollectionUtils.isNotEmpty(list)) {
+                    commonImg.setId(list.get(0).getId());
                 }
+                commonImgService.save(commonImg);
             }
             for (BizSkuInfo oldS : oldSkuList) {
                 boolean hasDel = true;
