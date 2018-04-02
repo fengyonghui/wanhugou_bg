@@ -37,6 +37,11 @@ public class BizPlatformDataOverviewDto {
     private BigDecimal accumulatedSalesMonth;
 
     /**
+     * 月回款额
+     */
+    private BigDecimal receiveTotal;
+
+    /**
      * 日采购额
      */
     private BigDecimal procurementDay;
@@ -165,5 +170,13 @@ public class BizPlatformDataOverviewDto {
 
     public void setStockAmount(BigDecimal stockAmount) {
         this.stockAmount = stockAmount;
+    }
+
+    public BigDecimal getReceiveTotal() {
+        return receiveTotal;
+    }
+
+    public void setReceiveTotal(BigDecimal receiveTotal) {
+        this.receiveTotal = receiveTotal;
     }
 }

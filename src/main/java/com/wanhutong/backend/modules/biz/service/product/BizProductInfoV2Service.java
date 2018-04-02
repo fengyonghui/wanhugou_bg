@@ -246,6 +246,9 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
             }
             for (BizSkuInfo oldS : oldSkuList) {
                 boolean hasDel = true;
+                if (StringUtils.isBlank(oldS.getItemNo())) {
+                    continue;
+                }
                 String oldItemNo = oldS.getItemNo().substring(oldS.getItemNo().indexOf("/") + 1);
                 for (BizSkuInfo newS : newSkuList) {
                     String newItemNo = newS.getItemNo().substring(newS.getItemNo().indexOf("/") + 1);
