@@ -103,10 +103,10 @@ public class BizCategoryInfoController extends BaseController {
 		}else {
 			bizCategoryInfo.setParent(bizCategoryInfoService.get(bizCategoryInfo.getParent().getId()));
 		}
-		PropertyInfo propertyInfo=new PropertyInfo();
-		List<PropertyInfo> propertyInfoList=propertyInfoService.findList(propertyInfo);
-		//Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
-		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo,bizCategoryInfo);
+//		PropertyInfo propertyInfo=new PropertyInfo();
+//		List<PropertyInfo> propertyInfoList=propertyInfoService.findList(propertyInfo);
+//		//Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo);
+//		Map<Integer,List<PropValue>> map=propertyInfoService.findMapList(propertyInfo,bizCategoryInfo);
 		CommonImg commonImg=new CommonImg();
 
 		commonImg.setImgType(ImgEnum.CATEGORY_TYPE.getCode());
@@ -119,18 +119,18 @@ public class BizCategoryInfoController extends BaseController {
 				bizCategoryInfo.setImgId(imgList.get(0).getId());
 			}
 		}
-		BizCatePropertyInfo bizCatePropertyInfo=new BizCatePropertyInfo();
-		bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
-		if(bizCategoryInfo.getId()!=null){
-			Map<Integer,List<BizCatePropValue>> catePropValueMap=bizCatePropertyInfoService.findMapList(bizCatePropertyInfo);
-			bizCategoryInfo.setCatePropValueMap(catePropValueMap);
-		//	model.addAttribute("catePropValueMap",catePropValueMap);
-		}
-		bizCategoryInfo.setMap(map);
-		bizCategoryInfo.setPropertyInfoList(propertyInfoList);
+//		BizCatePropertyInfo bizCatePropertyInfo=new BizCatePropertyInfo();
+//		bizCatePropertyInfo.setCategoryInfo(bizCategoryInfo);
+//		if(bizCategoryInfo.getId()!=null){
+//			Map<Integer,List<BizCatePropValue>> catePropValueMap=bizCatePropertyInfoService.findMapList(bizCatePropertyInfo);
+//			bizCategoryInfo.setCatePropValueMap(catePropValueMap);
+//		//	model.addAttribute("catePropValueMap",catePropValueMap);
+//		}
+//		bizCategoryInfo.setMap(map);
+//		bizCategoryInfo.setPropertyInfoList(propertyInfoList);
 		//bizCategoryInfo.setCheckedPropValue(catePropValueMap);
 		model.addAttribute("bizCategoryInfo", bizCategoryInfo);
-		model.addAttribute("propertyInfo",propertyInfo);
+	//	model.addAttribute("propertyInfo",propertyInfo);
 	//	model.addAttribute("propertyInfoList", propertyInfoList);
 	//	model.addAttribute("map", map);
 

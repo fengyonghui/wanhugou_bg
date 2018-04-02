@@ -36,8 +36,8 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>系统属性键</th>
-				<th>系统属性值</th>
+				<th>系统属性标签</th>
+				<th>系统属性值(ID)</th>
 				<th>属性描述</th>
 				<shiro:hasPermission name="sys:defaultProp:edit"><th>操作</th></shiro:hasPermission>
 			</tr>

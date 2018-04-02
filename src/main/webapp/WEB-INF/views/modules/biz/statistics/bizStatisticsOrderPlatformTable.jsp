@@ -80,19 +80,24 @@
                 $("#monthCol").append("<th>数据类型</th>");
                 var orderTable = "";
                 var orderTable1 = "";
+                var orderTable2 = "";
                 orderTable += "<tr>";
                 orderTable1 += "<tr>";
                 orderTable += "<td>销售额</td>";
                 orderTable1 += "<td>订单量</td>";
+                orderTable2 += "<td>利润</td>";
                 $.each(msg.bizOrderStatisticsDtoList, function (key1, value1) {
                     $("#monthCol").append("<th>" + value1.createDate + "</th>");
                     orderTable += "<td>" + value1.totalMoney + "</td>";
                     orderTable1 += "<td>" + value1.orderCount + "</td>";
+                    orderTable2 += "<td>" + value1.profitPrice + "</td>";
                 });
                 orderTable += "</tr>";
                 orderTable1 += "</tr>";
+                orderTable2 += "</tr>";
                 $("#orderTable").append(orderTable);
                 $("#orderTable").append(orderTable1);
+                $("#orderTable").append(orderTable2);
             }
         })
     }

@@ -307,8 +307,8 @@ public class BizOrderHeaderController extends BaseController {
                     //   以上输出结果是：-1小于、0等于、1大于
                     if (subtract.compareTo(new BigDecimal(0)) == 1) {
                         bizCustCredit.setWallet(subtract);
-                        bizCustCreditService.save(bizCustCredit);
-
+                        bizCustCredit.setId(orderHeaderMent.getCustomer().getId());
+                        bizCustCreditService.orderHeaderSave(bizCustCredit);
                         bizPayRecordCredit.setOriginalAmount(bizCustCredit.getWallet());//原金额
                         bizPayRecordCredit.setCashAmount(subtract);//现金额
                         if (payMentOne.equals(Totail)) {
@@ -473,10 +473,12 @@ public class BizOrderHeaderController extends BaseController {
             for (BizOrderHeader o : pageList) {
                 orderDetail.setOrderHeader(o);
                 List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
+                Double dou=0.0;
                 if (list.size() != 0) {
                     for (BizOrderDetail d : list) {
                         d.setOrderHeader(o);
                         o.setOrderDetailList(list);
+                        dou+=d.getBuyPrice()*d.getOrdQty();
                         List<String> detailListData = new ArrayList();
                         //ID
                         detailListData.add(String.valueOf(d.getId()));
@@ -496,6 +498,7 @@ public class BizOrderHeaderController extends BaseController {
                         detailListData.add(String.valueOf(d.getUnitPrice() * d.getOrdQty()));
                         detailData.add(detailListData);
                     }
+                    o.setTotalBuyPrice(dou);
                 }
                 //地址查询
                 o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
@@ -522,14 +525,22 @@ public class BizOrderHeaderController extends BaseController {
                 rowData.add(String.valueOf(o.getCentersName()));
                 //商品总价
                 rowData.add(String.valueOf(o.getTotalDetail()));
-                //已收货款
-                rowData.add(String.valueOf(o.getReceiveTotal()));
                 //交易金额
                 rowData.add(String.valueOf(o.getTotalExp()));
                 //运费
                 rowData.add(String.valueOf(o.getFreight()));
                 //应付金额
                 rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight()));
+                //已收货款
+                rowData.add(String.valueOf(o.getReceiveTotal()));
+                Integer ten = 10, forTy = 40;
+                if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
+                    //尾款信息
+                    rowData.add("有尾款");
+                } else {
+                    //尾款信息
+                    rowData.add("");
+                }
                 //利润
                 rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - o.getTotalBuyPrice()));
                 Dict dictInv = new Dict();
@@ -556,14 +567,6 @@ public class BizOrderHeaderController extends BaseController {
                 }
                 //订单来源
                 rowData.add(String.valueOf(o.getPlatformInfo().getName()));
-                Integer ten = 10, forTy = 40;
-                if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
-                    //尾款信息
-                    rowData.add("有尾款");
-                } else {
-                    //尾款信息
-                    rowData.add("");
-                }
                 if (o.getBizLocation() != null) {
                     //收货人
                     rowData.add(String.valueOf(o.getBizLocation().getReceiver()));
@@ -608,8 +611,8 @@ public class BizOrderHeaderController extends BaseController {
                     });
                 }
             }
-            String[] headers = {"ID", "订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价", "已收货款", "交易金额", "运费",
-                    "应付金额", "利润", "发票状态", "业务状态", "订单来源", "尾款信息", "收货人", "联系电话", "收货地址", "创建人", "创建时间", "更新人", "更新时间"};
+            String[] headers = {"ID", "订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价", "交易金额", "运费",
+                    "应付金额", "已收货款", "尾款信息", "利润", "发票状态", "业务状态", "订单来源", "收货人", "联系电话", "收货地址", "创建人", "创建时间", "更新人", "更新时间"};
             String[] details = {"ID", "订单编号", "商品名称", "商品编码", "供应商", "商品单价", "采购数量", "商品总价"};
             String[] pays = {"ID", "订单编号", "支付类型名称", "业务流水号", "支付金额", "交易时间"};
             ExportExcelUtils eeu = new ExportExcelUtils();
@@ -624,6 +627,7 @@ public class BizOrderHeaderController extends BaseController {
             workbook.dispose();
             return null;
         } catch (Exception e) {
+           e.printStackTrace();
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/order/bizOrderHeader/";

@@ -3,14 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.service.shelf;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.wanhutong.backend.common.service.BaseService;
-import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfInfoDao;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
-import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -98,4 +94,5 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 	public void updateDateTime(BizOpShelfSku bizOpShelfSku){
 		bizOpShelfSkuDao.dateTimeUpdate(bizOpShelfSku);
 	}
+
 }

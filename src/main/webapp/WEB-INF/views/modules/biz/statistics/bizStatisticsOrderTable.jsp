@@ -8,6 +8,11 @@
 <body>
 <div style="height: 50px">
     <input name="applyDate" id="applyDate" value="${month}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <select class="input-medium" id="centerType">
+        <option value="8" label="采购中心">采购中心</option>
+        <option value="11" label="网供">网供</option>
+        <option value="10" label="配资业务">配资业务</option>
+    </select>
     <input id="search" class="btn btn-primary" type="button" onclick="initData()" value="查询"/>
 
 </div>
@@ -42,13 +47,15 @@
     });
     function initData() {
         var applyDate = $("#applyDate").val();
+        var centerTypeEle = $("#centerType");
+        var centerType = centerTypeEle.find("option:selected").val();
+
         $.ajax({
             type: 'post',
             url: "${adminPath}/biz/statistics/centOrderTable",
-            data: {"month": applyDate},
+            data: {"month": applyDate, "centerType":centerType},
             dataType: "json",
             success: function (msg) {
-                console.info(msg);
                 $("#orderTable").empty();
                 var orderTable = "";
                 var sumUpTotalMoney = 0;
