@@ -61,7 +61,7 @@
 			<include refid="bizCustCreditColumns"/>
 		FROM biz_cust_credit a
 		<include refid="bizCustCreditJoins"/>
-		WHERE a.office_id = #{customer.id} and a.status = 1
+		WHERE a.office_id = #{customer.id}
 	</select>
 	
 	<select id="findList" resultType="BizCustCredit">

@@ -146,7 +146,8 @@ public class OfficeController extends BaseController {
             office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size + 1 : 1), 3, "0"));
         }
         BizCustCredit bizCustCredit = bizCustCreditService.get(office.getId());
-        if (bizCustCredit != null) {
+        String b="0";
+        if (bizCustCredit != null && !bizCustCredit.getDelFlag().equals(b)) {
             office.setLevel(bizCustCredit.getLevel());
         }
         model.addAttribute("office", office);

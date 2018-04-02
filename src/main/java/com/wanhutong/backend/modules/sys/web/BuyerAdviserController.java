@@ -70,10 +70,12 @@ public class BuyerAdviserController extends BaseController {
 		off.setCustomerTypeEleven(OfficeTypeEnum.NETWORKSUPPLY.getType());
 		List<Office> officeList = officeService.queryCenterList(off);
 		office = officeService.get(office.getId());
-		officeService.get(office);
-		BuyerAdviser buyerAdviser = buyerAdviserService.get(office.getId());
-		if(buyerAdviser != null){
-			buyerAdviser.setConsultantName(systemService.getUser(buyerAdviser.getConsultantId()).getName());
+		BuyerAdviser buyerAdviser =null;
+		if(office!=null){
+			buyerAdviser = buyerAdviserService.get(office.getId());
+			if(buyerAdviser != null){
+				buyerAdviser.setConsultantName(systemService.getUser(buyerAdviser.getConsultantId()).getName());
+			}
 		}
 		model.addAttribute("office", office);
 		model.addAttribute("buyerAdviser", buyerAdviser);
