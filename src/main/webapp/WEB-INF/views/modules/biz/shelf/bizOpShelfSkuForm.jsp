@@ -14,9 +14,11 @@
                 submitHandler: function(form){
                     var shelfSkuId = $("#bizOpShelfSkuId").val();
                     var shelfInfoId = $("#shelfInfoId").val();
+                    var centId = $("#centerOfficeId").val();
                     var flag = true;
                     var vflag = false;
                     var checkFlag = false;
+                    var numFlag = true;
                     var checkMassege = "";
                     var skuInfoIds = "";
                     var minQtys = "";
@@ -40,6 +42,15 @@
                             }
                         });
                     }) ;
+                    $("#tbody").find("tr").each(function () {
+                        var minQty = $(this).find("td").find("input[name='minQtys']").val();
+                        var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
+                        if (parseInt(minQty) >= parseInt(maxQty)){
+                            alert("最高销售数量必须大于最低销售数量");
+                            numFlag = false;
+                            return;
+                        }
+                    });
                     $("#tbody").find("td").each(function () {
                         var skuId = $(this).find("input[name='skuInfoIds']").val();
                         var minQty = $(this).find("input[name='minQtys']").val();
@@ -58,7 +69,7 @@
 							url:"${ctx}/biz/shelf/bizOpShelfSku/checkNum",
 							type:"post",
 							cache:false,
-							data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId},
+							data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId,centId:centId},
 							success:function(data){
 								if (data=="false"){
 								    checkFlag = true;
@@ -70,7 +81,7 @@
                                 if(checkFlag) {
                                     alert(checkMassege);
                                 }
-                                if(flag && vflag) {
+                                if(flag && vflag && numFlag) {
                                     $("#tbody").find("td").each(function () {
                                         if ($(this).attr("style") == "display: none;") {
                                             $(this).removeAttr("style");
@@ -284,6 +295,7 @@
                         $("#PurchaseID").css("display","block");
                     }else{
                         $("#PurchaseID").css("display","none");
+                        $("#centerOfficeId").prop("value","");
                     }
                 }
             });

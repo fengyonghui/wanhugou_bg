@@ -38,6 +38,7 @@ import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.ehcache.util.ProductInfo;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -362,7 +363,7 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
         /**
          * 选择分类属性（属性和值）
          */
-        if (bizProductInfo.getProdPropertyInfos() != null) {
+        if (StringUtils.isNotBlank(bizProductInfo.getProdPropertyInfos())) {
             String[] propInfoValue=bizProductInfo.getProdPropertyInfos().split(",");
             BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
             Map<Integer,List<String>> map=new HashMap<>();
@@ -397,15 +398,15 @@ public class BizProductInfoService extends CrudService<BizProductInfoDao, BizPro
                     Integer propValueId = Integer.parseInt(prodPropertyValueList.get(i).trim());
                     PropValue propValue = propValueService.get(propValueId);
                     prodPropValue.setId(null);
-                        prodPropValue.setPropertyInfo(propertyInfo);
-                        prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
-                        prodPropValue.setSource("sys");
-                        prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
-                        prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
-                        prodPropValue.setPropValue(propValue.getValue());
-                        prodPropValue.setCode(propValue.getCode());
-                        prodPropValue.setSysPropValue(propValue);
-                        bizProdPropValueService.save(prodPropValue);
+                    prodPropValue.setPropertyInfo(propertyInfo);
+                    prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
+                    prodPropValue.setSource("sys");
+                    prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
+                    prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+                    prodPropValue.setPropValue(propValue.getValue());
+                    prodPropValue.setCode(propValue.getCode());
+                    prodPropValue.setSysPropValue(propValue);
+                    bizProdPropValueService.save(prodPropValue);
                 }
 
             }

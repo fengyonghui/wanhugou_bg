@@ -1,6 +1,3 @@
-/**
- * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
- */
 package com.wanhutong.backend.modules.sys.dao.tag;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
@@ -14,5 +11,5 @@ import com.wanhutong.backend.modules.sys.entity.tag.TagInfo;
  */
 @MyBatisDao
 public interface TagInfoDao extends CrudDao<TagInfo> {
-	
+
 }

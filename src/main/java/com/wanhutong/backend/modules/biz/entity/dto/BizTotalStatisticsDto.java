@@ -3,7 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.entity.dto;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 /**
  * 统计总的会员数，采购中心数，订单数量，总额、已收货款，商品数量 平均客单价Entity
@@ -95,6 +98,10 @@ public class BizTotalStatisticsDto {
 	}
 
 	public String getCount() {
+		if (StringUtils.isNotBlank(count) && count.length() > 5) {
+			DecimalFormat df = new DecimalFormat("#,###.00");
+			return df.format(Double.valueOf(count));
+		}
 		return count;
 	}
 

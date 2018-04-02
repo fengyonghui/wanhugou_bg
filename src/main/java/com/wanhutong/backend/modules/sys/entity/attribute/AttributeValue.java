@@ -13,7 +13,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  * @version 2018-03-21
  */
 public class AttributeValue extends DataEntity<AttributeValue> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String tagId;		// 标签Id
 	private String objectName;		// 对象名称，表名称
@@ -22,7 +22,7 @@ public class AttributeValue extends DataEntity<AttributeValue> {
 	private String code;		// code
 	private String status;		// 1:active 0:inactive
 	private String uVersion;		// u_version
-	
+
 	public AttributeValue() {
 		super();
 	}
@@ -39,7 +39,7 @@ public class AttributeValue extends DataEntity<AttributeValue> {
 	public void setTagId(String tagId) {
 		this.tagId = tagId;
 	}
-	
+
 	@Length(min=1, max=30, message="对象名称，表名称长度必须介于 1 和 30 之间")
 	public String getObjectName() {
 		return objectName;
@@ -48,7 +48,7 @@ public class AttributeValue extends DataEntity<AttributeValue> {
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
 	}
-	
+
 	@Length(min=1, max=11, message="对应表的主键长度必须介于 1 和 11 之间")
 	public String getObjectId() {
 		return objectId;
@@ -57,7 +57,7 @@ public class AttributeValue extends DataEntity<AttributeValue> {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-	
+
 	@Length(min=1, max=100, message="记录该属性值长度必须介于 1 和 100 之间")
 	public String getValue() {
 		return value;
@@ -66,7 +66,7 @@ public class AttributeValue extends DataEntity<AttributeValue> {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	@Length(min=0, max=20, message="code长度必须介于 0 和 20 之间")
 	public String getCode() {
 		return code;
@@ -75,7 +75,7 @@ public class AttributeValue extends DataEntity<AttributeValue> {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	@Length(min=1, max=4, message="1:active 0:inactive长度必须介于 1 和 4 之间")
 	public String getStatus() {
 		return status;
@@ -84,7 +84,7 @@ public class AttributeValue extends DataEntity<AttributeValue> {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	@Length(min=1, max=4, message="u_version长度必须介于 1 和 4 之间")
 	public String getUVersion() {
 		return uVersion;
@@ -93,5 +93,5 @@ public class AttributeValue extends DataEntity<AttributeValue> {
 	public void setUVersion(String uVersion) {
 		this.uVersion = uVersion;
 	}
-	
+
 }

@@ -64,8 +64,8 @@ public class BizStatisticsDayService {
      * @param date 取数据的日期
      * @return 根据不同机构分类的统计数据
      */
-    public Map<String, BizOrderStatisticsDto> orderStatisticData(String date) {
-        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeDay(date, OrderHeaderBizStatusEnum.INVALID_STATUS, OfficeTypeEnum.PURCHASINGCENTER.getType());
+    public Map<String, BizOrderStatisticsDto> orderStatisticData(String date, String centerType) {
+        List<BizOrderStatisticsDto> orderTotalAndCountByCreateTimeMonthStatus = bizOrderHeaderDao.getValidOrderTotalAndCountByCreateTimeDay(date, OrderHeaderBizStatusEnum.INVALID_STATUS, centerType);
         Map<String, BizOrderStatisticsDto> resultMap = Maps.newHashMap();
         orderTotalAndCountByCreateTimeMonthStatus.forEach(o -> {
             resultMap.putIfAbsent(o.getOfficeName(), o);

@@ -51,7 +51,7 @@
                 ajaxFindCateByBrand(brandId);
 
                 var cateValueId = $("#cateValueId").val();
-             //   ajaxGetPropInfoBrand(ids);
+                //   ajaxGetPropInfoBrand(ids);
                 t = setTimeout(function () {
                     ajaxGetPropInfo(ids,prodId);
 
@@ -83,12 +83,12 @@
 
             <%--// 分类--菜单--%>
             <%--var zNodes = [--%>
-                    <%--<c:forEach items="${cateList}" var="cate">{--%>
-                    <%--id: "${cate.id}",--%>
-                    <%--pId: "${not empty cate.parent.id?cate.parent.id:0}",--%>
-                    <%--name: "${not empty cate.parent.id?cate.name:'分类列表'}"--%>
-                <%--},--%>
-                <%--</c:forEach>];--%>
+            <%--<c:forEach items="${cateList}" var="cate">{--%>
+            <%--id: "${cate.id}",--%>
+            <%--pId: "${not empty cate.parent.id?cate.parent.id:0}",--%>
+            <%--name: "${not empty cate.parent.id?cate.name:'分类列表'}"--%>
+            <%--},--%>
+            <%--</c:forEach>];--%>
             <%--// 初始化树结构--%>
             <%--var tree = $.fn.zTree.init($("#cateTree"), setting, zNodes);--%>
             <%--// 不选择父节点--%>
@@ -96,12 +96,12 @@
             <%--// 默认选择节点--%>
             <%--var ids = "${entity.cateIds}".split(",");--%>
             <%--for (var i = 0; i < ids.length; i++) {--%>
-                <%--var node = tree.getNodeByParam("id", ids[i]);--%>
-                <%--try {--%>
-                    <%--tree.checkNode(node, true, false);--%>
-                    <%--tree.checkNode(node.getParentNode(), true, false);--%>
-                <%--} catch (e) {--%>
-                <%--}--%>
+            <%--var node = tree.getNodeByParam("id", ids[i]);--%>
+            <%--try {--%>
+            <%--tree.checkNode(node, true, false);--%>
+            <%--tree.checkNode(node.getParentNode(), true, false);--%>
+            <%--} catch (e) {--%>
+            <%--}--%>
             <%--}--%>
             <%--// 默认展开全部节点--%>
             <%--tree.expandAll(true);--%>
@@ -137,10 +137,10 @@
                 $('#myModal').modal('hide');
             });
 
-        $("#propValueId").change(function () {
-            var brandId=$(this).val();
-            ajaxFindCateByBrand(brandId);
-        });
+            $("#propValueId").change(function () {
+                var brandId=$(this).val();
+                ajaxFindCateByBrand(brandId);
+            });
 
             function ajaxFindCateByBrand(brandId) {
                 $.post("${ctx}/biz/category/bizCategoryInfo/findListByBrandId",
@@ -235,12 +235,12 @@
                         if (propId != $("#brandDefId").val()) {
                             var propName = propKeys[1];
 
-                          //  $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
+                            //  $("#cateProp").append('<input class="select_all" id="' + propId + '" name="prodPropertyInfos" type="checkbox" value="' + propId + '" />' + propName + ':<span id="span_' + propId + '"/><br/>')
 
-                           var  str ='<div  style="width: 100%;display: inline-block">' +
-                               '<span  style="float:left;width:60px;padding-top:3px">' +propName +'</span>'+
-                               '<div style="float: left">' +
-                               '<select  title="search"   id="search_'+propId+'" class="input-xlarge" multiple="multiple" size="8">';
+                            var  str ='<div  style="width: 100%;display: inline-block">' +
+                                '<span  style="float:left;width:60px;padding-top:3px">' +propName +'</span>'+
+                                '<div style="float: left">' +
+                                '<select  title="search"   id="search_'+propId+'" class="input-xlarge" multiple="multiple" size="8">';
 
                             for (var p in values) {
                                 if (values[p].value != null) {
@@ -370,9 +370,9 @@
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
         <div class="controls">
-            <%--<form:select items="${propValueList}" id="propValueId" path="propValue.id" class="input-xlarge required" itemLabel="value" itemValue="id">--%>
+                <%--<form:select items="${propValueList}" id="propValueId" path="propValue.id" class="input-xlarge required" itemLabel="value" itemValue="id">--%>
                 <%--<from:option value="">请选择</from:option>--%>
-            <%--</form:select>--%>
+                <%--</form:select>--%>
             <form:select path="propValue.id" class="input-xlarge required" id="propValueId">
                 <form:option value="" label="请选择品牌"/>
                 <form:options items="${propValueList}" itemLabel="value" itemValue="id" htmlEscape="false"/>
@@ -461,39 +461,39 @@
     <div class="control-group">
         <label class="control-label">产品属性：</label>
         <div id="cateProp" class="controls">
-            <%--<c:forEach items="${propertyInfoList}" var="propertyInfo">
-                <div  style="width: 100%;display: inline-block">
-                    <span  style="float:left;width:60px;padding-top:3px">${propertyInfo.name}：</span>
-                    <div style="float: left">
-                        <select title="search"  id="search_${propertyInfo.id}" class="input-xlarge" multiple="multiple" size="8">
-                            <c:forEach items="${map[propertyInfo.id]}" var="propValue">
-                                <option value="${propValue.id}">${propValue.value}</option>
-                            </c:forEach>
+                <%--<c:forEach items="${propertyInfoList}" var="propertyInfo">
+                    <div  style="width: 100%;display: inline-block">
+                        <span  style="float:left;width:60px;padding-top:3px">${propertyInfo.name}：</span>
+                        <div style="float: left">
+                            <select title="search"  id="search_${propertyInfo.id}" class="input-xlarge" multiple="multiple" size="8">
+                                <c:forEach items="${map[propertyInfo.id]}" var="propValue">
+                                    <option value="${propValue.id}">${propValue.value}</option>
+                                </c:forEach>
 
 
-                        </select>
+                            </select>
+                        </div>
+                            &lt;%&ndash;<span class="icon-chevron-right"></span>&ndash;%&gt;
+                        <div  style="width: 20%;margin-left:10px;float: left">
+                            <button type="button" id="search_${propertyInfo.id}_rightAll" class="btn-block"><i class="icon-forward"></i></button>
+
+                            <button type="button" id="search_${propertyInfo.id}_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>
+
+                            <button type="button" id="search_${propertyInfo.id}_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>
+
+                            <button type="button" id="search_${propertyInfo.id}_leftAll" class="btn-block"><i class="icon-backward"></i></button>
+                        </div>
+
+                        <div style="margin-left:10px;float: left">
+                            <select name="propertyMap[${propertyInfo.id}].catePropertyValues" id="search_${propertyInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
+                                <c:forEach items="${catePropValueMap[propertyInfo.id]}" var="propValue">
+                                    &lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;
+                                    <option value="${propValue.propertyValueId}">${propValue.value}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
                     </div>
-                        &lt;%&ndash;<span class="icon-chevron-right"></span>&ndash;%&gt;
-                    <div  style="width: 20%;margin-left:10px;float: left">
-                        <button type="button" id="search_${propertyInfo.id}_rightAll" class="btn-block"><i class="icon-forward"></i></button>
-
-                        <button type="button" id="search_${propertyInfo.id}_rightSelected" class="btn-block"><i class="icon-chevron-right"></i></button>
-
-                        <button type="button" id="search_${propertyInfo.id}_leftSelected" class="btn-block"><i class="icon-chevron-left"></i></button>
-
-                        <button type="button" id="search_${propertyInfo.id}_leftAll" class="btn-block"><i class="icon-backward"></i></button>
-                    </div>
-
-                    <div style="margin-left:10px;float: left">
-                        <select name="propertyMap[${propertyInfo.id}].catePropertyValues" id="search_${propertyInfo.id}_to" class="input-xlarge" size="8" multiple="multiple">
-                            <c:forEach items="${catePropValueMap[propertyInfo.id]}" var="propValue">
-                                &lt;%&ndash;<input class="value_${propertyInfo.id}" id="value_${propValue.id}" type="checkbox" name="propertyMap[${propertyInfo.id}].catePropertyValues" value="${propValue.id}"/> ${propValue.value}&ndash;%&gt;
-                                <option value="${propValue.propertyValueId}">${propValue.value}</option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </div>
-            </c:forEach>--%>
+                </c:forEach>--%>
         </div>
     </div>
     <div class="control-group">
@@ -646,25 +646,25 @@
 
     </c:if>
 </div>
-    <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
-    <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
+<script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
+<script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
+<script type="text/javascript">
+    $(document).ready(function() {
 
-            <%--window.prettyPrint && prettyPrint();--%>
+        <%--window.prettyPrint && prettyPrint();--%>
 
-            // $('select[title="search"]').multiselect({
-            //     search: {
-            //         left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
-            //         right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
-            //     }
-            //     // ,
-            //     // fireSearch: function(value) {
-            //     //     return value.length >=1 ;
-            //     // }
-            // });
-        });
-    </script>
+        // $('select[title="search"]').multiselect({
+        //     search: {
+        //         left: '<input type="text" name="q" style="display: block;width: 95%"  placeholder="Search..." />',
+        //         right: '<input type="text" name="q" style="display: block;width: 95%" class="input-large" placeholder="Search..." />',
+        //     }
+        //     // ,
+        //     // fireSearch: function(value) {
+        //     //     return value.length >=1 ;
+        //     // }
+        // });
+    });
+</script>
 </body>
 </html>

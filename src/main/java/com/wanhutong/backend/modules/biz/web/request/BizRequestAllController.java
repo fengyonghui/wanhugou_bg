@@ -121,11 +121,20 @@ public class BizRequestAllController {
                 if (bizStatu == 1){
                     bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
                     bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
+
                 }
+
+                List<BizOrderHeader> orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
+                model.addAttribute("orderHeaderList",orderHeaderList);
+                List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
+                model.addAttribute("requestHeaderList",requestHeaderList);
             }
             else if("sh".equals(source)){
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
+
+                List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
+                model.addAttribute("requestHeaderList",requestHeaderList);
     //                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.STOCKING.getState());
     //                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.COMPLETE.getState());
             }
@@ -134,17 +143,24 @@ public class BizRequestAllController {
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+
+                 List<BizOrderHeader> orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
+                 model.addAttribute("orderHeaderList",orderHeaderList);
+                 List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
+                 model.addAttribute("requestHeaderList",requestHeaderList);
             }
             if("ghs".equals(source)) {
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
-            }
-                List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
-                model.addAttribute("requestHeaderList",requestHeaderList);
                 List<BizOrderHeader> orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
                 model.addAttribute("orderHeaderList",orderHeaderList);
+                List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
+                model.addAttribute("requestHeaderList",requestHeaderList);
+            }
+
+
                 if (bizStatu != null){
                     model.addAttribute("bizStatu",bizStatu.toString());
                 }
