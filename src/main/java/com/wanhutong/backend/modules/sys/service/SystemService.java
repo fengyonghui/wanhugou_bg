@@ -104,6 +104,7 @@ public class SystemService extends BaseService implements InitializingBean {
                 }
             }
         }
+        //只查询客户专员
         if (user.getConn() != null && user.getConn().equals("connIndex")) {
             Role role = new Role();
             role.setEnname(RoleEnNameEnum.BUYER.getState());
@@ -112,6 +113,16 @@ public class SystemService extends BaseService implements InitializingBean {
                 role = roleList.get(0);
             }
             user.setRole(role);
+		}
+		//只查询仓储专员
+		if (user.getConn() != null && user.getConn().equals("stoIndex")) {
+			Role role = new Role();
+			role.setEnname(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
+			List<Role> roleList = findRole(role);
+			if (roleList != null && roleList.size() > 0){
+				role = roleList.get(0);
+			}
+			user.setRole(role);
 		}
 
         if (flag){

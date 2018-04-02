@@ -93,7 +93,6 @@ public class UserController extends BaseController {
 				}
 			}
 		}
-
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
 		return "modules/sys/userList";
@@ -491,6 +490,15 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"conIndex"})
 	public String conIndex(User user, Model model) {
 		return "modules/sys/conIndex";
+	}
+
+	/**
+	 * 仓储专员管理
+	 */
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"stoIndex"})
+	public String stoIndex(User user, Model model) {
+		return "modules/sys/stoIndex";
 	}
 
 	/**
