@@ -340,4 +340,24 @@ public class BizProductInfoV2Controller extends BaseController {
         response.getWriter().write(JSONObject.fromObject(resultMap).toString());
     }
 
+    /**
+     * 用于列表搜索出结果，删除其中一个商品信息时，停留在搜索商品页面
+     * */
+    @ResponseBody
+    @RequiresPermissions("biz:product:bizProductInfo:edit")
+    @RequestMapping(value = "prodDelete")
+    public String prodDelete(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response, Model model) {
+        String aa="error";
+        try {
+            bizProductInfoService.delete(bizProductInfo);
+            //删除后传值给list，以展示上一次搜索的结果
+            list(bizProductInfo,request,response,model);
+            addMessage(redirectAttributes, "删除产品信息表成功");
+            aa="ok";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return aa;
+    }
+
 }

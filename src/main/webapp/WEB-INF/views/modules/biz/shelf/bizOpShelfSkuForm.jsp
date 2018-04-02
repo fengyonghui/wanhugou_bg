@@ -172,7 +172,7 @@
 
                                 tr_tds+= "<tr class='"+prodId+"'>";
                                 tr_tds+="<td><input type='checkbox' value='"+skuInfo.id+"' title='shelfIds'/></td>";
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td>" ;
+                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td>" ;
 
                                 if(flag){
                                     tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
