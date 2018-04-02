@@ -830,13 +830,13 @@
 		biz_status != #{item.state}
 		</foreach>
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
-		AND
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
 		where header1.cust_id = ta.object_id
 		and ta.object_name = 'sys_office'
 		)
+		AND
 		date_format(header1.create_time, '%Y-%m-%d') = #{day}
 		GROUP BY office.id)  AS buyPrice
 		FROM biz_order_header AS header
