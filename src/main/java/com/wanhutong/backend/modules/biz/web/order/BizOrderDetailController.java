@@ -116,18 +116,19 @@ public class BizOrderDetailController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderDetail:edit")
 	@RequestMapping(value = "save")
 	public String save(BizOrderDetail bizOrderDetail, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizOrderDetail)){
-			return form(bizOrderDetail, model);
-		}
 		bizOrderDetailService.save(bizOrderDetail);
 		addMessage(redirectAttributes, "保存订单详情成功");
 		Integer orderId=bizOrderDetail.getOrderHeader().getId();
 ////		if(orderId !=null && orderId !=0){
 //		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 ////		}
+		String consultantId ="";
+		if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getConsultantId()!=null){
+			consultantId = String.valueOf(bizOrderDetail.getOrderHeader().getConsultantId());
+		}
 		if(bizOrderDetail.getOrderHeader().getClientModify()!=null && bizOrderDetail.getOrderHeader().getClientModify().equals("client_modify")){
 			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId+"&clientModify=client_modify"+
-					"&consultantId="+bizOrderDetail.getOrderHeader().getConsultantId();
+					"&consultantId="+consultantId;
 		}
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 	}
@@ -154,10 +155,7 @@ public class BizOrderDetailController extends BaseController {
 			bizOrderHeaderService.updateMoney(bizOrderHeader);
 		}
 		addMessage(redirectAttributes, "删除订单详情成功");
-//		if(orderDetailDetele.equals("details")){
-////			跳回添加商品
-//		}
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+bizOrderDetail.getOrderHeader().getId();
 	}
 
 	@ResponseBody
