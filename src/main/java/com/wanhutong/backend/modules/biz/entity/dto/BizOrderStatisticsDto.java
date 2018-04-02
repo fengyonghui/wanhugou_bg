@@ -12,6 +12,11 @@ public class BizOrderStatisticsDto {
      * 总金额
      */
     private BigDecimal totalMoney = new BigDecimal(0);
+
+    /**
+     * 回款额
+     */
+    private BigDecimal receiveTotal = new BigDecimal(0);
     //上月总金额
     private BigDecimal upTotalMoney = new BigDecimal(0);
     /**
@@ -45,6 +50,15 @@ public class BizOrderStatisticsDto {
      * 日期
      */
     private String createDate;
+
+
+    public BigDecimal getReceiveTotal() {
+        return receiveTotal;
+    }
+
+    public void setReceiveTotal(BigDecimal receiveTotal) {
+        this.receiveTotal = receiveTotal;
+    }
 
     public String getCreateDate() {
         return createDate;

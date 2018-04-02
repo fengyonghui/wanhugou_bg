@@ -498,8 +498,10 @@ public class BizStatisticsPlatformController extends BaseController {
 
         List<Object> seriesDataList = Lists.newArrayList();
         List<Object> seriesCountDataList = Lists.newArrayList();
+        List<Object> seriesReceiveDataList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         EchartsSeriesDto echartsCountSeriesDto = new EchartsSeriesDto();
+        EchartsSeriesDto echartsReceiveSeriesDto = new EchartsSeriesDto();
         if ("1".equals(type)) {
             try {
                 List<String> dayList = Lists.newArrayList();
@@ -515,14 +517,17 @@ public class BizStatisticsPlatformController extends BaseController {
                 dayList.forEach(o -> {
                     Object value = 0;
                     Object count = 0;
+                    Object receiveTotal = 0;
                     for (BizOrderStatisticsDto b : bizOrderStatisticsDtoList) {
                         if (b.getCreateDate().equals(o)) {
                             value = b.getTotalMoney();
                             count = b.getOrderCount();
+                            receiveTotal = b.getReceiveTotal();
                         }
                     }
                     seriesDataList.add(value);
                     seriesCountDataList.add(count);
+                    seriesReceiveDataList.add(receiveTotal);
                     nameList.add(o);
                 });
 
@@ -534,6 +539,7 @@ public class BizStatisticsPlatformController extends BaseController {
             bizOrderStatisticsDtoList.forEach(o -> {
                 seriesDataList.add(o.getTotalMoney());
                 seriesCountDataList.add(o.getOrderCount());
+                seriesReceiveDataList.add(o.getOrderCount());
                 nameList.add(o.getCreateDate());
             });
         }
@@ -545,6 +551,11 @@ public class BizStatisticsPlatformController extends BaseController {
         echartsCountSeriesDto.setData(seriesCountDataList);
         echartsCountSeriesDto.setyAxisIndex(1);
         echartsCountSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+        echartsReceiveSeriesDto.setName("已收货款");
+        echartsReceiveSeriesDto.setData(seriesReceiveDataList);
+        echartsReceiveSeriesDto.setyAxisIndex(1);
+        echartsReceiveSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
 
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto, echartsCountSeriesDto));
