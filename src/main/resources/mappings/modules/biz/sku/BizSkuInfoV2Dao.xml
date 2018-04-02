@@ -176,6 +176,82 @@
 		</choose>
 	</select>
 
+	<select id="findListIgnoreStatus" resultType="BizSkuInfo">
+		SELECT
+			<include refid="bizSkuInfoColumns"/>,
+		(select
+		concat(ci.img_server, ci.img_path)
+		FROM common_img ci
+		WHERE ci.status = #{DEL_FLAG_NORMAL} AND ci.object_name = 'biz_sku_info' AND ci.object_id = a.id limit 1) AS defaultImg
+		FROM biz_sku_info a
+		<include refid="bizSkuInfoJoins"/>
+		<where>
+			1=1
+			<if test="id != null and id != ''">
+				AND a.id =#{id}
+			</if>
+            <if test="skuType != null and skuType != ''">
+                AND a.sku_type =#{skuType}
+            </if>
+            <if test="name != null and name != ''">
+                AND a.name LIKE
+                <if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+            </if>
+			<if test="partNo != null and partNo != ''">
+				AND a.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
+				AND a.prod_id =#{productInfo.id}
+			</if>
+			<if test="productInfo != null and productInfo.name !=null and productInfo.name!=''">
+				AND bpi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.prodCode !=null and productInfo.prodCode!=''">
+				AND bpi.prod_code LIKE
+
+				<if test="dbName == 'oracle'">'%'||#{productInfo.prodCode}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.prodCode}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.prodCode},'%')</if>
+			</if>
+
+			<if test="productInfo != null and productInfo.brandName !=null and productInfo.brandName!=''">
+				AND bpi.brand_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.brandName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.brandName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.brandName},'%')</if>
+			</if>
+			<if test="skuIds!=null and skuIds!='' and skuIds.size()!=0">
+				and a.id in
+				<foreach collection="skuIds" item="skuId" index="index"
+						 open="(" close=")" separator=",">
+					#{skuId}
+				</foreach>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
 	<select id="findListByParam" resultMap="BizSkuInfoMap">
 		SELECT
 		<include refid="bizSkuInfoColumns"/>,
@@ -319,16 +395,12 @@
 	
 	<update id="update">
 		UPDATE biz_sku_info SET 	
-			prod_id = #{productInfo.id},
 			sku_type = #{skuType},
 			name = #{name},
-			part_no = #{partNo},
 			<if test="basePrice != null">
 				base_price = #{basePrice},
 			</if>
 			buy_price = #{buyPrice},
-			item_no = #{itemNo},
-			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
@@ -340,10 +412,15 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	<update id="physicalDeleteByProd">
-		DELETE FROM biz_sku_info
-		WHERE prod_id = #{prodId}
-	</update>
+
+	<select id="getSkuInfoByItemNo" resultType="BizSkuInfo">
+		SELECT
+		<include refid="bizSkuInfoColumns"/>
+		FROM biz_sku_info a
+		<include refid="bizSkuInfoJoins"/>
+		WHERE a.item_no = #{itemNo}
+	</select>
+
 
 	<delete id="deleteSkuPropInfoReal">
 		DELETE FROM biz_sku_prop_value

@@ -21,5 +21,7 @@ public interface BizSkuInfoV2Dao extends CrudDao<BizSkuInfo> {
 
    List<BizSkuInfo> findListByParam(BizSkuInfo bizSkuInfo);
 
-    void physicalDeleteByProd(Integer prodId);
+    BizSkuInfo getSkuInfoByItemNo(String itemNo);
+
+    List<BizSkuInfo> findListIgnoreStatus(BizSkuInfo oldSkuEntity);
 }

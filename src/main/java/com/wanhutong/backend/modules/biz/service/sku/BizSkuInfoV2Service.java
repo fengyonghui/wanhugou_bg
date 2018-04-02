@@ -9,7 +9,6 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
-import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoDao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV2Dao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
@@ -25,12 +24,10 @@ import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
-import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
-import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import org.slf4j.Logger;
@@ -145,9 +142,6 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		attributeValue.setObjectId(skuInfo.getId());
 		attributeValue.setObjectName("biz_sku_info");
 		List<AttributeValueV2>skuPropValueList= attributeValueService.findList(attributeValue);
-//		BizSkuPropValue bizSkuPropValue=new BizSkuPropValue();
-//        bizSkuPropValue.setSkuInfo(skuInfo);
-//        List<BizSkuPropValue> skuPropValueList=bizSkuPropValueService.findList(bizSkuPropValue);
         StringBuffer skuPropName=new StringBuffer();
         for(AttributeValueV2 skuPropValue:skuPropValueList){
             skuPropName.append("-");
@@ -162,16 +156,6 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		if(bizProductInfo!=null && bizProductInfo.getOffice()!=null){
 			Office	office=officeService.get(bizProductInfo.getOffice().getId());
 			bizProductInfo.setOffice(office);
-//			BizProdCate bizProdCate=new BizProdCate();
-//			bizProdCate.setProductInfo(bizProductInfo);
-//			List<BizProdCate> prodCateList=bizProdCateService.findList(bizProdCate);
-//			StringBuffer cateName=new StringBuffer("\\/");
-//			for(BizProdCate prodCate:prodCateList){
-//				cateName.append(prodCate.getCategoryInfo().getName());
-//
-//			}
-//			String cateNames=cateName.toString().substring(2);
-//			bizProductInfo.setCateNames(cateNames);
 		}
 
 		skuInfo.setProductInfo(bizProductInfo);
@@ -191,17 +175,13 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	public void save(BizSkuInfo bizSkuInfo) {
 
 		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
-//		PropValue brandValue = propValueService.get(bizProductInfo.getPropValue().getId());
-//		if (brandValue != null) {
-//			bizProductInfo.setBrandName(brandValue.getValue());
-//			brandCode=bizProductInfoService.addZeroForNum(brandValue.getCode(),false,4);
-//			prodCode="CODE";
-//		}
-		if(bizSkuInfo.getId()==null){
-			String prodCode=bizProductInfo.getProdCode();
-			String partNo=prodCode+bizSkuInfo.getSort();
+		String prodCode = bizProductInfo.getProdCode();
+		String partNo = prodCode + bizSkuInfo.getSort();
+
+		if (StringUtils.isBlank(bizSkuInfo.getPartNo())) {
 			bizSkuInfo.setPartNo(partNo);
 		}
+
 		super.save(bizSkuInfo);
  		 BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();
 		if (bizSkuInfo.getProdPropMap() != null) {
@@ -348,15 +328,11 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
         commonImgService.delete(commonImg);
 	}
 
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public void physicalDeleteByProd(BizSkuInfo bizSkuInfo) {
-        bizSkuInfoDao.physicalDeleteByProd(bizSkuInfo.getProductInfo().getId());
-        CommonImg commonImg = new CommonImg();
-        commonImg.setObjectId(bizSkuInfo.getId());
-        commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
-        commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-        commonImgService.deleteCommonImg(commonImg);
+	public BizSkuInfo getSkuInfoByItemNo(String itemNo) {
+		return bizSkuInfoDao.getSkuInfoByItemNo(itemNo);
 	}
 
-	
+	public List<BizSkuInfo> findListIgnoreStatus(BizSkuInfo oldSkuEntity) {
+		return bizSkuInfoDao.findListIgnoreStatus(oldSkuEntity);
+	}
 }

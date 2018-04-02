@@ -247,6 +247,7 @@
            <table class="table  table-bordered table-condensed" id="skuTable">
                <thead>
                <tr>
+                    <th style="display: none">id</th>
                     <th>货号</th>
                     <th>尺寸</th>
                     <th>颜色</th>
@@ -260,6 +261,7 @@
                <tbody id="skuTableData">
                <c:forEach items="${entity.skuInfosList}" var="v">
                    <tr customType="skuTr">
+                       <td style="display: none"><input type="text" value="${v.id}" customInput="idInput" readonly/></td>
                        <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
                        <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
@@ -328,18 +330,20 @@
         var oldDataMap= $Map.Map();
         if (skuTableDataTr.length > 0) {
             skuTableDataTr.each(function () {
+                var oldIdInput = $($(this).find("[customInput = 'idInput']")[0]).val();
                 var oldSizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
                 var oldColorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
                 var oldPriceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
                 var oldImgInput = $($(this).find("[customInput = 'imgInput']")[0]).val();
                 var oldSkuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").val();
-                var oldData = oldSizeInput + "|" + oldColorInput + "|" + oldPriceInput + "|" + oldImgInput + "|" + oldSkuTypeSelect;
+                var oldData = oldSizeInput + "|" + oldColorInput + "|" + oldPriceInput + "|" + oldImgInput + "|" + oldSkuTypeSelect + "|" + oldIdInput;
                 oldDataMap.put(oldSizeInput + oldColorInput, oldData);
             });
         }
         skuTableData.empty();
 
         var tableHtml = "<tr customType=\"skuTr\">" +
+            "                   <td style=\"display: none\"><input type=\"text\" value=\"$id\" customInput=\"idInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$imteNo\" customInput=\"itemNoInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
@@ -363,6 +367,7 @@
         for (var i = 0; i < selectedSizeArr.length; i ++) {
             colorTrArr.each(function () {
                 var sizeInput = selectedSizeArr[i];
+                var idInput = $($(this).find("[customInput = 'idInput']")[0]).attr("value");
                 var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).attr("value");
                 var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("src");
                 var priceInput = "";
@@ -380,6 +385,7 @@
                     colorInput = $String.isNullOrBlank(colorInput) ?  dataArr[1] : colorInput;
                     priceInput = $String.isNullOrBlank(priceInput) ?  dataArr[2] : priceInput;
                     imgInput = $String.isNullOrBlank(imgInput) ?  dataArr[3] : imgInput;
+                    idInput = $String.isNullOrBlank(idInput) ?  dataArr[5] : idInput;
                     var oldSkuTypeSelect = dataArr[4];
 
 
@@ -410,6 +416,7 @@
                 var itemNo = $("#itemNo").val();
                 skuTableData.append(
                     tableHtml.replace("$imteNo", itemNo + "/" + sizeInput + "/" + colorInput)
+                        .replace("$id", idInput)
                         .replace("$size", sizeInput)
                         .replace("$color", colorInput)
                         .replace("$price", priceInput)
@@ -437,12 +444,17 @@
 
         var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
         skuTrArr.each(function () {
+            var idInput = $($(this).find("[customInput = 'idInput']")[0]).val();
             var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
             var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
             var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
             var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
             var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
-            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|" + imgInput));
+
+            if (idInput == null || idInput == '') {
+                idInput = 0;
+            }
+            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|"+ idInput + "|" + imgInput));
         });
 
         var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
