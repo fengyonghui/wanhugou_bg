@@ -328,15 +328,6 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
         commonImgService.delete(commonImg);
 	}
 
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public void physicalDeleteByProd(BizSkuInfo bizSkuInfo) {
-        CommonImg commonImg = new CommonImg();
-        commonImg.setObjectId(bizSkuInfo.getId());
-        commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
-        commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-        commonImgService.deleteCommonImg(commonImg);
-	}
-
 	public BizSkuInfo getSkuInfoByItemNo(String itemNo) {
 		return bizSkuInfoDao.getSkuInfoByItemNo(itemNo);
 	}

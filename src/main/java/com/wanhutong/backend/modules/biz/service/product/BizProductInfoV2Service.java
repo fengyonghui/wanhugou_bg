@@ -176,10 +176,6 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         // 属性 SKU
         List<String> skuAttrStrList = bizProductInfo.getSkuAttrStrList();
         if (CollectionUtils.isNotEmpty(skuAttrStrList)) {
-            //            删除 旧 SKU图片
-            BizSkuInfo tempBizSkuInfo = new BizSkuInfo();
-            tempBizSkuInfo.setProductInfo(bizProductInfo);
-            bizSkuInfoV2Service.physicalDeleteByProd(tempBizSkuInfo);
 
             BizSkuInfo oldSkuEntity = new BizSkuInfo();
             oldSkuEntity.setProductInfo(bizProductInfo);
