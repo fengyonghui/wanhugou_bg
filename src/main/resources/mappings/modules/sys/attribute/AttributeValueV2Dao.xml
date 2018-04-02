@@ -5,6 +5,7 @@
 	<sql id="attributeValueColumns">
 		a.id AS "id",
 		a.attr_id AS "attributeInfo.id",
+		ai.name AS "attributeInfo.name",
 		a.attr_id AS "attrId",
 		a.object_name AS "objectName",
 		a.object_id AS "objectId",
@@ -19,6 +20,7 @@
 	</sql>
 	
 	<sql id="attributeValueJoins">
+		LEFT JOIN sys_attribute_info ai on ai.id=a.attr_id
 	</sql>
     
 	<select id="get" resultType="AttributeValueV2">

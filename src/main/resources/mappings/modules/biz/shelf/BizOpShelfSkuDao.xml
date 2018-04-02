@@ -285,10 +285,4 @@
 		unshelf_time = #{unshelfTime}
 		WHERE id = #{id}
 	</update>
-
-	<update id="updateSkuIdById">
-		UPDATE biz_op_shelf_sku SET
-		sku_id = ${skuId}
-		WHERE id = #{id}
-	</update>
 </mapper>

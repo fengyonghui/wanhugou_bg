@@ -44,6 +44,7 @@
                     <%--console.log(JSON.stringify(opShelfSku.skuValueList)+"-测试 888--");--%>
                         trdatas+= "<tr id='"+opShelfSku.id+"'>";
                         trdatas+="<td>"+opShelfSku.opShelfInfo.name+"</td>";
+                        trdatas+="<td>"+opShelfSku.centerOffice.name+"</td>"
                         trdatas+="<td>"+opShelfSku.skuInfo.name+"</td>";
                         trdatas+="<td>"+opShelfSku.skuInfo.partNo+"</td>";
                         trdatas+="<td>"+opShelfSku.skuInfo.itemNo+"</td>";
@@ -197,6 +198,7 @@
                     <thead>
                     <tr>
                         <th>货架名称</th>
+                        <th>采购中心</th>
                         <th>商品名称</th>
                         <th>商品编码</th>
                         <th>商品货号</th>
