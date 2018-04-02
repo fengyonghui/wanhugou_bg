@@ -401,6 +401,7 @@
 				base_price = #{basePrice},
 			</if>
 			buy_price = #{buyPrice},
+			status = #{DEL_FLAG_NORMAL},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
