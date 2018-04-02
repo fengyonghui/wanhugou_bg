@@ -176,45 +176,46 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         // 属性 SKU
         List<String> skuAttrStrList = bizProductInfo.getSkuAttrStrList();
         if (CollectionUtils.isNotEmpty(skuAttrStrList)) {
-            // 查询已经上架的SKU
-            BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
-            bizOpShelfSku.setProductInfo(new BizProductInfo(bizProductInfo.getId()));
-            List<BizOpShelfSku> ossList = bizOpShelfSkuService.findList(bizOpShelfSku);
-            Map<String, BizOpShelfSku> oldOssMap = Maps.newHashMap();
-            for (BizOpShelfSku b : ossList) {
-                BizSkuInfo skuInfo = b.getSkuInfo();
-                if (skuInfo != null && StringUtils.isNotBlank(skuInfo.getItemNo())) {
-                    oldOssMap.put(skuInfo.getItemNo(), b);
-                }
-            }
+            //            删除 旧 SKU图片
+            BizSkuInfo tempBizSkuInfo = new BizSkuInfo();
+            tempBizSkuInfo.setProductInfo(bizProductInfo);
+            bizSkuInfoV2Service.physicalDeleteByProd(tempBizSkuInfo);
 
-//            删除 旧 SKU
-            BizSkuInfo oldBizSkuInfo = new BizSkuInfo();
-            oldBizSkuInfo.setProductInfo(bizProductInfo);
-            bizSkuInfoV2Service.physicalDeleteByProd(oldBizSkuInfo);
+            BizSkuInfo oldSkuEntity = new BizSkuInfo();
+            oldSkuEntity.setProductInfo(bizProductInfo);
+            List<BizSkuInfo> oldSkuList = bizSkuInfoV2Service.findListIgnoreStatus(oldSkuEntity);
+            List<BizSkuInfo> newSkuList = Lists.newArrayList();
 
             Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
-            int index = 0;
+            int index = oldSkuList.size();
             for(String s : skuAttrStrSet) {
                 String[] split = s.split("\\|");
                 String size = split[0];
                 String color = split[1];
                 String price = split[2];
                 String type = split[3];
-                String img = split.length >= 5 ? split[4] : StringUtils.EMPTY;
+                String id = split[4];
+                String img = split.length >= 6 ? split[5] : StringUtils.EMPTY;
 
                 BizSkuInfo bizSkuInfo = new BizSkuInfo();
+                if (StringUtils.isNotBlank(id) && !"undefined".equals(id) && !"0".equals(id)) {
+                    bizSkuInfo.setId(Integer.valueOf(id));
+                }
                 bizSkuInfo.setProductInfo(bizProductInfo);
                 bizSkuInfo.setBuyPrice(StringUtils.isBlank(price) ? 0 : Double.valueOf(price));
                 bizSkuInfo.setSkuType(Integer.valueOf(type));
                 bizSkuInfo.setName(bizProductInfo.getName());
                 bizSkuInfo.setSort(String.valueOf(index));
                 bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
-                bizSkuInfoV2Service.save(bizSkuInfo);
 
-                if (oldOssMap.get(bizSkuInfo.getItemNo()) != null) {
-                    bizOpShelfSkuService.updateSkuIdById(oldOssMap.get(bizSkuInfo.getItemNo()).getId(), bizSkuInfo.getId());
+                BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNo(bizSkuInfo.getItemNo());
+                if (oldBizSkuInfo != null) {
+                    bizSkuInfo.setId(oldBizSkuInfo.getId());
+                }else {
+                    index ++;
                 }
+                bizSkuInfoV2Service.save(bizSkuInfo);
+                newSkuList.add(bizSkuInfo);
 
                 AttributeValueV2 sizeAttrVal = new AttributeValueV2();
                 sizeAttrVal.setValue(size);
@@ -234,19 +235,38 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 colorAttrVal.setAttributeInfo(colorAttributeInfo);
                 attributeValueV2Service.save(colorAttrVal);
 
-                if(split.length >= 5) {
+                if(StringUtils.isNotBlank(img)) {
                     CommonImg commonImg = new CommonImg();
                     commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-                    commonImg.setImg(img);
                     commonImg.setObjectId(bizSkuInfo.getId());
                     commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
+                    List<CommonImg> list = commonImgService.findList(commonImg);
+                    commonImg.setImg(img);
                     commonImg.setImgSort(index);
                     commonImg.setImgServer(DsConfig.getImgServer());
                     commonImg.setImgPath(img.replaceAll(DsConfig.getImgServer(), ""));
+
+                    if (CollectionUtils.isNotEmpty(list)) {
+                        commonImg.setId(list.get(0).getId());
+                    }
                     commonImgService.save(commonImg);
                 }
-                index ++;
             }
+            for (BizSkuInfo oldS : oldSkuList) {
+                boolean hasDel = true;
+                String oldItemNo = oldS.getItemNo().substring(oldS.getItemNo().indexOf("/") + 1);
+                for (BizSkuInfo newS : newSkuList) {
+                    String newItemNo = newS.getItemNo().substring(newS.getItemNo().indexOf("/") + 1);
+                    if (oldItemNo.equals(newItemNo)) {
+                        hasDel = false;
+                        break;
+                    }
+                }
+                if (hasDel) {
+                    bizSkuInfoV2Service.delete(oldS);
+                }
+            }
+
         }
 
 
