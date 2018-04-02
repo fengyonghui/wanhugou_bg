@@ -16,6 +16,36 @@
         }
 
 	</script>
+	<script type="text/javascript">
+        function productDelete(item){
+            var cp=$("#cp").val();
+            var cpName=$("#cpName").val();
+            var cpPc=$("#cpPc").val();
+            var cpIn=$("#cpIn").val();
+            var cpBr=$("#cpBr").val();
+            top.$.jBox.confirm("确认要删除该产品信息表吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/product/bizProductInfo/prodDelete?id="+item,
+                        data:"bizVarietyInfo.name="+cp+"&name="+cpName+"&prodCode="+cpPc+"&itemNo="+cpIn+"&brandName="+cpBr,
+                        success:function(data){
+                            if(data=="ok"){
+                                <%--alert("删除产品信息成功");--%>
+                                $("#messDele").css("display","block");
+                                <%--使用setTimeout（）方法设定定时580毫秒--%>
+                                setTimeout(function(){
+                                    window.location.reload();
+                                },580);
+                            }
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+            top.$('.jbox-body .jbox-icon').css('top','55px');
+        }
+    </script>
+
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -27,28 +57,32 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>产品品类：</label>
-				<form:input path="bizVarietyInfo.name" htmlEscape="false" class="input-small"/>
+				<form:input id="cp" path="bizVarietyInfo.name" htmlEscape="false" class="input-small"/>
 			</li>
 			<li><label>产品名称：</label>
-				<form:input path="name" htmlEscape="false" class="input-medium"/>
+				<form:input  id="cpName" path="name" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><label>产品代码：</label>
-				<form:input path="prodCode" htmlEscape="false" maxlength="10" class="input-small"/>
+				<form:input id="cpPc" path="prodCode" htmlEscape="false" maxlength="10" class="input-small"/>
 			</li>
 			<li><label>产品货号：</label>
-				<form:input path="itemNo" htmlEscape="false" maxlength="50" class="input-medium"/>
+				<form:input  id="cpIn" path="itemNo" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>品牌名称：</label>
-				<form:input path="brandName" htmlEscape="false" maxlength="50" class="input-medium"/>
+				<form:input id="cpBr" path="brandName" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
-			<%--<li><label>工厂id：</label>--%>
-				<%--<form:input path="vendorId" htmlEscape="false" maxlength="50" class="input-medium"/>--%>
-			<%--</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
+	<%--删除保留当前搜索结果提示--%>
+	<div class="alert alert-warning" style="display: none" id="messDele">
+		<a href="#" class="close" data-dismiss="alert">
+			&times;
+		</a>
+		删除产品信息成功
+	</div>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -100,8 +134,9 @@
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit">
 					<td>
     				<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">修改</a>
-					<a href="${ctx}/biz/product/bizProductInfo/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>
-					<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">sku商品管理</a>
+					<%--<a href="${ctx}/biz/product/bizProductInfo/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>--%>
+						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
+						<a href="${ctx}/biz/product/bizProductInfo/form?id=${bizProductInfo.id}">sku商品管理</a>
  				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
