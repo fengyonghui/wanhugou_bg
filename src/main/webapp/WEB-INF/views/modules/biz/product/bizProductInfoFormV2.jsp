@@ -170,7 +170,9 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label">商品属性：</label>
+        <label class="control-label">商品属性：
+            <p style="opacity: 0.8;color: red;">*属性中禁止使用斜线: "/" </p>
+        </label>
         <div class="controls">
             <c:forEach items="${skuTagList}" var="tagInfo">
                 <div  style="width: 100%;display: inline-block">

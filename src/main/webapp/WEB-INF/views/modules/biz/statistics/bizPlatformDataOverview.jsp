@@ -34,6 +34,7 @@
     <tr>
         <th>月计划采购额(元)</th>
         <th>月累计销量</th>
+        <th>月累计回款</th>
         <th>日销售额(元)</th>
         <th>达成率</th>
         <th>月累计差异</th>
@@ -58,6 +59,9 @@
             </td>
             <td>
                     ${item.accumulatedSalesMonth}
+            </td>
+            <td>
+                    ${item.receiveTotal}
             </td>
             <td>
                     ${item.procurementDay}

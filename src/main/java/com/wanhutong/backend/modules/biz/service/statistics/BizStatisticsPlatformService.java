@@ -119,7 +119,7 @@ public class BizStatisticsPlatformService {
             }
 
             bizPlatformDataOverviewDto.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
-            bizPlatformDataOverviewDto.setAccumulatedSalesMonth(bizOrderStatisticsDto == null ? BigDecimal.ZERO :bizOrderStatisticsDto.getTotalMoney());
+            bizPlatformDataOverviewDto.setAccumulatedSalesMonth(bizOrderStatisticsDto == null ? BigDecimal.ZERO : bizOrderStatisticsDto.getTotalMoney());
             bizPlatformDataOverviewDto.setProcurementDay(
                     CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
                             BigDecimal.ZERO
@@ -128,6 +128,7 @@ public class BizStatisticsPlatformService {
             StockAmountDto stockAmountByCustId = bizInventoryInfoDao.getStockAmountByCustId(o.getId());
             bizPlatformDataOverviewDto.setStockAmount(new BigDecimal(stockAmountByCustId == null ? "0" : stockAmountByCustId.getStockAmount()));
             bizPlatformDataOverviewDto.setCurrentDate(endDate);
+            bizPlatformDataOverviewDto.setReceiveTotal(bizOrderStatisticsDto == null ? BigDecimal.ZERO : bizOrderStatisticsDto.getReceiveTotal());
             List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = resultMap.putIfAbsent(sysRegion == null ? "未知" : sysRegion.getName(), Lists.newArrayList(bizPlatformDataOverviewDto));
             if (bizPlatformDataOverviewDtos != null) {
                 bizPlatformDataOverviewDtos.add(bizPlatformDataOverviewDto);
