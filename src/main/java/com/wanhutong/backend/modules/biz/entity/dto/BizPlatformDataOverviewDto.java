@@ -154,13 +154,14 @@ public class BizPlatformDataOverviewDto {
     }
 
     public BigDecimal getDayMinReturned() {
+        if (getDifferenceTotalMonth().compareTo(BigDecimal.ZERO) >= 0) {
+            return BigDecimal.ZERO;
+        }
         if (getRemainingDays() == 0) {
             return getDifferenceTotalMonth().abs();
         }
-        if (getDifferenceTotalMonth().compareTo(BigDecimal.ZERO) < 0) {
-            return getDifferenceTotalMonth().divide(BigDecimal.valueOf(getRemainingDays()), 2,BigDecimal.ROUND_HALF_UP).abs();
-        }
-        return BigDecimal.ZERO;
+
+        return getDifferenceTotalMonth().divide(BigDecimal.valueOf(getRemainingDays()), 2,BigDecimal.ROUND_HALF_UP).abs();
     }
 
 
