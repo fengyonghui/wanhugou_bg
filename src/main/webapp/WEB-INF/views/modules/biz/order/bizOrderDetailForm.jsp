@@ -102,9 +102,26 @@
             $("#prodInfo2").find("#shelfSkuId_"+obj).removeAttr("name");
         }
     </script>
-
+    <script type="text/javascript">
+        function DetailDelete(a,b,c){
+            top.$.jBox.confirm("确认要删除该商品吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/order/bizOrderDetail//Detaildelete",
+                        data:"id="+a+"&sign="+b+"&orderDetailDetele="+c,
+                        success:function(data){
+                            if(data=="ok"){
+                                $("#trRevom_"+a).remove();//主要是删除这tr
+                                $("#id").val("");//点击删除后把原id为空
+                            }
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+        }
+    </script>
 <meta name="decorator" content="default"/>
-
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -170,7 +187,7 @@
                 </thead>
                 <tbody id="prodInfo">
                     <c:if test="${bizOrderDetail.id!=null}">
-                        <tr>
+                        <tr id="trRevom_${detail.id}">
                             <td>${detail.shelfInfo.opShelfInfo.name}</td>
                             <td>${detail.skuName}</td>
                             <td>${detail.partNo}</td>
@@ -186,9 +203,11 @@
                             <td>${shelfSku.minQty}-${shelfSku.maxQty}</td>
                             <td>${shelfSku.salePrice}</td>
                             <td style="text-align: center;">${detail.ordQty}</td>
-                            <td><a href="${ctx}/biz/order/bizOrderDetail/delete?id=${detail.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">
-                                    删除
-                            </a></td>
+                            <td>
+                                <%--<a href="${ctx}/biz/order/bizOrderDetail/delete?id=${detail.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">--%>
+                                    <%--删除</a>--%>
+                                <a href="javascript:void(0);" onclick="DetailDelete(${detail.id},'1','details');">删除</a>
+                            </td>
                         </tr>
                     </c:if>
                 </tbody>

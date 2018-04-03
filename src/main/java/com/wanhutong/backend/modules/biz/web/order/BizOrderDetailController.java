@@ -169,4 +169,39 @@ public class BizOrderDetailController extends BaseController {
 		}
 		return list;
 	}
+
+	/**
+	 * 订单商品详情实现不刷新删除
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:order:bizOrderDetail:edit")
+	@RequestMapping(value = "Detaildelete")
+	public String Detaildelete(BizOrderDetail bizOrderDetail,String orderDetailDetele) {
+		String aa="error";
+		try {
+			bizOrderDetailService.delete(bizOrderDetail);
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizOrderDetail.getOrderHeader().getId());
+			BizOrderDetail deta = new BizOrderDetail();
+			deta.setOrderHeader(bizOrderDetail.getOrderHeader());
+			List<BizOrderDetail> list = bizOrderDetailService.findList(deta);
+			Double sum=0.0;
+			if(list != null){
+				for(BizOrderDetail bod:list){
+					Double price = bod.getUnitPrice();//商品单价
+					Integer ordQty = bod.getOrdQty();//采购数量
+					if(price==null){price=0.0; }
+					if(ordQty==null){ordQty=0; }
+					sum+=price*ordQty;
+				}
+				bizOrderHeader.setTotalDetail(sum);
+				bizOrderHeaderService.updateMoney(bizOrderHeader);
+			}
+			aa="ok";
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return aa;
+	}
+
 }
