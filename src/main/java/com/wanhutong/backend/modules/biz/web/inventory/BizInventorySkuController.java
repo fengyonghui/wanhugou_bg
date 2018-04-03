@@ -123,6 +123,7 @@ public class BizInventorySkuController extends BaseController {
                     bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
                 }
             }
+            bizInventorySku.setDataStatus("filter");
             page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         }
         model.addAttribute("zt", zt);
@@ -238,11 +239,23 @@ public class BizInventorySkuController extends BaseController {
     @RequiresPermissions("biz:inventory:bizInventorySku:edit")
     @RequestMapping(value = "delete")
     public String delete(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
         bizInventorySkuService.delete(bizInventorySku);
         String zt = request.getParameter("zt");
         addMessage(redirectAttributes, "删除商品库存详情成功");
         return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
     }
+
+    @RequiresPermissions("biz:inventory:bizInventorySku:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_NORMAL);
+        bizInventorySkuService.delete(bizInventorySku);
+        String zt = request.getParameter("zt");
+        addMessage(redirectAttributes, "删除商品库存详情成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
+    }
+
 
     @ResponseBody
     @RequiresPermissions("biz:inventory:bizInventorySku:edit")

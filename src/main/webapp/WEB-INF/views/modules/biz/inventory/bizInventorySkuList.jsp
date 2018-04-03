@@ -135,8 +135,13 @@
 				</c:if>
 				<c:if test="${zt eq '2' || zt eq '3'}">
 					<shiro:hasPermission name="biz:inventory:bizInventorySku:edit"><td>
-						<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">修改</a>
-						<a href="${ctx}/biz/inventory/bizInventorySku/delete?id=${bizInventorySku.id}&zt=${zt}" onclick="return confirmx('确认要删除该商品库存详情吗？', this.href)">删除</a>
+						<c:if test="${bizInventorySku.delFlag!=null && bizInventorySku.delFlag!=0}">
+							<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}&invInfo.id=${bizInventorySku.invInfo.id}&zt=${zt}">修改</a>
+							<a href="${ctx}/biz/inventory/bizInventorySku/delete?id=${bizInventorySku.id}&zt=${zt}" onclick="return confirmx('确认要删除该商品库存详情吗？', this.href)">删除</a>
+						</c:if>
+						<c:if test="${bizInventorySku.delFlag!=null && bizInventorySku.delFlag==0}">
+							<a href="${ctx}/biz/inventory/bizInventorySku/recovery?id=${bizInventorySku.id}&zt=${zt}" onclick="return confirmx('确认要恢复该商品库存详情吗？', this.href)">恢复</a>
+						</c:if>
 					</td></shiro:hasPermission>
 				</c:if>
 			</tr>
