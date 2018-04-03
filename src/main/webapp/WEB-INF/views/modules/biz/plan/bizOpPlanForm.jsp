@@ -69,7 +69,7 @@
 							labelName="objectName1"
 							labelValue="${bizOpPlan.objectName1}" notAllowSelectParent="true"
 							onchange="centerOffUser();"
-							title="采购中心" url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required"
+							title="采购中心" url="/sys/office/selectTreeList?type=8" cssClass="input-xlarge required"
 							dataMsgRequired="必填信息">
 			</sys:treeselect>
 			<span class="help-inline"><font color="red">*</font></span>
