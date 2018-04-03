@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventoryviewlog.BizInventoryViewLogDao">
+    
+	<sql id="bizInventoryViewLogColumns">
+		a.id AS "id",
+		a.inv_id AS "invInfo.id",
+		bi.name AS  "invInfo.name",
+		a.inv_type AS "invType",
+		a.sku_id AS "skuInfo.id",
+		bsi.name AS  "skuInfo.name",
+		a.stock_qty AS "stockQty",
+		a.stock_change_qty AS "stockChangeQty",
+		a.create_id AS "createBy.id",
+		u.name as "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag"
+	</sql>
+	
+	<sql id="bizInventoryViewLogJoins">
+		LEFT JOIN biz_inventory_info bi on bi.id = a.inv_id
+		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
+		LEFT JOIN sys_user u on  u.id = a.create_id
+	</sql>
+    
+	<select id="get" resultType="BizInventoryViewLog">
+		SELECT 
+			<include refid="bizInventoryViewLogColumns"/>
+		FROM biz_inventory_view_log a
+		<include refid="bizInventoryViewLogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizInventoryViewLog">
+		SELECT 
+			<include refid="bizInventoryViewLogColumns"/>
+		FROM biz_inventory_view_log a
+		<include refid="bizInventoryViewLogJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<!--<if test="invInfo.name != null and invInfo.name != '' and invInfo != '' and invInfo != null">-->
+				<!--AND bi.NAME LIKE-->
+					<!--<if test="dbName == 'oracle'">'%'||#{invInfo.name}||'%'</if>-->
+					<!--<if test="dbName == 'mssql'">'%'+#{invInfo.name}+'%'</if>-->
+					<!--<if test="dbName == 'mysql'">concat('%',#{invInfo.name},'%')</if>-->
+			<!--</if>-->
+			<if test="skuInfo != null and skuInfo != '' and skuInfo.name != '' ">
+				AND bsi.name  LIKE
+					<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
+			</if>
+		</where>
+		ORDER BY a.create_time
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				 ,${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		DESC
+	</select>
+	
+	<select id="findAllList" resultType="BizInventoryViewLog">
+		SELECT 
+			<include refid="bizInventoryViewLogColumns"/>
+		FROM biz_inventory_view_log a
+		<include refid="bizInventoryViewLogJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_inventory_view_log(
+			id,
+			inv_id,
+			inv_type,
+			sku_id,
+			stock_qty,
+			stock_change_qty,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{invInfo.id},
+			#{invType},
+			#{skuInfo.id},
+			#{stockQty},
+			#{stockChangeQty},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_inventory_view_log SET 	
+			inv_id = #{invInfo.id},
+			inv_type = #{invInfo.type},
+			sku_id = #{skuInfo.id},
+			stock_qty = #{stockQty},
+			stock_change_qty = #{stockChangeQty},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_inventory_view_log SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
