@@ -304,7 +304,7 @@
 		,sua.mobile as "moblieMoeny.mobile"
 		FROM sys_office a
 		<include refid="officeJoins"/>
-		LEFT join sys_user sua on sua.company_id=a.id and sua.status =#{DEL_FLAG_NORMAL}
+		LEFT join sys_user sua on sua.company_id=a.id and sua.status =1 and a.primary_person=sua.id
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
             <if test="parentIds!=null and parentIds!=''">
