@@ -181,7 +181,10 @@
 			<if test="dbName == 'mssql'">'%'+#{mobile}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if>
 		</if>
-
+		<!-- 用户列表查询所有 -->
+		<if test="company != null and company.parentIds != null and company.parentIds != ''">
+			and c.parent_ids LIKE #{company.parentIds}
+		</if>
 		<!-- 是否是客户专员 -->
 		<if test="company != null and company.type != null and company.type != ''">
 			AND c.type in (#{company.type}

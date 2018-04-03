@@ -543,6 +543,11 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "officeUserList")
 	public String officeUserList(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
+		String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+		Office customer = new Office();
+		customer.setType(String.valueOf(OfficeTypeEnum.CUSTOMER.getType()));
+		customer.setParentIds("%," + purchasersId + ",%");
+		user.setCompany(customer);
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
 		return "modules/sys/OfficeUserList";
