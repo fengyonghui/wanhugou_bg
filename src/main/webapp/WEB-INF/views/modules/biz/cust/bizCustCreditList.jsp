@@ -104,8 +104,13 @@
 				</td>
 				<c:if test="${fns:getUser().isAdmin()}">
 					<shiro:hasPermission name="biz:cust:bizCustCredit:edit"><td>
-						<a href="${ctx}/biz/cust/bizCustCredit/form?customer.id=${custCredit.customer.id}">修改</a>
-						<a href="${ctx}/biz/cust/bizCustCredit/delete?customer.id=${custCredit.customer.id}" onclick="return confirmx('确认要删除该钱包吗？', this.href)">删除</a>
+						<c:if test="${custCredit.delFlag!=null && custCredit.delFlag!=0}">
+							<a href="${ctx}/biz/cust/bizCustCredit/form?customer.id=${custCredit.customer.id}">修改</a>
+							<a href="${ctx}/biz/cust/bizCustCredit/delete?customer.id=${custCredit.customer.id}" onclick="return confirmx('确认要删除该钱包吗？', this.href)">删除</a>
+						</c:if>
+						<c:if test="${custCredit.delFlag!=null && custCredit.delFlag==0}">
+							<a href="${ctx}/biz/cust/bizCustCredit/recovery?customer.id=${custCredit.customer.id}" onclick="return confirmx('确认要恢复该钱包吗？', this.href)">恢复</a>
+						</c:if>
 					</td></shiro:hasPermission>
 				</c:if>
 			</tr>

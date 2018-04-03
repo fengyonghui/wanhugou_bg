@@ -70,7 +70,10 @@
 		FROM biz_cust_credit a
 		<include refid="bizCustCreditJoins"/>
 		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+			1=1
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
 			<if test="customer != null and customer.id != null and customer.id != ''">
 				AND a.office_id = #{customer.id}
 			</if>
@@ -180,7 +183,7 @@
 	
 	<update id="delete">
 		UPDATE biz_cust_credit SET 
-			status = #{DEL_FLAG_DELETE}
+			status = #{delFlag}
 		WHERE office_id = #{customer.id}
 	</update>
 
