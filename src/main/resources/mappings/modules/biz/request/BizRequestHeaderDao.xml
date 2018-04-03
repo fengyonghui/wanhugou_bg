@@ -46,7 +46,10 @@
 		<include refid="bizRequestHeaderJoins"/>
 
 		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+			1=1
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
 			<if test="reqNo != null and reqNo != ''">
 				AND a.req_no
 				LIKE
@@ -168,7 +171,7 @@
 	
 	<update id="delete">
 		UPDATE biz_request_header SET 
-			status = #{DEL_FLAG_DELETE}
+			status = #{delFlag}
 		WHERE id = #{id}
 	</update>
 	

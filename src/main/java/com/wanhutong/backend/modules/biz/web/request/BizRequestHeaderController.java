@@ -204,6 +204,16 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizRequestHeader bizRequestHeader, RedirectAttributes redirectAttributes) {
+		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_DELETE);
+		bizRequestHeaderService.delete(bizRequestHeader);
+		addMessage(redirectAttributes, "删除备货清单成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(BizRequestHeader bizRequestHeader, RedirectAttributes redirectAttributes) {
+		bizRequestHeader.setDelFlag(BizRequestHeader.DEL_FLAG_NORMAL);
 		bizRequestHeaderService.delete(bizRequestHeader);
 		addMessage(redirectAttributes, "删除备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
