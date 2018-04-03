@@ -83,15 +83,15 @@
 		<div class="control-group">
 			<label class="control-label">订单来源：</label>
 			<div class="controls">
-				<c:forEach items="${bizPoHeader.poOrderReqList}" var="so">
-					<c:if test="${so.orderHeader!=null}">
-						<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.orderHeader.orderNum}" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+				<c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
+					<%--<c:if test="${so.orderHeader!=null}">--%>
+						<%--<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.orderHeader.orderNum}" htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
+						<%--<br/>--%>
+					<%--</c:if>--%>
+					<%--<c:if test="${so.requestHeader!=null}">--%>
+						<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.key}" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 						<br/>
-					</c:if>
-					<c:if test="${so.requestHeader!=null}">
-						<input type="text" style="margin-bottom: 10px" disabled="disabled" value="${so.requestHeader.reqNo}" htmlEscape="false" maxlength="30" class="input-xlarge "/>
-						<br/>
-					</c:if>
+					<%--</c:if>--%>
 
 				</c:forEach>
 
@@ -222,7 +222,7 @@
 					<c:if test="${bizPoHeader.poDetailList!=null}">
 						<c:forEach items="${bizPoHeader.poDetailList}" var="poDetail">
 							<tr>
-								<td><img style="width: 20%" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
+								<td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
 								<td>${poDetail.skuInfo.productInfo.brandName}</td>
 								<td>${poDetail.skuInfo.name}</td>
 								<td>${poDetail.skuInfo.partNo}</td>
@@ -252,7 +252,7 @@
 					<c:if test="${bizPoHeader.poDetailList==null}">
 						<c:forEach items="${skuInfoMap}" var="map">
 							<tr>
-					<td><img style="width: 20%" src="${map.key.productInfo.imgUrl}"/></td>
+					<td><img style="max-width: 120px" src="${map.key.productInfo.imgUrl}"/></td>
 					<td>${map.key.productInfo.brandName}</td>
 					<td>${map.key.name}</td>
 					<td>${map.key.partNo}</td>
