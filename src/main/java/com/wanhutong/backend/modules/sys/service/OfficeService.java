@@ -351,4 +351,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public List<Office> findListByTypeList(List<String> typeList) {
 		return officeDao.findListByTypeList(typeList);
 	}
+
+	/**
+	 * 用于查询配资下边的采购商
+	 * @param cust
+	 * @return
+	 */
+	public List<Office> findCapitalList(Office cust){
+		return officeDao.findList(cust);
+	}
 }

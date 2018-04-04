@@ -45,7 +45,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String skuInfos; //多种商品信息
 	private String imgUrl;   //图片地址
 	private String photoDetails;
-	private String vendorName;  //采购商名称
+	private String vendorName;  //供应商名称
 	private Date marketingDate ; //上市时间
 	private String skuPartNo;  //sku编码，用于查询
 

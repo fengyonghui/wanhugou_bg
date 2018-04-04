@@ -1,9 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.BizInventoryEnum" %>
 <html>
 <head>
 	<title>商品库存详情管理</title>
 	<meta name="decorator" content="default"/>
+    <link rel="stylesheet" href="${ctxStatic}/jquery-plugin/jquery.searchableSelect.css">
+	<script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -11,6 +14,7 @@
 				submitHandler: function(form){
                     $("select[title='invInfoId']").removeAttr("disabled");
                     $("select[title='invType']").removeAttr("disabled");
+                    $("select[title='custId']").removeAttr("disabled");
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -41,7 +45,7 @@
                         if($("#id").val()==''){
                             $("#prodInfo2").empty();
                         }
-						var selecttd="<select class='input-mini' title='invInfoId'><option value=''>请选择</option>";
+						var selecttd="<select class='input-mini' title='invInfoId' onchange='addCust(this)'><option value=''>请选择</option>";
                         $.each(data.inventoryInfoList,function (index,inventory) {
                             selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
 						});
@@ -59,7 +63,9 @@
                                 }
                                 trdatas+= "<tr class='"+skuInfo.id+"' id='"+skuInfo.id+"'>";
                                 trdatas+="<td id='invInfoId_"+skuInfo.id+"'>"+selecttd+"</td>";
+                                trdatas+="<td id='custId_"+skuInfo.id+"' class='custId'></td>";
                                 trdatas+="<td><input type='hidden' id='skuInfoIds_"+skuInfo.id+"' value='"+skuInfo.id+"'/>"+skuInfo.name+"</td>";
+                                trdatas+="<td>"+skuInfo.buyPrice+"</td>";
                                 trdatas+="<td>"+(skuInfo.partNo==undefined?"":skuInfo.partNo)+"</td>";
                                 trdatas+="<td>"+(skuInfo.itemNo==undefined?"":skuInfo.itemNo)+"</td>";
                                 trdatas+="<td>"+(skuInfo.productInfo.vendorName==undefined?"":skuInfo.productInfo.vendorName)+"</td>";
@@ -78,15 +84,18 @@
                 })
             });
 
+
+
 		});
 
 		function removeItem(obj) {
-		    alert(obj);
             $("#td_"+obj).html("<a href='#' onclick=\"addItem('"+obj+"')\">增加</a>");
             var trHtml=$("#"+obj);
             $("#prodInfo2").append(trHtml);
             $("#prodInfo2").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).removeAttr("name");
             $("#prodInfo2").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).removeAttr("disabled");
+            $("#prodInfo2").find($("#custId_"+obj)).find($("select[title='custId']")).removeAttr("name");
+            $("#prodInfo2").find($("#custId_"+obj)).find($("select[title='custId']")).removeAttr("disabled");
             $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("name");
             $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("disabled");
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
@@ -99,8 +108,13 @@
             var invInfoId= $("#invInfoId_"+obj).find("select[title='invInfoId']").val();
             var invType=$("#invType_"+obj).find("select[title='invType']").val();
             var saleQty=$("#saleQty_"+obj).val();
+            var custId = $("#custId_"+obj).find("select[title='custId']").val();
             if(invInfoId==''){
                 alert("请选择仓库");
+                return;
+            }
+            if(custId==''){
+                alert("请选择专属客户");
                 return;
             }
             if(invType==''){
@@ -114,8 +128,10 @@
             $("#td_"+obj).html("<a href='#' onclick=\"removeItem('"+obj+"')\">移除</a>");
             var trHtml=$("#"+obj);
             $("#prodInfo").append(trHtml);
-            $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("name","invInfoIds")
+            $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("name","invInfoIds");
             $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("disabled","disabled");
+            $("#prodInfo").find($("#custId_"+obj)).find($("select[title='custId']")).attr("name","customerIds");
+            $("#prodInfo").find($("#custId_"+obj)).find($("select[title='custId']")).attr("disabled","disabled");
             $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("name","invTypes");
             $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("disabled","disabled");
             $("#prodInfo").find($("#saleQty_"+obj)).attr("name","stockQtys");
@@ -137,6 +153,27 @@
                         }
                     }
                 })
+            }
+        }
+        <!--选择云仓时添加采购商-->
+        function addCust(obj) {
+			var invId = $(obj).val();
+            var invInfo = $(obj).parent().parent();
+            var html = "";
+
+            html+="<select title='custId' class='input-medium required'>" +
+                "<option value=''>请选择采购商</option>";
+                <c:forEach items="${custList}" var="item" varStatus="vs">
+                	html+="<option value='${item.id}'> ${item.name}</option>";
+                </c:forEach>
+                html+="</select>";
+            if (invId ==${BizInventoryEnum.CLOUDCHAMBE.statu}){
+                $("#invName1").after("<th>专属客户</th>");
+                $("#invName2").after("<th>专属客户</th>");
+                $(invInfo).find("td[class='custId']").append(html);
+                 $("select[title='custId']").searchableSelect();
+            }else {
+                $(invInfo).find("td[class='custId']").html("");
             }
         }
 	</script>
@@ -181,8 +218,9 @@
 				<table id="contentTable" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
-						<th>仓库名称</th>
+						<th id="invName1">仓库名称</th>
 						<th>商品名称</th>
+						<th>出厂价</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<th>供应商</th>
@@ -197,10 +235,17 @@
 						<tr class="${entity.skuInfo.id}" id="${entity.id}">
 						<input name="id" value="${entity.id}" type="hidden"/>
 						<td>${entity.invInfo.name}</td>
+						<c:if test="${entity.cust.id=='0'}">
+							<td></td>
+						</c:if>
+						<c:if test="${entity.cust.id!='0'}"	>
+							<td>${entity.cust.name}</td>
+						</c:if>
 						<td>${entity.skuInfo.name}</td>
+						<td>${entity.skuInfo.buyPrice}</td>
 						<td>${entity.skuInfo.partNo}</td>
 						<td>${entity.skuInfo.itemNo}</td>
-						<td>${entity.skuInfo.productInfo.vendorName}</td>
+						<td>${entity.skuInfo.vendorName}</td>
 						<td>${entity.skuInfo.skuPropertyInfos}</td>
 						<td>${fns:getDictLabel(entity.invType, 'inv_type', '未知状态')}</td>
 						<td><input name="stockQtys" value="${entity.stockQty}" style="width: 40px"/></td>
@@ -212,8 +257,9 @@
 				<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered table-condensed">
 					<thead>
 					<tr>
-						<th>仓库名称</th>
+						<th id="invName2">仓库名称</th>
 						<th>商品名称</th>
+						<th>出厂价</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<th>供应商</th>
