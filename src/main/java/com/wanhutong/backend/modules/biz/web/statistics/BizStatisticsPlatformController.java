@@ -80,8 +80,6 @@ public class BizStatisticsPlatformController extends BaseController {
             calendar.setTime(parseDate);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             Date startDate = calendar.getTime();
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.getMaximum(Calendar.DAY_OF_MONTH));
-            Date endDate = calendar.getTime();
             list = bizStatisticsPlatformService.getPlatformData(
                     simpleDateFormat.format(startDate),
                     simpleDateFormat.format(parseDate),
@@ -118,8 +116,6 @@ public class BizStatisticsPlatformController extends BaseController {
             calendar.setTime(parseDate);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             Date startDate = calendar.getTime();
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.getMaximum(Calendar.DAY_OF_MONTH));
-            Date endDate = calendar.getTime();
             dataMap = bizStatisticsPlatformService.getPlatformData(
                     simpleDateFormat.format(startDate),
                     simpleDateFormat.format(parseDate),

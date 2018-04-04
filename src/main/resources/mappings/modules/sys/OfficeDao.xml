@@ -359,4 +359,20 @@
 		and status = 1;
 	</select>
 
+	<select id="findListByTypeList" parameterType="String" resultType="Office">
+		SELECT a.*,
+		(SELECT region.name
+		FROM sys_region AS region
+		LEFT JOIN common_location AS location ON location.province_id = region.id
+		LEFT JOIN sys_office_address AS oAddress ON oAddress.addr_id = location.id
+		WHERE oAddress.office_id = a.id AND oAddress.type = 2 limit 1) AS province
+		FROM sys_office a
+		WHERE a.status = 1
+		AND a.type in
+		<foreach collection="typeList" item="i" index="index"
+		open="(" close=")" separator=",">
+		#{i}
+		</foreach>
+	</select>
+
 </mapper>
