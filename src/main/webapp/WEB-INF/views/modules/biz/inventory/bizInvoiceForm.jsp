@@ -6,6 +6,14 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
+            $('#select_all').live('click',function(){
+                var choose=$("input[type='checkbox']");
+                if($(this).attr('checked')){
+                    choose.attr('checked',true);
+                }else{
+                    choose.attr('checked',false);
+                }
+            });
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
@@ -160,13 +168,13 @@
 		});
             <%--点击确定时获取订单详情--%>
             $("#ensureData").click(function () {
-                    $('input:checkbox:checked').each(function(i) {
-                       var t= $(this).val();
-                       var ttp= $(this).parent().parent().parent();
-                       var trt= ttp.find($(".tr_"+t))
-                        $("#prodInfo").append(trt);
-                    });
-
+				$('input:checkbox:checked').each(function(i) {
+				   var t= $(this).val();
+				   var ttp= $(this).parent().parent().parent();
+				   var trt= ttp.find($(".tr_"+t))
+					$("#prodInfo").append(trt);
+				});
+                $("#select_all").removeAttr("checked");
 
 			});
 
