@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -446,11 +449,20 @@ public class OfficeController extends BaseController {
     public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
         List<Office> list = null;
         if (StringUtils.isNotBlank(type)) {
+            String defType = type;
+            String[] split = type.split(",");
+            if (ArrayUtils.isNotEmpty(split)) {
+                defType = split[0];
+            }
             if (source != null && source.equals("officeConnIndex")) {
                 //属于客户专员查询采购中心方法
-                list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(type));
+                list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(defType));
             } else {
-                list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(type));
+                if (ArrayUtils.isNotEmpty(split)) {
+                    list = officeService.findListByTypeList(Arrays.asList(split));
+                }else {
+                    list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
+                }
             }
         }
         if (list == null || list.size() == 0) {
@@ -523,7 +535,7 @@ public class OfficeController extends BaseController {
             //属于查询采购中心
             list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(type));
         }
-        if (list == null || list.size() == 0) {
+        if (CollectionUtils.isEmpty(list)) {
             addMessage(redirectAttributes, "列表不存在");
         }
         return convertList(list);

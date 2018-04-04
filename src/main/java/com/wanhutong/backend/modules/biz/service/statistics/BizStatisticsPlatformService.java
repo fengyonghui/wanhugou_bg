@@ -8,11 +8,11 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.plan.BizOpPlanDao;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.entity.plan.BizOpPlan;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
 import com.wanhutong.backend.modules.sys.dao.SysRegionDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -86,30 +85,48 @@ public class BizStatisticsPlatformService {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, id);
     }
 
+    private boolean hasOffice(List<BizPlatformDataOverviewDto> list, Office office) {
+        for (BizPlatformDataOverviewDto dto : list){
+            if (office.getName().equals(dto.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * 获取平台业务数据
      */
     public Map<String, List<BizPlatformDataOverviewDto>> getPlatformData(String startDate, String endDate, String currentDate) {
         String[] dateStrArr = startDate.split("-");
-        List<Office> listByType = officeDao.findListByType("8");
-        listByType.removeIf(o -> o.getName().contains("测试"));
-        Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
-        listByType.forEach(o -> {
-            SysRegion sysRegion = sysRegionDao.queryOfficeProvinceById(o.getId());
 
-            List<BizOrderStatisticsDto> bizOrderStatisticsDtoList = orderStatisticDataByOffice(startDate, endDate + " 23:59:59", null, null, null, o.getId());
-            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList = orderStatisticDataByOffice(currentDate, currentDate + " 23:59:59", null, null, null, o.getId());
-            BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
-            BizOrderStatisticsDto bizOrderStatisticsDto = null;
-            if (CollectionUtils.isNotEmpty(bizOrderStatisticsDtoList)) {
-                bizOrderStatisticsDto = bizOrderStatisticsDtoList.get(0);
+        List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.platformDataOverview(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS);
+
+        List<Office> listByType = officeDao.findListByTypeList(Lists.newArrayList(
+                OfficeTypeEnum.PURCHASINGCENTER.getType(),
+                OfficeTypeEnum.WITHCAPITAL.getType(),
+                OfficeTypeEnum.NETWORKSUPPLY.getType()
+        ));
+        listByType.removeIf(office -> office.getName().contains("测试"));
+        listByType.forEach(office -> {
+            if (!hasOffice(bizPlatformDataOverviewDtos, office)) {
+                BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
+                bizPlatformDataOverviewDto.setName(office.getName());
+                bizPlatformDataOverviewDto.setOfficeType(Integer.valueOf(office.getType()));
+                bizPlatformDataOverviewDto.setOfficeId(office.getId());
+                bizPlatformDataOverviewDto.setProvince(office.getProvince());
+                bizPlatformDataOverviewDtos.add(bizPlatformDataOverviewDto);
             }
-            bizPlatformDataOverviewDto.setName(o.getName());
+        });
+
+        Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
+        bizPlatformDataOverviewDtos.forEach(o -> {
+            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList =
+                    orderStatisticDataByOffice(currentDate, currentDate + " 23:59:59", null, null, null, o.getOfficeId());
             // 采购额
             BizOpPlan bizOpPlan = new BizOpPlan();
             bizOpPlan.setObjectName("sys_office");
-            bizOpPlan.setObjectId(String.valueOf(o.getId()));
+            bizOpPlan.setObjectId(String.valueOf(o.getOfficeId()));
             bizOpPlan.setYear(dateStrArr[0]);
             bizOpPlan.setMonth(dateStrArr[1]);
             bizOpPlan.setDay("0");
@@ -118,20 +135,16 @@ public class BizStatisticsPlatformService {
                 bizOpPlan = planList.get(0);
             }
 
-            bizPlatformDataOverviewDto.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
-            bizPlatformDataOverviewDto.setAccumulatedSalesMonth(bizOrderStatisticsDto == null ? BigDecimal.ZERO : bizOrderStatisticsDto.getTotalMoney());
-            bizPlatformDataOverviewDto.setProcurementDay(
+            o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            o.setProcurementDay(
                     CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
                             BigDecimal.ZERO
                             : currentBizOrderStatisticsDtoList.get(0).getTotalMoney());
             // 库存金额
-            StockAmountDto stockAmountByCustId = bizInventoryInfoDao.getStockAmountByCustId(o.getId());
-            bizPlatformDataOverviewDto.setStockAmount(new BigDecimal(stockAmountByCustId == null ? "0" : stockAmountByCustId.getStockAmount()));
-            bizPlatformDataOverviewDto.setCurrentDate(endDate);
-            bizPlatformDataOverviewDto.setReceiveTotal(bizOrderStatisticsDto == null ? BigDecimal.ZERO : bizOrderStatisticsDto.getReceiveTotal());
-            List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = resultMap.putIfAbsent(sysRegion == null ? "未知" : sysRegion.getName(), Lists.newArrayList(bizPlatformDataOverviewDto));
-            if (bizPlatformDataOverviewDtos != null) {
-                bizPlatformDataOverviewDtos.add(bizPlatformDataOverviewDto);
+            o.setCurrentDate(endDate);
+            List<BizPlatformDataOverviewDto> tempDtoList = resultMap.putIfAbsent(o.getProvince(), Lists.newArrayList(o));
+            if (tempDtoList != null) {
+                tempDtoList.add(o);
             }
         });
         return resultMap;

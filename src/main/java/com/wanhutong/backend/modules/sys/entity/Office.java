@@ -50,6 +50,12 @@ public class Office extends TreeEntity<Office> {
 	private Integer consultantId;
 	private Integer centerId;
 	private Integer ccStatus;
+
+	/**
+	 * 省份
+	 */
+	private String province;
+
 	public String getLevel() {
 		return level;
 	}
@@ -314,4 +320,11 @@ public class Office extends TreeEntity<Office> {
 		this.queryMemberGys = queryMemberGys;
 	}
 
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
 }
