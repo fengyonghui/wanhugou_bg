@@ -113,6 +113,7 @@ public class BizStatisticsPlatformService {
                 BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
                 bizPlatformDataOverviewDto.setName(office.getName());
                 bizPlatformDataOverviewDto.setOfficeType(Integer.valueOf(office.getType()));
+                bizPlatformDataOverviewDto.setOfficeId(office.getId());
                 bizPlatformDataOverviewDto.setProvince(office.getProvince());
                 bizPlatformDataOverviewDtos.add(bizPlatformDataOverviewDto);
             }

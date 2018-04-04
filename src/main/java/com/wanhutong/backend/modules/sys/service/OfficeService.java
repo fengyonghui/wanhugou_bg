@@ -8,7 +8,6 @@ import java.util.*;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.utils.excel.fieldtype.OfficeType;
 import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
@@ -340,5 +339,14 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         stringBuffer.append(",").append(id).append(",");
         String parentIds = stringBuffer.toString();
         return  officeDao.findVent(parentIds);
+	}
+
+	/**
+	 * 取多个类型的office
+	 * @param typeList
+	 * @return
+	 */
+	public List<Office> findListByTypeList(List<String> typeList) {
+		return officeDao.findListByTypeList(typeList);
 	}
 }

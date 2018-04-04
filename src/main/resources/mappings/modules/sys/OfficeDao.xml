@@ -373,6 +373,12 @@
 		open="(" close=")" separator=",">
 		#{i}
 		</foreach>
+		AND NOT EXISTS(
+		select 1
+		from sys_test_account ta
+		where a.id = ta.object_id
+		and ta.object_name = 'sys_office'
+		)
 	</select>
 
 </mapper>
