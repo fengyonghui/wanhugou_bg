@@ -1507,4 +1507,68 @@
 		GROUP BY monthDate
 	</select>
 
+	<select id="platformDataOverview" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto">
+SELECT
+  count(1)                                             AS orderCount,
+  sum(oh.total_detail + oh.total_exp + oh.freight)     AS accumulatedSalesMonth,
+  sum(receive_total)                                   AS receiveTotal,
+  (SELECT sum(sku1.buy_price * detail1.ord_qty)
+   FROM biz_order_header AS header1 LEFT JOIN biz_custom_center_consultant AS consultant1
+       ON consultant1.cust_id = header1.cust_id
+     LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
+     LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
+     LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
+   WHERE office1.id = so.id AND header1.order_type = 1 AND header1.`status` = 1 AND sku1.`status` = 1 AND
+         NOT EXISTS(SELECT 1
+                    FROM sys_test_account ta
+                    WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+		</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		AND header1.create_time BETWEEN #{startDate} AND #{endDate}
+		AND date_format(oh.create_time, '%Y-%m') = date_format(header1.create_time, '%Y-%m')) AS buyPrice,
+  CASE date_format(oh.create_time, '%Y-%m')
+  WHEN '2017-06'
+    THEN '2017-09'
+  WHEN '2017-07'
+    THEN '2017-10'
+  WHEN '2017-08'
+    THEN '2017-09'
+  ELSE date_format(oh.create_time, '%Y-%m') END           createDate,
+  so.id AS officeId,
+  so.name AS name,
+  so.type AS officeType,
+		(SELECT region.name
+		FROM sys_region AS region
+		LEFT JOIN common_location AS location ON location.province_id = region.id
+		LEFT JOIN sys_office_address AS oAddress ON oAddress.addr_id = location.id
+		LEFT JOIN sys_office AS office  ON oAddress.office_id = office.id
+		WHERE office.id = so.id AND oAddress.type = 2 limit 1) AS province,
+		(SELECT
+		SUM(bsi.base_price * s.stock_qty)
+		FROM biz_inventory_info ii ,biz_inventory_sku s, biz_sku_info bsi
+		WHERE ii.id = s.inv_id
+		and bsi.id = s.sku_id
+		and ii.`status` = 1
+		and s.`status` = 1
+		and bsi.`status` = 1
+		AND ii.cust_id = so.id
+		GROUP BY ii.cust_id) AS stockAmount
+FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_header oh
+	WHERE cc.consultant_id = u.id AND oh.cust_id = cc.cust_id
+		AND NOT EXISTS(SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id  AND ta.object_name = 'sys_office')
+		AND so.id = u.company_id
+		AND so.type IN (8, 10, 11)
+		AND
+		(<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+		biz_status != #{item.state}
+	</foreach>
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+      AND oh.`status` = 1 AND u.`status` = 1 AND cc.`status` = 1 AND so.id in
+		(select id from sys_office where type IN (8, 10, 11) and status = 1)
+		AND oh.create_time BETWEEN #{startDate} AND #{endDate}
+		GROUP BY so.id
+
+	</select>
 </mapper>

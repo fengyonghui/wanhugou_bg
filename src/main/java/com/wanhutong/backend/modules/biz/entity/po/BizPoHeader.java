@@ -48,7 +48,9 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private String unitPrices;
 	private String ordQtys;
 	private List<BizPoOrderReq>poOrderReqList;
+
 	private Map<Integer,List<BizPoOrderReq>> orderNumMap;
+	private Map<String,Integer> orderSourceMap;
 
 	
 	public BizPoHeader() {
@@ -234,5 +236,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setOrderNumMap(Map<Integer, List<BizPoOrderReq>> orderNumMap) {
 		this.orderNumMap = orderNumMap;
+	}
+
+	public Map<String, Integer> getOrderSourceMap() {
+		return orderSourceMap;
+	}
+
+	public void setOrderSourceMap(Map<String, Integer> orderSourceMap) {
+		this.orderSourceMap = orderSourceMap;
 	}
 }

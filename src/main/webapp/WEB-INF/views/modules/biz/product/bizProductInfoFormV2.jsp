@@ -12,7 +12,19 @@
         $(document).ready(function () {
             //$("#name").focus();
             $("#inputForm").validate({
+
                 submitHandler: function (form) {
+                    var brandId =$("#brandId").val();
+                    if(brandId==''){
+                        alert("请选择品牌");
+                        return;
+                    }
+                   var  varietyInfoId=$("#varietyInfoId").val();
+                    if(varietyInfoId==''){
+                        alert("请选择分类");
+                        return;
+                    }
+
                     loading('正在提交，请稍等...');
                     form.submit();
                 },
@@ -56,7 +68,7 @@
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
         <div style="margin-left: 180px">
-                <form:select title="choose" path="brandId" class="input-xlarge required">
+                <form:select  about="choose" path="brandId" class="input-xlarge required">
                     <form:option value="" label="请选择"/>
                     <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
                                   htmlEscape="false"/></form:select>
@@ -128,7 +140,7 @@
     <div class="control-group">
         <label class="control-label">请选择产品分类：</label>
         <div style="margin-left: 180px">
-            <form:select title="choose" path="bizVarietyInfo.id" class="input-medium required">
+            <form:select id="varietyInfoId" about="choose" path="bizVarietyInfo.id" class="input-medium required">
                 <form:option value="" label="请选择"/>
                 <form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
             </form:select>
@@ -587,7 +599,7 @@
             searchable: true
         });
 
-        $('select[title="choose"]').searchableSelect();
+        $('select[about="choose"]').searchableSelect();
 
         var testSelect2 = $("#test-select-2");
         var treeMultiselect = testSelect2.parent().find(".tree-multiselect")[0];

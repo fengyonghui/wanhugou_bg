@@ -144,7 +144,7 @@
 		<th>所属采购中心</th>
 		<th>采购商电话</th>
 		<th>商品总价</th>
-		<th>交易金额</th>
+		<th>调整金额</th>
 		<th>运费</th>
 		<th>应付金额</th>
 		<th>利润</th>
@@ -152,7 +152,8 @@
 		<th>业务状态</th>
 		<th>订单来源</th>
 		<th>创建人</th>
-		<th>订单更新时间</th>
+		<th>创建时间</th>
+		<th>更新时间</th>
 		<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><th>操作</th></shiro:hasPermission>
 	</tr>
 	</thead>
@@ -213,6 +214,9 @@
 			</td>
 			<td>
 					${orderHeader.createBy.name}
+			</td>
+			<td>
+				<fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<td>
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

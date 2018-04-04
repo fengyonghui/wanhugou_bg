@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.TreeDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -39,4 +40,11 @@ public interface OfficeDao extends TreeDao<Office> {
      * @return
      */
     List<Office> findVent(String parentIds);
+
+    /**
+     * 取多个类型的office
+     * @param typeList
+     * @return
+     */
+    List<Office> findListByTypeList(@Param("typeList") List<String> typeList);
 }

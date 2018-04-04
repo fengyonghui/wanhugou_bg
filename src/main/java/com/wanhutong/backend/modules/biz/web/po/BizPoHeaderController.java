@@ -99,13 +99,22 @@ public class BizPoHeaderController extends BaseController {
 			BizPoOrderReq bizPoOrderReq=new BizPoOrderReq();
 			bizPoOrderReq.setPoHeader(entity);
 			List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
-			List<BizPoOrderReq> poOrderReqs= Lists.newArrayList();
+			List<Map<String,Integer>> poOrderReqs= Lists.newArrayList();
 			BizOrderDetail bizOrderDetail=new BizOrderDetail();
 			BizRequestDetail bizRequestDetail=new BizRequestDetail();
 			Map<Integer,List<BizPoOrderReq>> map=new HashMap<>();
+			Map<String,Integer> mapSource=new HashMap<>();
 			for (BizPoOrderReq poOrderReq:poOrderReqList){
 				if(poOrderReq.getSoType()== Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())){
 					BizOrderHeader bizOrderHeader=bizOrderHeaderService.get(poOrderReq.getSoId());
+					String numKey=bizOrderHeader.getOrderNum();
+					if(mapSource.containsKey(numKey)){
+						int count = mapSource.get(numKey);
+						mapSource.remove(numKey);
+						mapSource.put(numKey,count+1);
+					}else {
+						mapSource.put(numKey,1);
+					}
 					poOrderReq.setOrderHeader(bizOrderHeader);
 					bizOrderDetail.setOrderHeader(bizOrderHeader);
 					bizOrderDetail.setLineNo(poOrderReq.getSoLineNo());
@@ -133,6 +142,14 @@ public class BizPoHeaderController extends BaseController {
 					}
 				}else if(poOrderReq.getSoType()==Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())){
 					BizRequestHeader bizRequestHeader=bizRequestHeaderService.get(poOrderReq.getSoId());
+					String reqKey=bizRequestHeader.getReqNo();
+					if(mapSource.containsKey(reqKey)){
+						int count = mapSource.get(reqKey);
+						mapSource.remove(reqKey);
+						mapSource.put(reqKey,count+1);
+					}else {
+						mapSource.put(reqKey,1);
+					}
 					poOrderReq.setRequestHeader(bizRequestHeader);
 					bizRequestDetail.setRequestHeader(bizRequestHeader);
 					bizRequestDetail.setLineNo(poOrderReq.getSoLineNo());
@@ -160,10 +177,10 @@ public class BizPoHeaderController extends BaseController {
 					}
 				}
 
-					poOrderReqs.add(poOrderReq);
+				//	poOrderReqs.add(mapSource);
 			}
 
-			entity.setPoOrderReqList(poOrderReqs);
+			entity.setOrderSourceMap(mapSource);
 
 
 

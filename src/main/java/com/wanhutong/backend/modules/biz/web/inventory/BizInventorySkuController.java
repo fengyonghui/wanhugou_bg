@@ -12,11 +12,13 @@ import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -69,7 +71,8 @@ public class BizInventorySkuController extends BaseController {
     private BizOrderDetailService bizOrderDetailService;
     @Autowired
     private DictService dictService;
-
+    @Autowired
+    private BizInventoryViewLogService bizInventoryViewLogService;
 
     @ModelAttribute
     public BizInventorySku get(@RequestParam(required = false) Integer id) {
@@ -123,7 +126,6 @@ public class BizInventorySkuController extends BaseController {
                     bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
                 }
             }
-            bizInventorySku.setDataStatus("filter");
             page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         }
         model.addAttribute("zt", zt);
@@ -208,11 +210,15 @@ public class BizInventorySkuController extends BaseController {
             String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
             String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
             BizInventorySku bizInventorySku = new BizInventorySku();
+            BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
             for (int i = 0; i < skuInfoIdArr.length; i++) {
                 bizInventorySku.setId(null);
                 bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
                 bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
                 bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
+                bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+                bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+                bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
                 //查询是否有已删除的该商品库存
                 BizInventorySku only = bizInventorySkuService.findOnly(bizInventorySku);
                 if (only == null) {
@@ -222,11 +228,21 @@ public class BizInventorySkuController extends BaseController {
                     only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
                     bizInventorySkuService.save(only);
                 }
+                bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());
+                bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
+                bizInventoryViewLogService.save(bizInventoryViewLog);
             }
         }//修改
         else if (bizInventorySkus != null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")) {
+            BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
             BizInventorySku bizInventorySku = bizInventorySkuService.get(bizInventorySkus.getId());
+            bizInventoryViewLog.setStockChangeQty(Integer.parseInt(bizInventorySkus.getStockQtys())-bizInventorySku.getStockQty());
             bizInventorySku.setStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));
+            bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+            bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
+            bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+            bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());
+            bizInventoryViewLogService.save(bizInventoryViewLog);
             bizInventorySkuService.save(bizInventorySku);
         }
 
@@ -239,23 +255,19 @@ public class BizInventorySkuController extends BaseController {
     @RequiresPermissions("biz:inventory:bizInventorySku:edit")
     @RequestMapping(value = "delete")
     public String delete(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
+        BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
+
         bizInventorySkuService.delete(bizInventorySku);
         String zt = request.getParameter("zt");
         addMessage(redirectAttributes, "删除商品库存详情成功");
+        bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+        bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
+        bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+        bizInventoryViewLog.setStockQty(0);
+        bizInventoryViewLog.setStockChangeQty(0-bizInventorySku.getStockQty());
+        bizInventoryViewLogService.save(bizInventoryViewLog);
         return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
     }
-
-    @RequiresPermissions("biz:inventory:bizInventorySku:edit")
-    @RequestMapping(value = "recovery")
-    public String recovery(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_NORMAL);
-        bizInventorySkuService.delete(bizInventorySku);
-        String zt = request.getParameter("zt");
-        addMessage(redirectAttributes, "删除商品库存详情成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
-    }
-
 
     @ResponseBody
     @RequiresPermissions("biz:inventory:bizInventorySku:edit")

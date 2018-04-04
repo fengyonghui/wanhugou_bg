@@ -107,10 +107,10 @@
                     totalProfitPrice += value1.profitPrice;
                     totalReceiveTotal += value1.receiveTotal;
                 });
-                orderTable += "<td>" + totalTotalMoney + "</td>";
-                orderTable1 += "<td>" + totalOrderCount + "</td>";
-                orderTable2 += "<td>" + totalProfitPrice + "</td>";
-                orderTable3 += "<td>" + totalReceiveTotal + "</td>";
+                orderTable += "<td>" + totalTotalMoney.toFixed(2) + "</td>";
+                orderTable1 += "<td>" + totalOrderCount.toFixed(2) + "</td>";
+                orderTable2 += "<td>" + totalProfitPrice.toFixed(2) + "</td>";
+                orderTable3 += "<td>" + totalReceiveTotal.toFixed(2) + "</td>";
 
                 orderTable += "</tr>";
                 orderTable1 += "</tr>";

@@ -93,7 +93,7 @@
         window.location.href = "overview?date=" + startDate;
     }
     function exportTable() {
-        var startDate = $("#applyDate").val();
+        var startDate = $("#startDate").val();
         //定义一个form表单
         var myform = $("<form></form>");
         myform.attr('method','post')

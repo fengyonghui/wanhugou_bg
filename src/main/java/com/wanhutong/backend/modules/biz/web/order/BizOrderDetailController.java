@@ -88,7 +88,7 @@ public class BizOrderDetailController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizOrderDetail bizOrderDetail, Model model) {
 //		用于往页面传给savg保存 首单标记 OneOrder
-          bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
+		bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
         BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
         if(orderHeader!=null){
 			BizOrderHeader ord = bizOrderHeaderService.get(orderHeader.getId());
@@ -98,7 +98,9 @@ public class BizOrderDetailController extends BaseController {
 		}
 //		订单详情修改按钮显示品规色
 		BizOrderDetail detailOrder = bizOrderDetailService.get(bizOrderDetail);
-		if(detailOrder!=null){
+        if(detailOrder!=null){
+			BizOpShelfSku opShelfSku=bizOpShelfSkuService.get(bizOrderDetail.getShelfInfo().getId()) ;
+			detailOrder.setShelfInfo(opShelfSku);
 			BizOrderSkuPropValue bizOrderSkuPropValue = new BizOrderSkuPropValue();
 			bizOrderSkuPropValue.setOrderDetails(detailOrder);
 			List<BizOrderSkuPropValue> list = bizOrderSkuPropValueService.findList(bizOrderSkuPropValue);
@@ -169,4 +171,39 @@ public class BizOrderDetailController extends BaseController {
 		}
 		return list;
 	}
+
+	/**
+	 * 订单商品详情实现不刷新删除
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:order:bizOrderDetail:edit")
+	@RequestMapping(value = "Detaildelete")
+	public String Detaildelete(BizOrderDetail bizOrderDetail,String orderDetailDetele) {
+		String aa="error";
+		try {
+			bizOrderDetailService.delete(bizOrderDetail);
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizOrderDetail.getOrderHeader().getId());
+			BizOrderDetail deta = new BizOrderDetail();
+			deta.setOrderHeader(bizOrderDetail.getOrderHeader());
+			List<BizOrderDetail> list = bizOrderDetailService.findList(deta);
+			Double sum=0.0;
+			if(list != null){
+				for(BizOrderDetail bod:list){
+					Double price = bod.getUnitPrice();//商品单价
+					Integer ordQty = bod.getOrdQty();//采购数量
+					if(price==null){price=0.0; }
+					if(ordQty==null){ordQty=0; }
+					sum+=price*ordQty;
+				}
+				bizOrderHeader.setTotalDetail(sum);
+				bizOrderHeaderService.updateMoney(bizOrderHeader);
+			}
+			aa="ok";
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return aa;
+	}
+
 }
