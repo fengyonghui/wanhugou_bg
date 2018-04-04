@@ -532,7 +532,13 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add("");
                 }
                 //利润
-                rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - o.getTotalBuyPrice()));
+                Double buy=0.0;
+                if(o.getTotalBuyPrice()!=null){
+                    buy=o.getTotalBuyPrice();
+                }else{
+                    buy=0.0;
+                }
+                rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - buy));
                 Dict dictInv = new Dict();
                 dictInv.setDescription("发票状态");
                 dictInv.setType("biz_order_invStatus");
