@@ -475,7 +475,7 @@ public class OfficeController extends BaseController {
                 //属于客户专员查询采购中心方法
                 list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(defType));
             } else {
-                if (ArrayUtils.isNotEmpty(split)) {
+                if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
                     list = officeService.findListByTypeList(Arrays.asList(split));
                 }else {
                     list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
