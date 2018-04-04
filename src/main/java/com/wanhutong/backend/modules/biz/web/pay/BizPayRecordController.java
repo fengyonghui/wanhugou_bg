@@ -86,7 +86,7 @@ public class BizPayRecordController extends BaseController {
 	public String recovery(BizPayRecord bizPayRecord, RedirectAttributes redirectAttributes) {
 		bizPayRecord.setDelFlag(BizPayRecord.DEL_FLAG_NORMAL);
 		bizPayRecordService.delete(bizPayRecord);
-		addMessage(redirectAttributes, "删除交易记录成功");
+		addMessage(redirectAttributes, "恢复交易记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/pay/bizPayRecord/?repage";
 	}
 
