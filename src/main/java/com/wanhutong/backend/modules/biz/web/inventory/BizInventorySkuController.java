@@ -224,12 +224,14 @@ public class BizInventorySkuController extends BaseController {
                 if (only == null) {
                     bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
                     bizInventorySkuService.save(bizInventorySku);
+                    bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());
+                    bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
                 } else {
                     only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
                     bizInventorySkuService.save(only);
+                    bizInventoryViewLog.setStockQty(only.getStockQty());
+                    bizInventoryViewLog.setStockChangeQty(only.getStockQty());
                 }
-                bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());
-                bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
                 bizInventoryViewLogService.save(bizInventoryViewLog);
             }
         }//修改
