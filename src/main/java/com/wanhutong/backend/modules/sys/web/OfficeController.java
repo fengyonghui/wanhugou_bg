@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -534,7 +535,7 @@ public class OfficeController extends BaseController {
             //属于查询采购中心
             list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(type));
         }
-        if (list == null || list.size() == 0) {
+        if (CollectionUtils.isEmpty(list)) {
             addMessage(redirectAttributes, "列表不存在");
         }
         return convertList(list);
