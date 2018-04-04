@@ -522,4 +522,21 @@ public class OfficeController extends BaseController {
         return "modules/sys/supplierList";
     }
 
+    /**
+     * 用于查询采购中心
+     * */
+    @RequiresPermissions("user")
+    @ResponseBody
+    @RequestMapping(value = "selectTreeList")
+    public List<Map<String, Object>> selectTreeList(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
+        List<Office> list = null;
+        if (StringUtils.isNotBlank(type)) {
+            //属于查询采购中心
+            list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(type));
+        }
+        if (list == null || list.size() == 0) {
+            addMessage(redirectAttributes, "列表不存在");
+        }
+        return convertList(list);
+    }
 }
