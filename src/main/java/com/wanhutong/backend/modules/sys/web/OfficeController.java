@@ -393,6 +393,7 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
+        office.setDelFlag(Office.DEL_FLAG_DELETE);
         officeService.delete(office);
         addMessage(redirectAttributes, "删除机构成功");
 //		}
@@ -404,6 +405,22 @@ public class OfficeController extends BaseController {
             //供应商列表删除跳转
             return "redirect:" + adminPath + "/sys/office/supplierListGys";
         }
+        return "redirect:" + adminPath + "/sys/office/list?id=" + office.getParentId() + "&parentIds=" + office.getParentIds();
+    }
+    @RequiresPermissions("sys:office:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(Office office, RedirectAttributes redirectAttributes) {
+        if (Global.isDemoMode()) {
+            addMessage(redirectAttributes, "演示模式，不允许操作！");
+            return "redirect:" + adminPath + "/sys/office/list";
+        }
+//		if (Office.isRoot(id)){
+//			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
+//		}else{
+        office.setDelFlag(Office.DEL_FLAG_NORMAL);
+        officeService.delete(office);
+        addMessage(redirectAttributes, "恢复机构成功");
+//		}
         return "redirect:" + adminPath + "/sys/office/list?id=" + office.getParentId() + "&parentIds=" + office.getParentIds();
     }
 

@@ -23,7 +23,7 @@
 		a.create_date,
 		a.update_id AS "updateBy.id",
 		a.update_date,
-		a.status,
+		a.status AS "delRemark",
 		a.useable AS useable,
 		a.primary_person AS "primaryPerson.id",
 		a.deputy_person AS "deputyPerson.id",
@@ -79,7 +79,14 @@
 		<include refid="officeColumns"/>
 		FROM sys_office a
 		<include refid="officeJoins"/>
-		WHERE a.status = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		<where>
+			a.parent_ids LIKE #{parentIds}
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+		</where>
+
+
 		<!-- 数据范围过滤 -->
 		-- 		${sqlMap.dsf}
 		ORDER BY a.code
@@ -248,7 +255,7 @@
 
 	<update id="delete">
 		UPDATE sys_office SET
-		status = #{DEL_FLAG_DELETE}
+		status = #{delFlag}
 		WHERE id = #{id} OR parent_ids LIKE
 		<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 		<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>

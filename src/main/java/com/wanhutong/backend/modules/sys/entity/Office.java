@@ -51,6 +51,16 @@ public class Office extends TreeEntity<Office> {
 	private Integer centerId;
 	private Integer ccStatus;
 
+	private String delRemark ;
+
+	public String getDelRemark() {
+		return delRemark;
+	}
+
+	public void setDelRemark(String delRemark) {
+		this.delRemark = delRemark;
+	}
+
 	/**
 	 * 省份
 	 */

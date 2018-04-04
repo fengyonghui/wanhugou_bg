@@ -255,17 +255,28 @@ public class BizInventorySkuController extends BaseController {
     @RequiresPermissions("biz:inventory:bizInventorySku:edit")
     @RequestMapping(value = "delete")
     public String delete(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
-
+//        BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
+        bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
         bizInventorySkuService.delete(bizInventorySku);
         String zt = request.getParameter("zt");
         addMessage(redirectAttributes, "删除商品库存详情成功");
-        bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
-        bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
-        bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
-        bizInventoryViewLog.setStockQty(0);
-        bizInventoryViewLog.setStockChangeQty(0-bizInventorySku.getStockQty());
-        bizInventoryViewLogService.save(bizInventoryViewLog);
+//        bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+//        bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
+//        bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+//        bizInventoryViewLog.setStockQty(0);
+//        bizInventoryViewLog.setStockChangeQty(0-bizInventorySku.getStockQty());
+//        bizInventoryViewLogService.save(bizInventoryViewLog);
+        return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
+    }
+
+    @RequiresPermissions("biz:inventory:bizInventorySku:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_NORMAL);
+        bizInventorySkuService.delete(bizInventorySku);
+        String zt = request.getParameter("zt");
+        addMessage(redirectAttributes, "恢复商品库存详情成功");
+
         return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
     }
 

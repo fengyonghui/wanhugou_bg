@@ -44,11 +44,16 @@
 			<td>{{row.area.name}}</td>
 			<td>{{row.code}}</td>
 			<td>{{dict.type}}</td>
-			<td>{{row.remarks}}</td>
+			<td>{{row.remark}}</td>
 			<shiro:hasPermission name="sys:office:edit"><td>
-				<a href="${ctx}/sys/office/form?id={{row.id}}">修改</a>
-				<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
-				<a href="${ctx}/sys/office/form?parent.id={{row.id}}">添加下级机构</a> 
+				<c:if test="${row.delRemark==1}">
+					<a href="${ctx}/sys/office/form?id={{row.id}}">修改</a>
+					<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
+					<a href="${ctx}/sys/office/form?parent.id={{row.id}}">添加下级机构</a>
+				</c:if>
+				<c:if test="${row.delRemark==1}">
+					<a href="${ctx}/sys/office/recovery?id={{row.id}}" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
+				</c:if>
 			</td></shiro:hasPermission>
 		</tr>
 	</script>
