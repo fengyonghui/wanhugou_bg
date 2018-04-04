@@ -10,12 +10,17 @@
 		sku.part_no AS "skuInfo.partNo",
 		sku.name AS "skuInfo.name",
 		sku.item_no AS "skuInfo.itemNo",
+		bpi.vendor_name AS "skuInfo.vendorName",
+		bpi.vari_id AS "skuInfo.variety.id",
+		bvi.name AS "skuInfo.variety.name",
 		a.inv_type AS "invType",
 		a.stock_qty AS "stockQty",
 		a.s_ord_qty AS "stockOrdQty",
 		a.trans_in_qty AS "transInQty",
 		a.trans_out_qty AS "transOutQty",
-		a.cust_id AS "customer.id",
+		a.cust_id AS "cust.id",
+		cust.name AS "cust.name",
+		s.id AS "customer.id",
 		s.name AS "customer.name",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -29,9 +34,12 @@
 	
 	<sql id="bizInventorySkuJoins">
 		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
+		LEFT JOIN biz_product_info bpi ON bpi.id = sku.prod_id
+		LEFT JOIN biz_variety_info bvi ON bvi.id = bpi.vari_id
 		LEFT JOIN biz_inventory_info i ON a.inv_id = i.id
 		LEFT JOIN sys_office s ON i.cust_id = s.id
 		LEFT JOIN sys_user su ON a.create_id=su.id
+		LEFT JOIN sys_office cust ON cust.id = a.cust_id
 	</sql>
     
 	<select id="get" resultType="BizInventorySku">
@@ -68,6 +76,15 @@
 				<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
+			</if>
+			<if test="skuInfo != null and skuInfo.vendorName != null and skuInfo.vendorName != ''">
+				AND bpi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.vendorName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.vendorName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.vendorName},'%')</if>
+			</if>
+			<if test="skuInfo != null and skuInfo.variety != null and skuInfo.variety.id != null and skuInfo.variety.id != ''">
+				AND bpi.vari_id = #{skuInfo.variety.id}
 			</if>
 			<if test="skuInfo != null and skuInfo.itemNo != null and skuInfo.itemNo != ''">
 				AND sku.item_no LIKE
@@ -132,6 +149,15 @@
 		AND a.inv_type = #{invType}
 	</select>
 
+	<!--查询采购中心库存总数-->
+	<select id="invSkuCount" parameterType="Integer" resultType="Integer">
+		SELECT
+			SUM(stock_qty)
+		FROM biz_inventory_sku bis
+		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE bii.cust_id = #{centId}
+
+	</select>
 	<insert id="insert">
 		INSERT INTO biz_inventory_sku(
 			id,
@@ -148,7 +174,7 @@
 			<if test="transOutQty!=null">
 				trans_out_qty,
 			</if>
-			<if test="customer!=null and customer.id!=null and customer.id!=''">
+			<if test="cust!=null and cust.id!=null and cust.id!=''">
 				cust_id,
 			</if>
 			status,
@@ -172,8 +198,8 @@
 			<if test="transOutQty!=null">
 				#{transOutQty},
 			</if>
-			<if test="customer!=null and customer.id!=null and customer.id!=''">
-				#{customer.id},
+			<if test="cust!=null and cust.id!=null and cust.id!=''">
+				#{cust.id},
 			</if>
 			#{delFlag},
 			#{createBy.id},
@@ -199,8 +225,8 @@
 			<if test="transOutQty!=null">
 				trans_out_qty = #{transOutQty},
 			</if>
-			<if test="customer!=null and customer.id!=null and customer.id!=''">
-				cust_id = #{customer.id},
+			<if test="cust!=null and cust.id!=null and cust.id!=''">
+				cust_id = #{cust.id},
 			</if>
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
