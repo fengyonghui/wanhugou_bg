@@ -72,6 +72,10 @@
 				<result property="buyPrice" column="orderDetailList.skuInfo.buyPrice" />
 				<result property="itemNo" column="orderDetailList.skuInfo.itemNo"/>
 			</association>
+			<association property="vendor" javaType="Office" column="vendor.id">
+				<id property="id" column="orderDetailList.vendor.id"/>
+				<result property="name" column="orderDetailList.vendor.name"/>
+			</association>
 		</collection>
 
 
@@ -213,10 +217,12 @@
 		od.line_no AS "orderDetailList.lineNo",
 		si.id AS "orderDetailList.skuInfo.id",
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
-		si.item_no AS "orderDetailList.skuInfo.itemNo"
+		si.item_no AS "orderDetailList.skuInfo.itemNo",
+		pi.vendor_name AS "orderDetailList.vendor.name"
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
+		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1
 			<if test="dataStatus!=null and dataStatus!=''">
@@ -232,6 +238,12 @@
 			</if>
 			<if test="orderType != null and orderType != ''">
 				AND a.order_type = #{orderType}
+			</if>
+			<if test="orderDetailList.vendor != null and orderDetailList.vendor.name != null and orderDetailList.vendor.name != ''">
+				AND pi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderDetailList.vendor.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderDetailList.vendor.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderDetailList.vendor.name},'%')</if>
 			</if>
 			<if test="customer != null and customer.id != null and customer.id!=''">
 				AND a.cust_id = #{customer.id}

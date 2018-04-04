@@ -6,6 +6,8 @@
 	<title>商品库存详情管理</title>
 	<meta name="decorator" content="default"/>
     <link rel="stylesheet" href="${ctxStatic}/jquery-plugin/jquery.searchableSelect.css">
+    <script src="${ctxStatic}/jquery/jquery-1.9.1-min.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
 	<script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -62,8 +64,8 @@
                                     return;
                                 }
                                 trdatas+= "<tr class='"+skuInfo.id+"' id='"+skuInfo.id+"'>";
-                                trdatas+="<td id='invInfoId_"+skuInfo.id+"'>"+selecttd+"</td>";
-                                trdatas+="<td id='custId_"+skuInfo.id+"' class='custId'></td>";
+                                trdatas+="<td id='invInfoId_"+skuInfo.id+"' class='invInfoId'>"+selecttd+"</td>";
+                                trdatas+="<td id='custId_"+skuInfo.id+"' class='custId' style='display: none'></td>";
                                 trdatas+="<td><input type='hidden' id='skuInfoIds_"+skuInfo.id+"' value='"+skuInfo.id+"'/>"+skuInfo.name+"</td>";
                                 trdatas+="<td>"+skuInfo.buyPrice+"</td>";
                                 trdatas+="<td>"+(skuInfo.partNo==undefined?"":skuInfo.partNo)+"</td>";
@@ -94,8 +96,8 @@
             $("#prodInfo2").append(trHtml);
             $("#prodInfo2").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).removeAttr("name");
             $("#prodInfo2").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).removeAttr("disabled");
-            $("#prodInfo2").find($("#custId_"+obj)).find($("select[title='custId']")).removeAttr("name");
-            $("#prodInfo2").find($("#custId_"+obj)).find($("select[title='custId']")).removeAttr("disabled");
+            $("#prodInfo2").find($("#custId_"+obj)).find($("select[autofocus='custId']")).removeAttr("name");
+            $("#prodInfo2").find($("#custId_"+obj)).find($("select[autofocus='custId']")).removeAttr("disabled");
             $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("name");
             $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("disabled");
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
@@ -130,8 +132,8 @@
             $("#prodInfo").append(trHtml);
             $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("name","invInfoIds");
             $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("disabled","disabled");
-            $("#prodInfo").find($("#custId_"+obj)).find($("select[title='custId']")).attr("name","customerIds");
-            $("#prodInfo").find($("#custId_"+obj)).find($("select[title='custId']")).attr("disabled","disabled");
+            $("#prodInfo").find($("#custId_"+obj)).find($("select[autofocus='autofocus']")).attr("name","customerIds");
+            $("#prodInfo").find($("#custId_"+obj)).find($("select[autofocus='autofocus']")).attr("disabled","disabled");
             $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("name","invTypes");
             $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("disabled","disabled");
             $("#prodInfo").find($("#saleQty_"+obj)).attr("name","stockQtys");
@@ -159,9 +161,11 @@
         function addCust(obj) {
 			var invId = $(obj).val();
             var invInfo = $(obj).parent().parent();
+            var skuId = $(invInfo).prop("id");
+            alert(skuId)
             var html = "";
 
-            html+="<select title='custId' class='input-medium required'>" +
+            html+="<select id='cust"+skuId+"'autofocus='autofocus' about='custId' class='input-medium required'>" +
                 "<option value=''>请选择采购商</option>";
                 <c:forEach items="${custList}" var="item" varStatus="vs">
                 	html+="<option value='${item.id}'> ${item.name}</option>";
@@ -170,11 +174,18 @@
             if (invId ==${BizInventoryEnum.CLOUDCHAMBE.statu}){
                 $("#invName1").after("<th>专属客户</th>");
                 $("#invName2").after("<th>专属客户</th>");
-                $(invInfo).find("td[class='custId']").append(html);
-                 $("select[title='custId']").searchableSelect();
-            }else {
-                $(invInfo).find("td[class='custId']").html("");
+                $("#invName1").removeAttr("id");
+                $("#invName2").removeAttr("id");
+                $(invInfo).parent().find("tr").each(function () {
+                    $(this).find("td").removeAttr("style");
+                });
+                $("#custId_"+skuId).append(html);
+                alert($("#custId_"+skuId).html());
+                 $("#cust"+skuId).searchableSelect();
             }
+            // else {
+            //     $(invInfo).find("td[class='custId']").html("");
+            // }
         }
 	</script>
 </head>
