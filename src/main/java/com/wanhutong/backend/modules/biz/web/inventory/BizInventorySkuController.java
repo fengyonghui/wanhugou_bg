@@ -256,6 +256,7 @@ public class BizInventorySkuController extends BaseController {
     @RequestMapping(value = "delete")
     public String delete(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
+
         bizInventorySkuService.delete(bizInventorySku);
         String zt = request.getParameter("zt");
         addMessage(redirectAttributes, "删除商品库存详情成功");
