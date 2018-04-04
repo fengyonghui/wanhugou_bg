@@ -172,6 +172,7 @@
                 <thead>
                 <tr>
                     <th>货架名称</th>
+                    <th>采购中心</th>
                     <th>商品名称</th>
                     <th>商品编码</th>
                     <th>商品货号</th>
@@ -189,6 +190,7 @@
                     <c:if test="${bizOrderDetail.id!=null}">
                         <tr id="trRevom_${detail.id}">
                             <td>${detail.shelfInfo.opShelfInfo.name}</td>
+                            <td>${detail.shelfInfo.centerOffice.name}</td>
                             <td>${detail.skuName}</td>
                             <td>${detail.partNo}</td>
                             <td>${detail.skuInfo.itemNo}</td>

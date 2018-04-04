@@ -88,7 +88,7 @@ public class BizOrderDetailController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizOrderDetail bizOrderDetail, Model model) {
 //		用于往页面传给savg保存 首单标记 OneOrder
-          bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
+		bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
         BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
         if(orderHeader!=null){
 			BizOrderHeader ord = bizOrderHeaderService.get(orderHeader.getId());
@@ -98,7 +98,9 @@ public class BizOrderDetailController extends BaseController {
 		}
 //		订单详情修改按钮显示品规色
 		BizOrderDetail detailOrder = bizOrderDetailService.get(bizOrderDetail);
-		if(detailOrder!=null){
+        if(detailOrder!=null){
+			BizOpShelfSku opShelfSku=bizOpShelfSkuService.get(bizOrderDetail.getShelfInfo().getId()) ;
+			detailOrder.setShelfInfo(opShelfSku);
 			BizOrderSkuPropValue bizOrderSkuPropValue = new BizOrderSkuPropValue();
 			bizOrderSkuPropValue.setOrderDetails(detailOrder);
 			List<BizOrderSkuPropValue> list = bizOrderSkuPropValueService.findList(bizOrderSkuPropValue);
