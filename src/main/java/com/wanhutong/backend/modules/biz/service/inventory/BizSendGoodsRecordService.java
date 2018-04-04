@@ -104,6 +104,7 @@ public class BizSendGoodsRecordService extends CrudService<BizSendGoodsRecordDao
 			if(user.isAdmin()){
 				return super.findPage(page, bizSendGoodsRecord);
 			}else {
+				bizSendGoodsRecord.setDataStatus("filter");
 				if(user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType()) ||
                    user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) ||
                    user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())){

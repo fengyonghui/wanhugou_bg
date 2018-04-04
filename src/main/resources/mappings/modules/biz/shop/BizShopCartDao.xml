@@ -45,8 +45,11 @@
 			<include refid="bizShopCartColumns"/>
 		FROM biz_shop_cart a
 		<include refid="bizShopCartJoins"/>
-		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+		<where> 1=1
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
 			</if>
@@ -80,14 +83,13 @@
 			<if test="sqlMap != null and sqlMap.shopCart != null and sqlMap.shopCart != ''">
 				${sqlMap.shopCart}
 			</if>
-            ORDER BY a.create_time DESC
-
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				, ${page.orderBy}
+				ORDER by ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.create_time DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -149,7 +151,7 @@
 	
 	<update id="delete">
 		UPDATE biz_shop_cart SET 
-			status = #{DEL_FLAG_DELETE}
+			status = #{delFlag}
 		WHERE id = #{id}
 	</update>
 	

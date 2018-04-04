@@ -108,6 +108,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
             return orderHeaderPage;
         }else {
+            bizOrderHeader.setDataStatus("filter");
             boolean flag=false;
             boolean roleFlag = false;
             if(user.getRoleList()!=null) {

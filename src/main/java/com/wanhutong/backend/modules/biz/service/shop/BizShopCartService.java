@@ -38,6 +38,7 @@ public class BizShopCartService extends CrudService<BizShopCartDao, BizShopCart>
 		if(user.isAdmin()){
 			return super.findPage(page, bizShopCart);
 		}else {
+			bizShopCart.setDataStatus("filter");
 			bizShopCart.getSqlMap().put("shopCart", BaseService.dataScopeFilter(user, "s", "su"));
 			return super.findPage(page, bizShopCart);
 		}

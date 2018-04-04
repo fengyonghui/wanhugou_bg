@@ -5,6 +5,8 @@ package com.wanhutong.backend.modules.biz.service.pay;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,10 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 	}
 	
 	public Page<BizPayRecord> findPage(Page<BizPayRecord> page, BizPayRecord bizPayRecord) {
+		User user=UserUtils.getUser();
+		if(!user.isAdmin()){
+			bizPayRecord.setDataStatus("filter");
+		}
 		return super.findPage(page, bizPayRecord);
 	}
 	

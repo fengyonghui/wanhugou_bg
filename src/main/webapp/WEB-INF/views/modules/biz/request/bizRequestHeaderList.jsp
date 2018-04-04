@@ -128,10 +128,13 @@
 				<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
 					<c:choose>
 						<c:when test="${fns:getUser().isAdmin()}">
-							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
-
-							<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
-
+							<c:if test="${requestHeader.delFlag!=null && requestHeader.delFlag!=0}">
+								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
+								<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+							</c:if>
+							<c:if test="${requestHeader.delFlag!=null && requestHeader.delFlag==0}">
+								<a href="${ctx}/biz/request/bizRequestHeader/recovery?id=${requestHeader.id}" onclick="return confirmx('确认要恢复该备货清单吗？', this.href)">恢复</a>
+							</c:if>
 						</c:when>
 						<c:when test="${!fns:getUser().isAdmin() && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state}">
 							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>

@@ -106,6 +106,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
         if (user.isAdmin()) {
 			return super.findPage(page, bizRequestHeader);
 		} else {
+        	bizRequestHeader.setDataStatus("filter");
 			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
 			return super.findPage(page, bizRequestHeader);
 		}

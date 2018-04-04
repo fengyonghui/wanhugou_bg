@@ -82,7 +82,12 @@
 				</td>
 				<shiro:hasPermission name="biz:shop:bizShopCart:edit"><td>
     				<%--<a href="${ctx}/biz/shop/bizShopCart/form?id=${bizShopCart.id}">修改</a>--%>
-					<a href="${ctx}/biz/shop/bizShopCart/delete?id=${bizShopCart.id}" onclick="return confirmx('确认要删除该购物车吗？', this.href)">删除</a>
+					<c:if test="${bizShopCart.delFlag!=null && bizShopCart.delFlag==1}">
+						<a href="${ctx}/biz/shop/bizShopCart/delete?id=${bizShopCart.id}" onclick="return confirmx('确认要删除该购物车吗？', this.href)">删除</a>
+					</c:if>
+						<c:if test="${bizShopCart.delFlag!=null && bizShopCart.delFlag==0}">
+							<a href="${ctx}/biz/shop/bizShopCart/recovery?id=${bizShopCart.id}" onclick="return confirmx('确认要恢复该购物车吗？', this.href)">恢复</a>
+						</c:if>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

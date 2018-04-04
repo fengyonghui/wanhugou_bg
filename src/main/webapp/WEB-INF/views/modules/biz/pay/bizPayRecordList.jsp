@@ -157,7 +157,13 @@
 				</td>
 				<shiro:hasPermission name="biz:pay:bizPayRecord:edit"><td>
     				<%--<a href="${ctx}/biz/pay/bizPayRecord/form?id=${bizPayRecord.id}">修改</a>--%>
-					<a href="${ctx}/biz/pay/bizPayRecord/delete?id=${bizPayRecord.id}" onclick="return confirmx('确认要删除该交易记录吗？', this.href)">删除</a>
+					<c:if test="${bizPayRecord.delFlag!=null && bizPayRecord.delFlag!=0}">
+						<a href="${ctx}/biz/pay/bizPayRecord/delete?id=${bizPayRecord.id}" onclick="return confirmx('确认要删除该交易记录吗？', this.href)">删除</a>
+					</c:if>
+					<c:if test="${bizPayRecord.delFlag!=null && bizPayRecord.delFlag==0}">
+						<a href="${ctx}/biz/pay/bizPayRecord/recovery?id=${bizPayRecord.id}" onclick="return confirmx('确认要恢复该交易记录吗？', this.href)">恢复</a>
+					</c:if>
+
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

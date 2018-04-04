@@ -201,10 +201,22 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "delete")
     public String delete(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "删除订单信息成功");
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
+
+
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
+        bizOrderHeaderService.delete(bizOrderHeader);
+        addMessage(redirectAttributes, "恢复订单信息成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
+    }
+
 
     /**
      * @param bizOrderHeader

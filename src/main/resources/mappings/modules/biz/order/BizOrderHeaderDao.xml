@@ -15,7 +15,7 @@
 		<result property="bizStatus" column="bizStatus"/>
 		<result property="bizType" column="bizType"/>
 		<result property="itemNo" column="itemNo"/>
-		<result property="delFlag" column="status"/>
+		<result property="delFlag" column="delFlag"/>
 		<result property="centersName" column="centersName"/>
 
 		<result property="createDate" column="createDate"/>
@@ -218,8 +218,11 @@
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		<include refid="bizOrderHeaderJoins"/>
-		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+		<where> 1=1
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
 				LIKE
@@ -515,7 +518,7 @@
 
 	<update id="delete">
 		UPDATE biz_order_header SET 
-			status = #{DEL_FLAG_DELETE}
+			status = #{delFlag}
 		WHERE id = #{id}
 	</update>
 

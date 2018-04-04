@@ -58,10 +58,10 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = true)
 	public List<Office> findList(Office office){
 		if(office != null){
-
 			office.setParentIds(office.getParentIds()+"%");
 			User user = UserUtils.getUser();
 			if(!user.isAdmin()&&!OfficeTypeEnum.VENDOR.getType().equals(office.getType())&&!OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
+				office.setDataStatus("filter");
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 			}
 			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
@@ -85,6 +85,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 					customCenterConsultant.setConsultants(user);
 				}
 				customCenterConsultant.setParentIds(office.getParentIds());
+
 				List<Office> officeList=officeDao.findOfficeByIdToParent(customCenterConsultant);
 
 				return  officeList;
