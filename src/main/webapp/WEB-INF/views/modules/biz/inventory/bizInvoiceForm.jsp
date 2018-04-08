@@ -146,7 +146,7 @@
                                     tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.orderNum+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
                                 }
                                  tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
                                 if(bizStatus==0) {
                                     tr_tds += "<td>" + selecttd + "</td>"
                                 }
@@ -290,6 +290,7 @@
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>供应商</th>
+						<th>商品货号</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
 						<c:if test="${bizInvoice.bizStatus==0}">
@@ -318,6 +319,7 @@
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>供应商</th>
+						<th>商品货号</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
 						<c:if test="${bizInvoice.bizStatus==0}">
