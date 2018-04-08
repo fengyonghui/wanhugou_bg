@@ -279,6 +279,7 @@
             if ($(second).attr("class")==skuId){
                 $(second).find("td").each(function () {
                     $(this).find("input[name='minQtys']").val(parseInt(item.value) + 1);
+                    $(this).find("input[name='minQtys']").attr("readonly","readonly");
                 });
             }
         }
