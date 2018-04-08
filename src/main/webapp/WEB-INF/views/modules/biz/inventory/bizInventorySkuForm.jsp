@@ -5,10 +5,10 @@
 <head>
 	<title>商品库存详情管理</title>
 	<meta name="decorator" content="default"/>
-    <link rel="stylesheet" href="${ctxStatic}/jquery-plugin/jquery.searchableSelect.css">
-    <script src="${ctxStatic}/jquery/jquery-1.9.1-min.js" type="text/javascript"></script>
-    <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
-	<script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
+    <%--<link rel="stylesheet" href="${ctxStatic}/jquery-plugin/jquery.searchableSelect.css">--%>
+    <%--<script src="${ctxStatic}/jquery/jquery-1.9.1-min.js" type="text/javascript"></script>--%>
+    <%--<script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>--%>
+	<%--<script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>--%>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
@@ -16,7 +16,7 @@
 				submitHandler: function(form){
                     $("select[title='invInfoId']").removeAttr("disabled");
                     $("select[title='invType']").removeAttr("disabled");
-                    $("select[title='custId']").removeAttr("disabled");
+                    $("select[about='custId']").removeAttr("disabled");
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -36,9 +36,9 @@
 				type:"post",
 				data:{invInfoId:invInfoId},
 				success:function (data) {
-					if (data.customer.type==10){
-
-                    }
+                    // if (data.customer.type==10){
+                    //
+                    // }
                 }
 			});
             $("#searchData").click(function () {
@@ -105,8 +105,8 @@
             $("#prodInfo2").append(trHtml);
             $("#prodInfo2").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).removeAttr("name");
             $("#prodInfo2").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).removeAttr("disabled");
-            $("#prodInfo2").find($("#custId_"+obj)).find($("select[autofocus='custId']")).removeAttr("name");
-            $("#prodInfo2").find($("#custId_"+obj)).find($("select[autofocus='custId']")).removeAttr("disabled");
+            $("#prodInfo2").find($("#custId_"+obj)).find($("select[about='custId']")).removeAttr("name");
+            $("#prodInfo2").find($("#custId_"+obj)).find($("select[about='custId']")).removeAttr("disabled");
             $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("name");
             $("#prodInfo2").find($("#invType_"+obj)).find($("select[title='invType']")).removeAttr("disabled");
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
@@ -141,8 +141,8 @@
             $("#prodInfo").append(trHtml);
             $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("name","invInfoIds");
             $("#prodInfo").find($("#invInfoId_"+obj)).find($("select[title='invInfoId']")).attr("disabled","disabled");
-            $("#prodInfo").find($("#custId_"+obj)).find($("select[autofocus='autofocus']")).attr("name","customerIds");
-            $("#prodInfo").find($("#custId_"+obj)).find($("select[autofocus='autofocus']")).attr("disabled","disabled");
+            $("#prodInfo").find($("#custId_"+obj)).find($("select[about='custId']")).attr("name","customerIds");
+            $("#prodInfo").find($("#custId_"+obj)).find($("select[about='custId']")).attr("disabled","disabled");
             $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("name","invTypes");
             $("#prodInfo").find($("#invType_"+obj)).find($("select[title='invType']")).attr("disabled","disabled");
             $("#prodInfo").find($("#saleQty_"+obj)).attr("name","stockQtys");
@@ -171,10 +171,9 @@
 			var invId = $(obj).val();
             var invInfo = $(obj).parent().parent();
             var skuId = $(invInfo).prop("id");
-            alert(skuId)
             var html = "";
 
-            html+="<select id='cust"+skuId+"'autofocus='autofocus' about='custId' class='input-mini required'>" +
+            html+="<select id='cust"+skuId+"' about='custId' class='input-mini required'>" +
                 "<option value=''>请选择采购商</option>";
                 <c:forEach items="${custList}" var="item" varStatus="vs">
                 	html+="<option value='${item.id}'> ${item.name}</option>";
@@ -239,6 +238,9 @@
 					<thead>
 					<tr>
 						<th id="invName1">仓库名称</th>
+						<c:if test="${entity.cust != null && entity.cust.id!='0'}">
+							<th>专属客户</th>
+						</c:if>
 						<th>商品名称</th>
 						<th>出厂价</th>
 						<th>商品编码</th>
@@ -255,10 +257,7 @@
 						<tr class="${entity.skuInfo.id}" id="${entity.id}">
 						<input name="id" value="${entity.id}" type="hidden"/>
 						<td>${entity.invInfo.name}</td>
-						<c:if test="${entity.cust.id=='0'}">
-							<td></td>
-						</c:if>
-						<c:if test="${entity.cust.id!='0'}"	>
+						<c:if test="${entity.cust.id!='0'}">
 							<td>${entity.cust.name}</td>
 						</c:if>
 						<td>${entity.skuInfo.name}</td>

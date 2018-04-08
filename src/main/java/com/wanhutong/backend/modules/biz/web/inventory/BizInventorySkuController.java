@@ -269,7 +269,9 @@ public class BizInventorySkuController extends BaseController {
                     bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
                 } else {
                     only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
-                    only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
+                    if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+                        only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
+                    }
                     bizInventorySkuService.save(only);
                     bizInventoryViewLog.setStockQty(only.getStockQty());
                     bizInventoryViewLog.setStockChangeQty(only.getStockQty());
