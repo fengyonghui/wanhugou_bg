@@ -87,51 +87,51 @@
 		<th>电话</th><th>手机</th><%--<th>角色</th> --%><shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
 	<c:forEach items="${page.list}" var="bizUser">
-		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
-			<c:if test="${bizUser.delFlag==1}">
-			<tr>
-				<td>${bizUser.company.name}</td>
-				<td>${bizUser.office.name}</td>
-				<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">
-                        ${bizUser.loginName}</a></td>
-				<td>${bizUser.name}</td>
-				<td>${bizUser.phone}</td>
-				<td>${bizUser.mobile}</td>
-                <%--<td>${user.roleNames}</td> --%>
-				<shiro:hasPermission name="sys:user:edit"><td>
-                    <a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}&office.id=${bizUser.office.id}">关联采购商</a>
-                    <a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>
-                    <a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
-                    <a href="${ctx}/sys/user/delete?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
-			</tr>
-		</c:if>
-	</c:if>
+		<%--<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">--%>
+			<%--<c:if test="${bizUser.delFlag==1}">--%>
+				<%--<tr>--%>
+					<%--<td>${bizUser.company.name}</td>--%>
+					<%--<td>${bizUser.office.name}</td>--%>
+					<%--<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">--%>
+							<%--${bizUser.loginName}</a></td>--%>
+					<%--<td>${bizUser.name}</td>--%>
+					<%--<td>${bizUser.phone}</td>--%>
+					<%--<td>${bizUser.mobile}</td>--%>
+					<%--&lt;%&ndash;<td>${user.roleNames}</td> &ndash;%&gt;--%>
+					<%--<shiro:hasPermission name="sys:user:edit"><td>--%>
+						<%--<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}&office.id=${bizUser.office.id}">关联采购商</a>--%>
+						<%--<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>--%>
+						<%--<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>--%>
+						<%--<a href="${ctx}/sys/user/delete?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>--%>
+					<%--</td></shiro:hasPermission>--%>
+				<%--</tr>--%>
+			<%--</c:if>--%>
+		<%--</c:if>--%>
 		<c:if test="${empty user.conn}">
-			<tr>
-				<td>${bizUser.company.name}</td>
-				<td>${bizUser.office.name}</td>
-                <td><c:if test="${bizUser.delFlag==1}">
-						<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">
-								${bizUser.loginName}</a>
-					</c:if>
-					<c:if test="${bizUser.delFlag==0}">${bizUser.loginName}</c:if>
-                </td>
-				<td>${bizUser.name}</td>
-				<td>${bizUser.phone}</td>
-				<td>${bizUser.mobile}</td><%--
+		<tr>
+			<td>${bizUser.company.name}</td>
+			<td>${bizUser.office.name}</td>
+			<td><c:if test="${bizUser.delFlag==1}">
+				<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">
+						${bizUser.loginName}</a>
+			</c:if>
+				<c:if test="${bizUser.delFlag==0}">${bizUser.loginName}</c:if>
+			</td>
+			<td>${bizUser.name}</td>
+			<td>${bizUser.phone}</td>
+			<td>${bizUser.mobile}</td><%--
 				<td>${user.roleNames}</td> --%>
-				<shiro:hasPermission name="sys:user:edit"><td>
-					<c:if test="${bizUser.delFlag==1}">
-						<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
-						<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
-					</c:if>
-					<c:if test="${bizUser.delFlag==0}">
-						<a href="${ctx}/sys/user/recovery?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">恢复</a>
-					</c:if>
-				</td></shiro:hasPermission>
-			</tr>
-		</c:if>
+			<shiro:hasPermission name="sys:user:edit"><td>
+				<c:if test="${bizUser.delFlag==1}">
+					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
+					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+				</c:if>
+				<c:if test="${bizUser.delFlag==0}">
+					<a href="${ctx}/sys/user/recovery?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">恢复</a>
+				</c:if>
+			</td></shiro:hasPermission>
+		</tr>
+	</c:if>
 		<tr>
 			<td>${bizUser.company.name}</td>
 			<td>${bizUser.office.name}</td>
