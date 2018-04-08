@@ -99,7 +99,7 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                 detailnew.setPartNo(null);//bom产品
                 detailnew.setShelfInfo(opShelfSku);//货架
                 detailnew.setSkuInfo(sku);//sku产品
-                detailnew.setPartNo(sku.getPartNo());//编号
+                detailnew.setPartNo(sku.getItemNo());//货号
                 detailnew.setSkuName(sku.getName());//商品名称
                 detailnew.setUnitPrice(opShelfSku.getSalePrice());//单价
                 detailnew.setOrdQty(ordQty);//采购数量
