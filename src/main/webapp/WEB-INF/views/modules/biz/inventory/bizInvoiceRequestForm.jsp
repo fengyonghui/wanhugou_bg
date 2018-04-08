@@ -62,6 +62,8 @@
                 $("#skuItemNoCopy").val(skuItemNo);
                 var skuCode =$("#skuCode").val();
                 $("#skuCodeCopy").val(skuCode);
+                var name =$("#name").val();
+                $("#nameCopy").val(name);
 
                 $.ajax({
                     type:"post",
@@ -97,7 +99,7 @@
                                     tr_tds+= "<td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.reqNo+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.fromOffice.name+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+bizName+"</td>" ;
                                 }
                                  tr_tds+="<input title='details_"+requestHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
 
                                 tr_tds+= "<td>"+detail.reqQty+"</td><td>"+detail.sendQty+"</td>";
                                 tr_tds+="<td><input  type='text' title='sent_"+requestHeader.id+"' name='' value='0'></td>";
@@ -215,6 +217,9 @@
 					<li><label>商品编码：</label>
 						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
+					<li><label>供应商：</label>
+						<input id="name"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
 					<li class="clearfix"></li>
 				</ul>
@@ -233,6 +238,7 @@
 						<th>采购中心</th>
 						<th>业务状态</th>
 						<th>商品名称</th>
+						<th>供应商</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
 
@@ -257,6 +263,7 @@
 						<th>采购中心</th>
 						<th>业务状态</th>
 						<th>商品名称</th>
+						<th>供应商</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
 						<c:if test="${bizStatus==0}">
@@ -284,6 +291,7 @@
 		<form:hidden id="reqNoCopy" path="reqNo"/>
 		<form:hidden id="skuItemNoCopy" path="itemNo"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
+		<form:hidden id="nameCopy" path="name"/>
 
 	</form:form>
 </body>

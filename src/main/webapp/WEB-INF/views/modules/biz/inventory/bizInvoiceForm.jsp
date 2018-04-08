@@ -100,8 +100,8 @@
                 var skuCode =$("#skuCode").val();
                 $("#skuCodeCopy").val(skuCode);
                 var bizStatus= $("#bizStatus").val();
-                var vendor =$("#vendor").val();
-                $("#vendorCopy").val(vendor);
+                var name =$("#name").val();
+                $("#nameCopy").val(name);
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/order/bizOrderHeader/findByOrder?flag="+bizStatus,
@@ -269,7 +269,7 @@
 						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
 					<li><label>供应商：</label>
-						<input id="vendor"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+						<input id="name"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
 					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
 					<li class="clearfix"></li>
@@ -345,9 +345,7 @@
 		<form:hidden id="orderNumCopy" path="orderNum"/>
 		<form:hidden id="skuItemNoCopy" path="itemNo"/>
 		<form:hidden id="skuCodeCopy" path="partNo"/>
-		<c:forEach items="${orderDetailList}" var="orderDetail">
-			<form:hidden id="vendorCopy" path="orderDetail.vendor.name"/>
-		</c:forEach>
+		<form:hidden id="nameCopy" path="name"/>
 
 	</form:form>
 </body>

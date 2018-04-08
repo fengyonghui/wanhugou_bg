@@ -58,6 +58,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String itemNo;      //根据sku货号搜索
     private String partNo;      //根据sku编号搜索
     private Integer orderCount; //find List中订单总条数据
+    private String name;  //根据供应商名搜索
 
     private String orderNum2;        //用于删除订单页面传值
     private String localSendIds;
@@ -405,5 +406,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public Office getCustomer() {
         return customer;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -276,7 +276,7 @@
 					</c:if>
 					</tbody>
 				</table>
-				<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered table-condensed">
+				<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered">
 					<thead>
 					<tr>
 						<th id="invName2">仓库名称</th>

@@ -239,11 +239,11 @@
 			<if test="orderType != null and orderType != ''">
 				AND a.order_type = #{orderType}
 			</if>
-			<if test="orderDetailList.vendor != null and orderDetailList.vendor.name != null and orderDetailList.vendor.name != ''">
+			<if test="name != null and name != ''">
 				AND pi.vendor_name LIKE
-				<if test="dbName == 'oracle'">'%'||#{orderDetailList.vendor.name}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{orderDetailList.vendor.name}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{orderDetailList.vendor.name},'%')</if>
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
 			<if test="customer != null and customer.id != null and customer.id!=''">
 				AND a.cust_id = #{customer.id}
