@@ -112,9 +112,9 @@ public class UserUtils {
 		if (user.getOffice() != null && user.getOffice().getId() != null){
 			CacheUtils.remove(USER_CACHE, USER_CACHE_LIST_BY_OFFICE_ID_ + user.getOffice().getId());
 		}
-        if (user.getCompany() != null && user.getCompany().getId() != null){
-            CacheUtils.remove(USER_CACHE, USER_CACHE_LIST_BY_COMPANY_ID_ + user.getOffice().getId());
-        }
+		if (user.getCompany() != null && user.getCompany().getId() != null){
+			CacheUtils.remove(USER_CACHE, USER_CACHE_LIST_BY_COMPANY_ID_ + user.getCompany().getId());
+		}
 	}
 	
 	/**

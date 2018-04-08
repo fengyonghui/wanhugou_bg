@@ -4,18 +4,19 @@
 package com.wanhutong.backend.modules.biz.entity.product;
 
 import com.google.common.collect.Lists;
-import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
+import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
-
-import com.wanhutong.backend.common.persistence.DataEntity;
 
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String name;		// 商品名称
 	private BizVarietyInfo bizVarietyInfo; //
 	private String prodCode;		// 商品代码--厂家定的-或自己定的
+	private Dict dict;		// biz_cate_prop_value.id, 对应品牌分类的属性值ID
+	private String brandId;		// 品牌名ID.
 	private PropValue propValue;		// biz_cate_prop_value.id, 对应品牌分类的属性值ID
 	private String brandName;		// 品牌名称，冗余字段，提升查询效率
 	private String description;		// 商品描述
@@ -42,7 +45,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String skuInfos; //多种商品信息
 	private String imgUrl;   //图片地址
 	private String photoDetails;
-	private String vendorName;  //采购商名称
+	private String vendorName;  //供应商名称
 	private Date marketingDate ; //上市时间
 	private String skuPartNo;  //sku编码，用于查询
 
@@ -62,6 +65,26 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String itemNo;
 
+	/**
+	 * sku 组合字符串集合
+	 */
+	private List<String> skuAttrStrList;
+
+	/**
+	 *	材质
+	 */
+	private AttributeValueV2 materialAttributeValue;
+
+	/**
+	 * 标签ID集合
+	 */
+	private String tagStr;
+
+	/**
+	 * 材质集合
+	 */
+	private String textureStr;
+
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
 
@@ -75,6 +98,45 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String source;
 
 
+	public AttributeValueV2 getMaterialAttributeValue() {
+		return materialAttributeValue;
+	}
+
+	public void setMaterialAttributeValue(AttributeValueV2 materialAttributeValue) {
+		this.materialAttributeValue = materialAttributeValue;
+	}
+
+	public String getTextureStr() {
+		return textureStr;
+	}
+
+	public void setTextureStr(String textureStr) {
+		this.textureStr = textureStr;
+	}
+
+	public String getTagStr() {
+		return tagStr;
+	}
+
+	public void setTagStr(String tagStr) {
+		this.tagStr = tagStr;
+	}
+
+	public String getBrandId() {
+		return brandId;
+	}
+
+	public void setBrandId(String brandId) {
+		this.brandId = brandId;
+	}
+
+	public List<String> getSkuAttrStrList() {
+		return skuAttrStrList;
+	}
+
+	public void setSkuAttrStrList(List<String> skuAttrStrList) {
+		this.skuAttrStrList = skuAttrStrList;
+	}
 
 	public List<Integer> getCateIdList() {
 		List<Integer> cateIdList = Lists.newArrayList();
@@ -363,4 +425,14 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	public void setItemNo(String itemNo) {
 		this.itemNo = itemNo;
 	}
+
+	public Dict getDict() {
+		return dict;
+	}
+
+	public void setDict(Dict dict) {
+		this.dict = dict;
+	}
+
+
 }

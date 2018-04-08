@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -146,7 +149,8 @@ public class OfficeController extends BaseController {
             office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size + 1 : 1), 3, "0"));
         }
         BizCustCredit bizCustCredit = bizCustCreditService.get(office.getId());
-        if (bizCustCredit != null) {
+        String b="0";
+        if (bizCustCredit != null && !bizCustCredit.getDelFlag().equals(b)) {
             office.setLevel(bizCustCredit.getLevel());
         }
         model.addAttribute("office", office);
@@ -389,6 +393,7 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
+        office.setDelFlag(Office.DEL_FLAG_DELETE);
         officeService.delete(office);
         addMessage(redirectAttributes, "删除机构成功");
 //		}
@@ -400,6 +405,22 @@ public class OfficeController extends BaseController {
             //供应商列表删除跳转
             return "redirect:" + adminPath + "/sys/office/supplierListGys";
         }
+        return "redirect:" + adminPath + "/sys/office/list?id=" + office.getParentId() + "&parentIds=" + office.getParentIds();
+    }
+    @RequiresPermissions("sys:office:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(Office office, RedirectAttributes redirectAttributes) {
+        if (Global.isDemoMode()) {
+            addMessage(redirectAttributes, "演示模式，不允许操作！");
+            return "redirect:" + adminPath + "/sys/office/list";
+        }
+//		if (Office.isRoot(id)){
+//			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
+//		}else{
+        office.setDelFlag(Office.DEL_FLAG_NORMAL);
+        officeService.delete(office);
+        addMessage(redirectAttributes, "恢复机构成功");
+//		}
         return "redirect:" + adminPath + "/sys/office/list?id=" + office.getParentId() + "&parentIds=" + office.getParentIds();
     }
 
@@ -445,11 +466,20 @@ public class OfficeController extends BaseController {
     public List<Map<String, Object>> getImgTreeList(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
         List<Office> list = null;
         if (StringUtils.isNotBlank(type)) {
+            String defType = type;
+            String[] split = type.split(",");
+            if (ArrayUtils.isNotEmpty(split)) {
+                defType = split[0];
+            }
             if (source != null && source.equals("officeConnIndex")) {
                 //属于客户专员查询采购中心方法
-                list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(type));
+                list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(defType));
             } else {
-                list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(type));
+                if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
+                    list = officeService.findListByTypeList(Arrays.asList(split));
+                }else {
+                    list = officeService.filerOffice(null, source, OfficeTypeEnum.stateOf(defType));
+                }
             }
         }
         if (list == null || list.size() == 0) {
@@ -510,4 +540,21 @@ public class OfficeController extends BaseController {
         return "modules/sys/supplierList";
     }
 
+    /**
+     * 用于查询采购中心
+     * */
+    @RequiresPermissions("user")
+    @ResponseBody
+    @RequestMapping(value = "selectTreeList")
+    public List<Map<String, Object>> selectTreeList(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
+        List<Office> list = null;
+        if (StringUtils.isNotBlank(type)) {
+            //属于查询采购中心
+            list = officeService.CustomerfilerOffice(null, source, OfficeTypeEnum.stateOf(type));
+        }
+        if (CollectionUtils.isEmpty(list)) {
+            addMessage(redirectAttributes, "列表不存在");
+        }
+        return convertList(list);
+    }
 }

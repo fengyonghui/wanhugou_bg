@@ -144,7 +144,7 @@
 		<th>所属采购中心</th>
 		<th>采购商电话</th>
 		<th>商品总价</th>
-		<th>交易金额</th>
+		<th>调整金额</th>
 		<th>运费</th>
 		<th>应付金额</th>
 		<th>利润</th>
@@ -152,7 +152,8 @@
 		<th>业务状态</th>
 		<th>订单来源</th>
 		<th>创建人</th>
-		<th>订单更新时间</th>
+		<th>创建时间</th>
+		<th>更新时间</th>
 		<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><th>操作</th></shiro:hasPermission>
 	</tr>
 	</thead>
@@ -215,10 +216,14 @@
 					${orderHeader.createBy.name}
 			</td>
 			<td>
+				<fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+			</td>
+			<td>
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
-				<c:choose>
+				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
+					<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
 							<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 || orderHeader.bizStatus==10}">
@@ -244,9 +249,15 @@
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+
 						</c:if>
 					</c:otherwise>
 				</c:choose>
+				</c:if >
+				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
+					<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
+				</c:if>
+
 			</td></shiro:hasPermission>
 		</tr>
 	</c:forEach>

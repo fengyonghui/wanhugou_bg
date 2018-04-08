@@ -49,11 +49,5 @@ public class CommonImgService extends CrudService<CommonImgDao, CommonImg> {
 	public void delete(CommonImg commonImg) {
 		super.delete(commonImg);
 	}
-	@Transactional(readOnly = false)
-	public void   deleteCommonImg(CommonImg commonImg){
-		commonImgDao.deleteCommonImg(commonImg);
-	}
 
-
-	
 }

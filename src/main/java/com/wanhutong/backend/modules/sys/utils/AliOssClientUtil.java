@@ -6,17 +6,17 @@ import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
 import com.google.common.collect.Maps;
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.utils.*;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.FileUtils;
+import com.wanhutong.backend.common.utils.IdGen;
+import com.wanhutong.backend.common.utils.PropertiesLoader;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -131,23 +131,19 @@ public class AliOssClientUtil {
     /**
      * 上传图片至OSS
      *
-     * @param file 上传文件（文件全路径如：D:\\image\\cake.jpg）
+     * @param is 输入流
      * @return String 返回的唯一MD5数字签名
      */
-    public static String uploadObject2OSS(File file, String path) {
-        /*// 图片格式
+    public static String uploadObject2OSS(InputStream is, String fileName, Long fileSize, String path) {
+                /*// 图片格式
         String suffix = "";*/
         String resultStr = null;
         try {
             //以输入流的形式上传文件
-            InputStream is = new FileInputStream(file);
-
             //文件名
-            String fileName = file.getName();
             /*String uuid = UUID.randomUUID().toString().replace("-", "");
             String newFileName = new StringBuffer(uuid).append(".").append(suffix).toString();*/
             //文件大小
-            Long fileSize = file.length();
             //创建上传Object的Metadata
             ObjectMetadata metadata = new ObjectMetadata();
             //上传的文件的长度
@@ -175,6 +171,34 @@ public class AliOssClientUtil {
             }
             //解析结果
             resultStr = putResult.getETag();
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("上传阿里云OSS服务器异常." + e.getMessage(), e);
+        }
+        return resultStr;
+
+    }
+    /**
+     * 上传图片至OSS
+     *
+     * @param file 上传文件（文件全路径如：D:\\image\\cake.jpg）
+     * @return String 返回的唯一MD5数字签名
+     */
+    public static String uploadObject2OSS(File file, String path) {
+        /*// 图片格式
+        String suffix = "";*/
+        String resultStr = null;
+        try {
+            //以输入流的形式上传文件
+            InputStream is = new FileInputStream(file);
+
+            //文件名
+            String fileName = file.getName();
+            /*String uuid = UUID.randomUUID().toString().replace("-", "");
+            String newFileName = new StringBuffer(uuid).append(".").append(suffix).toString();*/
+            //文件大小
+            Long fileSize = file.length();
+            resultStr = uploadObject2OSS(is, fileName, fileSize, path);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("上传阿里云OSS服务器异常." + e.getMessage(), e);

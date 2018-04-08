@@ -201,10 +201,22 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "delete")
     public String delete(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "删除订单信息成功");
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
+
+
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
+        bizOrderHeaderService.delete(bizOrderHeader);
+        addMessage(redirectAttributes, "恢复订单信息成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
+    }
+
 
     /**
      * @param bizOrderHeader
@@ -297,8 +309,8 @@ public class BizOrderHeaderController extends BaseController {
                     //   以上输出结果是：-1小于、0等于、1大于
                     if (subtract.compareTo(new BigDecimal(0)) == 1) {
                         bizCustCredit.setWallet(subtract);
-                        bizCustCreditService.save(bizCustCredit);
-
+                        bizCustCredit.setId(orderHeaderMent.getCustomer().getId());
+                        bizCustCreditService.orderHeaderSave(bizCustCredit);
                         bizPayRecordCredit.setOriginalAmount(bizCustCredit.getWallet());//原金额
                         bizPayRecordCredit.setCashAmount(subtract);//现金额
                         if (payMentOne.equals(Totail)) {
@@ -463,10 +475,12 @@ public class BizOrderHeaderController extends BaseController {
             for (BizOrderHeader o : pageList) {
                 orderDetail.setOrderHeader(o);
                 List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
+                Double dou=0.0;
                 if (list.size() != 0) {
                     for (BizOrderDetail d : list) {
                         d.setOrderHeader(o);
                         o.setOrderDetailList(list);
+                        dou+=d.getBuyPrice()*d.getOrdQty();
                         List<String> detailListData = new ArrayList();
                         //ID
                         detailListData.add(String.valueOf(d.getId()));
@@ -486,6 +500,7 @@ public class BizOrderHeaderController extends BaseController {
                         detailListData.add(String.valueOf(d.getUnitPrice() * d.getOrdQty()));
                         detailData.add(detailListData);
                     }
+                    o.setTotalBuyPrice(dou);
                 }
                 //地址查询
                 o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
@@ -529,7 +544,13 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add("");
                 }
                 //利润
-                rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - o.getTotalBuyPrice()));
+                Double buy=0.0;
+                if(o.getTotalBuyPrice()!=null){
+                    buy=o.getTotalBuyPrice();
+                }else{
+                    buy=0.0;
+                }
+                rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - buy));
                 Dict dictInv = new Dict();
                 dictInv.setDescription("发票状态");
                 dictInv.setType("biz_order_invStatus");
@@ -614,6 +635,7 @@ public class BizOrderHeaderController extends BaseController {
             workbook.dispose();
             return null;
         } catch (Exception e) {
+           e.printStackTrace();
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/order/bizOrderHeader/";

@@ -129,7 +129,7 @@
 				<c:if test="${reqDetailList!=null && reqDetailList.size()>0}">
 					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
 						<tr id="${reqDetail.id}" class="reqDetailList">
-							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
+							<td><img style="max-width: 120px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
 							<td>${reqDetail.skuInfo.productInfo.name}</td>
 							<td>
 								<c:forEach items="${reqDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >
@@ -187,7 +187,7 @@
 					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
 							<tr id="${ordDetail.id}" class="ordDetailList">
-								<td><img src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
+								<td><img style="max-width: 120px" src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
 								<td>${ordDetail.skuInfo.productInfo.name}</td>
 								<td>
 									<c:forEach items="${ordDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >

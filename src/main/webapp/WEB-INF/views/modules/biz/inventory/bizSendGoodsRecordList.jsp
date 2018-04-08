@@ -134,8 +134,13 @@
 				</td>
 				<c:if test="${fns:getUser().isAdmin()}">
 				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><td>
-    				<%--<a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">修改</a>--%>
-					<a href="${ctx}/biz/inventory/bizSendGoodsRecord/delete?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要删除该供货记录吗？', this.href)">删除</a>
+					<c:if test="${bizSendGoodsRecord.delFlag!=null && bizSendGoodsRecord.delFlag!=0}">
+						<%--<a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">修改</a>--%>
+						<a href="${ctx}/biz/inventory/bizSendGoodsRecord/delete?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要删除该供货记录吗？', this.href)">删除</a>
+					</c:if>
+					<c:if test="${bizSendGoodsRecord.delFlag!=null && bizSendGoodsRecord.delFlag==0}">
+						<a href="${ctx}/biz/inventory/bizSendGoodsRecord/recovery?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要恢复该供货记录吗？', this.href)">恢复</a>
+					</c:if>
 				</td></shiro:hasPermission>
 				</c:if>
 			</tr>

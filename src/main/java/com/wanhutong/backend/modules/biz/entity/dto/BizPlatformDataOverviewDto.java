@@ -1,5 +1,8 @@
 package com.wanhutong.backend.modules.biz.entity.dto;
 
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,19 +30,24 @@ public class BizPlatformDataOverviewDto {
     private String name;
 
     /**
-     * 采购额
+     * 计划采购额
      */
-    private BigDecimal procurement;
+    private BigDecimal procurement = BigDecimal.ZERO;
 
     /**
      * 月累计销量
      */
-    private BigDecimal accumulatedSalesMonth;
+    private BigDecimal accumulatedSalesMonth = BigDecimal.ZERO;
+
+    /**
+     * 月回款额
+     */
+    private BigDecimal receiveTotal = BigDecimal.ZERO;
 
     /**
      * 日采购额
      */
-    private BigDecimal procurementDay;
+    private BigDecimal procurementDay = BigDecimal.ZERO;
 
     /**
      * 达成率
@@ -49,7 +57,7 @@ public class BizPlatformDataOverviewDto {
     /**
      * 月累计差异
      */
-    private BigDecimal differenceTotalMonth;
+    private BigDecimal differenceTotalMonth = BigDecimal.ZERO;
 
     /**
      * 剩余天数
@@ -64,12 +72,43 @@ public class BizPlatformDataOverviewDto {
     /**
      * 库存金额
      */
-    private BigDecimal stockAmount;
+    private BigDecimal stockAmount = BigDecimal.ZERO;
 
     /**
      * 当前日期
      */
     private String currentDate;
+
+    /**
+     * 采购中心ID
+     */
+    private Integer officeId;
+
+    /**
+     * 采购中心NAME
+     */
+    private String officeName;
+
+    /**
+     * 采购中心TYPE
+     */
+    private Integer officeType;
+
+    public Integer getOfficeId() {
+        return officeId;
+    }
+
+    public void setOfficeId(Integer officeId) {
+        this.officeId = officeId;
+    }
+
+    public String getOfficeName() {
+        return officeName;
+    }
+
+    public void setOfficeName(String officeName) {
+        this.officeName = officeName;
+    }
 
     public String getCurrentDate() {
         return currentDate;
@@ -79,7 +118,28 @@ public class BizPlatformDataOverviewDto {
         this.currentDate = currentDate;
     }
 
+    public Integer getOfficeType() {
+        return officeType;
+    }
+
+    public void setOfficeType(Integer officeType) {
+        this.officeType = officeType;
+    }
+
     public String getProvince() {
+        switch (OfficeTypeEnum.stateOf(String.valueOf(officeType))) {
+            case PURCHASINGCENTER:
+                if (StringUtils.isBlank(province)) {
+                    return "未知";
+                }
+                return province;
+            case NETWORKSUPPLY:
+                return "网供";
+            case WITHCAPITAL:
+                return "配资";
+            default:
+                break;
+        }
         return province;
     }
 
@@ -123,7 +183,7 @@ public class BizPlatformDataOverviewDto {
         if (getProcurement().compareTo(BigDecimal.ZERO) == 0) {
             return "0";
         }
-        return getAccumulatedSalesMonth().divide(getProcurement(), 2,BigDecimal.ROUND_HALF_UP).multiply(PERCENTAGE).toString().concat("%");
+        return getAccumulatedSalesMonth().divide(getProcurement(), 2, BigDecimal.ROUND_HALF_UP).multiply(PERCENTAGE).toString().concat("%");
     }
 
 
@@ -149,10 +209,14 @@ public class BizPlatformDataOverviewDto {
     }
 
     public BigDecimal getDayMinReturned() {
-        if (getDifferenceTotalMonth().compareTo(BigDecimal.ZERO) < 0) {
-            return getDifferenceTotalMonth().divide(BigDecimal.valueOf(getRemainingDays()), 2,BigDecimal.ROUND_HALF_UP).abs();
+        if (getDifferenceTotalMonth().compareTo(BigDecimal.ZERO) >= 0) {
+            return BigDecimal.ZERO;
         }
-        return BigDecimal.ZERO;
+        if (getRemainingDays() == 0) {
+            return getDifferenceTotalMonth().abs();
+        }
+
+        return getDifferenceTotalMonth().divide(BigDecimal.valueOf(getRemainingDays()), 2, BigDecimal.ROUND_HALF_UP).abs();
     }
 
 
@@ -162,5 +226,13 @@ public class BizPlatformDataOverviewDto {
 
     public void setStockAmount(BigDecimal stockAmount) {
         this.stockAmount = stockAmount;
+    }
+
+    public BigDecimal getReceiveTotal() {
+        return receiveTotal;
+    }
+
+    public void setReceiveTotal(BigDecimal receiveTotal) {
+        this.receiveTotal = receiveTotal;
     }
 }

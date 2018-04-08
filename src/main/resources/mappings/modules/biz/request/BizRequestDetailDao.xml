@@ -51,6 +51,13 @@
 				<if test="dbName == 'mysql'">concat('%',#{skuInfo.itemNo},'%')</if>
 
 			</if>
+			<if test="skuInfo != null and skuInfo.partNo!=null and skuInfo.partNo != ''">
+				AND si.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+
+			</if>
 			<if test="requestHeader != null and requestHeader.id!=null and requestHeader.id != ''">
 				AND a.header_id = #{requestHeader.id}
 			</if>

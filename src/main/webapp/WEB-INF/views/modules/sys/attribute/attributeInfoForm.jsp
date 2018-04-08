@@ -30,6 +30,7 @@
 		<li><a href="${ctx}/sys/attribute/attributeInfo/">标签属性列表</a></li>
 		<li class="active"><a href="${ctx}/sys/attribute/attributeInfo/form?id=${attributeInfo.id}">标签属性<shiro:hasPermission name="sys:attribute:attributeInfo:edit">${not empty attributeInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:attribute:attributeInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
+	<%--@elvariable id="attributeInfo" type="com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2"--%>
 	<form:form id="inputForm" modelAttribute="attributeInfo" action="${ctx}/sys/attribute/attributeInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		

@@ -82,8 +82,18 @@ public class BizCustCreditController extends BaseController {
 	@RequiresPermissions("biz:cust:bizCustCredit:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizCustCredit bizCustCredit, RedirectAttributes redirectAttributes) {
+		bizCustCredit.setDelFlag(BizCustCredit.DEL_FLAG_DELETE);
 		bizCustCreditService.delete(bizCustCredit);
 		addMessage(redirectAttributes, "删除钱包成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/cust/bizCustCredit/?repage";
+	}
+
+	@RequiresPermissions("biz:cust:bizCustCredit:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(BizCustCredit bizCustCredit, RedirectAttributes redirectAttributes) {
+		bizCustCredit.setDelFlag(BizCustCredit.DEL_FLAG_NORMAL);
+		bizCustCreditService.delete(bizCustCredit);
+		addMessage(redirectAttributes, "恢复钱包成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/cust/bizCustCredit/?repage";
 	}
 

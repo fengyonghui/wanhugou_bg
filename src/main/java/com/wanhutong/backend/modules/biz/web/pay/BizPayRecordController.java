@@ -75,8 +75,18 @@ public class BizPayRecordController extends BaseController {
 	@RequiresPermissions("biz:pay:bizPayRecord:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizPayRecord bizPayRecord, RedirectAttributes redirectAttributes) {
+		bizPayRecord.setDelFlag(BizPayRecord.DEL_FLAG_DELETE);
 		bizPayRecordService.delete(bizPayRecord);
 		addMessage(redirectAttributes, "删除交易记录成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/pay/bizPayRecord/?repage";
+	}
+
+	@RequiresPermissions("biz:pay:bizPayRecord:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(BizPayRecord bizPayRecord, RedirectAttributes redirectAttributes) {
+		bizPayRecord.setDelFlag(BizPayRecord.DEL_FLAG_NORMAL);
+		bizPayRecordService.delete(bizPayRecord);
+		addMessage(redirectAttributes, "恢复交易记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/pay/bizPayRecord/?repage";
 	}
 

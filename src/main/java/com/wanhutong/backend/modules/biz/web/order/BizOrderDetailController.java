@@ -5,31 +5,17 @@ package com.wanhutong.backend.modules.biz.web.order;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.GenerateOrderUtils;
-import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.dao.order.BizOrderDetailDao;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderSkuPropValue;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderSkuPropValueService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
-import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
-import com.wanhutong.backend.modules.enums.BizOrderDiscount;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -102,7 +88,7 @@ public class BizOrderDetailController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizOrderDetail bizOrderDetail, Model model) {
 //		用于往页面传给savg保存 首单标记 OneOrder
-          bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
+		bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
         BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
         if(orderHeader!=null){
 			BizOrderHeader ord = bizOrderHeaderService.get(orderHeader.getId());
@@ -112,7 +98,9 @@ public class BizOrderDetailController extends BaseController {
 		}
 //		订单详情修改按钮显示品规色
 		BizOrderDetail detailOrder = bizOrderDetailService.get(bizOrderDetail);
-		if(detailOrder!=null){
+        if(detailOrder!=null){
+			BizOpShelfSku opShelfSku=bizOpShelfSkuService.get(bizOrderDetail.getShelfInfo().getId()) ;
+			detailOrder.setShelfInfo(opShelfSku);
 			BizOrderSkuPropValue bizOrderSkuPropValue = new BizOrderSkuPropValue();
 			bizOrderSkuPropValue.setOrderDetails(detailOrder);
 			List<BizOrderSkuPropValue> list = bizOrderSkuPropValueService.findList(bizOrderSkuPropValue);
@@ -130,18 +118,19 @@ public class BizOrderDetailController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderDetail:edit")
 	@RequestMapping(value = "save")
 	public String save(BizOrderDetail bizOrderDetail, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizOrderDetail)){
-			return form(bizOrderDetail, model);
-		}
 		bizOrderDetailService.save(bizOrderDetail);
 		addMessage(redirectAttributes, "保存订单详情成功");
 		Integer orderId=bizOrderDetail.getOrderHeader().getId();
 ////		if(orderId !=null && orderId !=0){
 //		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 ////		}
+		String consultantId ="";
+		if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getConsultantId()!=null){
+			consultantId = String.valueOf(bizOrderDetail.getOrderHeader().getConsultantId());
+		}
 		if(bizOrderDetail.getOrderHeader().getClientModify()!=null && bizOrderDetail.getOrderHeader().getClientModify().equals("client_modify")){
 			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId+"&clientModify=client_modify"+
-					"&consultantId="+bizOrderDetail.getOrderHeader().getConsultantId();
+					"&consultantId="+consultantId;
 		}
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 	}
@@ -168,10 +157,7 @@ public class BizOrderDetailController extends BaseController {
 			bizOrderHeaderService.updateMoney(bizOrderHeader);
 		}
 		addMessage(redirectAttributes, "删除订单详情成功");
-//		if(orderDetailDetele.equals("details")){
-////			跳回添加商品
-//		}
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+bizOrderDetail.getOrderHeader().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+bizOrderDetail.getOrderHeader().getId();
 	}
 
 	@ResponseBody
@@ -185,4 +171,39 @@ public class BizOrderDetailController extends BaseController {
 		}
 		return list;
 	}
+
+	/**
+	 * 订单商品详情实现不刷新删除
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:order:bizOrderDetail:edit")
+	@RequestMapping(value = "Detaildelete")
+	public String Detaildelete(BizOrderDetail bizOrderDetail,String orderDetailDetele) {
+		String aa="error";
+		try {
+			bizOrderDetailService.delete(bizOrderDetail);
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizOrderDetail.getOrderHeader().getId());
+			BizOrderDetail deta = new BizOrderDetail();
+			deta.setOrderHeader(bizOrderDetail.getOrderHeader());
+			List<BizOrderDetail> list = bizOrderDetailService.findList(deta);
+			Double sum=0.0;
+			if(list != null){
+				for(BizOrderDetail bod:list){
+					Double price = bod.getUnitPrice();//商品单价
+					Integer ordQty = bod.getOrdQty();//采购数量
+					if(price==null){price=0.0; }
+					if(ordQty==null){ordQty=0; }
+					sum+=price*ordQty;
+				}
+				bizOrderHeader.setTotalDetail(sum);
+				bizOrderHeaderService.updateMoney(bizOrderHeader);
+			}
+			aa="ok";
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return aa;
+	}
+
 }

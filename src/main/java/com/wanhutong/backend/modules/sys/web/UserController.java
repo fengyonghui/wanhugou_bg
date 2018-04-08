@@ -75,24 +75,24 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
-		if(user.getCompany()!=null && user.getCompany().getSource()!=null && user.getCompany().getSource().equals("officeConnIndex")){
-			Office queryOffice = officeService.get(user.getCompany().getId());
+		String userSou="officeConnIndex";
+		if(user.getCompany()!=null && user.getCompany().getSource()!=null && user.getCompany().getSource().equals(userSou)){
 			//属于客户专员左边点击菜单查询
+			Office queryOffice = officeService.get(user.getCompany().getId());
 			if(queryOffice!=null){
-				if(queryOffice.getType().equals("8")){//采购中心8
+				if(queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()))){//采购中心8
 					user.getCompany().setType(queryOffice.getType());
-				} else if(queryOffice.getType().equals("10")){ //配资中心 10
+				} else if(queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()))){ //配资中心 10
 					user.getCompany().setCustomerTypeTen(queryOffice.getType());
-				}else if(queryOffice.getType().equals("11")){	//网供中心 11
+				}else if(queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()))){	//网供中心 11
 					user.getCompany().setCustomerTypeEleven(queryOffice.getType());
 				}else{
-					user.getCompany().setType("8");
-					user.getCompany().setCustomerTypeTen("10");
-					user.getCompany().setCustomerTypeEleven("11");
+					user.getCompany().setType(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()));
+					user.getCompany().setCustomerTypeTen(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()));
+					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
 				}
 			}
 		}
-
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
 		return "modules/sys/userList";
@@ -149,10 +149,12 @@ public class UserController extends BaseController {
 		}
 		model.addAttribute("user", user);
 		model.addAttribute("allRoles", systemService.findAllRole());
-//		if(user.getConn().equals("connIndex")){
-////			修改 跳回客户专员管理
-//			return "redirect:" + adminPath + "/sys/user/list?company.id="+user.getCompany().getId()+"&company.type="+user.getCompany().getType();
-//		}
+
+		String officeUser="office_user_save";
+		if(user.getConn()!=null && user.getConn().equals(officeUser)){
+			//用于用户管理添加跳转
+			return "modules/sys/officeUserForm";
+		}
 		return "modules/sys/userForm";
 	}
 
@@ -210,11 +212,18 @@ public class UserController extends BaseController {
 		}else {
 			UserUtils.clearCache(user);
 		}
+
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
 
-		if(user.getConn()!=null && user.getConn().equals("connIndex")){
+		String Commissioner="connIndex";
+		String officeUser="office_user_save";
+		if(user.getConn()!=null && user.getConn().equals(Commissioner)){
 //			添加 跳回客户专员管理
 			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
+		}
+		if(user.getConn()!=null && user.getConn().equals(officeUser)){
+//			添加 跳回用户管理列表
+			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
@@ -234,10 +243,16 @@ public class UserController extends BaseController {
 			systemService.deleteUser(user);
 			addMessage(redirectAttributes, "删除用户成功");
 		}
-		if(user.getConn() !=null && user.getConn().equals("connIndex")){
+		String Commissioner="connIndex";
+		String officeUser="office_user_save";
+		if(user.getConn() !=null && user.getConn().equals(Commissioner)){
 //			跳回客户专员管理
 			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
 					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
+		}
+		if(user.getConn() !=null && user.getConn().equals(officeUser)){
+//			跳回用户管理
+			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
@@ -468,11 +483,22 @@ public class UserController extends BaseController {
 //		});
 //	}
 
-	//	客户专员管理
+	/**
+	 * 客户专员管理
+	 * */
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"conIndex"})
 	public String conIndex(User user, Model model) {
 		return "modules/sys/conIndex";
+	}
+
+	/**
+	 * 仓储专员管理
+	 */
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"stoIndex"})
+	public String stoIndex(User user, Model model) {
+		return "modules/sys/stoIndex";
 	}
 
 	/**
@@ -509,4 +535,30 @@ public class UserController extends BaseController {
 		}
 		return list;
 	}
+
+	/**
+	 * 用户管理模块
+	 * */
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"officeUserIndex"})
+	public String officeUserIndex(User user, Model model) {
+		return "modules/sys/officeUserIndex";
+	}
+
+	/**
+	 * 用户列表查询及点击左侧查询
+	 * */
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = "officeUserList")
+	public String officeUserList(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
+		String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+		Office customer = new Office();
+		customer.setType(String.valueOf(OfficeTypeEnum.CUSTOMER.getType()));
+		customer.setParentIds("%," + purchasersId + ",%");
+		user.setCompany(customer);
+		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
+		model.addAttribute("page", page);
+		return "modules/sys/OfficeUserList";
+	}
+
 }

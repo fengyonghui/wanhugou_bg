@@ -34,16 +34,16 @@ public class HanyuPinyinHelper {
         return hanyupinyin;
     }
 
-    public static String getFirstLettersUp(String ChineseLanguage){
-        return getFirstLetters(ChineseLanguage ,HanyuPinyinCaseType.UPPERCASE);
+    public static String getFirstLettersUp(String chineseLanguage){
+        return getFirstLetters(chineseLanguage ,HanyuPinyinCaseType.UPPERCASE);
     }
 
-    public static String getFirstLettersLo(String ChineseLanguage){
-        return getFirstLetters(ChineseLanguage ,HanyuPinyinCaseType.LOWERCASE);
+    public static String getFirstLettersLo(String chineseLanguage){
+        return getFirstLetters(chineseLanguage ,HanyuPinyinCaseType.LOWERCASE);
     }
 
-    public static String getFirstLetters(String ChineseLanguage,HanyuPinyinCaseType caseType) {
-        char[] cl_chars = ChineseLanguage.trim().toCharArray();
+    public static String getFirstLetters(String chineseLanguage,HanyuPinyinCaseType caseType) {
+        char[] cl_chars = chineseLanguage.trim().toCharArray();
         String hanyupinyin = "";
         HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
         defaultFormat.setCaseType(caseType);// 输出拼音全部大写

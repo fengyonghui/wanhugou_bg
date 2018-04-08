@@ -21,7 +21,8 @@
 		<li class="active"><a href="${ctx}/sys/attribute/attributeInfo/">标签属性列表</a></li>
 		<shiro:hasPermission name="sys:attribute:attributeInfo:edit"><li><a href="${ctx}/sys/attribute/attributeInfo/form">标签属性添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="attributeInfo" action="${ctx}/sys/attribute/attributeInfo/" method="post" class="breadcrumb form-search">
+	<%--@elvariable id="attributeInfoV2" type="com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2"--%>
+	<form:form id="searchForm" modelAttribute="attributeInfoV2" action="${ctx}/sys/attribute/attributeInfo/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">

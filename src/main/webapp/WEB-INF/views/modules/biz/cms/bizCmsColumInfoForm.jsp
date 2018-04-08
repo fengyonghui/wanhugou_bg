@@ -46,7 +46,7 @@
 		<div class="control-group">
 			<label class="control-label">栏目类型：</label>
 			<div class="controls">
-				<form:select path="type" class="input-xlarge ">
+				<form:select path="type" class="input-xlarge required">
 					<form:option value="" label=""/>
 					<form:options items="${fns:getDictList('biz_cms_colum')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
@@ -63,10 +63,11 @@
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<form:select path="shelfInfo.id" class="input-xlarge" id="pageInfoId">
+				<form:select path="shelfInfo.id" class="input-xlarge required" id="pageInfoId">
 					<form:option value="" label="请选择"/>
 					<form:options items="${shelfInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">

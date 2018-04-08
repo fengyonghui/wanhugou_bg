@@ -73,9 +73,17 @@ public class BizShopCartController extends BaseController {
 	@RequiresPermissions("biz:shop:bizShopCart:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizShopCart bizShopCart, RedirectAttributes redirectAttributes) {
+		bizShopCart.setDelFlag(BizShopCart.DEL_FLAG_DELETE);
 		bizShopCartService.delete(bizShopCart);
 		addMessage(redirectAttributes, "删除购物车成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/shop/bizShopCart/?repage";
 	}
-	
+	@RequiresPermissions("biz:shop:bizShopCart:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(BizShopCart bizShopCart, RedirectAttributes redirectAttributes) {
+		bizShopCart.setDelFlag(BizShopCart.DEL_FLAG_NORMAL);
+		bizShopCartService.delete(bizShopCart);
+		addMessage(redirectAttributes, "恢复购物车成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/shop/bizShopCart/?repage";
+	}
 }

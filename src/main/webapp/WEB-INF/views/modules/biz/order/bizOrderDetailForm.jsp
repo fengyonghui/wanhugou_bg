@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
@@ -45,20 +44,21 @@
                     <%--console.log(JSON.stringify(opShelfSku.skuValueList)+"-测试 888--");--%>
                         trdatas+= "<tr id='"+opShelfSku.id+"'>";
                         trdatas+="<td>"+opShelfSku.opShelfInfo.name+"</td>";
+                        trdatas+="<td>"+opShelfSku.centerOffice.name+"</td>"
                         trdatas+="<td>"+opShelfSku.skuInfo.name+"</td>";
                         trdatas+="<td>"+opShelfSku.skuInfo.partNo+"</td>";
                         trdatas+="<td>"+opShelfSku.skuInfo.itemNo+"</td>";
                         var arr=opShelfSku.skuValueList;
                         if(arr!=null){
-                            var Attribute="";<%--页面的属性值遍历--%>
+                            var attribute="";<%--页面的属性值遍历--%>
                             for(var jj=0;jj<arr.length;jj++){
-                               var items=arr[jj].propName+":"+arr[jj].propValue+",";
-                               Attribute+=items;
+                               var items=arr[jj].value+",";
+                               attribute+=items;
                             }
                         }else{
-                            var Attribute="";
+                            var attribute="";
                         }
-                        trdatas+="<td>"+Attribute+"</td>";
+                        trdatas+="<td>"+attribute+"</td>";
                         trdatas+="<td><input type='hidden' id='maxQty_"+opShelfSku.id+"' value='"+opShelfSku.maxQty+"'/>"+opShelfSku.minQty+"-"+opShelfSku.maxQty+"</td>";
                         trdatas+="<td>"+opShelfSku.salePrice+"</td>";
                         trdatas+="<td><input type='number' class='input-mini' id='saleQty_"+opShelfSku.id+"' style='width:58px;' min='1' max='99999' /></td>";
@@ -102,9 +102,26 @@
             $("#prodInfo2").find("#shelfSkuId_"+obj).removeAttr("name");
         }
     </script>
-
+    <script type="text/javascript">
+        function DetailDelete(a,b,c){
+            top.$.jBox.confirm("确认要删除该商品吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/order/bizOrderDetail//Detaildelete",
+                        data:"id="+a+"&sign="+b+"&orderDetailDetele="+c,
+                        success:function(data){
+                            if(data=="ok"){
+                                $("#trRevom_"+a).remove();//主要是删除这tr
+                                $("#id").val("");//点击删除后把原id为空
+                            }
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+        }
+    </script>
 <meta name="decorator" content="default"/>
-
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -155,6 +172,7 @@
                 <thead>
                 <tr>
                     <th>货架名称</th>
+                    <th>采购中心</th>
                     <th>商品名称</th>
                     <th>商品编码</th>
                     <th>商品货号</th>
@@ -170,8 +188,9 @@
                 </thead>
                 <tbody id="prodInfo">
                     <c:if test="${bizOrderDetail.id!=null}">
-                        <tr>
+                        <tr id="trRevom_${detail.id}">
                             <td>${detail.shelfInfo.opShelfInfo.name}</td>
+                            <td>${detail.shelfInfo.centerOffice.name}</td>
                             <td>${detail.skuName}</td>
                             <td>${detail.partNo}</td>
                             <td>${detail.skuInfo.itemNo}</td>
@@ -186,9 +205,11 @@
                             <td>${shelfSku.minQty}-${shelfSku.maxQty}</td>
                             <td>${shelfSku.salePrice}</td>
                             <td style="text-align: center;">${detail.ordQty}</td>
-                            <td><a href="${ctx}/biz/order/bizOrderDetail/delete?id=${detail.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">
-                                    删除
-                            </a></td>
+                            <td>
+                                <%--<a href="${ctx}/biz/order/bizOrderDetail/delete?id=${detail.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">--%>
+                                    <%--删除</a>--%>
+                                <a href="javascript:void(0);" onclick="DetailDelete(${detail.id},'1','details');">删除</a>
+                            </td>
                         </tr>
                     </c:if>
                 </tbody>
@@ -198,6 +219,7 @@
                     <thead>
                     <tr>
                         <th>货架名称</th>
+                        <th>采购中心</th>
                         <th>商品名称</th>
                         <th>商品编码</th>
                         <th>商品货号</th>

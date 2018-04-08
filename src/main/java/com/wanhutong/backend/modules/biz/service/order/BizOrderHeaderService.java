@@ -7,7 +7,6 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
-import com.wanhutong.backend.modules.biz.dao.order.BizOrderDetailDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
@@ -16,9 +15,6 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
-import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
-import com.wanhutong.backend.modules.enums.BizOrderDiscount;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -34,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
@@ -87,9 +82,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
         if(user.isAdmin()){
             List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
-            //用于订单导出的利润
-            List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
-            return headerList;
+
+            return bizOrderHeaderList;
         }else {
             if(oflag){
 
@@ -97,9 +91,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
                 List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
-            //用于订单导出的利润
-            List<BizOrderHeader> headerList = getTotalBuyPrice(bizOrderHeaderList);
-            return headerList;
+
+            return bizOrderHeaderList;
         }
     }
 
@@ -115,6 +108,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
             return orderHeaderPage;
         }else {
+            bizOrderHeader.setDataStatus("filter");
             boolean flag=false;
             boolean roleFlag = false;
             if(user.getRoleList()!=null) {
@@ -238,7 +232,10 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             if (orderDetailList != null && orderDetailList.size() > 0){
                 for (BizOrderDetail orderDetail:orderDetailList){
                     BizSkuInfo skuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
-                    totalBuyPrice += skuInfo.getBuyPrice() * orderDetail.getOrdQty();
+                    if(skuInfo!=null){
+                        totalBuyPrice += skuInfo.getBuyPrice() * (orderDetail.getOrdQty()==null?0:orderDetail.getOrdQty());
+                    }
+
                 }
             }
 //                totalBuyPrice = orderDetailList.stream().parallel().mapToDouble(orderDetail -> orderDetail.getSkuInfo() == null ? 0 : orderDetail.getSkuInfo().getBuyPrice() * orderDetail.getOrdQty()).sum();

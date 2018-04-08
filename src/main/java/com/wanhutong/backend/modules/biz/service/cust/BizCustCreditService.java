@@ -50,6 +50,10 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
         if (bizCustCredit.getCustomer() != null) {
             bizCustCredit.getCustomer().getMoblieMoeny().setMobile(bizCustCredit.getCustomer().getMoblieMoeny().getMobile());
         }
+        User user=UserUtils.getUser();
+        if(!user.isAdmin()){
+            bizCustCredit.setDataStatus("filter");
+        }
         return super.findPage(page, bizCustCredit);
     }
 
@@ -57,10 +61,15 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
     public void save(BizCustCredit bizCustCredit) {
         User user = UserUtils.getUser();
         BizCustCredit custCredit = this.get(bizCustCredit.getCustomer().getId());
-        if (custCredit != null) {
+        String a="0";
+        if (custCredit != null && !custCredit.getDelFlag().equals(a)) {
             //原金额
             BigDecimal wallet = custCredit.getWallet();
-            custCredit.setWallet(bizCustCredit.getWallet());
+            if (bizCustCredit.getCustFalg() != null && bizCustCredit.getCustFalg().equals("officeCust")) {
+                custCredit.setWallet(wallet);
+            }else{
+                custCredit.setWallet(bizCustCredit.getWallet());
+            }
             custCredit.setMoney(bizCustCredit.getMoney());
             custCredit.setId(bizCustCredit.getCustomer().getId());
             super.save(custCredit);
@@ -87,7 +96,14 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
                 bizPayRecordService.save(bizPayRecord);
             }
         } else {
-            super.save(bizCustCredit);
+            BizCustCredit officeCredit = super.get(bizCustCredit.getCustomer().getId());
+            if(officeCredit!=null){
+                officeCredit.setId(bizCustCredit.getCustomer().getId());
+                officeCredit.setDelFlag("1");
+                super.save(officeCredit);
+            }else{
+                super.save(bizCustCredit);
+            }
         }
 
     }
@@ -95,6 +111,15 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
     @Transactional(readOnly = false)
     public void delete(BizCustCredit bizCustCredit) {
         super.delete(bizCustCredit);
+    }
+
+
+    /**
+     * 用于订单支付保存 原有金额减去 输入的支付金额
+     */
+    @Transactional(readOnly = false)
+    public void orderHeaderSave(BizCustCredit bizCustCredit) {
+        super.save(bizCustCredit);
     }
 
 }

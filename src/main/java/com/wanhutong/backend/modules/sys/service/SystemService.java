@@ -5,10 +5,7 @@ package com.wanhutong.backend.modules.sys.service;
 
 import java.util.*;
 
-import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import org.activiti.engine.IdentityService;
-import org.activiti.engine.identity.Group;
 import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm;
 import com.wanhutong.backend.modules.sys.utils.LogUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+
 
 /**
  * 系统管理，安全相关实体的管理类,包括用户、角色、菜单.
@@ -98,7 +96,40 @@ public class SystemService extends BaseService implements InitializingBean {
 	
 	public Page<User> findUser(Page<User> page, User user) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+        boolean flag = false;
+        if(user.getCurrentUser().getRoleList()!=null) {
+            for (Role role : user.getCurrentUser().getRoleList()) {
+                if (RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())) {
+                    flag = true;
+                }
+            }
+        }
+        //只查询客户专员
+        if (user.getConn() != null && user.getConn().equals("connIndex")) {
+            Role role = new Role();
+            role.setEnname(RoleEnNameEnum.BUYER.getState());
+            List<Role> roleList = findRole(role);
+            if (roleList != null && roleList.size() > 0){
+                role = roleList.get(0);
+            }
+            user.setRole(role);
+		}
+		//只查询仓储专员
+		if (user.getConn() != null && user.getConn().equals("stoIndex")) {
+			Role role = new Role();
+			role.setEnname(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
+			List<Role> roleList = findRole(role);
+			if (roleList != null && roleList.size() > 0){
+				role = roleList.get(0);
+			}
+			user.setRole(role);
+		}
+
+        if (flag){
+            user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "", "a"));
+        }else {
+            user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+        }
 		// 设置分页参数
 		user.setPage(page);
 		// 执行分页查询

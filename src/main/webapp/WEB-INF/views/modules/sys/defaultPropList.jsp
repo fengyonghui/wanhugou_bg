@@ -25,7 +25,7 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>系统属性键：</label>
+			<li><label>属性标签：</label>
 				<form:input path="propKey" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -36,8 +36,8 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>系统属性键</th>
-				<th>系统属性值</th>
+				<th>系统属性标签</th>
+				<th>系统属性值(ID)</th>
 				<th>属性描述</th>
 				<shiro:hasPermission name="sys:defaultProp:edit"><th>操作</th></shiro:hasPermission>
 			</tr>

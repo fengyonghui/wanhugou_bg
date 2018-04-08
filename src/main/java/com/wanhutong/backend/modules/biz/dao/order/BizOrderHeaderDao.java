@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.order;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
@@ -240,4 +241,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return 商品新增数量
      */
     List<BizProductStatisticsDto> getSkuAllStatisticData(@Param("variId")Integer variId);
+
+    /**
+     * 取平台概览信息
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    List<BizPlatformDataOverviewDto> platformDataOverview(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
 }

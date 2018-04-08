@@ -88,7 +88,7 @@
 					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
 							<tr id="${ordDetail.id}" class="ordDetailList">
-							<td><img src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
+							<td><img style="max-width: 120px" src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
 							<td>${ordDetail.skuInfo.productInfo.name}</td>
 							<td>
 								<c:forEach items="${ordDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >

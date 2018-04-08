@@ -22,4 +22,11 @@ public interface BizInventorySkuDao extends CrudDao<BizInventorySku> {
      * @return
      */
     BizInventorySku findOnly(BizInventorySku bizInventorySku);
+
+    /**
+     * 查询采购中心库存总数
+     * @param centId
+     * @return
+     */
+    Integer invSkuCount(Integer centId);
 }

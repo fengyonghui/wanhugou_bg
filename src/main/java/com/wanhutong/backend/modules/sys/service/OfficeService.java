@@ -8,7 +8,6 @@ import java.util.*;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.utils.excel.fieldtype.OfficeType;
 import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
@@ -59,10 +58,10 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = true)
 	public List<Office> findList(Office office){
 		if(office != null){
-
 			office.setParentIds(office.getParentIds()+"%");
 			User user = UserUtils.getUser();
 			if(!user.isAdmin()&&!OfficeTypeEnum.VENDOR.getType().equals(office.getType())&&!OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
+				office.setDataStatus("filter");
 				office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 			}
 			else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(office.getType())){
@@ -86,6 +85,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 					customCenterConsultant.setConsultants(user);
 				}
 				customCenterConsultant.setParentIds(office.getParentIds());
+
 				List<Office> officeList=officeDao.findOfficeByIdToParent(customCenterConsultant);
 
 				return  officeList;
@@ -251,7 +251,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public List<Office> CustomerfilerOffice(List<Office> offices,String source, OfficeTypeEnum officeType){
 		Office office = new Office();
 		User user = UserUtils.getUser();
-		if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())){
+		if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())
+				|| user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) || user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())){
 			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 		}
 		else if (StringUtils.isNotBlank(source) && (source.equals("ghs") || source.equals("gys") || source.equals("cgs"))){
@@ -340,5 +341,23 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
         stringBuffer.append(",").append(id).append(",");
         String parentIds = stringBuffer.toString();
         return  officeDao.findVent(parentIds);
+	}
+
+	/**
+	 * 取多个类型的office
+	 * @param typeList
+	 * @return
+	 */
+	public List<Office> findListByTypeList(List<String> typeList) {
+		return officeDao.findListByTypeList(typeList);
+	}
+
+	/**
+	 * 用于查询配资下边的采购商
+	 * @param cust
+	 * @return
+	 */
+	public List<Office> findCapitalList(Office cust){
+		return officeDao.findList(cust);
 	}
 }

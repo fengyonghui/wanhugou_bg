@@ -80,19 +80,48 @@
                 $("#monthCol").append("<th>数据类型</th>");
                 var orderTable = "";
                 var orderTable1 = "";
+                var orderTable2 = "";
+                var orderTable3 = "";
+
+                var totalTotalMoney = 0;
+                var totalOrderCount = 0;
+                var totalProfitPrice = 0;
+                var totalReceiveTotal = 0;
                 orderTable += "<tr>";
                 orderTable1 += "<tr>";
+                orderTable3 += "<tr>";
+                orderTable2 += "<tr>";
+
                 orderTable += "<td>销售额</td>";
+                orderTable3 += "<td>回款额</td>";
                 orderTable1 += "<td>订单量</td>";
+                orderTable2 += "<td>利润</td>";
                 $.each(msg.bizOrderStatisticsDtoList, function (key1, value1) {
                     $("#monthCol").append("<th>" + value1.createDate + "</th>");
                     orderTable += "<td>" + value1.totalMoney + "</td>";
                     orderTable1 += "<td>" + value1.orderCount + "</td>";
+                    orderTable2 += "<td>" + value1.profitPrice + "</td>";
+                    orderTable3 += "<td>" + value1.receiveTotal + "</td>";
+                    totalTotalMoney += value1.totalMoney;
+                    totalOrderCount += value1.orderCount;
+                    totalProfitPrice += value1.profitPrice;
+                    totalReceiveTotal += value1.receiveTotal;
                 });
+                orderTable += "<td>" + totalTotalMoney.toFixed(2) + "</td>";
+                orderTable1 += "<td>" + totalOrderCount.toFixed(2) + "</td>";
+                orderTable2 += "<td>" + totalProfitPrice.toFixed(2) + "</td>";
+                orderTable3 += "<td>" + totalReceiveTotal.toFixed(2) + "</td>";
+
                 orderTable += "</tr>";
                 orderTable1 += "</tr>";
+                orderTable2 += "</tr>";
+                orderTable3 += "</tr>";
+
+                $("#monthCol").append("<th>合计</th>");
                 $("#orderTable").append(orderTable);
+                $("#orderTable").append(orderTable3);
                 $("#orderTable").append(orderTable1);
+                $("#orderTable").append(orderTable2);
             }
         })
     }
