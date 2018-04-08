@@ -408,15 +408,17 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         commonImg.setImgType(imgType);
         commonImg.setImgSort(20);
 
-        CommonImg oldCommonImg = new CommonImg();
-        oldCommonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
-        oldCommonImg.setObjectId(bizProductInfo.getId());
-        oldCommonImg.setObjectName("biz_product_info");
-
-        List<CommonImg> oldImgList = commonImgService.findList(oldCommonImg);
+        List<CommonImg> oldImgList = null;
+        if (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType) {
+            CommonImg oldCommonImg = new CommonImg();
+            oldCommonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
+            oldCommonImg.setObjectId(bizProductInfo.getId());
+            oldCommonImg.setObjectName("biz_product_info");
+            oldImgList = commonImgService.findList(oldCommonImg);
+        }
 
         for (String name : result) {
-            if (StringUtils.isNotBlank(name) && (copy || CollectionUtils.isEmpty(oldImgList))) {
+            if (StringUtils.isNotBlank(name) && (copy || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType)))) {
                 commonImg.setId(null);
                 commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
                 commonImg.setImgServer(name.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
