@@ -115,7 +115,7 @@
 				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
 					${bizOpShelfSku.skuInfo.name}
 				</a></td>
-				<td><a href="${ctx}/biz/product/bizProductInfo/form?id=${bizOpShelfSku.productInfo.id}">
+				<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizOpShelfSku.productInfo.id}">
 					${bizOpShelfSku.productInfo.name}
 				</a></td>
 				<td>
