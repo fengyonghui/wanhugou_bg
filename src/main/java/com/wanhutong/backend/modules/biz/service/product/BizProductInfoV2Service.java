@@ -317,25 +317,28 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
     public void saveCommonImg(BizProductInfo bizProductInfo, boolean copy) {
         String photos = null;
         try {
-            photos = URLDecoder.decode(bizProductInfo.getPhotos(), "utf-8");//主图转换编码
+            photos = URLDecoder.decode(bizProductInfo.getPhotos(), "utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             log.error("主图转换编码异常." + e.getMessage(), e);
         }
         String photoDetails = null;
         try {
-            photoDetails = URLDecoder.decode(bizProductInfo.getPhotoDetails(), "utf-8");//列表图转换编码
+            photoDetails = URLDecoder.decode(bizProductInfo.getPhotoDetails(), "utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             log.error("详情图转换编码异常." + e.getMessage(), e);
         }
         String photoLists = null;
-        try {
-//            photoLists = URLDecoder.decode(bizProductInfo.getPhotoLists(), "utf-8");//详情图转换编码
-            photoLists = URLDecoder.decode(bizProductInfo.getPhotoDetails(), "utf-8").split("\\|")[0];
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            log.error("列表图转换编码异常." + e.getMessage(), e);
+
+        if (StringUtils.isNotBlank(photos)) {
+            List<String> strings = Arrays.asList(photos.split("\\|"));
+            for (String s : strings) {
+                if (StringUtils.isNotBlank(s)) {
+                    photoLists = s;
+                    break;
+                }
+            }
         }
 
         if (photos != null) {
@@ -404,23 +407,31 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         commonImg.setObjectName("biz_product_info");
         commonImg.setImgType(imgType);
         commonImg.setImgSort(20);
+
+        CommonImg oldCommonImg = new CommonImg();
+        oldCommonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
+        oldCommonImg.setObjectId(bizProductInfo.getId());
+        oldCommonImg.setObjectName("biz_product_info");
+
+        List<CommonImg> oldImgList = commonImgService.findList(oldCommonImg);
+
         for (String name : result) {
-            if (StringUtils.isNotBlank(name) && copy) {
+            if (StringUtils.isNotBlank(name) && (copy || CollectionUtils.isEmpty(oldImgList))) {
                 commonImg.setId(null);
-                commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY));
-                commonImg.setImgServer(DsConfig.getImgServer());
+                commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
+                commonImg.setImgServer(name.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
                 commonImgService.save(commonImg);
                 continue;
             }
 
-            if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer())) {
+            if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer()) || name.contains(DsConfig.getOldImgServer())) {
                 continue;
             }
             String pathFile = Global.getUserfilesBaseDir() + name;
             String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
 
             commonImg.setId(null);
-            commonImg.setImgPath("/"+ossPath);
+            commonImg.setImgPath("/"+ ossPath);
             commonImg.setImgServer(DsConfig.getImgServer());
             commonImgService.save(commonImg);
         }

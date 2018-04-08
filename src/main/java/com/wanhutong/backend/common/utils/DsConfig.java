@@ -19,6 +19,7 @@ public class DsConfig {
         return config;
     }
     public static String getImgServer(){return getConfig().getString("imgServer");}
+    public static String getOldImgServer(){return getConfig().getString("oldImgServer");}
     public static void main(String[] args) {
         System.out.println(getImgServer());
     }

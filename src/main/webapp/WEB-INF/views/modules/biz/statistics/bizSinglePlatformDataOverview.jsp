@@ -16,8 +16,21 @@
 <span>
     <label>
         <input type="text" id="startDate" value="${date}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
+        <label>
+        <select class="input-medium" id="purchasingId">
+            <option value="0" label="全部"></option>
+            <c:forEach items="${purchasingList}" var="v">
+                <c:if test="${v.id == officeId}">
+                <option selected value="${v.id}" label="${v.name}">${v.name}</option>
+                </c:if>
+                <c:if test="${v.id != officeId}">
+                <option value="${v.id}" label="${v.name}">${v.name}</option>
+                </c:if>
+            </c:forEach>
+        </select>
+        </label>
         <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="init();"/>
-        <input id="exportTable"  onclick="exportTable()" class="btn btn-primary" type="submit" value="导出表格"/>
+        <%--<input id="exportTable"  onclick="exportTable()" class="btn btn-primary" type="submit" value="导出表格"/>--%>
     </label>
 </span>
 <table id="contentTable" class="table table-bordered table-condensed table_text_center">
@@ -38,7 +51,6 @@
         <th>月累计差异</th>
         <th>剩余天数</th>
         <th>每日最低回款额</th>
-        <th>库存金额</th>
     </tr>
     </thead>
     <tbody>
@@ -73,9 +85,6 @@
             <td>
                     ${item.dayMinReturned}
             </td>
-            <td>
-                    ${item.stockAmount}
-            </td>
             </tr>
         </c:forEach>
     </tr>
@@ -85,7 +94,7 @@
 <script type="application/javascript">
     function init() {
         var startDate = $("#startDate").val();
-        var officeId = "241";
+        var officeId = $("#purchasingId").val();
         window.location.href = "overviewSingle?date=" + startDate + "&officeId=" + officeId;
     }
     function exportTable() {

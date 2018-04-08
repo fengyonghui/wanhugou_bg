@@ -108,10 +108,6 @@ public class BizStatisticsPlatformController extends BaseController {
     @RequiresPermissions("biz:statistics:user:view")
     @RequestMapping(value = {"overviewSingle", ""})
     public String overviewSingle(HttpServletRequest request, String date, Integer officeId) {
-        officeId = 240; // TODO
-        date = "2018-03-30";
-
-
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
         Calendar calendar = Calendar.getInstance();
         Date parseDate = null;
@@ -125,9 +121,11 @@ public class BizStatisticsPlatformController extends BaseController {
             e.printStackTrace();
         }
 
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
+        request.setAttribute("officeId", officeId);
+        request.setAttribute("adminPath", adminPath);
         if (officeId == null || officeId == 0) {
-            request.setAttribute("adminPath", adminPath);
-            request.setAttribute("date", startDate);
+            request.setAttribute("date", simpleDateFormat.format(startDate));
             request.setAttribute("dataList", CollectionUtils.EMPTY_COLLECTION);
             return "modules/biz/statistics/bizSinglePlatformDataOverview";
         }
@@ -141,7 +139,6 @@ public class BizStatisticsPlatformController extends BaseController {
         if (StringUtils.isBlank(date)) {
             date = simpleDateFormat.format(new Date());
         }
-        request.setAttribute("adminPath", adminPath);
         request.setAttribute("date", date);
         request.setAttribute("dataList", list);
         return "modules/biz/statistics/bizSinglePlatformDataOverview";
