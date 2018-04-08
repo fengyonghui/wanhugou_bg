@@ -176,7 +176,7 @@
             alert(skuId)
             var html = "";
 
-            html+="<select id='cust"+skuId+"'autofocus='autofocus' about='custId' class='input-medium required'>" +
+            html+="<select id='cust"+skuId+"'autofocus='autofocus' about='custId' class='input-mini required'>" +
                 "<option value=''>请选择采购商</option>";
                 <c:forEach items="${custList}" var="item" varStatus="vs">
                 	html+="<option value='${item.id}'> ${item.name}</option>";
@@ -190,9 +190,9 @@
                 $(invInfo).parent().find("tr").each(function () {
                     $(this).find("td").removeAttr("style");
                 });
-                $("#custId_"+skuId).append(html);
-                alert($("#custId_"+skuId).html());
-                 $("#cust"+skuId).searchableSelect();
+                $("#custId_"+skuId).html(html);
+            //    alert($("#custId_"+skuId).html());
+              //   $("#cust"+skuId).searchableSelect();
             }
             // else {
             //     $(invInfo).find("td[class='custId']").html("");
@@ -276,7 +276,7 @@
 					</c:if>
 					</tbody>
 				</table>
-				<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered">
+				<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
 						<th id="invName2">仓库名称</th>
