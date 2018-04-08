@@ -38,7 +38,7 @@
 			<li class="active"><a>用户详情</a></li>
 		</c:if>
 		<c:if test="${flag ne 'ck'}">
-			<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
+			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
 				<li><a href="${ctx}/sys/user/list?company.type=8&conn=${user.conn}">用户列表</a></li>
 				<li class="active"><a href="${ctx}/sys/user/form?id=${user.id}&conn=${user.conn}">用户<shiro:hasPermission name="sys:user:edit">${not empty user.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:user:edit">查看</shiro:lacksPermission></a></li>
 			</c:if>

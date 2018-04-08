@@ -65,7 +65,21 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		bizInventorySkuDao.orderUpdate(bizInventorySku);
 	}
 
+	/**
+	 * 查询唯一商品库存
+	 * @param inventorySku
+	 * @return
+	 */
 	public BizInventorySku findOnly(BizInventorySku inventorySku){
 		return bizInventorySkuDao.findOnly(inventorySku);
+	}
+
+	/**
+	 * 统计采购中心库存总数
+	 * @param centId
+	 * @return
+	 */
+	public Integer invSkuCount(Integer centId){
+		return bizInventorySkuDao.invSkuCount(centId);
 	}
 }

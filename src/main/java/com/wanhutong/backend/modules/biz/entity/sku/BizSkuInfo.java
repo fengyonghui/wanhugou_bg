@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.sku;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -55,7 +56,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private String skuTypeName;
 
 	private String str;
-
+	private String vendorName;		//供应商名称
+	private BizVarietyInfo variety;		//品类
 
 	private int sign;//sku删除返回的标志
 
@@ -255,5 +257,21 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setSkuPropValueList(List<BizSkuPropValue> skuPropValueList) {
 		this.skuPropValueList = skuPropValueList;
+	}
+
+	public String getVendorName() {
+		return vendorName;
+	}
+
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
+
+	public BizVarietyInfo getVariety() {
+		return variety;
+	}
+
+	public void setVariety(BizVarietyInfo variety) {
+		this.variety = variety;
 	}
 }

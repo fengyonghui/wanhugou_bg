@@ -51,7 +51,7 @@ public class User extends DataEntity<User> {
 	private Date oldLoginDate;	// 上次登陆日期
 	
 	private Role role;	// 根据角色查询用户条件
-	private String conn;//用于标识客户专员
+	private String conn;//用于标识客户专员和仓储专员
 	private User user;
 	private Office cent;
 
