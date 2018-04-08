@@ -106,6 +106,54 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
+    @RequestMapping(value = {"overviewSingle", ""})
+    public String overviewSingle(HttpServletRequest request, String date, Integer officeId) {
+        officeId = 240; // TODO
+        date = "2018-03-30";
+
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        Calendar calendar = Calendar.getInstance();
+        Date parseDate = null;
+        Date startDate = null;
+        try {
+            parseDate = StringUtils.isBlank(date) ? new Date() : simpleDateFormat.parse(date);
+            calendar.setTime(parseDate);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            startDate = calendar.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (officeId == null || officeId == 0) {
+            request.setAttribute("adminPath", adminPath);
+            request.setAttribute("date", startDate);
+            request.setAttribute("dataList", CollectionUtils.EMPTY_COLLECTION);
+            return "modules/biz/statistics/bizSinglePlatformDataOverview";
+        }
+
+        Map<String, List<BizPlatformDataOverviewDto>> list = bizStatisticsPlatformService.getSinglePlatformData(
+                simpleDateFormat.format(startDate),
+                simpleDateFormat.format(parseDate),
+                officeId
+        );
+
+        if (StringUtils.isBlank(date)) {
+            date = simpleDateFormat.format(new Date());
+        }
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("date", date);
+        request.setAttribute("dataList", list);
+        return "modules/biz/statistics/bizSinglePlatformDataOverview";
+    }
+
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:user:view")
     @RequestMapping(value = {"overviewDownload", ""})
     public void overviewDownload(HttpServletRequest request, HttpServletResponse response, String date) throws IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);

@@ -119,6 +119,11 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
     public void save(BizProductInfo bizProductInfo) {
+        save(bizProductInfo, false);
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void save(BizProductInfo bizProductInfo, boolean copy) {
         // 取BRAND NAME
         Dict brand = StringUtils.isBlank(bizProductInfo.getBrandId()) ? null : dictService.get(Integer.valueOf(bizProductInfo.getBrandId()));
         bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getValue());
@@ -144,7 +149,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         }
 
         //保存产品图片
-        saveCommonImg(bizProductInfo);
+        saveCommonImg(bizProductInfo, copy);
 
         // 标签
         if(StringUtils.isNotBlank(bizProductInfo.getTagStr())) {
@@ -189,7 +194,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 String img = split.length >= 6 ? split[5] : StringUtils.EMPTY;
 
                 BizSkuInfo bizSkuInfo = new BizSkuInfo();
-                if (StringUtils.isNotBlank(id) && !"undefined".equals(id) && !"0".equals(id)) {
+                if (StringUtils.isNotBlank(id) && !"undefined".equals(id) && !"0".equals(id) && !copy) {
                     bizSkuInfo.setId(Integer.valueOf(id));
                 }
                 bizSkuInfo.setProductInfo(bizProductInfo);
@@ -200,7 +205,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
 
                 BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNo(bizSkuInfo.getItemNo());
-                if (oldBizSkuInfo != null) {
+                if (oldBizSkuInfo != null && !copy) {
                     bizSkuInfo.setId(oldBizSkuInfo.getId());
                 }else {
                     index ++;
@@ -309,7 +314,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
     }
 
     @Transactional(readOnly = false)
-    public void saveCommonImg(BizProductInfo bizProductInfo) {
+    public void saveCommonImg(BizProductInfo bizProductInfo, boolean copy) {
         String photos = null;
         try {
             photos = URLDecoder.decode(bizProductInfo.getPhotos(), "utf-8");//主图转换编码
@@ -335,7 +340,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
 
         if (photos != null) {
             String[] photoArr = photos.split("\\|");
-            saveProdImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr);
+            saveProdImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
         }
 
         //设置主图和图片次序
@@ -353,16 +358,16 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
 
         if (photoLists != null) {
             String[] photoArr = photoLists.split("\\|");
-            saveProdImg(ImgEnum.LIST_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr);
+            saveProdImg(ImgEnum.LIST_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
         }
         if (photoDetails != null) {
             String[] photoArr = photoDetails.split("\\|");
-            saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr);
+            saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
         }
 
     }
 
-    public void saveProdImg(Integer imgType, BizProductInfo bizProductInfo, String[] photoArr) {
+    public void saveProdImg(Integer imgType, BizProductInfo bizProductInfo, String[] photoArr, boolean copy) {
         if (bizProductInfo.getId() == null) {
             log.error("Can't save product image without product ID!");
             return;
@@ -400,6 +405,14 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         commonImg.setImgType(imgType);
         commonImg.setImgSort(20);
         for (String name : result) {
+            if (StringUtils.isNotBlank(name) && copy) {
+                commonImg.setId(null);
+                commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY));
+                commonImg.setImgServer(DsConfig.getImgServer());
+                commonImgService.save(commonImg);
+                continue;
+            }
+
             if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer())) {
                 continue;
             }

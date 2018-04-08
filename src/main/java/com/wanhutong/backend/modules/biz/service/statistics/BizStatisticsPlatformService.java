@@ -95,6 +95,46 @@ public class BizStatisticsPlatformService {
     }
 
     /**
+     * 获取个人平台业务数据
+     */
+    public Map<String, List<BizPlatformDataOverviewDto>> getSinglePlatformData(String startDate, String endDate, Integer officeId) {
+        String[] dateStrArr = startDate.split("-");
+
+        List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.singlePlatformDataOverview(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, officeId);
+        Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
+        bizPlatformDataOverviewDtos.forEach(o -> {
+            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList =
+                    Lists.newArrayList();
+//                    orderStatisticDataByOffice(endDate, endDate + " 23:59:59", null, null, null, o.getOfficeId());
+            // 采购额
+            BizOpPlan bizOpPlan = new BizOpPlan();
+            bizOpPlan.setObjectName("sys_user");
+            bizOpPlan.setObjectId(String.valueOf(o.getUserId()));
+            bizOpPlan.setYear(dateStrArr[0]);
+            bizOpPlan.setMonth(dateStrArr[1]);
+            bizOpPlan.setDay("0");
+            List<BizOpPlan> planList = bizOpPlanDao.findList(bizOpPlan);
+            if (CollectionUtils.isNotEmpty(planList)) {
+                bizOpPlan = planList.get(0);
+            }
+
+            o.setProcurement(new BigDecimal(bizOpPlan.getAmount() == null ? "0" : bizOpPlan.getAmount()));
+            o.setProcurementDay(
+                    CollectionUtils.isEmpty(currentBizOrderStatisticsDtoList) ?
+                            BigDecimal.ZERO
+                            : currentBizOrderStatisticsDtoList.get(0).getTotalMoney());
+            // 库存金额
+            o.setCurrentDate(endDate);
+            List<BizPlatformDataOverviewDto> tempDtoList = resultMap.putIfAbsent(o.getProvince(), Lists.newArrayList(o));
+            if (tempDtoList != null) {
+                tempDtoList.add(o);
+            }
+        });
+        return resultMap;
+
+    }
+
+    /**
      * 获取平台业务数据
      */
     public Map<String, List<BizPlatformDataOverviewDto>> getPlatformData(String startDate, String endDate, String currentDate) {

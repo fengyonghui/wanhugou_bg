@@ -94,6 +94,19 @@ public class BizPlatformDataOverviewDto {
      */
     private Integer officeType;
 
+    /**
+     * 用户ID
+     */
+    private Integer userId;
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public Integer getOfficeId() {
         return officeId;
     }
@@ -127,6 +140,9 @@ public class BizPlatformDataOverviewDto {
     }
 
     public String getProvince() {
+        if (officeType == null || officeType == 0) {
+            return StringUtils.EMPTY;
+        }
         switch (OfficeTypeEnum.stateOf(String.valueOf(officeType))) {
             case PURCHASINGCENTER:
                 if (StringUtils.isBlank(province)) {

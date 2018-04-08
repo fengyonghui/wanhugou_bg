@@ -249,4 +249,16 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return
      */
     List<BizPlatformDataOverviewDto> platformDataOverview(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
+
+    /**
+     * 取个人平台概览信息
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    List<BizPlatformDataOverviewDto> singlePlatformDataOverview(
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("statusList") List<OrderHeaderBizStatusEnum> statusList,
+            @Param("officeId")Integer officeId);
 }
