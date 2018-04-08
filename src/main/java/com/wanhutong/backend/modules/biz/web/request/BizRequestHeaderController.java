@@ -131,6 +131,7 @@ public class BizRequestHeaderController extends BaseController {
 			BizSkuInfo bizSkuInfo =new BizSkuInfo();
 			bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
 			bizSkuInfo.setPartNo(bizRequestHeader.getPartNo());
+			bizSkuInfo.setVendorName(bizRequestHeader.getName());
 			bizRequestDetail1.setSkuInfo(bizSkuInfo);
 
 			bizPoOrderReq.setRequestHeader(bizRequestHeader1);
@@ -142,6 +143,7 @@ public class BizRequestHeaderController extends BaseController {
 				List<BizPoOrderReq> poOrderReqList= bizPoOrderReqService.findList(bizPoOrderReq);
 				if(poOrderReqList!=null && poOrderReqList.size()>0){
 					BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+					skuInfo.setVendorName(requestDetail.getSkuInfo().getVendorName());
 					requestDetail.setSkuInfo(skuInfo);
 					reqDetailList.add(requestDetail);
 				}

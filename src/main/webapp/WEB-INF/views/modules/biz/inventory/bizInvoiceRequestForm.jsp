@@ -99,7 +99,7 @@
                                     tr_tds+= "<td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.reqNo+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.fromOffice.name+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+bizName+"</td>" ;
                                 }
                                  tr_tds+="<input title='details_"+requestHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
+                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.vendorName+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
 
                                 tr_tds+= "<td>"+detail.reqQty+"</td><td>"+detail.sendQty+"</td>";
                                 tr_tds+="<td><input  type='text' title='sent_"+requestHeader.id+"' name='' value='0'></td>";
@@ -239,6 +239,7 @@
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>供应商</th>
+						<th>商品货号</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
 
@@ -264,6 +265,7 @@
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>供应商</th>
+						<th>商品货号</th>
 						<th>商品编码</th>
 						<th>商品属性</th>
 						<c:if test="${bizStatus==0}">
