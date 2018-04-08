@@ -251,7 +251,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public List<Office> CustomerfilerOffice(List<Office> offices,String source, OfficeTypeEnum officeType){
 		Office office = new Office();
 		User user = UserUtils.getUser();
-		if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())){
+		if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())
+				|| user.getCompany().getType().equals(OfficeTypeEnum.WITHCAPITAL.getType()) || user.getCompany().getType().equals(OfficeTypeEnum.NETWORKSUPPLY.getType())){
 			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
 		}
 		else if (StringUtils.isNotBlank(source) && (source.equals("ghs") || source.equals("gys") || source.equals("cgs"))){
@@ -349,5 +350,14 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	 */
 	public List<Office> findListByTypeList(List<String> typeList) {
 		return officeDao.findListByTypeList(typeList);
+	}
+
+	/**
+	 * 用于查询配资下边的采购商
+	 * @param cust
+	 * @return
+	 */
+	public List<Office> findCapitalList(Office cust){
+		return officeDao.findList(cust);
 	}
 }

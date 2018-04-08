@@ -25,7 +25,8 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	private Integer stockOrdQty;       // 销售订单数量
 	private Integer transInQty;        // 调入数量--仓库间商品调拨，调拨单已审批
 	private Integer transOutQty;        // 调出数量--仓库间商品调拨，调拨单对方已出库
-	private Office customer;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
+	private Office customer;        // 所属采购中心
+	private Office cust;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
 	private List invInfoList;		//仓库集合
 //	private String sOrdQty;
 
@@ -112,5 +113,13 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 
 	public void setInvInfoList(List invInfoList) {
 		this.invInfoList = invInfoList;
+	}
+
+	public Office getCust() {
+		return cust;
+	}
+
+	public void setCust(Office cust) {
+		this.cust = cust;
 	}
 }

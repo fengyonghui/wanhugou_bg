@@ -46,6 +46,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	private String itemNo;      //根据sku货号搜索
 	private String partNo;      //根据sku编号搜索
+	private String name;		//根據供應商姓名搜索
 	private Byte bizStatusStart;
 	private Byte bizStatusEnd; //用于查询业务状态的区间
 
@@ -303,5 +304,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setPartNo(String partNo) {
 		this.partNo = partNo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
