@@ -341,6 +341,11 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
             }
         }
 
+        if (photoLists != null) {
+            String[] photoArr = photoLists.split("\\|");
+            saveProdImg(ImgEnum.LIST_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
+        }
+
         if (photos != null) {
             String[] photoArr = photos.split("\\|");
             saveProdImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
@@ -359,10 +364,8 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
             }
         }
 
-        if (photoLists != null) {
-            String[] photoArr = photoLists.split("\\|");
-            saveProdImg(ImgEnum.LIST_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
-        }
+
+
         if (photoDetails != null) {
             String[] photoArr = photoDetails.split("\\|");
             saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
@@ -409,7 +412,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         commonImg.setImgSort(20);
 
         List<CommonImg> oldImgList = null;
-        if (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType || ImgEnum.MAIN_PRODUCT_TYPE.getCode() == imgType) {
+        if (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType) {
             CommonImg oldCommonImg = new CommonImg();
             oldCommonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
             oldCommonImg.setObjectId(bizProductInfo.getId());
@@ -430,7 +433,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 continue;
             }
             String pathFile = Global.getUserfilesBaseDir() + name;
-            String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
+            String ossPath = AliOssClientUtil.uploadFile(pathFile, ImgEnum.LIST_PRODUCT_TYPE.getCode() != imgType);
 
             commonImg.setId(null);
             commonImg.setImgPath("/"+ ossPath);
