@@ -51,9 +51,15 @@ public class User extends DataEntity<User> {
 	private Date oldLoginDate;	// 上次登陆日期
 	
 	private Role role;	// 根据角色查询用户条件
-	private String conn;//用于标识客户专员
+	private String conn;//用于标识客户专员和仓储专员
 	private User user;
 	private Office cent;
+
+	/**
+	 * 用户列表标识符
+	 * */
+	private String userFlag;
+
 
 	private Integer consultantId;
 	private Integer centerId;
@@ -370,5 +376,13 @@ public class User extends DataEntity<User> {
 
 	public void setCcStatus(Integer ccStatus) {
 		this.ccStatus = ccStatus;
+	}
+
+	public String getUserFlag() {
+		return userFlag;
+	}
+
+	public void setUserFlag(String userFlag) {
+		this.userFlag = userFlag;
 	}
 }

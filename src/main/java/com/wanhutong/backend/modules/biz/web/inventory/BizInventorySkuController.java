@@ -10,17 +10,22 @@ import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.dto.BizInventorySkus;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventoryviewlog.BizInventoryViewLog;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryViewLogService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.BizInventoryEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -28,6 +33,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -73,6 +79,13 @@ public class BizInventorySkuController extends BaseController {
     private DictService dictService;
     @Autowired
     private BizInventoryViewLogService bizInventoryViewLogService;
+    @Autowired
+    private OfficeService officeService;
+    @Autowired
+    private BizVarietyInfoService bizVarietyInfoService;
+    @Autowired
+    private BizProductInfoService bizProductInfoService;
+
 
     @ModelAttribute
     public BizInventorySku get(@RequestParam(required = false) Integer id) {
@@ -89,6 +102,7 @@ public class BizInventorySkuController extends BaseController {
     @RequiresPermissions("biz:inventory:bizInventorySku:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizInventorySku bizInventorySku, HttpServletRequest request, HttpServletResponse response, Model model) {
+        int stamp= 0;
         String zt = request.getParameter("zt");
         //取出用户所属采购中心
         User user = UserUtils.getUser();
@@ -128,6 +142,14 @@ public class BizInventorySkuController extends BaseController {
             }
             page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         }
+        List<BizInventorySku> list = page.getList();
+        for (BizInventorySku inventorySku:list){
+            if(inventorySku.getCust()!=null && inventorySku.getCust().getId()!=0){
+                stamp = 1;
+            }
+        }
+        model.addAttribute("invStatus",stamp);
+        model.addAttribute("varietyList",bizVarietyInfoService.findList(new BizVarietyInfo()));
         model.addAttribute("zt", zt);
         model.addAttribute("page", page);
         return "modules/biz/inventory/bizInventorySkuList";
@@ -183,11 +205,23 @@ public class BizInventorySkuController extends BaseController {
                 if (skuPropName.toString().length() > 1) {
                     propNames = skuPropName.toString().substring(1);
                 }
-
+                BizProductInfo productInfo = bizProductInfoService.get(skuInfo.getProductInfo().getId());
                 skuInfo.setSkuPropertyInfos(propNames);
+                skuInfo.setVendorName(productInfo.getVendorName());
                 bizInventorySku.setSkuInfo(skuInfo);
             }
         }
+        Office office = new Office();
+        office.setType(OfficeTypeEnum.CUSTOMER.getType());
+        Office center = new Office();
+        center.setType(OfficeTypeEnum.WITHCAPITAL.getType());
+        List<Office> centList = officeService.queryList(center);
+        if (centList != null && centList.size() > 0){
+            center = centList.get(0);
+            office.setCenterId(center.getId());
+        }
+        List<Office> officeList = officeService.findCapitalList(office);
+        model.addAttribute("custList",officeList);
 
         BizInventoryInfo bizInventoryInfo2 = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
         bizInventorySku.setInvInfo(bizInventoryInfo2);
@@ -206,6 +240,10 @@ public class BizInventorySkuController extends BaseController {
 //		}
         if (bizInventorySkus != null && bizInventorySkus.getSkuInfoIds() != null) {
             String[] invInfoIdArr = bizInventorySkus.getInvInfoIds().split(",");
+            String[] customerIdArr = null;
+            if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+                customerIdArr = bizInventorySkus.getCustomerIds().split(",");
+            }
             String[] invTypeArr = bizInventorySkus.getInvTypes().split(",");
             String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
             String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
@@ -214,6 +252,9 @@ public class BizInventorySkuController extends BaseController {
             for (int i = 0; i < skuInfoIdArr.length; i++) {
                 bizInventorySku.setId(null);
                 bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
+                if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+                    bizInventorySku.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
+                }
                 bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
                 bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
                 bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
@@ -228,6 +269,9 @@ public class BizInventorySkuController extends BaseController {
                     bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
                 } else {
                     only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
+                    if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
+                        only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
+                    }
                     bizInventorySkuService.save(only);
                     bizInventoryViewLog.setStockQty(only.getStockQty());
                     bizInventoryViewLog.setStockChangeQty(only.getStockQty());
@@ -296,7 +340,6 @@ public class BizInventorySkuController extends BaseController {
         return data;
     }
 
-
     /**
      * 用于库存盘点表格导出
      */
@@ -306,10 +349,10 @@ public class BizInventorySkuController extends BaseController {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "库存盘点数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-            Page<BizInventorySku> page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+            List<BizInventorySku> invList = bizInventorySkuService.findList(bizInventorySku);
             //1库存盘点信息
             List<List<String>> data = new ArrayList<List<String>>();
-            page.getList().forEach(tory -> {
+            invList.forEach(tory -> {
                 List<String> rowData = new ArrayList();
                 //ID
                 rowData.add(String.valueOf(tory.getId()));
@@ -365,6 +408,14 @@ public class BizInventorySkuController extends BaseController {
             addMessage(redirectAttributes, "导出库存盘点数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/inventory/bizInventorySku/";
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping("invSkuCount")
+    public Integer invSkuCount(Integer centId){
+        Integer count = bizInventorySkuService.invSkuCount(centId);
+        return count;
     }
 
 }

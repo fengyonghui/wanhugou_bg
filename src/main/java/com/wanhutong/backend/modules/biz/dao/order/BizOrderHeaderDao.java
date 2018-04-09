@@ -210,7 +210,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     List<BizOrderStatisticsDto> getValidOrderTotalAndCount(
             @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> validStatus,
-            @Param("type") String type, @Param("centerType") String centerType, @Param("orderType") String orderType, @Param("officeId") Integer officeId);
+            @Param("type") String type, @Param("centerType") String centerType, @Param("orderType") String orderType, @Param("officeId") Integer officeId, @Param("userId") Integer userId);
 
     /**
      * 用户平台订单统计 所有数据, 不区分机构
@@ -249,4 +249,16 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return
      */
     List<BizPlatformDataOverviewDto> platformDataOverview(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> statusList);
+
+    /**
+     * 取个人平台概览信息
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    List<BizPlatformDataOverviewDto> singlePlatformDataOverview(
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("statusList") List<OrderHeaderBizStatusEnum> statusList,
+            @Param("officeId")Integer officeId);
 }

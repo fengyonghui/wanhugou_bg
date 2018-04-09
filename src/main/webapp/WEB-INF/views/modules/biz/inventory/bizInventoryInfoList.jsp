@@ -33,7 +33,13 @@
 				<%--<form:input path="locationId" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
 			<%--</li>--%>
 			<li><label>采购中心</label>
-				<form:input path="customer.name" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<%--<form:input path="customer.name" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
+				<sys:treeselect id="centerOffice" name="customer.id" value="" labelName="customer.name"
+								labelValue="" notAllowSelectRoot="true" notAllowSelectParent="true"
+								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" extId="${centerOffice.id}"
+								cssClass="input-xlarge"
+								allowClear="${office.currentUser.admin}">
+				</sys:treeselect>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>

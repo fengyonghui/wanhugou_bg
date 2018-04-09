@@ -51,6 +51,9 @@ import com.wanhutong.backend.modules.sys.utils.UserUtils;
 @RequestMapping(value = "${adminPath}/sys/user")
 public class UserController extends BaseController {
 
+    //用来判断仓储专员
+    private static final String WAREHOUSESPECIALIST = "stoIndex";
+
 	@Autowired
 	private SystemService systemService;
 
@@ -93,7 +96,6 @@ public class UserController extends BaseController {
 				}
 			}
 		}
-
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
 		return "modules/sys/userList";
@@ -148,7 +150,16 @@ public class UserController extends BaseController {
 		if (flag != null && !"".equals(flag)){
 			model.addAttribute("flag",flag);
 		}
-		model.addAttribute("user", user);
+		if(user.getConn()!=null && user.getConn().equals("office_user_save")) {
+			//用户列表默认选择部门
+			if(user.getId()==null && user.getUserFlag().equals("")){
+				user.setCompany(null);
+				user.setOffice(null);
+			}
+			model.addAttribute("user", user);
+		}else {
+			model.addAttribute("user", user);
+		}
 		model.addAttribute("allRoles", systemService.findAllRole());
 
 		String officeUser="office_user_save";
@@ -198,9 +209,21 @@ public class UserController extends BaseController {
 		// 角色数据有效性验证，过滤不在授权内的角色
 		List<Role> roleList = Lists.newArrayList();
 		List<Integer> roleIdList = user.getRoleIdList();
-		for (Role r : systemService.findAllRole()){
-			if (roleIdList.contains(r.getId())){
-				roleList.add(r);
+		String ua="office_user_save";
+		if(user.getConn()!=null && user.getConn().equals(ua)){
+			//用于用户列表不展示用户角色
+			if(roleIdList.size()==0){
+				String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+				Office office = officeService.get(Integer.parseInt(purchasersId));
+				Role roleByName = systemService.getRoleByName(String.valueOf(office.getName()));
+				roleList.add(roleByName);
+				user.setRoleList(roleList);
+			}
+		}else{
+			for (Role r : systemService.findAllRole()){
+				if (roleIdList.contains(r.getId())){
+					roleList.add(r);
+				}
 			}
 		}
 		user.setRoleList(roleList);
@@ -222,6 +245,10 @@ public class UserController extends BaseController {
 //			添加 跳回客户专员管理
 			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
 		}
+		if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
+		    //跳会仓储专员界面
+            return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
+        }
 		if(user.getConn()!=null && user.getConn().equals(officeUser)){
 //			添加 跳回用户管理列表
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
@@ -251,6 +278,11 @@ public class UserController extends BaseController {
 			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
 					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
 		}
+        if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
+            //跳会仓储专员界面
+            return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
+                    +"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
+        }
 		if(user.getConn() !=null && user.getConn().equals(officeUser)){
 //			跳回用户管理
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
@@ -491,6 +523,15 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"conIndex"})
 	public String conIndex(User user, Model model) {
 		return "modules/sys/conIndex";
+	}
+
+	/**
+	 * 仓储专员管理
+	 */
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"stoIndex"})
+	public String stoIndex(User user, Model model) {
+		return "modules/sys/stoIndex";
 	}
 
 	/**

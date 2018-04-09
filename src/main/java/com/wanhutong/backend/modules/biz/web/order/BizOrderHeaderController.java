@@ -250,7 +250,9 @@ public class BizOrderHeaderController extends BaseController {
 
         for (BizOrderHeader orderHeader : list) {
             List<BizOrderDetail> bizOrderDetailList = Lists.newArrayList();
-            List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(orderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
             if (StringUtils.isNotBlank(flag) && !"0".equals(flag)) {
                 bizPoOrderReq.setOrderHeader(orderHeader);
             }

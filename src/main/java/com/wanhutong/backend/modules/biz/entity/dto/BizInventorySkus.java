@@ -20,6 +20,7 @@ public class BizInventorySkus extends DataEntity<BizInventorySkus> {
 
 	private static final long serialVersionUID = 1L;
 	private String invInfoIds;        // 仓库ID，biz_inventory_info.id
+	private String customerIds;		//云仓专属客户
 	private String skuInfoIds;        // biz_sku_info.id
 	private String invTypes;        // 库存类型：1常规；2残损；3专属
 	private String stockQtys;      //库存数量
@@ -63,5 +64,13 @@ public class BizInventorySkus extends DataEntity<BizInventorySkus> {
 
 	public void setStockQtys(String stockQtys) {
 		this.stockQtys = stockQtys;
+	}
+
+	public String getCustomerIds() {
+		return customerIds;
+	}
+
+	public void setCustomerIds(String customerIds) {
+		this.customerIds = customerIds;
 	}
 }
