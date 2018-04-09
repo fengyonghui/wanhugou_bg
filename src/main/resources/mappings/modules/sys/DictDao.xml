@@ -23,6 +23,12 @@
 					<if test="dbName == 'mssql'">'%'+#{description}+'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{description}, '%')</if>
 		</if>
+		<if test="label != null and label != ''">
+			AND label LIKE
+			<if test="dbName == 'oracle'">'%'||#{label}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{label}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{label}, '%')</if>
+		</if>
 		ORDER BY type, sort, update_date DESC
 	</select>
 	
