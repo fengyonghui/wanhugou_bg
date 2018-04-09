@@ -6,7 +6,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+			$("#payBtnExport").click(function(){
+                top.$.jBox.confirm("确认要导出交易记录吗？","系统提示",function(v,h,f){
+                    if(v=="ok"){
+                        $("#searchForm").attr("action","${ctx}/biz/pay/bizPayRecord/payBtnExport");
+                        $("#searchForm").submit();
+                        $("#searchForm").attr("action","${ctx}/biz/pay/bizPayRecord/");
+                    }
+                },{buttonsFocus:1});
+                top.$('.jbox-body .jbox-icon').css('top','55px');
+            });
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -25,9 +34,6 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<%--<li><label>id：</label>--%>
-				<%--<form:input path="id" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
-			<%--</li>--%>
 			<li><label>订单编号：</label>
 				<form:input path="payNum" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
@@ -76,16 +82,17 @@
 								  htmlEscape="false"/>
 				</form:select>
 			</li>
-			<%--<li><label>记录状态：</label>--%>
-				<%--<form:radiobuttons path="status" items="${fns:getDictList('status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
-			<%--</li>--%>
 			<li><label>支付人：</label>
 				<form:input path="createBy.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-				<li><label>联系电话：</label>
-					<form:input path="customer.moblieMoeny.mobile" htmlEscape="false" maxlength="12" class="input-medium"/>
-				</li>
+			<li><label>联系电话：</label>
+				<form:input path="customer.moblieMoeny.mobile" htmlEscape="false" maxlength="12" class="input-medium"/>
+			</li>
+			<li><label>采购中心：</label>
+				<form:input path="custConsultant.centers.name" htmlEscape="false" maxlength="30" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="payBtnExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -98,8 +105,8 @@
 				<th>支付金额</th>
 				<th>支付人</th>
 				<th>客户名称</th>
+				<th>采购中心</th>
 				<th>联系电话</th>
-				<%--<th>支付状态</th>--%>
 				<th>支付账号</th>
 				<th>支付到账户</th>
 				<th>交易类型名称</th>
@@ -128,11 +135,11 @@
 					${bizPayRecord.customer.name}
 				</td>
 				<td>
+					${bizPayRecord.custConsultant.centers.name}
+				</td>
+				<td>
 					${bizPayRecord.customer.moblieMoeny.mobile}
 				</td>
-				<%--<td>--%>
-					<%--${fns:getDictLabel(bizPayRecord.bizStatus, 'bizStatus', '')}--%>
-				<%--</td>--%>
 				<td>
 					${bizPayRecord.account.name}
 				</td>

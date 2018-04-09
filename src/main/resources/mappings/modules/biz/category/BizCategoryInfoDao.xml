@@ -14,7 +14,7 @@
 		a.create_id AS "createBy.id",
 		su.name AS "createBy.name",
 		a.create_time AS "createDate",
-		a.status AS "status",
+		a.status AS "delFlag",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
