@@ -349,10 +349,10 @@ public class BizInventorySkuController extends BaseController {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "库存盘点数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-            Page<BizInventorySku> page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+            List<BizInventorySku> invList = bizInventorySkuService.findList(bizInventorySku);
             //1库存盘点信息
             List<List<String>> data = new ArrayList<List<String>>();
-            page.getList().forEach(tory -> {
+            invList.forEach(tory -> {
                 List<String> rowData = new ArrayList();
                 //ID
                 rowData.add(String.valueOf(tory.getId()));
