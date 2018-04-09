@@ -933,6 +933,7 @@
         <th>供应商电话</th>
         <th>商品单价</th>
         <th>采购数量</th>
+        <th>总 额</th>
         <th>已发货数量</th>
         <c:if test="${bizOrderHeader.flag=='check_pending'}">
             <th>本地备货</th>
@@ -986,6 +987,11 @@
             </td>
             <td>
                     ${bizOrderDetail.ordQty}
+            </td>
+            <td>
+                <c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
+                    ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}
+                </c:if>
             </td>
             <td>
                     ${bizOrderDetail.sentQty}
