@@ -119,7 +119,7 @@
             var invInfoId= $("#invInfoId_"+obj).find("select[title='invInfoId']").val();
             var invType=$("#invType_"+obj).find("select[title='invType']").val();
             var saleQty=$("#saleQty_"+obj).val();
-            var custId = $("#custId_"+obj).find("select[title='custId']").val();
+            var custId = $("#custId_"+obj).find("select[about='custId']").val();
             if(invInfoId==''){
                 alert("请选择仓库");
                 return;

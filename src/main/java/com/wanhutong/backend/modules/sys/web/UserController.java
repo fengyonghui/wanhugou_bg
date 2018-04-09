@@ -51,6 +51,9 @@ import com.wanhutong.backend.modules.sys.utils.UserUtils;
 @RequestMapping(value = "${adminPath}/sys/user")
 public class UserController extends BaseController {
 
+    //用来判断仓储专员
+    private static final String WAREHOUSESPECIALIST = "stoIndex";
+
 	@Autowired
 	private SystemService systemService;
 
@@ -242,6 +245,10 @@ public class UserController extends BaseController {
 //			添加 跳回客户专员管理
 			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
 		}
+		if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
+		    //跳会仓储专员界面
+            return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
+        }
 		if(user.getConn()!=null && user.getConn().equals(officeUser)){
 //			添加 跳回用户管理列表
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
@@ -271,6 +278,11 @@ public class UserController extends BaseController {
 			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
 					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
 		}
+        if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
+            //跳会仓储专员界面
+            return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
+                    +"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
+        }
 		if(user.getConn() !=null && user.getConn().equals(officeUser)){
 //			跳回用户管理
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";

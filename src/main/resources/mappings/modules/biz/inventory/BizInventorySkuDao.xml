@@ -9,6 +9,7 @@
 		a.sku_id AS "skuInfo.id",
 		sku.part_no AS "skuInfo.partNo",
 		sku.name AS "skuInfo.name",
+		sku.buy_price AS "skuInfo.buyPrice",
 		sku.item_no AS "skuInfo.itemNo",
 		bpi.vendor_name AS "skuInfo.vendorName",
 		bpi.vari_id AS "skuInfo.variety.id",
