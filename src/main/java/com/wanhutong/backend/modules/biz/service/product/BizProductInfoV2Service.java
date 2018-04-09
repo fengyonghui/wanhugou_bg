@@ -197,7 +197,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 bizSkuInfo.setSkuType(Integer.valueOf(type));
                 bizSkuInfo.setName(bizProductInfo.getName());
                 bizSkuInfo.setSort(String.valueOf(index));
-                bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
+                bizSkuInfo.setItemNo(vCode.concat(bizProductInfo.getItemNo()).concat("/").concat(size).concat("/").concat(color));
 
                 BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNo(bizSkuInfo.getItemNo());
                 if (oldBizSkuInfo != null) {
