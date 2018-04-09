@@ -65,7 +65,7 @@ public class BizStatisticsPlatformService {
 //        if (StringUtils.isBlank(centerType) || Integer.valueOf(centerType) == 0) {
 //            return bizOrderHeaderDao.getAllValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null);
 //        }
-        return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null);
+        return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null, null);
     }
 
     /**
@@ -83,7 +83,11 @@ public class BizStatisticsPlatformService {
 
 
     public List<BizOrderStatisticsDto> orderStatisticDataByOffice(String startDate, String endDate, String type, String centerType, String orderType, Integer id) {
-        return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, id);
+        return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, id, null);
+    }
+
+    public List<BizOrderStatisticsDto> orderStatisticDataByUser(String startDate, String endDate, String type, String centerType, String orderType, Integer userId) {
+        return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, null, userId);
     }
 
 
@@ -93,7 +97,7 @@ public class BizStatisticsPlatformService {
     public Map<String, List<BizPlatformDataOverviewDto>> getSinglePlatformData(String startDate, String endDate, Integer officeId) {
         String[] dateStrArr = startDate.split("-");
 
-        List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.singlePlatformDataOverview(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, officeId);
+        List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.singlePlatformDataOverview(startDate, endDate + " 23:59:59", OrderHeaderBizStatusEnum.INVALID_STATUS, officeId);
         Set<String> nameSet = Sets.newHashSet();
         for (BizPlatformDataOverviewDto b : bizPlatformDataOverviewDtos) {
             nameSet.add(b.getName());
@@ -118,7 +122,8 @@ public class BizStatisticsPlatformService {
 
         Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
         bizPlatformDataOverviewDtos.forEach(o -> {
-            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList = Lists.newArrayList();
+            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList =
+                    orderStatisticDataByUser(endDate, endDate + " 23:59:59", null, null, null, o.getUserId());
             // 采购额
             BizOpPlan bizOpPlan = new BizOpPlan();
             bizOpPlan.setObjectName("sys_user");
@@ -153,7 +158,7 @@ public class BizStatisticsPlatformService {
     public Map<String, List<BizPlatformDataOverviewDto>> getPlatformData(String startDate, String endDate, String currentDate) {
         String[] dateStrArr = startDate.split("-");
 
-        List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.platformDataOverview(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS);
+        List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.platformDataOverview(startDate, endDate + " 23:59:59", OrderHeaderBizStatusEnum.INVALID_STATUS);
         Set<String> nameSet = Sets.newHashSet();
         for (BizPlatformDataOverviewDto b : bizPlatformDataOverviewDtos) {
             nameSet.add(b.getName());
