@@ -108,6 +108,7 @@
 				<th>库存类型</th>
 				<th>仓库名称</th>
 				<th style="width: 15%">商品名称</th>
+				<th>出厂价</th>
 				<th style="width: 5%">品类</th>
 				<c:if test="${invStatus==1}">
 					<th>专属客户</th>
@@ -143,6 +144,9 @@
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.name}
+				</td>
+				<td>
+					${bizInventorySku.skuInfo.buyPrice}
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.variety.name}
