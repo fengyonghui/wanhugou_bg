@@ -210,7 +210,7 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     List<BizOrderStatisticsDto> getValidOrderTotalAndCount(
             @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("statusList") List<OrderHeaderBizStatusEnum> validStatus,
-            @Param("type") String type, @Param("centerType") String centerType, @Param("orderType") String orderType, @Param("officeId") Integer officeId);
+            @Param("type") String type, @Param("centerType") String centerType, @Param("orderType") String orderType, @Param("officeId") Integer officeId, @Param("userId") Integer userId);
 
     /**
      * 用户平台订单统计 所有数据, 不区分机构

@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsPlatfor
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -52,6 +53,8 @@ public class BizStatisticsPlatformController extends BaseController {
     private BizStatisticsPlatformService bizStatisticsPlatformService;
     @Resource
     private BizStatisticsService bizStatisticsService;
+    @Resource
+    private OfficeService officeService;
 
     /**
      * 默认除法运算精度
@@ -121,7 +124,7 @@ public class BizStatisticsPlatformController extends BaseController {
             e.printStackTrace();
         }
 
-        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
         request.setAttribute("officeId", officeId);
         request.setAttribute("adminPath", adminPath);
         if (officeId == null || officeId == 0) {
@@ -217,22 +220,22 @@ public class BizStatisticsPlatformController extends BaseController {
 
 
         // 合并单元格起始行, 终止行, 起始列, 终止列
-        CellRangeAddress h0 =new CellRangeAddress(0, 0, 1, 9);
+        CellRangeAddress h0 = new CellRangeAddress(0, 0, 1, 9);
         sheet.addMergedRegion(h0);
-         CellRangeAddress h1a =new CellRangeAddress(1, 2, 0, 0);
+        CellRangeAddress h1a = new CellRangeAddress(1, 2, 0, 0);
         sheet.addMergedRegion(h1a);
-         CellRangeAddress h1b =new CellRangeAddress(1, 2, 1, 1);
+        CellRangeAddress h1b = new CellRangeAddress(1, 2, 1, 1);
         sheet.addMergedRegion(h1b);
-         CellRangeAddress h1c =new CellRangeAddress(1, 1, 2, 9);
+        CellRangeAddress h1c = new CellRangeAddress(1, 1, 2, 9);
         sheet.addMergedRegion(h1c);
         if (dataMap == null || dataMap.size() <= 0) {
             return;
         }
         int rowIndex = 3;
         int rowMergeIndex = rowIndex;
-        for (String key : dataMap.keySet()){
+        for (String key : dataMap.keySet()) {
             List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = dataMap.get(key);
-            for (BizPlatformDataOverviewDto o : bizPlatformDataOverviewDtos){
+            for (BizPlatformDataOverviewDto o : bizPlatformDataOverviewDtos) {
                 HSSFRow sRow = sheet.createRow(rowIndex);
                 HSSFCell cell0 = sRow.createCell(0);
                 cell0.setCellValue(key);
@@ -254,10 +257,10 @@ public class BizStatisticsPlatformController extends BaseController {
                 cell8.setCellValue(o.getDayMinReturned().toString());
                 HSSFCell cell9 = sRow.createCell(9);
                 cell9.setCellValue(o.getStockAmount().toString());
-                rowIndex ++;
+                rowIndex++;
             }
 
-            CellRangeAddress cra =new CellRangeAddress(rowMergeIndex, rowIndex - 1, 0, 0);
+            CellRangeAddress cra = new CellRangeAddress(rowMergeIndex, rowIndex - 1, 0, 0);
             sheet.addMergedRegion(cra);
             rowMergeIndex = rowIndex;
         }
@@ -267,7 +270,6 @@ public class BizStatisticsPlatformController extends BaseController {
                 + URLEncoder.encode(fileName, "UTF-8"));
         wb.write(response.getOutputStream());
     }
-
 
 
     /**
@@ -610,8 +612,9 @@ public class BizStatisticsPlatformController extends BaseController {
      */
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "orderTable")
-    public String orderTable (HttpServletRequest request, String startDate, String endDate){
-        request.setAttribute("adminPath", adminPath);  Calendar cal = Calendar.getInstance();
+    public String orderTable(HttpServletRequest request, String startDate, String endDate) {
+        request.setAttribute("adminPath", adminPath);
+        Calendar cal = Calendar.getInstance();
         //获取本周一的日期
         cal.set(Calendar.DAY_OF_MONTH, 1);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
@@ -625,7 +628,7 @@ public class BizStatisticsPlatformController extends BaseController {
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "orderTableData")
     @ResponseBody
-    public String orderTableData (HttpServletRequest request, String startDate, String endDate, String type, String centerType, String orderType){
+    public String orderTableData(HttpServletRequest request, String startDate, String endDate, String type, String centerType, String orderType) {
         // 月份集合
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
         SimpleDateFormat simpleDateFormatDay = new SimpleDateFormat("yyyy-MM-dd");
@@ -651,6 +654,7 @@ public class BizStatisticsPlatformController extends BaseController {
 
     /**
      * 利润统计
+     *
      * @param request
      * @param response
      * @return
@@ -665,6 +669,7 @@ public class BizStatisticsPlatformController extends BaseController {
 
     /**
      * 利润统计数据
+     *
      * @param request
      * @param response
      * @return
@@ -737,16 +742,16 @@ public class BizStatisticsPlatformController extends BaseController {
         label.setShow(true);
         label.setTextStyle(
                 "fontWeight:'bolder'," +
-                "fontSize : '12'," +
-                "position : 'top'," +
-                "fontFamily : '微软雅黑'");
+                        "fontSize : '12'," +
+                        "position : 'top'," +
+                        "fontFamily : '微软雅黑'");
         normal.setLabel(label);
         itemStyle.setNormal(normal);
         echartsSeriesDto.setItemStyle(itemStyle);
 
         EchartsSeriesDto barSeriesList = null;
         try {
-            barSeriesList = (EchartsSeriesDto)BeanUtils.cloneBean(echartsSeriesDto);
+            barSeriesList = (EchartsSeriesDto) BeanUtils.cloneBean(echartsSeriesDto);
             barSeriesList.setType(EchartsSeriesDto.SeriesTypeEnum.BAR.getCode());
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
