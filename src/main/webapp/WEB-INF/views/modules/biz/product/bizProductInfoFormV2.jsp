@@ -167,7 +167,7 @@
                     <span  style="float:left;width:60px;padding-top:3px">${tagInfo.name}：</span>
                     <c:choose>
                         <c:when test="${tagInfo.dictList!=null}">
-                            <form:select title="choose" path="textureStr" class="input-medium required">
+                            <form:select about="choose" path="textureStr" class="input-medium required">
                                 <form:options items="${tagInfo.dictList}" itemLabel="label" itemValue="value" htmlEscape="false"/>
                             </form:select>
                         </c:when>

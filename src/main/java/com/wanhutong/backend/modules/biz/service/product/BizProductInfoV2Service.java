@@ -341,6 +341,11 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
             }
         }
 
+        if (photoLists != null) {
+            String[] photoArr = photoLists.split("\\|");
+            saveProdImg(ImgEnum.LIST_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
+        }
+
         if (photos != null) {
             String[] photoArr = photos.split("\\|");
             saveProdImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
@@ -359,10 +364,8 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
             }
         }
 
-        if (photoLists != null) {
-            String[] photoArr = photoLists.split("\\|");
-            saveProdImg(ImgEnum.LIST_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
-        }
+
+
         if (photoDetails != null) {
             String[] photoArr = photoDetails.split("\\|");
             saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
@@ -418,7 +421,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         }
 
         for (String name : result) {
-            if (StringUtils.isNotBlank(name) && (copy || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType)))) {
+            if (StringUtils.isNotBlank(name) && (copy || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType) && (name.contains(DsConfig.getImgServer()) || name.contains(DsConfig.getOldImgServer()))))) {
                 commonImg.setId(null);
                 commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
                 commonImg.setImgServer(name.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
@@ -430,7 +433,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 continue;
             }
             String pathFile = Global.getUserfilesBaseDir() + name;
-            String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
+            String ossPath = AliOssClientUtil.uploadFile(pathFile, ImgEnum.LIST_PRODUCT_TYPE.getCode() != imgType);
 
             commonImg.setId(null);
             commonImg.setImgPath("/"+ ossPath);
