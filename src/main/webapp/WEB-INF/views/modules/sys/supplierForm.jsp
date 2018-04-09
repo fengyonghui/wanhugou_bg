@@ -5,9 +5,11 @@
 <head>
 	<title>机构管理</title>
 	<meta name="decorator" content="default"/>
+
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#name").focus();
+			$("#myModal").modal("hide");
 			$("#inputForm").validate({
 				submitHandler: function(form){
 				 var phone = document.getElementById("phone").value;
@@ -107,6 +109,7 @@
 			<div class="controls">
 				 <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
 					title="用户" url="/sys/user/treeData?type=7&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
+				<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">添加新负责人</button>
 			</div>
 		</div>
 		<div class="control-group">
@@ -146,13 +149,13 @@
 				<form:input path="zipCode" htmlEscape="false" maxlength="50"/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">负责人:</label>
-			<div class="controls">
-				<form:input path="master" htmlEscape="false" class="required" maxlength="50"/>
-				<span class="help-inline"><font color="red">*</font></span>
-			</div>
-		</div>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">负责人:</label>--%>
+			<%--<div class="controls">--%>
+				<%--<form:input path="master" htmlEscape="false" class="required" maxlength="50"/>--%>
+				<%--<span class="help-inline"><font color="red">*</font></span>--%>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">手机:</label>
 			<div class="controls">
@@ -191,5 +194,85 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">×
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						负责人添加
+					</h4>
+				</div>
+				<div class="modal-body">
+					<div class="control-group">
+						<label class="control-label">姓名:</label>
+						<div class="controls">
+							<input name="primaryPerson.name" htmlEscape="false" maxlength="50" class="required"/>
+							<span class="help-inline"><font color="red">*</font> </span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">登录名:</label>
+						<div class="controls">
+							<%--<input id="oldLoginName" name="primaryPerson.oldLoginName" type="hidden" value="">--%>
+							<input name="primaryPerson.loginName" htmlEscape="false" maxlength="50" class="required userName"/>
+							<span class="help-inline"><font color="red">*</font> </span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">密码:</label>
+						<div class="controls">
+							<input id="newPassword" name="primaryPerson.newPassword" type="password" value="" maxlength="50" minlength="3" class="required"/>
+							<span class="help-inline"><font color="red">*</font> </span>
+							<%--<c:if test="${not empty user.id}"><span class="help-inline">若不修改密码，请留空。</span></c:if>--%>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">确认密码:</label>
+						<div class="controls">
+							<input id="confirmNewPassword" name="primaryPerson.confirmNewPassword" type="password" value="" maxlength="50" class="required" minlength="3" equalTo="#newPassword"/>
+							<span class="help-inline"><font color="red">*</font> </span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">手机:</label>
+						<div class="controls">
+							<input name="primaryPerson.mobile" htmlEscape="false" maxlength="100"/>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">是否允许登录:</label>
+						<div class="controls">
+							<select name="primaryPerson.loginFlag" class="input-mini required">
+								<option label="请选择" value="1"></option>
+								<c:forEach items="${fns:getDictList('yes_no')}">
+									<option label="是" value="value"></option>
+								</c:forEach>
+								<%--<options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
+							</select>
+							<span class="help-inline"><font color="red">*</font> “是”代表此账号允许登录，“否”则表示此账号不允许登录</span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">备注:</label>
+						<div class="controls">
+							<textarea name="primaryPerson.remarks" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">关闭
+					</button>
+					<button type="button" class="btn btn-primary">
+						提交更改
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
