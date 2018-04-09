@@ -3,7 +3,7 @@ package com.wanhutong.backend.modules.biz.service.statistics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.wanhutong.backend.modules.biz.dao.inventory.BizInventoryInfoDao;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.plan.BizOpPlanDao;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
@@ -11,8 +11,10 @@ import com.wanhutong.backend.modules.biz.entity.plan.BizOpPlan;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
-import com.wanhutong.backend.modules.sys.dao.SysRegionDao;
+import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -39,14 +42,12 @@ public class BizStatisticsPlatformService {
     @Resource
     private OfficeDao officeDao;
 
-    @Resource
-    private SysRegionDao sysRegionDao;
 
     @Resource
     private BizOpPlanDao bizOpPlanDao;
 
     @Resource
-    private BizInventoryInfoDao bizInventoryInfoDao;
+    private UserDao userDao;
 
     /**
      * 请求参数日期格式
@@ -85,14 +86,6 @@ public class BizStatisticsPlatformService {
         return bizOrderHeaderDao.getValidOrderTotalAndCount(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, type, centerType, orderType, id);
     }
 
-    private boolean hasOffice(List<BizPlatformDataOverviewDto> list, Office office) {
-        for (BizPlatformDataOverviewDto dto : list){
-            if (office.getName().equals(dto.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * 获取个人平台业务数据
@@ -101,11 +94,31 @@ public class BizStatisticsPlatformService {
         String[] dateStrArr = startDate.split("-");
 
         List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.singlePlatformDataOverview(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS, officeId);
+        Set<String> nameSet = Sets.newHashSet();
+        for (BizPlatformDataOverviewDto b : bizPlatformDataOverviewDtos) {
+            nameSet.add(b.getName());
+        }
+
+        User user = new User();
+        user.setOffice(new Office(officeId));
+        Role role = new Role();
+        role.setName("采购专员");
+        user.setRole(role);
+        List<User> userList = userDao.findList(user);
+        userList.removeIf(u -> u.getName().contains("测试"));
+        userList.forEach(u -> {
+            if (!nameSet.contains(u.getName())) {
+                BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
+                bizPlatformDataOverviewDto.setName(u.getName());
+                bizPlatformDataOverviewDto.setUserId(u.getId());
+                bizPlatformDataOverviewDto.setOfficeId(u.getId());
+                bizPlatformDataOverviewDtos.add(bizPlatformDataOverviewDto);
+            }
+        });
+
         Map<String, List<BizPlatformDataOverviewDto>> resultMap = Maps.newHashMap();
         bizPlatformDataOverviewDtos.forEach(o -> {
-            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList =
-                    Lists.newArrayList();
-//                    orderStatisticDataByOffice(endDate, endDate + " 23:59:59", null, null, null, o.getOfficeId());
+            List<BizOrderStatisticsDto> currentBizOrderStatisticsDtoList = Lists.newArrayList();
             // 采购额
             BizOpPlan bizOpPlan = new BizOpPlan();
             bizOpPlan.setObjectName("sys_user");
@@ -141,6 +154,11 @@ public class BizStatisticsPlatformService {
         String[] dateStrArr = startDate.split("-");
 
         List<BizPlatformDataOverviewDto> bizPlatformDataOverviewDtos = bizOrderHeaderDao.platformDataOverview(startDate, endDate, OrderHeaderBizStatusEnum.INVALID_STATUS);
+        Set<String> nameSet = Sets.newHashSet();
+        for (BizPlatformDataOverviewDto b : bizPlatformDataOverviewDtos) {
+            nameSet.add(b.getName());
+        }
+
 
         List<Office> listByType = officeDao.findListByTypeList(Lists.newArrayList(
                 OfficeTypeEnum.PURCHASINGCENTER.getType(),
@@ -149,7 +167,7 @@ public class BizStatisticsPlatformService {
         ));
         listByType.removeIf(office -> office.getName().contains("测试"));
         listByType.forEach(office -> {
-            if (!hasOffice(bizPlatformDataOverviewDtos, office)) {
+            if (!nameSet.contains(office.getName())) {
                 BizPlatformDataOverviewDto bizPlatformDataOverviewDto = new BizPlatformDataOverviewDto();
                 bizPlatformDataOverviewDto.setName(office.getName());
                 bizPlatformDataOverviewDto.setOfficeType(Integer.valueOf(office.getType()));
