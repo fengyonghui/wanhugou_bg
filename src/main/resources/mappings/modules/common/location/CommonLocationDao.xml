@@ -14,8 +14,8 @@
 		a.latitude AS "latitude",
 		province.name as "province.name",
         city.name as "city.name",
-        reg.name as "region.name"
-		a.status AS "status",
+        reg.name as "region.name",
+		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",

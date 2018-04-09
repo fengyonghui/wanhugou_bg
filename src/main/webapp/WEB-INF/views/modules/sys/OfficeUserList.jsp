@@ -40,11 +40,12 @@
 </div>
 <ul class="nav nav-tabs">
 	<li class="active"><a href="${ctx}/sys/user/officeUserList">用户列表</a></li>
-	<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}&conn=office_user_save">用户添加</a></li></shiro:hasPermission>
+	<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form?office.id=${user.office.id}&office.name=${user.office.name}&conn=office_user_save&userFlag=${user.userFlag}">用户添加</a></li></shiro:hasPermission>
 </ul>
 <form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/officeUserList" method="post" class="breadcrumb form-search ">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+	<input name="userFlag" type="hidden" value="${user.userFlag}"/>
 	<sys:tableSort id="orderBy" name="orderBy" value="${page.orderBy}" callback="page();"/>
 	<ul class="ul-form">
 		<c:if test="${fns:getUser().isAdmin()}">
