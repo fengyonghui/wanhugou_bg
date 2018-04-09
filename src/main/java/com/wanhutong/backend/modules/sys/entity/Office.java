@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
@@ -50,6 +51,12 @@ public class Office extends TreeEntity<Office> {
 	private Integer consultantId;
 	private Integer centerId;
 	private Integer ccStatus;
+
+	/**
+	 * 供应商新增页面显示，新增地址
+	 * */
+	private CommonLocation bizLocation;
+
 
 	private String delRemark ;
 
@@ -336,5 +343,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setProvince(String province) {
 		this.province = province;
+	}
+
+	public CommonLocation getBizLocation() {
+		return bizLocation;
+	}
+
+	public void setBizLocation(CommonLocation bizLocation) {
+		this.bizLocation = bizLocation;
 	}
 }

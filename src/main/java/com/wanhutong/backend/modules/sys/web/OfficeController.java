@@ -13,8 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -54,6 +57,11 @@ public class OfficeController extends BaseController {
     private BizCustCreditService bizCustCreditService;
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private CommonLocationService commonLocationService;
+    @Autowired
+    private SysOfficeAddressService sysOfficeAddressService;
+
 
     @ModelAttribute("office")
     public Office get(@RequestParam(required = false) Integer id) {
@@ -202,6 +210,11 @@ public class OfficeController extends BaseController {
                 }
             }
             office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size + 1 : 1), 3, "0"));
+        }
+        if(office.getAddress()!=null){
+            //用于供应商地址回显
+            SysOfficeAddress sysOfficeAddress = sysOfficeAddressService.get(Integer.parseInt(office.getAddress()));
+            office.setBizLocation(sysOfficeAddress.getBizLocation());
         }
         model.addAttribute("office", office);
         return "modules/sys/supplierForm";

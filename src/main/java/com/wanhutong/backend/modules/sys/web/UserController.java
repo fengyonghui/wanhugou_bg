@@ -147,7 +147,16 @@ public class UserController extends BaseController {
 		if (flag != null && !"".equals(flag)){
 			model.addAttribute("flag",flag);
 		}
-		model.addAttribute("user", user);
+		if(user.getConn()!=null && user.getConn().equals("office_user_save")) {
+			//用户列表默认选择部门
+			if(user.getId()==null && user.getUserFlag().equals("")){
+				user.setCompany(null);
+				user.setOffice(null);
+			}
+			model.addAttribute("user", user);
+		}else {
+			model.addAttribute("user", user);
+		}
 		model.addAttribute("allRoles", systemService.findAllRole());
 
 		String officeUser="office_user_save";
@@ -197,9 +206,21 @@ public class UserController extends BaseController {
 		// 角色数据有效性验证，过滤不在授权内的角色
 		List<Role> roleList = Lists.newArrayList();
 		List<Integer> roleIdList = user.getRoleIdList();
-		for (Role r : systemService.findAllRole()){
-			if (roleIdList.contains(r.getId())){
-				roleList.add(r);
+		String ua="office_user_save";
+		if(user.getConn()!=null && user.getConn().equals(ua)){
+			//用于用户列表不展示用户角色
+			if(roleIdList.size()==0){
+				String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+				Office office = officeService.get(Integer.parseInt(purchasersId));
+				Role roleByName = systemService.getRoleByName(String.valueOf(office.getName()));
+				roleList.add(roleByName);
+				user.setRoleList(roleList);
+			}
+		}else{
+			for (Role r : systemService.findAllRole()){
+				if (roleIdList.contains(r.getId())){
+					roleList.add(r);
+				}
 			}
 		}
 		user.setRoleList(roleList);

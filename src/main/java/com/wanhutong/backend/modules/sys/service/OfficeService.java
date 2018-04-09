@@ -12,10 +12,14 @@ import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
+import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +46,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	private BizCustCreditService bizCustCreditService;
 	@Autowired
 	private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
+	@Autowired
+	private CommonLocationService commonLocationService;
+	@Autowired
+	private SysOfficeAddressService sysOfficeAddressService;
+	@Autowired
+	private SystemService systemService;
+
 
 	public List<Office> findAll(){
 		return UserUtils.getOfficeList();
@@ -188,6 +199,46 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 	@Transactional(readOnly = false)
 	public void save(Office office) {
+		CommonLocation commonLocation =null;
+		if(office.getBizLocation()!=null && !office.getBizLocation().getAddress().equals("")){
+			if(office.getAddress()!=null && office.getBizLocation().getProvince()==null && office.getBizLocation().getCity()==null){
+				CommonLocation commonLocation1 = commonLocationService.get(Integer.parseInt(office.getAddress()));
+				office.getBizLocation().setAddress(office.getBizLocation().getAddress());
+				office.getBizLocation().setId(Integer.parseInt(office.getAddress()));
+				office.getBizLocation().setProvince(commonLocation1.getProvince());
+				office.getBizLocation().setCity(commonLocation1.getCity());
+				office.getBizLocation().setRegion(commonLocation1.getRegion());
+			}
+			commonLocation = commonLocationService.updateCommonLocation(office.getBizLocation());
+		}
+		if(commonLocation!=null){
+			/**
+			 * 用于保存地址
+			 * */
+			SysOfficeAddress officeAddress = new SysOfficeAddress();
+			if(office.getAddress()!=null){
+				officeAddress.setId(Integer.parseInt(office.getAddress()));
+			}
+			officeAddress.setOffice(office);
+			officeAddress.setBizLocation(commonLocation);
+			officeAddress.setReceiver(String.valueOf(office.getMaster()));
+			officeAddress.setPhone(String.valueOf(office.getPhone()));
+			String offType = DictUtils.getDictValue("公司地址", "office_type", "");
+			String sysDefau = DictUtils.getDictValue("默认", "sysadd_deFault", "");
+			if(offType!=null){
+				officeAddress.setType(Integer.parseInt(offType));
+			}else {
+				officeAddress.setType(2);
+			}
+			if(sysDefau!=null){
+				officeAddress.setDeFaultStatus(Integer.parseInt(sysDefau));
+			}else{
+				officeAddress.setDeFaultStatus(1);
+			}
+			sysOfficeAddressService.save(officeAddress);
+			office.setAddress(String.valueOf(officeAddress.getId()));
+		}
+
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}

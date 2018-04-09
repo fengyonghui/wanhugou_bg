@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
 <head>
 	<title>机构管理</title>
@@ -9,6 +10,11 @@
 			$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+				 var phone = document.getElementById("phone").value;
+                   if(!(/^1[34578]\d{9}$/.test(phone))){
+                        alert("手机号码有误，请输入11位有效手机号");
+                        return false;
+                    }
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -24,6 +30,16 @@
 			});
 		});
 	</script>
+	<script type="text/javascript">
+        function SubmitPhone(){
+            var phone = document.getElementById("phone").value;
+            if(!(/^1[34578]\d{9}$/.test(phone))){
+                alert("手机号码有误，请输入11位有效手机号");
+                return false;
+            }
+        }
+    </script>
+
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -100,12 +116,30 @@
 					title="用户" url="/sys/user/treeData?type=7&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
 			</div>
 		</div>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">联系地址:</label>--%>
+			<%--<div class="controls">--%>
+				<%--<form:input path="address" htmlEscape="false" maxlength="50"/>--%>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
-			<label class="control-label">联系地址:</label>
+			<label class="control-label">所在地区：</label>
 			<div class="controls">
-				<form:input path="address" htmlEscape="false" maxlength="50"/>
+				<input type="hidden" id="locationId" name="locationId" value="${office.bizLocation.id}"/>
+				<form:hidden path="bizLocation.selectedRegionId" id="regionId" value="${office.bizLocation.selectedRegionId}"/>
+				<input type="text" id="regionName" value="${office.bizLocation.pcrName}" readonly="readonly"/>
+				<biz:selectregion id="region_id" name="regionName" selectedId="regionId"/>
 			</div>
 		</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">详细地址：</label>
+			<div class="controls">
+				<form:input path="bizLocation.address" value="${office.bizLocation.address }" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+			</div>
+		</div>
+
+
 		<div class="control-group">
 			<label class="control-label">邮政编码:</label>
 			<div class="controls">
@@ -120,19 +154,20 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">电话:</label>
+			<label class="control-label">手机:</label>
 			<div class="controls">
-				<form:input path="phone" htmlEscape="false" maxlength="50"/>
+				<form:input path="phone" onblur="SubmitPhone();" placeholder="请输入11为有效手机号" class="required" htmlEscape="false" maxlength="11"/>
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">传真:</label>
+			<label class="control-label">微信号:</label>
 			<div class="controls">
 				<form:input path="fax" htmlEscape="false" maxlength="50"/>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">邮箱:</label>
+			<label class="control-label">QQ号:</label>
 			<div class="controls">
 				<form:input path="email" htmlEscape="false" maxlength="50"/>
 			</div>
