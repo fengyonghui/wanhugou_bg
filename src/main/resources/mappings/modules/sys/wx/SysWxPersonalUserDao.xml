@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.sys.dao.wx.SysWxPersonalUserDao">
+    
+	<sql id="sysWxPersonalUserColumns">
+		a.id AS "id",
+		a.user_id AS "user.id",
+		a.nickname AS "nickname",
+		a.head_img_url AS "headImgUrl",
+		a.openid AS "openid",
+		a.subscribe AS "subscribe",
+		a.sex AS "sex",
+		a.create_time AS "createDate",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag",
+		u2.name AS "user.name"
+	</sql>
+	
+	<sql id="sysWxPersonalUserJoins">
+		LEFT JOIN sys_user u2 ON u2.id = a.user_id
+	</sql>
+    
+	<select id="get" resultType="SysWxPersonalUser">
+		SELECT 
+			<include refid="sysWxPersonalUserColumns"/>
+		FROM sys_wx_personal_user a
+		<include refid="sysWxPersonalUserJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysWxPersonalUser">
+		SELECT 
+			<include refid="sysWxPersonalUserColumns"/>
+		FROM sys_wx_personal_user a
+		<include refid="sysWxPersonalUserJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="user != null and user.name != null and user.name != ''">
+				AND u2.name like
+				<if test="dbName == 'oracle'">'%'||#{user.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{user.name},'%')</if>
+			</if>
+			<if test="nickname != null and nickname != ''">
+				AND a.nickname like
+				<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{nickname}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{nickname},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		order by a.update_time desc
+	</select>
+	
+	<select id="findAllList" resultType="SysWxPersonalUser">
+		SELECT 
+			<include refid="sysWxPersonalUserColumns"/>
+		FROM sys_wx_personal_user a
+		<include refid="sysWxPersonalUserJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_wx_personal_user(
+			id,
+			user_id,
+			nickname,
+			head_img_url,
+			openid,
+			subscribe,
+			sex,
+			create_time,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{user.id},
+			#{nickname},
+			#{headImgUrl},
+			#{openid},
+			#{subscribe},
+			#{sex},
+			#{createDate},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_wx_personal_user SET 	
+			user_id = #{user.id},
+			nickname = #{nickname},
+			head_img_url = #{headImgUrl},
+			openid = #{openid},
+			subscribe = #{subscribe},
+			sex = #{sex},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_wx_personal_user SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

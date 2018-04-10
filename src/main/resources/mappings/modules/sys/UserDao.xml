@@ -495,4 +495,22 @@
 		a.status = 1
 	</select>
 
+	<!-- 用户C端查询已注册用户 -->
+	<select id="findPersonalUser" resultType="User" parameterType="Integer">
+		SELECT
+		a.id,
+		a.company_id,
+		a.office_id,
+		a.login_name,
+		a. NAME
+		FROM
+		sys_user a
+		LEFT JOIN sys_office so ON so.id = a.company_id
+		left join sys_wx_personal_user sw on sw.user_id=a.id
+		WHERE
+		a. STATUS = 1
+		and sw.status=1
+		and sw.user_id=a.id
+	</select>
+
 </mapper>

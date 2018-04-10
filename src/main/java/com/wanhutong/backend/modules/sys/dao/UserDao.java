@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.wx.SysWxPersonalUser;
 
 /**
  * 用户DAO接口
@@ -99,4 +100,10 @@ public interface UserDao extends CrudDao<User> {
 	public List<User> systemCompany();
 
 	void recovery(User user);
+
+	/**
+	 * 查询C端注册用户
+	 * */
+	public List<User> findPersonalUser();
+
 }
