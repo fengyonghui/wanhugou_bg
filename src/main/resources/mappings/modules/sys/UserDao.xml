@@ -169,8 +169,8 @@
 			JOIN sys_user_role ur ON ur.user_id = a.id AND ur.role_id = #{role.id}
 		</if>
 		<if test="role != null and role.name != null and role.name != ''">
-			JOIN sys_user_role ur ON ur.user_id = a.id
-			JOIN sys_role sr ON ur.role_id = sr.id
+			JOIN sys_user_role sur ON sur.user_id = a.id
+			JOIN sys_role sr ON sur.role_id = sr.id
 		</if>
 		WHERE 1=1
 		<if test="role != null and role.name != null and role.name != ''">
