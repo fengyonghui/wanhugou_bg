@@ -156,7 +156,7 @@ public class BizProductInfoForVendorController extends BaseController {
 
         AttributeValueV2 attributeValue = new AttributeValueV2();
         attributeValue.setObjectId(bizProductInfo.getId());
-        attributeValue.setObjectName(AttributeInfoV2.Level.PRODUCT.getTableName());
+        attributeValue.setObjectName(AttributeInfoV2.Level.PRODUCT_FOR_VENDOR.getTableName());
         List<AttributeValueV2> attributeValueList = attributeValueV2Service.findList(attributeValue);
         for (AttributeValueV2 a : attributeValueList) {
             bizProductInfo.setTextureStr(a.getValue());
@@ -229,7 +229,7 @@ public class BizProductInfoForVendorController extends BaseController {
             for (BizSkuInfo b : skuInfosList) {
                 AttributeValueV2 av = new AttributeValueV2();
                 av.setObjectId(b.getId());
-                av.setObjectName(AttributeInfoV2.Level.SKU.getTableName());
+                av.setObjectName(AttributeInfoV2.Level.SKU_FOR_VENDOR.getTableName());
                 List<AttributeValueV2> avList = attributeValueV2Service.findList(av);
                 for (AttributeValueV2 a : avList) {
                     List<String> attrList = skuAttrMap.putIfAbsent(a.getAttrId(), Lists.newArrayList(a.getValue()));
