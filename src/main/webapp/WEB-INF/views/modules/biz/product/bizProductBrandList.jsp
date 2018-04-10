@@ -21,13 +21,13 @@
 	<form:form id="searchForm" modelAttribute="dict" action="${ctx}/biz/product/brand" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<label>标签：</label>
+		<label>品牌名称：</label>
 		<form:input path="label" htmlEscape="false" maxlength="50" class="input-medium" value=""/>
 		<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>
 	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead><tr><th>键值</th><th>标签</th><th>类型</th><th>描述</th><th>排序</th><shiro:hasPermission name="biz:product:brand:edit"><th>操作</th></shiro:hasPermission></tr></thead>
+		<thead><tr><th>品牌名称</th><th>标签</th><th>类型</th><th>描述</th><th>排序</th><shiro:hasPermission name="biz:product:brand:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="dict">
 			<tr>

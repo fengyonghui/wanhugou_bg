@@ -22,6 +22,11 @@
 					}
 				}
 			});
+
+			$("#value").change(function () {
+				var value = $("#value").val();
+				$("#label").val(value);
+            });
 		});
 	</script>
 </head>
@@ -34,33 +39,35 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">键值:</label>
+			<label class="control-label">品牌名称:</label>
 			<div class="controls">
-				<form:input path="value" htmlEscape="false" maxlength="50" class="required"/>
+				<form:input id="value" path="value" htmlEscape="false" maxlength="50" class="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">标签:</label>
 			<div class="controls">
-				<form:input path="label" htmlEscape="false" maxlength="50" class="required"/>
+				<form:input id="label" path="label" readonly="true" htmlEscape="false" maxlength="50" class="required"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">类型:</label>
 			<div class="controls">
-				<input name="type" value="brand" readonly="readonly" htmlEscape="false" maxlength="50" class="required abc"/>
+				<form:input path="type" value="brand" readonly="true" htmlEscape="false" maxlength="50" class="required abc"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">描述:</label>
 			<div class="controls">
-				<input name="description" value="品牌" readonly="readonly" htmlEscape="false" maxlength="50" class="required"/>
+				<form:input path="description" value="品牌" readonly="true" htmlEscape="false" maxlength="50" class="required"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">排序:</label>
 			<div class="controls">
 				<form:input path="sort" htmlEscape="false" maxlength="11" class="required digits"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
