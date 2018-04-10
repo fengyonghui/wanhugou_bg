@@ -170,7 +170,7 @@
 			<div class="controls">
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
 								labelValue="${entity.fromOffice.name}"  notAllowSelectParent="true"
-								title="采购中心" isAll="false"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+								title="采购中心" isAll="false"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>

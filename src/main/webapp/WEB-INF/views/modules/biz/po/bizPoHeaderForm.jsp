@@ -160,7 +160,7 @@
 				<div class="controls">
 					<sys:treeselect id="deliveryOffice" name="deliveryOffice.id" value="${bizPoHeader.deliveryOffice.id}" labelName="deliveryOffice.name"
 									labelValue="${bizPoHeader.deliveryOffice.name}"  notAllowSelectParent="true"
-									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-xlarge " dataMsgRequired="必填信息">
+									title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge " dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</div>
 			</div>
