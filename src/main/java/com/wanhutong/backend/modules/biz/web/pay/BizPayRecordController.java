@@ -6,12 +6,17 @@ package com.wanhutong.backend.modules.biz.web.pay;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -21,6 +26,10 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 交易记录Controller
@@ -88,6 +97,100 @@ public class BizPayRecordController extends BaseController {
 		bizPayRecordService.delete(bizPayRecord);
 		addMessage(redirectAttributes, "恢复交易记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/pay/bizPayRecord/?repage";
+	}
+
+	/**
+	 * 用于交易记录导出
+	 * */
+	@RequiresPermissions("biz:pay:bizPayRecord:view")
+	@RequestMapping(value = "payBtnExport", method = RequestMethod.POST)
+	public String torySkuExport(BizPayRecord bizPayRecord, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			String fileName = "交易记录数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			List<BizPayRecord> PayList = bizPayRecordService.findList(bizPayRecord);
+			List<List<String>> data = new ArrayList<List<String>>();
+			PayList.forEach(pay->{
+				List<String> rowData = new ArrayList();
+				//ID
+				rowData.add(String.valueOf(pay.getId()));
+				//订单编号
+				rowData.add(String.valueOf(pay.getPayNum()));
+				//业务流水号
+				if(pay.getOutTradeNo()!=null){
+					rowData.add(String.valueOf(pay.getOutTradeNo()));
+				}else {
+					rowData.add(String.valueOf(""));
+				}
+				//支付金额
+				rowData.add(String.valueOf(pay.getPayMoney()));
+				//支付人
+				rowData.add(String.valueOf(pay.getCreateBy().getName()));
+				//客户名称
+				if(pay.getCustomer()!=null){
+					rowData.add(String.valueOf(pay.getCustomer().getName()));
+				}else{
+					rowData.add(String.valueOf(""));
+				}
+				//采购中心
+				if(pay.getCustConsultant()!=null){
+					rowData.add(String.valueOf(pay.getCustConsultant().getCenters().getName()));
+				}else {
+					rowData.add(String.valueOf(""));
+				}
+				//联系电话
+				if(pay.getCustomer()!=null){
+					rowData.add(String.valueOf(pay.getCustomer().getMoblieMoeny().getMobile()));
+				}else{
+					rowData.add(String.valueOf(""));
+				}
+				//支付账号
+				if(pay.getAccount()!=null){
+					rowData.add(String.valueOf(pay.getAccount().getName()));
+				}else {
+					rowData.add(String.valueOf(""));
+				}
+				//支付到账户
+				if(pay.getAccount()!=null){
+					rowData.add(String.valueOf(pay.getToAccount().getName()));
+				}else {
+					rowData.add(String.valueOf(""));
+				}
+				//交易类型名称
+				rowData.add(String.valueOf(pay.getRecordTypeName()));
+				//支付类型名称
+				rowData.add(String.valueOf(pay.getPayTypeName()));
+				//交易作用/原因
+				if(pay.getTradeReason()!=null){
+					rowData.add(String.valueOf(pay.getTradeReason()));
+				}else{
+					rowData.add(String.valueOf(""));
+				}
+				//创建人
+				rowData.add(String.valueOf(pay.getCreateBy().getName()));
+				//创建时间
+				rowData.add(String.valueOf(sdf.format(pay.getCreateDate())));
+				//更新人
+				rowData.add(String.valueOf(pay.getUpdateBy().getName()));
+				//更新时间
+				rowData.add(String.valueOf(sdf.format(pay.getUpdateDate())));
+				data.add(rowData);
+			});
+			String[] payHeads = {"ID", "订单编号", "业务流水号", "支付金额", "支付人", "客户名称", "采购中心", "联系电话", "支付账号",
+					"支付到账户", "交易类型名称", "支付类型名称", "交易作用/原因", "创建人", "创建时间", "更新人", "更新时间"};
+			ExportExcelUtils eeu = new ExportExcelUtils();
+			SXSSFWorkbook workbook = new SXSSFWorkbook();
+			eeu.exportExcel(workbook, 0, "交易记录数据", payHeads, data, fileName);
+			response.reset();
+			response.setContentType("application/octet-stream; charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+			workbook.write(response.getOutputStream());
+			workbook.dispose();
+			return null;
+		}catch (Exception e){
+			addMessage(redirectAttributes, "导出交易记录数据失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + adminPath + "/biz/pay/bizPayRecord/";
 	}
 
 }
