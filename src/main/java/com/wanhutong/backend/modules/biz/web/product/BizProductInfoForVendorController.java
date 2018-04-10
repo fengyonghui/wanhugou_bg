@@ -23,6 +23,7 @@ import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
@@ -72,7 +73,7 @@ public class BizProductInfoForVendorController extends BaseController {
     @Autowired
     private BizProductInfoForVendorService bizProductInfoForVendorService;
     @Autowired
-    private BizSkuInfoV2Service bizSkuInfoService;
+    private BizSkuInfoForVendorService bizSkuInfoForVendorService;
     @Autowired
     private CommonImgService commonImgService;
     @Autowired
@@ -93,7 +94,7 @@ public class BizProductInfoForVendorController extends BaseController {
             entity = bizProductInfoForVendorService.get(id);
             BizSkuInfo bizSkuInfo = new BizSkuInfo();
             bizSkuInfo.setProductInfo(entity);
-            List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
+            List<BizSkuInfo> skuInfosList = bizSkuInfoForVendorService.findList(bizSkuInfo);
             Collections.reverse(skuInfosList);
             entity.setSkuInfosList(skuInfosList);
         }

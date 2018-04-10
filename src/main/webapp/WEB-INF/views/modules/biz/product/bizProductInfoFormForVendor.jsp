@@ -587,7 +587,11 @@
     }
 
     function checkPass(){
-        $.post("${ctx}/biz/product/bizProductInfoForVendor/checkPass?id=" + ${bizProductInfo.id},
+        var productId = ${not empty bizProductInfo.id ? bizProductInfo.id: 0};
+        if (!productId) {
+            productId = 0;
+        }
+        $.post("${ctx}/biz/product/bizProductInfoForVendor/checkPass?id=" + productId,
             {},
             function (data, status) {
                 console.info(data);

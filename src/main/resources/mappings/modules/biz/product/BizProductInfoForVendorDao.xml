@@ -80,7 +80,7 @@
 		SELECT 
 			<include refid="bizProductInfoColumns"/>,
 			pc.cat_id AS "categoryInfoList.id"
-		FROM biz_product_info a
+		FROM biz_vendor_product_info a
 		LEFT JOIN biz_prod_cate pc ON pc.prod_id = a.id
 		<include refid="bizProductInfoJoins"/>
 		WHERE a.id = #{id}
@@ -89,7 +89,7 @@
 	<select id="findList" resultType="BizProductInfo">
 		SELECT 
 			<include refid="bizProductInfoColumns"/>
-		FROM biz_product_info a
+		FROM biz_vendor_product_info a
 		<include refid="bizProductInfoJoins"/>
 		<where>
 			  a.status = #{DEL_FLAG_NORMAL}
@@ -140,7 +140,7 @@
 	<select id="findAllList" resultType="BizProductInfo">
 		SELECT 
 			<include refid="bizProductInfoColumns"/>
-		FROM biz_product_info a
+		FROM biz_vendor_product_info a
 		<include refid="bizProductInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -156,7 +156,7 @@
 
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO biz_product_info(
+		INSERT INTO biz_vendor_product_info(
 			`name`,
             prod_code,
 			brand_id,
@@ -206,7 +206,7 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_product_info SET
+		UPDATE biz_vendor_product_info SET
 		<if test="name!=null and name !=''">
 			`name` = #{name},
 		</if>
@@ -246,7 +246,7 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE biz_product_info SET 
+		UPDATE biz_vendor_product_info SET 
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
@@ -273,7 +273,7 @@
 		</foreach>
 	</insert>
 	<update id="checkPass">
-		UPDATE biz_product_info SET
+		UPDATE biz_vendor_product_info SET
 			status = status
 		WHERE id = #{id}
 	</update>

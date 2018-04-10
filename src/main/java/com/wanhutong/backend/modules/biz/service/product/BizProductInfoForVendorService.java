@@ -102,8 +102,8 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
     private static final Integer MATERIAL_ATTR_ID = 1;
     private static final Integer SIZE_ATTR_ID = 2;
     private static final Integer COLOR_ATTR_ID = 3;
-    private static final String PRODUCT_TABLE = "biz_product_info";
-    private static final String SKU_TABLE = "biz_sku_info";
+    private static final String PRODUCT_TABLE = "biz_vendor_product_info";
+    private static final String SKU_TABLE = "biz_vendor_sku_info";
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -314,7 +314,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
     private List<CommonImg> getImgList(Integer imgType, Integer prodId) {
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(prodId);
-        commonImg.setObjectName("biz_product_info");
+        commonImg.setObjectName(PRODUCT_TABLE);
         commonImg.setImgType(imgType);
         return commonImgService.findList(commonImg);
     }
@@ -410,7 +410,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
 
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(bizProductInfo.getId());
-        commonImg.setObjectName("biz_product_info");
+        commonImg.setObjectName(PRODUCT_TABLE);
         commonImg.setImgType(imgType);
         commonImg.setImgSort(20);
 
@@ -419,7 +419,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
             CommonImg oldCommonImg = new CommonImg();
             oldCommonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
             oldCommonImg.setObjectId(bizProductInfo.getId());
-            oldCommonImg.setObjectName("biz_product_info");
+            oldCommonImg.setObjectName(PRODUCT_TABLE);
             oldImgList = commonImgService.findList(oldCommonImg);
         }
 
