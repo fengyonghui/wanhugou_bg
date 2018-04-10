@@ -119,7 +119,7 @@ public class BizProductInfoForVendorController extends BaseController {
         CommonImg commonImg = new CommonImg();
         commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
         commonImg.setObjectId(bizProductInfo.getId());
-        commonImg.setObjectName("biz_product_info");
+        commonImg.setObjectName(BizProductInfoForVendorService.PRODUCT_TABLE);
         if (bizProductInfo.getId() != null) {
             List<CommonImg> imgList = commonImgService.findList(commonImg);
             commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());

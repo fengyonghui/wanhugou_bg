@@ -102,8 +102,8 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
     private static final Integer MATERIAL_ATTR_ID = 1;
     private static final Integer SIZE_ATTR_ID = 2;
     private static final Integer COLOR_ATTR_ID = 3;
-    private static final String PRODUCT_TABLE = "biz_vendor_product_info";
-    private static final String SKU_TABLE = "biz_vendor_sku_info";
+    public static final String PRODUCT_TABLE = "biz_vendor_product_info";
+    public static final String SKU_TABLE = "biz_vendor_sku_info";
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
