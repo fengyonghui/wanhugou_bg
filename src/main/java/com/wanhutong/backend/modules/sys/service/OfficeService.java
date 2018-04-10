@@ -199,6 +199,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 	@Transactional(readOnly = false)
 	public void save(Office office) {
+		super.save(office);
 		CommonLocation commonLocation =null;
 		if(office.getBizLocation()!=null && !office.getBizLocation().getAddress().equals("")){
 			if(office.getAddress()!=null && office.getBizLocation().getProvince()==null && office.getBizLocation().getCity()==null){
@@ -238,7 +239,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			sysOfficeAddressService.save(officeAddress);
 			office.setAddress(String.valueOf(officeAddress.getId()));
 		}
-
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}
