@@ -8,7 +8,8 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
+import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoForVendorDao;
+import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoForVendorDao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV2Dao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
@@ -54,7 +55,7 @@ import java.util.Set;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoV2Dao, BizSkuInfo> {
+public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoForVendorDao, BizSkuInfo> {
 	@Resource
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	@Resource
@@ -66,7 +67,7 @@ public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoV2Dao, Biz
 	@Autowired
 	private BizSkuInfoV2Dao bizSkuInfoDao;
 	@Autowired
-	private BizProductInfoDao bizProductInfoDao;
+	private BizProductInfoForVendorDao bizProductInfoForVendorDao;
 	@Resource
 	private PropValueService propValueService;
 	@Autowired
@@ -83,10 +84,12 @@ public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoV2Dao, Biz
 
 	protected static Logger log = LoggerFactory.getLogger(BizSkuInfoForVendorService.class);
 
+	@Override
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
 	}
-	
+
+	@Override
 	public List<BizSkuInfo> findList(BizSkuInfo bizSkuInfo) {
 		if(bizSkuInfo != null) {
 			return super.findList(bizSkuInfo);
@@ -148,7 +151,7 @@ public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoV2Dao, Biz
 			return null;
 		}
 		Integer prodId=	skuInfo.getProductInfo().getId();
-		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
+		BizProductInfo bizProductInfo=bizProductInfoForVendorDao.get(prodId);
 		AttributeValueV2 attributeValue =new AttributeValueV2();
 		attributeValue.setObjectId(skuInfo.getId());
 		attributeValue.setObjectName(SKU_TABLE);
@@ -177,15 +180,15 @@ public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoV2Dao, Biz
  public  List<BizSkuInfo> findAllList(){
 		return bizSkuInfoDao.findAllList(new BizSkuInfo());
  }
-
+	@Override
  public Page<BizSkuInfo> findPage(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
 		return super.findPage(page, bizSkuInfo);
 	}
-	
+	@Override
 	@Transactional(readOnly = false)
 	public void save(BizSkuInfo bizSkuInfo) {
 
-		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
+		BizProductInfo bizProductInfo = bizProductInfoForVendorDao.get(bizSkuInfo.getProductInfo().getId());
 		String prodCode = bizProductInfo.getProdCode();
 		String partNo = prodCode + bizSkuInfo.getSort();
 

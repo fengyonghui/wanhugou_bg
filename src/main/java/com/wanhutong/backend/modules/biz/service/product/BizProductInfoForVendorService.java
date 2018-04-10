@@ -22,7 +22,7 @@ import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -93,7 +93,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
     @Resource
     private AttributeValueV2Service attributeValueV2Service;
     @Resource
-    private BizSkuInfoV2Service bizSkuInfoV2Service;
+    private BizSkuInfoForVendorService bizSkuInfoForVendorService;
 
 
     /**
@@ -185,7 +185,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
 
             BizSkuInfo oldSkuEntity = new BizSkuInfo();
             oldSkuEntity.setProductInfo(bizProductInfo);
-            List<BizSkuInfo> oldSkuList = bizSkuInfoV2Service.findListIgnoreStatus(oldSkuEntity);
+            List<BizSkuInfo> oldSkuList = bizSkuInfoForVendorService.findListIgnoreStatus(oldSkuEntity);
             List<BizSkuInfo> newSkuList = Lists.newArrayList();
 
             Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
@@ -210,13 +210,13 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 bizSkuInfo.setSort(String.valueOf(index));
                 bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
 
-                BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNo(bizSkuInfo.getItemNo());
+                BizSkuInfo oldBizSkuInfo = bizSkuInfoForVendorService.getSkuInfoByItemNo(bizSkuInfo.getItemNo());
                 if (oldBizSkuInfo != null && !copy) {
                     bizSkuInfo.setId(oldBizSkuInfo.getId());
                 }else {
                     index ++;
                 }
-                bizSkuInfoV2Service.save(bizSkuInfo);
+                bizSkuInfoForVendorService.save(bizSkuInfo);
                 newSkuList.add(bizSkuInfo);
 
                 AttributeValueV2 sizeAttrVal = new AttributeValueV2();
@@ -266,7 +266,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                     }
                 }
                 if (hasDel) {
-                    bizSkuInfoV2Service.delete(oldS);
+                    bizSkuInfoForVendorService.delete(oldS);
                 }
             }
 
