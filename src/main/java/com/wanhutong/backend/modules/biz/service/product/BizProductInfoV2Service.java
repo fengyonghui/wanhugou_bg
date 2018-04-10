@@ -421,7 +421,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         }
 
         for (String name : result) {
-            if (StringUtils.isNotBlank(name) && (copy || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType) && (name.contains(DsConfig.getImgServer()) || name.contains(DsConfig.getOldImgServer()))))) {
+            if (StringUtils.isNotBlank(name) || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType))) {
                 commonImg.setId(null);
                 commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
                 commonImg.setImgServer(name.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
