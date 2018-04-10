@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.relation.RoleList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -53,6 +54,8 @@ public class UserController extends BaseController {
 
     //用来判断仓储专员
     private static final String WAREHOUSESPECIALIST = "stoIndex";
+    //供应商角色ID
+    private static final Integer VENDOR = 29;
 
 	@Autowired
 	private SystemService systemService;
@@ -595,5 +598,14 @@ public class UserController extends BaseController {
 	}
 
 
-
+//	@RequiresPermissions("sys:user:edit")
+//	@RequestMapping(value = "savePersonForVendor")
+//	@ResponseBody
+//	public User savePersonForVendor(User user){
+//        RoleList roleList = new RoleList();
+//        Role role = systemService.getRole(VENDOR);
+//        roleList.add(role);
+//        user.setRoleList(roleList);
+//		systemService.savePersonForVendor(user);
+//	}
 }
