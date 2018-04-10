@@ -7,9 +7,15 @@
 	<meta name="decorator" content="default"/>
 
 	<script type="text/javascript">
+        $(function() {
+            $('#myModal').modal('hide')
+        });
 		$(document).ready(function() {
 			$("#name").focus();
-			$("#myModal").modal("hide");
+			$("#myModal").modal({
+                backdrop:true,
+				show:false
+			});
 			$("#inputForm").validate({
 				submitHandler: function(form){
 				 var phone = document.getElementById("phone").value;
@@ -30,6 +36,22 @@
 					}
 				}
 			});
+			$("#saveUser").click(function () {
+				var name = $("#primaryPersonName").val();
+				var loginName = $("#loginName").val();
+				var newPassword = $("#newPassword").val();
+				var confirmNewPassword = $("#confirmNewPassword").val();
+				var primaryMobile = $("#primaryMobile").val();
+				var primaryRemarks = $("#primaryRemarks").val();
+				$.ajax({
+					type:"post",
+					url:"${ctx}/",
+					data:{name:name,loginName:loginName,newPassword:newPassword,confirmNewPassword:confirmNewPassword,primaryMobile:primaryMobile,primaryRemarks:primaryRemarks},
+					success:function (data) {
+
+                    }
+				});
+            });
 		});
 	</script>
 	<script type="text/javascript">
@@ -210,7 +232,7 @@
 					<div class="control-group">
 						<label class="control-label">姓名:</label>
 						<div class="controls">
-							<input name="primaryPerson.name" htmlEscape="false" maxlength="50" class="required"/>
+							<input id="primaryPersonName" name="primaryPerson.name" htmlEscape="false" maxlength="50" class="required"/>
 							<span class="help-inline"><font color="red">*</font> </span>
 						</div>
 					</div>
@@ -218,7 +240,7 @@
 						<label class="control-label">登录名:</label>
 						<div class="controls">
 							<%--<input id="oldLoginName" name="primaryPerson.oldLoginName" type="hidden" value="">--%>
-							<input name="primaryPerson.loginName" htmlEscape="false" maxlength="50" class="required userName"/>
+							<input id="loginName" name="primaryPerson.loginName" htmlEscape="false" maxlength="50" class="required userName"/>
 							<span class="help-inline"><font color="red">*</font> </span>
 						</div>
 					</div>
@@ -240,26 +262,13 @@
 					<div class="control-group">
 						<label class="control-label">手机:</label>
 						<div class="controls">
-							<input name="primaryPerson.mobile" htmlEscape="false" maxlength="100"/>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">是否允许登录:</label>
-						<div class="controls">
-							<select name="primaryPerson.loginFlag" class="input-mini required">
-								<option label="请选择" value="1"></option>
-								<c:forEach items="${fns:getDictList('yes_no')}">
-									<option label="是" value="value"></option>
-								</c:forEach>
-								<%--<options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
-							</select>
-							<span class="help-inline"><font color="red">*</font> “是”代表此账号允许登录，“否”则表示此账号不允许登录</span>
+							<input id="primaryMobile" name="primaryPerson.mobile" htmlEscape="false" maxlength="100"/>
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label">备注:</label>
 						<div class="controls">
-							<textarea name="primaryPerson.remarks" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"></textarea>
+							<textarea id="primaryRemarks" name="primaryPerson.remarks" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"></textarea>
 						</div>
 					</div>
 				</div>
@@ -267,8 +276,8 @@
 					<button type="button" class="btn btn-default"
 							data-dismiss="modal">关闭
 					</button>
-					<button type="button" class="btn btn-primary">
-						提交更改
+					<button id="saveUser" type="button" class="btn btn-primary">
+						保存
 					</button>
 				</div>
 			</div>
