@@ -31,7 +31,8 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		sua.mobile as "customer.moblieMoeny.mobile"
+		sua.mobile as "customer.moblieMoeny.mobile",
+		sof.name as "custConsultant.centers.name"
 	</sql>
 	
 	<sql id="bizPayRecordJoins">
@@ -41,6 +42,9 @@
 		LEFT JOIN sys_office o on o.id = a.account
 	    LEFT JOIN  sys_office f on f.id = a.to_account
 	    LEFT join sys_user sua on sua.company_id=so.id and so.primary_person = sua.id
+		<!-- 采购中心 -->
+		LEFT JOIN biz_custom_center_consultant bcc on bcc.cust_id=so.id
+		LEFT JOIN sys_office sof ON sof.id = bcc.center_id
 	</sql>
     
 	<select id="get" resultType="BizPayRecord">
@@ -60,6 +64,12 @@
 			1=1
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="custConsultant != null and custConsultant.centers.name != null and custConsultant.centers.name != ''">
+				AND sof.NAME LIKE
+				<if test="dbName == 'oracle'">'%'||#{custConsultant.centers.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{custConsultant.centers.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{custConsultant.centers.name},'%')</if>
 			</if>
 			<if test="payNum != null and payNum != ''">
 				AND a.pay_num LIKE
@@ -138,7 +148,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		order by update_time desc
+		order by a.update_time desc
 	</select>
 	
 	<select id="findAllList" resultType="BizPayRecord">

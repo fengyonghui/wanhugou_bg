@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.pay;
 
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Length;//(min=1, max=4, message="支付类型：wx(微信) alipay");
@@ -39,6 +40,11 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 	private String tradeReason;		// 交易作用/原因
 	private Date trandStartTime;   //交易开始时间
 	private Date trandEndTime;     //交易结束时间
+
+	/**
+	 * 采购中心
+	 * */
+	private BizCustomCenterConsultant custConsultant;
 
 	public BizPayRecord() {
 		super();
@@ -187,5 +193,13 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 
 	public void setCashAmount(BigDecimal cashAmount) {
 		this.cashAmount = cashAmount;
+	}
+
+	public BizCustomCenterConsultant getCustConsultant() {
+		return custConsultant;
+	}
+
+	public void setCustConsultant(BizCustomCenterConsultant custConsultant) {
+		this.custConsultant = custConsultant;
 	}
 }
