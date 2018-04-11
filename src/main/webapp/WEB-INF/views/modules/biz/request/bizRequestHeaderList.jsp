@@ -49,7 +49,7 @@
 			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
 								labelValue="${entity.fromOffice.name}"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
+								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-medium required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 			</li>
 			<li><span><label>期望收货时间：</label></span>
