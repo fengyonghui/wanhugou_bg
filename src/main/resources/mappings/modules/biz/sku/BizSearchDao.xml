@@ -113,8 +113,12 @@
 			business_status,
 			send_time,
 			user_id,
-			min_price,
-			max_price,
+			<if test="minPrice!=null and minPrice!=''">
+				min_price,
+			</if>
+			<if test="maxPrice!=null and maxPrice!=''">
+				max_price,
+			</if>
 			amount,
 			comment,
 			status,
@@ -133,8 +137,12 @@
 			#{businessStatus},
 			#{sendTime},
 			#{user.id},
+		<if test="minPrice!=null and minPrice!=''">
 			#{minPrice},
+		</if>
+		<if test="maxPrice!=null and maxPrice!=''">
 			#{maxPrice},
+		</if>
 			#{amount},
 			#{comment},
 			#{delFlag},
