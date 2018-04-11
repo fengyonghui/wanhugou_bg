@@ -122,9 +122,9 @@ public class BizProductInfoV2Controller extends BaseController {
             String photoDetails = "";
             String photoLists = "";
             for (CommonImg img : imgList) {
-                photos += "|" + img.getImgServer() + img.getImgPath();
+                photos += img.getImgServer().concat(img.getImgPath()).concat("|");
             }
-            if (!"".equals(photos)) {
+            if (StringUtils.isNotBlank(photos)) {
                 bizProductInfo.setPhotos(photos);
             }
             for (CommonImg img : subImgList) {
@@ -499,23 +499,47 @@ public class BizProductInfoV2Controller extends BaseController {
         Map<String, Object> resultMap = Maps.newHashMap();
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         // 获取上传文件名
-        MultipartFile file = multipartRequest.getFile("colorImg");
-        String originalFilename = file.getOriginalFilename();
-        String fullName = UUID.randomUUID().toString().replaceAll("-", "").concat(originalFilename.substring(originalFilename.indexOf(".")));
-        String msg = "";
-        boolean ret = false;
-        try {
-            String result = AliOssClientUtil.uploadObject2OSS(file.getInputStream(), fullName, file.getSize(), AliOssClientUtil.getOssUploadPath());
-            if (StringUtils.isNotBlank(result)) {
-                fullName = DsConfig.getImgServer().concat("/").concat(AliOssClientUtil.getOssUploadPath()).concat(fullName);
-                ret = true;
+        MultipartFile colorFile = multipartRequest.getFile("colorImg");
+        if (colorFile != null) {
+            String originalFilename = colorFile.getOriginalFilename();
+            String fullName = UUID.randomUUID().toString().replaceAll("-", "").concat(originalFilename.substring(originalFilename.indexOf(".")));
+            String msg = "";
+            boolean ret = false;
+            try {
+                String result = AliOssClientUtil.uploadObject2OSS(colorFile.getInputStream(), fullName, colorFile.getSize(), AliOssClientUtil.getOssUploadPath());
+                if (StringUtils.isNotBlank(result)) {
+                    fullName = DsConfig.getImgServer().concat("/").concat(AliOssClientUtil.getOssUploadPath()).concat(fullName);
+                    ret = true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            resultMap.put("fullName", fullName);
+            resultMap.put("ret", ret);
+            resultMap.put("msg", msg);
         }
-        resultMap.put("fullName", fullName);
-        resultMap.put("ret", ret);
-        resultMap.put("msg", msg);
+
+        List<MultipartFile> files = multipartRequest.getFiles("productImg");
+        if (CollectionUtils.isNotEmpty(files)) {
+            List<String> imgList = Lists.newArrayList();
+            for (MultipartFile file : files) {
+                String originalFilename = file.getOriginalFilename();
+                String fullName = UUID.randomUUID().toString().replaceAll("-", "").concat(originalFilename.substring(originalFilename.indexOf(".")));
+                try {
+                    String result = AliOssClientUtil.uploadObject2OSS(file.getInputStream(), fullName, file.getSize(), AliOssClientUtil.getOssUploadPath());
+                    if (StringUtils.isNotBlank(result)) {
+                        fullName = DsConfig.getImgServer().concat("/").concat(AliOssClientUtil.getOssUploadPath()).concat(fullName);
+                        imgList.add(fullName);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            resultMap.put("imgList", imgList);
+            resultMap.put("ret", CollectionUtils.isNotEmpty(imgList));
+            resultMap.put("msg", "");
+        }
+
         response.getWriter().write(JSONObject.fromObject(resultMap).toString());
     }
 

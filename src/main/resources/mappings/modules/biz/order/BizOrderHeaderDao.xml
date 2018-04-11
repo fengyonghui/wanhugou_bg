@@ -266,9 +266,20 @@
 			<if test="bizStatus !=null">
 				AND a.biz_status=#{bizStatus}
 			</if>
-			<if test="ordrHeaderStartTime !=null and ordrHeaderStartTime !='' and orderHeaderEedTime!=null and orderHeaderEedTime!=''">
-				AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+			<!-- 列表时间查询 -->
+			<if test="ordrHeaderStartTime !=null and ordrHeaderStartTime !=''">
+				AND a.create_time &gt;= #{ordrHeaderStartTime}
+				<if test="orderHeaderEedTime!=null and orderHeaderEedTime!=''">
+                    AND a.create_time &lt;= #{orderHeaderEedTime}
+				</if>
 			</if>
+			<if test="orderUpdaStartTime !=null and orderUpdaStartTime !=''">
+				AND a.update_time &gt;= #{orderUpdaStartTime}
+				<if test="orderUpdaEndTime!=null and orderUpdaEndTime!=''">
+                    AND a.update_time &lt;= #{orderUpdaEndTime}
+				</if>
+			</if>
+			<!-- end -->
 			<if test="bizType !=null and bizType!=''">
 				AND a.biz_type=#{bizType}
 			</if>

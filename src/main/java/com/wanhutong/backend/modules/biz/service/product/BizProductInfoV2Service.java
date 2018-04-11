@@ -137,7 +137,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
         Office office = officeService.get(bizProductInfo.getOffice().getId());
         bizProductInfo.getOffice().setName(office.getName());
         BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
-        String vCode = bizVendInfo != null ? bizVendInfo.getCode() : "0";
+        String vCode = bizVendInfo != null ? bizVendInfo.getCode() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
         vCode = addZeroForNum(vCode, true, 3);
 
         BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
@@ -311,7 +311,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
     private List<CommonImg> getImgList(Integer imgType, Integer prodId) {
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(prodId);
-        commonImg.setObjectName("biz_product_info");
+        commonImg.setObjectName(PRODUCT_TABLE);
         commonImg.setImgType(imgType);
         return commonImgService.findList(commonImg);
     }
@@ -410,7 +410,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
 
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(bizProductInfo.getId());
-        commonImg.setObjectName("biz_product_info");
+        commonImg.setObjectName(PRODUCT_TABLE);
         commonImg.setImgType(imgType);
         commonImg.setImgSort(20);
 
@@ -419,12 +419,12 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
             CommonImg oldCommonImg = new CommonImg();
             oldCommonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
             oldCommonImg.setObjectId(bizProductInfo.getId());
-            oldCommonImg.setObjectName("biz_product_info");
+            oldCommonImg.setObjectName(PRODUCT_TABLE);
             oldImgList = commonImgService.findList(oldCommonImg);
         }
 
         for (String name : result) {
-            if (StringUtils.isNotBlank(name) && (copy || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType) && (name.contains(DsConfig.getImgServer()) || name.contains(DsConfig.getOldImgServer()))))) {
+            if (StringUtils.isNotBlank(name) || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType))) {
                 commonImg.setId(null);
                 commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
                 commonImg.setImgServer(name.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
