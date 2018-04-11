@@ -41,12 +41,12 @@
 		<include refid="bizInventoryViewLogJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<!--<if test="invInfo.name != null and invInfo.name != '' and invInfo != '' and invInfo != null">-->
-				<!--AND bi.NAME LIKE-->
-					<!--<if test="dbName == 'oracle'">'%'||#{invInfo.name}||'%'</if>-->
-					<!--<if test="dbName == 'mssql'">'%'+#{invInfo.name}+'%'</if>-->
-					<!--<if test="dbName == 'mysql'">concat('%',#{invInfo.name},'%')</if>-->
-			<!--</if>-->
+			<if test="invInfo != null and invInfo.name != null and invInfo.name != ''">
+				AND bi.name LIKE
+					<if test="dbName == 'oracle'">'%'||#{invInfo.name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{invInfo.name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{invInfo.name},'%')</if>
+			</if>
 			<if test="skuInfo != null and skuInfo != '' and skuInfo.name != '' ">
 				AND bsi.name  LIKE
 					<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>

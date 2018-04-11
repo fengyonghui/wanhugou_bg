@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.sys.service;
 
 import java.util.*;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -40,6 +41,8 @@ import static com.wanhutong.backend.common.persistence.BaseEntity.DEL_FLAG_NORMA
 @Service
 @Transactional(readOnly = true)
 public class OfficeService extends TreeService<OfficeDao, Office> {
+
+    public static final Integer VENDORROLEID = 29;
 	@Autowired
 	private OfficeDao officeDao;
 	@Autowired
@@ -241,6 +244,23 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		}
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
+		//保存新建联系人
+		if (office.getPrimaryPerson() != null) {
+			if (office.getPrimaryPerson().getId() == null || office.getPrimaryPerson().getId().equals("")) {
+				User primaryPerson = office.getPrimaryPerson();
+				primaryPerson.setCompany(office);
+				primaryPerson.setOffice(office);
+				primaryPerson.setPassword((SystemService.entryptPassword(primaryPerson.getNewPassword())));
+				primaryPerson.setLoginFlag("1");
+				List<Role> roleList = Lists.newArrayList();
+				roleList.add(systemService.getRole(VENDORROLEID));
+				primaryPerson.setRoleList(roleList);
+				systemService.saveUser(primaryPerson);
+				UserUtils.clearCache(primaryPerson);
+				office.setPrimaryPerson(primaryPerson);
+				super.save(office);
+			}
+		}
 	}
 
 	//创建采购商同时创建钱包
