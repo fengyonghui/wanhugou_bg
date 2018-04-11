@@ -193,9 +193,16 @@ public class OfficeController extends BaseController {
     public String supplierForm(Office office, Model model) {
         User user = UserUtils.getUser();
         if (office.getParent() == null || office.getParent().getId() == null) {
-            office.setParent(user.getOffice());
+            if (OfficeTypeEnum.VENDOR.getType().equals(office.getType())) {
+                office.setType(office.getType());
+                office.setParent(null);
+            } else {
+                office.setParent(user.getOffice());
+            }
         }
-        office.setParent(officeService.get(office.getParent().getId()));
+        if(office.getParent()!=null){
+            office.setParent(officeService.get(office.getParent().getId()));
+        }
         if (office.getArea() == null) {
             office.setArea(user.getOffice().getArea());
         }
