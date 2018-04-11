@@ -35,6 +35,7 @@ import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -88,6 +89,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizPoOrderReqService bizPoOrderReqService;
     @Autowired
     private DictService dictService;
+    @Autowired
+    private SystemService systemService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -126,6 +129,7 @@ public class BizOrderHeaderController extends BaseController {
 //			用于销售订单页面展示属于哪个采购中心哪个客户专员
             BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
             if (bizCustomCenterConsultant != null) {
+                bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
                 model.addAttribute("orderCenter", bizCustomCenterConsultant);
             } else {
                 model.addAttribute("orderCenter", new BizCustomCenterConsultant());
