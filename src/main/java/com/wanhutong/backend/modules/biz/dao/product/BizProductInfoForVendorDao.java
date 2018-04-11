@@ -27,12 +27,12 @@ public interface BizProductInfoForVendorDao extends CrudDao<BizProductInfo> {
      * @param id
      * @return
      */
-    int checkPass(@Param("id") Integer id);
+    int checkPass(@Param("id") Integer id, @Param("bizStatus") Integer bizStatus);
 
     /**
      * 复制ProductInfo
-     * @param id
+     * @param bizProductInfo
      * @return
      */
-    int insertProductInfoByVendorProductInfo(@Param("id") Integer id);
+    int insertProductInfoByVendorProductInfo(BizProductInfo bizProductInfo);
 }

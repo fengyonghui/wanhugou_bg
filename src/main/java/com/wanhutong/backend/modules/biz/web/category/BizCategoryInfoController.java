@@ -8,8 +8,6 @@ import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.entity.category.BizCatePropValue;
-import com.wanhutong.backend.modules.biz.entity.category.BizCatePropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizCatelogInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;

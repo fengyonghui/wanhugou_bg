@@ -53,6 +53,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -73,7 +74,11 @@ public class BizProductInfoForVendorController extends BaseController {
     @Autowired
     private BizProductInfoForVendorService bizProductInfoForVendorService;
     @Autowired
+    private BizProductInfoV2Service bizProductInfoV2Service;
+    @Autowired
     private BizSkuInfoForVendorService bizSkuInfoForVendorService;
+    @Autowired
+    private BizSkuInfoV2Service bizSkuInfoV2Service;
     @Autowired
     private CommonImgService commonImgService;
     @Autowired
@@ -373,11 +378,57 @@ public class BizProductInfoForVendorController extends BaseController {
     @RequestMapping(value = "checkPass")
     @ResponseBody
     public String checkPass(BizProductInfo bizProductInfo, Integer id) {
-        System.out.println(bizProductInfo);
-        System.out.println(id);
-        int i = bizProductInfoForVendorService.insertProductInfoByVendorProductInfo(id);
-        System.out.println(i);
-        bizProductInfoForVendorService.checkPass(id);
+        CommonImg commonImg = new CommonImg();
+        commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
+        commonImg.setObjectId(bizProductInfo.getId());
+        commonImg.setObjectName(BizProductInfoForVendorService.PRODUCT_TABLE);
+        if (bizProductInfo.getId() != null) {
+            List<CommonImg> imgList = commonImgService.findList(commonImg);
+            commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
+            List<CommonImg> subImgList = commonImgService.findList(commonImg);
+            commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
+            List<CommonImg> itemImgList = commonImgService.findList(commonImg);
+            String photos = "";
+            String photoDetails = "";
+            String photoLists = "";
+            for (CommonImg img : imgList) {
+                photos += "|" + img.getImgServer() + img.getImgPath();
+            }
+            if (!"".equals(photos)) {
+                bizProductInfo.setPhotos(photos);
+            }
+            for (CommonImg img : subImgList) {
+                photoDetails += "|" + img.getImgServer() + img.getImgPath();
+            }
+            if (!"".equals(photoDetails)) {
+                bizProductInfo.setPhotoDetails(photoDetails);
+            }
+            for (CommonImg img : itemImgList) {
+                photoLists += "|" + img.getImgServer() + img.getImgPath();
+            }
+            if (!"".equals(photoLists)) {
+                bizProductInfo.setPhotoLists(photoLists);
+            }
+        }
+
+        AttributeValueV2 attributeValue = new AttributeValueV2();
+        attributeValue.setObjectId(bizProductInfo.getId());
+        attributeValue.setObjectName(AttributeInfoV2.Level.PRODUCT_FOR_VENDOR.getTableName());
+        List<AttributeValueV2> attributeValueList = attributeValueV2Service.findList(attributeValue);
+        for (AttributeValueV2 a : attributeValueList) {
+            bizProductInfo.setTextureStr(a.getValue());
+        }
+
+        List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
+
+        bizProductInfo.setId(null);
+        bizProductInfoV2Service.save(bizProductInfo);
+        skuInfosList.forEach(o -> {
+            o.setId(null);
+            o.setProductInfo(bizProductInfo);
+            bizSkuInfoV2Service.baseSave(o);
+        });
+        int i1 = bizProductInfoForVendorService.checkPass(id, BizProductInfo.BizStatus.AUDIT_PASS.getStatus());
         return null;
     }
 

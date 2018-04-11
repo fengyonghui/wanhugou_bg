@@ -586,16 +586,19 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
      * @param id
      */
     @Transactional(readOnly = false)
-    public int checkPass(Integer id) {
-        return bizProductInfoForVendorDao.checkPass(id);
+    public int checkPass(Integer id, Integer bizStatus) {
+        return bizProductInfoForVendorDao.checkPass(id, bizStatus);
     }
 
     /**
      * 产品信息审核通过
-     * @param id
+     * @param id 返回新数据的ID
      */
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public int insertProductInfoByVendorProductInfo(Integer id) {
-        return bizProductInfoForVendorDao.insertProductInfoByVendorProductInfo(id);
+        BizProductInfo bizProductInfo = new BizProductInfo(id);
+        bizProductInfoForVendorDao.insertProductInfoByVendorProductInfo(bizProductInfo);
+        return bizProductInfo.getId();
+
     }
 }

@@ -9,6 +9,7 @@
 		<result property="marketingDate" column="marketingDate"/>
 		<result property="brandId" column="brandId"/>
 		<result property="brandName" column="brandName"/>
+		<result property="bizStatus" column="bizStatus"/>
 		<result property="vendorName" column="vendorName"/>
 		<result property="imgUrl" column="imgUrl"/>
 		<result property="description" column="description"/>
@@ -46,6 +47,7 @@
 
 	<sql id="bizProductInfoColumns">
 		a.id AS "id",
+		a.biz_status AS "bizStatus",
 		vi.name as "bizVarietyInfo.name",
 		a.name AS "name",
 		a.prod_code AS "prodCode",
@@ -274,11 +276,11 @@
 	</insert>
 	<update id="checkPass">
 		UPDATE biz_vendor_product_info SET
-			status = status
+			biz_status = #{bizStatus}
 		WHERE id = #{id}
 	</update>
 
-	<insert id="insertProductInfoByVendorProductInfo"  useGeneratedKeys="true" keyProperty="id">
+	<insert id="insertProductInfoByVendorProductInfo"  useGeneratedKeys="true" keyProperty="id" parameterType="BizProductInfo">
 		INSERT INTO biz_product_info(
 		`name`,
 		prod_code,

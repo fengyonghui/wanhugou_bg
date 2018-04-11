@@ -166,12 +166,18 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
  public  List<BizSkuInfo> findAllList(){
 		return bizSkuInfoDao.findAllList(new BizSkuInfo());
  }
-
+	@Override
  public Page<BizSkuInfo> findPage(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
 		return super.findPage(page, bizSkuInfo);
 	}
 	
 	@Transactional(readOnly = false)
+	public void baseSave(BizSkuInfo bizSkuInfo) {
+		System.out.println(bizSkuInfo.getItemNo());
+		super.save(bizSkuInfo);
+	}
+	@Transactional(readOnly = false)
+	@Override
 	public void save(BizSkuInfo bizSkuInfo) {
 
 		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
