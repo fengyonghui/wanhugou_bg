@@ -54,8 +54,6 @@ public class UserController extends BaseController {
 
     //用来判断仓储专员
     private static final String WAREHOUSESPECIALIST = "stoIndex";
-    //供应商角色ID
-    private static final Integer VENDOR = 29;
 
 	@Autowired
 	private SystemService systemService;
