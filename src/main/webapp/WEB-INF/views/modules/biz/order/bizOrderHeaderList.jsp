@@ -114,10 +114,7 @@
 		<li><label>采购中心：</label>
 			<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
 		</li>
-		<li><label>客户专员：</label>
-			<form:input path="con.name" htmlEscape="false" maxlength="100" class="input-medium"/>
-		</li>
-		<li><label>选择日期：</label>
+		<li><label>创建日期：</label>
 			<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 				   value="<fmt:formatDate value="${bizOrderHeader.ordrHeaderStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
@@ -126,6 +123,18 @@
 				   value="<fmt:formatDate value="${bizOrderHeader.orderHeaderEedTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 		</li>
+        <li><label>客户专员：</label>
+            <form:input path="con.name" htmlEscape="false" maxlength="100" class="input-medium"/>
+        </li>
+        <li><label>更新日期：</label>
+            <input name="orderUpdaStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+            至
+            <input name="orderUpdaEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+                   value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+        </li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 		<c:if test="${bizOrderHeader.flag=='check_pending'}">
