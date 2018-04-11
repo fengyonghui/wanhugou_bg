@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
@@ -213,8 +214,16 @@ public class OfficeController extends BaseController {
         }
         if(office.getAddress()!=null){
             //用于供应商地址回显
-            SysOfficeAddress sysOfficeAddress = sysOfficeAddressService.get(Integer.parseInt(office.getAddress()));
-            office.setBizLocation(sysOfficeAddress.getBizLocation());
+            boolean result=office.getAddress().matches("[0-9]+");
+            //判断是字符串汉字还是数字
+            if(result == true){
+                SysOfficeAddress sysOfficeAddress = sysOfficeAddressService.get(Integer.parseInt(office.getAddress()));
+                office.setBizLocation(sysOfficeAddress.getBizLocation());
+            }else{
+                CommonLocation commonLocation = new CommonLocation();
+                commonLocation.setAddress(String.valueOf(office.getAddress()));
+                office.setBizLocation(commonLocation);
+            }
         }
         model.addAttribute("office", office);
         return "modules/sys/supplierForm";
