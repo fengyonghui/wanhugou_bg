@@ -308,7 +308,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
     private List<CommonImg> getImgList(Integer imgType, Integer prodId) {
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(prodId);
-        commonImg.setObjectName("biz_product_info");
+        commonImg.setObjectName(PRODUCT_TABLE);
         commonImg.setImgType(imgType);
         return commonImgService.findList(commonImg);
     }
@@ -407,7 +407,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
 
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(bizProductInfo.getId());
-        commonImg.setObjectName("biz_product_info");
+        commonImg.setObjectName(PRODUCT_TABLE);
         commonImg.setImgType(imgType);
         commonImg.setImgSort(20);
 
@@ -416,7 +416,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
             CommonImg oldCommonImg = new CommonImg();
             oldCommonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
             oldCommonImg.setObjectId(bizProductInfo.getId());
-            oldCommonImg.setObjectName("biz_product_info");
+            oldCommonImg.setObjectName(PRODUCT_TABLE);
             oldImgList = commonImgService.findList(oldCommonImg);
         }
 
