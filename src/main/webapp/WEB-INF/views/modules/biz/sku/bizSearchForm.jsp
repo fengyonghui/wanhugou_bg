@@ -36,7 +36,7 @@
 		<div class="control-group">
 			<label class="control-label">商品编码：</label>
 			<div class="controls">
-				<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+				<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
@@ -47,7 +47,7 @@
 			</div>--%>
 			<div class="controls">
 				<sys:treeselect id="cateId" name="cateId.id" value="${bizSearch.cateId.id}" labelName="cateId.name" labelValue="${bizSearch.cateId.name}"
-								title="分类名称" url="/biz/category/bizCategoryInfo/treeData"  cssClass="required" allowClear="true" notAllowSelectParent="true"/>
+								title="分类名称" url="/biz/category/bizCategoryInfo/treeData"  cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -83,21 +83,24 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">业务状态 ：</label>
+			<label class="control-label">业务状态：</label>
 			<%--<div class="controls">--%>
 				<%--<form:input path="businessStatus" htmlEscape="false" maxlength="4" class="input-xlarge required"/>--%>
 				<%--<span class="help-inline"><font color="red">*</font> <font> 0：关闭 1：开放 2：取消</font></span>--%>
 			<%--</div>--%>
-			<form:select path="businessStatus" class="input-xlarge ">
-				<form:option value="" label="请选择"/>
-				<form:options items="${fns:getDictList('businessStatus')}" itemLabel="label" itemValue="value"
-							  htmlEscape="false"/>
-			</form:select>
+			<div class="controls">
+				<form:select path="businessStatus" class="input-xlarge ">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('businessStatus')}" itemLabel="label" itemValue="value" cssClass="input-xlarge required"
+								  htmlEscape="false"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">期望到货时间：</label>
 			<div class="controls">
-				<input name="sendTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate "
+				<input name="sendTime" type="text" readonly="readonly" maxlength="20" class="input-xlarge Wdate "
 					value="<fmt:formatDate value="${bizSearch.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
 			</div>
@@ -106,20 +109,20 @@
 			<label class="control-label">用户：</label>
 			<div class="controls">
 				<sys:treeselect id="user" name="user.id" value="${bizSearch.user.id}" labelName="user.name" labelValue="${bizSearch.user.name}"
-					title="用户" url="/sys/user/treeData?type=6&officeId=${office.id}" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
+					title="用户" url="/sys/user/treeData?type=6&officeId=${office.id}" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">期望最低售价：</label>
 			<div class="controls">
-				<form:input path="minPrice" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="minPrice" htmlEscape="false" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">期望最高价：</label>
 			<div class="controls">
-				<form:input path="maxPrice" htmlEscape="false" class="input-xlarge "/>
+				<form:input path="maxPrice" htmlEscape="false" class="input-xlarge"/>
 			</div>
 		</div>
 		<div class="control-group">
