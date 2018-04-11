@@ -14,7 +14,7 @@
 		a.create_id AS "createBy.id",
 		su.name AS "createBy.name",
 		a.create_time AS "createDate",
-		a.status AS "delFlag",
+		a.status AS "status",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
@@ -149,7 +149,6 @@
 			<if test="catelogInfo!=null and catelogInfo.id!=null  and catelogInfo.id!=''">
 				catelog_id,
 			</if>
-
 			p_id,
 			p_ids,
 			name,

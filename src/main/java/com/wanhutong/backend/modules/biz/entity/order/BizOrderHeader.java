@@ -69,6 +69,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private User con;        //订单所属客户专员
     private Date ordrHeaderStartTime;    //订单创建开始时间
     private Date orderHeaderEedTime;    //订单创建结束时间
+    /**
+     * 订单更新开始时间
+     * */
+    private Date orderUpdaStartTime;
+    /**
+     * 订单更新结束时间
+     * */
+    private Date orderUpdaEndTime;
 
     private List<BizPayRecord> BizPayRecordList;
 
@@ -414,5 +422,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getOrderUpdaStartTime() {
+        return orderUpdaStartTime;
+    }
+
+    public void setOrderUpdaStartTime(Date orderUpdaStartTime) {
+        this.orderUpdaStartTime = orderUpdaStartTime;
+    }
+
+    public Date getOrderUpdaEndTime() {
+        return orderUpdaEndTime;
+    }
+
+    public void setOrderUpdaEndTime(Date orderUpdaEndTime) {
+        this.orderUpdaEndTime = orderUpdaEndTime;
     }
 }
