@@ -7,15 +7,8 @@
     <meta name="decorator" content="default"/>
 
     <script type="text/javascript">
-        $(function() {
-            $('#myModal').modal('hide')
-        });
         $(document).ready(function() {
             $("#name").focus();
-            $("#myModal").modal({
-                backdrop:true,
-                show:false
-            });
             $("#inputForm").validate({
                 submitHandler: function(form){
                     var phone = document.getElementById("phone").value;
@@ -37,18 +30,55 @@
                 }
             });
             $("#saveUser").click(function () {
-                var name = $("#primaryPersonName").val();
+                var aflag = true;
+                var flag = true;
+                var name = $("#primaryName").val();
                 var loginName = $("#loginName").val();
                 var newPassword = $("#newPassword").val();
                 var confirmNewPassword = $("#confirmNewPassword").val();
                 var primaryMobile = $("#primaryMobile").val();
-                var vendor =
+                if (name == null || name == ''){
+                    $("#checkName").append("<font color='red'>必填</font>");
+                    flag = false;
+				}
+				if (loginName == null || loginName == ''){
+                    $("#checkLoginName").append("<font color='red'>必填</font>");
+                    flag = false;
+				}
+                if (newPassword == null || newPassword == ''){
+                    $("#checkNewPassword").append("<font color='red'>必填</font>");
+                    flag = false;
+                }
+                if (confirmNewPassword == null || confirmNewPassword == ''){
+                    $("#checkConfirmNewPassword").append("<font color='red'>必填</font>");
+                    flag = false;
+                }
+                if (primaryMobile == null || primaryMobile == ''){
+                    $("#checkPrimaryMobile").append("<font color='red'>必填</font>");
+                    flag = false;
+                }
+                if (flag){
+
+				}else {
+                    return false;
+				}
+                if(!(/^1[34578]\d{9}$/.test(primaryMobile))){
+                    alert("手机号码有误，请输入11位有效手机号");
+                    return false;
+                }
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/",
-                    data:{name:name,loginName:loginName,newPassword:newPassword,confirmNewPassword:confirmNewPassword,mobile:primaryMobile},
+                    url:"${ctx}/sys/user/findVendorUser",
+                    data:{loginName:loginName},
                     success:function (data) {
-
+                        if (data == "false"){
+                            alert("该登陆名已经存在");
+                            aflag = false;
+                            return false;
+                        }
+                        $("#primaryPersonId").val(null);
+                        $("#primaryPersonName").val(name);
+                        $("#myModal").modal('hide');
                     }
                 });
             });
@@ -132,15 +162,16 @@
             <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
                             title="用户" url="/sys/user/treeData?type=7&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
             <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">添加新负责人</button>
+            <font color="red">添加新用户请点击添加新负责人，其余请在左侧选择</font>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">副负责人:</label>
-        <div class="controls">
-            <sys:treeselect id="deputyPerson" name="deputyPerson.id" value="${office.deputyPerson.id}" labelName="office.deputyPerson.name" labelValue="${office.deputyPerson.name}"
-                            title="用户" url="/sys/user/treeData?type=7&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
-        </div>
-    </div>
+    <%--<div class="control-group">--%>
+        <%--<label class="control-label">副负责人:</label>--%>
+        <%--<div class="controls">--%>
+            <%--<sys:treeselect id="deputyPerson" name="deputyPerson.id" value="${office.deputyPerson.id}" labelName="office.deputyPerson.name" labelValue="${office.deputyPerson.name}"--%>
+                            <%--title="用户" url="/sys/user/treeData?type=7&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>--%>
+        <%--</div>--%>
+    <%--</div>--%>
     <%--<div class="control-group">--%>
     <%--<label class="control-label">联系地址:</label>--%>
     <%--<div class="controls">--%>
@@ -181,7 +212,7 @@
     <div class="control-group">
         <label class="control-label">手机:</label>
         <div class="controls">
-            <form:input path="phone" onblur="SubmitPhone();" placeholder="请输入11为有效手机号" class="required" htmlEscape="false" maxlength="11"/>
+            <form:input path="phone" onblur="SubmitPhone();" placeholder="请输入11位有效手机号" class="required" htmlEscape="false" maxlength="11"/>
             <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
@@ -215,67 +246,69 @@
         <shiro:hasPermission name="sys:office:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
+	<!-- 模态框（Modal） -->
+	<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">×
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						负责人添加
+					</h4>
+				</div>
+				<div class="modal-body">
+					<div class="control-group">
+						<label class="control-label">姓名:</label>
+						<div class="controls">
+							<input id="primaryName" name="primaryPerson.name" htmlEscape="false" maxlength="50" class="required"/>
+							<span id="checkName" class="help-inline"><font color="red">*</font> </span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">登录名:</label>
+						<div class="controls">
+							<input id="oldLoginName" name="primaryPerson.oldLoginName" type="hidden" value="">
+							<input id="loginName" name="primaryPerson.loginName" htmlEscape="false" maxlength="50" class="required userName"/>
+							<span id="checkLoginName" class="help-inline"><font color="red">*</font> </span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">密码:</label>
+						<div class="controls">
+							<input id="newPassword" name="primaryPerson.newPassword" type="password" value="" maxlength="50" minlength="3" class="required"/>
+							<span id="checkNewPassword" class="help-inline"><font color="red">*</font> </span>
+								<%--<c:if test="${not empty user.id}"><span class="help-inline">若不修改密码，请留空。</span></c:if>--%>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">确认密码:</label>
+						<div class="controls">
+							<input id="confirmNewPassword" name="primaryPerson.confirmNewPassword" type="password" value="" maxlength="50" class="required" minlength="3" equalTo="#newPassword"/>
+							<span id="checkConfirmNewPassword" class="help-inline"><font color="red">*</font> </span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">手机:</label>
+						<div class="controls">
+							<input id="primaryMobile" name="primaryPerson.mobile" htmlEscape="false" maxlength="100" class="required"/>
+							<span id="checkPrimaryMobile" class="help-inline"><font color="red">*</font> </span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">关闭
+					</button>
+					<button id="saveUser" type="button" class="btn btn-primary">
+						保存
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </form:form>
-<!-- 模态框（Modal） -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                        aria-hidden="true">×
-                </button>
-                <h4 class="modal-title" id="myModalLabel">
-                    负责人添加
-                </h4>
-            </div>
-            <div class="modal-body">
-                <div class="control-group">
-                    <label class="control-label">姓名:</label>
-                    <div class="controls">
-                        <input id="primaryPersonName" name="primaryPerson.name" htmlEscape="false" maxlength="50" class="required"/>
-                        <span class="help-inline"><font color="red">*</font> </span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">登录名:</label>
-                    <div class="controls">
-                        <%--<input id="oldLoginName" name="primaryPerson.oldLoginName" type="hidden" value="">--%>
-                        <input id="loginName" name="primaryPerson.loginName" htmlEscape="false" maxlength="50" class="required userName"/>
-                        <span class="help-inline"><font color="red">*</font> </span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">密码:</label>
-                    <div class="controls">
-                        <input id="newPassword" name="primaryPerson.newPassword" type="password" value="" maxlength="50" minlength="3" class="required"/>
-                        <span class="help-inline"><font color="red">*</font> </span>
-                        <%--<c:if test="${not empty user.id}"><span class="help-inline">若不修改密码，请留空。</span></c:if>--%>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">确认密码:</label>
-                    <div class="controls">
-                        <input id="confirmNewPassword" name="primaryPerson.confirmNewPassword" type="password" value="" maxlength="50" class="required" minlength="3" equalTo="#newPassword"/>
-                        <span class="help-inline"><font color="red">*</font> </span>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">手机:</label>
-                    <div class="controls">
-                        <input id="primaryMobile" name="primaryPerson.mobile" htmlEscape="false" maxlength="100"/>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default"
-                        data-dismiss="modal">关闭
-                </button>
-                <button id="saveUser" type="button" class="btn btn-primary">
-                    保存
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
 </body>
 </html>

@@ -597,15 +597,20 @@ public class UserController extends BaseController {
 		return "modules/sys/OfficeUserList";
 	}
 
-
-//	@RequiresPermissions("sys:user:edit")
-//	@RequestMapping(value = "savePersonForVendor")
-//	@ResponseBody
-//	public User savePersonForVendor(User user){
-//        RoleList roleList = new RoleList();
-//        Role role = systemService.getRole(VENDOR);
-//        roleList.add(role);
-//        user.setRoleList(roleList);
-//		systemService.savePersonForVendor(user);
-//	}
+	/**
+	 * 查找供应商负责人的登陆名是否存在
+	 * @param loginName
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("sys:user:view")
+    @RequestMapping(value = "findVendorUser")
+	public String findVendorUser(String loginName){
+	    String flag = "true";
+        User user = systemService.getUserByLoginName(loginName);
+        if (user != null){
+            flag = "false";
+        }
+        return flag;
+    }
 }
