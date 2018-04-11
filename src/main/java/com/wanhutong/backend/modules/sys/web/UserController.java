@@ -594,6 +594,20 @@ public class UserController extends BaseController {
 		return "modules/sys/OfficeUserList";
 	}
 
-
-
+	/**
+	 * 查找供应商负责人的登陆名是否存在
+	 * @param loginName
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("sys:user:view")
+    @RequestMapping(value = "findVendorUser")
+	public String findVendorUser(String loginName){
+	    String flag = "true";
+        User user = systemService.getUserByLoginName(loginName);
+        if (user != null){
+            flag = "false";
+        }
+        return flag;
+    }
 }
