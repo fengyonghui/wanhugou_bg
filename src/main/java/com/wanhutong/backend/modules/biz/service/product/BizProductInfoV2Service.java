@@ -134,7 +134,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         Office office = officeService.get(bizProductInfo.getOffice().getId());
         bizProductInfo.getOffice().setName(office.getName());
         BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
-        String vCode = bizVendInfo != null ? bizVendInfo.getCode() : "0";
+        String vCode = bizVendInfo != null ? bizVendInfo.getCode() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
         vCode = addZeroForNum(vCode, true, 3);
 
         BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
