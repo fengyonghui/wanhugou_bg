@@ -22,5 +22,17 @@ public interface BizProductInfoForVendorDao extends CrudDao<BizProductInfo> {
 
     public int deleteProdPropInfoReal(BizProductInfo bizProductInfo);
 
+    /**
+     * 通过审核
+     * @param id
+     * @return
+     */
     int checkPass(@Param("id") Integer id);
+
+    /**
+     * 复制ProductInfo
+     * @param id
+     * @return
+     */
+    int insertProductInfoByVendorProductInfo(@Param("id") Integer id);
 }

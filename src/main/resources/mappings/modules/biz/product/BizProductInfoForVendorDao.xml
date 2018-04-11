@@ -277,4 +277,44 @@
 			status = status
 		WHERE id = #{id}
 	</update>
+
+	<insert id="insertProductInfoByVendorProductInfo"  useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_product_info(
+		`name`,
+		prod_code,
+		brand_id,
+		brand_name,
+		description,
+		vendor_id,
+		vendor_name,
+		marketing_date,
+		vari_id,
+		min_price,
+		max_price,
+		img_url,
+		item_no,
+		create_id,
+		create_time,
+		u_version,
+		update_time,
+		update_id
+		) SELECT 	`name`,
+		prod_code,
+		brand_id,
+		brand_name,
+		description,
+		vendor_id,
+		vendor_name,
+		marketing_date,
+		vari_id,
+		min_price,
+		max_price,
+		img_url,
+		item_no,
+		create_id,
+		create_time,
+		u_version,
+		update_time,
+		update_id FROM biz_vendor_product_info WHERE id = ${id};
+	</insert>
 </mapper>

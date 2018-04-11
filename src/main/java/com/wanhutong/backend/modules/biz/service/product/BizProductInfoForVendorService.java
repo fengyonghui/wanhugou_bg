@@ -240,7 +240,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 CommonImg commonImg = new CommonImg();
                 commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
                 commonImg.setObjectId(bizSkuInfo.getId());
-                commonImg.setObjectName(ImgEnum.SKU_TYPE.getTableName());
+                commonImg.setObjectName(SKU_TABLE);
                 List<CommonImg> list = commonImgService.findList(commonImg);
                 commonImg.setImg(img);
                 commonImg.setImgSort(index);
@@ -588,5 +588,14 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
     @Transactional(readOnly = false)
     public int checkPass(Integer id) {
         return bizProductInfoForVendorDao.checkPass(id);
+    }
+
+    /**
+     * 产品信息审核通过
+     * @param id
+     */
+    @Transactional(readOnly = false)
+    public int insertProductInfoByVendorProductInfo(Integer id) {
+        return bizProductInfoForVendorDao.insertProductInfoByVendorProductInfo(id);
     }
 }

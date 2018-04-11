@@ -372,8 +372,11 @@ public class BizProductInfoForVendorController extends BaseController {
     @RequiresPermissions("biz:product:bizProductInfoForVendor:check")
     @RequestMapping(value = "checkPass")
     @ResponseBody
-    public String checkPass(Integer id) {
+    public String checkPass(BizProductInfo bizProductInfo, Integer id) {
+        System.out.println(bizProductInfo);
         System.out.println(id);
+        int i = bizProductInfoForVendorService.insertProductInfoByVendorProductInfo(id);
+        System.out.println(i);
         bizProductInfoForVendorService.checkPass(id);
         return null;
     }
