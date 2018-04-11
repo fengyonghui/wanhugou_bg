@@ -81,7 +81,12 @@
 				</td>
 				<shiro:hasPermission name="sys:wx:sysWxPersonalUser:edit"><td>
     				<%--<a href="${ctx}/sys/wx/sysWxPersonalUser/form?id=${sysWxPersonalUser.id}">修改</a>--%>
-					<a href="${ctx}/sys/wx/sysWxPersonalUser/delete?id=${sysWxPersonalUser.id}" onclick="return confirmx('确认要删除该注册用户吗？', this.href)">删除</a>
+					<c:if test="${sysWxPersonalUser.delFlag ==1}">
+						<a href="${ctx}/sys/wx/sysWxPersonalUser/delete?id=${sysWxPersonalUser.id}" onclick="return confirmx('确认要删除该注册用户吗？', this.href)">删除</a>
+					</c:if>
+					<c:if test="${sysWxPersonalUser.delFlag ==0}">
+						<a href="${ctx}/sys/wx/sysWxPersonalUser/deleRecovery?id=${sysWxPersonalUser.id}" onclick="return confirmx('确认要恢复该注册用户吗？', this.href)">恢复</a>
+					</c:if>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

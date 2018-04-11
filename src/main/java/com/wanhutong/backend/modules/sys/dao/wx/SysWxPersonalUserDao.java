@@ -14,5 +14,5 @@ import com.wanhutong.backend.modules.sys.entity.wx.SysWxPersonalUser;
  */
 @MyBatisDao
 public interface SysWxPersonalUserDao extends CrudDao<SysWxPersonalUser> {
-	
+	public void recovery(SysWxPersonalUser personalUser);
 }

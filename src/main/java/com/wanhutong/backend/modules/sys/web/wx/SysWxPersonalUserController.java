@@ -3,11 +3,13 @@
  */
 package com.wanhutong.backend.modules.sys.web.wx;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.modules.sys.dao.wx.SysWxPersonalUserDao;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -30,6 +32,8 @@ import com.wanhutong.backend.modules.sys.service.wx.SysWxPersonalUserService;
 import java.util.List;
 import java.util.Map;
 
+import static com.wanhutong.backend.common.persistence.BaseEntity.DEL_FLAG_NORMAL;
+
 /**
  * 注册用户Controller
  * @author Oy
@@ -41,6 +45,8 @@ public class SysWxPersonalUserController extends BaseController {
 
 	@Autowired
 	private SysWxPersonalUserService sysWxPersonalUserService;
+	@Resource
+	private SysWxPersonalUserDao sysWxPersonalUserDao;
 	@Autowired
 	private SystemService systemService;
 	
@@ -108,5 +114,16 @@ public class SysWxPersonalUserController extends BaseController {
 			mapList.add(map);
 		}
 		return mapList;
+	}
+
+	/**
+	 * 恢复按钮
+	 * */
+	@RequiresPermissions("sys:wx:sysWxPersonalUser:edit")
+	@RequestMapping(value = "deleRecovery")
+	public String deleRecovery(SysWxPersonalUser sysWxPersonalUser, RedirectAttributes redirectAttributes) {
+		sysWxPersonalUserDao.recovery(sysWxPersonalUser);
+		addMessage(redirectAttributes, "恢复注册用户成功");
+		return "redirect:"+Global.getAdminPath()+"/sys/wx/sysWxPersonalUser/?repage";
 	}
 }
