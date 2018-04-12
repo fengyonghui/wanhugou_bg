@@ -207,6 +207,17 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		/**
 		 * 用于保存供应商地址
 		 * */
+		SysOfficeAddress sysOfficeAddress = new SysOfficeAddress();
+		sysOfficeAddress.setOffice(office);
+		List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
+		if(list.size()!=0) {
+			for (SysOfficeAddress add : list) {
+				if (add.getDeFaultStatus() != null && add.getDeFaultStatus() == 1) {
+					address.setId(add.getId());
+					break;
+				}
+			}
+		}
 		if(office.getOfficeAddress()!=null){
 			CommonLocation commonLocation = commonLocationService.get(office.getLocationId());
 			if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getSelectedRegionId()==null &&
