@@ -147,6 +147,7 @@
 					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
 						<c:if test="${bizProductInfo.bizStatus == 1}">
 							<a onclick="checkPass(${bizProductInfo.id})">审核通过</a>
+							<a onclick="checkUnPass(${bizProductInfo.id})">审核不通过</a>
 						</c:if>
 					</shiro:hasPermission>
 				</td>
@@ -156,8 +157,11 @@
 	</table>
 	<div class="pagination">${page}</div>
 <script type="text/javascript">
+    function checkUnPass(id){
+       window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=3&id=" + id;
+    }
     function checkPass(id){
-       window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?id=" + id;
+       window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=2&id=" + id;
     }
 
 </script>

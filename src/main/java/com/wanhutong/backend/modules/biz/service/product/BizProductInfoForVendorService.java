@@ -585,7 +585,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
      * 产品信息审核通过
      * @param id
      */
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public int checkPass(Integer id, Integer bizStatus) {
         return bizProductInfoForVendorDao.checkPass(id, bizStatus);
     }
@@ -599,6 +599,5 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
         BizProductInfo bizProductInfo = new BizProductInfo(id);
         bizProductInfoForVendorDao.insertProductInfoByVendorProductInfo(bizProductInfo);
         return bizProductInfo.getId();
-
     }
 }

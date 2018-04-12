@@ -376,7 +376,12 @@ public class BizProductInfoForVendorController extends BaseController {
 
     @RequiresPermissions("biz:product:bizProductInfoForVendor:check")
     @RequestMapping(value = "checkPass")
-    public String checkPass(BizProductInfo bizProductInfo, Integer id, RedirectAttributes redirectAttributes) {
+    public String checkPass(BizProductInfo bizProductInfo, Integer id, RedirectAttributes redirectAttributes, int bizStatus) {
+            bizProductInfoForVendorService.checkPass(id, bizStatus);
+        if (BizProductInfo.BizStatus.AUDIT_PASS.getStatus() != bizStatus) {
+            addMessage(redirectAttributes, "审核未通过");
+            return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
+        }
         CommonImg commonImg = new CommonImg();
         commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
         commonImg.setObjectId(bizProductInfo.getId());
@@ -439,8 +444,7 @@ public class BizProductInfoForVendorController extends BaseController {
             o.setProductInfo(bizProductInfo);
             bizSkuInfoV2Service.save(o, Boolean.TRUE);
         });
-        bizProductInfoForVendorService.checkPass(id, BizProductInfo.BizStatus.AUDIT_PASS.getStatus());
-        addMessage(redirectAttributes, "保存产品信息表成功");
+        addMessage(redirectAttributes, "审核通过");
         return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
     }
 
