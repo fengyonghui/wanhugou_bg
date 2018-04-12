@@ -29,12 +29,14 @@ import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoV2Service;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -53,7 +55,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -112,6 +113,8 @@ public class BizProductInfoForVendorController extends BaseController {
     @RequiresPermissions("biz:product:bizProductInfoForVendor:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user = UserUtils.getUser();
+        bizProductInfo.setCreateBy(user);
         Page<BizProductInfo> page = bizProductInfoForVendorService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
         model.addAttribute("page", page);
         return "modules/biz/product/bizProductInfoListForVendor";
