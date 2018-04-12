@@ -11,10 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
-import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
-import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -58,8 +55,6 @@ public class OfficeController extends BaseController {
     private BizCustCreditService bizCustCreditService;
     @Autowired
     private SystemService systemService;
-    @Autowired
-    private CommonLocationService commonLocationService;
     @Autowired
     private SysOfficeAddressService sysOfficeAddressService;
 
@@ -212,17 +207,17 @@ public class OfficeController extends BaseController {
             }
             office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size + 1 : 1), 3, "0"));
         }
-        if(office.getAddress()!=null){
-            //用于供应商地址回显
-            boolean result=office.getAddress().matches("[0-9]+");
-            //判断是字符串汉字还是数字
-            if(result == true){
-                SysOfficeAddress sysOfficeAddress = sysOfficeAddressService.get(Integer.parseInt(office.getAddress()));
-                office.setBizLocation(sysOfficeAddress.getBizLocation());
-            }else{
-                CommonLocation commonLocation = new CommonLocation();
-                commonLocation.setAddress(String.valueOf(office.getAddress()));
-                office.setBizLocation(commonLocation);
+        //地址回显
+        SysOfficeAddress sysOfficeAddress = new SysOfficeAddress();
+        sysOfficeAddress.setOffice(office);
+        List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
+            if(list.size()!=0){
+            for (SysOfficeAddress add : list) {
+                if(add.getDeFaultStatus()!=null && add.getDeFaultStatus()==1){
+                    sysOfficeAddress.setBizLocation(add.getBizLocation());
+                    model.addAttribute("entity", sysOfficeAddress);
+                    break;
+                }
             }
         }
         model.addAttribute("office", office);

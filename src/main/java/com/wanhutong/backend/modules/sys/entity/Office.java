@@ -8,6 +8,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
@@ -55,8 +56,8 @@ public class Office extends TreeEntity<Office> {
 	/**
 	 * 供应商新增页面显示，新增地址
 	 * */
-	private CommonLocation bizLocation;
-
+	private SysOfficeAddress officeAddress;
+	private Integer locationId;
 
 	private String delRemark ;
 
@@ -345,11 +346,19 @@ public class Office extends TreeEntity<Office> {
 		this.province = province;
 	}
 
-	public CommonLocation getBizLocation() {
-		return bizLocation;
+	public SysOfficeAddress getOfficeAddress() {
+		return officeAddress;
 	}
 
-	public void setBizLocation(CommonLocation bizLocation) {
-		this.bizLocation = bizLocation;
+	public void setOfficeAddress(SysOfficeAddress officeAddress) {
+		this.officeAddress = officeAddress;
+	}
+
+	public Integer getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
 	}
 }

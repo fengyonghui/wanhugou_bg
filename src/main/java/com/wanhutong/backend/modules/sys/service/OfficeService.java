@@ -203,45 +203,40 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void save(Office office) {
 		super.save(office);
-		CommonLocation commonLocation =null;
-		if(office.getBizLocation()!=null && !office.getBizLocation().getAddress().equals("")){
-			if(office.getAddress()!=null && office.getBizLocation().getProvince()==null && office.getBizLocation().getCity()==null){
-				CommonLocation commonLocation1 = commonLocationService.get(Integer.parseInt(office.getAddress()));
-				office.getBizLocation().setAddress(office.getBizLocation().getAddress());
-				office.getBizLocation().setId(Integer.parseInt(office.getAddress()));
-				office.getBizLocation().setProvince(commonLocation1.getProvince());
-				office.getBizLocation().setCity(commonLocation1.getCity());
-				office.getBizLocation().setRegion(commonLocation1.getRegion());
+		SysOfficeAddress address = new SysOfficeAddress();
+		/**
+		 * 用于保存供应商地址
+		 * */
+		if(office.getOfficeAddress()!=null){
+			CommonLocation commonLocation = commonLocationService.get(office.getLocationId());
+			if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getSelectedRegionId()==null &&
+					commonLocation.getAddress().equals(office.getOfficeAddress().getBizLocation().getAddress())){
+				address.setBizLocation(commonLocation);
+			}else{
+				address.setBizLocation(office.getOfficeAddress().getBizLocation());
 			}
-			commonLocation = commonLocationService.updateCommonLocation(office.getBizLocation());
-		}
-		if(commonLocation!=null){
-			/**
-			 * 用于保存地址
-			 * */
-			SysOfficeAddress officeAddress = new SysOfficeAddress();
-			if(office.getAddress()!=null){
-				officeAddress.setId(Integer.parseInt(office.getAddress()));
+			address.setOffice(office);
+			if(office.getPrimaryPerson()!=null && !office.getPrimaryPerson().getName().equals("")){
+				address.setReceiver(String.valueOf(office.getPrimaryPerson().getName()));
+			}else{
+				address.setReceiver("无");
 			}
-			officeAddress.setOffice(office);
-			officeAddress.setBizLocation(commonLocation);
-			officeAddress.setReceiver(String.valueOf(office.getMaster()));
-			officeAddress.setPhone(String.valueOf(office.getPhone()));
+			address.setPhone(office.getPhone());
 			String offType = DictUtils.getDictValue("公司地址", "office_type", "");
 			String sysDefau = DictUtils.getDictValue("默认", "sysadd_deFault", "");
 			if(offType!=null){
-				officeAddress.setType(Integer.parseInt(offType));
+				address.setType(Integer.parseInt(offType));
 			}else {
-				officeAddress.setType(2);
+				address.setType(2);
 			}
 			if(sysDefau!=null){
-				officeAddress.setDeFaultStatus(Integer.parseInt(sysDefau));
+				address.setDeFaultStatus(Integer.parseInt(sysDefau));
 			}else{
-				officeAddress.setDeFaultStatus(1);
+				address.setDeFaultStatus(1);
 			}
-			sysOfficeAddressService.save(officeAddress);
-			office.setAddress(String.valueOf(officeAddress.getId()));
+			sysOfficeAddressService.save(address);
 		}
+		office.setAddress(String.valueOf(address.getBizLocation().getPcrName()));
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 		//保存新建联系人
