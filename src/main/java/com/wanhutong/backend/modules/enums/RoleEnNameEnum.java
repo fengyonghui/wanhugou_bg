@@ -5,6 +5,7 @@ public enum RoleEnNameEnum {
     BUYER("buyer"),
     STOCKREADYCOMMISSIONER("stock_ready_commissioner"),
     MARKETINGMANAGER("marketing_manager"),
+    FINANCE("finance"),
     WAREHOUSESPECIALIST("warehouse_specialist"),
     DEPT("dept");//系统管理员
     private String state;
