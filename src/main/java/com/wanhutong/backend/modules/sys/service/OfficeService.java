@@ -263,22 +263,22 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		}
 	}
 
-	//创建采购商同时创建钱包
+//	创建采购商同时创建钱包
 	@Transactional(readOnly = false)
 	public void save(Office office,BizCustCredit bizCustCredit) {
 		super.save(office);
-		if(bizCustCredit.getId()== null){
-			if(bizCustCredit != null ){
-//				bizCustCredit.setId(office.getId());
-				bizCustCredit.setCustomer(office);
-				bizCustCredit.setPayPwd(SystemService.entryptPassword(DictUtils.getDictValue("密码", "payment_password", "")));
-				bizCustCredit.setuVersion(1);
-				bizCustCredit.setCustFalg("officeCust");
-				bizCustCreditService.save(bizCustCredit);
-			}
-		}else{
-			bizCustCreditService.save(bizCustCredit);
-		}
+//		if(bizCustCredit.getId()== null){
+//			if(bizCustCredit != null ){
+////				bizCustCredit.setId(office.getId());
+//				bizCustCredit.setCustomer(office);
+//				bizCustCredit.setPayPwd(SystemService.entryptPassword(DictUtils.getDictValue("密码", "payment_password", "")));
+//				bizCustCredit.setuVersion(1);
+//				bizCustCredit.setCustFalg("officeCust");
+//				bizCustCreditService.save(bizCustCredit);
+//			}
+//		}else{
+//			bizCustCreditService.save(bizCustCredit);
+//		}
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}
 
