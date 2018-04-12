@@ -173,12 +173,16 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	
 	@Transactional(readOnly = false)
 	public void baseSave(BizSkuInfo bizSkuInfo) {
-		System.out.println(bizSkuInfo.getItemNo());
 		super.save(bizSkuInfo);
 	}
 	@Transactional(readOnly = false)
 	@Override
 	public void save(BizSkuInfo bizSkuInfo) {
+		save(bizSkuInfo, Boolean.FALSE);
+	}
+
+	@Transactional(readOnly = false)
+	public void save(BizSkuInfo bizSkuInfo, boolean copy) {
 
 		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
 		String prodCode = bizProductInfo.getProdCode();
@@ -243,11 +247,11 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 			super.save(bizSkuInfo);
 			}
 		//sku图片保存
-		saveCommonImg(bizSkuInfo);
+		saveCommonImg(bizSkuInfo, copy);
 	}
 
 	@Transactional(readOnly = false)
-	public void saveCommonImg(BizSkuInfo bizSkuInfo) {
+	public void saveCommonImg(BizSkuInfo bizSkuInfo, boolean copy) {
 		if (StringUtils.isBlank(bizSkuInfo.getPhotos())) {
 			return;
 		}
@@ -260,13 +264,13 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		}
 		if (photos != null) {
 			String[] photoArr = photos.split("\\|");
-			saveProdImg(ImgEnum.SKU_TYPE.getCode(), bizSkuInfo, photoArr);
+			saveProdImg(ImgEnum.SKU_TYPE.getCode(), bizSkuInfo, photoArr, copy);
 		}
 
 	}
 
 
-	public void saveProdImg(Integer imgType, BizSkuInfo bizSkuInfo, String[] photoArr) {
+	public void saveProdImg(Integer imgType, BizSkuInfo bizSkuInfo, String[] photoArr, boolean copy) {
 		if (bizSkuInfo.getId() == null) {
 			log.error("Can't save sku image without sku ID!");
 			return;
@@ -304,6 +308,14 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		commonImg.setImgType(imgType);
 		commonImg.setImgSort(20);
 		for (String name : result) {
+			if (StringUtils.isNotBlank(name) && copy) {
+				commonImg.setId(null);
+				commonImg.setImgServer(DsConfig.getImgServer());
+				commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY));
+				commonImgService.save(commonImg);
+				continue;
+			}
+
 			if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer())) {
 				continue;
 			}

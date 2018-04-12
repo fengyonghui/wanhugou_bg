@@ -88,11 +88,15 @@
         <label class="control-label">产品主图:
             <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
             <p style="opacity: 0.5;">图片建议比例为1:1</p>
+            <p style="opacity: 0.5;">点击图片删除</p>
         </label>
         <div class="controls">
-            <form:hidden id="prodMaxImg" path="photos" htmlEscape="false" maxlength="255" class="input-xlarge"/>
-            <sys:ckfinder input="prodMaxImg" type="images" uploadPath="/prod/main" selectMultiple="true" maxWidth="100"
-                          maxHeight="100"/>
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg')" value="上传图片" multiple="multiple" id="prodMainImg"/>
+        </div>
+        <div id="prodMainImgDiv">
+            <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
+                <img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();">
+            </c:forEach>
         </div>
     </div>
     <%--<div class="control-group">--%>
@@ -117,12 +121,18 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">产品详情图片:</label>
+        <label class="control-label">产品详情图:
+            <p style="opacity: 0.5;">点击图片删除</p>
+            <p style="opacity: 0;color: red;">*首图为列表页图</p>
+            <p style="opacity: 0;">图片建议比例为1:1</p>
+        </label>
         <div class="controls">
-            <form:hidden id="prodDetailImg" path="photoDetails" htmlEscape="false" maxlength="255"
-                         class="input-xlarge"/>
-            <sys:ckfinder input="prodDetailImg" type="images" uploadPath="/prod/detail" selectMultiple="true"
-                          maxWidth="100" maxHeight="100"/>
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodDetailImg')" value="上传图片" multiple="multiple" id="prodDetailImg"/>
+        </div>
+        <div id="prodDetailImgDiv">
+            <c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">
+                <img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">
+            </c:forEach>
         </div>
     </div>
     <div class="control-group">
@@ -310,14 +320,12 @@
 
         </div>
     </div>
-
+    <form:input path="photos" id="photos" cssStyle="display: none"/>
+    <form:input path="photoDetails" id="photoDetails" cssStyle="display: none"/>
     <div class="form-actions">
         <shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                            type="button"
                                                                            value="保 存" onclick="submitCustomForm()"/>&nbsp;</shiro:hasPermission>
-        <shiro:hasPermission name="biz:product:bizProductInfoForVendor:check"><input id="btnSubmit" class="btn btn-primary"
-                                                                           type="button"
-                                                                           value=审核通过 onclick="checkPass()"/>&nbsp;</shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 </form:form>
@@ -474,6 +482,20 @@
             inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|"+ idInput + "|" + imgInput));
         });
 
+        var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
+        var mainImgStr = "";
+        for (var i = 0; i < mainImg.length; i ++) {
+            mainImgStr += ($(mainImg[i]).attr("src") + "|");
+        }
+        $("#photos").val(mainImgStr);
+
+        var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
+        var detailImgStr = "";
+        for (var i = 0; i < detailImg.length; i ++) {
+            detailImgStr += ($(detailImg[i]).attr("src") + "|");
+        }
+        $("#photoDetails").val(detailImgStr);
+
         var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
         var testSelect2 = $("#test-select-2");
         var tagSelected = testSelect2.parent().children(".tree-multiselect").children(".selected").children("div");
@@ -540,13 +562,24 @@
                 //服务器成功响应处理函数
                 var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
                 var msgJSON = JSON.parse(msg);
-
-                var img = $("#" + id + "Img");
-                img.attr("src", msgJSON.fullName);
+                var imgList = msgJSON.imgList;
+                var imgDiv = $("#" + id + "Div");
+                var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
+                if (imgList && imgList.length > 0) {
+                    for (var i = 0; i < imgList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                    }
+                }else {
+                    var img = $("#" + id + "Img");
+                    img.attr("src", msgJSON.fullName);
+                }
             },
             error : function(data, status, e) {
                 //服务器响应失败处理函数
-               alert("上传失败");
+                console.info(data);
+                console.info(status);
+                console.info(e);
+                alert("上传失败");
             }
         });
         return false;
@@ -585,19 +618,6 @@
                     .replace("$id", j + ""));
         }
     }
-
-    function checkPass(){
-        var productId = ${not empty bizProductInfo.id ? bizProductInfo.id: 0};
-        if (!productId) {
-            productId = 0;
-        }
-        $.post("${ctx}/biz/product/bizProductInfoForVendor/checkPass?id=" + productId,
-            {},
-            function (data, status) {
-                console.info(data);
-            });
-    }
-
 
     $(document).ready(function() {
 

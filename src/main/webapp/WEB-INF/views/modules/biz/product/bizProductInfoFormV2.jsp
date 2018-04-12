@@ -466,7 +466,6 @@
             var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
             var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
             var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
-
             var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
 
             if (idInput == null || idInput == '') {
@@ -521,7 +520,6 @@
         parent.append(skuAttrHtmlText);
     }
 
-    //新建或编辑 保存提交
     function submitPic(id){
         var f = $("#" + id).val();
         if(f==null||f==""){

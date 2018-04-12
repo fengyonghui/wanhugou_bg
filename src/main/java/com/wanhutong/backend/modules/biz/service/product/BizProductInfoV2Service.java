@@ -317,14 +317,14 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
     public void saveCommonImg(BizProductInfo bizProductInfo, boolean copy) {
         String photos = null;
         try {
-            photos = URLDecoder.decode(bizProductInfo.getPhotos(), "utf-8");
+            photos = StringUtils.isNotBlank(bizProductInfo.getPhotos()) ? URLDecoder.decode(bizProductInfo.getPhotos(), "utf-8") : StringUtils.EMPTY;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             log.error("主图转换编码异常." + e.getMessage(), e);
         }
         String photoDetails = null;
         try {
-            photoDetails = URLDecoder.decode(bizProductInfo.getPhotoDetails(), "utf-8");
+            photoDetails = StringUtils.isNotBlank(bizProductInfo.getPhotoDetails()) ? URLDecoder.decode(bizProductInfo.getPhotoDetails(), "utf-8") : StringUtils.EMPTY;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             log.error("详情图转换编码异常." + e.getMessage(), e);

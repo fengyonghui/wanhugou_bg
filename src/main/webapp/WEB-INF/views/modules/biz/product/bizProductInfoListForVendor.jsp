@@ -96,7 +96,8 @@
 				<th>供应商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
-				
+				<th>审核状态</th>
+
 				<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -107,9 +108,9 @@
 				<td>
 					${bizProductInfo.bizVarietyInfo.name}
 				</td>
-				<td><a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">
+				<td>
 					${bizProductInfo.name}
-				</a></td>
+				</td>
 				<td>
 					${bizProductInfo.prodCode}
 				</td>
@@ -131,16 +132,34 @@
 				<td>
 					${bizProductInfo.maxPrice}
 				</td>
-				<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
-					<td>
-    					<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>
+				<td>
+					<c:if test="${bizProductInfo.bizStatus == 1}">未审核</c:if>
+					<c:if test="${bizProductInfo.bizStatus == 2}">审核通过</c:if>
+					<c:if test="${bizProductInfo.bizStatus == 3}">审核失败</c:if>
+				</td>
+				<td>
+					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
+						<c:if test="${bizProductInfo.bizStatus == 1}">
+							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>
+						</c:if>
 						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
- 					</td>
-				</shiro:hasPermission>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
+						<c:if test="${bizProductInfo.bizStatus == 1}">
+							<a onclick="checkPass(${bizProductInfo.id})">审核通过</a>
+						</c:if>
+					</shiro:hasPermission>
+				</td>
 			</tr>
 		</c:forEach>
 		</tbody>
 	</table>
 	<div class="pagination">${page}</div>
+<script type="text/javascript">
+    function checkPass(id){
+       window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?id=" + id;
+    }
+
+</script>
 </body>
 </html>

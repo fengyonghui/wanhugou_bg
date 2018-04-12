@@ -424,7 +424,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
         }
 
         for (String name : result) {
-            if (StringUtils.isNotBlank(name) && (copy || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType)))) {
+            if (StringUtils.isNotBlank(name) || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType))) {
                 commonImg.setId(null);
                 commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
                 commonImg.setImgServer(name.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
@@ -436,7 +436,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 continue;
             }
             String pathFile = Global.getUserfilesBaseDir() + name;
-            String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
+            String ossPath = AliOssClientUtil.uploadFile(pathFile, ImgEnum.LIST_PRODUCT_TYPE.getCode() != imgType);
 
             commonImg.setId(null);
             commonImg.setImgPath("/"+ ossPath);

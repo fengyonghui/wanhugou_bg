@@ -376,8 +376,7 @@ public class BizProductInfoForVendorController extends BaseController {
 
     @RequiresPermissions("biz:product:bizProductInfoForVendor:check")
     @RequestMapping(value = "checkPass")
-    @ResponseBody
-    public String checkPass(BizProductInfo bizProductInfo, Integer id) {
+    public String checkPass(BizProductInfo bizProductInfo, Integer id, RedirectAttributes redirectAttributes) {
         CommonImg commonImg = new CommonImg();
         commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
         commonImg.setObjectId(bizProductInfo.getId());
@@ -422,14 +421,27 @@ public class BizProductInfoForVendorController extends BaseController {
         List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
 
         bizProductInfo.setId(null);
+        bizProductInfo.setSkuAttrStrList(null);
         bizProductInfoV2Service.save(bizProductInfo);
         skuInfosList.forEach(o -> {
+            CommonImg commonSkuImg = new CommonImg();
+            commonSkuImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+            commonSkuImg.setObjectId(o.getId());
+            commonSkuImg.setObjectName(AttributeInfoV2.Level.SKU_FOR_VENDOR.getTableName());
+            List<CommonImg> imgList = commonImgService.findList(commonSkuImg);
+            String photos = "";
+            for (CommonImg img : imgList) {
+                photos += "|" + img.getImgServer() + img.getImgPath();
+            }
+            o.setPhotos(photos);
+
             o.setId(null);
             o.setProductInfo(bizProductInfo);
-            bizSkuInfoV2Service.baseSave(o);
+            bizSkuInfoV2Service.save(o, Boolean.TRUE);
         });
-        int i1 = bizProductInfoForVendorService.checkPass(id, BizProductInfo.BizStatus.AUDIT_PASS.getStatus());
-        return null;
+        bizProductInfoForVendorService.checkPass(id, BizProductInfo.BizStatus.AUDIT_PASS.getStatus());
+        addMessage(redirectAttributes, "保存产品信息表成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
     }
 
 }
