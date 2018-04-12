@@ -261,4 +261,9 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
             @Param("endDate") String endDate,
             @Param("statusList") List<OrderHeaderBizStatusEnum> statusList,
             @Param("officeId")Integer officeId);
+
+    /**
+     * 用于C端订单列表
+     * */
+    public List<BizOrderHeader> cendfindList(BizOrderHeader bizOrderHeader);
 }

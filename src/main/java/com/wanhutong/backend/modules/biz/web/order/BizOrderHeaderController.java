@@ -208,6 +208,10 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "删除订单信息成功");
+        String a="cendDelete";//C端删除标记
+        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(a)){
+            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList?repage";
+        }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
@@ -218,6 +222,10 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "恢复订单信息成功");
+        String b="cendRecover";
+        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(b)){
+            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList?repage";
+        }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
@@ -646,4 +654,81 @@ public class BizOrderHeaderController extends BaseController {
         }
         return "redirect:" + adminPath + "/biz/order/bizOrderHeader/";
     }
+
+    /**
+     * C端订单列表
+     * */
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = "cendList")
+    public String cendList(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Page<BizOrderHeader> page = bizOrderHeaderService.cendfindPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        model.addAttribute("page", page);
+        return "modules/biz/order/bizOrderHeaderCendList";
+    }
+
+    /**
+     * C端订单编辑
+     * */
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = "cendform")
+    public String cendform(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
+        if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            bizOrderHeader.setCustomer(office);
+            model.addAttribute("entity2", bizOrderHeader);
+//			用于销售订单页面展示属于哪个采购中心哪个客户专员
+            BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+            if (bizCustomCenterConsultant != null) {
+                bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
+                model.addAttribute("orderCenter", bizCustomCenterConsultant);
+            } else {
+                model.addAttribute("orderCenter", new BizCustomCenterConsultant());
+            }
+        }
+        BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
+        if (bizOrderHeader.getId() != null) {
+            Double totalDetail = bizOrderHeaderTwo.getTotalDetail();//订单详情总价
+            Double totalExp = bizOrderHeaderTwo.getTotalExp();//订单总费用
+            Double freight = bizOrderHeaderTwo.getFreight();//运费
+            Double orderHeaderTotal = totalDetail + totalExp + freight;
+            bizOrderHeader.setTobePaid(orderHeaderTotal - bizOrderHeaderTwo.getReceiveTotal());//页面显示待支付总价
+            if (orderNoEditable != null && orderNoEditable.equals("editable")) {//不可编辑标识符
+                bizOrderHeaderTwo.setOrderNoEditable("editable");//待支付页面不能修改
+            }
+            if (orderDetails != null && orderDetails.equals("details")) {
+                bizOrderHeaderTwo.setOrderDetails("details");//查看详情页面不能修改
+            }
+            BizOrderAddress bizOrderAddress = new BizOrderAddress();
+            bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
+            List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
+            for (BizOrderAddress orderAddress : list) {
+//				    收货地址
+                if (orderAddress.getType() == 1) {
+                    model.addAttribute("orderAddress", orderAddress);
+                }
+            }
+            BizOrderAddress orderAddress = new BizOrderAddress();
+            orderAddress.setOrderHeaderID(bizOrderHeaderTwo);
+            List<BizOrderAddress> Addresslist = bizOrderAddressService.findList(orderAddress);
+            for (BizOrderAddress address : Addresslist) {
+//				交货地址
+                if (address.getType() == 2) {
+                    model.addAttribute("address", address);
+                }
+            }
+        }
+        BizOrderHeader boh = new BizOrderHeader();
+        if (bizOrderHeader != null) {
+            boh.setCustomer(bizOrderHeader.getCustomer());
+            boh.setBizStatus(BizOrderDiscount.ONE_ORDER.getOneOr());//条件为0
+            List<BizOrderHeader> list = bizOrderHeaderDao.findListFirstOrder(boh);
+            if (list.size() == 0) {
+                System.out.println("--是首单--");
+                bizOrderHeader.setOneOrder("firstOrder");
+            }
+        }
+        model.addAttribute("entity", bizOrderHeader);
+        return "modules/biz/order/bizOrderHeaderCendForm";
+    }
+
 }

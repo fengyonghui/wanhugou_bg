@@ -225,6 +225,7 @@
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1
+			and a.order_type !=4
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
@@ -1649,4 +1650,139 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         and so.id = #{officeId}
         GROUP BY u.id
     </select>
+
+	<!-- C端订单管理 -->
+	<select id="cendfindList" resultMap="orderHeaderResult">
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>,
+		od.id AS "orderDetailList.id",
+		od.unit_price AS "orderDetailList.unitPrice",
+		od.ord_qty AS "orderDetailList.ordQty",
+		od.sent_qty AS "orderDetailList.sentQty",
+		od.line_no AS "orderDetailList.lineNo",
+		si.id AS "orderDetailList.skuInfo.id",
+		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
+		si.item_no AS "orderDetailList.skuInfo.itemNo",
+		pi.vendor_name AS "orderDetailList.vendor.name"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
+		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
+		<include refid="bizOrderHeaderJoins"/>
+		<where> 1=1
+			and a.order_type =4
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
+			<if test="name != null and name != ''">
+				AND pi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="customer != null and customer.id != null and customer.id!=''">
+				AND a.cust_id = #{customer.id}
+			</if>
+			<if test="centersName != null and centersName!=''">
+				AND s.name like
+				<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+			</if>
+			<if test="customer != null and customer.phone != null and customer.phone!=''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
+			</if>
+			<if test="receiveTotal != null and receiveTotal != ''">
+				AND a.receive_total = #{receiveTotal}
+			</if>
+			<if test="bizStatus !=null">
+				AND a.biz_status=#{bizStatus}
+			</if>
+			<!-- 列表时间查询 -->
+			<if test="ordrHeaderStartTime !=null and ordrHeaderStartTime !=''">
+				AND a.create_time &gt;= #{ordrHeaderStartTime}
+				<if test="orderHeaderEedTime!=null and orderHeaderEedTime!=''">
+					AND a.create_time &lt;= #{orderHeaderEedTime}
+				</if>
+			</if>
+			<if test="orderUpdaStartTime !=null and orderUpdaStartTime !=''">
+				AND a.update_time &gt;= #{orderUpdaStartTime}
+				<if test="orderUpdaEndTime!=null and orderUpdaEndTime!=''">
+					AND a.update_time &lt;= #{orderUpdaEndTime}
+				</if>
+			</if>
+			<!-- end -->
+			<if test="bizType !=null and bizType!=''">
+				AND a.biz_type=#{bizType}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="invStatus !=null and invStatus!=''">
+				AND a.inv_status=#{invStatus}
+			</if>
+			<if test="suplyIds!=null">
+				and od.suply_id !=0
+			</if>
+
+			<if test="consultantId!=null">
+				and ccs.consultant_id = #{consultantId}
+			</if>
+
+			<if test="centerId!=null">
+				and ccs.center_id = #{centerId}
+			</if>
+
+			<if test="itemNo !=null and itemNo !=''">
+				and si.item_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+
+			<if test="partNo !=null and partNo !=''">
+				and si.part_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+			</if>
+			<if test="con !=null and con.name != null and con.name !=''">
+				and con.name
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{con.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
+			</if>
+
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				GROUP  BY a.id
+			</otherwise>
+		</choose>
+		ORDER BY updateDate DESC
+	</select>
+
 </mapper>

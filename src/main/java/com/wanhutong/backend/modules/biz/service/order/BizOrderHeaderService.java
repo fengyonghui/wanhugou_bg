@@ -244,4 +244,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         return orderHeaderList;
     }
 
+
+    /**
+     * C端订单列表
+     * */
+    public Page<BizOrderHeader> cendfindPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
+        bizOrderHeader.setPage(page);
+        page.setList(dao.cendfindList(bizOrderHeader));
+        return page;
+    }
+
 }
