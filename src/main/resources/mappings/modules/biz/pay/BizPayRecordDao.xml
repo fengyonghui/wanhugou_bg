@@ -113,8 +113,11 @@
 			<if test="bizStatus != null and bizStatus != -1">
 				AND a.biz_status = #{bizStatus}
 			</if>
-			<if test="account != null and account != ''">
-				AND a.account = #{account}
+			<if test="account != null and account.name != null and account.name != ''">
+				AND o.name like
+				<if test="dbName == 'oracle'">'%'||#{account.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{account.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{account.name},'%')</if>
 			</if>
 			<if test="toAccount != null and toAccount != ''">
 				AND a.to_account = #{toAccount}
