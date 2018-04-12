@@ -4,6 +4,7 @@
     
 	<sql id="bizShopCartColumns">
 		a.id AS "id",
+		a.cust_type as "custType",
 		a.sku_shelf_id AS "skuShelfinfo.id",
 		osi.name as "skuShelfinfo.opShelfInfo.name",
 		a.office_id AS "office.id",
@@ -49,7 +50,9 @@
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
-
+			<if test="custType != null and custType != ''">
+				AND a.cust_type = #{custType}
+			</if>
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
 			</if>
@@ -114,6 +117,7 @@
 	<insert id="insert">
 		INSERT INTO biz_shop_cart(
 			id,
+			cust_type,
 			sku_shelf_id,
 			office_id,
 			user_id,
@@ -125,6 +129,7 @@
 			update_time
 		) VALUES (
 			#{id},
+			#{custType},
 			#{skuShelfinfo.id},
 			#{office.id},
 			#{user.id},
@@ -138,7 +143,8 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_shop_cart SET 	
+		UPDATE biz_shop_cart SET
+			cust_type = #{custType},
 			sku_shelf_id = #{skuShelfinfo.id},
 			office_id = #{office.id},
 			user_id = #{user.id},

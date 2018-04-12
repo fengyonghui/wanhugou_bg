@@ -34,6 +34,12 @@
 			<li><label>采购商电话：</label>
 				<form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
+			<li><label>客户端：</label>
+				<form:select path="custType" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${fns:getDictList('biz_shop_cartType')}" itemLabel="label" itemValue="value"
+								  htmlEscape="false"/></form:select>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -42,6 +48,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>客户端</th>
 				<th>商品货架</th>
 				<th>采购商名称</th>
 				<th>采购商电话</th>
@@ -56,6 +63,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizShopCart">
 			<tr>
+				<td>
+					${fns:getDictLabel(bizShopCart.custType, 'biz_shop_cartType', '未知状态')}
+				</td>
 				<td>
 					${bizShopCart.skuShelfinfo.opShelfInfo.name}
                 </td>

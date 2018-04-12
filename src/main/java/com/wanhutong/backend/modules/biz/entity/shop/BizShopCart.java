@@ -17,6 +17,10 @@ import com.wanhutong.backend.modules.sys.entity.User;
 public class BizShopCart extends DataEntity<BizShopCart> {
 	
 	private static final long serialVersionUID = 1L;
+	/**
+	 * 1: B端 ; 2:C端
+	 * */
+	private Integer custType;
 	private BizOpShelfSku skuShelfinfo;		// 货架商品ID
 	private Office office;		// 采购商ID
 	private User user;		// 采购商或采购顾问ID
@@ -60,5 +64,13 @@ public class BizShopCart extends DataEntity<BizShopCart> {
 	
 	public void setSkuQty(Integer skuQty) {
 		this.skuQty = skuQty;
+	}
+
+	public Integer getCustType() {
+		return custType;
+	}
+
+	public void setCustType(Integer custType) {
+		this.custType = custType;
 	}
 }
