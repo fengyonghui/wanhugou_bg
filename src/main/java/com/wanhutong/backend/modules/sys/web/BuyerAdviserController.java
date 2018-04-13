@@ -47,8 +47,9 @@ public class BuyerAdviserController extends BaseController {
 		}
 		BuyerAdviser adviser = buyerAdviserService.get(buyerAdviser.getCustId());
 		buyerAdviser.setIsNewRecord(true);
-		if(adviser != null){
+		if (adviser != null) {
 			buyerAdviser.setIsNewRecord(false);
+			buyerAdviserService.delete(adviser);
 		}
 		buyerAdviser.setStatus("1");
 		buyerAdviserService.save(buyerAdviser);
@@ -74,7 +75,11 @@ public class BuyerAdviserController extends BaseController {
 		if(office!=null){
 			buyerAdviser = buyerAdviserService.get(office.getId());
 			if(buyerAdviser != null){
-				buyerAdviser.setConsultantName(systemService.getUser(buyerAdviser.getConsultantId()).getName());
+				if(!buyerAdviser.getStatus().equals("0")){
+					buyerAdviser.setConsultantName(systemService.getUser(buyerAdviser.getConsultantId()).getName());
+				}else{
+					buyerAdviser=null;
+				}
 			}
 		}
 		model.addAttribute("office", office);
