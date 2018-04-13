@@ -62,7 +62,7 @@
 		<include refid="bizPayRecordJoins"/>
 		<where>
 			1=1
-			<if test="dataStatus!=null and dataStatus!=''">
+			<if test="dataStatus==null">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
 			<if test="custConsultant != null and custConsultant.centers.name != null and custConsultant.centers.name != ''">
