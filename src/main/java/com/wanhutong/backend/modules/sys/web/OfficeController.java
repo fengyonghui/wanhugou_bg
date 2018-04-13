@@ -51,8 +51,8 @@ public class OfficeController extends BaseController {
 
     @Autowired
     private OfficeService officeService;
-    @Autowired
-    private BizCustCreditService bizCustCreditService;
+//    @Autowired
+//    private BizCustCreditService bizCustCreditService;
     @Autowired
     private SystemService systemService;
     @Autowired
@@ -574,4 +574,32 @@ public class OfficeController extends BaseController {
         }
         return convertList(list);
     }
+
+
+    /**
+     * 客户专员关联采购商，选择的采购商不包括已经关联的采购商
+     * */
+    @RequiresPermissions("user")
+    @ResponseBody
+    @RequestMapping(value = "commissQueryTreeList")
+    public List<Map<String, Object>> commissQueryTreeList(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
+        List<Office> list = null;
+        if (StringUtils.isNotBlank(type)) {
+            String defType = type;
+            String[] split = type.split(",");
+            if (ArrayUtils.isNotEmpty(split)) {
+                defType = split[0];
+            }
+            if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
+                list = officeService.findListByTypeList(Arrays.asList(split));
+            }else {
+                list = officeService.commissFilerOffice(null, source, OfficeTypeEnum.stateOf(defType));
+            }
+        }
+        if (list == null || list.size() == 0) {
+            addMessage(redirectAttributes, "列表不存在");
+        }
+        return convertList(list);
+    }
+
 }

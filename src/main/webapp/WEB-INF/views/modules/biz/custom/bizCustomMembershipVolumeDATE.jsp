@@ -70,7 +70,7 @@
         <div class="controls">
             <sys:treeselect id="customs" name="customs.id" value="${page.customs.id}" labelName="customs.name"
                             labelValue="${page.customs.name}" notAllowSelectParent="true"
-                            title="采购商" url="/sys/office/queryTreeList?type=6&source=con" cssClass="input-medium required"
+                            title="采购商" url="/sys/office/commissQueryTreeList?type=6&source=con" cssClass="input-medium required"
                             allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
             <input type="text" name="conn" value="${user.conn}" style="display:none">
         </div>
