@@ -76,7 +76,7 @@
 		<li><label>订单状态：</label>
 			<form:select path="bizStatus" class="input-medium">
 				<form:option value="" label="请选择"/>
-				<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
+				<form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
 							  htmlEscape="false"/></form:select>
 		</li>
 		<li>
