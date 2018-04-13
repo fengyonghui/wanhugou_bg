@@ -327,7 +327,7 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post"
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/cendSave" method="post"
            class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
@@ -1008,7 +1008,7 @@
                            value="订单商品信息添加"/></c:if>
                     <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
                         <input type="button"
-                               onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}';"
+                               onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=cend_modifSave&orderHeader.consultantId=${bizOrderHeader.consultantId}';"
                                class="btn btn-primary"
                                value="订单商品信息添加"/>
                     </c:if>

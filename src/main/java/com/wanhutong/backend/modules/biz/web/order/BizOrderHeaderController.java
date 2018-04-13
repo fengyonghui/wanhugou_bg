@@ -731,4 +731,21 @@ public class BizOrderHeaderController extends BaseController {
         return "modules/biz/order/bizOrderHeaderCendForm";
     }
 
+    /**
+     * C端订单保存
+     * */
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "cendSave")
+    public String cendSave(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        if (!beanValidator(model, bizOrderHeader)) {
+            return form(bizOrderHeader, model, null, null);
+        }
+        if (bizOrderHeader.getPlatformInfo() == null) {
+            bizOrderHeader.getPlatformInfo().setId(1);
+        }
+        bizOrderHeaderService.CendorderSave(bizOrderHeader);
+        addMessage(redirectAttributes, "保存订单信息成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
+    }
+
 }
