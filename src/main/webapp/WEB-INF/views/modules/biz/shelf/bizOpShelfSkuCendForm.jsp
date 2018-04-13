@@ -109,7 +109,7 @@
             var opShelfId=$("#opShelfId").val();
             $.ajax({
                 type:"post",
-                url:"${ctx}/biz/shelf/bizOpShelfInfo/findShelf",
+                url:"${ctx}/biz/shelf/bizOpShelfInfo/cendFindShelf",
                 success:function (data) {
                     $.each(data,function(index,shelfInfo) {
                         if(opShelfId==shelfInfo.id){
