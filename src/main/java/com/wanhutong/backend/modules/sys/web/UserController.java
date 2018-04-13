@@ -11,7 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,6 +62,8 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+    private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -610,4 +615,39 @@ public class UserController extends BaseController {
         }
         return flag;
     }
+
+
+    @ResponseBody
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = "selectConsultant")
+    public String selectConsultant(String userId,String companyId,String userRoleIds) {
+		String sflag = "true";
+		boolean flag = false;
+		boolean bflag = true;
+		if (userId != null) {
+            User user = systemService.getUser(Integer.parseInt(userId));
+            String[] roleIds = userRoleIds.split(",".trim());
+            for (String id:roleIds) {
+                Integer roleId = Integer.parseInt(id);
+                Role role = systemService.getRole(roleId);
+                if (role.getEnname().equals(RoleEnNameEnum.BUYER.getState())) {
+                    bflag = false;
+                }
+            }
+            if (user.getCompany().getId()!=Integer.parseInt(companyId)) {
+                flag = true;
+            }
+            if (flag || bflag) {
+                BizCustomCenterConsultant ccc = new BizCustomCenterConsultant();
+                User consultant = new User();
+                consultant.setId(user.getId());
+                ccc.setConsultants(consultant);
+                List<BizCustomCenterConsultant> cccList = bizCustomCenterConsultantService.findList(ccc);
+                if (!cccList.isEmpty() && cccList.size() > 0) {
+                    sflag = "false";
+                }
+            }
+        }
+		return sflag;
+	}
 }

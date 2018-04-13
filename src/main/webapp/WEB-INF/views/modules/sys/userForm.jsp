@@ -16,8 +16,25 @@
 					confirmNewPassword: {equalTo: "输入与上面相同的密码"}
 				},
 				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
+				    var userId = $("#userId").val();
+				    var companyId = $("#companyId").val();
+				    var userRoleIds = "";
+                    $("input[type=checkbox]:checked").each(function (index) {
+                        userRoleIds += $(this).val() + ",";
+                    });
+				    $.ajax({
+						type:"post",
+						url:"${ctx}/sys/user/selectConsultant",
+						data:{userId:userId,companyId:companyId,userRoleIds:userRoleIds},
+						success:function (data) {
+							if (data=="false"){
+							    alert("该采购专员下关联有采购商，请交接后再修改");
+							    return false;
+							}
+                            loading('正在提交，请稍等...');
+                            form.submit();
+                        }
+					});
 				},
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
@@ -49,7 +66,7 @@
 		</c:if>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
-		<form:hidden path="id"/>
+		<form:hidden id="userId" path="id"/>
 		<form:hidden path="conn"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
@@ -149,7 +166,7 @@
 		<div class="control-group">
 			<label class="control-label">用户角色:</label>
 			<div class="controls">
-				<form:checkboxes path="roleIdList" items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" class="required"/>
+				<form:checkboxes id="userRoleIds" path="roleIdList" items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" class="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
