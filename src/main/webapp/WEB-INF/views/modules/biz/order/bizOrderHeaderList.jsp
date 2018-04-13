@@ -201,16 +201,18 @@
 				<fmt:formatNumber type="number" value="${orderHeader.freight}" pattern="0.00"/>
 			</font></td>
 			<td><font color="#0A2A0A">
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
+				<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 			</font></td>
 			<td>
-				<fmt:formatNumber type="number"  value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
+				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
 			</td>
 			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 			</td>
 			<td>
 					${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
+				<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40 && total != orderHeader.receiveTotal}">
+					<font color="#FF0000">(有尾款)</font>
 				<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
 					<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">
 						<font color="#FF0000">(有尾款)</font>

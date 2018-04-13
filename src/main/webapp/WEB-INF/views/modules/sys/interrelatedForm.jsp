@@ -6,15 +6,20 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
         $(document).ready(function() {
-            <%--if ($("#id").val() != '') {--%>
-                <%--var bcID = $("#bcID").val();--%>
-                <%--changeSelect(bcID);--%>
-            <%--}--%>
+            if ($("#id").val() != '') {
+                var bcID = $("#bcID").val();
+                changeSelect(bcID);
+            }
         });
 		function changeSelect(id){
+			var brccID = $("#prcIdcc").val();
 			 $("#adviserId").html("");
-			 $("#adviserId").append("<option value='' selected = 'selected'>==请选择采购顾问==</option>");
-			 $("#s2id_adviserId span:eq(0)").html("==请选择采购顾问==");
+				 if(brccID!=id){
+				 	$("#adviserId").append("<option value='' selected = 'selected'>==请选择采购顾问==</option>");
+					$("#s2id_adviserId span:eq(0)").html("==请选择采购顾问==");
+				 }else{
+				 	$("#adviserId").append("<option value='${buyerAdviser.consultantId}' selected = 'selected'>==请选择采购顾问==</option>");
+				 }
 			if(id != null && id !=undefined && id.trim() != ""){
 				 $.ajax({
 					url:"${ctx}/sys/user/getAdvisers",
@@ -32,7 +37,7 @@
 				});
 			}
 		}
-		
+
 		function submitData(){
 			var bcid = $("#bcID").val();
 			var adviserid = $("#adviserId").val();
@@ -67,6 +72,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/buyerAdviser/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input type="hidden" id="prcIdcc" value="${buyerAdviser.centerId}"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">上级机构:</label>
