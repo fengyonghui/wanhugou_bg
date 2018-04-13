@@ -18,9 +18,9 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/shop/bizShopCart/">购物车列表</a></li>
+		<li class="active"><a href="${ctx}/biz/shop/bizShopCart/CendList">购物车列表</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizShopCart" action="${ctx}/biz/shop/bizShopCart/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizShopCart" action="${ctx}/biz/shop/bizShopCart/CendList" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
@@ -93,10 +93,10 @@
 				<shiro:hasPermission name="biz:shop:bizShopCart:edit"><td>
     				<%--<a href="${ctx}/biz/shop/bizShopCart/form?id=${bizShopCart.id}">修改</a>--%>
 					<c:if test="${bizShopCart.delFlag!=null && bizShopCart.delFlag==1}">
-						<a href="${ctx}/biz/shop/bizShopCart/delete?id=${bizShopCart.id}" onclick="return confirmx('确认要删除该购物车吗？', this.href)">删除</a>
+						<a href="${ctx}/biz/shop/bizShopCart/delete?id=${bizShopCart.id}&cendDele=cendShopDele" onclick="return confirmx('确认要删除该购物车吗？', this.href)">删除</a>
 					</c:if>
 						<c:if test="${bizShopCart.delFlag!=null && bizShopCart.delFlag==0}">
-							<a href="${ctx}/biz/shop/bizShopCart/recovery?id=${bizShopCart.id}" onclick="return confirmx('确认要恢复该购物车吗？', this.href)">恢复</a>
+							<a href="${ctx}/biz/shop/bizShopCart/recovery?id=${bizShopCart.id}&cendDele=cendShopDele" onclick="return confirmx('确认要恢复该购物车吗？', this.href)">恢复</a>
 						</c:if>
 				</td></shiro:hasPermission>
 			</tr>

@@ -25,7 +25,11 @@ public class BizShopCart extends DataEntity<BizShopCart> {
 	private Office office;		// 采购商ID
 	private User user;		// 采购商或采购顾问ID
 	private Integer skuQty;		// sku数量
-	
+	/**
+	 * C端删除标记
+	 * */
+	private String cendDele;
+
 	public BizShopCart() {
 		super();
 	}
@@ -72,5 +76,13 @@ public class BizShopCart extends DataEntity<BizShopCart> {
 
 	public void setCustType(Integer custType) {
 		this.custType = custType;
+	}
+
+	public String getCendDele() {
+		return cendDele;
+	}
+
+	public void setCendDele(String cendDele) {
+		this.cendDele = cendDele;
 	}
 }
