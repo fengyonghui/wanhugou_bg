@@ -181,17 +181,30 @@
     <div class="control-group">
         <label class="control-label">所在地区：</label>
         <div class="controls">
-            <input type="hidden" id="locationId" name="locationId" value="${office.bizLocation.id}"/>
-            <form:hidden path="bizLocation.selectedRegionId" id="regionId" value="${office.bizLocation.selectedRegionId}"/>
-            <input type="text" id="regionName" value="${office.bizLocation.pcrName}" readonly="readonly"/>
+            <input type="hidden" id="locationId" name="locationId" value="${entity.bizLocation.id}"/>
+            <form:hidden path="officeAddress.bizLocation.selectedRegionId" id="regionId" value="${entity.bizLocation.selectedRegionId}"/>
+            <input type="text" id="regionName" value="${entity.bizLocation.pcrName}" readonly="readonly" required="true"/>
             <biz:selectregion id="region_id" name="regionName" selectedId="regionId"/>
+            <span class="help-inline"><font color="red">*</font> </span>
         </div>
-    </div>
     </div>
     <div class="control-group">
         <label class="control-label">详细地址：</label>
         <div class="controls">
-            <form:input path="bizLocation.address" value="${office.bizLocation.address }" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+            <form:input path="officeAddress.bizLocation.address" value="${entity.bizLocation.address }" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+            <span class="help-inline"><font color="red">*</font> </span>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">经度：</label>
+        <div class="controls">
+            <form:input path="officeAddress.bizLocation.longitude" value="${entity.bizLocation.longitude }" htmlEscape="false" class="input-xlarge  number"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">纬度：</label>
+        <div class="controls">
+            <form:input path="officeAddress.bizLocation.latitude" value="${entity.bizLocation.latitude }" htmlEscape="false" class="input-xlarge  number"/>
         </div>
     </div>
 
