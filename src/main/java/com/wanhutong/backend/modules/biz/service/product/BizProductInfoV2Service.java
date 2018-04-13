@@ -113,7 +113,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
     @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
         User user=UserUtils.getUser();
-        if(!user.isAdmin()){
+        if(user.isAdmin()){
             bizProductInfo.setDataStatus("filter");
         }
         return super.findPage(page, bizProductInfo);

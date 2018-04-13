@@ -235,9 +235,20 @@ public class BizInvoiceController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizInvoice bizInvoice, RedirectAttributes redirectAttributes) {
+        bizInvoice.setDelFlag(BizInvoice.DEL_FLAG_DELETE);
 		bizInvoiceService.delete(bizInvoice);
 		addMessage(redirectAttributes, "删除发货单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";
 	}
+
+
+    @RequiresPermissions("biz:inventory:bizInvoice:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(BizInvoice bizInvoice, RedirectAttributes redirectAttributes) {
+        bizInvoice.setDelFlag(BizInvoice.DEL_FLAG_NORMAL);
+        bizInvoiceService.delete(bizInvoice);
+        addMessage(redirectAttributes, "恢复发货单成功");
+        return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";
+    }
 
 }

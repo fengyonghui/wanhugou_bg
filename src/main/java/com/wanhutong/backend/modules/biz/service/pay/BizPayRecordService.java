@@ -34,7 +34,7 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 	
 	public Page<BizPayRecord> findPage(Page<BizPayRecord> page, BizPayRecord bizPayRecord) {
 		User user=UserUtils.getUser();
-		if(!user.isAdmin()){
+		if(user.isAdmin()){
 			bizPayRecord.setDataStatus("filter");
 		}
 		return super.findPage(page, bizPayRecord);

@@ -190,6 +190,7 @@ public class BizOpShelfSkuController extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
+		bizOpShelfSku.setDelFlag(BizOpShelfSku.DEL_FLAG_DELETE);
 		bizOpShelfSkuService.delete(bizOpShelfSku);
 		addMessage(redirectAttributes, "删除商品上架成功");
 		if(bizOpShelfSku.getShelfSign()==0){
@@ -197,7 +198,17 @@ public class BizOpShelfSkuController extends BaseController {
 		}
 		return "redirect:"+Global.getAdminPath()+"//biz/shelf/bizOpShelfInfo/form?id="+bizOpShelfSku.getOpShelfInfo().getId();
 	}
-
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
+		bizOpShelfSku.setDelFlag(BizOpShelfSku.DEL_FLAG_NORMAL);
+		bizOpShelfSkuService.delete(bizOpShelfSku);
+		addMessage(redirectAttributes, "恢复商品上架成功");
+		if(bizOpShelfSku.getShelfSign()==0){
+			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
+		}
+		return "redirect:"+Global.getAdminPath()+"//biz/shelf/bizOpShelfInfo/form?id="+bizOpShelfSku.getOpShelfInfo().getId();
+	}
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "dateTimeSave")
 	public String dateTimeSave(BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
