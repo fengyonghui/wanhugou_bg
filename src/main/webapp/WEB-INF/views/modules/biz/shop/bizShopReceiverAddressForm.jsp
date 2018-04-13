@@ -56,7 +56,23 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<biz:selectLocationForm/>
+		<div class="control-group">
+			<label class="control-label">所在地区：</label>
+			<div class="controls">
+				<input type="hidden" id="locationId" name="locationId" value="${entity.bizLocation.id}"/>
+				<form:hidden path="bizLocation.selectedRegionId" id="regionId" value="${entity.bizLocation.selectedRegionId}"/>
+				<input type="text" id="regionName" value="${entity.bizLocation.pcrName}" readonly="readonly" required="true"/>
+				<biz:selectregion id="region_id" name="regionName" selectedId="regionId"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">详细地址：</label>
+			<div class="controls">
+				<form:input path="bizLocation.address" value="${entity.bizLocation.address }" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label">联系人：</label>
 			<div class="controls">
