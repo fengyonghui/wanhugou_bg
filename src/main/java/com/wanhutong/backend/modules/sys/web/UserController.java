@@ -131,18 +131,18 @@ public class UserController extends BaseController {
 			List<Office> list = officeService.findList(off);
 			Office office = officeService.get(user.getOffice().getId());
 			if(list == null || list.isEmpty()){
-				if(OfficeTypeEnum.PURCHASINGCENTER.getType().equals(office.getType())){
-					user.setCompany(office);
-					user.setOffice(office);
-				}else if(OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
-					user.setCompany(office);
-					user.setOffice(office);
-				}else {
+//				if(OfficeTypeEnum.PURCHASINGCENTER.getType().equals(office.getType())){
+//					user.setCompany(office);
+//					user.setOffice(office);
+//				}else if(OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+//					user.setCompany(office);
+//					user.setOffice(office);
+//				}else {
 //					Office parentOffice = officeService.get(office.getParentId());
 //					user.setCompany(parentOffice);
 					user.setCompany(office);
 					user.setOffice(office);
-				}
+//				}
 
 			}else{
 				if(user.getConn()!=null && user.getConn().equals("connIndex")){//客户专员标识符
