@@ -231,29 +231,29 @@
         }
     </script>
     <script type="text/javascript">
-        function btnOrder(){
-            var button=$("#btnOrderButton").disabled=true;
-            var buttonText=$("#payMentOne").val();
-            if(buttonText==""){
-                alert("内容不能为空");
-                button=$("#btnOrderButton").disabled=false;
-                return false;
-            }
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/order/bizOrderHeader/saveOrderHeader?payMentOne="+$("#payMentOne").val()+"&tobePaid=${entity.tobePaid}",
-                data:{id:$("#id").val()},
-                success:function(data){
-                    if(data=="ok"){
-                        alert("支付成功！");
-                        window.location.href="${ctx}/biz/order/bizOrderHeader/";
-                    }else{
-                        alert(" 余额不足，支付失败！");
-                        window.location.reload();
-                    }
-                }
-            });
-        }
+        <%--function btnOrder(){--%>
+            <%--var button=$("#btnOrderButton").disabled=true;--%>
+            <%--var buttonText=$("#payMentOne").val();--%>
+            <%--if(buttonText==""){--%>
+                <%--alert("内容不能为空");--%>
+                <%--button=$("#btnOrderButton").disabled=false;--%>
+                <%--return false;--%>
+            <%--}--%>
+            <%--$.ajax({--%>
+                <%--type:"post",--%>
+                <%--url:"${ctx}/biz/order/bizOrderHeader/saveOrderHeader?payMentOne="+$("#payMentOne").val()+"&tobePaid=${entity.tobePaid}",--%>
+                <%--data:{id:$("#id").val()},--%>
+                <%--success:function(data){--%>
+                    <%--if(data=="ok"){--%>
+                        <%--alert("支付成功！");--%>
+                        <%--window.location.href="${ctx}/biz/order/bizOrderHeader/";--%>
+                    <%--}else{--%>
+                        <%--alert(" 余额不足，支付失败！");--%>
+                        <%--window.location.reload();--%>
+                    <%--}--%>
+                <%--}--%>
+            <%--});--%>
+        <%--}--%>
         function updateMoney() {
             if(confirm("确定修改价钱吗？")){
                 var totalExp=$("#totalExp").val();
@@ -631,16 +631,16 @@
             </div>
         </div>
     </c:if>
-    <c:if test="${entity.orderNoEditable eq 'editable' && empty bizOrderHeader.flag && empty entity.orderDetails}">
-        <div class="form-actions">
-            <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                <input type="text" id="payMentOne" placeholder="请输入支付金额">
-                <input class="btn btn-primary" id="btnOrderButton" onclick="btnOrder();" type="button" value="支付"/>
-                待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>
-            </shiro:hasPermission>
-            <span class="help-inline"></span>
-        </div>
-    </c:if>
+    <%--<c:if test="${entity.orderNoEditable eq 'editable' && empty bizOrderHeader.flag && empty entity.orderDetails}">--%>
+        <%--<div class="form-actions">--%>
+            <%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit">--%>
+                <%--<input type="text" id="payMentOne" placeholder="请输入支付金额">--%>
+                <%--<input class="btn btn-primary" id="btnOrderButton" onclick="btnOrder();" type="button" value="支付"/>--%>
+                <%--待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>--%>
+            <%--</shiro:hasPermission>--%>
+            <%--<span class="help-inline"></span>--%>
+        <%--</div>--%>
+    <%--</c:if>--%>
     <c:if test="${not empty entity.orderDetails}">
         <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
