@@ -180,11 +180,11 @@
 			</td>
 			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
-						<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">
-							<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
-								<a href="${ctx}/biz/order/bizOrderHeader/cendform?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
-							</c:if>
-						</c:if>
+						<%--<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">--%>
+							<%--<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">--%>
+								<%--<a href="${ctx}/biz/order/bizOrderHeader/cendform?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>--%>
+							<%--</c:if>--%>
+						<%--</c:if>--%>
 						<a href="${ctx}/biz/order/bizOrderHeader/cendform?id=${orderHeader.id}&orderDetails=details">查看详情</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/cendform?id=${orderHeader.id}">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
