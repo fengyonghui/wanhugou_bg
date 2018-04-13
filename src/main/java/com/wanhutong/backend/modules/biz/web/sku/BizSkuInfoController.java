@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
@@ -122,6 +123,7 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizSkuInfo bizSkuInfo, RedirectAttributes redirectAttributes) {
+		bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_DELETE);
 		bizSkuInfoService.delete(bizSkuInfo);
 		addMessage(redirectAttributes, "删除商品sku成功");
 		if(bizSkuInfo.getSign()==0){
@@ -129,6 +131,22 @@ public class BizSkuInfoController extends BaseController {
         }
 		return "redirect:"+Global.getAdminPath()+"//biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
 	}
+
+
+
+	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(BizSkuInfo bizSkuInfo, RedirectAttributes redirectAttributes) {
+		bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_NORMAL);
+		bizSkuInfoService.delete(bizSkuInfo);
+		addMessage(redirectAttributes, "恢复商品sku成功");
+		if(bizSkuInfo.getSign()==0){
+			return "redirect:"+Global.getAdminPath()+"//biz/sku/bizSkuInfo/?repage";
+		}
+		return "redirect:"+Global.getAdminPath()+"//biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+	}
+
+
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuList")

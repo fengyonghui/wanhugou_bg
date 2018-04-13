@@ -51,7 +51,7 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
             bizCustCredit.getCustomer().getMoblieMoeny().setMobile(bizCustCredit.getCustomer().getMoblieMoeny().getMobile());
         }
         User user=UserUtils.getUser();
-        if(!user.isAdmin()){
+        if(user.isAdmin()){
             bizCustCredit.setDataStatus("filter");
         }
         return super.findPage(page, bizCustCredit);

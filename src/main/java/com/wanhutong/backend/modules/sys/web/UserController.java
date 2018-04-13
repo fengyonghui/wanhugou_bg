@@ -84,7 +84,9 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
 		String userSou="officeConnIndex";
+
 		if(user.getCompany()!=null && user.getCompany().getSource()!=null && user.getCompany().getSource().equals(userSou)){
+
 			//属于客户专员左边点击菜单查询
 			Office queryOffice = officeService.get(user.getCompany().getId());
 			if(queryOffice!=null){
@@ -100,7 +102,10 @@ public class UserController extends BaseController {
 					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
 				}
 			}
+		}else {
+			user.setDataStatus("filter");
 		}
+
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
 		return "modules/sys/userList";

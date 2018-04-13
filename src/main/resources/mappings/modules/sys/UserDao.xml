@@ -174,7 +174,9 @@
 		</if>
 		WHERE
 		1 = 1
-		and a.status = #{DEL_FLAG_NORMAL}
+		<if test="dataStatus==null or  dataStatus==''">
+			AND  a.status = #{DEL_FLAG_NORMAL}
+		</if>
 		<if test="role != null and role.name != null and role.name != ''">
 			AND sr.name = #{role.name}
 		</if>
