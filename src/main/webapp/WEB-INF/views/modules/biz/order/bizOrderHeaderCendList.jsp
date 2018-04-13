@@ -94,7 +94,7 @@
 			<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
 		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+		<%--<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>--%>
 		<li class="clearfix"></li>
 	</ul>
 </form:form>
@@ -159,7 +159,7 @@
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
 			</td>
 			<td>
-					${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
+					${fns:getDictLabel(orderHeader.bizStatus, 'biz_cend_orderType', '未知状态')}
 				<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
 					<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">
 						<font color="#FF0000">(有尾款)</font>

@@ -450,7 +450,7 @@
                 <div class="controls">
                     <form:select path="bizStatus" class="input-xlarge" disabled="true">
                         <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
+                        <form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
                                       htmlEscape="false"/></form:select>
                 </div>
             </div>
@@ -487,7 +487,7 @@
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <form:select path="bizStatus" class="input-xlarge required">
                         <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
+                        <form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
                                       htmlEscape="false"/></form:select>
                     <span class="help-inline"><font color="red">*</font>默认选择</span>
                 </c:if>
@@ -971,8 +971,6 @@
                             <input type="checkbox" name="localSendIds" value="${bizOrderDetail.id}"/>
                         </c:otherwise>
                     </c:choose>
-
-
                 </td>
             </c:if>
             <td>
