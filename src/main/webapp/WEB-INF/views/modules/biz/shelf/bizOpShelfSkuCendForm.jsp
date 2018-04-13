@@ -148,7 +148,7 @@
                 $("#itemNoCopy").val(itemNo);
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
+                    url:"${ctx}/biz/sku/bizSkuInfo/cendFindSkuList",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                         if(id==''){

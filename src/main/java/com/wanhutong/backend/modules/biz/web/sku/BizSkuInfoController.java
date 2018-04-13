@@ -200,4 +200,21 @@ public class BizSkuInfoController extends BaseController {
         map.put("dictList",dictList);
 			return map;
 	}
+
+	/**
+	 * C端商品上下架form 搜索商品
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "cendFindSkuList")
+	public Map<String, List<BizSkuInfo>> cendFindSkuList(BizSkuInfo bizSkuInfo, String skuIds){
+		if (skuIds != null && !"".equals(skuIds)){
+			String[] ids =StringUtils.split(skuIds, ",");
+			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
+		}
+		//	bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
+		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForCendProd(bizSkuInfo);
+		return listMap;
+	}
+
 }
