@@ -34,7 +34,6 @@
             }
             <%--订单地址--%>
             if($("#id").val() !=""){
-             clickBut();
                 var option2=$("<option/>").text("${orderAddress.province.name}").val(${orderAddress.province.id});
                 $("#province").append(option2);
                 var option3=$("<option/>").text("${orderAddress.city.name}").val(${orderAddress.city.id});

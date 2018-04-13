@@ -17,6 +17,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -276,5 +277,36 @@ public class BizOpShelfSkuController extends BaseController {
         }
         return flag;
     }
+
+	/**
+	 * C端上下架管理列表
+	 * */
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@RequestMapping(value = {"cendList", ""})
+	public String cendList(BizOpShelfSku bizOpShelfSku, HttpServletRequest request, HttpServletResponse response, Model model) {
+		String supplierId = DictUtils.getDictValue("微店", "biz_opshel_cend", "");
+		BizOpShelfInfo bizOpShelfInfo = new BizOpShelfInfo();
+		bizOpShelfInfo.setId(Integer.parseInt(supplierId));
+		bizOpShelfSku.setOpShelfInfo(bizOpShelfInfo);
+		Page<BizOpShelfSku> page = bizOpShelfSkuService.findPage(new Page<BizOpShelfSku>(request, response), bizOpShelfSku);
+		model.addAttribute("page", page);
+		return "modules/biz/shelf/bizOpShelfSkuCendList";
+	}
+
+	/**
+	 * C端上下架管理form
+	 * */
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@RequestMapping(value = "cendForm")
+	public String cendForm(BizOpShelfSkus bizOpShelfSku, Model model) {
+		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null){
+			BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuService.get(bizOpShelfSku.getId());
+			model.addAttribute("bizOpShelfSku",bizOpShelfSku1);
+		}else {
+			model.addAttribute("bizOpShelfSku", bizOpShelfSku);
+		}
+		model.addAttribute("bizSkuInfo", new BizSkuInfo());
+		return "modules/biz/shelf/bizOpShelfSkuCendForm";
+	}
 }
 
