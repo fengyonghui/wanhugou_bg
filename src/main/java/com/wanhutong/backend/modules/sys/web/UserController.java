@@ -629,7 +629,7 @@ public class UserController extends BaseController {
 		String sflag = "true";
 		boolean flag = false;
 		boolean bflag = true;
-		if (userId != null) {
+		if (userId != null && !userId.isEmpty()) {
             User user = systemService.getUser(Integer.parseInt(userId));
             String[] roleIds = userRoleIds.split(",".trim());
             for (String id:roleIds) {
