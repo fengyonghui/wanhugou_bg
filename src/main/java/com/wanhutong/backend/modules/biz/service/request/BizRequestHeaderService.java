@@ -134,10 +134,6 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 				}
 			}
 		}
-
-		if(bizRequestHeader.getId()==null&&user.getRoleList()!=null && flag){
-			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
-		}
 		if(bizRequestHeader.getId()==null){
 			BizRequestHeader requestHeader=new BizRequestHeader();
 			requestHeader.setFromOffice(bizRequestHeader.getFromOffice());
