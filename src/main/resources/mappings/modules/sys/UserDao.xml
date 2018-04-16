@@ -265,8 +265,10 @@
 	<select id="selectUserByOfficeId" resultType="User" >
         SELECT
         a.id, a.name, a.login_name
-        FROM sys_user a left join sys_user_role ur on a.id=ur.user_id AND ur.role_id = #{role.id}
-        WHERE a.status = #{DEL_FLAG_NORMAL} AND a.office_id = #{office.id}
+        FROM sys_user a left join sys_user_role ur on a.id=ur.user_id
+        WHERE a.status = #{DEL_FLAG_NORMAL}
+         AND ur.role_id = #{role.id}
+         AND a.office_id = #{office.id}
         ORDER BY a.name
     </select>
 

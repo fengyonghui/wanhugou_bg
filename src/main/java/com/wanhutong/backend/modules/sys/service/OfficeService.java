@@ -224,6 +224,17 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 					commonLocation.getAddress().equals(office.getOfficeAddress().getBizLocation().getAddress())){
 				address.setBizLocation(commonLocation);
 			}else{
+				if(office.getOfficeAddress().getBizLocation().getSelectedRegionId()==null){
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getProvince()==null){
+						office.getOfficeAddress().getBizLocation().setProvince(commonLocation.getProvince());
+					}
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getCity()==null){
+						office.getOfficeAddress().getBizLocation().setCity(commonLocation.getCity());
+					}
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getRegion()==null){
+						office.getOfficeAddress().getBizLocation().setRegion(commonLocation.getRegion());
+					}
+				}
 				address.setBizLocation(office.getOfficeAddress().getBizLocation());
 			}
 			address.setOffice(office);
@@ -247,7 +258,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			}
 			sysOfficeAddressService.save(address);
 		}
-		office.setAddress(String.valueOf(address.getBizLocation().getPcrName()));
+		office.setAddress(String.valueOf(address.getBizLocation().getPcrName())+address.getBizLocation().getAddress());
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 		//保存新建联系人
