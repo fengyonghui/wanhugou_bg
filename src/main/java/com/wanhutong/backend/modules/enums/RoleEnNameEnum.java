@@ -4,6 +4,7 @@ public enum RoleEnNameEnum {
     P_CENTER_MANAGER("p_center_manager"),
     BUYER("buyer"),
     STOCKREADYCOMMISSIONER("stock_ready_commissioner"),
+    MARKETINGMANAGER("marketing_manager"),
     WAREHOUSESPECIALIST("warehouse_specialist");
     private String state;
 
