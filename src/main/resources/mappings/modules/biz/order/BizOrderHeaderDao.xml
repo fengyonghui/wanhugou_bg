@@ -1649,4 +1649,15 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         and so.id = #{officeId}
         GROUP BY u.id
     </select>
+    <select id="getStockAmountByOfficeId" resultType="BigDecimal">
+		SELECT
+		SUM(bsi.base_price * s.stock_qty)
+		FROM biz_inventory_info ii ,biz_inventory_sku s, biz_sku_info bsi
+		WHERE ii.id = s.inv_id
+		and bsi.id = s.sku_id
+		and ii.`status` = 1
+		and s.`status` = 1
+		and bsi.`status` = 1
+		AND ii.cust_id = #{id}
+    </select>
 </mapper>

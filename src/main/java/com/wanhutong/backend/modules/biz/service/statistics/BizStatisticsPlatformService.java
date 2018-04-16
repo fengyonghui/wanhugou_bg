@@ -178,6 +178,8 @@ public class BizStatisticsPlatformService {
                 bizPlatformDataOverviewDto.setOfficeType(Integer.valueOf(office.getType()));
                 bizPlatformDataOverviewDto.setOfficeId(office.getId());
                 bizPlatformDataOverviewDto.setProvince(office.getProvince());
+                // 取库存
+                bizPlatformDataOverviewDto.setStockAmount(bizOrderHeaderDao.getStockAmountByOfficeId(office.getId()));
                 bizPlatformDataOverviewDtos.add(bizPlatformDataOverviewDto);
             }
         });
