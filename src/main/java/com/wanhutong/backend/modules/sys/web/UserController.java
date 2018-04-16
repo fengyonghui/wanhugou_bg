@@ -639,7 +639,7 @@ public class UserController extends BaseController {
                     bflag = false;
                 }
             }
-            if (user.getCompany().getId()!=Integer.parseInt(companyId)) {
+            if (user.getCompany()!= null && user.getCompany().getId()!=Integer.parseInt(companyId)) {
                 flag = true;
             }
             if (flag || bflag) {
