@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -388,7 +389,7 @@ public class BizStatisticsPlatformController extends BaseController {
         cal.add(Calendar.YEAR, -1);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
 //        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
-        request.setAttribute("startDate", "2017-09-01"); // TODO 临时代码
+        request.setAttribute("startDate", "2017-09-01");
         cal.add(Calendar.YEAR, 1);
         cal.add(Calendar.MONTH, 1);
         cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -542,8 +543,10 @@ public class BizStatisticsPlatformController extends BaseController {
         List<Object> seriesDataList = Lists.newArrayList();
         List<Object> seriesCountDataList = Lists.newArrayList();
         List<Object> seriesReceiveDataList = Lists.newArrayList();
+        List<Object> seriesUnivalenceList = Lists.newArrayList();
         EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
         EchartsSeriesDto echartsCountSeriesDto = new EchartsSeriesDto();
+        EchartsSeriesDto echartsUnivalenceDto = new EchartsSeriesDto();
         EchartsSeriesDto echartsReceiveSeriesDto = new EchartsSeriesDto();
         if ("1".equals(type)) {
             try {
@@ -558,9 +561,9 @@ public class BizStatisticsPlatformController extends BaseController {
                 }
 
                 dayList.forEach(o -> {
-                    Object value = 0;
-                    Object count = 0;
-                    Object receiveTotal = 0;
+                    BigDecimal value = BigDecimal.ZERO;
+                    int count = 0;
+                    BigDecimal receiveTotal = BigDecimal.ZERO;
                     for (BizOrderStatisticsDto b : bizOrderStatisticsDtoList) {
                         if (b.getCreateDate().equals(o)) {
                             value = b.getTotalMoney();
@@ -571,6 +574,7 @@ public class BizStatisticsPlatformController extends BaseController {
                     seriesDataList.add(value);
                     seriesCountDataList.add(count);
                     seriesReceiveDataList.add(receiveTotal);
+                    seriesUnivalenceList.add(count <= 0 ? 0 : value.divide(BigDecimal.valueOf(count), RoundingMode.DOWN));
                     nameList.add(o);
                 });
 
@@ -583,6 +587,7 @@ public class BizStatisticsPlatformController extends BaseController {
                 seriesDataList.add(o.getTotalMoney());
                 seriesCountDataList.add(o.getOrderCount());
                 seriesReceiveDataList.add(o.getOrderCount());
+                seriesUnivalenceList.add(o.getOrderCount() <= 0 ? 0 : o.getTotalMoney().divide(BigDecimal.valueOf(o.getOrderCount()), RoundingMode.DOWN));
                 nameList.add(o.getCreateDate());
             });
         }
@@ -600,8 +605,14 @@ public class BizStatisticsPlatformController extends BaseController {
         echartsReceiveSeriesDto.setyAxisIndex(1);
         echartsReceiveSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
 
+        echartsUnivalenceDto.setName("平均单价");
+        echartsUnivalenceDto.setData(seriesUnivalenceList);
+        echartsUnivalenceDto.setyAxisIndex(0);
+        echartsUnivalenceDto.setType(EchartsSeriesDto.SeriesTypeEnum.BAR.getCode());
+
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("seriesList", Lists.newArrayList(echartsSeriesDto, echartsCountSeriesDto));
+        paramMap.put("univalenceSeries", echartsUnivalenceDto);
         paramMap.put("nameList", nameList);
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return paramMap;
