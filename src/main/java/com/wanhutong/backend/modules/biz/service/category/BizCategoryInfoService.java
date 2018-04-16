@@ -76,7 +76,7 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 				bizCategoryInfo.setParentIds(null);
 			}
 			List<BizCategoryInfo> byParentIdsLike = dao.findByParentIdsLike(bizCategoryInfo);
-			if(byParentIdsLike.size()!=0){
+			if(byParentIdsLike.size()==0){
 				byParentIdsLike.add(dao.get(bizCategoryInfo.getCid()));
 			}
 			return byParentIdsLike;
