@@ -213,10 +213,6 @@
 					${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 				<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40 && total != orderHeader.receiveTotal}">
 					<font color="#FF0000">(有尾款)</font>
-				<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
-					<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">
-						<font color="#FF0000">(有尾款)</font>
-					</c:if>
 				</c:if>
 			</td>
 			<td>
@@ -252,11 +248,11 @@
 						</c:if>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">
-							<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
-								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>
-							</c:if>
-						</c:if>
+						<%--<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">--%>
+							<%--<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">--%>
+								<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>--%>
+							<%--</c:if>--%>
+						<%--</c:if>--%>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
@@ -269,7 +265,6 @@
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
 					<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
 				</c:if>
-
 			</td></shiro:hasPermission>
 		</tr>
 	</c:forEach>

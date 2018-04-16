@@ -48,9 +48,7 @@ public class BizShopCartController extends BaseController {
 	@RequiresPermissions("biz:shop:bizShopCart:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizShopCart bizShopCart, HttpServletRequest request, HttpServletResponse response, Model model) {
-		String supplierId = DictUtils.getDictValue("App端", "biz_shop_cartType", "");
-		bizShopCart.setCustType(Integer.parseInt(supplierId));
-		Page<BizShopCart> page = bizShopCartService.findPage(new Page<BizShopCart>(request, response), bizShopCart); 
+		Page<BizShopCart> page = bizShopCartService.findPage(new Page<BizShopCart>(request, response), bizShopCart);
 		model.addAttribute("page", page);
 		return "modules/biz/shop/bizShopCartList";
 	}

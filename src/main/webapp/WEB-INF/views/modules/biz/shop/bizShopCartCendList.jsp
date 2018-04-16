@@ -28,12 +28,13 @@
 				<form:input path="skuShelfinfo.opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>采购商名称：</label>
-				<sys:treeselect id="office" name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"
-					title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+				<%--<sys:treeselect id="office" name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"--%>
+					<%--title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>--%>
+				<form:input path="office.name" htmlEscape="false" maxlength="60" class="input-medium"/>
 			</li>
-			<li><label>采购商电话：</label>
-				<form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
+			<%--<li><label>采购商电话：</label>--%>
+				<%--<form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
+			<%--</li>--%>
 			<%--<li><label>客户端：</label>--%>
 				<%--<form:select path="custType" class="input-medium">--%>
 					<%--<form:option value="" label="请选择"/>--%>
