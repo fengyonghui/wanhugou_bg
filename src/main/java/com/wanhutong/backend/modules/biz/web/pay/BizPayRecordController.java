@@ -210,8 +210,10 @@ public class BizPayRecordController extends BaseController {
 	 * C端交易记录
 	 * */
 	@RequiresPermissions("biz:pay:bizPayRecord:view")
-	@RequestMapping(value = {"CendList", ""})
+	@RequestMapping(value ="CendList")
 	public String CendList(BizPayRecord bizPayRecord, HttpServletRequest request, HttpServletResponse response, Model model) {
+		//查询C端交易记录标识
+		bizPayRecord.setListPayQuery("CqueryPay");
 		Page<BizPayRecord> page = bizPayRecordService.findPage(new Page<BizPayRecord>(request, response), bizPayRecord);
 		model.addAttribute("page", page);
 		return "modules/biz/pay/bizPayRecordCendList";

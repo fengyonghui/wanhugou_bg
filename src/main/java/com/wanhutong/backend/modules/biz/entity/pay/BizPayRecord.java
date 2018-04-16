@@ -46,9 +46,13 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 	 * */
 	private BizCustomCenterConsultant custConsultant;
 	/**
-	 * C端标记
+	 * C端删除标记
 	 * */
 	private String cendDele;
+	/**
+	 * C端列表查询标识
+	 * */
+	private String listPayQuery;
 
 	public BizPayRecord() {
 		super();
@@ -213,5 +217,13 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 
 	public void setCendDele(String cendDele) {
 		this.cendDele = cendDele;
+	}
+
+	public String getListPayQuery() {
+		return listPayQuery;
+	}
+
+	public void setListPayQuery(String listPayQuery) {
+		this.listPayQuery = listPayQuery;
 	}
 }

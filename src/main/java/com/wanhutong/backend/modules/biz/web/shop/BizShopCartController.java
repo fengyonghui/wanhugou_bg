@@ -100,7 +100,7 @@ public class BizShopCartController extends BaseController {
 	 * C端购物车
 	 * */
 	@RequiresPermissions("biz:shop:bizShopCart:view")
-	@RequestMapping(value = {"CendList", ""})
+	@RequestMapping(value ="CendList")
 	public String CendList(BizShopCart bizShopCart, HttpServletRequest request, HttpServletResponse response, Model model) {
 		String supplierId = DictUtils.getDictValue("微信端", "biz_shop_cartType", "");
 		bizShopCart.setCustType(Integer.parseInt(supplierId));

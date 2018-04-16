@@ -65,6 +65,10 @@
 			<if test="dataStatus==null">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
+			<if test="listPayQuery!=null and listPayQuery!=''">
+				<!-- 查询C端列表标识 -->
+				and a.cust_id=a.account
+			</if>
 			<if test="custConsultant != null and custConsultant.centers.name != null and custConsultant.centers.name != ''">
 				AND sof.NAME LIKE
 				<if test="dbName == 'oracle'">'%'||#{custConsultant.centers.name}||'%'</if>
