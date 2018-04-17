@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderUnlineDao">
+
+
+	<sql id="bizOrderHeaderUnlineColumns">
+		a.id AS "id",
+		a.order_id AS "orderHeader.id",
+		a.img_url AS "imgUrl",
+		a.unline_pay_money AS "unlinePayMoney",
+		a.real_money AS "realMoney",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+
+	<sql id="bizOrderHeaderUnlineJoins">
+		LEFT JOIN biz_orderHeader oh ON oh.id = a.order_id
+	</sql>
+
+	<select id="get" resultType="BizOrderHeaderUnline">
+		SELECT
+		<include refid="bizOrderHeaderUnlineColumns"/>
+		FROM biz_order_header_unline a
+		<include refid="bizOrderHeaderUnlineJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="BizOrderHeaderUnline">
+		SELECT
+		<include refid="bizOrderHeaderUnlineColumns"/>
+		FROM biz_order_header_unline a
+		<include refid="bizOrderHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				AND a.order_id = #{orderHeader.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				GROUP  BY a.id
+			</otherwise>
+		</choose>
+		ORDER BY updateDate DESC
+	</select>
+
+	<select id="findAllList" resultType="BizOrderHeaderUnline">
+		SELECT
+		<include refid="bizOrderHeaderUnlineColumns"/>
+		FROM biz_order_header_unline a
+		<include refid="bizOrderHeaderUnlineJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		ORDER BY updateDate DESC
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_order_header_unline(
+		id,
+		order_id,
+		img_url,
+		unline_pay_money,
+		real_money,
+		status,
+		create_id,
+		create_time,
+		u_version,
+		update_id,
+		update_time
+		) VALUES (
+		#{id},
+		#{orderHeader.id},
+		#{imgUrl},
+		#{unlinePayMoney},
+		#{realMoney},
+		#{delFlag},
+		#{createBy.id},
+		#{createDate},
+		#{uVersion},
+		#{updateBy.id},
+		#{updateDate}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE biz_order_header_unline SET
+		order_id = #{orderHeader.id},
+		img_url = #{imgUrl},
+		unline_pay_money = #{unlinePayMoney},
+		real_money = #{realMoney},
+		u_version = #{uVersion},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE biz_order_header_unline SET
+			status = #{delFlag}
+		WHERE id = #{id}
+	</update>
+</mapper>
