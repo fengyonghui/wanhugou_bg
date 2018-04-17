@@ -38,11 +38,10 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach items="${custList}" var="dataName">
+    <c:forEach items="${dataMap}" var="dataName">
         <tr>
-            <td>${dataName}</td>
-            <td>${dataMap.dataName}</td>
-            <td>${dataMap[dataName]}</td>
+            <td>${dataName.key}</td>
+            <td>${dataName.value}</td>
         </tr>
     </c:forEach>
     </tbody>

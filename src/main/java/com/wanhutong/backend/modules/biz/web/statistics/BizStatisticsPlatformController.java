@@ -806,13 +806,28 @@ public class BizStatisticsPlatformController extends BaseController {
     @RequestMapping(value = {"orderCountFrequency", ""})
     public String orderCountFrequency(HttpServletRequest request, Integer officeId) {
         long startTime = System.currentTimeMillis();
+
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        if (officeId == null) {
+            return "modules/biz/statistics/bizPlatformOrderCountFrequency";
+        }
+
         List<Office> custList = officeService.findCustomByOfficeId(officeId);
+
+        custList.sort(new Comparator<Office>() {
+            @Override
+            public int compare(Office o1, Office o2) {
+                return HanyuPinyinHelper.getPinyinString(o1.getName()).compareTo(HanyuPinyinHelper.getPinyinString(o2.getName()));
+            }
+        });
+
+
         List<Callable<Pair<String, List<Integer>>>> tasks = Lists.newArrayList();
         for (Office o : custList) {
             tasks.add(new Callable<Pair<String, List<Integer>>>() {
                 @Override
                 public Pair<String, List<Integer>> call() throws Exception {
-                    return Pair.of(o.getName(), bizStatisticsPlatformService.findOrderCountFrequency(o.getId()));
+                    return Pair.of(o.getName() + o.getId(), bizStatisticsPlatformService.findOrderCountFrequency(o.getId()));
                 }
             });
         }
@@ -823,7 +838,7 @@ public class BizStatisticsPlatformController extends BaseController {
             LOGGER.error("get user error (tasks)", e);
         }
 
-        Map<String, Integer> resultMap = Maps.newHashMap();
+        Map<String, Integer> resultMap = Maps.newLinkedHashMap();
         if (futures != null) {
             for (Future<Pair<String, List<Integer>>> future : futures) {
                 try {
@@ -840,18 +855,11 @@ public class BizStatisticsPlatformController extends BaseController {
             }
         }
 
-        custList.sort(new Comparator<Office>() {
-            @Override
-            public int compare(Office o1, Office o2) {
-                return HanyuPinyinHelper.getPinyinString(o1.getName()).compareTo(HanyuPinyinHelper.getPinyinString(o2.getName()));
-            }
-        });
 
-        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
         request.setAttribute("officeId", officeId);
         request.setAttribute("dataMap", resultMap);
         request.setAttribute("custList", custList);
-        LOGGER.info("orderCountFrequency [{}]", System.currentTimeMillis() - startTime);
+        LOGGER.info("orderCountFrequency time[{}]", System.currentTimeMillis() - startTime);
         return "modules/biz/statistics/bizPlatformOrderCountFrequency";
     }
 
