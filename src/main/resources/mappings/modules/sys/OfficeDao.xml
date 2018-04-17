@@ -388,4 +388,11 @@
 		)
 	</select>
 
+	<select id="findCustomByOfficeId" parameterType="Integer" resultType="Office">
+		SELECT a.*
+		FROM sys_office a
+		LEFT JOIN  biz_custom_center_consultant AS ccc ON ccc.cust_id = a.id
+  		WHERE ccc.center_id = #{officeId} AND a.type = 6
+	</select>
+
 </mapper>

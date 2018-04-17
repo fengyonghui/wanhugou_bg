@@ -12,6 +12,7 @@
     <select class="input-medium" id="barChartType">
         <option value="1" label="销售额">销售额</option>
         <option value="3" label="订单量">订单量</option>
+        <option value="5" label="平均单价">平均单价</option>
     </select>
     <select class="input-medium" id="centerType">
         <option value="8" label="采购中心">采购中心</option>
@@ -50,7 +51,6 @@
         var orderRateChart = echarts.init(document.getElementById('orderRateChart'), 'light');
         orderRateChart.clear();
         orderRateChart.showLoading($Echarts.showLoadingStyle);
-
 
         var dataTypeEle = $("#dataType");
         var dataType = dataTypeEle.find("option:selected").val();
@@ -205,6 +205,7 @@
                     });
                     $('#img1').val(imgUrl);
                 },1000);
+
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");

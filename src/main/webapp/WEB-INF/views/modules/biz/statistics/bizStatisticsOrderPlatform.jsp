@@ -23,6 +23,7 @@
     <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
     (如查询年报无需选择月份)
     <div id="orderTotalDataChart" style="height: 300px;"></div>
+    <div id="univalenceChart" style="height: 300px;"></div>
 
 
 </div>
@@ -38,6 +39,10 @@
         var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
         salesVolumeChart.clear();
         salesVolumeChart.showLoading($Echarts.showLoadingStyle);
+
+        var univalenceChart = echarts.init(document.getElementById('univalenceChart'), 'light');
+        univalenceChart.clear();
+        univalenceChart.showLoading($Echarts.showLoadingStyle);
 
         var barChartTypeEle = $("#barChartType");
         var barChartType = barChartTypeEle.find("option:selected").val();
@@ -66,6 +71,7 @@
                 if (!Boolean(msg.ret)) {
                     alert("未查询到数据!");
                     salesVolumeChart.hideLoading();
+                    univalenceChart.hideLoading();
                     return;
                 }
 
@@ -133,6 +139,59 @@
                     series: msg.seriesList
                 });
                 salesVolumeChart.hideLoading();
+
+
+                univalenceChart.setOption({
+                    title: {
+                        text: '平均订单价统计',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        },
+                        x:'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#999'
+                            }
+                        }
+                    },
+                    toolbox: {
+                        show: true,
+                        right: 30,
+                        feature: {
+                            saveAsImage: {
+                                show: true,
+                                excludeComponents: ['toolbox'],
+                                pixelRatio: 2
+                            }
+                        }
+                    },
+                    legend: {
+                        data: '平均订单价',
+                        y : 'bottom'
+                    },
+                    xAxis: {
+                        data: msg.nameList,
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    yAxis: [
+                        {
+                            type: 'value',
+                            scale: true,
+                            name: '平均订单价',
+                            min:0
+                        }
+                    ],
+                    series: msg.univalenceSeries
+                });
+                univalenceChart.hideLoading();
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

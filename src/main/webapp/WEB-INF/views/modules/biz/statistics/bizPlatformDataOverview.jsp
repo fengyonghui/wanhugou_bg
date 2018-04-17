@@ -89,6 +89,7 @@
 </table>
 <script type="application/javascript">
     function init() {
+        $Mask.AddLogo("正在加载");
         var startDate = $("#startDate").val();
         window.location.href = "overview?date=" + startDate;
     }

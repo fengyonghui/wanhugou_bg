@@ -105,6 +105,9 @@ public class BizStatisticsService {
                     case PROFIT:
                         dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getProfitPrice() : 0);
                         break;
+                    case UNIVALENCE:
+                        dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getUnivalence() : 0);
+                        break;
                     default:
                         break;
                 }
