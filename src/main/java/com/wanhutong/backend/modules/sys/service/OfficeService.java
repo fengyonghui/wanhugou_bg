@@ -10,9 +10,14 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -55,6 +60,10 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	private SystemService systemService;
 	@Autowired
 	private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
+	@Autowired
+    private BizVarietyInfoService bizVarietyInfoService;
+	@Autowired
+    private BizVendInfoService bizVendInfoService;
 
 
 	public List<Office> findAll(){
@@ -203,6 +212,23 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void save(Office office) {
 		super.save(office);
+		//保存供应商经营品类
+		if (office.getBizVendInfo()!= null && office.getBizVendInfo().getBizCategoryInfo().getId()!= null) {
+                BizVarietyInfo bizVarietyInfo = bizVarietyInfoService.get(office.getBizVendInfo().getBizCategoryInfo().getId());
+                BizVendInfo bizVendInfo = new BizVendInfo();
+                BizVendInfo vendInfo = bizVendInfoService.get(office.getId());
+                if (vendInfo!=null){
+                    bizVendInfo.setId(office.getId());
+                }
+                bizVendInfo.setOffice(office);
+                bizVendInfo.setVendName(office.getName());
+                BizCategoryInfo bizCategoryInfo = new BizCategoryInfo();
+                bizCategoryInfo.setId(office.getBizVendInfo().getBizCategoryInfo().getId());
+                bizVendInfo.setBizCategoryInfo(bizCategoryInfo);
+                bizVendInfo.setCateName(bizVarietyInfo.getName());
+                bizVendInfo.setCode(office.getCode());
+                bizVendInfoService.save(bizVendInfo);
+        }
 		SysOfficeAddress address = new SysOfficeAddress();
 		/**
 		 * 用于保存供应商地址

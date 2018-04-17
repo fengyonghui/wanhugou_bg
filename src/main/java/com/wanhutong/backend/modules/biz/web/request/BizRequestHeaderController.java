@@ -164,7 +164,7 @@ public class BizRequestHeaderController extends BaseController {
 					bizRequestHeader1.setRequestDetailList(reqDetailList);
 					bizRequestHeaderList.add(bizRequestHeader1);
 				}
-			} else {
+			} else if (requestDetailList!=null && requestDetailList.size()>0){
 				bizRequestHeader1.setRequestDetailList(reqDetailList);
 				bizRequestHeaderList.add(bizRequestHeader1);
 			}
