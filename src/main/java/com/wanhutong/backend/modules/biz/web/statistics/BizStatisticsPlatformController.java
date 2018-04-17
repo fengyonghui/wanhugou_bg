@@ -1,27 +1,35 @@
 package com.wanhutong.backend.modules.biz.web.statistics;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsPlatformService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import net.sf.json.JSONObject;
+import net.sourceforge.pinyin4j.PinyinHelper;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +47,11 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -49,6 +62,8 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/statistics/platform")
 public class BizStatisticsPlatformController extends BaseController {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(BizStatisticsPlatformController.class);
 
     @Resource
     private BizStatisticsPlatformService bizStatisticsPlatformService;
@@ -68,12 +83,17 @@ public class BizStatisticsPlatformController extends BaseController {
     private static final int MAX_DATA_LENGTH = 10;
 
     /**
+     * 默认超时时间
+     */
+    private static final Long DEFAULT_TIME_OUT = TimeUnit.SECONDS.toMillis(60);
+
+    /**
      * 用户相关统计数据
      *
      * @param request
      * @return
      */
-    @RequiresPermissions("biz:statistics:user:view")
+    @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = {"overview", ""})
     public String overview(HttpServletRequest request, String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
@@ -775,4 +795,64 @@ public class BizStatisticsPlatformController extends BaseController {
         paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
         return JSONObject.fromObject(paramMap).toString();
     }
+
+    /**
+     * 订单频率
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = {"orderCountFrequency", ""})
+    public String orderCountFrequency(HttpServletRequest request, Integer officeId) {
+        long startTime = System.currentTimeMillis();
+        List<Office> custList = officeService.findCustomByOfficeId(officeId);
+        List<Callable<Pair<String, List<Integer>>>> tasks = Lists.newArrayList();
+        for (Office o : custList) {
+            tasks.add(new Callable<Pair<String, List<Integer>>>() {
+                @Override
+                public Pair<String, List<Integer>> call() throws Exception {
+                    return Pair.of(o.getName(), bizStatisticsPlatformService.findOrderCountFrequency(o.getId()));
+                }
+            });
+        }
+        List<Future<Pair<String, List<Integer>>>> futures = null;
+        try {
+            futures = ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
+        } catch (InterruptedException e) {
+            LOGGER.error("get user error (tasks)", e);
+        }
+
+        Map<String, Integer> resultMap = Maps.newHashMap();
+        if (futures != null) {
+            for (Future<Pair<String, List<Integer>>> future : futures) {
+                try {
+                    Pair<String, List<Integer>> data = future.get(DEFAULT_TIME_OUT, TimeUnit.SECONDS);
+                    List<Integer> countList = data.getRight();
+                    int totalCount = 0;
+                    for (Integer b : countList) {
+                        totalCount += b;
+                    }
+                    resultMap.put(data.getLeft(), countList.size() == 0 ? 0 : (totalCount / countList.size()));
+                } catch (Exception e) {
+                    LOGGER.error("多线程取订单频率异常[{}]",officeId, e);
+                }
+            }
+        }
+
+        custList.sort(new Comparator<Office>() {
+            @Override
+            public int compare(Office o1, Office o2) {
+                return HanyuPinyinHelper.getPinyinString(o1.getName()).compareTo(HanyuPinyinHelper.getPinyinString(o2.getName()));
+            }
+        });
+
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        request.setAttribute("officeId", officeId);
+        request.setAttribute("dataMap", resultMap);
+        request.setAttribute("custList", custList);
+        LOGGER.info("orderCountFrequency [{}]", System.currentTimeMillis() - startTime);
+        return "modules/biz/statistics/bizPlatformOrderCountFrequency";
+    }
+
 }

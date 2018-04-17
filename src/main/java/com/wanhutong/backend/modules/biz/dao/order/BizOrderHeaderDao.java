@@ -269,4 +269,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @return
      */
     BigDecimal getStockAmountByOfficeId(Integer id);
+
+    /**
+     * 根据采购商ID 取采购频率的原始数据
+     * @param custId
+     * @param invalidStatus
+     * @return
+     */
+    List<Integer> findOrderCountFrequency(@Param("custId") Integer custId, @Param("statusList") List<OrderHeaderBizStatusEnum> invalidStatus);
 }

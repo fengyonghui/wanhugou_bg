@@ -99,7 +99,7 @@
     }
     function exportTable() {
         var startDate = $("#startDate").val();
-        var officeId = "241";
+        var officeId = $("#purchasingId").val();
         //定义一个form表单
         var myform = $("<form></form>");
         myform.attr('method','post');

@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +54,15 @@ public class BizStatisticsPlatformService {
      * 请求参数日期格式
      */
     public static final String PARAM_DATE_FORMAT = "yyyy-MM";
+    /**
+     * 默认起始日期
+     */
+    public static final String DEFAULT_START_DATE = "2017-09-01";
 
+    /**
+     * 默认日期格式
+     */
+    public static final SimpleDateFormat DF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 根据月份取订单统计相关数据
@@ -213,5 +222,14 @@ public class BizStatisticsPlatformService {
             }
         });
         return resultMap;
+    }
+
+    /**
+     * 根据采购商ID 取采购频率的原始数据
+     * @param custId
+     * @return
+     */
+    public List<Integer> findOrderCountFrequency(Integer custId) {
+        return bizOrderHeaderDao.findOrderCountFrequency(custId, OrderHeaderBizStatusEnum.INVALID_STATUS);
     }
 }
