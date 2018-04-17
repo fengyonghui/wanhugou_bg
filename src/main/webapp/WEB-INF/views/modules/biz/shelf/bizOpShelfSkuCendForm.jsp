@@ -111,19 +111,20 @@
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/cendFindShelf",
                 success:function (data) {
-                    $.each(data,function(index,shelfInfo) {
-                        if(opShelfId==shelfInfo.id){
-                            if(shelfInfo.type==3){
-                                $("#PurchaseID").css("display","block");
-                            }else{
-                                $("#PurchaseID").css("display","none");
-                            }
-                            $("#s2id_shelfInfoId").find("span").eq(0).text(shelfInfo.name);
-                            $("#shelfInfoId").append("<option selected='selected' value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
-                        }else {
-                            $("#shelfInfoId").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
-                        }
-                    })
+                	$("#shelfInfoId").append("<option selected='selected' value='"+data.id+"'>"+data.name+"</option>")
+                    <%--$.each(data,function(index,shelfInfo) {--%>
+                        <%--if(opShelfId==shelfInfo.id){--%>
+                            <%--if(shelfInfo.type==3){--%>
+                                <%--$("#PurchaseID").css("display","block");--%>
+                            <%--}else{--%>
+                                <%--$("#PurchaseID").css("display","none");--%>
+                            <%--}--%>
+                            <%--$("#s2id_shelfInfoId").find("span").eq(0).text(shelfInfo.name);--%>
+                            <%--$("#shelfInfoId").append("<option selected='selected' value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")--%>
+                        <%--}else {--%>
+                            <%--$("#shelfInfoId").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")--%>
+                        <%--}--%>
+                    <%--})--%>
                 }
             });
             $('#select_all').live('click',function(){
