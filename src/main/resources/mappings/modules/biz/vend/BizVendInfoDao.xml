@@ -115,7 +115,6 @@
 			cate_name = #{cateName},
 			code = #{code},
 			u_version = #{uVersion},
-			create_time = #{createDate},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
 		WHERE office_id = #{office.id}

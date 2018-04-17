@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.userRoleOfficeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -188,7 +189,8 @@ public class UserController extends BaseController {
 			list = new ArrayList<>();
 		}else{
 			Role role = new Role();
-			role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
+//			role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
+			role.setId(Integer.parseInt(userRoleOfficeEnum.PURCHASE.getType()));
 			user.setRole(role);
 			list = systemService.selectUserByOfficeId(user);
 		}
@@ -639,7 +641,7 @@ public class UserController extends BaseController {
                     bflag = false;
                 }
             }
-            if (user.getCompany().getId()!=Integer.parseInt(companyId)) {
+            if (user.getCompany()!= null && user.getCompany().getId()!=Integer.parseInt(companyId)) {
                 flag = true;
             }
             if (flag || bflag) {

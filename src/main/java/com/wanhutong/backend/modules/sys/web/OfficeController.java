@@ -11,7 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -51,12 +55,16 @@ public class OfficeController extends BaseController {
 
     @Autowired
     private OfficeService officeService;
-//    @Autowired
-//    private BizCustCreditService bizCustCreditService;
+    @Autowired
+    private BizCustCreditService bizCustCreditService;
     @Autowired
     private SystemService systemService;
     @Autowired
     private SysOfficeAddressService sysOfficeAddressService;
+    @Autowired
+    private BizVarietyInfoService bizVarietyInfoService;
+    @Autowired
+    private BizVendInfoService bizVendInfoService;
 
 
     @ModelAttribute("office")
@@ -220,6 +228,12 @@ public class OfficeController extends BaseController {
                 }
             }
         }
+        if (office.getId()!=null && office.getType().equals(OfficeTypeEnum.VENDOR.getType())) {
+            BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
+            office.setBizVendInfo(bizVendInfo);
+        }
+        //查询所有商品品类
+        model.addAttribute("varietyList",bizVarietyInfoService.findList(new BizVarietyInfo()));
         model.addAttribute("office", office);
         return "modules/sys/supplierForm";
     }
@@ -358,6 +372,10 @@ public class OfficeController extends BaseController {
         }
         if (flag != null && !"".equals(flag)) {
             model.addAttribute("flag", flag);
+        }
+        if (office.getId()!=null && office.getType().equals(OfficeTypeEnum.VENDOR.getType())) {
+            BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
+            office.setBizVendInfo(bizVendInfo);
         }
         model.addAttribute("office", office);
         return "modules/sys/officeForm";
@@ -574,32 +592,4 @@ public class OfficeController extends BaseController {
         }
         return convertList(list);
     }
-
-
-    /**
-     * 客户专员关联采购商，选择的采购商不包括已经关联的采购商
-     * */
-    @RequiresPermissions("user")
-    @ResponseBody
-    @RequestMapping(value = "commissQueryTreeList")
-    public List<Map<String, Object>> commissQueryTreeList(@RequestParam(required = false) String type, String source, RedirectAttributes redirectAttributes) {
-        List<Office> list = null;
-        if (StringUtils.isNotBlank(type)) {
-            String defType = type;
-            String[] split = type.split(",");
-            if (ArrayUtils.isNotEmpty(split)) {
-                defType = split[0];
-            }
-            if (ArrayUtils.isNotEmpty(split) && split.length > 1) {
-                list = officeService.findListByTypeList(Arrays.asList(split));
-            }else {
-                list = officeService.commissFilerOffice(null, source, OfficeTypeEnum.stateOf(defType));
-            }
-        }
-        if (list == null || list.size() == 0) {
-            addMessage(redirectAttributes, "列表不存在");
-        }
-        return convertList(list);
-    }
-
 }
