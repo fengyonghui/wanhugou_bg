@@ -7,7 +7,9 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
@@ -52,10 +54,13 @@ public class Office extends TreeEntity<Office> {
 	private Integer centerId;
 	private Integer ccStatus;
 
+	private BizVendInfo bizVendInfo;		//供应商拓展
+
 	/**
 	 * 供应商新增页面显示，新增地址
 	 * */
-	private CommonLocation bizLocation;
+	private SysOfficeAddress officeAddress;
+	private Integer locationId;
 
 
 	private String delRemark ;
@@ -90,7 +95,7 @@ public class Office extends TreeEntity<Office> {
 	public Office(Integer id){
 		super(id);
 	}
-	
+
 	public List<String> getChildDeptList() {
 		return childDeptList;
 	}
@@ -167,7 +172,7 @@ public class Office extends TreeEntity<Office> {
 //	public void setSort(Integer sort) {
 //		this.sort = sort;
 //	}
-	
+
 	@Length(min=1, max=1)
 	public String getType() {
 		return type;
@@ -251,7 +256,7 @@ public class Office extends TreeEntity<Office> {
 	//	public String getParentId() {
 //		return parent != null && parent.getId() != null ? parent.getId() : "0";
 //	}
-	
+
 	@Override
 	public String toString() {
 		return name;
@@ -345,11 +350,27 @@ public class Office extends TreeEntity<Office> {
 		this.province = province;
 	}
 
-	public CommonLocation getBizLocation() {
-		return bizLocation;
+	public BizVendInfo getBizVendInfo() {
+		return bizVendInfo;
 	}
 
-	public void setBizLocation(CommonLocation bizLocation) {
-		this.bizLocation = bizLocation;
+	public void setBizVendInfo(BizVendInfo bizVendInfo) {
+		this.bizVendInfo = bizVendInfo;
+	}
+
+	public SysOfficeAddress getOfficeAddress() {
+		return officeAddress;
+	}
+
+	public void setOfficeAddress(SysOfficeAddress officeAddress) {
+		this.officeAddress = officeAddress;
+	}
+
+	public Integer getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
 	}
 }
