@@ -111,20 +111,9 @@
                 type:"post",
                 url:"${ctx}/biz/shelf/bizOpShelfInfo/cendFindShelf",
                 success:function (data) {
-                	$("#shelfInfoId").append("<option selected='selected' value='"+data.id+"'>"+data.name+"</option>")
-                    <%--$.each(data,function(index,shelfInfo) {--%>
-                        <%--if(opShelfId==shelfInfo.id){--%>
-                            <%--if(shelfInfo.type==3){--%>
-                                <%--$("#PurchaseID").css("display","block");--%>
-                            <%--}else{--%>
-                                <%--$("#PurchaseID").css("display","none");--%>
-                            <%--}--%>
-                            <%--$("#s2id_shelfInfoId").find("span").eq(0).text(shelfInfo.name);--%>
-                            <%--$("#shelfInfoId").append("<option selected='selected' value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")--%>
-                        <%--}else {--%>
-                            <%--$("#shelfInfoId").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")--%>
-                        <%--}--%>
-                    <%--})--%>
+                	if(${empty bizOpShelfSku.id}){
+                		$("#shelfInfoId").append("<option value='"+data.id+"' selected='selected'>"+data.name+"</option>");
+                	}
                 }
             });
             $('#select_all').live('click',function(){
@@ -285,24 +274,24 @@
             }
         }
 	</script>
-	<script type="text/javascript">
-        function selectedColum(){
-            <%--属于选中货架名称下的 本地备货--%>
-            var opShelfId=$("#shelfInfoId").val();
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
-                success:function (data) {
-                    if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){
-                        $("#PurchaseID").css("display","block");
-                    }else{
-                        $("#PurchaseID").css("display","none");
-                        $("#centerOfficeId").prop("value","");
-                    }
-                }
-            });
-        }
-	</script>
+	<%--<script type="text/javascript">--%>
+        <%--function selectedColum(){--%>
+            <%--&lt;%&ndash;属于选中货架名称下的 本地备货&ndash;%&gt;--%>
+            <%--var opShelfId=$("#shelfInfoId").val();--%>
+            <%--$.ajax({--%>
+                <%--type:"post",--%>
+                <%--url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,--%>
+                <%--success:function (data) {--%>
+                    <%--if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){--%>
+                        <%--$("#PurchaseID").css("display","block");--%>
+                    <%--}else{--%>
+                        <%--$("#PurchaseID").css("display","none");--%>
+                        <%--$("#centerOfficeId").prop("value","");--%>
+                    <%--}--%>
+                <%--}--%>
+            <%--});--%>
+        <%--}--%>
+	<%--</script>--%>
 	<meta name="decorator" content="default"/>
 </head>
 <body>
@@ -317,26 +306,16 @@
 	<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>
 	<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 	<sys:message content="${message}"/>
-
-	<%--<div class="control-group">--%>
-	<%--<label class="control-label">栏目类型：</label>--%>
-	<%--<div class="controls">--%>
-	<%--<select class="input-xlarge required" onchange="selectedColum();" id="columInfoShelf">--%>
-	<%--<option value="">请选择</option>--%>
-	<%--<c:forEach items="${fns:getDictList('biz_cms_colum')}" var="colu">--%>
-	<%--<option value="${colu.value}" >${colu.label}</option>--%>
-	<%--</c:forEach>--%>
-	<%--</select>--%>
-	<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-	<%--</div>--%>
-	<%--</div>--%>
 	<div class="control-group">
 		<label class="control-label">货架名称：</label>
 		<div class="controls">
-			<select id="shelfInfoId" name="opShelfInfo.id" onchange="selectedColum();" class="input-xlarge required">
-				<option value="">请选择</option>
-			</select>
-			<span class="help-inline"><font color="red">*</font> </span>
+				<select id="shelfInfoId" name="opShelfInfo.id" class="input-xlarge required">
+						<option value="">请选择</option>
+					<c:if test="${not empty bizOpShelfSku.id}">
+						<option value="${bizOpShelfSku.opShelfInfo.id}" selected="selected">${bizOpShelfSku.opShelfInfo.name}</option>
+					</c:if>
+				</select>
+			<span class="help-inline"><font color="red">*</font></span>
 		</div>
 	</div>
 	<div class="control-group" id="PurchaseID" style="display:none">
