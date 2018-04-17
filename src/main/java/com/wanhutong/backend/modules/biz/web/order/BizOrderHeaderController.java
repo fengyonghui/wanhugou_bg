@@ -473,13 +473,20 @@ public class BizOrderHeaderController extends BaseController {
      */
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "orderHeaderExport", method = RequestMethod.POST)
-    public String orderHeaderExportFile(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public String orderHeaderExportFile(BizOrderHeader bizOrderHeader,String cendExportbs, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        String a="cend_listPage";
         try {
             BizOrderDetail orderDetail = new BizOrderDetail();
             BizPayRecord bizPayRecord = new BizPayRecord();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-            List<BizOrderHeader> pageList = bizOrderHeaderService.findList(bizOrderHeader);
+            List<BizOrderHeader> pageList =null;
+            if(cendExportbs!=null && cendExportbs.equals(a)) {
+                Page<BizOrderHeader> bizOrderHeaderPage = bizOrderHeaderService.cendfindPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+                pageList = bizOrderHeaderPage.getList();
+            }else{
+                pageList = bizOrderHeaderService.findList(bizOrderHeader);
+            }
             //1订单
             List<List<String>> data = new ArrayList<List<String>>();
             //2商品
@@ -651,6 +658,10 @@ public class BizOrderHeaderController extends BaseController {
         } catch (Exception e) {
            e.printStackTrace();
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
+        }
+        if(cendExportbs!=null && cendExportbs.equals(a)){
+            //跳转C端列表
+            return "redirect:" + adminPath + "/biz/order/bizOrderHeader/cendList";
         }
         return "redirect:" + adminPath + "/biz/order/bizOrderHeader/";
     }

@@ -10,9 +10,9 @@
 			$("#buttonExport").click(function(){
 				top.$.jBox.confirm("确认要导出订单数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport");
+						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport?cendExportbs=cend_listPage");
 						$("#searchForm").submit();
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/");
+						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/cendList");
 					}
 				},{buttonsFocus:1});
 				top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -55,11 +55,8 @@
 							cssClass="input-medium"
 							allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 		</li>
-		<li><label>采购中心：</label>
-			<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
-		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-		<%--<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>--%>
+		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 		<li class="clearfix"></li>
 	</ul>
 </form:form>
