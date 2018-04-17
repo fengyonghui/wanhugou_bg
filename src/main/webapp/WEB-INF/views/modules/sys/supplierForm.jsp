@@ -157,6 +157,19 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label">经营品类:</label>
+        <div class="controls">
+            <form:select id="vendInfo" path="bizVendInfo.bizCategoryInfo.id" class="input-xlarge required">
+                <form:option value="" label="请选择"/>
+                <c:if test="${! empty bizVendInfo.bizCategoryInfo.id}">
+                    <form:option value="${bizVendInfo.bizCategoryInfo.id}">${bizVendInfo.cateName}</form:option>
+                </c:if>
+                <form:options items="${varietyList}" itemLabel="name" itemValue="id"/>
+            </form:select>
+            <span class="help-inline"><font color="red">*</font></span>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">主负责人:</label>
         <div class="controls">
             <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"

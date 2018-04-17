@@ -10,9 +10,14 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao;
+import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -48,13 +53,17 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Autowired
 	private BizCustCreditService bizCustCreditService;
 	@Autowired
+	private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
+	@Autowired
 	private CommonLocationService commonLocationService;
 	@Autowired
 	private SysOfficeAddressService sysOfficeAddressService;
 	@Autowired
 	private SystemService systemService;
 	@Autowired
-	private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
+    private BizVarietyInfoService bizVarietyInfoService;
+	@Autowired
+    private BizVendInfoService bizVendInfoService;
 
 
 	public List<Office> findAll(){
@@ -203,45 +212,79 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void save(Office office) {
 		super.save(office);
-		CommonLocation commonLocation =null;
-		if(office.getBizLocation()!=null && !office.getBizLocation().getAddress().equals("")){
-			if(office.getAddress()!=null && office.getBizLocation().getProvince()==null && office.getBizLocation().getCity()==null){
-				CommonLocation commonLocation1 = commonLocationService.get(Integer.parseInt(office.getAddress()));
-				office.getBizLocation().setAddress(office.getBizLocation().getAddress());
-				office.getBizLocation().setId(Integer.parseInt(office.getAddress()));
-				office.getBizLocation().setProvince(commonLocation1.getProvince());
-				office.getBizLocation().setCity(commonLocation1.getCity());
-				office.getBizLocation().setRegion(commonLocation1.getRegion());
+		//保存供应商经营品类
+		if (office.getBizVendInfo()!= null && office.getBizVendInfo().getBizCategoryInfo().getId()!= null) {
+                BizVarietyInfo bizVarietyInfo = bizVarietyInfoService.get(office.getBizVendInfo().getBizCategoryInfo().getId());
+                BizVendInfo bizVendInfo = new BizVendInfo();
+                BizVendInfo vendInfo = bizVendInfoService.get(office.getId());
+                if (vendInfo!=null){
+                    bizVendInfo.setId(office.getId());
+                }
+                bizVendInfo.setOffice(office);
+                bizVendInfo.setVendName(office.getName());
+                BizCategoryInfo bizCategoryInfo = new BizCategoryInfo();
+                bizCategoryInfo.setId(office.getBizVendInfo().getBizCategoryInfo().getId());
+                bizVendInfo.setBizCategoryInfo(bizCategoryInfo);
+                bizVendInfo.setCateName(bizVarietyInfo.getName());
+                bizVendInfo.setCode(office.getCode());
+                bizVendInfoService.save(bizVendInfo);
+        }
+		SysOfficeAddress address = new SysOfficeAddress();
+		/**
+		 * 用于保存供应商地址
+		 * */
+		SysOfficeAddress sysOfficeAddress = new SysOfficeAddress();
+		sysOfficeAddress.setOffice(office);
+		List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
+		if(list.size()!=0) {
+			for (SysOfficeAddress add : list) {
+				if (add.getDeFaultStatus() != null && add.getDeFaultStatus() == 1) {
+					address.setId(add.getId());
+					break;
+				}
 			}
-			commonLocation = commonLocationService.updateCommonLocation(office.getBizLocation());
 		}
-		if(commonLocation!=null){
-			/**
-			 * 用于保存地址
-			 * */
-			SysOfficeAddress officeAddress = new SysOfficeAddress();
-			if(office.getAddress()!=null){
-				officeAddress.setId(Integer.parseInt(office.getAddress()));
+		if(office.getOfficeAddress()!=null){
+			CommonLocation commonLocation = commonLocationService.get(office.getLocationId());
+			if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getSelectedRegionId()==null &&
+					commonLocation.getAddress().equals(office.getOfficeAddress().getBizLocation().getAddress())){
+				address.setBizLocation(commonLocation);
+			}else{
+				if(office.getOfficeAddress().getBizLocation().getSelectedRegionId()==null){
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getProvince()==null){
+						office.getOfficeAddress().getBizLocation().setProvince(commonLocation.getProvince());
+					}
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getCity()==null){
+						office.getOfficeAddress().getBizLocation().setCity(commonLocation.getCity());
+					}
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getRegion()==null){
+						office.getOfficeAddress().getBizLocation().setRegion(commonLocation.getRegion());
+					}
+				}
+				address.setBizLocation(office.getOfficeAddress().getBizLocation());
 			}
-			officeAddress.setOffice(office);
-			officeAddress.setBizLocation(commonLocation);
-			officeAddress.setReceiver(String.valueOf(office.getMaster()));
-			officeAddress.setPhone(String.valueOf(office.getPhone()));
+			address.setOffice(office);
+			if(office.getPrimaryPerson()!=null && !office.getPrimaryPerson().getName().equals("")){
+				address.setReceiver(String.valueOf(office.getPrimaryPerson().getName()));
+			}else{
+				address.setReceiver("无");
+			}
+			address.setPhone(office.getPhone());
 			String offType = DictUtils.getDictValue("公司地址", "office_type", "");
 			String sysDefau = DictUtils.getDictValue("默认", "sysadd_deFault", "");
 			if(offType!=null){
-				officeAddress.setType(Integer.parseInt(offType));
+				address.setType(Integer.parseInt(offType));
 			}else {
-				officeAddress.setType(2);
+				address.setType(2);
 			}
 			if(sysDefau!=null){
-				officeAddress.setDeFaultStatus(Integer.parseInt(sysDefau));
+				address.setDeFaultStatus(Integer.parseInt(sysDefau));
 			}else{
-				officeAddress.setDeFaultStatus(1);
+				address.setDeFaultStatus(1);
 			}
-			sysOfficeAddressService.save(officeAddress);
-			office.setAddress(String.valueOf(officeAddress.getId()));
+			sysOfficeAddressService.save(address);
 		}
+		office.setAddress(String.valueOf(address.getBizLocation().getPcrName())+address.getBizLocation().getAddress());
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 		//保存新建联系人
@@ -263,22 +306,22 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		}
 	}
 
-	//创建采购商同时创建钱包
+//	创建采购商同时创建钱包
 	@Transactional(readOnly = false)
 	public void save(Office office,BizCustCredit bizCustCredit) {
 		super.save(office);
-		if(bizCustCredit.getId()== null){
-			if(bizCustCredit != null ){
-//				bizCustCredit.setId(office.getId());
-				bizCustCredit.setCustomer(office);
-				bizCustCredit.setPayPwd(SystemService.entryptPassword(DictUtils.getDictValue("密码", "payment_password", "")));
-				bizCustCredit.setuVersion(1);
-				bizCustCredit.setCustFalg("officeCust");
-				bizCustCreditService.save(bizCustCredit);
-			}
-		}else{
-			bizCustCreditService.save(bizCustCredit);
-		}
+//		if(bizCustCredit.getId()== null){
+//			if(bizCustCredit != null ){
+////				bizCustCredit.setId(office.getId());
+//				bizCustCredit.setCustomer(office);
+//				bizCustCredit.setPayPwd(SystemService.entryptPassword(DictUtils.getDictValue("密码", "payment_password", "")));
+//				bizCustCredit.setuVersion(1);
+//				bizCustCredit.setCustFalg("officeCust");
+//				bizCustCreditService.save(bizCustCredit);
+//			}
+//		}else{
+//			bizCustCreditService.save(bizCustCredit);
+//		}
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}
 
@@ -431,5 +474,4 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public List<Office> findCapitalList(Office cust){
 		return officeDao.findList(cust);
 	}
-
 }

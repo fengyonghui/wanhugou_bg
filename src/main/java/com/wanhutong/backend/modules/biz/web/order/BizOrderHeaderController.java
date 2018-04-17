@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcel;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
@@ -49,6 +50,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -208,10 +210,6 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "删除订单信息成功");
-        String a="cendDelete";//C端删除标记
-        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(a)){
-            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList?repage";
-        }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
@@ -222,10 +220,6 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "恢复订单信息成功");
-        String b="cendRecover";
-        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(b)){
-            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList?repage";
-        }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
@@ -297,74 +291,74 @@ public class BizOrderHeaderController extends BaseController {
         return map;
     }
 
-    @ResponseBody
-    @RequiresPermissions("biz:order:bizOrderHeader:edit")
-    @RequestMapping(value = "saveOrderHeader")
-    public String saveOrderHeader(BizOrderHeader bizOrderHeader, Double payMentOne, Model model, RedirectAttributes redirectAttributes) {
-        BizOrderHeader orderHeaderMent = bizOrderHeaderService.get(bizOrderHeader.getId());
-        Double receiveTotal = orderHeaderMent.getReceiveTotal();
-        Double Totail = bizOrderHeader.getTobePaid();//获取From方法的计算总价
-        BizPayRecord bizPayRecordCredit = new BizPayRecord();//保存客户钱包交易记录
-        BizCustCredit bizCustCredit = bizCustCreditService.get(orderHeaderMent.getCustomer().getId());//客户钱包
-        BigDecimal subtract = null;
-        Integer recordBiz = 0;//0失败 1成功 支付记录表，支付状态
-        String payMent = "error";
-        try {
-            if (bizCustCredit != null) {
-                BigDecimal wallet = bizCustCredit.getWallet();//钱包总余额
-                if (wallet == null) {
-//				   System.out.println(" 余额不足 ");
-                    recordBiz = 0;
-                } else {
-                    recordBiz = 1;
-                    BigDecimal payMentTwo = new BigDecimal(payMentOne);//输入支付的值
-                    subtract = wallet.subtract(payMentTwo);//计算后结果
-//				   System.out.println(subtract.compareTo(new BigDecimal(0)));
-                    //   以上输出结果是：-1小于、0等于、1大于
-                    if (subtract.compareTo(new BigDecimal(0)) == 1) {
-                        bizCustCredit.setWallet(subtract);
-                        bizCustCredit.setId(orderHeaderMent.getCustomer().getId());
-                        bizCustCreditService.orderHeaderSave(bizCustCredit);
-                        bizPayRecordCredit.setOriginalAmount(bizCustCredit.getWallet());//原金额
-                        bizPayRecordCredit.setCashAmount(subtract);//现金额
-                        if (payMentOne.equals(Totail)) {
-                            orderHeaderMent.setReceiveTotal(receiveTotal + payMentOne);//订单已收货款
-                            orderHeaderMent.setBizStatus(OrderTransaction.WHOLE_PAYMENT.getOrderId());//订单状态 10全部支付
-                            bizOrderHeaderService.saveOrderHeader(orderHeaderMent);
-                        } else {
-                            orderHeaderMent.setReceiveTotal(receiveTotal + payMentOne);//订单已收货款
-                            orderHeaderMent.setBizStatus(OrderTransaction.FIRST_PAYMENT.getOrderId());//首付款支付5
-                            bizOrderHeaderService.saveOrderHeader(orderHeaderMent);
-                        }
-                        payMent = "ok";
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            payMent = "error";
-        } finally {
-            if (bizCustCredit != null) {
-                if (subtract.compareTo(new BigDecimal(0)) == 1) {
-                    bizPayRecordCredit.setPayer(UserUtils.getUser().getId());//支付人
-                    bizPayRecordCredit.setPayMoney(payMentOne);//支付金额
-                    bizPayRecordCredit.setPayNum(orderHeaderMent.getOrderNum());//订单编号
-                    bizPayRecordCredit.setCustomer(orderHeaderMent.getCustomer());//采购商
-                    if (recordBiz == 1) {
-                        bizPayRecordCredit.setBizStatus(OrderTransaction.SUCCESS.getOrderId());//成功1
-                    } else {
-                        bizPayRecordCredit.setBizStatus(OrderTransaction.FAIL.getOrderId());//失败0
-                    }
-                    bizPayRecordCredit.setRecordType(OrderTransaction.PAYMENT.getOrderId());//交易类型
-                    bizPayRecordCredit.setRecordTypeName(OrderTransaction.PAYMENT.getOrderName());//交易名称
-                    bizPayRecordCredit.setPayType(OrderTransaction.PLATFORM_PAYMENT.getOrderId());//支付类型
-                    bizPayRecordCredit.setPayTypeName(OrderTransaction.PLATFORM_PAYMENT.getOrderName());//类型名称
-                    bizPayRecordService.save(bizPayRecordCredit);
-                }
-            }
-        }
-        return payMent;
-    }
+//    @ResponseBody
+//    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+//    @RequestMapping(value = "saveOrderHeader")
+//    public String saveOrderHeader(BizOrderHeader bizOrderHeader, Double payMentOne, Model model, RedirectAttributes redirectAttributes) {
+//        BizOrderHeader orderHeaderMent = bizOrderHeaderService.get(bizOrderHeader.getId());
+//        Double receiveTotal = orderHeaderMent.getReceiveTotal();
+//        Double Totail = bizOrderHeader.getTobePaid();//获取From方法的计算总价
+//        BizPayRecord bizPayRecordCredit = new BizPayRecord();//保存客户钱包交易记录
+//        BizCustCredit bizCustCredit = bizCustCreditService.get(orderHeaderMent.getCustomer().getId());//客户钱包
+//        BigDecimal subtract = null;
+//        Integer recordBiz = 0;//0失败 1成功 支付记录表，支付状态
+//        String payMent = "error";
+//        try {
+//            if (bizCustCredit != null) {
+//                BigDecimal wallet = bizCustCredit.getWallet();//钱包总余额
+//                if (wallet == null) {
+////				   System.out.println(" 余额不足 ");
+//                    recordBiz = 0;
+//                } else {
+//                    recordBiz = 1;
+//                    BigDecimal payMentTwo = new BigDecimal(payMentOne);//输入支付的值
+//                    subtract = wallet.subtract(payMentTwo);//计算后结果
+////				   System.out.println(subtract.compareTo(new BigDecimal(0)));
+//                    //   以上输出结果是：-1小于、0等于、1大于
+//                    if (subtract.compareTo(new BigDecimal(0)) == 1) {
+//                        bizCustCredit.setWallet(subtract);
+//                        bizCustCredit.setId(orderHeaderMent.getCustomer().getId());
+//                        bizCustCreditService.orderHeaderSave(bizCustCredit);
+//                        bizPayRecordCredit.setOriginalAmount(bizCustCredit.getWallet());//原金额
+//                        bizPayRecordCredit.setCashAmount(subtract);//现金额
+//                        if (payMentOne.equals(Totail)) {
+//                            orderHeaderMent.setReceiveTotal(receiveTotal + payMentOne);//订单已收货款
+//                            orderHeaderMent.setBizStatus(OrderTransaction.WHOLE_PAYMENT.getOrderId());//订单状态 10全部支付
+//                            bizOrderHeaderService.saveOrderHeader(orderHeaderMent);
+//                        } else {
+//                            orderHeaderMent.setReceiveTotal(receiveTotal + payMentOne);//订单已收货款
+//                            orderHeaderMent.setBizStatus(OrderTransaction.FIRST_PAYMENT.getOrderId());//首付款支付5
+//                            bizOrderHeaderService.saveOrderHeader(orderHeaderMent);
+//                        }
+//                        payMent = "ok";
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            payMent = "error";
+//        } finally {
+//            if (bizCustCredit != null) {
+//                if (subtract.compareTo(new BigDecimal(0)) == 1) {
+//                    bizPayRecordCredit.setPayer(UserUtils.getUser().getId());//支付人
+//                    bizPayRecordCredit.setPayMoney(payMentOne);//支付金额
+//                    bizPayRecordCredit.setPayNum(orderHeaderMent.getOrderNum());//订单编号
+//                    bizPayRecordCredit.setCustomer(orderHeaderMent.getCustomer());//采购商
+//                    if (recordBiz == 1) {
+//                        bizPayRecordCredit.setBizStatus(OrderTransaction.SUCCESS.getOrderId());//成功1
+//                    } else {
+//                        bizPayRecordCredit.setBizStatus(OrderTransaction.FAIL.getOrderId());//失败0
+//                    }
+//                    bizPayRecordCredit.setRecordType(OrderTransaction.PAYMENT.getOrderId());//交易类型
+//                    bizPayRecordCredit.setRecordTypeName(OrderTransaction.PAYMENT.getOrderName());//交易名称
+//                    bizPayRecordCredit.setPayType(OrderTransaction.PLATFORM_PAYMENT.getOrderId());//支付类型
+//                    bizPayRecordCredit.setPayTypeName(OrderTransaction.PLATFORM_PAYMENT.getOrderName());//类型名称
+//                    bizPayRecordService.save(bizPayRecordCredit);
+//                }
+//            }
+//        }
+//        return payMent;
+//    }
 
 
     /**
@@ -476,6 +470,7 @@ public class BizOrderHeaderController extends BaseController {
     public String orderHeaderExportFile(BizOrderHeader bizOrderHeader,String cendExportbs, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         String a="cend_listPage";
         try {
+            DecimalFormat df = new DecimalFormat();
             BizOrderDetail orderDetail = new BizOrderDetail();
             BizPayRecord bizPayRecord = new BizPayRecord();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -494,161 +489,275 @@ public class BizOrderHeaderController extends BaseController {
             //3交易记录
             List<List<String>> payData = new ArrayList<List<String>>();
             for (BizOrderHeader o : pageList) {
-                orderDetail.setOrderHeader(o);
-                List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
-                Double dou=0.0;
-                if (list.size() != 0) {
-                    for (BizOrderDetail d : list) {
-                        d.setOrderHeader(o);
-                        o.setOrderDetailList(list);
-                        dou+=d.getBuyPrice()*d.getOrdQty();
-                        List<String> detailListData = new ArrayList();
-                        //ID
-                        detailListData.add(String.valueOf(d.getId()));
-                        //订单编号
-                        detailListData.add(String.valueOf(d.getOrderHeader().getOrderNum()));
-                        //商品名称
-                        detailListData.add(String.valueOf(d.getSkuName()));
-                        //商品编码
-                        detailListData.add(String.valueOf(d.getPartNo()));
-                        //供应商
-                        detailListData.add(String.valueOf(d.getVendor().getName()));
-                        //商品单价
-                        detailListData.add(String.valueOf(d.getUnitPrice()));
-                        //采购数量
-                        detailListData.add(String.valueOf(d.getOrdQty()));
-                        //商品总价
-                        detailListData.add(String.valueOf(d.getUnitPrice() * d.getOrdQty()));
-                        detailData.add(detailListData);
-                    }
-                    o.setTotalBuyPrice(dou);
-                }
-                //地址查询
-                o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
-                List<String> rowData = new ArrayList();
-                //id
-                rowData.add(String.valueOf(o.getId()));
-                //订单编号
-                rowData.add(String.valueOf(o.getOrderNum()));
-                //描述
-                Dict dict = new Dict();
-                dict.setDescription("订单类型");
-                dict.setType("biz_order_type");
-                List<Dict> dictList = dictService.findList(dict);
-                for (Dict di : dictList) {
-                    if (di.getValue().equals(String.valueOf(o.getOrderType()))) {
-                        //订单类型
-                        rowData.add(String.valueOf(di.getLabel()));
-                        break;
-                    }
-                }
-                //采购商名称/电话
-                rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
-                //所属采购中心
-                rowData.add(String.valueOf(o.getCentersName()));
-                //商品总价
-                rowData.add(String.valueOf(o.getTotalDetail()));
-                //交易金额
-                rowData.add(String.valueOf(o.getTotalExp()));
-                //运费
-                rowData.add(String.valueOf(o.getFreight()));
-                //应付金额
-                rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight()));
-                //已收货款
-                rowData.add(String.valueOf(o.getReceiveTotal()));
-                Integer ten = 10, forTy = 40;
-                if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
-                    //尾款信息
-                    rowData.add("有尾款");
-                } else {
-                    //尾款信息
-                    rowData.add("");
-                }
-                //利润
-                Double buy=0.0;
-                if(o.getTotalBuyPrice()!=null){
-                    buy=o.getTotalBuyPrice();
-                }else{
-                    buy=0.0;
-                }
-                rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - buy));
-                Dict dictInv = new Dict();
-                dictInv.setDescription("发票状态");
-                dictInv.setType("biz_order_invStatus");
-                List<Dict> dictListInv = dictService.findList(dictInv);
-                for (Dict dinv : dictListInv) {
-                    if (dinv.getValue().equals(String.valueOf(o.getInvStatus()))) {
-                        //发票状态
-                        rowData.add(String.valueOf(dinv.getLabel()));
-                        break;
-                    }
-                }
-                Dict dictBiz = new Dict();
-                dictBiz.setDescription("业务状态");
-                dictBiz.setType("biz_order_status");
-                List<Dict> dictListBiz = dictService.findList(dictBiz);
-                for (Dict dbiz : dictListBiz) {
-                    if (dbiz.getValue().equals(String.valueOf(o.getBizStatus()))) {
-                        //业务状态
-                        rowData.add(String.valueOf(dbiz.getLabel()));
-                        break;
-                    }
-                }
-                //订单来源
-                rowData.add(String.valueOf(o.getPlatformInfo().getName()));
-                if (o.getBizLocation() != null) {
-                    //收货人
-                    rowData.add(String.valueOf(o.getBizLocation().getReceiver()));
-                    //联系电话
-                    rowData.add(String.valueOf(o.getBizLocation().getPhone()));
-                    //订单收货地址
-                    rowData.add(String.valueOf(o.getBizLocation().getProvince().getName() + o.getBizLocation().getCity().getName() +
-                            o.getBizLocation().getRegion().getName() + o.getBizLocation().getAddress()));
-                } else {
-                    rowData.add("");
-                    rowData.add("");
-                    rowData.add("");
-                }
-                //创建人
-                rowData.add(String.valueOf(o.getCreateBy().getName()));
-                //创建时间
-                rowData.add(String.valueOf(sdf.format(o.getCreateDate())));
-                //更新人
-                rowData.add(String.valueOf(o.getUpdateBy().getName()));
-                //更新时间
-                rowData.add(String.valueOf(sdf.format(o.getUpdateDate())));
-                data.add(rowData);
                 bizPayRecord.setPayNum(o.getOrderNum());
                 List<BizPayRecord> payList = bizPayRecordService.findList(bizPayRecord);
+                if (payList == null || payList.size()==0){
+                    orderDetail.setOrderHeader(o);
+                    List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
+                    Double dou=0.0;
+                    if (list.size() != 0) {
+                        for (BizOrderDetail d : list) {
+                            d.setOrderHeader(o);
+                            o.setOrderDetailList(list);
+                            dou+=d.getBuyPrice()*d.getOrdQty();
+                            List<String> detailListData = new ArrayList();
+                            //ID
+                            //                        detailListData.add(String.valueOf(d.getId()));
+                            //订单编号
+                            detailListData.add(String.valueOf(d.getOrderHeader().getOrderNum()));
+                            //商品名称
+                            detailListData.add(String.valueOf(d.getSkuName()));
+                            //商品编码
+                            detailListData.add(String.valueOf(d.getPartNo()));
+                            //供应商
+                            detailListData.add(String.valueOf(d.getVendor().getName()));
+                            //商品单价
+                            detailListData.add(String.valueOf(d.getUnitPrice()));
+                            //商品工厂价
+                            BizSkuInfo skuInfo = bizSkuInfoService.get(d.getSkuInfo().getId());
+                            detailListData.add(String.valueOf(skuInfo.getBuyPrice()));
+                            //采购数量
+                            detailListData.add(String.valueOf(d.getOrdQty()));
+                            //商品总价
+                            detailListData.add(String.valueOf(df.format(d.getUnitPrice() * d.getOrdQty())));
+                            detailData.add(detailListData);
+                        }
+                        o.setTotalBuyPrice(dou);
+                    }
+                    //地址查询
+                    o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
+                    List<String> rowData = new ArrayList();
+                    //id
+                    //                rowData.add(String.valueOf(o.getId()));
+                    //订单编号
+                    rowData.add(String.valueOf(o.getOrderNum()));
+                    //描述
+                    Dict dict = new Dict();
+                    dict.setDescription("订单类型");
+                    dict.setType("biz_order_type");
+                    List<Dict> dictList = dictService.findList(dict);
+                    for (Dict di : dictList) {
+                        if (di.getValue().equals(String.valueOf(o.getOrderType()))) {
+                            //订单类型
+                            rowData.add(String.valueOf(di.getLabel()));
+                            break;
+                        }
+                    }
+                    //采购商名称/电话
+                    rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
+                    //所属采购中心
+                    rowData.add(String.valueOf(o.getCentersName()));
+                    //商品总价
+                    rowData.add(String.valueOf(df.format(o.getTotalDetail())));
+                    //商品工厂总价
+                    List<BizOrderHeader> orderHeaderList = new ArrayList<>();
+                    orderHeaderList.add(o);
+                    List<BizOrderHeader> oheaderList = bizOrderHeaderService.getTotalBuyPrice(orderHeaderList);
+                    BizOrderHeader orderHeader = oheaderList.get(0);
+                    rowData.add(String.valueOf(df.format(orderHeader.getTotalBuyPrice())));
+                    //交易金额
+                    rowData.add(String.valueOf(o.getTotalExp()));
+                    //运费
+                    rowData.add(String.valueOf(o.getFreight()));
+                    //应付金额
+                    rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight()));
+                    //已收货款
+                    rowData.add(String.valueOf(o.getReceiveTotal()));
+                    Integer ten = 10, forTy = 40;
+                    if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
+                        //尾款信息
+                        rowData.add("有尾款");
+                    } else {
+                        //尾款信息
+                        rowData.add("");
+                    }
+                    //利润
+                    Double buy=0.0;
+                    if(o.getTotalBuyPrice()!=null){
+                        buy=o.getTotalBuyPrice();
+                    }else{
+                        buy=0.0;
+                    }
+                    rowData.add(String.valueOf(df.format(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - buy)));
+                    Dict dictInv = new Dict();
+                    dictInv.setDescription("发票状态");
+                    dictInv.setType("biz_order_invStatus");
+                    List<Dict> dictListInv = dictService.findList(dictInv);
+                    for (Dict dinv : dictListInv) {
+                        if (dinv.getValue().equals(String.valueOf(o.getInvStatus()))) {
+                            //发票状态
+                            rowData.add(String.valueOf(dinv.getLabel()));
+                            break;
+                        }
+                    }
+                    Dict dictBiz = new Dict();
+                    dictBiz.setDescription("业务状态");
+                    dictBiz.setType("biz_order_status");
+                    List<Dict> dictListBiz = dictService.findList(dictBiz);
+                    for (Dict dbiz : dictListBiz) {
+                        if (dbiz.getValue().equals(String.valueOf(o.getBizStatus()))) {
+                            //业务状态
+                            rowData.add(String.valueOf(dbiz.getLabel()));
+                            break;
+                        }
+                    }
+                    data.add(rowData);
+                }
                 if (payList.size() != 0) {
+                    o.setBizPayRecordList(payList);
+                    orderDetail.setOrderHeader(o);
                     payList.forEach(p -> {
-                        o.setBizPayRecordList(payList);
-                        List<String> payRow = new ArrayList();
-                        //ID
-                        payRow.add(String.valueOf(p.getId()));
+                        //======================================================================
+                        List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
+                        Double dou=0.0;
+                        if (list.size() != 0) {
+                            for (BizOrderDetail d : list) {
+                                d.setOrderHeader(o);
+                                o.setOrderDetailList(list);
+                                dou+=d.getBuyPrice()*d.getOrdQty();
+                                List<String> detailListData = new ArrayList();
+                                //订单编号
+                                detailListData.add(String.valueOf(d.getOrderHeader().getOrderNum()));
+                                //商品名称
+                                detailListData.add(String.valueOf(d.getSkuName()));
+                                //商品编码
+                                detailListData.add(String.valueOf(d.getPartNo()));
+                                //供应商
+                                detailListData.add(String.valueOf(d.getVendor().getName()));
+                                //商品单价
+                                detailListData.add(String.valueOf(d.getUnitPrice()));
+                                //商品工厂价
+                                BizSkuInfo skuInfo = bizSkuInfoService.get(d.getSkuInfo().getId());
+                                detailListData.add(String.valueOf(skuInfo.getBuyPrice()));
+                                //采购数量
+                                detailListData.add(String.valueOf(d.getOrdQty()));
+                                //商品总价
+                                detailListData.add(String.valueOf(df.format(d.getUnitPrice() * d.getOrdQty())));
+                                detailData.add(detailListData);
+                            }
+                            o.setTotalBuyPrice(dou);
+                        }
+                        //地址查询
+                        o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
+                        List<String> rowData = new ArrayList();
+                        //id
+                        //                rowData.add(String.valueOf(o.getId()));
                         //订单编号
-                        payRow.add(String.valueOf(p.getPayNum()));
+                        rowData.add(String.valueOf(o.getOrderNum()));
+                        //描述
+                        Dict dict = new Dict();
+                        dict.setDescription("订单类型");
+                        dict.setType("biz_order_type");
+                        List<Dict> dictList = dictService.findList(dict);
+                        for (Dict di : dictList) {
+                            if (di.getValue().equals(String.valueOf(o.getOrderType()))) {
+                                //订单类型
+                                rowData.add(String.valueOf(di.getLabel()));
+                                break;
+                            }
+                        }
+                        //采购商名称/电话
+                        rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
+                        //所属采购中心
+                        rowData.add(String.valueOf(o.getCentersName()));
+                        //商品总价
+                        rowData.add(String.valueOf(df.format(o.getTotalDetail())));
+                        //商品工厂总价
+                        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
+                        orderHeaderList.add(o);
+                        List<BizOrderHeader> oheaderList = bizOrderHeaderService.getTotalBuyPrice(orderHeaderList);
+                        BizOrderHeader orderHeader = oheaderList.get(0);
+                        rowData.add(String.valueOf(df.format(orderHeader.getTotalBuyPrice())));
+                        //交易金额
+                        rowData.add(String.valueOf(o.getTotalExp()));
+                        //运费
+                        rowData.add(String.valueOf(o.getFreight()));
+                        //应付金额
+                        rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight()));
+                        //已收货款
+                        rowData.add(String.valueOf(o.getReceiveTotal()));
+                        Integer ten = 10, forTy = 40;
+                        if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
+                            //尾款信息
+                            rowData.add("有尾款");
+                        } else {
+                            //尾款信息
+                            rowData.add("");
+                        }
+                        //利润
+                        Double buy=0.0;
+                        if(o.getTotalBuyPrice()!=null){
+                            buy=o.getTotalBuyPrice();
+                        }else{
+                            buy=0.0;
+                        }
+                        rowData.add(String.valueOf(df.format(o.getTotalDetail() + o.getTotalExp() + o.getFreight() - buy)));
+                        Dict dictInv = new Dict();
+                        dictInv.setDescription("发票状态");
+                        dictInv.setType("biz_order_invStatus");
+                        List<Dict> dictListInv = dictService.findList(dictInv);
+                        for (Dict dinv : dictListInv) {
+                            if (dinv.getValue().equals(String.valueOf(o.getInvStatus()))) {
+                                //发票状态
+                                rowData.add(String.valueOf(dinv.getLabel()));
+                                break;
+                            }
+                        }
+                        Dict dictBiz = new Dict();
+                        dictBiz.setDescription("业务状态");
+                        dictBiz.setType("biz_order_status");
+                        List<Dict> dictListBiz = dictService.findList(dictBiz);
+                        for (Dict dbiz : dictListBiz) {
+                            if (dbiz.getValue().equals(String.valueOf(o.getBizStatus()))) {
+                                //业务状态
+                                rowData.add(String.valueOf(dbiz.getLabel()));
+                                break;
+                            }
+                        }
+
                         //支付类型名称
-                        payRow.add(String.valueOf(p.getPayTypeName()));
+                        rowData.add(String.valueOf(p.getPayTypeName()));
                         //业务流水号
-                        payRow.add(String.valueOf(p.getOutTradeNo()));
+                        rowData.add(String.valueOf(p.getOutTradeNo()));
                         //支付金额
-                        payRow.add(String.valueOf(p.getPayMoney()));
+                        rowData.add(String.valueOf(p.getPayMoney()));
                         //交易时间
-                        payRow.add(String.valueOf(sdf.format(p.getCreateDate())));
-                        payData.add(payRow);
+                        rowData.add(String.valueOf(sdf.format(p.getCreateDate())));
+                        //                        payData.add(payRow);
+                        data.add(rowData);
                     });
                 }
+                //订单来源
+//                rowData.add(String.valueOf(o.getPlatformInfo().getName()));
+//                if (o.getBizLocation() != null) {
+//                    //收货人
+//                    rowData.add(String.valueOf(o.getBizLocation().getReceiver()));
+//                    //联系电话
+//                    rowData.add(String.valueOf(o.getBizLocation().getPhone()));
+//                    //订单收货地址
+//                    rowData.add(String.valueOf(o.getBizLocation().getProvince().getName() + o.getBizLocation().getCity().getName() +
+//                            o.getBizLocation().getRegion().getName() + o.getBizLocation().getAddress()));
+//                } else {
+//                    rowData.add("");
+//                    rowData.add("");
+//                    rowData.add("");
+//                }
+//                //创建人
+//                rowData.add(String.valueOf(o.getCreateBy().getName()));
+//                //创建时间
+//                rowData.add(String.valueOf(sdf.format(o.getCreateDate())));
+//                //更新人
+//                rowData.add(String.valueOf(o.getUpdateBy().getName()));
+//                //更新时间
+//                rowData.add(String.valueOf(sdf.format(o.getUpdateDate())));
             }
-            String[] headers = {"ID", "订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价", "交易金额", "运费",
-                    "应付金额", "已收货款", "尾款信息", "利润", "发票状态", "业务状态", "订单来源", "收货人", "联系电话", "收货地址", "创建人", "创建时间", "更新人", "更新时间"};
-            String[] details = {"ID", "订单编号", "商品名称", "商品编码", "供应商", "商品单价", "采购数量", "商品总价"};
-            String[] pays = {"ID", "订单编号", "支付类型名称", "业务流水号", "支付金额", "交易时间"};
-            ExportExcelUtils eeu = new ExportExcelUtils();
+            String[] headers = {"订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价","商品工厂总价", "调整金额", "运费",
+                    "应付金额", "已收货款", "尾款信息", "利润", "发票状态", "业务状态","支付类型名称","业务流水号","支付金额","交易时间"};
+            String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价","商品工厂价", "采购数量", "商品总价"};
+            OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "订单数据", headers, data, fileName);
-            eeu.exportExcel(workbook, 1, "交易记录", pays, payData, fileName);
-            eeu.exportExcel(workbook, 2, "商品数据", details, detailData, fileName);
+            eeu.exportExcel(workbook, 1, "商品数据", details, detailData, fileName);
             response.reset();
             response.setContentType("application/octet-stream; charset=utf-8");
             response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
