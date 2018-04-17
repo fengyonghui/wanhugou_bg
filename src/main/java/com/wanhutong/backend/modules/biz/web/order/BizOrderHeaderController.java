@@ -506,6 +506,9 @@ public class BizOrderHeaderController extends BaseController {
                             detailListData.add(String.valueOf(d.getVendor().getName()));
                             //商品单价
                             detailListData.add(String.valueOf(d.getUnitPrice()));
+                            //商品工厂价
+                            BizSkuInfo skuInfo = bizSkuInfoService.get(d.getSkuInfo().getId());
+                            detailListData.add(String.valueOf(skuInfo.getBuyPrice()));
                             //采购数量
                             detailListData.add(String.valueOf(d.getOrdQty()));
                             //商品总价
@@ -539,6 +542,12 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add(String.valueOf(o.getCentersName()));
                     //商品总价
                     rowData.add(String.valueOf(df.format(o.getTotalDetail())));
+                    //商品工厂总价
+                    List<BizOrderHeader> orderHeaderList = new ArrayList<>();
+                    orderHeaderList.add(o);
+                    List<BizOrderHeader> oheaderList = bizOrderHeaderService.getTotalBuyPrice(orderHeaderList);
+                    BizOrderHeader orderHeader = oheaderList.get(0);
+                    rowData.add(String.valueOf(df.format(orderHeader.getTotalBuyPrice())));
                     //交易金额
                     rowData.add(String.valueOf(o.getTotalExp()));
                     //运费
@@ -610,6 +619,9 @@ public class BizOrderHeaderController extends BaseController {
                                 detailListData.add(String.valueOf(d.getVendor().getName()));
                                 //商品单价
                                 detailListData.add(String.valueOf(d.getUnitPrice()));
+                                //商品工厂价
+                                BizSkuInfo skuInfo = bizSkuInfoService.get(d.getSkuInfo().getId());
+                                detailListData.add(String.valueOf(skuInfo.getBuyPrice()));
                                 //采购数量
                                 detailListData.add(String.valueOf(d.getOrdQty()));
                                 //商品总价
@@ -643,6 +655,12 @@ public class BizOrderHeaderController extends BaseController {
                         rowData.add(String.valueOf(o.getCentersName()));
                         //商品总价
                         rowData.add(String.valueOf(df.format(o.getTotalDetail())));
+                        //商品工厂总价
+                        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
+                        orderHeaderList.add(o);
+                        List<BizOrderHeader> oheaderList = bizOrderHeaderService.getTotalBuyPrice(orderHeaderList);
+                        BizOrderHeader orderHeader = oheaderList.get(0);
+                        rowData.add(String.valueOf(df.format(orderHeader.getTotalBuyPrice())));
                         //交易金额
                         rowData.add(String.valueOf(o.getTotalExp()));
                         //运费
@@ -726,9 +744,9 @@ public class BizOrderHeaderController extends BaseController {
 //                //更新时间
 //                rowData.add(String.valueOf(sdf.format(o.getUpdateDate())));
             }
-            String[] headers = {"订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价", "调整金额", "运费",
+            String[] headers = {"订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价","商品工厂总价", "调整金额", "运费",
                     "应付金额", "已收货款", "尾款信息", "利润", "发票状态", "业务状态","支付类型名称","业务流水号","支付金额","交易时间"};
-            String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "采购数量", "商品总价"};
+            String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价","商品工厂价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "订单数据", headers, data, fileName);

@@ -89,6 +89,7 @@ public class OrderHeaderExportExcelUtils {
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 10, 10));
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 11, 11));
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 12, 12));
+                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 13, 13));
                     }
                 }
                 if (index > 1 && sheetTitle.equals("商品数据")) {
@@ -104,6 +105,7 @@ public class OrderHeaderExportExcelUtils {
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 4, 4));
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 5, 5));
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 6, 6));
+                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 7, 7));
                     }
                 }
                 int cellIndex = 0;

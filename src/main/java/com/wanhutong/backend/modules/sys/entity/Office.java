@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
@@ -52,6 +54,8 @@ public class Office extends TreeEntity<Office> {
 	private Integer consultantId;
 	private Integer centerId;
 	private Integer ccStatus;
+
+	private BizVendInfo bizVendInfo;		//供应商拓展
 
 	/**
 	 * 供应商新增页面显示，新增地址
@@ -360,5 +364,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
+	}
+
+	public BizVendInfo getBizVendInfo() {
+		return bizVendInfo;
+	}
+
+	public void setBizVendInfo(BizVendInfo bizVendInfo) {
+		this.bizVendInfo = bizVendInfo;
 	}
 }

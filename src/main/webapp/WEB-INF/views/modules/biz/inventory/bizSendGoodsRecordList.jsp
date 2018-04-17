@@ -6,7 +6,18 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+            $("#buttonExport").click(function(){
+                top.$.jBox.confirm("确认要导出供货记录吗？","系统提示",function(v,h,f){
+                    if(v=="ok"){
+                        $("#searchForm").attr("action","${ctx}/biz/inventory/bizSendGoodsRecord/bizSendGoodsRecordExport?bizStatu=${bizStatus}");
+                        $("#searchForm").submit();
+                        <%--$("#buttonExport").attr("disabled",true);--%>
+                        $("#searchForm").attr("action","${ctx}/biz/inventory/bizSendGoodsRecord?bizStatu=${bizStatus}");
+                        <%--$("#buttonExport").removeAttr("disabled");--%>
+                    }
+                },{buttonsFocus:1});
+                top.$('.jbox-body .jbox-icon').css('top','55px');
+            });
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -21,7 +32,7 @@
 		<li class="active"><a href="${ctx}/biz/inventory/bizSendGoodsRecord?bizStatu=${bizStatus}">供货记录列表</a></li>
 		 <%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><li><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form">供货记录添加</a></li></shiro:hasPermission>--%>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord?bizStatu=${bizStatus}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="bizStatus" name="bizStatus" type="hidden" value="${bizStatus}"/>
@@ -42,6 +53,7 @@
 				<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
