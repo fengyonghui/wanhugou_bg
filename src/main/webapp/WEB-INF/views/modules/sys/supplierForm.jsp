@@ -179,11 +179,11 @@
         </div>
     </div>
     <%--<div class="control-group">--%>
-        <%--<label class="control-label">副负责人:</label>--%>
-        <%--<div class="controls">--%>
-            <%--<sys:treeselect id="deputyPerson" name="deputyPerson.id" value="${office.deputyPerson.id}" labelName="office.deputyPerson.name" labelValue="${office.deputyPerson.name}"--%>
-                            <%--title="用户" url="/sys/user/treeData?type=7&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>--%>
-        <%--</div>--%>
+    <%--<label class="control-label">副负责人:</label>--%>
+    <%--<div class="controls">--%>
+    <%--<sys:treeselect id="deputyPerson" name="deputyPerson.id" value="${office.deputyPerson.id}" labelName="office.deputyPerson.name" labelValue="${office.deputyPerson.name}"--%>
+    <%--title="用户" url="/sys/user/treeData?type=7&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>--%>
+    <%--</div>--%>
     <%--</div>--%>
     <%--<div class="control-group">--%>
     <%--<label class="control-label">联系地址:</label>--%>
@@ -194,17 +194,30 @@
     <div class="control-group">
         <label class="control-label">所在地区：</label>
         <div class="controls">
-            <input type="hidden" id="locationId" name="locationId" value="${office.bizLocation.id}"/>
-            <form:hidden path="bizLocation.selectedRegionId" id="regionId" value="${office.bizLocation.selectedRegionId}"/>
-            <input type="text" id="regionName" value="${office.bizLocation.pcrName}" readonly="readonly"/>
+            <input type="hidden" id="locationId" name="locationId" value="${entity.bizLocation.id}"/>
+            <form:hidden path="officeAddress.bizLocation.selectedRegionId" id="regionId" value="${entity.bizLocation.selectedRegionId}"/>
+            <input type="text" id="regionName" value="${entity.bizLocation.pcrName}" readonly="readonly" required="true"/>
             <biz:selectregion id="region_id" name="regionName" selectedId="regionId"/>
+            <span class="help-inline"><font color="red">*</font> </span>
         </div>
-    </div>
     </div>
     <div class="control-group">
         <label class="control-label">详细地址：</label>
         <div class="controls">
-            <form:input path="bizLocation.address" value="${office.bizLocation.address }" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+            <form:input path="officeAddress.bizLocation.address" value="${entity.bizLocation.address }" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+            <span class="help-inline"><font color="red">*</font> </span>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">经度：</label>
+        <div class="controls">
+            <form:input path="officeAddress.bizLocation.longitude" value="${entity.bizLocation.longitude }" htmlEscape="false" class="input-xlarge  number"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">纬度：</label>
+        <div class="controls">
+            <form:input path="officeAddress.bizLocation.latitude" value="${entity.bizLocation.latitude }" htmlEscape="false" class="input-xlarge  number"/>
         </div>
     </div>
 
@@ -259,68 +272,68 @@
         <shiro:hasPermission name="sys:office:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
-	<!-- 模态框（Modal） -->
-	<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-							aria-hidden="true">×
-					</button>
-					<h4 class="modal-title" id="myModalLabel">
-						负责人添加
-					</h4>
-				</div>
-				<div class="modal-body">
-					<div class="control-group">
-						<label class="control-label">姓名:</label>
-						<div class="controls">
-							<input id="primaryName" name="primaryPerson.name" htmlEscape="false" maxlength="50" class="required"/>
-							<span id="checkName" class="help-inline"><font color="red">*</font> </span>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">登录名:</label>
-						<div class="controls">
-							<input id="oldLoginName" name="primaryPerson.oldLoginName" type="hidden" value="">
-							<input id="loginName" name="primaryPerson.loginName" htmlEscape="false" maxlength="50" class="required userName"/>
-							<span id="checkLoginName" class="help-inline"><font color="red">*</font> </span>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">密码:</label>
-						<div class="controls">
-							<input id="newPassword" name="primaryPerson.newPassword" type="password" value="" maxlength="50" minlength="3" class="required"/>
-							<span id="checkNewPassword" class="help-inline"><font color="red">*</font> </span>
-								<%--<c:if test="${not empty user.id}"><span class="help-inline">若不修改密码，请留空。</span></c:if>--%>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">确认密码:</label>
-						<div class="controls">
-							<input id="confirmNewPassword" name="primaryPerson.confirmNewPassword" type="password" value="" maxlength="50" class="required" minlength="3" equalTo="#newPassword"/>
-							<span id="checkConfirmNewPassword" class="help-inline"><font color="red">*</font> </span>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label">手机:</label>
-						<div class="controls">
-							<input id="primaryMobile" name="primaryPerson.mobile" htmlEscape="false" maxlength="100" class="required"/>
-							<span id="checkPrimaryMobile" class="help-inline"><font color="red">*</font> </span>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default"
-							data-dismiss="modal">关闭
-					</button>
-					<button id="saveUser" type="button" class="btn btn-primary">
-						保存
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        负责人添加
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="control-group">
+                        <label class="control-label">姓名:</label>
+                        <div class="controls">
+                            <input id="primaryName" name="primaryPerson.name" htmlEscape="false" maxlength="50" class="required"/>
+                            <span id="checkName" class="help-inline"><font color="red">*</font> </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">登录名:</label>
+                        <div class="controls">
+                            <input id="oldLoginName" name="primaryPerson.oldLoginName" type="hidden" value="">
+                            <input id="loginName" name="primaryPerson.loginName" htmlEscape="false" maxlength="50" class="required userName"/>
+                            <span id="checkLoginName" class="help-inline"><font color="red">*</font> </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">密码:</label>
+                        <div class="controls">
+                            <input id="newPassword" name="primaryPerson.newPassword" type="password" value="" maxlength="50" minlength="3" class="required"/>
+                            <span id="checkNewPassword" class="help-inline"><font color="red">*</font> </span>
+                                <%--<c:if test="${not empty user.id}"><span class="help-inline">若不修改密码，请留空。</span></c:if>--%>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">确认密码:</label>
+                        <div class="controls">
+                            <input id="confirmNewPassword" name="primaryPerson.confirmNewPassword" type="password" value="" maxlength="50" class="required" minlength="3" equalTo="#newPassword"/>
+                            <span id="checkConfirmNewPassword" class="help-inline"><font color="red">*</font> </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">手机:</label>
+                        <div class="controls">
+                            <input id="primaryMobile" name="primaryPerson.mobile" htmlEscape="false" maxlength="100" class="required"/>
+                            <span id="checkPrimaryMobile" class="help-inline"><font color="red">*</font> </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button id="saveUser" type="button" class="btn btn-primary">
+                        保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </form:form>
 
 </body>
