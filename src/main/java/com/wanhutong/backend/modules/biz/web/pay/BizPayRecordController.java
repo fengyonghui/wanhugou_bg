@@ -117,11 +117,18 @@ public class BizPayRecordController extends BaseController {
 	 * */
 	@RequiresPermissions("biz:pay:bizPayRecord:view")
 	@RequestMapping(value = "payBtnExport", method = RequestMethod.POST)
-	public String torySkuExport(BizPayRecord bizPayRecord, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String torySkuExport(BizPayRecord bizPayRecord,String payExportCend, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		String a="cend_pay";
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			String fileName = "交易记录数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			List<BizPayRecord> PayList = bizPayRecordService.findList(bizPayRecord);
+			List<BizPayRecord> PayList =null;
+			if(payExportCend!=null && payExportCend.equals(a)){
+				bizPayRecord.setListPayQuery("CqueryPay");
+				PayList = bizPayRecordService.findList(bizPayRecord);
+			}else {
+				PayList = bizPayRecordService.findList(bizPayRecord);
+			}
 			List<List<String>> data = new ArrayList<List<String>>();
 			PayList.forEach(pay->{
 				List<String> rowData = new ArrayList();
@@ -202,6 +209,9 @@ public class BizPayRecordController extends BaseController {
 			return null;
 		}catch (Exception e){
 			addMessage(redirectAttributes, "导出交易记录数据失败！失败信息：" + e.getMessage());
+		}
+		if(payExportCend!=null && payExportCend.equals(a)){
+			return "redirect:" + adminPath + "/biz/pay/bizPayRecord/CendList";
 		}
 		return "redirect:" + adminPath + "/biz/pay/bizPayRecord/";
 	}

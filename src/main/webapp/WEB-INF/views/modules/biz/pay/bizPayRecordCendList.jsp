@@ -9,9 +9,9 @@
 			$("#payBtnExport").click(function(){
                 top.$.jBox.confirm("确认要导出交易记录吗？","系统提示",function(v,h,f){
                     if(v=="ok"){
-                        $("#searchForm").attr("action","${ctx}/biz/pay/bizPayRecord/payBtnExport");
+                        $("#searchForm").attr("action","${ctx}/biz/pay/bizPayRecord/payBtnExport?payExportCend=cend_pay");
                         $("#searchForm").submit();
-                        $("#searchForm").attr("action","${ctx}/biz/pay/bizPayRecord/");
+                        $("#searchForm").attr("action","${ctx}/biz/pay/bizPayRecord/CendList");
                     }
                 },{buttonsFocus:1});
                 top.$('.jbox-body .jbox-icon').css('top','55px');
