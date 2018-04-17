@@ -474,4 +474,22 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public List<Office> findCapitalList(Office cust){
 		return officeDao.findList(cust);
 	}
+
+	/**
+	 * 根据type取数据
+	 * @param type
+	 * @return
+	 */
+	public List<Office> findListByType(String type) {
+		return officeDao.findListByType(type);
+	}
+
+	/**
+	 * 根据officeId 取 cust
+	 * @param officeId
+	 * @return
+	 */
+	public List<Office> findCustomByOfficeId(Integer officeId) {
+		return officeDao.findCustomByOfficeId(officeId);
+	}
 }
