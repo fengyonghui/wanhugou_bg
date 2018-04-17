@@ -274,8 +274,7 @@ usingNamespace("Base")["Mask"] =  {
         if ($String.isNullOrBlank(content)) {
             content = "";
         }
-        var hei=window.innerHeight-100;
-        var logo=$("<div class='loGo'><img src='/static/images/load.gif'><p>"+content+"</p></div>");
+        var logo=$("<div class='loGo' style='width:200px;height: 200px;position:fixed;margin:auto;left:0;right:0;top:0;bottom:0;'><img src='/static/images/load.gif'><p>"+content+"</p></div>");
         $("body").append(logo);
     },
     RemoveLogo: function(){
