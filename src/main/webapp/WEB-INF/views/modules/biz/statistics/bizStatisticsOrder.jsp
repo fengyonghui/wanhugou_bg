@@ -52,7 +52,6 @@
         orderRateChart.clear();
         orderRateChart.showLoading($Echarts.showLoadingStyle);
 
-
         var dataTypeEle = $("#dataType");
         var dataType = dataTypeEle.find("option:selected").val();
         var dataTypeDesc = dataTypeEle.find("option:selected").html();
@@ -206,6 +205,7 @@
                     });
                     $('#img1').val(imgUrl);
                 },1000);
+
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("未查询到数据!");

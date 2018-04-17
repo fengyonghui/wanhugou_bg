@@ -48,6 +48,7 @@
 </table>
 <script type="application/javascript">
     function init() {
+        $Mask.AddLogo("正在加载");
         var officeId = $("#purchasingId").val();
         window.location.href = "orderCountFrequency?&officeId=" + officeId;
     }

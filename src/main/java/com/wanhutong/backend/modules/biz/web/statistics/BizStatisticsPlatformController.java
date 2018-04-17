@@ -855,7 +855,6 @@ public class BizStatisticsPlatformController extends BaseController {
             }
         }
 
-
         request.setAttribute("officeId", officeId);
         request.setAttribute("dataMap", resultMap);
         request.setAttribute("custList", custList);
