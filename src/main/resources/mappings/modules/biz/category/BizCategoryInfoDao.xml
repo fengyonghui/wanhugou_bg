@@ -62,7 +62,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		order by updateDate desc
+		order by a.update_time desc
 	</select>
 
 	<select id="findListByBrandId" resultType="BizCategoryInfo">
@@ -113,8 +113,8 @@
 		WHERE a.status = #{DEL_FLAG_NORMAL}
 		<if test="parentIds != null and parentIds != ''">
 			AND a.p_ids LIKE
-			<if test="dbName == 'oracle'">'%'||#{id}||'%'</if>
-			<if test="dbName == 'mssql'">'%'+#{id}+'%'</if>
+			<if test="dbName == 'oracle'">'%'||#{parentIds}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{parentIds}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{parentIds},'%')</if>
 		</if>
 		<if test="name != null and name != ''">
@@ -123,7 +123,7 @@
 			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 		</if>
-		order by updateDate desc
+		order by a.update_time desc
 	</select>
 
 	<select id="findAllList" resultType="BizCategoryInfo">

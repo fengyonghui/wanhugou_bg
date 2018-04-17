@@ -53,13 +53,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Autowired
 	private BizCustCreditService bizCustCreditService;
 	@Autowired
+	private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
+	@Autowired
 	private CommonLocationService commonLocationService;
 	@Autowired
 	private SysOfficeAddressService sysOfficeAddressService;
 	@Autowired
 	private SystemService systemService;
-	@Autowired
-	private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
 	@Autowired
     private BizVarietyInfoService bizVarietyInfoService;
 	@Autowired
@@ -250,6 +250,17 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 					commonLocation.getAddress().equals(office.getOfficeAddress().getBizLocation().getAddress())){
 				address.setBizLocation(commonLocation);
 			}else{
+				if(office.getOfficeAddress().getBizLocation().getSelectedRegionId()==null){
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getProvince()==null){
+						office.getOfficeAddress().getBizLocation().setProvince(commonLocation.getProvince());
+					}
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getCity()==null){
+						office.getOfficeAddress().getBizLocation().setCity(commonLocation.getCity());
+					}
+					if(office.getLocationId()!=null && office.getOfficeAddress().getBizLocation().getRegion()==null){
+						office.getOfficeAddress().getBizLocation().setRegion(commonLocation.getRegion());
+					}
+				}
 				address.setBizLocation(office.getOfficeAddress().getBizLocation());
 			}
 			address.setOffice(office);
@@ -273,7 +284,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			}
 			sysOfficeAddressService.save(address);
 		}
-		office.setAddress(String.valueOf(address.getBizLocation().getPcrName()));
+		office.setAddress(String.valueOf(address.getBizLocation().getPcrName())+address.getBizLocation().getAddress());
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 		//保存新建联系人
@@ -462,94 +473,5 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	 */
 	public List<Office> findCapitalList(Office cust){
 		return officeDao.findList(cust);
-	}
-
-
-	/**
-	 * 客户专员关联采购商，选择的采购商不包括已经关联的采购商
-	 * */
-	public List<Office> commissFilerOffice(List<Office> offices,String source, OfficeTypeEnum officeType){
-		Office office = new Office();
-		User user = UserUtils.getUser();
-		if(!user.isAdmin()&& !OfficeTypeEnum.VENDOR.getType().equals(officeType.getType()) &&!OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType()) && user.getCompany().getType().equals(OfficeTypeEnum.PURCHASINGCENTER.getType())){
-			office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a", ""));
-		}
-		else if (StringUtils.isNotBlank(source) && (source.equals("ghs") || source.equals("gys") || source.equals("cgs"))){
-
-		}
-		else if(!user.isAdmin()&&OfficeTypeEnum.CUSTOMER.getType().equals(officeType.getType())){
-			boolean flag=false;
-			boolean flagb=false;
-			if(user.getRoleList()!=null){
-				for(Role role:user.getRoleList()){
-					if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
-						flag=true;
-
-					}else if(RoleEnNameEnum.BUYER.getState().equals(role.getEnname())){
-						flagb=true;
-
-					}
-				}
-			}
-			BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
-			if(flag){
-				customCenterConsultant.setCenters(user.getCompany());
-				List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
-				return officeList;
-			}else if(flagb && StringUtils.isNotBlank(source) && source.equals("purchaser")) {
-				customCenterConsultant.setCenters(user.getCompany());
-				if(StringUtils.isNotBlank(source) && source.equals("purchaser")){
-					customCenterConsultant.setConsultants(user);
-				}
-				List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
-
-				return officeList;
-			}
-			else if(flagb || (flag&& StringUtils.isNotBlank(source) && source.equals("con"))){
-				office.setType(String.valueOf(officeType.ordinal()));
-
-				office.setDelFlag(DEL_FLAG_NORMAL);
-				List<Office> officeList =	officeDao.findOfficeCustByIdToParent(office);
-				return officeList;
-			}
-		}
-		office.setType(String.valueOf(officeType.ordinal()));
-		office.setDelFlag(DEL_FLAG_NORMAL);
-		List<Office> list = queryList(office);
-		//get all parents
-		Set<Integer> parentSet = new HashSet<>();
-		for (Office office1 : list) {
-			//关联采购商的选择，客户专员
-			BizCustomCenterConsultant ccl = bizCustomCenterConsultantDao.get(office1.getId());
-			if(ccl==null || ccl.getDelFlag().equals("0")){
-				String[] parentIds = office1.getParentIds().split(",");
-				for (String id : parentIds) {
-					parentSet.add(Integer.valueOf(id));
-				}
-			}
-		}
-		if (offices == null || offices.size() == 0) {
-			office.setType(null);
-			//	office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "so", ""));
-			offices = queryList(office);
-		}
-		Iterator<Office> iterator = offices.iterator();
-		while (iterator.hasNext()) {
-			Office office1 = iterator.next();
-			Integer id = office1.getId();
-			if (!parentSet.contains(id) && !String.valueOf(officeType.ordinal()).equals(office1.getType())) {
-				iterator.remove(); //注意这个地方
-			}
-		}
-		//二次移除，关联采购商的选择，客户专员
-		Iterator<Office> iterator22 = offices.iterator();
-		while (iterator22.hasNext()) {
-			Office office1 = iterator22.next();
-			BizCustomCenterConsultant ccl = bizCustomCenterConsultantDao.get(office1.getId());
-			if(ccl!=null && !ccl.getDelFlag().equals("0")){
-				iterator22.remove(); //注意这个地方
-			}
-		}
-		return offices;
 	}
 }
