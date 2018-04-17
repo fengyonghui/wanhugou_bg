@@ -6,6 +6,9 @@ package com.wanhutong.backend.modules.sys.entity;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -14,6 +17,7 @@ import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
+
 
 /**
  * 机构Entity
@@ -365,7 +369,7 @@ public class Office extends TreeEntity<Office> {
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
 	}
-
+	@XmlTransient
 	public BizVendInfo getBizVendInfo() {
 		return bizVendInfo;
 	}
