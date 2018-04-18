@@ -414,7 +414,7 @@
 	
 	<update id="delete">
 		UPDATE biz_sku_info SET 
-			status = #{delFlag}
+			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 
