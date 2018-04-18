@@ -268,7 +268,7 @@
 					<%--<td>${reqDetail.recvQty}</td>--%>
 					<td><input  name="ordQtys" readonly="readonly"  value="${map.value.reqQty-map.value.sentQty}" class="input-mini" type='text'/></td>
 					<td>
-					<input type="text" name="unitPrices" value="${map.value.buyPrice}" class="input-mini">
+					<input readonly="readonly" type="text" name="unitPrices" value="${map.value.buyPrice}" class="input-mini">
 					</td>
 
 					</tr>
