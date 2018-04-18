@@ -3,58 +3,70 @@
  */
 package com.wanhutong.backend.modules.biz.service.order;
 
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderUnlineDao;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
-import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.List;
+
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.List;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderUnlineDao;
 
 /**
- * 线下支付订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
+ * 线下支付订单(线下独有)Service
  * @author ZhangTengfei
- * @version 2017-12-20
+ * @version 2018-04-17
  */
 @Service
 @Transactional(readOnly = true)
 public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlineDao, BizOrderHeaderUnline> {
 
-    @Resource
-    private BizOrderHeaderUnlineDao bizOrderHeaderUnlineDao;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
 
-
-    public BizOrderHeaderUnline get(Integer id) {
-        return super.get(id);
-    }
-
-    public List<BizOrderHeaderUnline> findList(BizOrderHeaderUnline bizOrderHeaderUnline) {
-        User user= UserUtils.getUser();
-        boolean oflag = false;
-        if (UserUtils.getOfficeList() != null){
-            for (Office office:UserUtils.getOfficeList()){
-                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
-                    oflag = true;
-                }
+	public BizOrderHeaderUnline get(Integer id) {
+		return super.get(id);
+	}
+	
+	public List<BizOrderHeaderUnline> findList(BizOrderHeaderUnline bizOrderHeaderUnline) {
+		return super.findList(bizOrderHeaderUnline);
+	}
+	
+	public Page<BizOrderHeaderUnline> findPage(Page<BizOrderHeaderUnline> page, BizOrderHeaderUnline bizOrderHeaderUnline) {
+		return super.findPage(page, bizOrderHeaderUnline);
+	}
+	
+	@Transactional(readOnly = false)
+	public void save(BizOrderHeaderUnline bizOrderHeaderUnline) {
+		super.save(bizOrderHeaderUnline);
+		BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
+        BigDecimal money = new BigDecimal(bizOrderHeader.getTotalDetail()+bizOrderHeader.getTotalExp()+bizOrderHeader.getFreight());
+        if (bizOrderHeader.getBizStatus().equals(OrderHeaderBizStatusEnum.UNPAY.getState())) {
+            if (money.compareTo(bizOrderHeaderUnline.getRealMoney())>=0) {
+                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
+            }
+            if (money.compareTo(bizOrderHeaderUnline.getRealMoney())==0) {
+                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
+            }
+		}
+		if (bizOrderHeader.getBizStatus().equals(OrderHeaderBizStatusEnum.INITIAL_PAY.getState())) {
+            if (money.compareTo(bizOrderHeaderUnline.getRealMoney())==0) {
+                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
             }
         }
-        List<BizOrderHeaderUnline> bizOrderHeaderList = super.findList(bizOrderHeaderUnline);
-        return bizOrderHeaderList;
-    }
-
-    @Transactional(readOnly = false)
-    public void save(BizOrderHeaderUnline bizOrderHeaderUnline) {
-        super.save(bizOrderHeaderUnline);
-    }
-
-    @Transactional(readOnly = false)
-    public void delete(BizOrderHeaderUnline bizOrderHeaderUnline) {
-        super.delete(bizOrderHeaderUnline);
-    }
-
+		bizOrderHeader.setReceiveTotal(bizOrderHeaderUnline.getRealMoney().doubleValue());
+		bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+	}
+	
+	@Transactional(readOnly = false)
+	public void delete(BizOrderHeaderUnline bizOrderHeaderUnline) {
+		super.delete(bizOrderHeaderUnline);
+	}
+	
 }

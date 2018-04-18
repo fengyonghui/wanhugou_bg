@@ -80,6 +80,9 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private List<BizPayRecord> BizPayRecordList;
 
+    private BizOrderHeaderUnline orderHeaderUnline;     //线下支付订单独有内容
+    private String statu;       //线下支付订单表示
+
     public List<BizPayRecord> getBizPayRecordList() {
         return BizPayRecordList;
     }
@@ -438,5 +441,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setOrderUpdaEndTime(Date orderUpdaEndTime) {
         this.orderUpdaEndTime = orderUpdaEndTime;
+    }
+
+    public BizOrderHeaderUnline getOrderHeaderUnline() {
+        return orderHeaderUnline;
+    }
+
+    public void setOrderHeaderUnline(BizOrderHeaderUnline orderHeaderUnline) {
+        this.orderHeaderUnline = orderHeaderUnline;
+    }
+
+    public String getStatu() {
+        return statu;
+    }
+
+    public void setStatu(String statu) {
+        this.statu = statu;
     }
 }

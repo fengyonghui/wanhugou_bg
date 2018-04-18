@@ -1675,4 +1675,35 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 		GROUP BY
   		date_format(oh.create_time, '%Y-%m')
     </select>
+
+	<select id="findUnlineOrder" resultType="BizOrderHeader">
+		SELECT
+		a.id AS "id",
+		a.order_num AS "orderNum",
+		a.order_type AS "orderType",
+		a.cust_id AS "customer.id",
+		a.total_detail AS "totalDetail",
+		a.receive_total as "receiveTotal",
+		a.total_exp AS "totalExp",
+		a.freight AS "freight",
+		a.update_id AS "updateBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.update_time AS "updateDate",
+		a.biz_type as "bizType",
+		a.inv_status AS "invStatus",
+		a.plateform_id AS "platformInfo.id",
+		a.biz_status AS "bizStatus",
+		so.name as "custName",
+		s.name as "centersName"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		LEFT JOIN sys_office so on so.id = a.cust_id
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office s on s.id=ccs.center_id
+		WHERE a.status = 1
+		AND ohu.id is not NULL
+	</select>
 </mapper>

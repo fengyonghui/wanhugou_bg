@@ -31,6 +31,7 @@ public class OrderHeaderExportExcelUtils {
                             String fileName) throws Exception {
         // 生成一个表格  
         sheet = workbook.createSheet();
+        int a=0;
         workbook.setSheetName(sheetNum, sheetTitle
 //                ,HSSFWorkbook.ENCODING_UTF_16
         );
@@ -67,29 +68,37 @@ public class OrderHeaderExportExcelUtils {
             XSSFRichTextString text = new XSSFRichTextString(headers[i]);
             cell.setCellValue(text.toString());
         }
+
         // 遍历集合数据，产生数据行  
         if (result != null) {
             int index = 1;
+            int b=1;
+            int rowNum = 1;
+            int n = 0;
             for (List<String> m : result) {
                 row = sheet.createRow(index);
                 if (index > 1 && sheetTitle.equals("订单数据")) {
                     String s = m.get(0);
-                    String s1 = result.get(index-2).get(0);
+                    String s1 = result.get(n).get(0);
                     if (s.equals(s1)) {
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 0, 0));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 1, 1));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 2, 2));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 3, 3));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 4, 4));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 5, 5));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 6, 6));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 7, 7));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 8, 8));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 9, 9));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 10, 10));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 11, 11));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 12, 12));
-                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 13, 13));
+                        rowNum = sheet.addMergedRegion(new CellRangeAddress(b, index, 0, 0));
+//                        lastRow = sheet.getMergedRegion(n).getLastRow();
+                        sheet.addMergedRegion(new CellRangeAddress(b, index, 1, 1));
+//                        int c = sheet.addMergedRegion(new CellRangeAddress(b, index, 2, 2));
+//                        int d = sheet.addMergedRegion(new CellRangeAddress(c, index, 3, 3));
+//                        System.out.println(""+a+b+c+d);
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 4, 4));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 5, 5));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 6, 6));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 7, 7));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 8, 8));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 9, 9));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 10, 10));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 11, 11));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 12, 12));
+//                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 13, 13));
+                    }else {
+                        b = rowNum+1;
                     }
                 }
                 if (index > 1 && sheetTitle.equals("商品数据")) {
@@ -115,7 +124,9 @@ public class OrderHeaderExportExcelUtils {
                     cellIndex++;
                 }
                 index++;
+                n++;
             }
+
         }
     }
 
