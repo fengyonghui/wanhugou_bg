@@ -13,6 +13,7 @@ public enum  OrderStatisticsDataTypeEnum {
     SALES_GROWTH_RATE(2,"销售增长率"),
     ORDER_COUNT(3,"订单量"),
     PROFIT(4,"利润"),
+    UNIVALENCE(5,"平均单价"),
     ;
     private int code;
     private String desc;

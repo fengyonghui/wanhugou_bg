@@ -97,6 +97,12 @@ public class BizStatisticsDayService {
                     case ORDER_COUNT:
                         dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getOrderCount() : 0);
                         break;
+                    case PROFIT:
+                        dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getProfitPrice() : 0);
+                        break;
+                    case UNIVALENCE:
+                        dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getUnivalence() : 0);
+                        break;
                     default:
                         break;
                 }

@@ -10,9 +10,6 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
-import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
-import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
@@ -23,6 +20,7 @@ import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -208,6 +206,14 @@ public class BizSkuInfoController extends BaseController {
 
 			skuInfo.setSkuPropertyInfos(propNames);
 
+			CommonImg commonImg=new CommonImg();
+			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+			commonImg.setObjectId(skuInfo.getId());
+			commonImg.setObjectName("biz_sku_info");
+			List<CommonImg> imgList = commonImgService.findList(commonImg);
+			if (CollectionUtils.isNotEmpty(imgList)) {
+				skuInfo.setDefaultImg(imgList.get(0).getImgServer().concat(imgList.get(0).getImgPath()));
+			}
 			skuInfoList.add(skuInfo);
 
 		}
@@ -217,5 +223,23 @@ public class BizSkuInfoController extends BaseController {
         List<Dict> dictList=DictUtils.getDictList("inv_type");
         map.put("dictList",dictList);
 			return map;
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
+	@RequestMapping(value = "saveSkuInfo")
+	public String saveBizSkuInfo(Integer skuId, Double money) {
+		String flag = "";
+		try {
+			BizSkuInfo skuInfo = bizSkuInfoService.get(skuId);
+			skuInfo.setBuyPrice(money);
+			bizSkuInfoService.saveSkuInfo(skuInfo);
+			flag = "ok";
+
+		} catch (Exception e) {
+			flag = "error";
+			logger.error(e.getMessage());
+		}
+		return flag;
 	}
 }

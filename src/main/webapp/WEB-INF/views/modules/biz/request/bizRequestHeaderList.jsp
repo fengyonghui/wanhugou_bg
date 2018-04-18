@@ -43,9 +43,12 @@
 			<li><label>备货单号：</label>
 				<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
-			<%--<li><label>货号：</label>--%>
-				<%--<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
-			<%--</li>--%>
+			<li><label>货号：</label>
+				<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
+			<li><label>供应商：</label>
+				<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
 			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
 								labelValue="${entity.fromOffice.name}"
@@ -75,6 +78,7 @@
 				<th>采购中心</th>
 				<th>期望收货时间</th>
 				<th>备货商品数量</th>
+				<th>备货商品总价</th>
 				<th>已到货数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
@@ -108,6 +112,7 @@
 					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>${requestHeader.reqQtys}</td>
+				<td>${requestHeader.totalMoney}</td>
 				<td>${requestHeader.recvQtys}</td>
 				<td>
 					${requestHeader.remark}

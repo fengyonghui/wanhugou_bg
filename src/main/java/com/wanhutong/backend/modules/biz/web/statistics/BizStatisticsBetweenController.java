@@ -76,7 +76,7 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequestMapping(value = {"userSale", ""})
     public String userSale(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
-        request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList("8"));
+        request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList(OfficeTypeEnum.PURCHASINGCENTER.getType()));
 
         Calendar cal = Calendar.getInstance();
         //获取本周一的日期
