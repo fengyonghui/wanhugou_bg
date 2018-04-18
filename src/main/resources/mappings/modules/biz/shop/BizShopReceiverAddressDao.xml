@@ -58,6 +58,9 @@
 				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{user.name},'%')</if>
 			</if>
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id =#{user.id}
+			</if>
 			<if test="receiver != null and receiver != ''">
 				AND a.receiver = #{receiver}
 			</if>

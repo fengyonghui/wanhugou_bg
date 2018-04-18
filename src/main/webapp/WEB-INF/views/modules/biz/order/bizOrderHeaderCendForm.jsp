@@ -32,7 +32,7 @@
             if($("#bizOrderMark").val()!=""){
                 clickBut();
             }
-            <%--订单地址--%>
+            <%--C端订单地址--%>
             if($("#id").val() !=""){
                 var option2=$("<option/>").text("${orderAddress.province.name}").val(${orderAddress.province.id});
                 $("#province").append(option2);
@@ -41,35 +41,11 @@
                 var option4=$("<option/>").text("${orderAddress.region.name}").val(${orderAddress.region.id});
                 $("#region").append(option4);
                 $("#address").val("${orderAddress.address}");
-                <%--交货地址--%>
-                if(${orderAddress.type==1 }){
-                    var option2=$("<option/>").text("${orderAddress.province.name}").val(${orderAddress.province.id});
-                    $("#jhprovince").append(option2);
-                    var option3=$("<option/>").text("${orderAddress.city.name}").val(${orderAddress.city.id});
-                    $("#jhcity").append(option3);
-                    var option4=$("<option/>").text("${orderAddress.region.name}").val(${orderAddress.region.id});
-                    $("#jhregion").append(option4);
-                    $("#jhaddress").val("${address.address}");
-                    $("#appointedDate").val("<fmt:formatDate value="${address.appointedTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>");
-                }else{
-                    var option2=$("<option/>").text("${address.province.name}").val(${address.province.id});
-                    $("#jhprovince").append(option2);
-                    var option3=$("<option/>").text("${address.city.name}").val(${address.city.id});
-                    $("#jhcity").append(option3);
-                    var option4=$("<option/>").text("${address.region.name}").val(${address.region.id});
-                    $("#jhregion").append(option4);
-                    $("#jhaddress").val("${address.address}");
-                    $("#appointedDate").val("<fmt:formatDate value="${address.appointedTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>");
-                }
+                <%--C端订单收货地址--%>
                 $("#province").change();
                 $("#city").change();
                 $("#region").change();
                 $("#address").change();
-                <%--交货地址--%>
-                $("#jhprovince").change();
-                $("#jhcity").change();
-                $("#jhregion").change();
-                $("#jhaddress").change();
             }
             $("#addAddressHref").click(function () {
                 var officeId=$("#officeId").val();
@@ -89,7 +65,7 @@
             $("#address").empty();
             $.ajax({
                 type:"post",
-                url:"${ctx}/sys/office/sysOfficeAddress/findAddrByOffice?office.id="+officeId,
+                url:"${ctx}/biz/shop/bizShopReceiverAddress/findCendByAdderUser?user.id="+officeId,
                 success:function(data){
                     if(data==''){
                         console.log("数据为空显示 新增地址 ");
@@ -101,6 +77,8 @@
                         $("#add1").css("display","block");
                         $("#add2").css("display","none");
                         $("#add3").css("display","block");
+                        $("#receCend").val(data.receiver);
+                        $("#phoneCend").val(data.phone);
                         var option2=$("<option>").text(data.bizLocation.province.name).val(data.bizLocation.province.id);
                         $("#province").append(option2);
                         var option3=$("<option/>").text(data.bizLocation.city.name).val(data.bizLocation.city.id);
@@ -108,7 +86,7 @@
                         var option4=$("<option/>").text(data.bizLocation.region.name).val(data.bizLocation.region.id);
                         $("#region").append(option4);
                         $("#address").val(data.bizLocation.address);
-
+                        <%-- C端订单 --%>
                         $("#province").change();
                         $("#city").change();
                         $("#region").change();
@@ -227,22 +205,17 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/cendSave" method="post"
-           class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/cendSave" method="post" class="form-horizontal">
     <form:hidden path="id"/>
-    <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
-    <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <form:hidden path="platformInfo.id" value="1"/>
     <sys:message content="${message}"/>
-
     <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
         <div class="control-group">
             <label class="control-label">订单编号：</label>
             <div class="controls">
-                <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"
-                            class="input-xlarge"/>
+                <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="50" class="input-xlarge"/>
             </div>
         </div>
     </c:if>
@@ -258,20 +231,18 @@
         </div>
     </c:if>
     <div class="control-group">
-        <label class="control-label">采购商名称：</label>
+        <label class="control-label">用户名称：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-                <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
-                                labelValue="${entity2.customer.name}" disabled="disabled"
-                                notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
+                <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}" labelName="customer.name"
+                                labelValue="${entity.customer.name}" disabled="disabled" notAllowSelectParent="true"
+                                title="用户" url="/sys/wx/sysWxPersonalUser/userTreeData" cssClass="input-xlarge"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
-                                labelValue="${entity2.customer.name}"
-                                notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+                <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}" labelName="customer.name"
+                                labelValue="${entity.customer.name}" notAllowSelectParent="true"
+                                title="用户" url="/sys/wx/sysWxPersonalUser/userTreeData" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
                 <span class="help-inline"><font color="red">*</font></span>
             </c:if>
@@ -318,9 +289,6 @@
         <div class="control-group">
             <label class="control-label">已付金额：</label>
             <div class="controls">
-                <%--<input type="text" value="<fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />"--%>
-                       <%--style="color:#088A29" class="input-xlarge" disabled="true" />--%>
-                        <%-----${bizOrderHeader.receiveTotal}----%>
                 <font color="#088A29">
                     <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
@@ -396,7 +364,7 @@
                             class="input-xlarge"/>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <form:input path="bizLocation.receiver" placeholder="请输入收货人名称" htmlEscape="false"
+                <form:input path="bizLocation.receiver" id="receCend" placeholder="请输入收货人名称" htmlEscape="false"
                             class="input-xlarge required"/>
                 <span class="help-inline"><font color="red">*</font> </span>
             </c:if>
@@ -410,7 +378,7 @@
                             class="input-xlarge required"/>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <form:input path="bizLocation.phone" placeholder="请输入联系电话" htmlEscape="false"
+                <form:input path="bizLocation.phone" id="phoneCend" placeholder="请输入联系电话" htmlEscape="false"
                             class="input-xlarge required"/>
                 <span class="help-inline"><font color="red">*</font> </span>
             </c:if>
@@ -518,71 +486,20 @@
     </c:if>
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
-            <div class="control-group" id="jhadd1">
-                <label class="control-label">交货地址；</label>
-                <div class="controls">
-                    <select id="jhprovince" class="input-medium" name="bizLocation.province.id" disabled="disabled"
-                            style="width:150px;text-align: center;">
-                        <c:if test="${bizOrderHeader.id ==null}">
-                            <option value="-1">—— 省 ——</option>
-                        </c:if>
-                    </select>
-                    <select id="jhcity" class="input-medium" name="bizLocation.city.id" disabled="disabled"
-                            style="width:150px;text-align: center;">
-                        <c:if test="${bizOrderHeader.id ==null}">
-                            <option value="-1">—— 市 ——</option>
-                        </c:if>
-                    </select>
-                    <select id="jhregion" class="input-medium" name="bizLocation.region.id" disabled="disabled"
-                            style="width:150px;text-align: center;">
-                        <c:if test="${bizOrderHeader.id ==null}">
-                            <option value="-1">—— 区 ——</option>
-                        </c:if>
-                    </select>
-                    <span class="help-inline"><font color="red">*</font> </span>
-                </div>
-            </div>
-            <div class="control-group" id="jhadd2" style="display:none">
-                <label class="control-label">交货地址；</label>
-                <div class="controls">
-                    <input id="addJhAddressHref" type="button" value="新增地址" htmlEscape="false"
-                           class="input-xlarge required"/>
-                    <label class="error" id="addError" style="display:none;">必填信息</label>
-                    <span class="help-inline"><font color="red">*</font></span>
-                </div>
-            </div>
-            <div class="control-group" id="jhadd3">
-                <label class="control-label">详细地址；</label>
-                <div class="controls">
-                    <input type="text" id="jhaddress" name="bizLocation.address" htmlEscape="false"
-                           class="input-xlarge required"/>
-                    <span class="help-inline"><font color="red">*</font></span>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">交货时间；</label>
-                <div class="controls">
-                    <input id="appointedDate" name="bizLocation.appointedTime" type="text" readonly="readonly"
-                           maxlength="20" class="input-xlarge Wdate required"
-                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
-                    <span class="help-inline"><font color="red">*</font></span>
-                </div>
-            </div>
+
         </c:when>
         <c:otherwise>
             <div class="form-actions">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                    <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit"
-                                                                                     class="btn btn-primary"
-                                                                                     type="submit"
-                                                                                     value="保存"/>&nbsp;</shiro:hasPermission>
+                    <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+                        <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>
+                    </shiro:hasPermission>
                 </c:if>
                 <c:if test="${not empty entity.orderDetails}">
                     待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
-
         </c:otherwise>
     </c:choose>
 
@@ -724,17 +641,16 @@
         </c:if>
     </c:if>
 </div>
-<c:if test="${bizOrderHeader.flag=='check_pending'}">
-    <div class="form-actions">
-        <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-            <input class="btn btn-primary" type="button"
-                   onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;
-            <input class="btn btn-primary" type="button"
-                   onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;
-        </shiro:hasPermission>
-    </div>
-</c:if>
-
+<%--<c:if test="${bizOrderHeader.flag=='check_pending'}">--%>
+    <%--<div class="form-actions">--%>
+        <%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit">--%>
+            <%--<input class="btn btn-primary" type="button"--%>
+                   <%--onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;--%>
+            <%--<input class="btn btn-primary" type="button"--%>
+                   <%--onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;--%>
+        <%--</shiro:hasPermission>--%>
+    <%--</div>--%>
+<%--</c:if>--%>
 
 </body>
 </html>

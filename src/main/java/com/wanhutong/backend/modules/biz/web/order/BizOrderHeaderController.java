@@ -9,12 +9,9 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.utils.excel.ExportExcel;
-import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
@@ -37,7 +34,6 @@ import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +45,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -800,58 +795,41 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "cendform")
     public String cendform(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
         if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
-            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            Office office = new Office();
+            User user = systemService.getUser(bizOrderHeader.getCustomer().getId());
+            office.setId(user.getId());
+            office.setName(user.getName());
             bizOrderHeader.setCustomer(office);
-            model.addAttribute("entity2", bizOrderHeader);
-//			用于销售订单页面展示属于哪个采购中心哪个客户专员
-            BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
-            if (bizCustomCenterConsultant != null) {
-                bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
-                model.addAttribute("orderCenter", bizCustomCenterConsultant);
-            } else {
-                model.addAttribute("orderCenter", new BizCustomCenterConsultant());
-            }
         }
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
         if (bizOrderHeader.getId() != null) {
-            Double totalDetail = bizOrderHeaderTwo.getTotalDetail();//订单详情总价
-            Double totalExp = bizOrderHeaderTwo.getTotalExp();//订单总费用
-            Double freight = bizOrderHeaderTwo.getFreight();//运费
+            Double totalDetail = bizOrderHeaderTwo.getTotalDetail();
+            Double totalExp = bizOrderHeaderTwo.getTotalExp();
+            Double freight = bizOrderHeaderTwo.getFreight();
             Double orderHeaderTotal = totalDetail + totalExp + freight;
-            bizOrderHeader.setTobePaid(orderHeaderTotal - bizOrderHeaderTwo.getReceiveTotal());//页面显示待支付总价
-            if (orderNoEditable != null && orderNoEditable.equals("editable")) {//不可编辑标识符
-                bizOrderHeaderTwo.setOrderNoEditable("editable");//待支付页面不能修改
+            //cendForm页面显示待支付总价
+            bizOrderHeader.setTobePaid(orderHeaderTotal - bizOrderHeaderTwo.getReceiveTotal());
+            //不可编辑标识符
+            String a="editable";
+            String b="details";
+            if (orderNoEditable != null && orderNoEditable.equals(a)) {
+                //待支付cendForm页面不能修改
+                bizOrderHeaderTwo.setOrderNoEditable(a);
             }
-            if (orderDetails != null && orderDetails.equals("details")) {
-                bizOrderHeaderTwo.setOrderDetails("details");//查看详情页面不能修改
+            if (orderDetails != null && orderDetails.equals(b)) {
+                //查看详情cendForm页面不能修改
+                bizOrderHeaderTwo.setOrderDetails(b);
             }
             BizOrderAddress bizOrderAddress = new BizOrderAddress();
             bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
             List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
-            for (BizOrderAddress orderAddress : list) {
-//				    收货地址
-                if (orderAddress.getType() == 1) {
-                    model.addAttribute("orderAddress", orderAddress);
+            if(list.size()!=0){
+                for (BizOrderAddress orderAddress : list) {
+    //				    收货地址
+                    if (orderAddress.getType() == 1) {
+                        model.addAttribute("orderAddress", orderAddress);
+                    }
                 }
-            }
-            BizOrderAddress orderAddress = new BizOrderAddress();
-            orderAddress.setOrderHeaderID(bizOrderHeaderTwo);
-            List<BizOrderAddress> Addresslist = bizOrderAddressService.findList(orderAddress);
-            for (BizOrderAddress address : Addresslist) {
-//				交货地址
-                if (address.getType() == 2) {
-                    model.addAttribute("address", address);
-                }
-            }
-        }
-        BizOrderHeader boh = new BizOrderHeader();
-        if (bizOrderHeader != null) {
-            boh.setCustomer(bizOrderHeader.getCustomer());
-            boh.setBizStatus(BizOrderDiscount.ONE_ORDER.getOneOr());//条件为0
-            List<BizOrderHeader> list = bizOrderHeaderDao.findListFirstOrder(boh);
-            if (list.size() == 0) {
-                System.out.println("--是首单--");
-                bizOrderHeader.setOneOrder("firstOrder");
             }
         }
         model.addAttribute("entity", bizOrderHeader);
