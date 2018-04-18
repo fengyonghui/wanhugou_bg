@@ -54,6 +54,8 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	private List<BizPoDetail> poDetailList;
 
+	private Double totalMoney;
+
 	private String vendOfficeIds;
 
 	private String startDate;
@@ -312,5 +314,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Double getTotalMoney() {
+		return totalMoney;
+	}
+
+	public void setTotalMoney(Double totalMoney) {
+		this.totalMoney = totalMoney;
 	}
 }

@@ -10,8 +10,6 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
-import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
@@ -225,6 +223,24 @@ public class BizSkuInfoController extends BaseController {
         List<Dict> dictList=DictUtils.getDictList("inv_type");
         map.put("dictList",dictList);
 			return map;
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
+	@RequestMapping(value = "saveSkuInfo")
+	public String saveBizSkuInfo(Integer skuId, Double money) {
+		String flag = "";
+		try {
+			BizSkuInfo skuInfo = bizSkuInfoService.get(skuId);
+			skuInfo.setBuyPrice(money);
+			bizSkuInfoService.saveSkuInfo(skuInfo);
+			flag = "ok";
+
+		} catch (Exception e) {
+			flag = "error";
+			logger.error(e.getMessage());
+		}
+		return flag;
 	}
 
 	/**
