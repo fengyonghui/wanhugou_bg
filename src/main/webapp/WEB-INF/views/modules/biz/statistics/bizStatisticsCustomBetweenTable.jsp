@@ -38,6 +38,7 @@
 <script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initData() {
+        $Mask.AddLogo("正在加载");
         var startDate = $("#startDate").val();
         var endDate = $("#endDate").val();
         window.location.href="${adminPath}/biz/statistics/between/customTable?startDate=" + startDate + "&endDate=" + endDate;

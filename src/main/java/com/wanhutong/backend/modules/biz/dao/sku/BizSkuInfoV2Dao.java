@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.sku;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface BizSkuInfoV2Dao extends CrudDao<BizSkuInfo> {
 
    List<BizSkuInfo> findListByParam(BizSkuInfo bizSkuInfo);
 
-    BizSkuInfo getSkuInfoByItemNo(String itemNo);
+    BizSkuInfo getSkuInfoByItemNoProdId(@Param("itemNo") String itemNo, @Param("prodId")Integer prodId);
 
     List<BizSkuInfo> findListIgnoreStatus(BizSkuInfo oldSkuEntity);
 }

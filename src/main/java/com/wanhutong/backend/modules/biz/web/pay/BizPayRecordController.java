@@ -159,7 +159,7 @@ public class BizPayRecordController extends BaseController {
 					rowData.add(String.valueOf(""));
 				}
 				//联系电话
-				if(pay.getCustomer()!=null){
+				if(pay.getCustomer()!=null && pay.getCustomer().getMoblieMoeny()!=null &&  pay.getCustomer().getMoblieMoeny().getMobile()!=null){
 					rowData.add(String.valueOf(pay.getCustomer().getMoblieMoeny().getMobile()));
 				}else{
 					rowData.add(String.valueOf(""));
@@ -171,7 +171,7 @@ public class BizPayRecordController extends BaseController {
 					rowData.add(String.valueOf(""));
 				}
 				//支付到账户
-				if(pay.getAccount()!=null){
+				if(pay.getToAccount()!=null){
 					rowData.add(String.valueOf(pay.getToAccount().getName()));
 				}else {
 					rowData.add(String.valueOf(""));

@@ -81,6 +81,7 @@
                                 trdatas+="<td>"+skuInfo.buyPrice+"</td>";
                                 trdatas+="<td>"+(skuInfo.partNo==undefined?"":skuInfo.partNo)+"</td>";
                                 trdatas+="<td>"+(skuInfo.itemNo==undefined?"":skuInfo.itemNo)+"</td>";
+                                trdatas+="<td style='width: 200px'><a target='_blank' href='" + (skuInfo.defaultImg==undefined?"":skuInfo.defaultImg) + "'><img style='width: 200px' src=\"" + (skuInfo.defaultImg==undefined?"":skuInfo.defaultImg) + "\"/></a></td>";
                                 trdatas+="<td>"+(skuInfo.productInfo.vendorName==undefined?"":skuInfo.productInfo.vendorName)+"</td>";
                                 trdatas+="<td>"+skuInfo.skuPropertyInfos+"</td>";
                                 trdatas+="<td id='invType_"+skuInfo.id+"'>"+selectInvTypetd+"</td>";
@@ -245,6 +246,7 @@
 						<th>出厂价</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
+						<th style='width: 200px'>图片(点击查看大图)</th>
 						<th>供应商</th>
 						<th>商品属性</th>
 						<th>库存类型</th>
@@ -264,6 +266,7 @@
 						<td>${entity.skuInfo.buyPrice}</td>
 						<td>${entity.skuInfo.partNo}</td>
 						<td>${entity.skuInfo.itemNo}</td>
+						<td style='width: 200px'><img style='width: 200px' src="${entity.skuInfo.defaultImg}"></td>
 						<td>${entity.skuInfo.vendorName}</td>
 						<td>${entity.skuInfo.skuPropertyInfos}</td>
 						<td>${fns:getDictLabel(entity.invType, 'inv_type', '未知状态')}</td>
@@ -281,6 +284,7 @@
 						<th>出厂价</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
+						<th style='width: 200px'>图片(点击查看大图)</th>
 						<th>供应商</th>
 						<th>商品属性</th>
 						<th>库存类型</th>

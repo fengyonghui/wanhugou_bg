@@ -6,13 +6,18 @@ package com.wanhutong.backend.modules.sys.entity;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.TreeEntity;
+
 
 /**
  * 机构Entity
@@ -40,7 +45,7 @@ public class Office extends TreeEntity<Office> {
 	private User primaryPerson;//主负责人
 	private User deputyPerson;//副负责人
 	private List<String> childDeptList;//快速添加子部门
-	private String level; //钱包等级
+//	private String level; //钱包等级
 	private String gysMobile;	//供应商联系方式
 	private String queryMemberGys;	//列表查询列表 供应商、会员
 
@@ -62,7 +67,6 @@ public class Office extends TreeEntity<Office> {
 	private SysOfficeAddress officeAddress;
 	private Integer locationId;
 
-
 	private String delRemark ;
 
 	public String getDelRemark() {
@@ -78,13 +82,13 @@ public class Office extends TreeEntity<Office> {
 	 */
 	private String province;
 
-	public String getLevel() {
-		return level;
-	}
-
-	public void setLevel(String level) {
-		this.level = level;
-	}
+//	public String getLevel() {
+//		return level;
+//	}
+//
+//	public void setLevel(String level) {
+//		this.level = level;
+//	}
 
 	public Office(){
 		super();
@@ -95,7 +99,7 @@ public class Office extends TreeEntity<Office> {
 	public Office(Integer id){
 		super(id);
 	}
-
+	
 	public List<String> getChildDeptList() {
 		return childDeptList;
 	}
@@ -172,7 +176,7 @@ public class Office extends TreeEntity<Office> {
 //	public void setSort(Integer sort) {
 //		this.sort = sort;
 //	}
-
+	
 	@Length(min=1, max=1)
 	public String getType() {
 		return type;
@@ -256,7 +260,7 @@ public class Office extends TreeEntity<Office> {
 	//	public String getParentId() {
 //		return parent != null && parent.getId() != null ? parent.getId() : "0";
 //	}
-
+	
 	@Override
 	public String toString() {
 		return name;
@@ -350,14 +354,6 @@ public class Office extends TreeEntity<Office> {
 		this.province = province;
 	}
 
-	public BizVendInfo getBizVendInfo() {
-		return bizVendInfo;
-	}
-
-	public void setBizVendInfo(BizVendInfo bizVendInfo) {
-		this.bizVendInfo = bizVendInfo;
-	}
-
 	public SysOfficeAddress getOfficeAddress() {
 		return officeAddress;
 	}
@@ -372,5 +368,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
+	}
+	@XmlTransient
+	public BizVendInfo getBizVendInfo() {
+		return bizVendInfo;
+	}
+
+	public void setBizVendInfo(BizVendInfo bizVendInfo) {
+		this.bizVendInfo = bizVendInfo;
 	}
 }

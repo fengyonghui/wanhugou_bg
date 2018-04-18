@@ -268,3 +268,18 @@ usingNamespace("Base")["String"] = {
 };
 var $String = Base.String;
 
+//添加的蒙版
+usingNamespace("Base")["Mask"] =  {
+    AddLogo: function(content){
+        if ($String.isNullOrBlank(content)) {
+            content = "";
+        }
+        var logo=$("<div class='loGo' style='width:200px;height: 200px;position:fixed;margin:auto;left:0;right:0;top:0;bottom:0;'><img src='/static/images/load.gif'><p>"+content+"</p></div>");
+        $("body").append(logo);
+    },
+    RemoveLogo: function(){
+        $(".loGo").remove();
+    }
+};
+
+var $Mask = Base.Mask;

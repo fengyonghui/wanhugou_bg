@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -122,6 +123,7 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizSkuInfo bizSkuInfo, RedirectAttributes redirectAttributes) {
+		bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_DELETE);
 		bizSkuInfoService.delete(bizSkuInfo);
 		addMessage(redirectAttributes, "删除商品sku成功");
 		if(bizSkuInfo.getSign()==0){
@@ -129,6 +131,22 @@ public class BizSkuInfoController extends BaseController {
         }
 		return "redirect:"+Global.getAdminPath()+"//biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
 	}
+
+
+
+	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
+	@RequestMapping(value = "recovery")
+	public String recovery(BizSkuInfo bizSkuInfo, RedirectAttributes redirectAttributes) {
+		bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_NORMAL);
+		bizSkuInfoService.delete(bizSkuInfo);
+		addMessage(redirectAttributes, "恢复商品sku成功");
+		if(bizSkuInfo.getSign()==0){
+			return "redirect:"+Global.getAdminPath()+"//biz/sku/bizSkuInfo/?repage";
+		}
+		return "redirect:"+Global.getAdminPath()+"//biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+	}
+
+
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuList")
@@ -190,6 +208,14 @@ public class BizSkuInfoController extends BaseController {
 
 			skuInfo.setSkuPropertyInfos(propNames);
 
+			CommonImg commonImg=new CommonImg();
+			commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+			commonImg.setObjectId(skuInfo.getId());
+			commonImg.setObjectName("biz_sku_info");
+			List<CommonImg> imgList = commonImgService.findList(commonImg);
+			if (CollectionUtils.isNotEmpty(imgList)) {
+				skuInfo.setDefaultImg(imgList.get(0).getImgServer().concat(imgList.get(0).getImgPath()));
+			}
 			skuInfoList.add(skuInfo);
 
 		}

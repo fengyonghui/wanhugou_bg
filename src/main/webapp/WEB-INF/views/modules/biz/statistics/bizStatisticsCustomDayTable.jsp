@@ -37,6 +37,7 @@
 <script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initData() {
+        $Mask.AddLogo("正在加载");
         var date = $("#applyDate").val();
         window.location.href="${adminPath}/biz/statistics/day/customTable?day=" + date;
     }

@@ -34,7 +34,7 @@
 			<li><label>商品编号：</label>
 				<form:input path="skuInfo.partNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-			<li><label>订单号：</label>
+			<li><label>备货单号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>

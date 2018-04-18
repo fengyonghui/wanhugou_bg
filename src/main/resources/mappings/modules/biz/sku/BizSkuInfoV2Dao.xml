@@ -414,12 +414,12 @@
 		WHERE id = #{id}
 	</update>
 
-	<select id="getSkuInfoByItemNo" resultType="BizSkuInfo">
+	<select id="getSkuInfoByItemNoProdId" resultType="BizSkuInfo">
 		SELECT
 		<include refid="bizSkuInfoColumns"/>
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
-		WHERE a.item_no = #{itemNo}
+		WHERE a.item_no = #{itemNo} AND prod_id = #{prodId}
 	</select>
 
 
