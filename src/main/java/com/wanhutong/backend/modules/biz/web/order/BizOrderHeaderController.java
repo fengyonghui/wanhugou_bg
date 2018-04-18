@@ -9,28 +9,26 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.utils.excel.ExportExcel;
-import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
-import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -97,7 +95,7 @@ public class BizOrderHeaderController extends BaseController {
     @Autowired
     private SystemService systemService;
     @Autowired
-    private CommonImgService commonImgService;
+    private BizOrderHeaderUnlineService bizOrderHeaderUnlineService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -121,6 +119,13 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        if (bizOrderHeader.getStatu()!= null && bizOrderHeader.getStatu().equals("unline")){
+            page = new Page<>(request, response);
+            bizOrderHeader.setPage(page);
+            page.setList(bizOrderHeaderService.findUnlineOrder());
+        }
+
+        model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
         model.addAttribute("page", page);
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -184,7 +189,7 @@ public class BizOrderHeaderController extends BaseController {
                 bizOrderHeader.setOneOrder("firstOrder");
             }
         }
-        model.addAttribute("entity", bizOrderHeader);
+
         boolean flag = false;
         User user = UserUtils.getUser();
         if (user.getRoleList() != null) {
@@ -195,22 +200,18 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
         }
-        if (user.isAdmin() || flag) {
-            if (bizOrderHeaderTwo.getBizStatus().equals(OrderHeaderBizStatusEnum.LINE_PAY.getState())) {
-                CommonImg commonImg = new CommonImg();
-                commonImg.setObjectId(bizOrderHeaderTwo.getId());
-                commonImg.setObjectName("biz_orderHeader");
-                commonImg.setImgType(IMGTYPE);
-                List<CommonImg> commonImgList = commonImgService.findList(commonImg);
-                if (!commonImgList.isEmpty() && commonImgList.size() > 0) {
-                    commonImg = commonImgList.get(0);
-                }
-                StringBuffer imgurl = new StringBuffer();
-                imgurl.append(commonImg.getImgServer()).append(commonImg.getImgPath());
-                model.addAttribute("imgUrl", imgurl);
-                return "modules/biz/order/bizLineOrderHeaderForm";
+        if (bizOrderHeader.getStatu() != null && bizOrderHeader.getStatu().equals("unline")){
+            BizOrderHeaderUnline orderHeaderUnline = new BizOrderHeaderUnline();
+            orderHeaderUnline.setOrderHeader(bizOrderHeader);
+            List<BizOrderHeaderUnline> list = bizOrderHeaderUnlineService.findList(orderHeaderUnline);
+            if (list != null && !list.isEmpty()) {
+                BizOrderHeaderUnline bizOrderHeaderUnline = list.get(0);
+                bizOrderHeader.setOrderHeaderUnline(bizOrderHeaderUnline);
             }
+            model.addAttribute("entity", bizOrderHeader);
+            return "modules/biz/order/bizOrderHeaderUnlineForm";
         }
+        model.addAttribute("entity", bizOrderHeader);
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
@@ -793,18 +794,5 @@ public class BizOrderHeaderController extends BaseController {
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/order/bizOrderHeader/";
-    }
-
-    /**
-     * 更改线下支付订单状态
-     * @param id
-     */
-    @ResponseBody
-    @RequiresPermissions("biz:order:bizOrderHeader:view")
-    @RequestMapping(value = "changeOrderStatus")
-    public void changeOrderStatus(Integer id){
-        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
-        bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
     }
 }
