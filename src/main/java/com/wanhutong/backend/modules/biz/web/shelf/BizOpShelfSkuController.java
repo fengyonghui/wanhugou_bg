@@ -133,8 +133,11 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSkuService.save(bizOpShelfSku);
 
 		}
-
 		addMessage(redirectAttributes, "保存商品上架成功");
+		String a="cend_save";
+		if(bizOpShelfSkus.getCendShelf()!=null && bizOpShelfSkus.getCendShelf().equals(a)){
+			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/cendList";
+		}
 		if(bizOpShelfSkus.getShelfSign()==0){
 			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
 		}
@@ -282,7 +285,7 @@ public class BizOpShelfSkuController extends BaseController {
 	 * C端上下架管理列表
 	 * */
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
-	@RequestMapping(value = {"cendList", ""})
+	@RequestMapping(value ="cendList")
 	public String cendList(BizOpShelfSku bizOpShelfSku, HttpServletRequest request, HttpServletResponse response, Model model) {
 		String supplierId = DictUtils.getDictValue("微店", "biz_opshel_cend", "");
 		BizOpShelfInfo bizOpShelfInfo = new BizOpShelfInfo();

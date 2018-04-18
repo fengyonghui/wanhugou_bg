@@ -375,7 +375,7 @@
                 <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                     <form:select path="bizStatus" class="input-xlarge" disabled="true">
                         <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
+                        <form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
                                       htmlEscape="false"/></form:select>
                 </c:if>
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">

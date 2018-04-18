@@ -36,24 +36,19 @@
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	<ul class="ul-form">
 		<li><label>订单编号：</label>
-			<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
+			<form:input path="orderNum" htmlEscape="false" maxlength="50" class="input-medium"/>
+		</li>
+		<li><label>用户名称：</label>
+			<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
+					labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
+					title="用户"  url="/sys/wx/sysWxPersonalUser/userTreeData" cssClass="input-medium"
+					allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 		</li>
 		<li><label>订单状态：</label>
 			<form:select path="bizStatus" class="input-medium">
 				<form:option value="" label="请选择"/>
 				<form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
 							  htmlEscape="false"/></form:select>
-		</li>
-		<li>
-			<label>货架编号：</label>
-			<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
-		</li>
-		<li><label>采购商名称：</label>
-			<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
-							labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
-							title="采购商"  url="/sys/office/queryTreeList?type=6"
-							cssClass="input-medium"
-							allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
@@ -65,8 +60,7 @@
 	<thead>
 	<tr>
 		<th>订单编号</th>
-		<th>采购商名称</th>
-		<th>采购商电话</th>
+		<th>用户名称</th>
 		<th>商品总价</th>
 		<th>调整金额</th>
 		<th>运费</th>
@@ -90,9 +84,6 @@
 			</td>
 			<td>
 					${orderHeader.customer.name}
-			</td>
-			<td>
-					${orderHeader.customer.phone}
 			</td>
 			<td><font color="#848484">
 				<fmt:formatNumber type="number" value="${orderHeader.totalDetail}" pattern="0.00"/>

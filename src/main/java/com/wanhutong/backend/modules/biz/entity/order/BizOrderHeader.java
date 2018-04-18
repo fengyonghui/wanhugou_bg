@@ -25,7 +25,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private static final long serialVersionUID = 1L;
     private String orderNum;        // 订单编号-由系统生成；唯一
-    private Integer orderType;        // 1: 普通订单 ; 2:帐期采购 3:配资采购
+    private Integer orderType;        // 1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单
     private Office customer;        // 客户ID sys_office.id &amp;  type=customer
     private Double totalDetail;        // 订单详情总价
     private Double receiveTotal;    //订单已收货款
@@ -36,6 +36,16 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer bizType;        //订单运营类型: 1专营订单 2非专营订单
     private BizPlatformInfo platformInfo;        // 订单来源； biz_platform_info.id
     private BizOrderAddress bizLocation;        // 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
+    /**
+     * 卖方ID
+     *  if(order_type == 4)｛
+     *     seller_id = sys_office.id
+     *  ｝else｛
+     *     seller_id = 公司office.id
+     *  ｝
+     * */
+    private Office sellers;
+
 
     private CommonLocation location;          //订单交货地址
     private List<BizOrderDetail> orderDetailList;    //查询有多少订单
@@ -438,5 +448,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setOrderUpdaEndTime(Date orderUpdaEndTime) {
         this.orderUpdaEndTime = orderUpdaEndTime;
+    }
+
+    public Office getSellers() {
+        return sellers;
+    }
+
+    public void setSellers(Office sellers) {
+        this.sellers = sellers;
     }
 }

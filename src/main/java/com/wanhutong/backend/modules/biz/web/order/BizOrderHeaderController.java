@@ -201,7 +201,6 @@ public class BizOrderHeaderController extends BaseController {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?oneOrder=" + oneOrder;
-        //	return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
@@ -210,6 +209,10 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "删除订单信息成功");
+        String a="cendDelete";
+        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(a)){
+            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
+        }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
@@ -220,6 +223,10 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "恢复订单信息成功");
+        String a="cendRecover";
+        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(a)){
+            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
+        }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
@@ -858,7 +865,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "cendSave")
     public String cendSave(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
         if (!beanValidator(model, bizOrderHeader)) {
-            return form(bizOrderHeader, model, null, null);
+            return cendform(bizOrderHeader, model, null, null);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
             bizOrderHeader.getPlatformInfo().setId(1);

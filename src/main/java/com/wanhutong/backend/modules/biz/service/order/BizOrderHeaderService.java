@@ -273,7 +273,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         if(bizOrderHeader.getId()==null || bizOrderHeader.getId()==0){
             BizOrderHeader orderHeader=new BizOrderHeader();
             orderHeader.setCustomer(bizOrderHeader.getCustomer());
-            orderHeader.setOrderType(Integer.parseInt(OrderTypeEnum.SO.getOrderType()));
+            orderHeader.setOrderType(Integer.parseInt(OrderTypeEnum.CO.getOrderType()));
             List<BizOrderHeader> bizOrderHeaderList= bizOrderHeaderDao.findList(orderHeader);
             int s=0;
             if(bizOrderHeaderList!=null && bizOrderHeaderList.size()>0){

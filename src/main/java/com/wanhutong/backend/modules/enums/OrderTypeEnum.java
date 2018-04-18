@@ -3,7 +3,7 @@ package com.wanhutong.backend.modules.enums;
 
 public enum OrderTypeEnum {
     //SO销售订单 PO采购订单 SE发货单 ，CEND微店订单
-    ORDER("0"),SO("1"),PO("2"),RE("6"),SE("7"),CEND("4");
+    ORDER("0"),SO("1"),PO("2"),RE("6"),SE("7"),CO("4");
     private String orderType;
 
     OrderTypeEnum(String orderType) {
