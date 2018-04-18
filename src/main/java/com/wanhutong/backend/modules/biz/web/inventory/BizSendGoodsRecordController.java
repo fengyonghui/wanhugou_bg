@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
@@ -146,7 +147,7 @@ public class BizSendGoodsRecordController extends BaseController {
                 List<String> rowData = new ArrayList<>();
                 //仓库名
                 BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(bsgr.getInvInfo().getId());
-                rowData.add(bizInventoryInfo.getName());
+				rowData.add(bizInventoryInfo == null ? StringUtils.EMPTY : bizInventoryInfo.getName());
                 //商品名称
                 rowData.add(bsgr.getSkuInfo().getName());
                 //商品货号
