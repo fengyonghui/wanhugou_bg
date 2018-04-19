@@ -243,6 +243,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         bizOrdDetail.setSkuInfo(bizSkuInfo);
                         bizPoOrderReq.setOrderDetail(bizOrdDetail);
                         bizPoOrderReq.setOrderHeader(orderHeader);
+                        bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
                         List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
                         if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
                             poHeader = bizPoOrderReqList.get(0).getPoHeader();
@@ -376,6 +377,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bizReqDetail.setSkuInfo(bizSkuInfo);
                     bizPoOrderReq.setRequestDetail(bizReqDetail);
                     bizPoOrderReq.setRequestHeader(requestHeader);
+                    bizPoOrderReq.setSoType((Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())));
                     List<BizPoOrderReq> bizPoOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
                     if (bizPoOrderReqList != null && bizPoOrderReqList.size() > 0) {
                         poHeader = bizPoOrderReqList.get(0).getPoHeader();
@@ -396,7 +398,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bizRequestDetailService.save(requestDetail);
                     //改备货单状态为备货中(20)
                     requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
-                    bizRequestHeaderService.save(requestHeader);
+                    bizRequestHeaderService.saveInfo(requestHeader);
                     //生成供货记录
                     BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
                     bsgr.setSendNum(sendNum);

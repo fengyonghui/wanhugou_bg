@@ -80,11 +80,11 @@
 			<li><label>归属部门：</label>
 			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
 				<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
-						title="部门" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/></li>
+						title="部门" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</c:if>
 			<c:if test="${empty user.conn}">
-				<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-						title="公司" url="/sys/office/treeData" cssClass="input-small" allowClear="true"/>
+				<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
+								title="部门" url="/sys/office/treeData" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</c:if>
 			</li>
 		</c:if>
@@ -148,6 +148,7 @@
 		</tr>
 	</c:if>
 		<c:if test="${not empty user.conn}">
+		<c:if test="${bizUser.delFlag==1}">
 			<tr>
 				<td>${bizUser.company.name}</td>
 				<td>${bizUser.office.name}</td>
@@ -179,6 +180,7 @@
 					</c:if>
 				</td></shiro:hasPermission>
 			</tr>
+		</c:if>
 		</c:if>
 	</c:forEach>
 	</tbody>

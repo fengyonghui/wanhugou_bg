@@ -10,6 +10,7 @@
 		a.sku_id AS "skuInfo.id",
 		si.item_no AS "skuInfo.itemNo",
 		bpi.vendor_name AS "skuInfo.vendorName",
+		si.buy_price AS "skuInfo.buyPrice",
 		a.req_qty AS "reqQty",
 		a.recv_qty AS "recvQty",
 		a.send_qty AS "sendQty",

@@ -385,12 +385,27 @@ public class BizOrderHeaderController extends BaseController {
                             }
                         }
                         OrderAddressTwo.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
-                        OrderAddressTwo.setProvince(bizOrderHeader.getBizLocation().getProvince());
-                        OrderAddressTwo.setRegion(bizOrderHeader.getBizLocation().getRegion());
-                        OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
-                        OrderAddressTwo.setCity(bizOrderHeader.getBizLocation().getCity());
-                        OrderAddressTwo.setAddress(bizOrderHeader.getBizLocation().getAddress());
-                        OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());
+                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getProvince()!=null && bizOrderHeader.getBizLocation().getCity()!=null
+                                && bizOrderHeader.getBizLocation().getRegion()!=null){
+                            OrderAddressTwo.setProvince(bizOrderHeader.getBizLocation().getProvince());
+                            OrderAddressTwo.setCity(bizOrderHeader.getBizLocation().getCity());
+                            OrderAddressTwo.setRegion(bizOrderHeader.getBizLocation().getRegion());
+                        }
+                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getAddress()!=null){
+                            OrderAddressTwo.setAddress(bizOrderHeader.getBizLocation().getAddress());
+                        }else{
+                            OrderAddressTwo.setAddress("");
+                        }
+                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getReceiver()!=null){
+                            OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
+                        }else{
+                            OrderAddressTwo.setReceiver("");
+                        }
+                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getPhone()!=null){
+                            OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());
+                        }else{
+                            OrderAddressTwo.setPhone("");
+                        }
                         OrderAddressTwo.setType(2);
                         bizOrderAddressService.save(OrderAddressTwo);
                         if (StringUtils.isNotBlank(localSendIds) && StringUtils.isNotBlank(boo)) {
@@ -422,12 +437,27 @@ public class BizOrderHeaderController extends BaseController {
                             }
                         }
                         OrderAddressTwo.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
-                        OrderAddressTwo.setProvince(bizOrderHeader.getBizLocation().getProvince());
-                        OrderAddressTwo.setRegion(bizOrderHeader.getBizLocation().getRegion());
-                        OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
-                        OrderAddressTwo.setCity(bizOrderHeader.getBizLocation().getCity());
-                        OrderAddressTwo.setAddress(bizOrderHeader.getBizLocation().getAddress());
-                        OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());
+                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getProvince()!=null && bizOrderHeader.getBizLocation().getCity()!=null
+                                && bizOrderHeader.getBizLocation().getRegion()!=null){
+                            OrderAddressTwo.setProvince(bizOrderHeader.getBizLocation().getProvince());
+                            OrderAddressTwo.setCity(bizOrderHeader.getBizLocation().getCity());
+                            OrderAddressTwo.setRegion(bizOrderHeader.getBizLocation().getRegion());
+                        }
+                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getAddress()!=null){
+                            OrderAddressTwo.setAddress(bizOrderHeader.getBizLocation().getAddress());
+                        }else{
+                            OrderAddressTwo.setAddress("");
+                        }
+                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getReceiver()!=null){
+                            OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
+                        }else{
+                            OrderAddressTwo.setReceiver("");
+                        }
+                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getPhone()!=null){
+                            OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());
+                        }else{
+                            OrderAddressTwo.setPhone("");
+                        }
                         OrderAddressTwo.setType(2);
                         bizOrderAddressService.save(OrderAddressTwo);
                         commis = "ok";

@@ -14,7 +14,6 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +126,9 @@ public class BizSendGoodsRecordController extends BaseController {
                 List<String> rowData = new ArrayList<>();
                 //仓库名
                 BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(bsgr.getInvInfo().getId());
-				rowData.add(bizInventoryInfo == null ? StringUtils.EMPTY : bizInventoryInfo.getName());
+                if (bizStatu.equals("0")) {
+                    rowData.add(bizInventoryInfo == null ? StringUtils.EMPTY : bizInventoryInfo.getName());
+                }
                 //商品名称
                 rowData.add(bsgr.getSkuInfo().getName());
                 //商品货号
@@ -142,10 +143,15 @@ public class BizSendGoodsRecordController extends BaseController {
                 rowData.add(sdf.format(bsgr.getSendDate()));
                 data.add(rowData);
             }
-            String[] records = {"仓库名", "商品名称", "商品货号", "订单号", "供货数量", "客户", "供货时间"};
             ExportExcelUtils eeu = new ExportExcelUtils();
-            SXSSFWorkbook workbook = new SXSSFWorkbook();
-            eeu.exportExcel(workbook,0,"供货记录",records,data,fileName);
+			SXSSFWorkbook workbook = new SXSSFWorkbook();
+			if (bizStatu.equals("1")) {
+				String[] records = {"商品名称", "商品货号", "订单号", "供货数量", "客户", "供货时间"};
+				eeu.exportExcel(workbook,0,"供货记录",records,data,fileName);
+			}else {
+				String[] records = {"仓库名", "商品名称", "商品货号", "订单号", "供货数量", "客户", "供货时间"};
+				eeu.exportExcel(workbook,0,"供货记录",records,data,fileName);
+			}
             response.reset();
             response.setContentType("application/octet-stream; charset=utf-8");
             response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));

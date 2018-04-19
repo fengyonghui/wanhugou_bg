@@ -224,4 +224,22 @@ public class BizSkuInfoController extends BaseController {
         map.put("dictList",dictList);
 			return map;
 	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
+	@RequestMapping(value = "saveSkuInfo")
+	public String saveBizSkuInfo(Integer skuId, Double money) {
+		String flag = "";
+		try {
+			BizSkuInfo skuInfo = bizSkuInfoService.get(skuId);
+			skuInfo.setBuyPrice(money);
+			bizSkuInfoService.saveSkuInfo(skuInfo);
+			flag = "ok";
+
+		} catch (Exception e) {
+			flag = "error";
+			logger.error(e.getMessage());
+		}
+		return flag;
+	}
 }

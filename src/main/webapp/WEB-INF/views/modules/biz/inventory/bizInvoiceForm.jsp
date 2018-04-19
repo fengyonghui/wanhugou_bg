@@ -17,6 +17,12 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+				   // var fTd= $("#prodInfo").find("td").length;
+				   // alert(fTd)
+				   if($("#prodInfo").find("td").length==0){
+				       alert("请先选择待发货订单,然后点击确定。");
+					   return;
+				   }
                     var tt="";
                     var flag = false;
                     var total = 0;
@@ -283,7 +289,7 @@
 					<li><label>供应商：</label>
 						<input id="name"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
-					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
+					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/><span style="color: red;">(请输入没有供货完成的订单)</span></li>
 					<li class="clearfix"></li>
 				</ul>
 
