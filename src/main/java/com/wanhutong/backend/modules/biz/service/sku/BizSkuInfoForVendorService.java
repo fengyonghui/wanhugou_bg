@@ -342,8 +342,8 @@ public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoForVendorD
         commonImgService.delete(commonImg);
 	}
 
-	public BizSkuInfo getSkuInfoByItemNo(String itemNo) {
-		return bizSkuInfoDao.getSkuInfoByItemNo(itemNo);
+	public BizSkuInfo getSkuInfoByItemNoProdId(String itemNo, Integer prodId) {
+		return bizSkuInfoDao.getSkuInfoByItemNoProdId(itemNo, prodId);
 	}
 
 	public List<BizSkuInfo> findListIgnoreStatus(BizSkuInfo oldSkuEntity) {

@@ -210,7 +210,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 bizSkuInfo.setSort(String.valueOf(index));
                 bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
 
-                BizSkuInfo oldBizSkuInfo = bizSkuInfoForVendorService.getSkuInfoByItemNo(bizSkuInfo.getItemNo());
+                BizSkuInfo oldBizSkuInfo = bizSkuInfoForVendorService.getSkuInfoByItemNoProdId(bizSkuInfo.getItemNo(), bizProductInfo.getId());
                 if (oldBizSkuInfo != null && !copy) {
                     bizSkuInfo.setId(oldBizSkuInfo.getId());
                 }else {
