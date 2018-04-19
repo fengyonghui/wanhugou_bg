@@ -185,7 +185,7 @@ public class BizOrderHeaderController extends BaseController {
             return form(bizOrderHeader, model, null, null);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
-            bizOrderHeader.getPlatformInfo().setId(1);
+            bizOrderHeader.getPlatformInfo().setId(6);
         }
         bizOrderHeaderService.save(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
@@ -876,7 +876,7 @@ public class BizOrderHeaderController extends BaseController {
             return cendform(bizOrderHeader, model, null, null);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
-            bizOrderHeader.getPlatformInfo().setId(1);
+            bizOrderHeader.getPlatformInfo().setId(6);
         }
         bizOrderHeaderService.CendorderSave(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");

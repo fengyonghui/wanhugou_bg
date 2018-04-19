@@ -119,7 +119,7 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		su.name as "updateBy.name",
+		us.name as "updateBy.name",
 		a.update_time AS "updateDate",
 		s.name as "centersName",
 		con.id AS "con.id",
@@ -151,13 +151,14 @@
 		wxsu.name AS "customer.name",
 		bpi.name as "platformInfo.name",
 		su.name as "createBy.name",
-		su.name as "updateBy.name"
+		suu.name as "updateBy.name"
 	</sql>
 	<sql id="cendOrderHeaderJoins">
 		left join sys_user wxsu on wxsu.id=a.cust_id
 		left join biz_cms_platform_info bpi on bpi.id=a.plateform_id
-		left join sys_wx_personal_user wxpu on wxpu.id=a.create_id
-		left join sys_user su on wxpu.user_id=su.id
+		<!--left join sys_wx_personal_user wxpu on wxpu.id=a.create_id-->
+		left join sys_user su on a.create_id=su.id
+		left join sys_user suu on a.update_id=suu.id
 	</sql>
 	<!-- end -->
 
@@ -168,6 +169,7 @@
         LEFT JOIN sys_region city ON c.city_id = city.id
         LEFT JOIN sys_region reg ON c.region_id = reg.id
 		left join sys_user su on a.create_id=su.id
+		left join sys_user us on a.update_id=us.id
 		left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
     	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id

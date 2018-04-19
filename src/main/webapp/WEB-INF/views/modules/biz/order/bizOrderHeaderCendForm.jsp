@@ -209,7 +209,7 @@
     <form:hidden path="id"/>
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
-    <form:hidden path="platformInfo.id" value="1"/>
+    <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
     <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
         <div class="control-group">
@@ -462,7 +462,7 @@
         <div class="control-group">
             <label class="control-label">创建人：</label>
             <div class="controls">
-                <form:input path="totalDetail" value="${bizOrderHeader.createBy.name}" readOnly="true" class="input-xlarge"/>
+                <form:input path="createBy.id" value="${bizOrderHeader.createBy.name}" readOnly="true" class="input-xlarge"/>
             </div>
         </div>
         <div class="control-group">
@@ -474,7 +474,7 @@
         <div class="control-group">
             <label class="control-label">更新人：</label>
             <div class="controls">
-                <form:input path="totalDetail" value="${bizOrderHeader.updateBy.name}" readOnly="true" class="input-xlarge"/>
+                <form:input path="updateBy.id" value="${bizOrderHeader.updateBy.name}" readOnly="true" class="input-xlarge"/>
             </div>
         </div>
         <div class="control-group">
