@@ -54,8 +54,9 @@
         <div class="controls">
             <sys:treeselect id="office" name="parent.id" value="${office.parent.id}" labelName="parent.name"
                             labelValue="${office.parent.name}"
-                            title="机构" url="/sys/office/queryTreeList?type=6" extId="${office.id}" cssClass=""
+                            title="机构" url="/sys/office/queryTreeList?type=6" extId="${office.id}" cssClass="required"
                             allowClear="${office.currentUser.admin}"/>
+            <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
     <div class="control-group">
@@ -64,6 +65,7 @@
             <sys:treeselect id="area" name="area.id" value="${office.area.id}" labelName="area.name"
                             labelValue="${office.area.name}"
                             title="区域" url="/sys/area/treeData" cssClass="required"/>
+            <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
     <div class="control-group">
