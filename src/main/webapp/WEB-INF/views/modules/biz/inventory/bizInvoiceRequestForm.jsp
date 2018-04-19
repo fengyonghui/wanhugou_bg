@@ -17,6 +17,10 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    if($("#prodInfo").find("td").length==0){
+                        alert("请先选择待发货备货单,然后点击确定。");
+                        return;
+                    }
                     var tt="";
                     $('input:checkbox:checked').each(function(i) {
                         var t= $(this).val();
@@ -205,7 +209,7 @@
 
 
 		<div class="control-group">
-			<label class="control-label">选择订单：</label>
+			<label class="control-label">选择备货单：</label>
 			<div class="controls">
 				<ul class="inline ul-form">
 					<li><label>备货清单号：</label>
@@ -220,7 +224,7 @@
 					<li><label>供应商：</label>
 						<input id="name"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
-					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
+					<li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/><span style="color: red;">(请输入没有供货完成的订单)</span></li>
 					<li class="clearfix"></li>
 				</ul>
 
