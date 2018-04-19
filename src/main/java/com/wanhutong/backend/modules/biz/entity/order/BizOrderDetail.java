@@ -61,6 +61,10 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String suplyIds;
     private Office vendor;      //供应商
     private User primary;       //供应商主联系人
+    /**
+     * C端订单详情保存
+     * */
+    private String detailFlag;
 
     private BizOrderDetail orderDaillist;//商品
 
@@ -348,5 +352,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setInventoryInfo(BizInventoryInfo inventoryInfo) {
         this.inventoryInfo = inventoryInfo;
+    }
+
+    public String getDetailFlag() {
+        return detailFlag;
+    }
+
+    public void setDetailFlag(String detailFlag) {
+        this.detailFlag = detailFlag;
     }
 }
