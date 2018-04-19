@@ -55,7 +55,7 @@
 <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
 <form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoForVendor/save" method="post"
            class="form-horizontal">
-    <form:hidden path="id"/>
+    <form:hidden path="id" id="id"/>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -471,53 +471,72 @@
     }
 
     function submitCustomForm() {
-        var skuTrArr = $("[customType='skuTr']");
-        var inputForm = $("#inputForm");
+        var itemNo = $("#itemNo").val();
+        var id = $("#id").val();
+        $.ajax({
+            url: '${ctx}/biz/product/bizProductInfoV2/getItemNoExist',
+            contentType: 'application/json',
+            data: {"itemNo": itemNo, "id": id},
+            type: 'get',
+            success: function (result) {
+                if (result == "true") {
+                    alert("货号重复,请重新输入");
+                    return;
+                }
 
-        var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
-        skuTrArr.each(function () {
-            var idInput = $($(this).find("[customInput = 'idInput']")[0]).val();
-            var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
-            var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
-            var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
-            var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
-            var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
+                var skuTrArr = $("[customType='skuTr']");
+                var inputForm = $("#inputForm");
 
-            if (idInput == null || idInput == '') {
-                idInput = 0;
+                var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
+                skuTrArr.each(function () {
+                    var idInput = $($(this).find("[customInput = 'idInput']")[0]).val();
+                    var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
+                    var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
+                    var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
+                    var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
+                    var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
+
+                    if (idInput == null || idInput == '') {
+                        idInput = 0;
+                    }
+                    inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|" + idInput + "|" + imgInput));
+                });
+
+                var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
+                var mainImgStr = "";
+                for (var i = 0; i < mainImg.length; i++) {
+                    mainImgStr += ($(mainImg[i]).attr("src") + "|");
+                }
+                $("#photos").val(mainImgStr);
+
+                var bannerImg = $("#prodBannerImgDiv").find("[customInput = 'prodBannerImgImg']");
+                var bannerImgStr = "";
+                for (var i = 0; i < bannerImg.length; i++) {
+                    bannerImgStr += ($(bannerImg[i]).attr("src"));
+                }
+                $("#imgUrl").val(bannerImgStr);
+
+                var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
+                var detailImgStr = "";
+                for (var i = 0; i < detailImg.length; i++) {
+                    detailImgStr += ($(detailImg[i]).attr("src") + "|");
+                }
+                $("#photoDetails").val(detailImgStr);
+
+                var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
+                var testSelect2 = $("#test-select-2");
+                var tagSelected = testSelect2.parent().children(".tree-multiselect").children(".selected").children("div");
+                tagSelected.each(function () {
+                    inputForm.append(tagFormHtml.replace("$value", $(this).attr("data-value")));
+                });
+
+                inputForm.submit();
+
+            },
+            error: function (error) {
+                error(error);
             }
-            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|"+ idInput + "|" + imgInput));
         });
-
-        var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
-        var mainImgStr = "";
-        for (var i = 0; i < mainImg.length; i ++) {
-            mainImgStr += ($(mainImg[i]).attr("src") + "|");
-        }
-        $("#photos").val(mainImgStr);
-
-        var bannerImg = $("#prodBannerImgDiv").find("[customInput = 'prodBannerImgImg']");
-        var bannerImgStr = "";
-        for (var i = 0; i < bannerImg.length; i ++) {
-            bannerImgStr += ($(bannerImg[i]).attr("src"));
-        }
-        $("#imgUrl").val(bannerImgStr);
-
-        var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
-        var detailImgStr = "";
-        for (var i = 0; i < detailImg.length; i ++) {
-            detailImgStr += ($(detailImg[i]).attr("src") + "|");
-        }
-        $("#photoDetails").val(detailImgStr);
-
-        var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
-        var testSelect2 = $("#test-select-2");
-        var tagSelected = testSelect2.parent().children(".tree-multiselect").children(".selected").children("div");
-        tagSelected.each(function () {
-            inputForm.append(tagFormHtml.replace("$value", $(this).attr("data-value")));
-        });
-
-        inputForm.submit();
     }
 
     function deleteParentParentEle(that) {
