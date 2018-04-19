@@ -134,6 +134,7 @@
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>更新人</th>
+				<th>发货时间</th>
 				<th>更新时间</th>
 				<th>操作</th>
 			</tr>
@@ -167,6 +168,9 @@
 					</td>
 					<td>
 						${requestHeader.updateBy.name}
+					</td>
+					<td>
+						<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
 					<td>
 						<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -217,6 +221,9 @@
 					</td>
 					<td>
 							${orderHeader.updateBy.name}
+					</td>
+					<td>
+						<fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
 					<td>
 						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

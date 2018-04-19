@@ -45,15 +45,15 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/product/bizProductInfoV2/">产品信息表列表</a></li>
+    <li><a href="${ctx}/biz/product/bizProductInfoForVendor/">产品信息表列表</a></li>
     <li class="active"><a
-            href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}">产品信息表<shiro:hasPermission
+            href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">产品信息表<shiro:hasPermission
             name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
-            name="biz:product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
+            name="biz:product:bizProductInfoForVendor:edit">查看</shiro:lacksPermission></a></li>
 </ul>
 <br/>
 <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
-<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoV2/save" method="post"
+<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoForVendor/save" method="post"
            class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
@@ -91,7 +91,7 @@
             <p style="opacity: 0.5;">点击图片删除</p>
         </label>
         <div class="controls">
-                <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
         </div>
         <div id="prodMainImgDiv">
             <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
@@ -106,16 +106,16 @@
             <p style="opacity: 0.5;">点击图片删除</p>
         </label>
         <div class="controls">
-                <input class="btn" type="file" name="productImg" onchange="submitPic('prodBannerImg', false)" value="上传图片" id="prodBannerImg"/>
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodBannerImg', false)" value="上传图片" id="prodBannerImg"/>
         </div>
         <div id="prodBannerImgDiv">
-                <img src="${entity.imgUrl}" customInput="prodBannerImgImg" style='width: 100px' onclick="$(this).remove();">
+            <img src="${entity.imgUrl}" customInput="prodBannerImgImg" style='width: 100px' onclick="$(this).remove();">
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">产品货号：</label>
         <div class="controls">
-            <form:input id="itemNo" path="itemNo" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
+            <form:input path="itemNo" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>
@@ -246,7 +246,7 @@
     <div class="control-group">
         <label class="control-label">上传颜色图片：</label>
         <div class="controls">
-            <input class="btn" type="button" value="上传图片" onclick="uploadPic() "/>
+            <input class="btn" type="button" value="上传图片" onclick="uploadPic()"/>
         </div>
         <br/>
         <div class="controls">
@@ -329,8 +329,9 @@
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:input path="photoDetails" id="photoDetails" cssStyle="display: none"/>
     <form:input path="imgUrl" id="imgUrl" cssStyle="display: none"/>
+
     <div class="form-actions">
-        <shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary"
+        <shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                            type="button"
                                                                            value="保 存" onclick="submitCustomForm()"/>&nbsp;</shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
@@ -459,7 +460,7 @@
             });
         }
     }
-
+    
     function deleteImgEle(that) {
         var p = $(that).parent().parent();
         var imgInput = $($(p).find("[customInput = 'imgInput']"));
@@ -474,11 +475,11 @@
         var itemNo = $("#itemNo").val();
         var id = $("#id").val();
         $.ajax({
-            url : '${ctx}/biz/product/bizProductInfoV2/getItemNoExist',
-            contentType:'application/json',
-            data : {"itemNo" : itemNo, "id" : id},
-            type : 'get',
-            success : function(result){
+            url: '${ctx}/biz/product/bizProductInfoV2/getItemNoExist',
+            contentType: 'application/json',
+            data: {"itemNo": itemNo, "id": id},
+            type: 'get',
+            success: function (result) {
                 if (result == "true") {
                     alert("货号重复,请重新输入");
                     return;
@@ -499,26 +500,26 @@
                     if (idInput == null || idInput == '') {
                         idInput = 0;
                     }
-                    inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|"+ idInput + "|" + imgInput));
+                    inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|" + idInput + "|" + imgInput));
                 });
 
                 var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
                 var mainImgStr = "";
-                for (var i = 0; i < mainImg.length; i ++) {
+                for (var i = 0; i < mainImg.length; i++) {
                     mainImgStr += ($(mainImg[i]).attr("src") + "|");
                 }
                 $("#photos").val(mainImgStr);
 
                 var bannerImg = $("#prodBannerImgDiv").find("[customInput = 'prodBannerImgImg']");
                 var bannerImgStr = "";
-                for (var i = 0; i < bannerImg.length; i ++) {
+                for (var i = 0; i < bannerImg.length; i++) {
                     bannerImgStr += ($(bannerImg[i]).attr("src"));
                 }
                 $("#imgUrl").val(bannerImgStr);
 
                 var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
                 var detailImgStr = "";
-                for (var i = 0; i < detailImg.length; i ++) {
+                for (var i = 0; i < detailImg.length; i++) {
                     detailImgStr += ($(detailImg[i]).attr("src") + "|");
                 }
                 $("#photoDetails").val(detailImgStr);
@@ -533,7 +534,7 @@
                 inputForm.submit();
 
             },
-            error : function(error){
+            error: function (error) {
                 error(error);
             }
         });
@@ -616,7 +617,7 @@
                 console.info(data);
                 console.info(status);
                 console.info(e);
-               alert("上传失败");
+                alert("上传失败");
             }
         });
         return false;

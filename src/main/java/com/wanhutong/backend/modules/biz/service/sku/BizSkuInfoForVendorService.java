@@ -8,7 +8,8 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
+import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoForVendorDao;
+import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoForVendorDao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV2Dao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
@@ -24,14 +25,12 @@ import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
 import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
-import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.PropValueService;
 import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 商品skuService
@@ -50,7 +55,7 @@ import java.util.*;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo> {
+public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoForVendorDao, BizSkuInfo> {
 	@Resource
 	private BizProdPropertyInfoService bizProdPropertyInfoService;
 	@Resource
@@ -60,9 +65,9 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	@Resource
 	private CommonImgService commonImgService;
 	@Autowired
-	private BizSkuInfoV2Dao bizSkuInfoDao;
+	private BizSkuInfoForVendorDao bizSkuInfoDao;
 	@Autowired
-	private BizProductInfoDao bizProductInfoDao;
+	private BizProductInfoForVendorDao bizProductInfoForVendorDao;
 	@Resource
 	private PropValueService propValueService;
 	@Autowired
@@ -72,12 +77,19 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	@Autowired
 	private AttributeValueV2Service attributeValueService;
 
-	protected Logger log = LoggerFactory.getLogger(BizSkuInfoV2Service.class);//日志
 
+	private static final String PRODUCT_TABLE = "biz_vendor_product_info";
+	private static final String SKU_TABLE = "biz_vendor_sku_info";
+
+
+	protected static Logger log = LoggerFactory.getLogger(BizSkuInfoForVendorService.class);
+
+	@Override
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
 	}
-	
+
+	@Override
 	public List<BizSkuInfo> findList(BizSkuInfo bizSkuInfo) {
 		if(bizSkuInfo != null) {
 			return super.findList(bizSkuInfo);
@@ -139,10 +151,10 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 			return null;
 		}
 		Integer prodId=	skuInfo.getProductInfo().getId();
-		BizProductInfo bizProductInfo=bizProductInfoDao.get(prodId);
+		BizProductInfo bizProductInfo=bizProductInfoForVendorDao.get(prodId);
 		AttributeValueV2 attributeValue =new AttributeValueV2();
 		attributeValue.setObjectId(skuInfo.getId());
-		attributeValue.setObjectName("biz_sku_info");
+		attributeValue.setObjectName(SKU_TABLE);
 		List<AttributeValueV2>skuPropValueList= attributeValueService.findList(attributeValue);
         StringBuffer skuPropName=new StringBuffer();
         for(AttributeValueV2 skuPropValue:skuPropValueList){
@@ -170,27 +182,13 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
  }
 	@Override
  public Page<BizSkuInfo> findPage(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
-	 	User user= UserUtils.getUser();
-		 if(user.isAdmin()){
-			bizSkuInfo.setDataStatus("filter");
-		 }
 		return super.findPage(page, bizSkuInfo);
 	}
-	
-	@Transactional(readOnly = false)
-	public void baseSave(BizSkuInfo bizSkuInfo) {
-		super.save(bizSkuInfo);
-	}
-	@Transactional(readOnly = false)
 	@Override
-	public void save(BizSkuInfo bizSkuInfo) {
-		save(bizSkuInfo, Boolean.FALSE);
-	}
-
 	@Transactional(readOnly = false)
-	public void save(BizSkuInfo bizSkuInfo, boolean copy) {
+	public void save(BizSkuInfo bizSkuInfo) {
 
-		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
+		BizProductInfo bizProductInfo = bizProductInfoForVendorDao.get(bizSkuInfo.getProductInfo().getId());
 		String prodCode = bizProductInfo.getProdCode();
 		String partNo = prodCode + bizSkuInfo.getSort();
 
@@ -199,19 +197,65 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		}
 
 		super.save(bizSkuInfo);
+ 		 BizSkuPropValue bizSkuPropValue = new BizSkuPropValue();
+		if (bizSkuInfo.getProdPropMap() != null) {
+			bizSkuInfoDao.deleteSkuPropInfoReal(bizSkuInfo);
+			String sizeStr="";
+			String colorStr="";
+			for (Map.Entry<String, BizProdPropertyInfo> entry : bizSkuInfo.getProdPropMap().entrySet()) {
+				Integer propId = Integer.parseInt(entry.getKey());
+				BizProdPropertyInfo bizProdPropertyInfo = entry.getValue();
+
+				String prodPropertyValueStr = bizProdPropertyInfo.getProdPropertyValues();
+				if (prodPropertyValueStr != null && !"".equals(prodPropertyValueStr)) {
+					String[] prodPropertyValues = prodPropertyValueStr.split("-");
+					String source=prodPropertyValues[1].trim();
+					Integer propValueId=Integer.parseInt(prodPropertyValues[0].trim());
+
+					bizSkuPropValue.setId(null);
+					if("sys".equals(source)){
+						PropertyInfo propertyInfo = propertyInfoService.get(propId);
+						bizSkuPropValue.setPropertyInfo(propertyInfo);
+						bizSkuPropValue.setPropName(propertyInfo.getName());
+						PropValue propValue= propValueService.get(propValueId);
+						bizSkuPropValue.setPropValue(propValue.getValue());
+						bizSkuPropValue.setPropValueObj(propValue);
+						bizSkuPropValue.setSource("sys");
+						bizSkuPropValue.setCode(propValue.getCode());
+
+					}else if("prod".equals(source)){
+						BizProdPropertyInfo prodPropertyInfo = bizProdPropertyInfoService.get(propId);
+						BizProdPropValue bizProdPropValue = bizProdPropValueService.get(propValueId);
+						bizSkuPropValue.setProdPropertyInfo(prodPropertyInfo);
+						bizSkuPropValue.setPropName(prodPropertyInfo.getPropName());
+						bizSkuPropValue.setPropValue(bizProdPropValue.getPropValue());
+						bizSkuPropValue.setProdPropValue(bizProdPropValue);
+						bizSkuPropValue.setSource(bizProdPropValue.getSource());
+						bizSkuPropValue.setCode(bizProdPropValue.getCode());
+					}
+						if(StringUtils.isNotBlank(bizSkuPropValue.getPropName()) && bizSkuPropValue.getPropName().contains("尺寸")){
+							sizeStr="/"+bizSkuPropValue.getPropValue();
+						}
+						if(StringUtils.isNotBlank(bizSkuPropValue.getPropName()) && bizSkuPropValue.getPropName().contains("颜色")){
+							colorStr="/"+bizSkuPropValue.getPropValue();
+						}
+						bizSkuPropValue.setSkuInfo(bizSkuInfo);
+
+						bizSkuPropValueService.save(bizSkuPropValue);
+
+
+					}
+				}
+
+			bizSkuInfo.setItemNo(bizProductInfo.getItemNo()+(bizProductInfo.getVendorName()==null?0:bizProductInfo.getVendorName())+sizeStr+colorStr);
+			super.save(bizSkuInfo);
+			}
 		//sku图片保存
-		saveCommonImg(bizSkuInfo, copy);
+		saveCommonImg(bizSkuInfo);
 	}
 
 	@Transactional(readOnly = false)
-	public void saveSkuInfo(BizSkuInfo bizSkuInfo) {
-
-		super.save(bizSkuInfo);
-
-	}
-
-	@Transactional(readOnly = false)
-	public void saveCommonImg(BizSkuInfo bizSkuInfo, boolean copy) {
+	public void saveCommonImg(BizSkuInfo bizSkuInfo) {
 		if (StringUtils.isBlank(bizSkuInfo.getPhotos())) {
 			return;
 		}
@@ -224,13 +268,13 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		}
 		if (photos != null) {
 			String[] photoArr = photos.split("\\|");
-			saveProdImg(ImgEnum.SKU_TYPE.getCode(), bizSkuInfo, photoArr, copy);
+			saveProdImg(ImgEnum.SKU_TYPE.getCode(), bizSkuInfo, photoArr);
 		}
 
 	}
 
 
-	public void saveProdImg(Integer imgType, BizSkuInfo bizSkuInfo, String[] photoArr, boolean copy) {
+	public void saveProdImg(Integer imgType, BizSkuInfo bizSkuInfo, String[] photoArr) {
 		if (bizSkuInfo.getId() == null) {
 			log.error("Can't save sku image without sku ID!");
 			return;
@@ -264,18 +308,10 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 
 		CommonImg commonImg = new CommonImg();
 		commonImg.setObjectId(bizSkuInfo.getId());
-		commonImg.setObjectName("biz_sku_info");
+		commonImg.setObjectName(SKU_TABLE);
 		commonImg.setImgType(imgType);
 		commonImg.setImgSort(20);
 		for (String name : result) {
-			if (StringUtils.isNotBlank(name) && copy) {
-				commonImg.setId(null);
-				commonImg.setImgServer(DsConfig.getImgServer());
-				commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY));
-				commonImgService.save(commonImg);
-				continue;
-			}
-
 			if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer())) {
 				continue;
 			}
@@ -292,7 +328,7 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	private List<CommonImg> getImgList(Integer imgType, Integer skuId) {
 		CommonImg commonImg = new CommonImg();
 		commonImg.setObjectId(skuId);
-		commonImg.setObjectName("biz_sku_info");
+		commonImg.setObjectName(SKU_TABLE);
 		commonImg.setImgType(imgType);
 		return commonImgService.findList(commonImg);
 	}
@@ -302,7 +338,7 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		super.delete(bizSkuInfo);
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(bizSkuInfo.getId());
-        commonImg.setObjectName("biz_sku_info");
+        commonImg.setObjectName(SKU_TABLE);
         commonImgService.delete(commonImg);
 	}
 

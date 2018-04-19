@@ -8,7 +8,6 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
@@ -17,19 +16,17 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizDetailInvoiceService;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,8 +65,11 @@ public class BizInvoiceController extends BaseController {
 	@Autowired
     private BizDetailInvoiceService bizDetailInvoiceService;
 	@Autowired
+    private SystemService systemService;
+	@Autowired
     private BizSkuInfoService bizSkuInfoService;
 
+    private static final String DEF_EN_NAME = "shipper";
 
 
 	@ModelAttribute
@@ -123,14 +123,21 @@ public class BizInvoiceController extends BaseController {
 	public String form(BizInvoice bizInvoice, Model model) {
         BizLogistics bizLogistics = new BizLogistics();
 		List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-		model.addAttribute("logisticsList",logisticsList);
+        List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
+        User user = UserUtils.getUser();
+        model.addAttribute("logisticsList",logisticsList);
 //        List<BizOrderHeader> orderList = bizOrderHeaderService.findList(new BizOrderHeader());
 //        List<BizRequestHeader> requestList = bizRequestHeaderService.findList(new BizRequestHeader());
 //        List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(new BizInventoryInfo());
 //        model.addAttribute("invInfoList",invInfoList);
 //        model.addAttribute("orderList",orderList);
 //        model.addAttribute("requestList",requestList);
+        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
+            bizInvoice.setCarrier(String.valueOf(user.getId()));
+        }
+
 		model.addAttribute("bizInvoice", bizInvoice);
+		model.addAttribute("userList", userList);
 		model.addAttribute("bizOrderHeader",new BizOrderHeader());
 		if(bizInvoice.getShip() != null && bizInvoice.getShip()==1 ){
 			model.addAttribute("bizRequestHeader",new BizRequestHeader());
@@ -171,9 +178,16 @@ public class BizInvoiceController extends BaseController {
                 orderHeaderList.add(orderHeader);
             }
         }
+
+        List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
+        User user = UserUtils.getUser();
+        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
+            bizInvoice.setCarrier(String.valueOf(user.getId()));
+        }
         BizLogistics bizLogistics = new BizLogistics();
         List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         model.addAttribute("logisticsList",logisticsList);
+        model.addAttribute("userList", userList);
         model.addAttribute("source",source);
         model.addAttribute("orderHeaderList",orderHeaderList);
         model.addAttribute("bizInvoice", bizInvoice);

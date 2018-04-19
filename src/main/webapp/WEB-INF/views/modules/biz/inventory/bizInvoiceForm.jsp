@@ -241,9 +241,21 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">承运人：</label>
+			<label class="control-label">发货人：</label>
 			<div class="controls">
-				<form:input path="carrier" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
+				<form:select about="choose" path="carrier" class="input-medium required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${userList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">发货时间：</label>
+			<div class="controls">
+				<input name="sendDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.sendDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -344,7 +356,7 @@
 			</div>
 		</div>
 		<div class="form-actions">
-			<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+			<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="发 货"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
 	</form:form>

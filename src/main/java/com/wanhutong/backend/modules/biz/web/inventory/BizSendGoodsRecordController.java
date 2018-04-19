@@ -3,33 +3,18 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
-import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
-import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.enums.*;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.service.OfficeService;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +26,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
-import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
