@@ -287,8 +287,8 @@
                    <tr customType="skuTr">
                        <td style="display: none"><input type="text" value="${v.id}" customInput="idInput" readonly/></td>
                        <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
-                       <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
-                       <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
+                       <td><input type="text" value="${v.attrValueMap['2'][0].value}" customInput="sizeInput" readonly/></td>
+                       <td><input type="text" value="${v.attrValueMap['3'][0].value}" customInput="colorInput" readonly/></td>
                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
                        <td><img customInput="imgInputLab" style="width: 160px" src="${v.defaultImg}"></td>
                        <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>

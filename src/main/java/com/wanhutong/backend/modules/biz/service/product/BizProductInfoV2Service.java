@@ -361,7 +361,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
             commonImg.setImgSort(i);
             commonImgService.save(commonImg);
 
-            if (i == 0) {
+            if (i == 0 && StringUtils.isBlank(bizProductInfo.getImgUrl())) {
                 bizProductInfo.setImgUrl(commonImg.getImgServer() + commonImg.getImgPath());
                 bizProductInfoDao.update(bizProductInfo);
             }
