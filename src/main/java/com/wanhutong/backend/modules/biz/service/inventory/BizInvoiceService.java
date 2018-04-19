@@ -92,14 +92,15 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
+    @Override
 	public BizInvoice get(Integer id) {
 		return super.get(id);
 	}
-	
+    @Override
 	public List<BizInvoice> findList(BizInvoice bizInvoice) {
 		return super.findList(bizInvoice);
 	}
-	
+    @Override
 	public Page<BizInvoice> findPage(Page<BizInvoice> page, BizInvoice bizInvoice) {
 		User user=UserUtils.getUser();
 		if(user.isAdmin()){
@@ -121,6 +122,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             invoice.setFreight(bizInvoice.getFreight());
             invoice.setCarrier(bizInvoice.getCarrier());
             invoice.setSettlementStatus(bizInvoice.getSettlementStatus());
+            invoice.setSendDate(bizInvoice.getSendDate());
             bizInvoiceDao.update(invoice);
             return;
         }
@@ -132,10 +134,6 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         Office company = officeService.get(user.getCompany().getId());
         //采购商或采购中心
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
-        Date date = new Date();
-        bizInvoice.setSendDate(date);
-        bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,1));
-        super.save(bizInvoice);
         bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,bizInvoice.getId()));
         super.save(bizInvoice);
         //保存图片
@@ -230,7 +228,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             bsgr.setOrderNum(orderHeader.getOrderNum());
                             bsgr.setBizOrderHeader(orderHeader);
                             bsgr.setSkuInfo(bizSkuInfo);
-                            bsgr.setSendDate(date);
+                            bsgr.setSendDate(bizInvoice.getSendDate());
                             bizSendGoodsRecordService.save(bsgr);
                         }
                     }
@@ -273,7 +271,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         bsgr.setBizOrderHeader(orderHeader);
                         bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
                         bsgr.setSkuInfo(bizSkuInfo);
-                        bsgr.setSendDate(date);
+                        bsgr.setSendDate(bizInvoice.getSendDate());
                         bizSendGoodsRecordService.save(bsgr);
                     }
                 }
@@ -409,7 +407,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
                     bsgr.setSkuInfo(bizSkuInfo);
                     bsgr.setOrderNum(requestHeader.getReqNo());
-                    bsgr.setSendDate(date);
+                    bsgr.setSendDate(bizInvoice.getSendDate());
                     bizSendGoodsRecordService.save(bsgr);
                 }
                 //更改备货单状态
@@ -434,7 +432,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     List<BizPoDetail> poDetailList = bizPoDetailService.findList(poDetail);
                     boolean flag = true;
                     for (BizPoDetail bizPoDetail:poDetailList) {
-                        if (bizPoDetail.getOrdQty() != bizPoDetail.getSendQty()){
+                        if (bizPoDetail.getOrdQty().equals(bizPoDetail.getSendQty())){
                             flag = false;
                         }
                     }
@@ -540,6 +538,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     }
 	
 	@Transactional(readOnly = false)
+    @Override
 	public void delete(BizInvoice bizInvoice) {
 		super.delete(bizInvoice);
 	}

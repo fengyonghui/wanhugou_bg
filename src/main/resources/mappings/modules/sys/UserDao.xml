@@ -499,4 +499,63 @@
 		a.status = 1
 	</select>
 
+	<select id="findUserByRole" resultType="User" parameterType="Integer">
+		SELECT
+			a.id,
+		a.company_id AS "company.id",
+		a.office_id AS "office.id",
+		a.login_name,
+		a.password,
+		a.no,
+		a.name,
+		a.email,
+		a.phone,
+		a.mobile,
+		a.user_type,
+		a.login_ip,
+		a.login_date,
+		a.remarks,
+		a.login_flag,
+		a.photo,
+		a.create_id AS "createBy.id",
+		a.create_date,
+		a.update_id AS "updateBy.id",
+		a.update_date,
+		a.status AS "delFlag"
+		FROM sys_user a
+		LEFT JOIN sys_user_role sur on sur.user_id = a.id
+		WHERE
+		sur.role_id = #{roleId} AND a.status = 1
+	</select>
+
+	<select id="findUserByRoleEnName" resultType="User" parameterType="String">
+		SELECT
+			a.id,
+		a.company_id AS "company.id",
+		a.office_id AS "office.id",
+		a.login_name,
+		a.password,
+		a.no,
+		a.name,
+		a.email,
+		a.phone,
+		a.mobile,
+		a.user_type,
+		a.login_ip,
+		a.login_date,
+		a.remarks,
+		a.login_flag,
+		a.photo,
+		a.create_id AS "createBy.id",
+		a.create_date,
+		a.update_id AS "updateBy.id",
+		a.update_date,
+		a.status AS "delFlag"
+		FROM sys_user a
+		LEFT JOIN sys_user_role sur on sur.user_id = a.id
+		LEFT JOIN sys_role sr on sur.role_id = sr.id
+		WHERE
+		sr.enname = #{roleEnName} AND a.status = 1 AND sr.status = 1
+	</select>
+
 </mapper>

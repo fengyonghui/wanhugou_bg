@@ -55,7 +55,7 @@
 <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
 <form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoForVendor/save" method="post"
            class="form-horizontal">
-    <form:hidden path="id"/>
+    <form:hidden path="id" id="id"/>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -91,7 +91,7 @@
             <p style="opacity: 0.5;">点击图片删除</p>
         </label>
         <div class="controls">
-            <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg')" value="上传图片" multiple="multiple" id="prodMainImg"/>
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
         </div>
         <div id="prodMainImgDiv">
             <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
@@ -99,14 +99,19 @@
             </c:forEach>
         </div>
     </div>
-    <%--<div class="control-group">--%>
-        <%--<label class="control-label">产品列表图:</label>--%>
-        <%--<div class="controls">--%>
-            <%--<form:hidden id="prodListImg" path="photoLists" htmlEscape="false" maxlength="255" class="input-xlarge"/>--%>
-            <%--<sys:ckfinder input="prodListImg" type="images" uploadPath="/prod/item" selectMultiple="true" maxWidth="100"--%>
-                          <%--maxHeight="100"/>--%>
-        <%--</div>--%>
-    <%--</div>--%>
+    <div class="control-group">
+        <label class="control-label">banner大图:
+            <p style="opacity: 0.5;">图片建议比例为16:9</p>
+            <p style="opacity: 0.5;">非banner展示产品可不传</p>
+            <p style="opacity: 0.5;">点击图片删除</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodBannerImg', false)" value="上传图片" id="prodBannerImg"/>
+        </div>
+        <div id="prodBannerImgDiv">
+            <img src="${entity.imgUrl}" customInput="prodBannerImgImg" style='width: 100px' onclick="$(this).remove();">
+        </div>
+    </div>
     <div class="control-group">
         <label class="control-label">产品货号：</label>
         <div class="controls">
@@ -127,7 +132,7 @@
             <p style="opacity: 0;">图片建议比例为1:1</p>
         </label>
         <div class="controls">
-            <input class="btn" type="file" name="productImg" onchange="submitPic('prodDetailImg')" value="上传图片" multiple="multiple" id="prodDetailImg"/>
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodDetailImg', true)" value="上传图片" multiple="multiple" id="prodDetailImg"/>
         </div>
         <div id="prodDetailImgDiv">
             <c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">
@@ -194,6 +199,7 @@
     <div class="control-group">
         <label class="control-label">商品属性：
             <p style="opacity: 0.8;color: red;">*属性中禁止使用斜线: "/" </p>
+            <p style="opacity: 0.8;color: red;">*建议使用: "-" </p>
         </label>
         <div class="controls">
             <c:forEach items="${skuTagList}" var="tagInfo">
@@ -287,8 +293,8 @@
                    <tr customType="skuTr">
                        <td style="display: none"><input type="text" value="${v.id}" customInput="idInput" readonly/></td>
                        <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
-                       <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), 0, fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/"))}" customInput="sizeInput" readonly/></td>
-                       <td><input type="text" value="${fn:substring(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1),fn:indexOf(fn:substring(v.itemNo, fn:indexOf(v.itemNo, "/") + 1, -1), "/") +1 , -1)}" customInput="colorInput" readonly/></td>
+                       <td><input type="text" value="${v.attrValueMap['2'][0].value}" customInput="sizeInput" readonly/></td>
+                       <td><input type="text" value="${v.attrValueMap['3'][0].value}" customInput="colorInput" readonly/></td>
                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
                        <td><img customInput="imgInputLab" style="width: 160px" src="${v.defaultImg}"></td>
                        <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
@@ -322,6 +328,8 @@
     </div>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:input path="photoDetails" id="photoDetails" cssStyle="display: none"/>
+    <form:input path="imgUrl" id="imgUrl" cssStyle="display: none"/>
+
     <div class="form-actions">
         <shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                            type="button"
@@ -464,46 +472,72 @@
     }
 
     function submitCustomForm() {
-        var skuTrArr = $("[customType='skuTr']");
-        var inputForm = $("#inputForm");
+        var itemNo = $("#itemNo").val();
+        var id = $("#id").val();
+        $.ajax({
+            url: '${ctx}/biz/product/bizProductInfoV2/getItemNoExist',
+            contentType: 'application/json',
+            data: {"itemNo": itemNo, "id": id},
+            type: 'get',
+            success: function (result) {
+                if (result == "true") {
+                    alert("货号重复,请重新输入");
+                    return;
+                }
 
-        var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
-        skuTrArr.each(function () {
-            var idInput = $($(this).find("[customInput = 'idInput']")[0]).val();
-            var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
-            var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
-            var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
-            var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
-            var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
+                var skuTrArr = $("[customType='skuTr']");
+                var inputForm = $("#inputForm");
 
-            if (idInput == null || idInput == '') {
-                idInput = 0;
+                var skuFormHtml = "<input name='skuAttrStrList' type='hidden' value='$value'/>";
+                skuTrArr.each(function () {
+                    var idInput = $($(this).find("[customInput = 'idInput']")[0]).val();
+                    var sizeInput = $($(this).find("[customInput = 'sizeInput']")[0]).val();
+                    var colorInput = $($(this).find("[customInput = 'colorInput']")[0]).val();
+                    var priceInput = $($(this).find("[customInput = 'priceInput']")[0]).val();
+                    var imgInput = $($(this).find("[customInput = 'imgInput']")[0]).attr("value");
+                    var skuTypeSelect = $($(this).find("[customInput = 'skuTypeSelect']")[0]).find("option:selected").attr("value");
+
+                    if (idInput == null || idInput == '') {
+                        idInput = 0;
+                    }
+                    inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|" + idInput + "|" + imgInput));
+                });
+
+                var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
+                var mainImgStr = "";
+                for (var i = 0; i < mainImg.length; i++) {
+                    mainImgStr += ($(mainImg[i]).attr("src") + "|");
+                }
+                $("#photos").val(mainImgStr);
+
+                var bannerImg = $("#prodBannerImgDiv").find("[customInput = 'prodBannerImgImg']");
+                var bannerImgStr = "";
+                for (var i = 0; i < bannerImg.length; i++) {
+                    bannerImgStr += ($(bannerImg[i]).attr("src"));
+                }
+                $("#imgUrl").val(bannerImgStr);
+
+                var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
+                var detailImgStr = "";
+                for (var i = 0; i < detailImg.length; i++) {
+                    detailImgStr += ($(detailImg[i]).attr("src") + "|");
+                }
+                $("#photoDetails").val(detailImgStr);
+
+                var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
+                var testSelect2 = $("#test-select-2");
+                var tagSelected = testSelect2.parent().children(".tree-multiselect").children(".selected").children("div");
+                tagSelected.each(function () {
+                    inputForm.append(tagFormHtml.replace("$value", $(this).attr("data-value")));
+                });
+
+                inputForm.submit();
+
+            },
+            error: function (error) {
+                error(error);
             }
-            inputForm.append(skuFormHtml.replace("$value", sizeInput + "|" + colorInput + "|" + priceInput + "|" + skuTypeSelect + "|"+ idInput + "|" + imgInput));
         });
-
-        var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
-        var mainImgStr = "";
-        for (var i = 0; i < mainImg.length; i ++) {
-            mainImgStr += ($(mainImg[i]).attr("src") + "|");
-        }
-        $("#photos").val(mainImgStr);
-
-        var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
-        var detailImgStr = "";
-        for (var i = 0; i < detailImg.length; i ++) {
-            detailImgStr += ($(detailImg[i]).attr("src") + "|");
-        }
-        $("#photoDetails").val(detailImgStr);
-
-        var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
-        var testSelect2 = $("#test-select-2");
-        var tagSelected = testSelect2.parent().children(".tree-multiselect").children(".selected").children("div");
-        tagSelected.each(function () {
-            inputForm.append(tagFormHtml.replace("$value", $(this).attr("data-value")));
-        });
-
-        inputForm.submit();
     }
 
     function deleteParentParentEle(that) {
@@ -528,8 +562,7 @@
         parent.append(skuAttrHtmlText);
     }
 
-    //新建或编辑 保存提交
-    function submitPic(id){
+    function submitPic(id, multiple){
         var f = $("#" + id).val();
         if(f==null||f==""){
             alert("错误提示:上传文件不能为空,请重新选择文件");
@@ -548,10 +581,10 @@
             alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
             return false;
         }
-        ajaxFileUploadPic(id);
+        ajaxFileUploadPic(id, multiple);
     }
 
-    function ajaxFileUploadPic(id) {
+    function ajaxFileUploadPic(id, multiple) {
         $.ajaxFileUpload({
             url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
             secureuri : false, //一般设置为false
@@ -565,7 +598,12 @@
                 var imgList = msgJSON.imgList;
                 var imgDiv = $("#" + id + "Div");
                 var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
-                if (imgList && imgList.length > 0) {
+                if (imgList && imgList.length > 0 && multiple) {
+                    for (var i = 0; i < imgList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                    }
+                }else if (imgList && imgList.length > 0 && !multiple) {
+                    imgDiv.empty();
                     for (var i = 0; i < imgList.length; i ++) {
                         imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
                     }
@@ -604,7 +642,7 @@
             "                   <td><img id=\"colorImg$idImg\" customInput=\"imgInput\" style='width: 150px'/></td>" +
             "                   <td>" +
             "                       <input type=\"file\" name=\"colorImg\" id=\"colorImg$id\" value=\"上传\"/>" +
-            "                       <input type=\"button\" value=\"上传\" onclick=\"submitPic('colorImg$id')\"/>" +
+            "                       <input type=\"button\" value=\"上传\" onclick=\"submitPic('colorImg$id', true)\"/>" +
             "                       <input type=\"button\" value=\"删除\"  onclick=\"deletePic('colorImg$idImg')\"/>" +
             "                   </td>" +
             "                   <td><input onclick='deleteParentParentEle(this)' class=\"btn\" type=\"button\" value=\"删除\"/></td>" +

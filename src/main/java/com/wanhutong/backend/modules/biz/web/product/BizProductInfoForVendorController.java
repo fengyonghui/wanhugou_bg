@@ -102,6 +102,22 @@ public class BizProductInfoForVendorController extends BaseController {
             bizSkuInfo.setProductInfo(entity);
             List<BizSkuInfo> skuInfosList = bizSkuInfoForVendorService.findList(bizSkuInfo);
             Collections.reverse(skuInfosList);
+
+            skuInfosList.forEach(o -> {
+                Map<String, List<AttributeValueV2>> attMap = Maps.newHashMap();
+                AttributeValueV2 attributeValueV2 = new AttributeValueV2();
+                attributeValueV2.setObjectName(BizProductInfoV2Service.SKU_TABLE);
+                attributeValueV2.setObjectId(o.getId());
+                List<AttributeValueV2> list = attributeValueV2Service.findList(attributeValueV2);
+                for (AttributeValueV2 valueV2 : list) {
+                    List<AttributeValueV2> attributeValueV2s = attMap.putIfAbsent(String.valueOf(valueV2.getAttrId()), Lists.newArrayList(valueV2));
+                    if(attributeValueV2s != null) {
+                        attributeValueV2s.add(valueV2);
+                    }
+                }
+                o.setAttrValueMap(attMap);
+            });
+
             entity.setSkuInfosList(skuInfosList);
         }
         if (entity == null) {
@@ -329,31 +345,6 @@ public class BizProductInfoForVendorController extends BaseController {
             }
         }
         return mapList;
-    }
-
-    @RequestMapping(value = "saveColorImg")
-    public void saveFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Map<String, Object> resultMap = Maps.newHashMap();
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        // 获取上传文件名
-        MultipartFile file = multipartRequest.getFile("colorImg");
-        String originalFilename = file.getOriginalFilename();
-        String fullName = UUID.randomUUID().toString().replaceAll("-", "").concat(originalFilename.substring(originalFilename.indexOf(".")));
-        String msg = "";
-        boolean ret = false;
-        try {
-            String result = AliOssClientUtil.uploadObject2OSS(file.getInputStream(), fullName, file.getSize(), AliOssClientUtil.getOssUploadPath());
-            if (StringUtils.isNotBlank(result)) {
-                fullName = DsConfig.getImgServer().concat("/").concat(AliOssClientUtil.getOssUploadPath()).concat(fullName);
-                ret = true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        resultMap.put("fullName", fullName);
-        resultMap.put("ret", ret);
-        resultMap.put("msg", msg);
-        response.getWriter().write(JSONObject.fromObject(resultMap).toString());
     }
 
     /**

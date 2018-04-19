@@ -21,6 +21,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -66,6 +67,8 @@ public class BizProductInfoV2Controller extends BaseController {
     @Autowired
     private BizProductInfoV2Service bizProductInfoService;
     @Autowired
+    private BizProductInfoForVendorService bizProductInfoForVendorService;
+    @Autowired
     private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private CommonImgService commonImgService;
@@ -89,6 +92,22 @@ public class BizProductInfoV2Controller extends BaseController {
             bizSkuInfo.setProductInfo(entity);
             List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
             Collections.reverse(skuInfosList);
+
+            skuInfosList.forEach(o -> {
+                Map<String, List<AttributeValueV2>> attMap = Maps.newHashMap();
+                AttributeValueV2 attributeValueV2 = new AttributeValueV2();
+                attributeValueV2.setObjectName(BizProductInfoV2Service.SKU_TABLE);
+                attributeValueV2.setObjectId(o.getId());
+                List<AttributeValueV2> list = attributeValueV2Service.findList(attributeValueV2);
+                for (AttributeValueV2 valueV2 : list) {
+                    List<AttributeValueV2> attributeValueV2s = attMap.putIfAbsent(String.valueOf(valueV2.getAttrId()), Lists.newArrayList(valueV2));
+                    if(attributeValueV2s != null) {
+                        attributeValueV2s.add(valueV2);
+                    }
+                }
+                o.setAttrValueMap(attMap);
+            });
+
             entity.setSkuInfosList(skuInfosList);
         }
         if (entity == null) {
@@ -563,5 +582,23 @@ public class BizProductInfoV2Controller extends BaseController {
         }
         return delStatusStr;
     }
+    /**
+     * 查询货号是否存在
+     * */
+    @ResponseBody
+    @RequiresPermissions("biz:product:bizProductInfo:edit")
+    @RequestMapping(value = "getItemNoExist")
+    public String getItemNoExist(String itemNo, Integer id) {
+        BizProductInfo b = new BizProductInfo();
+        b.setItemNo(itemNo);
+        List<BizProductInfo> list = bizProductInfoService.findList(b);
+        List<BizProductInfo> listForVendor = bizProductInfoForVendorService.findList(b);
+        if(id != null) {
+            list.removeIf(o -> o.getId().intValue() == id);
+            listForVendor.removeIf(o -> o.getId().intValue() == id);
+        }
+        return String.valueOf(CollectionUtils.isNotEmpty(list) || CollectionUtils.isNotEmpty(listForVendor));
+    }
+
 
 }

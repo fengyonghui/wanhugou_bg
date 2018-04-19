@@ -95,8 +95,8 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
     private static final Integer MATERIAL_ATTR_ID = 1;
     private static final Integer SIZE_ATTR_ID = 2;
     private static final Integer COLOR_ATTR_ID = 3;
-    private static final String PRODUCT_TABLE = "biz_product_info";
-    private static final String SKU_TABLE = "biz_sku_info";
+    public static final String PRODUCT_TABLE = "biz_product_info";
+    public static final String SKU_TABLE = "biz_sku_info";
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -361,7 +361,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
             commonImg.setImgSort(i);
             commonImgService.save(commonImg);
 
-            if (i == 0) {
+            if (i == 0 && StringUtils.isBlank(bizProductInfo.getImgUrl())) {
                 bizProductInfo.setImgUrl(commonImg.getImgServer() + commonImg.getImgPath());
                 bizProductInfoDao.update(bizProductInfo);
             }
