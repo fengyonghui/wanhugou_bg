@@ -157,6 +157,19 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label">经营品类:</label>
+        <div class="controls">
+            <form:select id="vendInfo" path="bizVendInfo.bizCategoryInfo.id" class="input-xlarge required">
+                <form:option value="" label="请选择"/>
+                <c:if test="${! empty bizVendInfo.bizCategoryInfo.id}">
+                    <form:option value="${bizVendInfo.bizCategoryInfo.id}">${bizVendInfo.cateName}</form:option>
+                </c:if>
+                <form:options items="${varietyList}" itemLabel="name" itemValue="id"/>
+            </form:select>
+            <span class="help-inline"><font color="red">*</font></span>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">主负责人:</label>
         <div class="controls">
             <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
@@ -181,17 +194,30 @@
     <div class="control-group">
         <label class="control-label">所在地区：</label>
         <div class="controls">
-            <input type="hidden" id="locationId" name="locationId" value="${office.bizLocation.id}"/>
-            <form:hidden path="bizLocation.selectedRegionId" id="regionId" value="${office.bizLocation.selectedRegionId}"/>
-            <input type="text" id="regionName" value="${office.bizLocation.pcrName}" readonly="readonly"/>
+            <input type="hidden" id="locationId" name="locationId" value="${entity.bizLocation.id}"/>
+            <form:hidden path="officeAddress.bizLocation.selectedRegionId" id="regionId" value="${entity.bizLocation.selectedRegionId}"/>
+            <input type="text" id="regionName" value="${entity.bizLocation.pcrName}" readonly="readonly" required="true"/>
             <biz:selectregion id="region_id" name="regionName" selectedId="regionId"/>
+            <span class="help-inline"><font color="red">*</font> </span>
         </div>
-    </div>
     </div>
     <div class="control-group">
         <label class="control-label">详细地址：</label>
         <div class="controls">
-            <form:input path="bizLocation.address" value="${office.bizLocation.address }" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+            <form:input path="officeAddress.bizLocation.address" value="${entity.bizLocation.address }" htmlEscape="false" maxlength="255" class="input-xlarge "/>
+            <span class="help-inline"><font color="red">*</font> </span>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">经度：</label>
+        <div class="controls">
+            <form:input path="officeAddress.bizLocation.longitude" value="${entity.bizLocation.longitude }" htmlEscape="false" class="input-xlarge  number"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">纬度：</label>
+        <div class="controls">
+            <form:input path="officeAddress.bizLocation.latitude" value="${entity.bizLocation.latitude }" htmlEscape="false" class="input-xlarge  number"/>
         </div>
     </div>
 

@@ -81,7 +81,7 @@
 
                                     "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
 								}
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
@@ -104,6 +104,10 @@
 
                     }
                 })
+            });
+
+            $("#updateMoney").click(function () {
+                updateMoney();
             });
 
         });
@@ -157,6 +161,27 @@
                 }
             })
         }
+        function updateMoney() {
+            if(confirm("确定修改价钱吗？")){
+                var skuPrice=$("#skuPrice").val();
+                $.ajax({
+                    type:"post",
+                    url:" ${ctx}/biz/sku/bizSkuInfo/saveSkuInfo",
+                    data:{skuId:$("#skuId").val(),money:skuPrice},
+                    success:function(flag){
+                        if(flag=="ok"){
+                            alert(" 修改成功 ");
+
+                        }else{
+                            alert(" 修改失败 ");
+                        }
+                    }
+                });
+            }
+        }
+
+
+
 	</script>
 </head>
 <body>
@@ -167,6 +192,15 @@
 	<form:form id="inputForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeader/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<input id="str" type="hidden"  value="${entity.str}"/>
+		<c:forEach items="${fns:getUser().roleList}" var="role">
+			<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state}">
+				<c:set var="flag" value="true"/>
+			</c:if>
+			<c:if test="${role.enname==RoleEnNameEnum.MARKETINGMANAGER.state}">
+				<c:set var="flag" value="true"/>
+			</c:if>
+		</c:forEach>
+
 		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
@@ -230,6 +264,7 @@
 					<th>商品编码</th>
 					<th>商品货号</th>
 					<th>商品属性</th>
+					<th>工厂价</th>
 					<th>申报数量</th>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
@@ -254,6 +289,22 @@
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
 							<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
+							<td style="white-space: nowrap">
+								<c:choose>
+									<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
+									<span style="float: left">
+										<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.skuInfo.buyPrice}"/>
+										<a href="#"  id="updateMoney" class="icon-ok-circle"></a>
+									</span>
+										<input type="hidden"  id="skuId" value="${reqDetail.skuInfo.id}"/>
+									</c:when>
+									<c:otherwise>
+										${reqDetail.skuInfo.buyPrice}
+									</c:otherwise>
+								</c:choose>
+
+
+							</td>
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
 								<input type='hidden' name='skuInfoIds' value='${reqDetail.skuInfo.id}'/>
@@ -294,6 +345,7 @@
 						<th>商品编码</th>
 						<th>商品货号</th>
 						<th>商品属性</th>
+						<th>工厂价</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
 							<%--<th>已收货数量</th>--%>
@@ -332,11 +384,7 @@
 		<div class="form-actions">
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
-				<c:forEach items="${fns:getUser().roleList}" var="role">
-					<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state || role.enname==RoleEnNameEnum.P_CENTER_MANAGER.state}">
-						<c:set var="flag" value="true"/>
-					</c:if>
-				</c:forEach>
+
 				<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.APPROVE.state}">
 					<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;
 				</c:if>

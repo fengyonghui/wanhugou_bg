@@ -111,10 +111,19 @@
 					<%--</td>--%>
 				<shiro:hasPermission name="biz:sku:bizSkuInfo:view"><td>
 					<%--<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>--%>
-							<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">详情</a>
+					<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==1}">
+						<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">详情</a>
 						<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
 							<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
 						</shiro:hasPermission>
+					</c:if>
+
+						<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==0}">
+							<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+								<a href="${ctx}/biz/sku/bizSkuInfo/recovery?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要恢复该商品sku吗？', this.href)">恢复</a>
+							</shiro:hasPermission>
+						</c:if>
+
 				</td></shiro:hasPermission>
 
 			</tr>

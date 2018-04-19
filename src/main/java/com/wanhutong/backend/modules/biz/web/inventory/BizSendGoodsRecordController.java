@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
@@ -14,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
@@ -25,12 +30,14 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -40,6 +47,8 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
 import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,6 +65,8 @@ public class BizSendGoodsRecordController extends BaseController {
 	private BizSendGoodsRecordService bizSendGoodsRecordService;
     @Autowired
     private BizInventorySkuService bizInventorySkuService;
+    @Autowired
+    private BizInventoryInfoService bizInventoryInfoService;
 
 	@ModelAttribute
 	public BizSendGoodsRecord get(@RequestParam(required=false) Integer id) {
@@ -121,6 +132,51 @@ public class BizSendGoodsRecordController extends BaseController {
 		bizSendGoodsRecordService.delete(bizSendGoodsRecord);
 		addMessage(redirectAttributes, "恢复供货记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizSendGoodsRecord/?repage";
+	}
+
+	@RequiresPermissions("biz:inventory:bizSendGoodsRecord:view")
+	@RequestMapping(value = "bizSendGoodsRecordExport", method = RequestMethod.POST)
+	public String bizSendGoodsRecordExport(BizSendGoodsRecord bizSendGoodsRecord,String bizStatu, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes){
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			String fileName = "供货记录数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+            List<BizSendGoodsRecord> bsgrList = bizSendGoodsRecordService.findList(bizSendGoodsRecord);
+            //供货记录数据容器
+            List<List<String>> data = new ArrayList<List<String>>();
+            for (BizSendGoodsRecord bsgr:bsgrList) {
+                List<String> rowData = new ArrayList<>();
+                //仓库名
+                BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(bsgr.getInvInfo().getId());
+				rowData.add(bizInventoryInfo == null ? StringUtils.EMPTY : bizInventoryInfo.getName());
+                //商品名称
+                rowData.add(bsgr.getSkuInfo().getName());
+                //商品货号
+                rowData.add(bsgr.getSkuInfo().getItemNo()==null?"":bsgr.getSkuInfo().getItemNo());
+                //订单号
+                rowData.add(bsgr.getOrderNum());
+                //供货数量
+                rowData.add(bsgr.getSendNum().toString());
+                //客户
+                rowData.add(bsgr.getCustomer().getName());
+                //供货时间
+                rowData.add(sdf.format(bsgr.getSendDate()));
+                data.add(rowData);
+            }
+            String[] records = {"仓库名", "商品名称", "商品货号", "订单号", "供货数量", "客户", "供货时间"};
+            ExportExcelUtils eeu = new ExportExcelUtils();
+            SXSSFWorkbook workbook = new SXSSFWorkbook();
+            eeu.exportExcel(workbook,0,"供货记录",records,data,fileName);
+            response.reset();
+            response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+            workbook.write(response.getOutputStream());
+            workbook.dispose();
+            return null;
+        }catch (Exception e){
+			e.printStackTrace();
+			addMessage(redirectAttributes, "导出供货记录失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + adminPath + "/biz/inventory/bizSendGoodsRecord?bizStatu="+bizStatu;
 	}
 
 }

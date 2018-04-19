@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
 <html>
 <head>
 	<title>用户管理</title>
@@ -16,8 +17,25 @@
 					confirmNewPassword: {equalTo: "输入与上面相同的密码"}
 				},
 				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
+				    var userId = $("#userId").val();
+				    var companyId = $("#companyId").val();
+				    var userRoleIds = "";
+                    $("input[type=checkbox]:checked").each(function (index) {
+                        userRoleIds += $(this).val() + ",";
+                    });
+				    $.ajax({
+						type:"post",
+						url:"${ctx}/sys/user/selectConsultant",
+						data:{userId:userId,companyId:companyId,userRoleIds:userRoleIds},
+						success:function (data) {
+							if (data=="false"){
+							    alert("该采购专员下关联有采购商，请交接后再修改");
+							    return false;
+							}
+                            loading('正在提交，请稍等...');
+                            form.submit();
+                        }
+					});
 				},
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
@@ -49,7 +67,7 @@
 		</c:if>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
-		<form:hidden path="id"/>
+		<form:hidden id="userId" path="id"/>
 		<form:hidden path="conn"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
@@ -62,15 +80,27 @@
 		<div class="control-group">
 			<label class="control-label">归属公司:</label>
 			<div class="controls">
-                <sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-					title="公司" url="/sys/office/treeData?type=2" cssClass="required"/>
+				<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
+					<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
+									title="公司" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" cssClass="required"/>
+				</c:if>
+				<c:if test="${empty user.conn}">
+					<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
+									title="公司" url="/sys/office/treeData" cssClass="required"/>
+				</c:if>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">归属部门:</label>
 			<div class="controls">
-                <sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
-					title="部门" url="/sys/office/treeData?type=2" cssClass="required" notAllowSelectParent="true"/>
+				<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
+					<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
+									title="部门" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" cssClass="required" notAllowSelectParent="true"/>
+				</c:if>
+				<c:if test="${empty user.conn}">
+					<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
+									title="部门" url="/sys/office/treeData" cssClass="required" notAllowSelectParent="true"/>
+				</c:if>
 			</div>
 		</div>
 		<div class="control-group">
@@ -149,7 +179,7 @@
 		<div class="control-group">
 			<label class="control-label">用户角色:</label>
 			<div class="controls">
-				<form:checkboxes path="roleIdList" items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" class="required"/>
+				<form:checkboxes id="userRoleIds" path="roleIdList" items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" class="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

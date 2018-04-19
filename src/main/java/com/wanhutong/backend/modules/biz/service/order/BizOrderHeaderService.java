@@ -99,6 +99,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
+            bizOrderHeader.setDataStatus("filter");
            // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
           // page.setCount(count);
@@ -108,7 +109,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
             return orderHeaderPage;
         }else {
-            bizOrderHeader.setDataStatus("filter");
+
             boolean flag=false;
             boolean roleFlag = false;
             if(user.getRoleList()!=null) {

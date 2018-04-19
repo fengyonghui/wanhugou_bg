@@ -93,13 +93,14 @@
 </table>
 <script type="application/javascript">
     function init() {
+        $Mask.AddLogo("正在加载");
         var startDate = $("#startDate").val();
         var officeId = $("#purchasingId").val();
         window.location.href = "overviewSingle?date=" + startDate + "&officeId=" + officeId;
     }
     function exportTable() {
         var startDate = $("#startDate").val();
-        var officeId = "241";
+        var officeId = $("#purchasingId").val();
         //定义一个form表单
         var myform = $("<form></form>");
         myform.attr('method','post');

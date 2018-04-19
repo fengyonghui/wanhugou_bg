@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
+import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoV2Dao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -25,10 +26,7 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.sys.entity.Dict;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.PropValue;
-import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
+import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -38,6 +36,7 @@ import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -60,7 +59,7 @@ import java.util.*;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizProductInfo> {
+public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, BizProductInfo> {
 
     @Resource
     private PropertyInfoService propertyInfoService;
@@ -113,6 +112,10 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
 
     @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
+        User user=UserUtils.getUser();
+        if(user.isAdmin()){
+            bizProductInfo.setDataStatus("filter");
+        }
         return super.findPage(page, bizProductInfo);
     }
 
@@ -204,7 +207,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
                 bizSkuInfo.setSort(String.valueOf(index));
                 bizSkuInfo.setItemNo(vCode.concat(bizProductInfo.getItemNo()).concat("/").concat(size).concat("/").concat(color));
 
-                BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNo(bizSkuInfo.getItemNo());
+                BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNoProdId(bizSkuInfo.getItemNo(), bizProductInfo.getId());
                 if (oldBizSkuInfo != null && !copy) {
                     bizSkuInfo.setId(oldBizSkuInfo.getId());
                 }else {

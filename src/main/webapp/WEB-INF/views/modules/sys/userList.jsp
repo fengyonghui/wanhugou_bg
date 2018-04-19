@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
 <html>
 <head>
 	<title>用户管理</title>
@@ -55,9 +56,15 @@
 	<ul class="ul-form">
 		<c:if test="${fns:getUser().isAdmin()}">
 		<li><label>归属公司：</label>
-			<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-							title="公司" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true"/>
+			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
+				<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
+						title="公司" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" cssClass="input-small" allowClear="true"/>
 			</c:if>
+			<c:if test="${empty user.conn}">
+				<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
+						title="公司" url="/sys/office/treeData" cssClass="input-small" allowClear="true"/>
+			</c:if>
+		</c:if>
 			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
 				<input type="hidden" name="company.type" value="8">
 				<input type="hidden" name="company.customerTypeTen" value="10">
@@ -70,8 +77,16 @@
 		<li><label>登录名：</label><form:input path="loginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li class="clearfix"></li>
 		<c:if test="${fns:getUser().isAdmin()}">
-			<li><label>归属部门：</label><sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
-													title="部门" url="/sys/office/treeData?type=2" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/></li>
+			<li><label>归属部门：</label>
+			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
+				<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
+						title="部门" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+			</c:if>
+			<c:if test="${empty user.conn}">
+				<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
+								title="部门" url="/sys/office/treeData" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+			</c:if>
+			</li>
 		</c:if>
 		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li><label>电&nbsp;&nbsp;&nbsp;话：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>

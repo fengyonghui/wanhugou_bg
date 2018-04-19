@@ -104,10 +104,10 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		User user = UserUtils.getUser();
         Office office = officeService.get(user.getCompany().getId());
         if (user.isAdmin()) {
+			bizRequestHeader.setDataStatus("filter");
 			return super.findPage(page, bizRequestHeader);
 		} else {
-        	bizRequestHeader.setDataStatus("filter");
-			bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
+        	bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so", "su"));
 			return super.findPage(page, bizRequestHeader);
 		}
 	}
@@ -133,10 +133,6 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 					break;
 				}
 			}
-		}
-
-		if(bizRequestHeader.getId()==null&&user.getRoleList()!=null && flag){
-			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
 		}
 		if(bizRequestHeader.getId()==null){
 			BizRequestHeader requestHeader=new BizRequestHeader();

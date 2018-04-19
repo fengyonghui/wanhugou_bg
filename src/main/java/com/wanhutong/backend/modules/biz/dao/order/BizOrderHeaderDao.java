@@ -14,6 +14,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -261,4 +262,19 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
             @Param("endDate") String endDate,
             @Param("statusList") List<OrderHeaderBizStatusEnum> statusList,
             @Param("officeId")Integer officeId);
+
+    /**
+     * 根据office id 取库存
+     * @param id
+     * @return
+     */
+    BigDecimal getStockAmountByOfficeId(Integer id);
+
+    /**
+     * 根据采购商ID 取采购频率的原始数据
+     * @param custId
+     * @param invalidStatus
+     * @return
+     */
+    List<Integer> findOrderCountFrequency(@Param("custId") Integer custId, @Param("statusList") List<OrderHeaderBizStatusEnum> invalidStatus);
 }

@@ -237,6 +237,9 @@ public class BizPlatformDataOverviewDto {
 
 
     public BigDecimal getStockAmount() {
+        if (stockAmount == null) {
+            return BigDecimal.ZERO;
+        }
         return stockAmount;
     }
 

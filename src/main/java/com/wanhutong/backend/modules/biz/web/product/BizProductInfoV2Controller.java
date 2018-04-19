@@ -444,8 +444,18 @@ public class BizProductInfoV2Controller extends BaseController {
     @RequiresPermissions("biz:product:bizProductInfo:edit")
     @RequestMapping(value = "delete")
     public String delete(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes) {
+        bizProductInfo.setDelFlag(BizProductInfo.DEL_FLAG_DELETE);
         bizProductInfoService.delete(bizProductInfo);
         addMessage(redirectAttributes, "删除产品信息表成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
+    }
+
+    @RequiresPermissions("biz:product:bizProductInfo:edit")
+    @RequestMapping(value = "recovery")
+    public String recovery(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes) {
+        bizProductInfo.setDelFlag(BizProductInfo.DEL_FLAG_NORMAL);
+        bizProductInfoService.delete(bizProductInfo);
+        addMessage(redirectAttributes, "恢复产品信息表成功");
         return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
     }
 
@@ -540,17 +550,18 @@ public class BizProductInfoV2Controller extends BaseController {
     @RequiresPermissions("biz:product:bizProductInfo:edit")
     @RequestMapping(value = "prodDelete")
     public String prodDelete(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response, Model model) {
-        String aa="error";
+        String delStatusStr="error";
         try {
+            bizProductInfo.setDelFlag(BizProductInfo.DEL_FLAG_DELETE);
             bizProductInfoService.delete(bizProductInfo);
             //删除后传值给list，以展示上一次搜索的结果
             list(bizProductInfo,request,response,model);
             addMessage(redirectAttributes, "删除产品信息表成功");
-            aa="ok";
+            delStatusStr="ok";
         }catch (Exception e){
             e.printStackTrace();
         }
-        return aa;
+        return delStatusStr;
     }
 
 }

@@ -11,7 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.userRoleOfficeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,6 +63,8 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+    private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -79,7 +85,9 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
 		String userSou="officeConnIndex";
+
 		if(user.getCompany()!=null && user.getCompany().getSource()!=null && user.getCompany().getSource().equals(userSou)){
+
 			//属于客户专员左边点击菜单查询
 			Office queryOffice = officeService.get(user.getCompany().getId());
 			if(queryOffice!=null){
@@ -95,7 +103,10 @@ public class UserController extends BaseController {
 					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
 				}
 			}
+		}else {
+			user.setDataStatus("filter");
 		}
+
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
 		return "modules/sys/userList";
@@ -121,18 +132,18 @@ public class UserController extends BaseController {
 			List<Office> list = officeService.findList(off);
 			Office office = officeService.get(user.getOffice().getId());
 			if(list == null || list.isEmpty()){
-				if(OfficeTypeEnum.PURCHASINGCENTER.getType().equals(office.getType())){
-					user.setCompany(office);
-					user.setOffice(office);
-				}else if(OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
-					user.setCompany(office);
-					user.setOffice(office);
-				}else {
+//				if(OfficeTypeEnum.PURCHASINGCENTER.getType().equals(office.getType())){
+//					user.setCompany(office);
+//					user.setOffice(office);
+//				}else if(OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+//					user.setCompany(office);
+//					user.setOffice(office);
+//				}else {
 //					Office parentOffice = officeService.get(office.getParentId());
 //					user.setCompany(parentOffice);
 					user.setCompany(office);
 					user.setOffice(office);
-				}
+//				}
 
 			}else{
 				if(user.getConn()!=null && user.getConn().equals("connIndex")){//客户专员标识符
@@ -178,7 +189,8 @@ public class UserController extends BaseController {
 			list = new ArrayList<>();
 		}else{
 			Role role = new Role();
-			role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
+//			role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
+			role.setId(Integer.parseInt(userRoleOfficeEnum.PURCHASE.getType()));
 			user.setRole(role);
 			list = systemService.selectUserByOfficeId(user);
 		}
@@ -610,4 +622,39 @@ public class UserController extends BaseController {
         }
         return flag;
     }
+
+
+    @ResponseBody
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = "selectConsultant")
+    public String selectConsultant(String userId,String companyId,String userRoleIds) {
+		String sflag = "true";
+		boolean flag = false;
+		boolean bflag = true;
+		if (userId != null && !userId.equals("")) {
+            User user = systemService.getUser(Integer.parseInt(userId));
+            String[] roleIds = userRoleIds.split(",".trim());
+            for (String id:roleIds) {
+                Integer roleId = Integer.parseInt(id);
+                Role role = systemService.getRole(roleId);
+                if (role.getEnname().equals(RoleEnNameEnum.BUYER.getState())) {
+                    bflag = false;
+                }
+            }
+            if (user.getCompany()!= null && user.getCompany().getId()!=Integer.parseInt(companyId)) {
+                flag = true;
+            }
+            if (flag || bflag) {
+                BizCustomCenterConsultant ccc = new BizCustomCenterConsultant();
+                User consultant = new User();
+                consultant.setId(user.getId());
+                ccc.setConsultants(consultant);
+                List<BizCustomCenterConsultant> cccList = bizCustomCenterConsultantService.findList(ccc);
+                if (!cccList.isEmpty() && cccList.size() > 0) {
+                    sflag = "false";
+                }
+            }
+        }
+		return sflag;
+	}
 }

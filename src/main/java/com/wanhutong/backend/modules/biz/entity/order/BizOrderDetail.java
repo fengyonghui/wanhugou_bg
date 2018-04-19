@@ -51,7 +51,10 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private List<BizOrderDetail> orderHeaderList;   //用于查询该订单下有多少商品
     private BizInventoryInfo inventoryInfo;     //仓库
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
-
+    /**
+     * 商品图片
+     * */
+    private String skuImgUrl;
 
     private String detailIds;
     private Integer totalReqQty;
@@ -348,5 +351,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setInventoryInfo(BizInventoryInfo inventoryInfo) {
         this.inventoryInfo = inventoryInfo;
+    }
+
+    public String getSkuImgUrl() {
+        return skuImgUrl;
+    }
+
+    public void setSkuImgUrl(String skuImgUrl) {
+        this.skuImgUrl = skuImgUrl;
     }
 }

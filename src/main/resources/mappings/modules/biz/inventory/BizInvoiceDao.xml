@@ -43,7 +43,10 @@
 		FROM biz_invoice a
 		<include refid="bizInvoiceJoins"/>
 		<where>
-			a.status = #{DEL_FLAG_NORMAL}
+			1=1
+			<if test="dataStatus==null">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
 			<if test="sendNumber != null and sendNumber != ''">
 				AND a.send_number LIKE
 				<if test="dbName == 'oracle'">'%'||#{sendNumber}||'%'</if>
@@ -209,7 +212,7 @@
 	
 	<update id="delete">
 		UPDATE biz_invoice SET 
-			status = #{DEL_FLAG_DELETE}
+			status = #{delFlag}
 		WHERE id = #{id}
 	</update>
 	

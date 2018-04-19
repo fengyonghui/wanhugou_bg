@@ -51,6 +51,21 @@ public class BizOrderStatisticsDto {
      */
     private String createDate;
 
+    /**
+     * 平均单价
+     */
+    private BigDecimal univalence;
+
+    public BigDecimal getUnivalence() {
+        if (orderCount <= 0) {
+            return BigDecimal.ZERO;
+        }
+        return getTotalMoney().divide(BigDecimal.valueOf(getOrderCount()), BigDecimal.ROUND_DOWN);
+    }
+
+    public void setUnivalence(BigDecimal univalence) {
+        this.univalence = univalence;
+    }
 
     public BigDecimal getReceiveTotal() {
         return receiveTotal;

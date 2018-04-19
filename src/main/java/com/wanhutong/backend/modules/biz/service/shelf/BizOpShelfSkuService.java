@@ -48,6 +48,7 @@ public class BizOpShelfSkuService extends CrudService<BizOpShelfSkuDao, BizOpShe
 	public Page<BizOpShelfSku> findPage(Page<BizOpShelfSku> page, BizOpShelfSku bizOpShelfSku) {
 		User user= UserUtils.getUser();
 		if(user.isAdmin()){
+			bizOpShelfSku.setDataStatus("filter");
 			return super.findPage(page, bizOpShelfSku);
 		}else {
 			bizOpShelfSku.getSqlMap().put("shelfSku", BaseService.dataScopeFilter(user, "so", "suc"));

@@ -225,7 +225,7 @@
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1
-			<if test="dataStatus!=null and dataStatus!=''">
+			<if test="dataStatus==null">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
 
@@ -1648,5 +1648,29 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         AND oh.create_time BETWEEN #{startDate} AND #{endDate}
         and so.id = #{officeId}
         GROUP BY u.id
+    </select>
+    <select id="getStockAmountByOfficeId" resultType="BigDecimal">
+		SELECT
+		SUM(bsi.base_price * s.stock_qty)
+		FROM biz_inventory_info ii ,biz_inventory_sku s, biz_sku_info bsi
+		WHERE ii.id = s.inv_id
+		and bsi.id = s.sku_id
+		and ii.`status` = 1
+		and s.`status` = 1
+		and bsi.`status` = 1
+		AND ii.cust_id = #{id}
+    </select>
+
+	<select id="findOrderCountFrequency" resultType="Integer">
+		SELECT
+  		count(1) AS orderCount
+		FROM biz_order_header AS oh
+		WHERE oh.cust_id = #{custId}
+		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
+				biz_status != #{item.state}
+			</foreach>
+			OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		GROUP BY
+  		date_format(oh.create_time, '%Y-%m')
     </select>
 </mapper>

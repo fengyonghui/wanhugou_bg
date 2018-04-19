@@ -47,4 +47,6 @@ public interface OfficeDao extends TreeDao<Office> {
      * @return
      */
     List<Office> findListByTypeList(@Param("typeList") List<String> typeList);
+
+    List<Office> findCustomByOfficeId(Integer officeId);
 }
