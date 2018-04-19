@@ -142,7 +142,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 				}
 			}
 			BizCustomCenterConsultant customCenterConsultant=new BizCustomCenterConsultant();
-			if(flag && (source==null || source.equals(""))){
+			if(flag && (source==null || source.equals("") || source.equals("purchaser"))){
 				customCenterConsultant.setCenters(user.getCompany());
 
 				List<Office> officeList = officeDao.findOfficeByIdToParent(customCenterConsultant);
