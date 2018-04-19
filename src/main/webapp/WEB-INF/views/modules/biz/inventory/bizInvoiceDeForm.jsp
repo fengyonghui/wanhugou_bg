@@ -69,6 +69,15 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">发货时间：</label>
+			<div class="controls">
+				<input name="sendDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+						   value="<fmt:formatDate value="${bizInvoice.sendDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">物流结算方式：</label>
 			<div class="controls">
 				<form:select id="settlementStatus" path="settlementStatus" onmouseout="" class="input-xlarge">

@@ -89,6 +89,22 @@ public class BizProductInfoV2Controller extends BaseController {
             bizSkuInfo.setProductInfo(entity);
             List<BizSkuInfo> skuInfosList = bizSkuInfoService.findList(bizSkuInfo);
             Collections.reverse(skuInfosList);
+
+            skuInfosList.forEach(o -> {
+                Map<String, List<AttributeValueV2>> attMap = Maps.newHashMap();
+                AttributeValueV2 attributeValueV2 = new AttributeValueV2();
+                attributeValueV2.setObjectName(BizProductInfoV2Service.SKU_TABLE);
+                attributeValueV2.setObjectId(o.getId());
+                List<AttributeValueV2> list = attributeValueV2Service.findList(attributeValueV2);
+                for (AttributeValueV2 valueV2 : list) {
+                    List<AttributeValueV2> attributeValueV2s = attMap.putIfAbsent(String.valueOf(valueV2.getAttrId()), Lists.newArrayList(valueV2));
+                    if(attributeValueV2s != null) {
+                        attributeValueV2s.add(valueV2);
+                    }
+                }
+                o.setAttrValueMap(attMap);
+            });
+
             entity.setSkuInfosList(skuInfosList);
         }
         if (entity == null) {
