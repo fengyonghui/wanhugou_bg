@@ -21,6 +21,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -65,6 +66,8 @@ public class BizProductInfoV2Controller extends BaseController {
 
     @Autowired
     private BizProductInfoV2Service bizProductInfoService;
+    @Autowired
+    private BizProductInfoForVendorService bizProductInfoForVendorService;
     @Autowired
     private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
@@ -579,5 +582,23 @@ public class BizProductInfoV2Controller extends BaseController {
         }
         return delStatusStr;
     }
+    /**
+     * 查询货号是否存在
+     * */
+    @ResponseBody
+    @RequiresPermissions("biz:product:bizProductInfo:edit")
+    @RequestMapping(value = "getItemNoExist")
+    public String getItemNoExist(String itemNo, Integer id) {
+        BizProductInfo b = new BizProductInfo();
+        b.setItemNo(itemNo);
+        List<BizProductInfo> list = bizProductInfoService.findList(b);
+        List<BizProductInfo> listForVendor = bizProductInfoForVendorService.findList(b);
+        if(id != null) {
+            list.removeIf(o -> o.getId().intValue() == id);
+            listForVendor.removeIf(o -> o.getId().intValue() == id);
+        }
+        return String.valueOf(CollectionUtils.isNotEmpty(list) || CollectionUtils.isNotEmpty(listForVendor));
+    }
+
 
 }
