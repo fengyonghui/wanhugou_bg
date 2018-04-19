@@ -1745,6 +1745,9 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 		<include refid="cendOrderHeaderJoins"/>
 		<where>
 			1=1 and a.order_type =4
+			<if test="dataStatus != null">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>

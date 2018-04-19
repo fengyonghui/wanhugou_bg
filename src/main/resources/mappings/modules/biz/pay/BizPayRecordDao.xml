@@ -30,6 +30,7 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
+		us.name as "updateBy.name",
 		a.update_time AS "updateDate",
 		sua.mobile as "customer.moblieMoeny.mobile",
 		sof.name as "custConsultant.centers.name"
@@ -37,6 +38,7 @@
 	
 	<sql id="bizPayRecordJoins">
 		left join sys_user su on a.create_id=su.id
+		left join sys_user us on a.update_id=us.id
 		LEFT JOIN sys_office so on so.id=a.cust_id
 		LEFT JOIN sys_user s on s.id = a.payer
 		LEFT JOIN sys_office o on o.id = a.account

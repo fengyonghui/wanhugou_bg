@@ -509,6 +509,8 @@ public class BizOrderHeaderController extends BaseController {
             String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             List<BizOrderHeader> pageList =null;
             if(cendExportbs!=null && cendExportbs.equals(a)) {
+                //C端导出
+                bizOrderHeader.setDataStatus("filter");
                 Page<BizOrderHeader> bizOrderHeaderPage = bizOrderHeaderService.cendfindPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
                 pageList = bizOrderHeaderPage.getList();
             }else{
@@ -533,8 +535,6 @@ public class BizOrderHeaderController extends BaseController {
                             o.setOrderDetailList(list);
                             dou+=d.getBuyPrice()*d.getOrdQty();
                             List<String> detailListData = new ArrayList();
-                            //ID
-                            //                        detailListData.add(String.valueOf(d.getId()));
                             //订单编号
                             detailListData.add(String.valueOf(d.getOrderHeader().getOrderNum()));
                             //商品名称
@@ -559,8 +559,6 @@ public class BizOrderHeaderController extends BaseController {
                     //地址查询
                     o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
                     List<String> rowData = new ArrayList();
-                    //id
-                    //                rowData.add(String.valueOf(o.getId()));
                     //订单编号
                     rowData.add(String.valueOf(o.getOrderNum()));
                     //描述
@@ -672,8 +670,6 @@ public class BizOrderHeaderController extends BaseController {
                         //地址查询
                         o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
                         List<String> rowData = new ArrayList();
-                        //id
-                        //                rowData.add(String.valueOf(o.getId()));
                         //订单编号
                         rowData.add(String.valueOf(o.getOrderNum()));
                         //描述
@@ -746,7 +742,6 @@ public class BizOrderHeaderController extends BaseController {
                                 break;
                             }
                         }
-
                         //支付类型名称
                         rowData.add(String.valueOf(p.getPayTypeName()));
                         //业务流水号
@@ -759,29 +754,6 @@ public class BizOrderHeaderController extends BaseController {
                         data.add(rowData);
                     });
                 }
-                //订单来源
-//                rowData.add(String.valueOf(o.getPlatformInfo().getName()));
-//                if (o.getBizLocation() != null) {
-//                    //收货人
-//                    rowData.add(String.valueOf(o.getBizLocation().getReceiver()));
-//                    //联系电话
-//                    rowData.add(String.valueOf(o.getBizLocation().getPhone()));
-//                    //订单收货地址
-//                    rowData.add(String.valueOf(o.getBizLocation().getProvince().getName() + o.getBizLocation().getCity().getName() +
-//                            o.getBizLocation().getRegion().getName() + o.getBizLocation().getAddress()));
-//                } else {
-//                    rowData.add("");
-//                    rowData.add("");
-//                    rowData.add("");
-//                }
-//                //创建人
-//                rowData.add(String.valueOf(o.getCreateBy().getName()));
-//                //创建时间
-//                rowData.add(String.valueOf(sdf.format(o.getCreateDate())));
-//                //更新人
-//                rowData.add(String.valueOf(o.getUpdateBy().getName()));
-//                //更新时间
-//                rowData.add(String.valueOf(sdf.format(o.getUpdateDate())));
             }
             String[] headers = {"订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价","商品工厂总价", "调整金额", "运费",
                     "应付金额", "已收货款", "尾款信息", "利润", "发票状态", "业务状态","支付类型名称","业务流水号","支付金额","交易时间"};

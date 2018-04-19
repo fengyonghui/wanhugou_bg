@@ -124,6 +124,7 @@ public class BizPayRecordController extends BaseController {
 			String fileName = "交易记录数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 			List<BizPayRecord> PayList =null;
 			if(payExportCend!=null && payExportCend.equals(a)){
+				//C端
 				bizPayRecord.setListPayQuery("CqueryPay");
 				PayList = bizPayRecordService.findList(bizPayRecord);
 			}else {
@@ -211,6 +212,7 @@ public class BizPayRecordController extends BaseController {
 			addMessage(redirectAttributes, "导出交易记录数据失败！失败信息：" + e.getMessage());
 		}
 		if(payExportCend!=null && payExportCend.equals(a)){
+			//C端
 			return "redirect:" + adminPath + "/biz/pay/bizPayRecord/CendList";
 		}
 		return "redirect:" + adminPath + "/biz/pay/bizPayRecord/";
