@@ -90,12 +90,12 @@
 	<ul class="ul-form" style="list-style: none">
 		<li><label style="width: 80px;text-align:right;">采购中心：</label>
 			<sys:treeselect id="centerOffice" name="customer.id" value="" labelName="customer.name"
-							labelValue="" notAllowSelectRoot="true" notAllowSelectParent="true"
+							labelValue="" notAllowSelectParent="true"
 							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" extId="${centerOffice.id}"
 							cssClass="input-medium"
 							allowClear="${office.currentUser.admin}">
 			</sys:treeselect>
-			<input id="btn" class="btn btn-primary" type="button" value="查询"/>
+			<input id="btn" class="btn btn-primary" type="button" value="查询库存数量"/>
 			<label style="width: 80px;text-align:right;">库存数量：</label>
 			<input id="invCount" type="number" class="input-medium" readonly="readonly" value=""/>
 		</li>
