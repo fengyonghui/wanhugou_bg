@@ -148,6 +148,7 @@
 		</tr>
 	</c:if>
 		<c:if test="${not empty user.conn}">
+		<c:if test="${bizUser.delFlag==1}">
 			<tr>
 				<td>${bizUser.company.name}</td>
 				<td>${bizUser.office.name}</td>
@@ -179,6 +180,7 @@
 					</c:if>
 				</td></shiro:hasPermission>
 			</tr>
+		</c:if>
 		</c:if>
 	</c:forEach>
 	</tbody>
