@@ -65,6 +65,9 @@
 			<if test="soLineNo != null and soLineNo!= ''">
 				AND a.so_line_no = #{soLineNo}
 			</if>
+			<if test="soType != null and soType != ''">
+				AND a.so_type = #{soType}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
