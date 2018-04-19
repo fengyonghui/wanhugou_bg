@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.product.BizProductInfoForVendorDao">
+
+	<resultMap id="productInfoResult" type="BizProductInfo">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="prodCode" column="prodCode"/>
+		<result property="marketingDate" column="marketingDate"/>
+		<result property="brandId" column="brandId"/>
+		<result property="brandName" column="brandName"/>
+		<result property="bizStatus" column="bizStatus"/>
+		<result property="vendorName" column="vendorName"/>
+		<result property="imgUrl" column="imgUrl"/>
+		<result property="description" column="description"/>
+		<result property="minPrice" column="minPrice"/>
+		<result property="maxPrice" column="maxPrice"/>
+		<result property="itemNo" column="itemNo"/>
+		<result property="delFlag" column="status"/>
+		<result property="createDate" column="createDate"/>
+		<result property="updateDate" column="updateDate"/>
+		<association property="office" javaType="Office" column="office.id">
+			<id property="id" column="office.id"/>
+			<result property="name" column="office.name"/>
+			<result property="type" column="office.type"/>
+		</association>
+		<!--<association property="propValue" javaType="PropValue" column="propValue.id">-->
+			<!--<id property="id" column="propValue.id"/>-->
+		<!--</association>-->
+		<association property="bizVarietyInfo" javaType="BizVarietyInfo" column="bizVarietyInfo.id">
+			<id property="id" column="bizVarietyInfo.id"/>
+			<result property="name" column="bizVarietyInfo.name"/>
+            <result property="code" column="bizVarietyInfo.code"/>
+		</association>
+		<association property="createBy" javaType="User" column="createBy.id">
+			<id property="id" column="createBy.id"/>
+		</association>
+		<association property="updateBy" javaType="User" column="updateBy.id">
+			<id property="id" column="updateBy.id"/>
+		</association>
+		<collection property="categoryInfoList" ofType="BizCategoryInfo">
+			<id property="id" column="categoryInfoList.id" />
+			<id property="name" column="categoryInfoList.name" />
+		</collection>
+
+	</resultMap>
+
+	<sql id="bizProductInfoColumns">
+		a.id AS "id",
+		a.biz_status AS "bizStatus",
+		vi.name as "bizVarietyInfo.name",
+		a.name AS "name",
+		a.prod_code AS "prodCode",
+		a.brand_id AS "brandId",
+		a.brand_name AS "brandName",
+		a.img_url AS "imgUrl",
+		so.name AS "office.name",
+		so.type AS "office.type",
+		a.description AS "description",
+		a.vendor_id AS "office.id",
+		a.vendor_name AS "vendorName",
+		a.marketing_date AS "marketingDate",
+		a.vari_id AS "bizVarietyInfo.id",
+		vi.code AS "bizVarietyInfo.code",
+		a.min_price AS "minPrice",
+		a.max_price AS "maxPrice",
+		a.item_no AS "itemNo",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_time AS "updateDate",
+		a.update_id AS "updateBy.id"
+	</sql>
+	
+	<sql id="bizProductInfoJoins">
+		 LEFT JOIN sys_office so ON so.id = a.vendor_id
+		 LEFT JOIN biz_variety_info vi ON vi.id = a.vari_id
+	</sql>
+    
+	<select id="get" resultMap="productInfoResult">
+		SELECT 
+			<include refid="bizProductInfoColumns"/>,
+			pc.cat_id AS "categoryInfoList.id"
+		FROM biz_vendor_product_info a
+		LEFT JOIN biz_prod_cate pc ON pc.prod_id = a.id
+		<include refid="bizProductInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizProductInfo">
+		SELECT 
+			<include refid="bizProductInfoColumns"/>
+		FROM biz_vendor_product_info a
+		<include refid="bizProductInfoJoins"/>
+		<where>
+			  a.status = #{DEL_FLAG_NORMAL}
+			<if test="bizVarietyInfo != '' and bizVarietyInfo != null and  bizVarietyInfo.name != ''">
+				AND vi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{bizVarietyInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{bizVarietyInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{bizVarietyInfo.name},'%')</if>
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="prodCode != null and prodCode != ''">
+				AND a.prod_code LIKE 
+					<if test="dbName == 'oracle'">'%'||#{prodCode}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{prodCode}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{prodCode},'%')</if>
+			</if>
+			<if test="itemNo != null and itemNo != ''">
+				AND a.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+			</if>
+			<if test="brandName != null and brandName != ''">
+				AND a.brand_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{brandName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{brandName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{brandName},'%')</if>
+			</if>
+			<if test="office != null and office.id !=null and office.id != ''">
+				AND a.vendor_id = #{office.id}
+			</if>
+			<if test="createBy != null and createBy.id !=null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizProductInfo">
+		SELECT 
+			<include refid="bizProductInfoColumns"/>
+		FROM biz_vendor_product_info a
+		<include refid="bizProductInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_vendor_product_info(
+			`name`,
+            prod_code,
+			brand_id,
+			brand_name,
+			description,
+			vendor_id,
+			vendor_name,
+			marketing_date,
+			vari_id,
+			<if test="minPrice!=null">
+				min_price,
+			</if>
+			<if test="maxPrice!=null">
+				max_price,
+			</if>
+			img_url,
+			item_no,
+			create_id,
+			create_time,
+			u_version,
+			update_time,
+			update_id
+		) VALUES (
+			#{name},
+			#{prodCode},
+			#{brandId},
+			#{brandName},
+			#{description},
+			#{office.id},
+			#{office.name},
+			#{marketingDate},
+			#{bizVarietyInfo.id},
+		<if test="minPrice!=null">
+			#{minPrice},
+		</if>
+		<if test="maxPrice!=null">
+			#{maxPrice},
+		</if>
+			#{imgUrl},
+			#{itemNo},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateDate},
+			#{updateBy.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_vendor_product_info SET
+		<if test="name!=null and name !=''">
+			`name` = #{name},
+		</if>
+		<if test="prodCode!=null and prodCode!=''">
+			prod_code = #{prodCode},
+		</if>
+		<if test="brandName!=null and brandName!=''">
+			brand_name = #{brandName},
+		</if>
+		<if test="imgUrl!=null and imgUrl!=''">
+			img_url = #{imgUrl},
+		</if>
+		<if test="description!=null and description!=''">
+			description = #{description},
+		</if>
+		<if test="office!=null and office.id!=null and office.id!=''">
+			vendor_id = #{office.id},
+		</if>
+		<if test="office!=null and office.name!=null and office.name!=''">
+			vendor_name = #{office.name},
+		</if>
+		<if test="marketingDate!=null and marketingDate!=''">
+			marketing_date = #{marketingDate},
+		</if>
+		<if test="minPrice!=null">
+			min_price = #{minPrice},
+		</if>
+		<if test="maxPrice!=null">
+			max_price = #{maxPrice},
+		</if>
+			vari_id = #{bizVarietyInfo.id},
+			item_no = #{itemNo},
+			u_version = #{uVersion},
+			update_time = #{updateDate},
+			update_id = #{updateBy.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_vendor_product_info SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<delete id="deleteProdCate">
+		DELETE FROM biz_prod_cate WHERE prod_id = #{id}
+	</delete>
+	<delete id="deleteProdPropInfoReal">
+		DELETE biz_prod_property_info,
+		biz_prod_prop_value
+		FROM
+		biz_prod_property_info
+		LEFT JOIN biz_prod_prop_value ON biz_prod_property_info.id = biz_prod_prop_value.prod_prop_id
+		WHERE
+		biz_prod_property_info.prod_id = #{id}
+	</delete>
+	<insert id="insertProdCate">
+		INSERT INTO biz_prod_cate(prod_id, cat_id,create_id,create_time,update_id,update_time)
+		<foreach collection="categoryInfoList" item="cate" separator=" union all ">
+			SELECT #{id}, #{cate.id},#{createBy.id},#{createDate},#{updateBy.id},#{updateDate}
+			<if test="dbName != 'mssql'">
+				FROM dual
+			</if>
+		</foreach>
+	</insert>
+	<update id="checkPass">
+		UPDATE biz_vendor_product_info SET
+			biz_status = #{bizStatus}
+		WHERE id = #{id}
+	</update>
+
+	<insert id="insertProductInfoByVendorProductInfo"  useGeneratedKeys="true" keyProperty="id" parameterType="BizProductInfo">
+		INSERT INTO biz_product_info(
+		`name`,
+		prod_code,
+		brand_id,
+		brand_name,
+		description,
+		vendor_id,
+		vendor_name,
+		marketing_date,
+		vari_id,
+		min_price,
+		max_price,
+		img_url,
+		item_no,
+		create_id,
+		create_time,
+		u_version,
+		update_time,
+		update_id
+		) SELECT 	`name`,
+		prod_code,
+		brand_id,
+		brand_name,
+		description,
+		vendor_id,
+		vendor_name,
+		marketing_date,
+		vari_id,
+		min_price,
+		max_price,
+		img_url,
+		item_no,
+		create_id,
+		create_time,
+		u_version,
+		update_time,
+		update_id FROM biz_vendor_product_info WHERE id = ${id};
+	</insert>
+</mapper>

@@ -82,6 +82,9 @@ public class AttributeInfoV2 extends DataEntity<AttributeInfoV2> {
 		SYS(0, "系统标签", ""),
 		PRODUCT(1, "产品标签", "biz_product_info"),
 		SKU(2, "商品标签", "biz_sku_info"),
+
+		PRODUCT_FOR_VENDOR(3, "供应商产品标签", "biz_vendor_product_info"),
+		SKU_FOR_VENDOR(4, "供应商商品标签", "biz_vendor_sku_info"),
 		;
 		private int level;
 		private String desc;

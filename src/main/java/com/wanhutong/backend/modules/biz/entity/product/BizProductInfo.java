@@ -64,6 +64,10 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private SkuProd skuProd;
 
 	private String itemNo;
+	/**
+	 * 业务状态
+	 */
+	private Integer bizStatus;
 
 	/**
 	 * sku 组合字符串集合
@@ -97,6 +101,14 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String source;
 
+
+	public Integer getBizStatus() {
+		return bizStatus;
+	}
+
+	public void setBizStatus(Integer bizStatus) {
+		this.bizStatus = bizStatus;
+	}
 
 	public AttributeValueV2 getMaterialAttributeValue() {
 		return materialAttributeValue;
@@ -435,4 +447,29 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	}
 
 
+	/**
+	 * 供应商上传产品的审核状态
+	 */
+	public enum BizStatus {
+//		产品状态：1、未审核；2、审核通过；3、审核失败
+		UNAUDITED(1, "未审核"),
+		AUDIT_PASS(2, "审核通过"),
+		AUDIT_FAILED (3, "审核失败"),
+		;
+		private int status;
+		private String desc;
+
+		BizStatus(int status, String desc) {
+			this.status = status;
+			this.desc = desc;
+		}
+
+		public int getStatus() {
+			return status;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
+	}
 }
