@@ -105,11 +105,12 @@
 			</td>
 			<td>
 				${fns:getDictLabel(orderHeader.bizStatus, 'biz_cend_orderType', '未知状态')}
-				<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">
-					<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">
+					<a style="display: none">
+						<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
+					</a>
+					<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40 && total != orderHeader.receiveTotal}">
 						<font color="#FF0000">(有尾款)</font>
 					</c:if>
-				</c:if>
 			</td>
 			<td>
 					${orderHeader.platformInfo.name}
