@@ -101,8 +101,8 @@
     </div>
     <div class="control-group">
         <label class="control-label">banner大图:
-            <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
             <p style="opacity: 0.5;">图片建议比例为16:9</p>
+            <p style="opacity: 0.5;">非banner展示产品可不传</p>
             <p style="opacity: 0.5;">点击图片删除</p>
         </label>
         <div class="controls">
