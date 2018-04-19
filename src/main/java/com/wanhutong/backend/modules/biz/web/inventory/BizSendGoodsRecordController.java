@@ -147,7 +147,9 @@ public class BizSendGoodsRecordController extends BaseController {
                 List<String> rowData = new ArrayList<>();
                 //仓库名
                 BizInventoryInfo bizInventoryInfo = bizInventoryInfoService.get(bsgr.getInvInfo().getId());
-				rowData.add(bizInventoryInfo == null ? StringUtils.EMPTY : bizInventoryInfo.getName());
+                if (bizStatu.equals("0")) {
+                    rowData.add(bizInventoryInfo == null ? StringUtils.EMPTY : bizInventoryInfo.getName());
+                }
                 //商品名称
                 rowData.add(bsgr.getSkuInfo().getName());
                 //商品货号
