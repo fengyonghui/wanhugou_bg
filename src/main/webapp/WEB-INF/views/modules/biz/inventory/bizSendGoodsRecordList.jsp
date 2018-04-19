@@ -58,9 +58,11 @@
 			<li><label>商品货号：</label>
 				<form:input path="skuInfo.itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-			<li><label>仓库名称：</label>
-				<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
-			</li>
+			<c:if test="${bizStatus=='0'}">
+				<li><label>仓库名称：</label>
+					<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
+				</li>
+			</c:if>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>

@@ -27,19 +27,19 @@
 	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead><tr><th>品牌名称</th><th>标签</th><th>类型</th><th>描述</th><th>排序</th><shiro:hasPermission name="biz:product:brand:edit"><th>操作</th></shiro:hasPermission></tr></thead>
+		<thead><tr><th>品牌名称</th><th>类型</th><th>描述</th><th>排序</th><td>备注</td><shiro:hasPermission name="biz:product:brand:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="dict">
 			<tr>
-				<td>${dict.value}</td>
 				<td><a href="${ctx}/biz/product/brand/form?id=${dict.id}">${dict.label}</a></td>
 				<td><a href="javascript:" onclick="$('#type').val('${dict.type}');$('#searchForm').submit();return false;">${dict.type}</a></td>
 				<td>${dict.description}</td>
 				<td>${dict.sort}</td>
+				<td>${dict.remarks}</td>
 				<shiro:hasPermission name="biz:product:brand:edit"><td>
     				<a href="${ctx}/biz/product/brand/form?id=${dict.id}">修改</a>
 					<a href="${ctx}/biz/product/brand/delete?id=${dict.id}&type=${dict.type}" onclick="return confirmx('确认要删除该字典吗？', this.href)">删除</a>
-    				<a href="<c:url value='${fns:getAdminPath()}/biz/product/brand/form?type=${dict.type}&sort=${dict.sort+10}'><c:param name='description' value='${dict.description}'/></c:url>">添加键值</a>
+    				<%--<a href="<c:url value='${fns:getAdminPath()}/biz/product/brand/form?type=${dict.type}&sort=${dict.sort+10}'><c:param name='description' value='${dict.description}'/></c:url>">添加键值</a>--%>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
