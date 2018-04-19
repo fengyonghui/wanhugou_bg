@@ -11,6 +11,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -75,6 +77,8 @@ public class BrandController extends BaseController {
 		if (!beanValidator(model, dict)){
 			return form(dict, model);
 		}
+		String code = HanyuPinyinHelper.getFirstLetters(dict.getLabel(), HanyuPinyinCaseType.UPPERCASE);
+		dict.setValue(code);
 		dictService.save(dict);
 		addMessage(redirectAttributes, "保存产品品牌'" + dict.getLabel() + "'成功");
 		return "redirect:" + adminPath + "/biz/product/brand/?repage&type="+dict.getType();
