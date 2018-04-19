@@ -38,7 +38,7 @@
 		<li><label>订单编号：</label>
 			<form:input path="orderNum" htmlEscape="false" maxlength="50" class="input-medium"/>
 		</li>
-		<li><label>用户名称：</label>
+		<li><label>用户名称：</label><%-- /sys/user/treeData --%>
 			<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
 					labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 					title="用户"  url="/sys/wx/sysWxPersonalUser/userTreeData" cssClass="input-medium"

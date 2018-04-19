@@ -251,7 +251,7 @@
     </c:if>
     <div class="control-group">
         <label class="control-label">用户名称：</label>
-        <div class="controls">
+        <div class="controls"><%-- /sys/user/treeData --%>
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <sys:treeselect id="office" name="customer.id" value="${entity.customer.id}" labelName="customer.name"
                                 labelValue="${entity.customer.name}" disabled="disabled" notAllowSelectParent="true"
