@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
 <html>
 <head>
 	<title>仓库信息管理</title>
@@ -52,10 +53,10 @@
 		<biz:selectLocationForm/>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
-			<div class="controls">
+			<div class="controls"><%-- notAllowSelectRoot="true" 不能选中根节点 --%>
 				<sys:treeselect id="centerOffice" name="customer.id" value="${bizInventoryInfo.customer.id}" labelName="customer.name"
-								labelValue="${bizInventoryInfo.customer.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" extId="${centerOffice.id}"
+								labelValue="${bizInventoryInfo.customer.name}"  notAllowSelectParent="true"
+								title="采购中心"  url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" extId="${centerOffice.id}"
 								cssClass="input-xlarge required"
 								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息">
 				</sys:treeselect>

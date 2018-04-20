@@ -8,6 +8,7 @@
 		a.object_name AS "objectName",
 		s.name AS  "objectName1",
 		su.name AS  "objectName2",
+		su.id as "user.id",
 		a.year AS "year",
 		a.month AS "month",
 		a.day AS "day",
@@ -17,12 +18,16 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		syu.name as "createBy.name",
+		uys.name as "updateBy.name"
 	</sql>
 
 	<sql id="bizOpPlanJoins">
 		LEFT JOIN  sys_office s on s.id = a.object_id
 		LEFT JOIN  sys_user su on su.id = a.object_id
+		left join sys_user syu on syu.id=a.create_id
+		left join sys_user uys on uys.id=a.update_id
 	</sql>
 
 	<select id="get" resultType="BizOpPlan">
@@ -51,12 +56,6 @@
 				<if test="dbName == 'oracle'">'%'||#{objectName2}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{objectName2}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{objectName2},'%')</if>
-			</if>
-			<if test="objectId != null and objectId != ''">
-				AND a.object_id = #{objectId}
-			</if>
-			<if test="objectName != null and objectName != ''">
-				AND a.object_Name = #{objectName}
 			</if>
 			<if test="year != null and year != ''">
 				AND a.year = #{year}
