@@ -334,6 +334,16 @@
         <shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                            type="button"
                                                                            value="保 存" onclick="submitCustomForm()"/>&nbsp;</shiro:hasPermission>
+        <shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
+            <c:if test="${bizProductInfo.bizStatus == 1}">
+                <input id="btnSubmit" class="btn btn-primary"
+                       type="button"
+                       value="审核通过" onclick="checkPass(${bizProductInfo.id})"/>
+                <input id="btnSubmit" class="btn btn-primary"
+                       type="button"
+                       value="审核不通过" onclick="checkUnPass(${bizProductInfo.id})"/>
+            </c:if>
+        </shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 </form:form>
@@ -349,6 +359,24 @@
 <script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+
+    function checkUnPass(id){
+        top.$.jBox.confirm("确认要拒绝通过审核吗？","系统提示",function(v,h,f){
+            if(v=="ok"){
+                window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=3&id=" + id;
+            }
+        },{buttonsFocus:1});
+        top.$('.jbox-body .jbox-icon').css('top','55px');
+    }
+    function checkPass(id){
+        top.$.jBox.confirm("确认要通过审核吗？","系统提示",function(v,h,f){
+            if(v=="ok"){
+                window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=2&id=" + id;
+            }
+        },{buttonsFocus:1});
+        top.$('.jbox-body .jbox-icon').css('top','55px');
+    }
+
     function initSkuTable() {
         var skuTableData = $("#skuTableData");
         var skuTableDataTr = skuTableData.find("tr");
