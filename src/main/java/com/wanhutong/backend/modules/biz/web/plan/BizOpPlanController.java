@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.web.plan;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -23,6 +27,8 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.plan.BizOpPlan;
 import com.wanhutong.backend.modules.biz.service.plan.BizOpPlanService;
 
+import java.util.List;
+
 /**
  * 运营计划Controller
  * @author 张腾飞
@@ -38,6 +44,8 @@ public class BizOpPlanController extends BaseController {
 	private OfficeService officeService;
 	@Autowired
 	private SystemService systemService;
+	@Autowired
+	private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 	
 	@ModelAttribute
 	public BizOpPlan get(@RequestParam(required=false) Integer id) {
@@ -62,11 +70,35 @@ public class BizOpPlanController extends BaseController {
 	@RequiresPermissions("biz:plan:bizOpPlan:view")
 	@RequestMapping(value = "form")
 	public String form(BizOpPlan bizOpPlan, Model model) {
-		if (bizOpPlan.getId() != null) {
-			if (bizOpPlan.getObjectName() != null && bizOpPlan.getObjectName().equals("sys_office")) {
-				officeService.get(Integer.parseInt(bizOpPlan.getObjectId()));
-			} else if (bizOpPlan.getObjectName() != null && bizOpPlan.getObjectName().equals("sys_user")) {
-				systemService.getUser(Integer.parseInt(bizOpPlan.getObjectId()));
+		BizOpPlan opPlan =null;
+		String a="sys_office";
+		String b="sys_user";
+		if(bizOpPlan.getId()!=null){
+			opPlan = bizOpPlanService.get(bizOpPlan);
+		}
+		if (opPlan != null) {
+			if (opPlan.getObjectName() != null && opPlan.getObjectName().equals(a)) {
+				Office office = officeService.get(Integer.parseInt(bizOpPlan.getObjectId()));
+				bizOpPlan.setObjectName1(office.getName());
+				bizOpPlan.setObjectName2(null);
+			} else if (opPlan.getObjectName() != null && opPlan.getObjectName().equals(b)) {
+				BizCustomCenterConsultant bizCustomCenterConsultant = new BizCustomCenterConsultant();
+				User user1 = new User();
+				User user = systemService.getUser(Integer.parseInt(bizOpPlan.getObjectId()));
+				user1.setId(user.getId());
+				bizCustomCenterConsultant.setConsultants(user1);
+				List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(bizCustomCenterConsultant);
+				if(list.size()!=0){
+					for (BizCustomCenterConsultant customCenterConsultant : list) {
+						bizOpPlan.setObjectId(String.valueOf(customCenterConsultant.getCenters().getId()));
+						bizOpPlan.setObjectName1(customCenterConsultant.getCenters().getName());
+						break;
+					}
+				}else{
+					bizOpPlan.setObjectName1(null);
+				}
+				bizOpPlan.setUser(user1);
+				bizOpPlan.setObjectName2(user.getName());
 			}
 		}
 		model.addAttribute("bizOpPlan", bizOpPlan);

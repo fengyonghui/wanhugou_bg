@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
 <html>
 <head>
 	<title>仓库信息管理</title>
@@ -29,15 +30,11 @@
 			<li><label>仓库名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
-			<%--<li><label>common_location.id：</label>--%>
-				<%--<form:input path="locationId" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
-			<%--</li>--%>
 			<li><label>采购中心</label>
-				<%--<form:input path="customer.name" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
 				<sys:treeselect id="centerOffice" name="customer.id" value="" labelName="customer.name"
-								labelValue="" notAllowSelectRoot="true" notAllowSelectParent="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" extId="${centerOffice.id}"
-								cssClass="input-xlarge"
+								labelValue="" notAllowSelectParent="true"
+								title="采购中心"  url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" extId="${centerOffice.id}"
+								cssClass="input-medium"
 								allowClear="${office.currentUser.admin}">
 				</sys:treeselect>
 			</li>
