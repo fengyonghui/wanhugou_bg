@@ -32,7 +32,7 @@
 
     </script>
 	<script type="text/javascript">
-    //用于选择采购中心查询客户专员
+    //用于选择采购中心查询采购专员
     function centerOffUser() {
         $("#userSelect").empty();
         	if($("#id").val()!=null && $("#id").val()!='' && ${bizOpPlan.objectName2 !=null}){
@@ -96,7 +96,7 @@
 					<option value=""> ===请选择=== </option>
 				</select>
 			</c:if>
-			<span class="help-inline">此处选择就代表添加的是客户专员,不选择客户专员代表添加的是采购中心</span>
+			<span class="help-inline">此处选择就代表添加的是采购专员,不选择采购专员代表添加的是采购中心</span>
 		</div>
 	</div>
 	<div class="control-group">
