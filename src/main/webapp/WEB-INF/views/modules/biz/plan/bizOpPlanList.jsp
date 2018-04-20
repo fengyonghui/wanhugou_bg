@@ -53,6 +53,7 @@
 		<th>月</th>
 		<th>日</th>
 		<th>总额</th>
+		<th>创建时间</th>
 		<shiro:hasPermission name="biz:plan:bizOpPlan:edit"><th>操作</th></shiro:hasPermission>
 	</tr>
 	</thead>
@@ -82,6 +83,9 @@
 			</td>
 			<td>
 					${bizOpPlan.amount}
+			</td>
+			<td>
+				<fmt:formatDate value="${bizOpPlan.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<shiro:hasPermission name="biz:plan:bizOpPlan:edit"><td>
 				<a href="${ctx}/biz/plan/bizOpPlan/form?id=${bizOpPlan.id}">修改</a>
