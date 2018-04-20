@@ -54,7 +54,7 @@
 		        alert("价钱不能为空！");
 		        return;
 			}
-            if(confirm("确认生成采购订单吗？")){
+            if(confirm("确认生成预览采购订单吗？")){
                 $("#inputForm").submit();
             }
 		}
@@ -66,7 +66,7 @@
 		<li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
 		<li class="active"><a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">采购订单<shiro:hasPermission name="biz:po:bizPoHeader:edit">${not empty bizPoHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:po:bizPoHeader:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/save?prewStatus=prew" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<input type="hidden" name="vendOffice.id" value="${vendorId}">
@@ -188,9 +188,12 @@
 		<c:if test="${bizPoHeader.poDetailList!=null}">
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:po:bizPoHeader:edit">
-
+				<c:if test="${prewStatus == 'prew'}">
+					<input id="btnSubmit" type="button" onclick="saveMon()"  class="btn btn-primary"  value="确认生成"/>
+				</c:if>
+				<c:if test="${prewStatus != 'prew'}">
 					<input id="btnSubmit" type="button" onclick="saveMon()"  class="btn btn-primary"  value="保存"/>
-
+				</c:if>
 				&nbsp;</shiro:hasPermission>
 		</div>
 	</c:if>
@@ -281,7 +284,7 @@
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:po:bizPoHeader:edit">
 				<c:if test="${bizPoHeader.poDetailList==null}">
-					<input id="btnSubmit" type="button" onclick="savePoOrder()"  class="btn btn-primary"  value="生成采购单"/>
+					<input id="btnSubmit" type="button" onclick="savePoOrder()"  class="btn btn-primary"  value="采购单预览"/>
 				</c:if>
 				&nbsp;</shiro:hasPermission>
 			<c:if test="${not empty bizPoHeader.str && bizPoHeader.str eq 'detail'}">
