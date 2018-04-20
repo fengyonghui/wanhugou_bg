@@ -52,7 +52,8 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Map<Integer,List<BizPoOrderReq>> orderNumMap;
 	private Map<String,Integer> orderSourceMap;
 
-	
+	private int isPrew = 1;
+
 	public BizPoHeader() {
 		super();
 	}
@@ -68,6 +69,14 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setOrderNum(String orderNum) {
 		this.orderNum = orderNum;
+	}
+
+	public int getIsPrew() {
+		return isPrew;
+	}
+
+	public void setIsPrew(int isPrew) {
+		this.isPrew = isPrew;
 	}
 
 	public Office getVendOffice() {

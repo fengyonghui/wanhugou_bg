@@ -90,11 +90,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		super.save(bizPoHeader);
 
 		savePoHeaderDetail(bizPoHeader);
-		if(bizPoHeader.getId()!=null){
-			saveOrdReqBizStatus(bizPoHeader);
-		}
-
-
 	}
 
     @Transactional(readOnly = false)
@@ -103,6 +98,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		if(bizPoHeader.getDeliveryStatus()!=null && bizPoHeader.getDeliveryStatus()==1){
 			BizPoHeader poHeader=get(bizPoHeader.getId());
 			bizPoHeader.setDeliveryOffice(poHeader.getVendOffice());
+		}
+		if(bizPoHeader.getId()!=null && bizPoHeader.getIsPrew() == 0){
+			saveOrdReqBizStatus(bizPoHeader);
 		}
         super.save(bizPoHeader);
 
@@ -234,8 +232,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
 
 			 }
-		for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectReq.entrySet())
-		{
+		for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectReq.entrySet()) {
 			BizRequestHeader bizRequestHeader=	bizRequestHeaderService.get(entry.getKey());
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
 			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);

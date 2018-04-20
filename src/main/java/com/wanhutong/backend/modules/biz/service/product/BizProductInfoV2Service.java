@@ -112,10 +112,6 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
 
     @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
-        User user=UserUtils.getUser();
-        if(user.isAdmin()){
-            bizProductInfo.setDataStatus("filter");
-        }
         return super.findPage(page, bizProductInfo);
     }
 
@@ -137,13 +133,19 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
         Office office = officeService.get(bizProductInfo.getOffice().getId());
         bizProductInfo.getOffice().setName(office.getName());
         BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
-        String vCode = bizVendInfo != null ? bizVendInfo.getCode() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
-        vCode = addZeroForNum(vCode, true, 3);
+        String vFullCode = bizVendInfo != null ? bizVendInfo.getCode() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
+
+        if (!bizProductInfo.getItemNo().startsWith(vFullCode)) {
+            bizProductInfo.setItemNo(bizProductInfo.getItemNo().concat(vFullCode));
+        }
+
+        String vCode = addZeroForNum(vFullCode, true, 3);
 
         BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
         BizVarietyInfo varietyInfo = bizVarietyInfoService.get(bizVarietyInfo.getId());
         String cateCode = addZeroForNum(varietyInfo.getCode(), true, 3);
         bizProductInfo.setProdCode(StringUtils.EMPTY);
+
         super.save(bizProductInfo);
         if (StringUtils.isBlank(bizProductInfo.getProdCode())) {
             String prodCode = brandCode + vCode + cateCode + autoGenericCode(bizProductInfo.getId().toString(), 6);
