@@ -3,15 +3,6 @@
  */
 package com.wanhutong.backend.modules.sys.service;
 
-import java.util.*;
-
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import org.apache.shiro.session.Session;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.security.Digests;
@@ -22,6 +13,7 @@ import com.wanhutong.backend.common.utils.CacheUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.Servlets;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.dao.MenuDao;
 import com.wanhutong.backend.modules.sys.dao.RoleDao;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
@@ -32,6 +24,15 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm;
 import com.wanhutong.backend.modules.sys.utils.LogUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.shiro.session.Session;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -249,7 +250,15 @@ public class SystemService extends BaseService implements InitializingBean {
 		userDao.recovery(user);
 		UserUtils.clearCache(user);
 	}
-	
+
+	public List<User> findUserByRole(Integer roleId){
+		return userDao.findUserByRole(roleId);
+	}
+
+	public List<User> findUserByRoleEnName(String roleEnName){
+		return userDao.findUserByRoleEnName(roleEnName);
+	}
+
 	@Transactional(readOnly = false)
 	public void updatePasswordById(Integer id, String loginName, String newPassword) {
 		User user = new User(id);

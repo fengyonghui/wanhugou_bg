@@ -3,13 +3,13 @@
  */
 package com.wanhutong.backend.modules.sys.dao;
 
-import java.util.List;
-
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.wx.SysWxPersonalUser;
+
+import java.util.List;
 
 /**
  * 用户DAO接口
@@ -100,6 +100,21 @@ public interface UserDao extends CrudDao<User> {
 	public List<User> systemCompany();
 
 	void recovery(User user);
+
+	/**
+	 * 根据角色取所有用户
+	 * @param roleId
+	 * @return
+	 */
+	List<User> findUserByRole(int roleId);
+
+	/**
+	 * 根据角色enname取所有用户
+	 * @param roleEnName
+	 * @return
+	 */
+	List<User> findUserByRoleEnName(String roleEnName);
+
 
 	/**
 	 * 查询C端注册用户

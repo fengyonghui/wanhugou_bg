@@ -8,6 +8,10 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            var vendId = $("#id").val();
+            if (vendId==''){
+                $("#primaryPersonButton").attr("class","btn disabled");
+            }
             $("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
@@ -175,7 +179,7 @@
             <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
                             title="用户" url="/sys/user/treeData?type=7&officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
             <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">添加新负责人</button>
-            <font color="red">添加新用户请点击添加新负责人，其余请在左侧选择</font>
+            <font color="red">添加新用户请点击添加新负责人，修改请点击左侧放大镜</font>
         </div>
     </div>
     <%--<div class="control-group">--%>

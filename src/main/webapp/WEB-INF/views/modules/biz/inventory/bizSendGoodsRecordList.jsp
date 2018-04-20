@@ -4,6 +4,15 @@
 <head>
 	<title>供货记录管理</title>
 	<meta name="decorator" content="default"/>
+	<style media="print">
+		@page {
+			size: auto;  /* auto is the initial value */
+			margin: 0mm; /* this affects the margin in the printer settings */
+		}
+		.noprint {
+			display: none
+		}
+	</style>
 	<script type="text/javascript">
 		$(document).ready(function() {
             $("#buttonExport").click(function(){
@@ -32,11 +41,11 @@
 		<li class="active"><a href="${ctx}/biz/inventory/bizSendGoodsRecord?bizStatu=${bizStatus}">供货记录列表</a></li>
 		 <%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><li><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form">供货记录添加</a></li></shiro:hasPermission>--%>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord?bizStatu=${bizStatus}" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizSendGoodsRecord" action="${ctx}/biz/inventory/bizSendGoodsRecord?bizStatu=${bizStatus}" method="post" class="noprint breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="bizStatus" name="bizStatus" type="hidden" value="${bizStatus}"/>
-		<ul class="ul-form">
+		<ul class="ul-form" >
 			<li><label>商品名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
@@ -49,9 +58,11 @@
 			<li><label>商品货号：</label>
 				<form:input path="skuInfo.itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
-			<li><label>仓库名称：</label>
-				<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
-			</li>
+			<c:if test="${bizStatus=='0'}">
+				<li><label>仓库名称：</label>
+					<form:input path="invInfo.name" htmlEscape="false" maxlength="30" class="input-medium"/>
+				</li>
+			</c:if>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
@@ -82,7 +93,7 @@
 				<%--</c:if>--%>
 				<th>供货时间</th>
 				<c:if test="${fns:getUser().isAdmin()}">
-				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th>操作</th></shiro:hasPermission>
+				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><th class="noprint">操作</th></shiro:hasPermission>
 				</c:if>
 			</tr>
 		</thead>
@@ -145,7 +156,7 @@
 					<fmt:formatDate value="${bizSendGoodsRecord.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<c:if test="${fns:getUser().isAdmin()}">
-				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><td>
+				<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><td class="noprint">
 					<c:if test="${bizSendGoodsRecord.delFlag!=null && bizSendGoodsRecord.delFlag!=0}">
 						<%--<a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">修改</a>--%>
 						<a href="${ctx}/biz/inventory/bizSendGoodsRecord/delete?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要删除该供货记录吗？', this.href)">删除</a>
@@ -159,6 +170,7 @@
 		</c:forEach>
 		</tbody>
 	</table>
+	<input onclick="window.print();" type="button" class="btn btn-primary" value="打印" style="background:#F78181;">
 	<div class="pagination">${page}</div>
 </body>
 </html>

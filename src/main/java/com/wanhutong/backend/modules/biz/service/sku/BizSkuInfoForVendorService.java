@@ -65,7 +65,7 @@ public class BizSkuInfoForVendorService extends CrudService<BizSkuInfoForVendorD
 	@Resource
 	private CommonImgService commonImgService;
 	@Autowired
-	private BizSkuInfoV2Dao bizSkuInfoDao;
+	private BizSkuInfoForVendorDao bizSkuInfoDao;
 	@Autowired
 	private BizProductInfoForVendorDao bizProductInfoForVendorDao;
 	@Resource

@@ -36,6 +36,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private List<CommonImg> skuImgs;
 	private List<BizSkuPropValue> skuPropValueList;
 	private List<AttributeValueV2> attrValueList;
+	private Map<String, List<AttributeValueV2>> attrValueMap;
 	private String itemNo;
 
 	private String sort; //生成part_no排序
@@ -70,6 +71,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 		super(id);
 	}
 
+	public Map<String, List<AttributeValueV2>> getAttrValueMap() {
+		return attrValueMap;
+	}
+
+	public void setAttrValueMap(Map<String, List<AttributeValueV2>> attrValueMap) {
+		this.attrValueMap = attrValueMap;
+	}
 
 	public List<CommonImg> getSkuImgs() {
 		return skuImgs;

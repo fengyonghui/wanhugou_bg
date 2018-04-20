@@ -31,7 +31,7 @@
 			<li><label>物流商：</label>
 				<form:input path="logistics.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>承运人：</label>
+			<li><label>发货人：</label>
 				<form:input path="carrier" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -48,7 +48,7 @@
 				<th>操作费</th>
 				<th>货值</th>
 				<th>运费/货值</th>
-				<th>承运人</th>
+				<th>发货人</th>
 				<th>物流结算方式</th>
 				<th>发货时间</th>
 				<th>物流信息图</th>

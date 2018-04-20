@@ -359,7 +359,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
             commonImg.setImgSort(i);
             commonImgService.save(commonImg);
 
-            if (i == 0) {
+            if (i == 0 && StringUtils.isBlank(bizProductInfo.getImgUrl())) {
                 bizProductInfo.setImgUrl(commonImg.getImgServer() + commonImg.getImgPath());
                 bizProductInfoForVendorDao.update(bizProductInfo);
             }

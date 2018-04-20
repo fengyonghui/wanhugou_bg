@@ -56,8 +56,7 @@
 				<th>商品编码</th>
 				<th>商品货号</th>
 				<%--<th>创建人</th>--%>
-				<th>基础售价</th>
-				<th>采购价格</th>
+				<th>工厂价格</th>
 				<th>创建时间</th>
 				<th>更新人</th>
 				<%--<th>更新时间</th>--%>
@@ -88,10 +87,6 @@
 					<td>
 						<input name="itemNo" value="${bizSkuInfo.itemNo}" type="hidden"/>
 							${bizSkuInfo.itemNo}
-					</td>
-					<td>
-						<input name="basePrice" value="${bizSkuInfo.basePrice}" type="hidden"/>
-						${bizSkuInfo.basePrice}
 					</td>
 					<td>
 						<input name="buyPrice" value="${bizSkuInfo.buyPrice}" type="hidden"/>
