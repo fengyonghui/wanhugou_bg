@@ -30,6 +30,7 @@ import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -73,8 +74,7 @@ public class BizRequestAllController {
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
-    public String list(String source,Integer bizStatu,String ship, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader){
-
+    public String list(String source,Integer bizStatu,String ship,HttpServletRequest request,HttpServletResponse response, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader){
         User user= UserUtils.getUser();
         DefaultProp defaultProp=new DefaultProp();
         defaultProp.setPropKey("vend_center");
@@ -123,18 +123,23 @@ public class BizRequestAllController {
                     bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
 
                 }
-
-                List<BizOrderHeader> orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
-                model.addAttribute("orderHeaderList",orderHeaderList);
-                List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
-                model.addAttribute("requestHeaderList",requestHeaderList);
+                if (ship.equals("xs")) {
+                    Page<BizOrderHeader> page = new Page<>(request, response);
+                    page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
+                    model.addAttribute("page", page);
+                } else {
+                    Page<BizRequestHeader> page = new Page<>(request, response);
+                    page = bizRequestHeaderService.findPageForSendGoods(page,bizRequestHeader);
+                    model.addAttribute("page", page);
+                }
             }
             else if("sh".equals(source)){
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
 
-                List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
-                model.addAttribute("requestHeaderList",requestHeaderList);
+                Page<BizRequestHeader> page = new Page<>(request, response);
+                page = bizRequestHeaderService.findPageForSendGoods(page,bizRequestHeader);
+                model.addAttribute("page",page);
     //                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.STOCKING.getState());
     //                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.COMPLETE.getState());
             }
@@ -143,21 +148,30 @@ public class BizRequestAllController {
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
-
-                 List<BizOrderHeader> orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
-                 model.addAttribute("orderHeaderList",orderHeaderList);
-                 List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
-                 model.addAttribute("requestHeaderList",requestHeaderList);
+                 if (ship.equals("xs")) {
+                     Page<BizOrderHeader> page = new Page<>(request, response);
+                     page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
+                     model.addAttribute("page", page);
+                 } else {
+                     Page<BizRequestHeader> page = new Page<>(request, response);
+                     page = bizRequestHeaderService.findPageForSendGoods(page,bizRequestHeader);
+                     model.addAttribute("page", page);
+                 }
             }
             if("ghs".equals(source)) {
                 bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
                 bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                 bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
-                List<BizOrderHeader> orderHeaderList=bizOrderHeaderService.findList(bizOrderHeader);
-                model.addAttribute("orderHeaderList",orderHeaderList);
-                List<BizRequestHeader> requestHeaderList= bizRequestHeaderService.findList(bizRequestHeader);
-                model.addAttribute("requestHeaderList",requestHeaderList);
+                if (ship.equals("xs")) {
+                    Page<BizOrderHeader> page = new Page<>(request, response);
+                    page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
+                    model.addAttribute("page", page);
+                } else {
+                    Page<BizRequestHeader> page = new Page<>(request, response);
+                    page = bizRequestHeaderService.findPageForSendGoods(page,bizRequestHeader);
+                    model.addAttribute("page", page);
+                }
             }
 
 
