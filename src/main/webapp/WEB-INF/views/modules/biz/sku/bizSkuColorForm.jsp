@@ -22,11 +22,6 @@
 					}
 				}
 			});
-
-            $("#value").change(function () {
-                var value = $("#value").val();
-                $("#label").val(value);
-            });
 		});
 	</script>
 </head>
@@ -41,14 +36,7 @@
 		<div class="control-group">
 			<label class="control-label">颜色名称:</label>
 			<div class="controls">
-				<form:input id="value" path="value" htmlEscape="false" maxlength="50" class="required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">标签:</label>
-			<div class="controls">
-				<form:input id="label" readonly="true" path="label" htmlEscape="false" maxlength="50" class="required"/>
+				<form:input id="label" path="label" htmlEscape="false" maxlength="50" class="required"/>
 			</div>
 		</div>
 		<div class="control-group">

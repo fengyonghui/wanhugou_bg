@@ -134,6 +134,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         Office company = officeService.get(user.getCompany().getId());
         //采购商或采购中心
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
+        bizInvoice.setSendNumber("");
+        super.save(bizInvoice);
         bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,bizInvoice.getId()));
         super.save(bizInvoice);
         //保存图片
