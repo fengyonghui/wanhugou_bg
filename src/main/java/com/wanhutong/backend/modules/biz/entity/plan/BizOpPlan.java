@@ -27,8 +27,6 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	private String objectName2;  //user 中的id对应名称
 	private Office centerOffice;   //采购中心id
 	private User user; //采购专员
-//	private String status;		// status
-//	private String uVersion;		// u_version
 	
 	public BizOpPlan() {
 		super();
@@ -122,23 +120,5 @@ public class BizOpPlan extends DataEntity<BizOpPlan> {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-	//	@Length(min=1, max=4, message="status长度必须介于 1 和 4 之间")
-//	public String getStatus() {
-//		return status;
-//	}
-//
-//	public void setStatus(String status) {
-//		this.status = status;
-//	}
-//
-//	@Length(min=1, max=4, message="u_version长度必须介于 1 和 4 之间")
-//	public String getUVersion() {
-//		return uVersion;
-//	}
-//
-//	public void setUVersion(String uVersion) {
-//		this.uVersion = uVersion;
-//	}
 	
 }
