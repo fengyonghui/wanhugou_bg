@@ -49,6 +49,7 @@
 				<th>商品名称</th>
 				<th>商品编号</th>
 				<th>备货单号</th>
+				<th>原库存数</th>
 				<th>收货数量</th>
 				<th>收货时间</th>
 				<%--<shiro:hasPermission name="biz:inventory:bizCollectGoodsRecord:edit"><th>操作</th></shiro:hasPermission>--%>
@@ -69,6 +70,9 @@
 				</td>
 				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${bizCollectGoodsRecord.bizRequestHeader.id}&source=gh">
 					${bizCollectGoodsRecord.orderNum}</a>
+				</td>
+				<td>
+					${bizCollectGoodsRecord.invOldNum==null?"":bizCollectGoodsRecord.invOldNum}
 				</td>
 				<td>
 					${bizCollectGoodsRecord.receiveNum}

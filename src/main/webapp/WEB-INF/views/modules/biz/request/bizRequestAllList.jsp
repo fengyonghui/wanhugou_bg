@@ -68,6 +68,8 @@
 	</c:if>
 	<c:if test="${ship eq 'xs'}">
 		<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestAll/" method="post" class="breadcrumb form-search">
+			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 			<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 			<input name="source" value="${source}" type="hidden"/>
 			<input name="ship" value="${ship}" type="hidden"/>
@@ -142,7 +144,7 @@
 		<tbody>
 		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">
 		<c:if test="${source == 'sh' || source=='gh' || bizStatu==1 && ship=='bh'}">
-			<c:forEach items="${requestHeaderList}" var="requestHeader">
+			<c:forEach items="${page.list}" var="requestHeader">
 				<tr>
 					<c:if test="${source=='gh'}">
 					<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
@@ -196,7 +198,7 @@
 		</c:if>
 
 		<c:if test="${source == 'kc' && ship=='xs'||bizStatu == 0 || source=='gh'}">
-			<c:forEach items="${orderHeaderList}" var="orderHeader">
+			<c:forEach items="${page.list}" var="orderHeader">
 				<tr>
 					<c:if test="${source=='gh'}">
 						<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
@@ -245,6 +247,7 @@
 		</form>
 		</tbody>
 	</table>
+	<div class="pagination">${page}</div>
 	<%--<div class="form-actions">
 
 			<shiro:hasPermission name="biz:request:selecting:supplier:edit">

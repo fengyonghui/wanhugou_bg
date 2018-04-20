@@ -136,6 +136,10 @@ public class BizSendGoodsRecordController extends BaseController {
                 rowData.add(bsgr.getSkuInfo().getItemNo()==null?"":bsgr.getSkuInfo().getItemNo());
                 //订单号
                 rowData.add(bsgr.getOrderNum());
+				if (bizStatu.equals("0")) {
+					//供货之前库存数
+					rowData.add(bsgr.getInvOldNum()==null?"":bsgr.getInvOldNum().toString());
+				}
                 //供货数量
                 rowData.add(bsgr.getSendNum().toString());
                 //客户
@@ -150,7 +154,7 @@ public class BizSendGoodsRecordController extends BaseController {
 				String[] records = {"商品名称", "商品货号", "订单号", "供货数量", "客户", "供货时间"};
 				eeu.exportExcel(workbook,0,"供货记录",records,data,fileName);
 			}else {
-				String[] records = {"仓库名", "商品名称", "商品货号", "订单号", "供货数量", "客户", "供货时间"};
+				String[] records = {"仓库名", "商品名称", "商品货号", "订单号","原库存数", "供货数量", "客户", "供货时间"};
 				eeu.exportExcel(workbook,0,"供货记录",records,data,fileName);
 			}
             response.reset();

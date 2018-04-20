@@ -79,6 +79,9 @@
 				<th>商品编号</th>
 				<th>商品货号</th>
 				<th>订单号</th>
+				<c:if test="${bizStatus==0}">
+					<th>原库存数</th>
+				</c:if>
 				<th>供货数量</th>
 				<th>客户</th>
 				<%--<c:if test="${bizStatus==1}">--%>
@@ -118,6 +121,11 @@
 					<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${bizSendGoodsRecord.bizOrderHeader.id}&source=ghs"></a>--%>
 					${bizSendGoodsRecord.orderNum}
 				</td>
+				<c:if test="${bizStatus==0}">
+					<td>
+						${bizSendGoodsRecord.invOldNum==null?"":bizSendGoodsRecord.invOldNum}
+					</td>
+				</c:if>
 				<td>
 					${bizSendGoodsRecord.sendNum}
 				</td>

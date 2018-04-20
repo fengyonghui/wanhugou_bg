@@ -28,6 +28,7 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 	private static final long serialVersionUID = 1L;
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
 	private BizInventoryInfo invInfo;		//发货仓库，biz_inventory_info.id
+	private Integer invOldNum;		//发货之前的库存数
 	private BizOrderHeader bizOrderHeader;		// order_id
 	private BizRequestHeader bizRequestHeader;	//request_id
 	private String orderNum;		//订单号
@@ -209,4 +210,11 @@ public class BizSendGoodsRecord extends DataEntity<BizSendGoodsRecord> {
 		this.invInfo = invInfo;
 	}
 
+	public Integer getInvOldNum() {
+		return invOldNum;
+	}
+
+	public void setInvOldNum(Integer invOldNum) {
+		this.invOldNum = invOldNum;
+	}
 }
