@@ -132,8 +132,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
             Page<BizOrderHeader> orderHeaderPage=super.findPage(page, bizOrderHeader);
-            Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
-            page.setCount(count);
+           // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
+          //  page.setCount(count);
             List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
             List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
             orderHeaderPage.setList(bizOrderHeaderList);
