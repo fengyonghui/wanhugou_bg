@@ -502,10 +502,11 @@
     function submitCustomForm() {
         var itemNo = $("#itemNo").val();
         var id = $("#id").val();
+        var officeName = $("#officeName").val();
         $.ajax({
             url: '${ctx}/biz/product/bizProductInfoV2/getItemNoExist',
             contentType: 'application/json',
-            data: {"itemNo": itemNo, "id": id},
+            data: {"itemNo": itemNo, "id": id, "officeName" : officeName},
             type: 'get',
             success: function (result) {
                 if (result == "true") {
