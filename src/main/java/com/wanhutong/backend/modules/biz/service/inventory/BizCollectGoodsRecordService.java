@@ -126,26 +126,8 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 				bizRequestDetail.setRecvQty(recvQty + receiveNum);
 				bizRequestDetailService.save(bizRequestDetail);
 			}
-			//生成收货记录表
-			//商品
-			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bcgr.getSkuInfo().getId());
-			//仓库
-//			BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-//			bizInventoryInfo.setCustomer(bcgr.getCustomer());
-//			List<BizInventoryInfo> bizInventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-//			if (bizInventoryInfoList != null && bizInventoryInfoList.size() > 0){
-//				bizInventoryInfo = bizInventoryInfoList.get(0);
-//			}
-			bcgr.setInvInfo(bizCollectGoodsRecord.getInvInfo());
-			bcgr.setSkuInfo(bizSkuInfo);
-			bcgr.setVender(officeService.get(user.getCompany().getId()));
-			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
-			bcgr.setBizRequestHeader(bizRequestHeader);
-			bcgr.setOrderNum(bcgr.getOrderNum());
-			bcgr.setReceiveDate(new Date());
-			bcgr.setReceiveNum(bcgr.getReceiveNum());
-			super.save(bcgr);
-
+			//收货之前的库存
+			int invOldNum = 0;
 			//获取库存信息
 			BizInventorySku bizInventorySku = new BizInventorySku();
 			bizInventorySku.setSkuInfo(bcgr.getSkuInfo());
@@ -156,6 +138,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			if(bizInventorySkuService.findList(bizInventorySku) != null && bizInventorySkuService.findList(bizInventorySku).size() > 0){
 				List<BizInventorySku> bizInventorySkuList = bizInventorySkuService.findList(bizInventorySku);
 				BizInventorySku bizInventorySku1 = bizInventorySkuList.get(0);
+				invOldNum = bizInventorySku1.getStockQty();
 				bizInventorySku1.setStockQty(bizInventorySku1.getStockQty()+receiveNum);
 				bizInventorySkuService.save(bizInventorySku1);
 			}
@@ -170,6 +153,27 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 				bizInventorySkuService.save(bizInventorySku1);
 
 			}
+			//生成收货记录表
+			//商品
+			BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bcgr.getSkuInfo().getId());
+			//仓库
+//			BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+//			bizInventoryInfo.setCustomer(bcgr.getCustomer());
+//			List<BizInventoryInfo> bizInventoryInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+//			if (bizInventoryInfoList != null && bizInventoryInfoList.size() > 0){
+//				bizInventoryInfo = bizInventoryInfoList.get(0);
+//			}
+			bcgr.setInvInfo(bizCollectGoodsRecord.getInvInfo());
+			bcgr.setInvOldNum(invOldNum);
+			bcgr.setSkuInfo(bizSkuInfo);
+			bcgr.setVender(officeService.get(user.getCompany().getId()));
+			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
+			bcgr.setBizRequestHeader(bizRequestHeader);
+			bcgr.setOrderNum(bcgr.getOrderNum());
+			bcgr.setReceiveDate(new Date());
+			bcgr.setReceiveNum(bcgr.getReceiveNum());
+			super.save(bcgr);
+
 			//修改备货单状态为：备货中（20）
 			BizRequestHeader bizRequestHeader1 = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bizRequestHeader1.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());

@@ -142,6 +142,41 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
     }
 
+    public Page<BizOrderHeader> findPageForSendGoods(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
+        User user= UserUtils.getUser();
+//        boolean flag=false;
+        boolean oflag = false;
+        /*if(user.getRoleList()!=null){
+            for(Role role:user.getRoleList()){
+                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+                    flag=true;
+                    break;
+                }
+            }
+        }*/
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
+                }
+            }
+        }
+        if(user.isAdmin()){
+            Page<BizOrderHeader> pageList = super.findPage(page,bizOrderHeader);
+
+            return pageList;
+        }else {
+            if(oflag){
+
+            }else {
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            }
+            Page<BizOrderHeader> pageList = super.findPage(page, bizOrderHeader);
+
+            return pageList;
+        }
+    }
+
     @Transactional(readOnly = false)
     public void save(BizOrderHeader bizOrderHeader) {
         if(bizOrderHeader.getBizType()==null){

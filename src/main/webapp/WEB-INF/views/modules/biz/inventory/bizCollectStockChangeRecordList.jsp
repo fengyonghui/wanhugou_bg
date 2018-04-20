@@ -43,6 +43,7 @@
 				<th>商品编号</th>
 				<th>备货单号/订单号</th>
 				<th>变更记录</th>
+				<th>原库存数</th>
 				<th>变更数量</th>
 				<th>客户名称</th>
 				<th>变更时间</th>
@@ -66,6 +67,7 @@
 						${collectGoods.orderNum}</a>
 				</td>
 				<td><font color="#B40404">出库记录</font></td>
+				<td>${collectGoods.invOldNum}</td>
 				<td>
 					<font color="#B40404">-</font>${collectGoods.sendNum}
 				</td>
@@ -98,6 +100,7 @@
 						${collectGoodsRecord.orderNum}</a>
 				</td>
 				<td><font color="#0B610B">入库记录</font></td>
+				<td>${collectGoodsRecord.invOldNum}</td>
 				<td>
 					<font color="#0B610B">+</font>${collectGoodsRecord.receiveNum}
 				</td>
