@@ -25,6 +25,7 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizInventoryInfo invInfo;		// 仓库ID，biz_inventory_info.id
+	private Integer invOldNum;		//收货之前的库存数
 	private BizSkuInfo skuInfo;		// 商品ID，biz_sku_info.id
 	private BizOrderHeader bizOrderHeader;		// 销售单ID，biz_order_header.id
 	private BizRequestHeader bizRequestHeader;	//备货单ID, biz_request_header.id
@@ -152,5 +153,13 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setQueryClass(Integer queryClass) {
 		this.queryClass = queryClass;
+	}
+
+	public Integer getInvOldNum() {
+		return invOldNum;
+	}
+
+	public void setInvOldNum(Integer invOldNum) {
+		this.invOldNum = invOldNum;
 	}
 }

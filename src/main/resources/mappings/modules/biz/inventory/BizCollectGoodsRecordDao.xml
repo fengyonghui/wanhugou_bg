@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.inv_id AS "invInfo.id",
 		inv.name AS "invInfo.name",
+		a.inv_old_num AS "invOldNum",
 		a.sku_id AS "skuInfo.id",
 		sku.part_no AS "skuInfo.partNo",
 		sku.name AS "skuInfo.name",
@@ -114,6 +115,9 @@
 		INSERT INTO biz_collect_goods_record(
 			id,
 			inv_id,
+			<if test="invOldNum != null and invOldNum != ''">
+				inv_old_num,
+			</if>
 			sku_id,
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				order_id,
@@ -136,6 +140,9 @@
 		) VALUES (
 			#{id},
 			#{invInfo.id},
+			<if test="invOldNum != null and invOldNum != ''">
+				#{invOldNum},
+			</if>
 			#{skuInfo.id},
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				#{bizOrderHeader.id},
@@ -161,6 +168,9 @@
 	<update id="update">
 		UPDATE biz_collect_goods_record SET 	
 			inv_id = #{invInfo.id},
+			<if test="invOldNum != null and invOldNum != ''">
+				a.inv_old_num = #{invOldNum},
+			</if>
 			sku_id = #{skuInfo.id},
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				order_id = #{bizOrderHeader.id},

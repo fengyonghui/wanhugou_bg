@@ -7,6 +7,7 @@
 		a.sku_id AS "skuInfo.id",
 		sku.name AS "skuInfo.name",
 		a.inv_id AS "invInfo.id",
+		a.inv_old_num AS "invOldNum",
 		inv.name AS "invInfo.name",
 		sku.part_no AS "skuInfo.partNo",
 		sku.item_no as "skuInfo.itemNo",
@@ -148,6 +149,9 @@
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				inv_id,
 			</if>
+			<if test="invOldNum != null and invOldNum != ''">
+				inv_old_num,
+			</if>
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				order_id,
 			</if>
@@ -191,6 +195,9 @@
 			#{skuInfo.id},
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				#{invInfo.id},
+			</if>
+			<if test="invOldNum != null and invOldNum != ''">
+				#{invOldNum},
 			</if>
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				#{bizOrderHeader.id},
@@ -238,6 +245,9 @@
 			sku_id = #{skuInfo.id},
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
 				inv_id = #{invInfo.id},
+			</if>
+			<if test="invOldNum != null and invOldNum != ''">
+				a.inv_old_num = #{invOldNum},
 			</if>
 			<if test="bizOrderHeader != null and bizOrderHeader.id != null and bizOrderHeader.id != ''">
 				order_id = #{bizOrderHeader.id},

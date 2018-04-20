@@ -191,6 +191,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         bizInventorySku.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
                         List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
                         int stock = 0;
+                        //发货之前库存数
+                        int invOldNum = 0;
                         //没有库存，
                         if (list == null || list.size() == 0 || list.get(0).getStockQty() == 0) {
                             /*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
@@ -200,6 +202,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             //有库存
                             for (BizInventorySku invSku : list) {
                                 stock = invSku.getStockQty();
+                                invOldNum = stock;
                                 //如果库存不够，
                                 if (stock < orderDetail.getOrdQty()) {
                                     /*bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
@@ -225,6 +228,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                               BizInventoryInfo inventoryInfo=  bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
                                 bsgr.setInvInfo(inventoryInfo);
                             }
+                            bsgr.setInvOldNum(invOldNum);
                             bsgr.setCustomer(office);
                             bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());
                             bsgr.setOrderNum(orderHeader.getOrderNum());
