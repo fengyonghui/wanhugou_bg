@@ -134,7 +134,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
         bizProductInfo.getOffice().setName(office.getName());
         BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
         String vFullCode = bizVendInfo != null ? bizVendInfo.getCode() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
-        String vFullName = bizVendInfo != null ? bizVendInfo.getVendName() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
+        String vFullName = bizVendInfo == null ? StringUtils.EMPTY : HanyuPinyinHelper.getFirstLetters(bizVendInfo.getVendName(), HanyuPinyinCaseType.UPPERCASE);
 
         if (!bizProductInfo.getItemNo().startsWith(vFullName)) {
             bizProductInfo.setItemNo(vFullName.concat(bizProductInfo.getItemNo()));
