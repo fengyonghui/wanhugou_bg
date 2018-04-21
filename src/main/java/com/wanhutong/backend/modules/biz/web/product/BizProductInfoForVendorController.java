@@ -128,18 +128,19 @@ public class BizProductInfoForVendorController extends BaseController {
 
     @RequiresPermissions("biz:product:bizProductInfoForVendor:view")
     @RequestMapping(value = {"list", ""})
-    public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model, String view) {
         User user = UserUtils.getUser();
         bizProductInfo.setCreateBy(user);
         Page<BizProductInfo> page = bizProductInfoForVendorService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
         model.addAttribute("page", page);
+        model.addAttribute("view", view);
         return "modules/biz/product/bizProductInfoListForVendor";
     }
 
 
     @RequiresPermissions("biz:product:bizProductInfoForVendor:view")
     @RequestMapping(value = "form")
-    public String form(BizProductInfo bizProductInfo, Model model) {
+    public String form(BizProductInfo bizProductInfo, Model model, String view) {
         CommonImg commonImg = new CommonImg();
         commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
         commonImg.setObjectId(bizProductInfo.getId());
@@ -286,6 +287,7 @@ public class BizProductInfoForVendorController extends BaseController {
         model.addAttribute("prodTagList", tagInfos);
         model.addAttribute("skuTagList", skuTagInfos);
         model.addAttribute("skuAttrMap", skuAttrMap);
+        model.addAttribute("view", view);
         model.addAttribute("cateList", categoryInfos);
         model.addAttribute("varietyInfoList", varietyInfoList);
         model.addAttribute("skuTypeLit", skuTypeLit);
@@ -297,7 +299,7 @@ public class BizProductInfoForVendorController extends BaseController {
     @RequestMapping(value = "save")
     public String save(BizProductInfo bizProductInfo, Model model, RedirectAttributes redirectAttributes) {
         if (!beanValidator(model, bizProductInfo)) {
-            return form(bizProductInfo, model);
+            return form(bizProductInfo, model, Boolean.FALSE.toString());
         }
         bizProductInfoForVendorService.save(bizProductInfo);
         addMessage(redirectAttributes, "保存产品信息表成功");
@@ -358,7 +360,7 @@ public class BizProductInfoForVendorController extends BaseController {
         try {
             bizProductInfoForVendorService.delete(bizProductInfo);
             //删除后传值给list，以展示上一次搜索的结果
-            list(bizProductInfo,request,response,model);
+            list(bizProductInfo,request,response,model, Boolean.FALSE.toString());
             addMessage(redirectAttributes, "删除产品信息表成功");
             aa="ok";
         }catch (Exception e){

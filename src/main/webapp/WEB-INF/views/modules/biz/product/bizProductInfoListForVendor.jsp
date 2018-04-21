@@ -109,7 +109,9 @@
 					${bizProductInfo.bizVarietyInfo.name}
 				</td>
 				<td>
-					${bizProductInfo.name}
+					<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">
+							${bizProductInfo.name}
+					</a>
 				</td>
 				<td>
 					${bizProductInfo.prodCode}
@@ -141,6 +143,9 @@
 					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
 						<c:if test="${bizProductInfo.bizStatus == 1}">
 							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>
+						</c:if>
+						<c:if test="${bizProductInfo.bizStatus != 1}">
+							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">查看</a>
 						</c:if>
 						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
 					</shiro:hasPermission>
