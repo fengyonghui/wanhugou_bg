@@ -19,7 +19,6 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
-		<%--<shiro:hasPermission name="biz:po:bizPoHeader:edit"><li><a href="${ctx}/biz/po/bizPoHeader/form">采购订单添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -69,6 +68,7 @@
 				<th>支付比例</th>
 				<th>订单状态</th>
 				<th>订单来源</th>
+				<th>创建时间</th>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -92,7 +92,6 @@
 				</td>
 				<td>
 					<fmt:formatNumber value="${bizPoHeader.initialPay/(bizPoHeader.totalDetail+bizPoHeader.totalExp)}" pattern="0.00"/>%
-
 				</td>
 				<td>
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
@@ -104,13 +103,14 @@
 				</div>
 				<td>
 					${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}
-					<%--${bizPoHeader.plateformInfo.id}--%>
+				</td>
+				<td>
+					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view"><td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit">
     				<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
 				</shiro:hasPermission>
-						<%--<a href="${ctx}/biz/po/bizPoHeader/delete?id=${bizPoHeader.id}" onclick="return confirmx('确认要删除该采购订单吗？', this.href)">删除</a>--%>
 					<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
 				</td></shiro:hasPermission>
 			</tr>

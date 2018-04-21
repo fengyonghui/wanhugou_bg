@@ -1,11 +1,4 @@
-/**
- * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
- */
 package com.wanhutong.backend.common.utils;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
  * Cache工具类
@@ -13,8 +6,9 @@ import net.sf.ehcache.Element;
  * @version 2013-5-29
  */
 public class CacheUtils {
-	
-	private static CacheManager cacheManager = ((CacheManager)SpringContextHolder.getBean("cacheManager"));
+
+
+	private static final int DEF_CACHE_VALIDITY_TIME = 3600;
 
 	private static final String SYS_CACHE = "sysCache";
 
@@ -26,7 +20,7 @@ public class CacheUtils {
 	public static Object get(String key) {
 		return get(SYS_CACHE, key);
 	}
-	
+
 	/**
 	 * 写入SYS_CACHE缓存
 	 * @param key
@@ -35,7 +29,7 @@ public class CacheUtils {
 	public static void put(String key, Object value) {
 		put(SYS_CACHE, key, value);
 	}
-	
+
 	/**
 	 * 从SYS_CACHE缓存中移除
 	 * @param key
@@ -44,7 +38,7 @@ public class CacheUtils {
 	public static void remove(String key) {
 		remove(SYS_CACHE, key);
 	}
-	
+
 	/**
 	 * 获取缓存
 	 * @param cacheName
@@ -52,8 +46,7 @@ public class CacheUtils {
 	 * @return
 	 */
 	public static Object get(String cacheName, String key) {
-		Element element = getCache(cacheName).get(key);
-		return element==null?null:element.getObjectValue();
+		return JedisUtils.getObject(cacheName + key);
 	}
 
 	/**
@@ -63,8 +56,16 @@ public class CacheUtils {
 	 * @param value
 	 */
 	public static void put(String cacheName, String key, Object value) {
-		Element element = new Element(key, value);
-		getCache(cacheName).put(element);
+		CacheUtils.put(cacheName + key, value, DEF_CACHE_VALIDITY_TIME);
+	}
+
+	/**
+	 * 写入缓存
+	 * @param key
+	 * @param value
+	 */
+	public static void put(String key, Object value, int validityTime) {
+		JedisUtils.setObject(key, value, validityTime);
 	}
 
 	/**
@@ -73,26 +74,26 @@ public class CacheUtils {
 	 * @param key
 	 */
 	public static void remove(String cacheName, String key) {
-		getCache(cacheName).remove(key);
+		JedisUtils.del(cacheName + key);
 	}
-	
-	/**
-	 * 获得一个Cache，没有则创建一个。
-	 * @param cacheName
-	 * @return
-	 */
-	private static Cache getCache(String cacheName){
-		Cache cache = cacheManager.getCache(cacheName);
-		if (cache == null){
-			cacheManager.addCache(cacheName);
-			cache = cacheManager.getCache(cacheName);
-			cache.getCacheConfiguration().setEternal(true);
-		}
-		return cache;
-	}
-
-	public static CacheManager getCacheManager() {
-		return cacheManager;
-	}
-	
+//
+//	/**
+//	 * 获得一个Cache，没有则创建一个。
+//	 * @param cacheName
+//	 * @return
+//	 */
+//	private static Cache getCache(String cacheName){
+//		Cache cache = cacheManager.getCache(cacheName);
+//		if (cache == null){
+//			cacheManager.addCache(cacheName);
+//			cache = cacheManager.getCache(cacheName);
+//			cache.getCacheConfiguration().setEternal(true);
+//		}
+//		return cache;
+//	}
+//
+//	public static CacheManager getCacheManager() {
+//		return cacheManager;
+//	}
+//
 }

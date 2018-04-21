@@ -44,6 +44,7 @@
 		<include refid="bizPoHeaderJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			and is_prew = 0
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
@@ -133,7 +134,8 @@
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			is_prew
 		) VALUES (
 			#{id},
 		<if test="orderNum!=null and orderNum !=''">
@@ -175,7 +177,8 @@
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{isPrew}
 		)
 	</insert>
 	
@@ -220,7 +223,8 @@
 
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+			is_prew = #{isPrew}
 		WHERE id = #{id}
 	</update>
 	

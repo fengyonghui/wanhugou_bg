@@ -34,7 +34,9 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoV2Service;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import net.sf.json.JSONObject;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -577,7 +579,13 @@ public class BizProductInfoV2Controller extends BaseController {
     @ResponseBody
     @RequiresPermissions("biz:product:bizProductInfo:edit")
     @RequestMapping(value = "getItemNoExist")
-    public String getItemNoExist(String itemNo, Integer id) {
+    public String getItemNoExist(String itemNo, Integer id, String officeName) {
+        String vFullName = HanyuPinyinHelper.getFirstLetters(officeName, HanyuPinyinCaseType.UPPERCASE);
+
+        if (!itemNo.startsWith(vFullName)) {
+            itemNo = vFullName.concat(itemNo);
+        }
+
         BizProductInfo b = new BizProductInfo();
         b.setItemNo(itemNo);
         List<BizProductInfo> list = bizProductInfoService.findList(b);

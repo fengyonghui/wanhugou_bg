@@ -283,12 +283,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 				address.setDeFaultStatus(1);
 			}
 			sysOfficeAddressService.save(address);
+			office.setAddress(String.valueOf(address.getBizLocation().getPcrName())+address.getBizLocation().getAddress());
 		}
-		office.setAddress(String.valueOf(address.getBizLocation().getPcrName())+address.getBizLocation().getAddress());
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 		//保存新建联系人
-		if (office.getPrimaryPerson() != null) {
+		String gys="gys_save";
+		if (office.getPrimaryPerson() != null && office.getGysFlag()!=null && office.getGysFlag().equals(gys)) {
 			if (office.getPrimaryPerson().getId() == null || office.getPrimaryPerson().getId().equals("")) {
 				User primaryPerson = office.getPrimaryPerson();
 				primaryPerson.setCompany(office);

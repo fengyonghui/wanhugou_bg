@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OfficeTypeEnum" %>
 <html>
 <head>
 	<title>运营计划管理</title>
@@ -31,17 +32,20 @@
 
     </script>
 	<script type="text/javascript">
-    //用于选择采购中心查询客户专员
+    //用于选择采购中心查询采购专员
     function centerOffUser() {
         $("#userSelect").empty();
+        	if($("#id").val()!=null && $("#id").val()!='' && ${bizOpPlan.objectName2 !=null}){
+        		$("#userSelect").append("<option value='${bizOpPlan.user.id}' selected = 'selected'>${bizOpPlan.objectName2}</option>");
+        	}
         var centId = $("#centerOfficeId").val();
         $.ajax({
             type:"post",
             url:"${ctx}/sys/user/bizOpPlanUser?officeId="+centId,
             success:function (data) {
-                $("#userSelect").append("<option value=''> 请选择 </option>")
+                $("#userSelect").append("<option value=''> ===请选择=== </option>");
                 $.each(data,function(index,items) {
-                    $("#userSelect").append("<option value='"+items.id+"'>"+items.name+"</option>")
+                    $("#userSelect").append("<option value='"+items.id+"'>"+items.name+"</option>");
                 });
             }
         });
@@ -66,10 +70,9 @@
 		<label class="control-label">采购中心：</label>
 		<div class="controls">
 			<sys:treeselect id="centerOffice" name="objectId" value="${bizOpPlan.objectId}"
-							labelName="objectName1"
-							labelValue="${bizOpPlan.objectName1}" notAllowSelectParent="true"
+							labelName="objectName1" labelValue="${bizOpPlan.objectName1}" notAllowSelectParent="true"
 							onchange="centerOffUser();"
-							title="采购中心" url="/sys/office/queryTreeList?type=8,10,11" cssClass="input-xlarge required"
+							title="采购中心" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" cssClass="input-xlarge required"
 							dataMsgRequired="必填信息">
 			</sys:treeselect>
 			<span class="help-inline"><font color="red">*</font></span>
@@ -78,16 +81,22 @@
 	<div class="control-group">
 		<label class="control-label">采购专员：</label>
 		<div class="controls">
-			<c:if test="${empty id}">
+			<c:if test="${empty bizOpPlan.id}">
 				<select id="userSelect" name="user.id" class="input-xlarge">
-					<option value=""> 请选择</option>
+					<option value=""> ===请选择=== </option>
 				</select>
 			</c:if>
-			<c:if test="${not empty id}">
+			<c:if test="${not empty bizOpPlan.id && not empty bizOpPlan.objectName2}">
 				<select id="userSelect" name="user.id" class="input-xlarge">
-					<option value="${bizOpPlan.objectId}">${bizOpPlan.objectName1}</option>
+					<option value="${bizOpPlan.user.id}" selected="selected">${bizOpPlan.objectName2}</option>
 				</select>
 			</c:if>
+			<c:if test="${not empty bizOpPlan.id && empty bizOpPlan.objectName2}">
+				<select id="userSelect" name="user.id" class="input-xlarge">
+					<option value=""> ===请选择=== </option>
+				</select>
+			</c:if>
+			<span class="help-inline">此处选择就代表添加的是采购专员,不选择采购专员代表添加的是采购中心</span>
 		</div>
 	</div>
 	<div class="control-group">

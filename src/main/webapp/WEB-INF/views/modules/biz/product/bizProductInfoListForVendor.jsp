@@ -109,7 +109,9 @@
 					${bizProductInfo.bizVarietyInfo.name}
 				</td>
 				<td>
-					${bizProductInfo.name}
+					<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">
+							${bizProductInfo.name}
+					</a>
 				</td>
 				<td>
 					${bizProductInfo.prodCode}
@@ -142,13 +144,10 @@
 						<c:if test="${bizProductInfo.bizStatus == 1}">
 							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>
 						</c:if>
-						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
-					</shiro:hasPermission>
-					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
-						<c:if test="${bizProductInfo.bizStatus == 1}">
-							<a onclick="checkPass(${bizProductInfo.id})">审核通过</a>
-							<a onclick="checkUnPass(${bizProductInfo.id})">审核不通过</a>
+						<c:if test="${bizProductInfo.bizStatus != 1}">
+							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">查看</a>
 						</c:if>
+						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
 					</shiro:hasPermission>
 				</td>
 			</tr>
@@ -156,14 +155,5 @@
 		</tbody>
 	</table>
 	<div class="pagination">${page}</div>
-<script type="text/javascript">
-    function checkUnPass(id){
-       window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=3&id=" + id;
-    }
-    function checkPass(id){
-       window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=2&id=" + id;
-    }
-
-</script>
 </body>
 </html>

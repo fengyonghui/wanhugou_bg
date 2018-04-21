@@ -126,7 +126,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
     public void save(BizProductInfo bizProductInfo, boolean copy) {
         // 取BRAND NAME
         Dict brand = StringUtils.isBlank(bizProductInfo.getBrandId()) ? null : dictService.get(Integer.valueOf(bizProductInfo.getBrandId()));
-        bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getValue());
+        bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getLabel());
 
         String brandPinYin = HanyuPinyinHelper.getFirstLetters(bizProductInfo.getBrandName() , HanyuPinyinCaseType.UPPERCASE);
         String brandCode = addZeroForNum(brandPinYin.substring(0, Math.min(brandPinYin.length(), 4)), false, 2);
@@ -134,13 +134,20 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizP
         Office office = officeService.get(bizProductInfo.getOffice().getId());
         bizProductInfo.getOffice().setName(office.getName());
         BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
-        String vCode = bizVendInfo != null ? bizVendInfo.getCode() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
-        vCode = addZeroForNum(vCode, true, 3);
+        String vFullCode = bizVendInfo != null ? bizVendInfo.getCode() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
+
+        String vFullName = HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
+        if (!bizProductInfo.getItemNo().startsWith(vFullName)) {
+            bizProductInfo.setItemNo(vFullName.concat(bizProductInfo.getItemNo()));
+        }
+
+        String vCode = addZeroForNum(vFullCode, true, 3);
 
         BizVarietyInfo bizVarietyInfo = bizProductInfo.getBizVarietyInfo();
         BizVarietyInfo varietyInfo = bizVarietyInfoService.get(bizVarietyInfo.getId());
         String cateCode = addZeroForNum(varietyInfo.getCode(), true, 3);
         bizProductInfo.setProdCode(StringUtils.EMPTY);
+
         super.save(bizProductInfo);
         if (StringUtils.isBlank(bizProductInfo.getProdCode())) {
             String prodCode = brandCode + vCode + cateCode + autoGenericCode(bizProductInfo.getId().toString(), 6);

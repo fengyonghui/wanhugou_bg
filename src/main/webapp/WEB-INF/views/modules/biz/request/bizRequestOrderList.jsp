@@ -166,28 +166,11 @@
 						<td>
 							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
 							<c:if test="${requestHeader.ownGenPoOrder}">
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">供货</a>
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">采购</a>
 							</c:if>
 
 						</td>
 						</shiro:hasPermission>
-
-							<%--<shiro:hasPermission name="biz:request:bizRequestHeader:edit"><td>--%>
-						<%--<c:choose>--%>
-							<%--<c:when test="${source=='gh'}">--%>
-								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">详情</a>--%>
-							<%--</c:when>--%>
-							<%--<c:when test="${source=='sh'}">--%>
-								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=gh">备货单详情</a>--%>
-								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">收货</a>--%>
-							<%--</c:when>--%>
-							<%--<c:otherwise>--%>
-
-								<%--<a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">供货</a>--%>
-							<%--</c:otherwise>--%>
-						<%--</c:choose>--%>
-
-					<%--</td></shiro:hasPermission>--%>
 				</tr>
 			</c:forEach>
 
@@ -215,13 +198,8 @@
 			</tr>
 			</thead>
 			<tbody>
-				<%--<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">--%>
-
 			<c:forEach items="${orderHeaderList}" var="orderHeader">
 				<tr>
-						<%--<c:if test="${source=='gh'}">--%>
-						<%--<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>--%>
-						<%--</c:if>--%>
 					<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">
 									${orderHeader.orderNum}</a>
 					</td>
@@ -256,29 +234,15 @@
 							<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
 							<c:if test="${orderHeader.ownGenPoOrder}">
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">供货</a>
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
 							</c:if>
 							</td>
 							</shiro:hasPermission>
 
 				</tr>
 			</c:forEach>
-
-
-				<%--</form>--%>
 			</tbody>
 		</table>
 	</c:if>
-
-
-
-
-
-	<%--<div class="form-actions">
-
-			<shiro:hasPermission name="biz:request:selecting:supplier:edit">
-				<input type="button" onclick="saveOrderIds();" class="btn btn-primary" value="合单采购"/>
-			</shiro:hasPermission>
-	</div>--%>
 </body>
 </html>

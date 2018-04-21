@@ -3,7 +3,6 @@
  */
 package com.wanhutong.backend.common.filter;
 
-import com.wanhutong.backend.common.utils.CacheUtils;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.constructs.web.filter.SimplePageCachingFilter;
@@ -17,7 +16,7 @@ public class PageCachingFilter extends SimplePageCachingFilter {
 
 	@Override
 	protected CacheManager getCacheManager() {
-		return CacheUtils.getCacheManager();
+		return null;
 	}
 	
 }

@@ -198,7 +198,7 @@ public class OfficeController extends BaseController {
         if (office.getParent() == null || office.getParent().getId() == null) {
             if (OfficeTypeEnum.VENDOR.getType().equals(office.getType())) {
                 office.setType(office.getType());
-                office.setParent(null);
+                office.setParent(officeService.get(0));
             } else {
                 office.setParent(user.getOffice());
             }
@@ -226,7 +226,7 @@ public class OfficeController extends BaseController {
         SysOfficeAddress sysOfficeAddress = new SysOfficeAddress();
         sysOfficeAddress.setOffice(office);
         List<SysOfficeAddress> list = sysOfficeAddressService.findList(sysOfficeAddress);
-            if(list.size()!=0){
+        if(list.size()!=0 && office.getId()!=null){
             for (SysOfficeAddress add : list) {
                 if(add.getDeFaultStatus()!=null && add.getDeFaultStatus()==1){
                     sysOfficeAddress.setBizLocation(add.getBizLocation());

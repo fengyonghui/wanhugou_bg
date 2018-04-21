@@ -85,6 +85,36 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			return super.findList(bizRequestHeader);
 		}
 	}
+
+	public Page<BizRequestHeader> findPageForSendGoods(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
+		User user = UserUtils.getUser();
+		boolean oflag = false;
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+				}
+			}
+		}
+		if (UserUtils.getOfficeList() != null){
+			for (Office office:UserUtils.getOfficeList()){
+				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+					oflag = true;
+				}
+			}
+		}
+		if (user.isAdmin()) {
+			return super.findPage(page,bizRequestHeader);
+		} else {
+			if(oflag){
+
+			}else {
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+			}
+			return super.findPage(page,bizRequestHeader);
+		}
+	}
 	
 	public Page<BizRequestHeader> findPage(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
 		Date today = bizRequestHeader.getRecvEta();

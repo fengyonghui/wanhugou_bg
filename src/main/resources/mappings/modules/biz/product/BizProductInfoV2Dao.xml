@@ -216,6 +216,9 @@
 		<if test="brandName!=null and brandName!=''">
 			brand_name = #{brandName},
 		</if>
+		<if test="brandId!=null and brandId!=0">
+			brand_id = #{brandId},
+		</if>
 		<if test="imgUrl!=null and imgUrl!=''">
 			img_url = #{imgUrl},
 		</if>
