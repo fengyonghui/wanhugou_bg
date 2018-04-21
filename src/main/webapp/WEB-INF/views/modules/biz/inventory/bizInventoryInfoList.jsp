@@ -33,7 +33,7 @@
 			<li><label>采购中心</label>
 				<sys:treeselect id="centerOffice" name="customer.id" value="" labelName="customer.name"
 								labelValue="" notAllowSelectParent="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" extId="${centerOffice.id}"
+								title="采购中心"  url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" extId="${centerOffice.id}"
 								cssClass="input-medium"
 								allowClear="${office.currentUser.admin}">
 				</sys:treeselect>

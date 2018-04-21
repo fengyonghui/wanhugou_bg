@@ -58,7 +58,7 @@
 		<li><label>归属公司：</label>
 			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
 				<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-						title="公司" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" cssClass="input-small" allowClear="true"/>
+						title="公司" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" cssClass="input-small" allowClear="true"/>
 			</c:if>
 			<c:if test="${empty user.conn}">
 				<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
@@ -80,7 +80,7 @@
 			<li><label>归属部门：</label>
 			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
 				<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
-						title="部门" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type},${OfficeTypeEnum.WITHCAPITAL.type},${OfficeTypeEnum.NETWORKSUPPLY.type}" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+						title="部门" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</c:if>
 			<c:if test="${empty user.conn}">
 				<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
