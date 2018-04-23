@@ -112,6 +112,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
 
     @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
+        bizProductInfo.setDataStatus("filter");
         return super.findPage(page, bizProductInfo);
     }
 
