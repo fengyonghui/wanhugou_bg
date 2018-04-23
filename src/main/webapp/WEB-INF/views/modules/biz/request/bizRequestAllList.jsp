@@ -43,6 +43,7 @@
 	<c:if test="${ship eq 'bh'}">
 		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestAll/" method="post" class="breadcrumb form-search">
 			<ul class="ul-form">
+				<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 				<input name="source" value="${source}" type="hidden"/>
 				<input name="ship" value="${ship}" type="hidden"/>
 				<input name="bizStatu" value="${bizStatu}" type="hidden"/>

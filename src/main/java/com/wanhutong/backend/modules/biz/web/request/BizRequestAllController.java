@@ -103,95 +103,96 @@ public class BizRequestAllController {
         }*/
 //        String type = officeService.get(user.getCompany().getId()).getType();
 //        if (type.equals(OfficeTypeEnum.SUPPLYCENTER.getType())  || user.isAdmin()){
-            model.addAttribute("ship",ship);
+        model.addAttribute("ship", ship);
 //        }else {
 //            model.addAttribute("ship","");
 //        }
-        model.addAttribute("source",source);
-        if(bizOrderHeader==null){
-            bizOrderHeader=new BizOrderHeader();
+        model.addAttribute("source", source);
+        if (bizOrderHeader == null) {
+            bizOrderHeader = new BizOrderHeader();
         }
-		 	if("kc".equals(source)) {
-                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
-                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
-                if(bizStatu == 0) {
-                    bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
-                    bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
-                }
-                if (bizStatu == 1){
-                    bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
-                    bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
-
-                }
-                if (ship.equals("xs")) {
-                    Page<BizOrderHeader> page = new Page<>(request, response);
-                    page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
-                    model.addAttribute("page", page);
-                } else {
-                    Page<BizRequestHeader> page = new Page<>(request, response);
-                    page = bizRequestHeaderService.findPageForSendGoods(page,bizRequestHeader);
-                    model.addAttribute("page", page);
-                }
-            }
-            else if("sh".equals(source)){
-                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
-                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
-
-                Page<BizRequestHeader> page = new Page<>(request, response);
-                page = bizRequestHeaderService.findPageForSendGoods(page,bizRequestHeader);
-                model.addAttribute("page",page);
-    //                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.STOCKING.getState());
-    //                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.COMPLETE.getState());
-            }
-             if("gh".equals(source)){
-                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
-                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
-                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
-                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
-                 if (ship.equals("xs")) {
-                     Page<BizOrderHeader> page = new Page<>(request, response);
-                     page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
-                     model.addAttribute("page", page);
-                 } else {
-                     Page<BizRequestHeader> page = new Page<>(request, response);
-                     page = bizRequestHeaderService.findPageForSendGoods(page,bizRequestHeader);
-                     model.addAttribute("page", page);
-                 }
-            }
-            if("ghs".equals(source)) {
-                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
-                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+        if ("kc".equals(source)) {
+            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+            bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
+            if (bizStatu == 0) {
                 bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
-                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
-                if (ship.equals("xs")) {
-                    Page<BizOrderHeader> page = new Page<>(request, response);
-                    page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
-                    model.addAttribute("page", page);
-                } else {
-                    Page<BizRequestHeader> page = new Page<>(request, response);
-                    page = bizRequestHeaderService.findPageForSendGoods(page,bizRequestHeader);
-                    model.addAttribute("page", page);
-                }
+                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
             }
+            if (bizStatu == 1) {
+                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.SEND.getState());
 
+            }
+            if (ship.equals("xs")) {
+                Page<BizOrderHeader> page = new Page<>(request, response);
+                page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
+                model.addAttribute("page", page);
+            } else {
+                Page<BizRequestHeader> page = new Page<>(request, response);
+                page.setPageSize(2);
+                page = bizRequestHeaderService.findPageForSendGoods(page, bizRequestHeader);
+                model.addAttribute("page", page);
+            }
+        } else if ("sh".equals(source)) {
+            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+            bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
 
-                if (bizStatu != null){
-                    model.addAttribute("bizStatu",bizStatu.toString());
-                }
-                return "modules/biz/request/bizRequestAllList";
+            Page<BizRequestHeader> page = new Page<>(request, response);
+            page = bizRequestHeaderService.findPageForSendGoods(page, bizRequestHeader);
+            model.addAttribute("page", page);
+            //                bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.STOCKING.getState());
+            //                bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.COMPLETE.getState());
         }
+        if ("gh".equals(source)) {
+            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
+            bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+            bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.APPROVE.getState());
+            bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+            if (ship.equals("xs")) {
+                Page<BizOrderHeader> page = new Page<>(request, response);
+                page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
+                model.addAttribute("page", page);
+            } else {
+                Page<BizRequestHeader> page = new Page<>(request, response);
+                page = bizRequestHeaderService.findPageForSendGoods(page, bizRequestHeader);
+                model.addAttribute("page", page);
+            }
+        }
+        if ("ghs".equals(source)) {
+            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+            bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
+            bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+            bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
+            if (ship.equals("xs")) {
+                Page<BizOrderHeader> page = new Page<>(request, response);
+                page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
+                model.addAttribute("page", page);
+            } else {
+                Page<BizRequestHeader> page = new Page<>(request, response);
+                page = bizRequestHeaderService.findPageForSendGoods(page, bizRequestHeader);
+                model.addAttribute("page", page);
+            }
+        }
+
+
+        if (bizStatu != null) {
+            model.addAttribute("bizStatu", bizStatu.toString());
+        }
+        return "modules/biz/request/bizRequestAllList";
+    }
+
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = "form")
-    public String form(String source,Integer id, Model model,Integer bizStatu,String ship) {
+    public String form(String source, Integer id, Model model, Integer bizStatu, String ship) {
         List<BizRequestDetail> reqDetailList = Lists.newArrayList();
-        List<BizOrderDetail> ordDetailList=Lists.newArrayList();
-        BizOrderHeader orderHeader=null;
-        BizRequestHeader requestHeader=null;
+        List<BizOrderDetail> ordDetailList = Lists.newArrayList();
+        BizOrderHeader orderHeader = null;
+        BizRequestHeader requestHeader = null;
         BizRequestHeader bizRequestHeader = new BizRequestHeader();
-        BizOrderHeader bizOrderHeader= new BizOrderHeader();
-        if ("kc".equals(source) && "xs".equals(ship) || "ghs".equals(source)){
+        BizOrderHeader bizOrderHeader = new BizOrderHeader();
+        if ("kc".equals(source) && "xs".equals(ship) || "ghs".equals(source)) {
             bizOrderHeader = bizOrderHeaderService.get(id);
-        }else{
+        } else {
             bizRequestHeader = bizRequestHeaderService.get(id);
         }
         if (bizRequestHeader != null && bizRequestHeader.getId() != null) {
@@ -200,18 +201,18 @@ public class BizRequestAllController {
             BizLogistics bizLogistics = new BizLogistics();
             User user = UserUtils.getUser();
 //            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-            if (user.isAdmin()){
+            if (user.isAdmin()) {
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList",invInfoList);
+                model.addAttribute("invInfoList", invInfoList);
                 List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList",logisticsList);
-            }else {
+                model.addAttribute("logisticsList", logisticsList);
+            } else {
                 Office company = officeService.get(user.getCompany().getId());
                 bizInventoryInfo.setCustomer(company);
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList",invInfoList);
+                model.addAttribute("invInfoList", invInfoList);
                 List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList",logisticsList);
+                model.addAttribute("logisticsList", logisticsList);
             }
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(bizRequestHeader);
@@ -221,25 +222,25 @@ public class BizRequestAllController {
                 requestDetail.setSkuInfo(skuInfo);
                 reqDetailList.add(requestDetail);
             }
-            requestHeader= bizRequestHeaderService.get(bizRequestHeader.getId());
+            requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
         }
         if (bizOrderHeader != null && bizOrderHeader.getId() != null) {
             //取出用户所属采购中心
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             BizLogistics bizLogistics = new BizLogistics();
             User user = UserUtils.getUser();
-            if (user.isAdmin()){
+            if (user.isAdmin()) {
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList",invInfoList);
+                model.addAttribute("invInfoList", invInfoList);
                 List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList",logisticsList);
-            }else {
+                model.addAttribute("logisticsList", logisticsList);
+            } else {
                 Office company = officeService.get(user.getCompany().getId());
                 bizInventoryInfo.setCustomer(company);
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList",invInfoList);
+                model.addAttribute("invInfoList", invInfoList);
                 List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-                model.addAttribute("logisticsList",logisticsList);
+                model.addAttribute("logisticsList", logisticsList);
             }
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
@@ -249,39 +250,39 @@ public class BizRequestAllController {
                 orderDetail.setSkuInfo(skuInfo);
                 ordDetailList.add(orderDetail);
             }
-            orderHeader=bizOrderHeaderService.get(bizOrderHeader.getId());
+            orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
         }
-        model.addAttribute("bizRequestHeader",requestHeader );
+        model.addAttribute("bizRequestHeader", requestHeader);
         model.addAttribute("bizOrderHeader", orderHeader);
         model.addAttribute("reqDetailList", reqDetailList);
         model.addAttribute("ordDetailList", ordDetailList);
-        model.addAttribute("source",source);
-        model.addAttribute("bizStatu",bizStatu);
-        model.addAttribute("ship",ship);
+        model.addAttribute("source", source);
+        model.addAttribute("bizStatu", bizStatu);
+        model.addAttribute("ship", ship);
         if (source != null && "kc".equals(source)) {
             return "modules/biz/request/bizRequestHeaderKcForm";
         }
-        if (source != null && "ghs".equals(source)){
+        if (source != null && "ghs".equals(source)) {
             return "modules/biz/request/bizRequestKcXqForm";
         }
-        if(source != null && "sh".equals(source)){
+        if (source != null && "sh".equals(source)) {
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             User user = UserUtils.getUser();
-            if (user.isAdmin()){
+            if (user.isAdmin()) {
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList",invInfoList);
-            }else {
+                model.addAttribute("invInfoList", invInfoList);
+            } else {
                 Office company = systemService.getUser(user.getId()).getCompany();
                 BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
                 bizInventoryInfo1.setCustomer(company);
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo1);
-                model.addAttribute("invInfoList",invInfoList);
+                model.addAttribute("invInfoList", invInfoList);
             }
             return "modules/biz/request/bizRequestKcForm";
         }
-       // if(source!=null && "gh".equals(source)){
-            return "modules/biz/request/bizRequestHeaderGhForm";
-      //  }
+        // if(source!=null && "gh".equals(source)){
+        return "modules/biz/request/bizRequestHeaderGhForm";
+        //  }
 
     }
 
