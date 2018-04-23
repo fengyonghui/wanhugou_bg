@@ -235,7 +235,8 @@
 		<div class="control-group">
 			<label class="control-label">盘点商品：</label>
 			<div class="controls">
-				<table id="contentTable" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
+
+				<table id="contentTable"  class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
 						<th id="invName1">仓库名称</th>
@@ -276,7 +277,18 @@
 					</c:if>
 					</tbody>
 				</table>
-				<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered">
+
+
+			</div>
+
+		</div>
+
+
+		<div class="control-group">
+			<label class="control-label">待盘点商品：</label>
+			<div class="controls">
+
+				<table id="contentTable2" style="background-color:#abcceb;" class="table table-striped table-bordered">
 					<thead>
 					<tr>
 						<th id="invName2">仓库名称</th>
@@ -296,6 +308,8 @@
 
 					</tbody>
 				</table>
+
+
 			</div>
 
 		</div>
