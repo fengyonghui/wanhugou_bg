@@ -129,7 +129,6 @@ public class BizRequestAllController {
                 model.addAttribute("page", page);
             } else {
                 Page<BizRequestHeader> page = new Page<>(request, response);
-                page.setPageSize(2);
                 page = bizRequestHeaderService.findPageForSendGoods(page, bizRequestHeader);
                 model.addAttribute("page", page);
             }
