@@ -21,6 +21,19 @@
                         return false;
                     }
                     loading('正在提交，请稍等...');
+                    var compactImg = $("#compactImgDiv").find("[customInput = 'compactImgImg']");
+                    var compactImgStr = "";
+                    for (var i = 0; i < compactImg.length; i ++) {
+                        compactImgStr += ($(compactImg[i]).attr("src") + "|");
+                    }
+                    $("#compactPhotos").val(compactImgStr);
+
+                    var idCardImg = $("#idCardImgDiv").find("[customInput = 'idCardImgImg']");
+                    var idCardImgStr = "";
+                    for (var i = 0; i < idCardImg.length; i ++) {
+                        idCardImgStr += ($(idCardImg[i]).attr("src") + "|");
+                    }
+                    $("#idCardPhotos").val(idCardImgStr);
                     form.submit();
                 },
                 errorContainer: "#messageBox",
@@ -259,6 +272,32 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label">合同图:
+            <p style="opacity: 0.5;">点击图片删除</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="productImg" onchange="submitPic('compactImg', true)" value="上传图片" multiple="multiple" id="compactImg"/>
+        </div>
+        <div id="compactImgDiv">
+            <c:forEach items='${fn:split(office.bizVendInfo.compactPhotos,"|")}' var="v" varStatus="status">
+                <img src="${v}" customInput="compactImgImg" style='width: 100px' onclick="$(this).remove();">
+            </c:forEach>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">身份证图:
+            <p style="opacity: 0.5;">点击图片删除</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="productImg" onchange="submitPic('idCardImg', true)" value="上传图片" multiple="multiple" id="idCardImg"/>
+        </div>
+        <div id="idCardImgDiv">
+            <c:forEach items='${fn:split(office.bizVendInfo.idCardPhotos,"|")}' var="v" varStatus="status">
+                <img src="${v}" customInput="idCardImgImg" style='width: 100px' onclick="$(this).remove();">
+            </c:forEach>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">备注:</label>
         <div class="controls">
             <form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="input-xlarge"/>
@@ -273,7 +312,17 @@
         </div>
     </c:if>
     <div class="form-actions">
-        <shiro:hasPermission name="sys:office:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
+        <shiro:hasPermission name="sys:supplier:audit">
+            <c:if test="${gysFlag == 'gys_audit' && office.bizVendInfo.auditStatus == 0}">
+                <a href="${ctx}/sys/office/auditSupplier?id=${office.id}&status=1"><input id="auditPass" class="btn btn-primary" type="button" value="审核通过"/>&nbsp;</a>
+                <a href="${ctx}/sys/office/auditSupplier?id=${office.id}&status=2"><input id="auditRejected" class="btn btn-primary" type="button" value="审核驳回"/>&nbsp;</a>
+            </c:if>
+        </shiro:hasPermission>
+        <shiro:hasPermission name="sys:office:edit">
+            <c:if test="${gysFlag != 'gys_audit' && office.bizVendInfo.auditStatus == 0}">
+                <input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
+            </c:if>
+        </shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 	<!-- 模态框（Modal） -->
@@ -338,7 +387,71 @@
 			</div>
 		</div>
 	</div>
+    <form:input path="bizVendInfo.compactPhotos" id="compactPhotos" cssStyle="display: none"/>
+    <form:input path="bizVendInfo.idCardPhotos" id="idCardPhotos" cssStyle="display: none"/>
 </form:form>
+<script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function submitPic(id, multiple){
+        var f = $("#" + id).val();
+        if(f==null||f==""){
+            alert("错误提示:上传文件不能为空,请重新选择文件");
+            return false;
+        }else{
+            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
+            extname = extname.toLowerCase();//处理了大小写
+            if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
+                $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+                return false;
+            }
+        }
+        var file = document.getElementById(id).files;
+        var size = file[0].size;
+        if(size>2097152){
+            alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
+            return false;
+        }
+        ajaxFileUploadPic(id, multiple);
+    }
 
+    function ajaxFileUploadPic(id, multiple) {
+        $.ajaxFileUpload({
+            url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
+            secureuri : false, //一般设置为false
+            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            type : 'POST',
+            dataType : 'text', //返回值类型 一般设置为json
+            success : function(data, status) {
+                //服务器成功响应处理函数
+                var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
+                var msgJSON = JSON.parse(msg);
+                var imgList = msgJSON.imgList;
+                var imgDiv = $("#" + id + "Div");
+                var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
+                if (imgList && imgList.length > 0 && multiple) {
+                    for (var i = 0; i < imgList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                    }
+                }else if (imgList && imgList.length > 0 && !multiple) {
+                    imgDiv.empty();
+                    for (var i = 0; i < imgList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                    }
+                }else {
+                    var img = $("#" + id + "Img");
+                    img.attr("src", msgJSON.fullName);
+                }
+            },
+            error : function(data, status, e) {
+                //服务器响应失败处理函数
+                console.info(data);
+                console.info(status);
+                console.info(e);
+                alert("上传失败");
+            }
+        });
+        return false;
+    }
+</script>
 </body>
 </html>

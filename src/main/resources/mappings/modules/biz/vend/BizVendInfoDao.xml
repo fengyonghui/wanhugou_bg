@@ -8,6 +8,7 @@
 		a.cate_id AS "bizCategoryInfo.id",
 		bci.name as "bizCategoryInfo.name",
 		a.cate_name AS "cateName",
+		a.audit_status AS "auditStatus",
 		a.code AS "code",
 		a.status AS "delFlag",
 		a.u_version AS "uVersion",
@@ -131,5 +132,13 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE office_id = #{office.id}
 	</update>
+
+	<update id="auditSupplier">
+		UPDATE biz_vend_info SET
+			audit_status = #{status}
+		WHERE office_id = #{id}
+	</update>
+
+
 	
 </mapper>

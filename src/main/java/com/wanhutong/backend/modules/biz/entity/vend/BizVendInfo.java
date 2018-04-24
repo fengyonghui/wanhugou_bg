@@ -5,7 +5,6 @@ package com.wanhutong.backend.modules.biz.entity.vend;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
-import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -23,9 +22,22 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	private BizCategoryInfo bizCategoryInfo;		// cate_id
 	private String cateName;		// cate_name
 	private String code;		// code
+	/**
+	 * 合同图片 多个以|分隔
+	 */
+	private String compactPhotos;
+	/**
+	 * 身份证图片 多个以|分隔
+	 */
+	private String idCardPhotos;
 
 	private String insertNew;	//新增时，已有数据不能重复添加
-	
+
+	/**
+	 * 审核状态
+	 */
+	private int auditStatus;
+
 	public BizVendInfo() {
 		super();
 	}
@@ -34,6 +46,13 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 		super(id);
 	}
 
+	public int getAuditStatus() {
+		return auditStatus;
+	}
+
+	public void setAuditStatus(int auditStatus) {
+		this.auditStatus = auditStatus;
+	}
 
 	public Office getOffice() {
 		return office;
@@ -85,5 +104,44 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 
 	public void setInsertNew(String insertNew) {
 		this.insertNew = insertNew;
+	}
+
+	public String getCompactPhotos() {
+		return compactPhotos;
+	}
+
+	public void setCompactPhotos(String compactPhotos) {
+		this.compactPhotos = compactPhotos;
+	}
+
+	public String getIdCardPhotos() {
+		return idCardPhotos;
+	}
+
+	public void setIdCardPhotos(String idCardPhotos) {
+		this.idCardPhotos = idCardPhotos;
+	}
+
+
+	public enum  AuditStatus {
+		UNAUDITED(0, "未审核"),
+		AUDIT_PASS(1, "审核通过"),
+		AUDIT_FAILED (2, "审核失败"),
+		;
+		private int status;
+		private String desc;
+
+		public int getStatus() {
+			return status;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
+
+		AuditStatus(int status, String desc) {
+			this.status = status;
+			this.desc = desc;
+		}
 	}
 }
