@@ -64,6 +64,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private SkuProd skuProd;
 
 	private String itemNo;
+	private String itemNoComplete;
 	/**
 	 * 业务状态
 	 */
@@ -101,6 +102,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String source;
 
+	public String getItemNoComplete() {
+		return itemNoComplete;
+	}
+
+	public void setItemNoComplete(String itemNoComplete) {
+		this.itemNoComplete = itemNoComplete;
+	}
 
 	public Integer getBizStatus() {
 		return bizStatus;
