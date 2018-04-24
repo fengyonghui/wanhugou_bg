@@ -49,6 +49,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String name;		//根據供應商姓名搜索
 	private Byte bizStatusStart;
 	private Byte bizStatusEnd; //用于查询业务状态的区间
+	/**
+	 * 列表序号
+	 * */
+	private Integer numberRownum;
 
 	private List<BizRequestDetail> requestDetailList;
 
@@ -322,5 +326,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setTotalMoney(Double totalMoney) {
 		this.totalMoney = totalMoney;
+	}
+
+	public Integer getNumberRownum() {
+		return numberRownum;
+	}
+
+	public void setNumberRownum(Integer numberRownum) {
+		this.numberRownum = numberRownum;
 	}
 }
