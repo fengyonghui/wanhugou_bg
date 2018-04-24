@@ -20,7 +20,8 @@
 		a.update_id AS "updateBy.id",
 		suu.name AS "updateBy.name",
 		su.name AS "createBy.name",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		(@rownum:=@rownum+1) as "numberRownum"
 	</sql>
 	
 	<sql id="bizRequestHeaderJoins">
@@ -42,7 +43,7 @@
 	<select id="findList" resultType="BizRequestHeader">
 		SELECT 
 			<include refid="bizRequestHeaderColumns"/>
-		FROM biz_request_header a
+		FROM (select @rownum:=0) as rownum,biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
 
 		<where>
@@ -84,7 +85,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				GROUP  BY a.id
+				<!--GROUP  BY a.id-->
 			</otherwise>
 		</choose>
 		order by updateDate desc
