@@ -11,8 +11,10 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -48,6 +50,8 @@ public class BizOpShelfSkuController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private AttributeValueV2Service attributeValueService;
+	@Autowired
+	private BizSkuViewLogService bizSkuViewLogService;
 
 	
 	@ModelAttribute
@@ -104,6 +108,7 @@ public class BizOpShelfSkuController extends BaseController {
 			BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
 			if(bizOpShelfSkus.getId()!=null){
                 bizOpShelfSku.setId(bizOpShelfSkus.getId());
+
 				if (flag) {
 					bizOpShelfSku.setId(null);
 				}
@@ -111,8 +116,26 @@ public class BizOpShelfSkuController extends BaseController {
             }else {
                 bizOpShelfSku.setId(null);
             }
-
+			//保存商品出厂价日志表
+			BizSkuViewLog skuViewLog = new BizSkuViewLog();
 			BizSkuInfo bizSkuInfo=bizSkuInfoService.get(Integer.parseInt(skuIdArr[i].trim()));
+			if(bizOpShelfSkus.getId()!=null){
+				BizOpShelfSku OpShelfSku = bizOpShelfSkuService.get(bizOpShelfSkus.getId());
+				if(OpShelfSku!=null){
+					skuViewLog.setSkuInfo(OpShelfSku.getSkuInfo());//商品名称
+					skuViewLog.setItemNo(OpShelfSku.getSkuInfo().getItemNo());//货号
+					skuViewLog.setUpdateDate(OpShelfSku.getUpdateDate());//商品修改时间
+					skuViewLog.setUpdateBy(OpShelfSku.getCreateBy());//商品修改人
+					Double buyPrice=0.0;
+					if(OpShelfSku.getOrgPrice()!=null){
+						buyPrice=OpShelfSku.getOrgPrice();
+					}
+					skuViewLog.setFrontBuyPrice(buyPrice);//修改前价格
+					skuViewLog.setAfterBuyPrice(Double.parseDouble(orgPriceArr[i].trim()));//修改后价格
+					skuViewLog.setChangePrice(buyPrice-Double.parseDouble(orgPriceArr[i].trim()));//改变价格
+					bizSkuViewLogService.save(skuViewLog);
+				}
+			}
 			bizOpShelfSku.setSkuInfo(bizSkuInfo);
 			bizOpShelfSku.setProductInfo(bizSkuInfo.getProductInfo());
 			bizOpShelfSku.setCenterOffice(bizOpShelfSkus.getCenterOffice());
@@ -130,7 +153,6 @@ public class BizOpShelfSkuController extends BaseController {
 				}
             }
 			bizOpShelfSkuService.save(bizOpShelfSku);
-
 		}
 
 		addMessage(redirectAttributes, "保存商品上架成功");
