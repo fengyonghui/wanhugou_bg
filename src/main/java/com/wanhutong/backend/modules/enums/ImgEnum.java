@@ -27,7 +27,14 @@ public enum ImgEnum{
     OFFICE_TYPE((byte)35,"office图", "sys_office"),
 
     /**物流信息图*/
-    LOGISTICS_TYPE((byte)40,"物流信息图", "biz_invoice");
+    LOGISTICS_TYPE((byte)40,"物流信息图", "biz_invoice"),
+
+    /**供应商合同图*/
+    VEND_COMPACT((byte)50,"供应商合同", "biz_vend_info"),
+    /**供应商身份证*/
+    VEND_IDENTITY_CARD((byte)51,"供应商身份证", "biz_vend_info"),
+
+    ;
 
     private int code;
     private String name;

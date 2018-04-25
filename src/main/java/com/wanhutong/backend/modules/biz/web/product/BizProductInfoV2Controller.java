@@ -598,7 +598,7 @@ public class BizProductInfoV2Controller extends BaseController {
         }
 
         BizProductInfo b = new BizProductInfo();
-        b.setItemNo(itemNo);
+        b.setItemNoComplete(itemNo);
         List<BizProductInfo> list = bizProductInfoService.findList(b);
         List<BizProductInfo> listForVendor = bizProductInfoForVendorService.findList(b);
         if(id != null) {

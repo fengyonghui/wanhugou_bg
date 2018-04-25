@@ -186,6 +186,7 @@
 			sku_img_url,
 		</if>
 			unit_price,
+			buy_price,
 			sent_qty,
 			ord_qty,
 		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
@@ -218,6 +219,7 @@
 			#{skuImgUrl},
 		</if>
 			#{unitPrice},
+			#{buyPrice},
 			#{sentQty},
 			#{ordQty},
 		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
@@ -253,6 +255,7 @@
 			sku_img_url=#{skuImgUrl},
 		</if>
 			unit_price = #{unitPrice},
+			buy_price = #{buyPrice},
 			sent_qty = #{sentQty},
 			ord_qty = #{ordQty},
 		<choose>

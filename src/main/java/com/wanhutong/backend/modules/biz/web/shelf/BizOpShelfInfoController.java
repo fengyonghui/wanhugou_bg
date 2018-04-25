@@ -15,8 +15,10 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizShelfUserService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.SupportCenterStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -111,23 +113,24 @@ public class BizOpShelfInfoController extends BaseController {
 	@RequestMapping(value = "findShelf")
 	public List<BizOpShelfInfo> findShelf(BizOpShelfInfo bizOpShelfInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
         User user= UserUtils.getUser();
-        if(user.isAdmin()){
+		Role role=new Role();
+		role.setEnname(RoleEnNameEnum.DEPT.getState());
+        if(user.isAdmin() || user.getRoleList().contains(role)){
 			return bizOpShelfInfoService.findList(bizOpShelfInfo);
         }else {
-            bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "s"));
-            return bizOpShelfInfoService.findList(bizOpShelfInfo);
-        }
-       /* User user = UserUtils.getUser();
+        	//货架列表走货架管理员权限
         BizShelfUser bizShelfUser = new BizShelfUser();
         bizShelfUser.setUser(user);
         List<BizShelfUser> bizShelfUserList = bizShelfUserService.findList(bizShelfUser);
         List<BizOpShelfInfo> list = new ArrayList<>();
         for (BizShelfUser bizShelfUser1:bizShelfUserList) {
                list.add(bizShelfUser1.getShelfInfo());
-        }*/
-//        List<BizOpShelfInfo> list = bizOpShelfInfoService.findList(bizOpShelfInfo);
-		
-//		return list;
+        }
+//       List<BizOpShelfInfo> list = bizOpShelfInfoService.findList(bizOpShelfInfo);
+			return list;
+          //  bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "s"));
+    //        return bizOpShelfInfoService.findList(bizOpShelfInfo);
+        }
 	}
 
 	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")

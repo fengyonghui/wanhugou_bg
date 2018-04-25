@@ -120,6 +120,9 @@
 				<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
 			</if>
+			<if test="itemNoComplete != null and itemNoComplete != ''">
+				AND a.item_no = #{itemNoComplete}
+			</if>
 			<if test="brandName != null and brandName != ''">
 				AND a.brand_name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{brandName}||'%'</if>
@@ -219,6 +222,9 @@
 		</if>
 		<if test="brandName!=null and brandName!=''">
 			brand_name = #{brandName},
+		</if>
+		<if test="brandId!=null and brandId!=0">
+			brand_id = #{brandId},
 		</if>
 		<if test="imgUrl!=null and imgUrl!=''">
 			img_url = #{imgUrl},

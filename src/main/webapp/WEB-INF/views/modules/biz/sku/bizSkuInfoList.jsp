@@ -77,9 +77,9 @@
 					<td>
                         ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}
 					</td>
-					<td>
+					<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizSkuInfo.productInfo.id}">
 						${bizSkuInfo.productInfo.name}
-					</td>
+					</a></td>
 				    <td>
 						<input name="partNo" value="${bizSkuInfo.partNo}" type="hidden"/>
 						${bizSkuInfo.partNo}

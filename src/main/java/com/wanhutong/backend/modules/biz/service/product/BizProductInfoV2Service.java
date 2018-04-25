@@ -112,6 +112,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
 
     @Override
     public Page<BizProductInfo> findPage(Page<BizProductInfo> page, BizProductInfo bizProductInfo) {
+        bizProductInfo.setDataStatus("filter");
         return super.findPage(page, bizProductInfo);
     }
 
@@ -125,7 +126,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
     public void save(BizProductInfo bizProductInfo, boolean copy) {
         // 取BRAND NAME
         Dict brand = StringUtils.isBlank(bizProductInfo.getBrandId()) ? null : dictService.get(Integer.valueOf(bizProductInfo.getBrandId()));
-        bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getValue());
+        bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getLabel());
 
         String brandPinYin = HanyuPinyinHelper.getFirstLetters(bizProductInfo.getBrandName() , HanyuPinyinCaseType.UPPERCASE);
         String brandCode = addZeroForNum(brandPinYin.substring(0, Math.min(brandPinYin.length(), 4)), false, 2);
@@ -134,9 +135,9 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
         bizProductInfo.getOffice().setName(office.getName());
         BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
         String vFullCode = bizVendInfo != null ? bizVendInfo.getCode() : HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
-        String vFullName = HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
 
-        if (!bizProductInfo.getItemNo().startsWith(office.getName())) {
+        String vFullName = HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
+        if (!bizProductInfo.getItemNo().startsWith(vFullName)) {
             bizProductInfo.setItemNo(vFullName.concat(bizProductInfo.getItemNo()));
         }
 
@@ -208,7 +209,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
                 bizSkuInfo.setSkuType(Integer.valueOf(type));
                 bizSkuInfo.setName(bizProductInfo.getName());
                 bizSkuInfo.setSort(String.valueOf(index));
-                bizSkuInfo.setItemNo(vCode.concat(bizProductInfo.getItemNo()).concat("/").concat(size).concat("/").concat(color));
+                bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
 
                 BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNoProdId(bizSkuInfo.getItemNo(), bizProductInfo.getId());
                 if (oldBizSkuInfo != null && !copy) {

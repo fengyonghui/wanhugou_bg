@@ -95,7 +95,6 @@
 			<div class="controls">
 				 <sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
 					title="用户" url="/sys/user/treeData?officeId=${office.id}" allowClear="true" notAllowSelectParent="true"/>
-				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">

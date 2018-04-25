@@ -132,7 +132,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
     public void save(BizProductInfo bizProductInfo, boolean copy) {
         // 取BRAND NAME
         Dict brand = StringUtils.isBlank(bizProductInfo.getBrandId()) ? null : dictService.get(Integer.valueOf(bizProductInfo.getBrandId()));
-        bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getValue());
+        bizProductInfo.setBrandName(brand == null ? StringUtils.EMPTY : brand.getLabel());
 
         String brandPinYin = HanyuPinyinHelper.getFirstLetters(bizProductInfo.getBrandName() , HanyuPinyinCaseType.UPPERCASE);
         String brandCode = addZeroForNum(brandPinYin.substring(0, Math.min(brandPinYin.length(), 4)), false, 2);
@@ -142,7 +142,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
         BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
         String vCode = bizVendInfo != null ? bizVendInfo.getCode() : "0";
 
-        String vFullName = bizVendInfo == null ? StringUtils.EMPTY : HanyuPinyinHelper.getFirstLetters(bizVendInfo.getVendName(), HanyuPinyinCaseType.UPPERCASE);
+        String vFullName = HanyuPinyinHelper.getFirstLetters(office.getName(), HanyuPinyinCaseType.UPPERCASE);
         if (!bizProductInfo.getItemNo().startsWith(vFullName)) {
             bizProductInfo.setItemNo(vFullName.concat(bizProductInfo.getItemNo()));
         }
