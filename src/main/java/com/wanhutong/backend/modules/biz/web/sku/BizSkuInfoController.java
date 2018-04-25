@@ -11,10 +11,12 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -57,6 +59,8 @@ public class BizSkuInfoController extends BaseController {
 	private BizInventoryInfoService bizInventoryInfoService;
 	@Autowired
 	private AttributeValueV2Service attributeValueV2Service;
+	@Autowired
+	private BizSkuViewLogService bizSkuViewLogService;
 
 
 
@@ -112,6 +116,23 @@ public class BizSkuInfoController extends BaseController {
 	public String save(BizSkuInfo bizSkuInfo, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, bizSkuInfo)){
 			return form(bizSkuInfo, model);
+		}
+		if(bizSkuInfo.getId()!=null){
+			//保存商品出厂价日志表
+			BizSkuViewLog skuViewLog = new BizSkuViewLog();
+			BizSkuInfo skuInfo=bizSkuInfoService.get(bizSkuInfo.getId());
+			skuViewLog.setSkuInfo(bizSkuInfo);//商品名称
+			skuViewLog.setItemNo(skuInfo.getItemNo());//货号
+			skuViewLog.setUpdateDate(skuInfo.getUpdateDate());//商品修改时间
+			skuViewLog.setUpdateBy(skuInfo.getCreateBy());//商品修改人
+			Double buyPrice=0.0;
+			if(skuInfo.getBuyPrice()!=null){
+				buyPrice=skuInfo.getBuyPrice();
+			}
+			skuViewLog.setFrontBuyPrice(buyPrice);//修改前价格
+			skuViewLog.setAfterBuyPrice(bizSkuInfo.getBuyPrice());//修改后价格
+			skuViewLog.setChangePrice(buyPrice-bizSkuInfo.getBuyPrice());//改变价格
+			bizSkuViewLogService.save(skuViewLog);
 		}
 		bizSkuInfoService.save(bizSkuInfo);
 		addMessage(redirectAttributes, "保存商品sku成功");
