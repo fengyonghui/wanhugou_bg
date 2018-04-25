@@ -117,23 +117,6 @@ public class BizSkuInfoController extends BaseController {
 		if (!beanValidator(model, bizSkuInfo)){
 			return form(bizSkuInfo, model);
 		}
-		if(bizSkuInfo.getId()!=null){
-			//保存商品出厂价日志表
-			BizSkuViewLog skuViewLog = new BizSkuViewLog();
-			BizSkuInfo skuInfo=bizSkuInfoService.get(bizSkuInfo.getId());
-			skuViewLog.setSkuInfo(bizSkuInfo);//商品名称
-			skuViewLog.setItemNo(skuInfo.getItemNo());//货号
-			skuViewLog.setUpdateDate(skuInfo.getUpdateDate());//商品修改时间
-			skuViewLog.setUpdateBy(skuInfo.getCreateBy());//商品修改人
-			Double buyPrice=0.0;
-			if(skuInfo.getBuyPrice()!=null){
-				buyPrice=skuInfo.getBuyPrice();
-			}
-			skuViewLog.setFrontBuyPrice(buyPrice);//修改前价格
-			skuViewLog.setAfterBuyPrice(bizSkuInfo.getBuyPrice());//修改后价格
-			skuViewLog.setChangePrice(buyPrice-bizSkuInfo.getBuyPrice());//改变价格
-			bizSkuViewLogService.save(skuViewLog);
-		}
 		bizSkuInfoService.save(bizSkuInfo);
 		addMessage(redirectAttributes, "保存商品sku成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
