@@ -88,7 +88,7 @@ public class BizRequestHeaderController extends BaseController {
             Integer recvQtys = 0;
             Double money=0.0;
             for (BizRequestDetail bizRequestDetail:requestDetailList) {
-				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*bizRequestDetail.getSkuInfo().getBuyPrice();
+				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*(bizRequestDetail.getSkuInfo().getBuyPrice()==null?0:bizRequestDetail.getSkuInfo().getBuyPrice());
                 reqQtys += bizRequestDetail.getReqQty();
                 recvQtys += bizRequestDetail.getRecvQty();
             }
