@@ -3,9 +3,25 @@
 <html>
 <head>
 	<title>采购订单管理</title>
+	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
+            $("#contentTable").tablesMergeCell({
+                // automatic: true
+                // 是否根据内容来合并
+                cols:[0]
+                // rows:[0,2]
+            });
+
+            $('#select_all').live('click',function(){
+                var choose=$("input[title='num']");
+                if($(this).attr('checked')){
+                    choose.attr('checked',true);
+                }else{
+                    choose.attr('checked',false);
+                }
+            });
 			//$("#name").focus();
             var str=$("#str").val();
             if(str=='detail'){
@@ -58,6 +74,66 @@
                 $("#inputForm").submit();
             }
 		}
+		function selectOrder(obj) {
+		    alert(obj);
+            var flag = false;
+            $("input[name='orderDetailIds']").each(function () {
+                var reqNo = $(this).attr("about");
+                alert($(this).attr("about"));
+                if (reqNo==obj){
+                    if ($(this).attr("checked")==undefined){
+                        flag = true;
+                    }
+                }
+            });
+            if (flag) {
+                alert($(this).text());
+                $(this).attr("checked","checked");
+                $("input[name='orderDetailIds']").each(function () {
+                    var reqNo = $(this).attr("about");
+                    if (reqNo==obj){
+                        $(this).attr("checked","checked");
+                    }
+                })
+            } else {
+                $("input[name='orderDetailIds']").each(function () {
+                    var reqNo = $(this).attr("about");
+                    if (reqNo==obj){
+                        $(this).removeAttr("checked");
+                    }
+                })
+            }
+        }
+        function selectRequest(obj) {
+            alert(obj);
+            var flag = false;
+			$("input[name='reqDetailIds']").each(function () {
+			    var reqNo = $(this).attr("about");
+					alert($(this).attr("about"));
+					if (reqNo==obj){
+					    if ($(this).attr("checked")==undefined){
+					        flag = true;
+                        }
+					}
+                });
+			if (flag) {
+			    alert($(this).text());
+			    $(this).attr("checked","checked");
+                $("input[name='reqDetailIds']").each(function () {
+                    var reqNo = $(this).attr("about");
+                    if (reqNo==obj){
+                        $(this).attr("checked","checked");
+                    }
+                })
+			} else {
+                $("input[name='reqDetailIds']").each(function () {
+                    var reqNo = $(this).attr("about");
+                    if (reqNo==obj){
+                        $(this).removeAttr("checked");
+                    }
+                })
+			}
+        }
 
 	</script>
 </head>
@@ -200,6 +276,10 @@
 		<table id="contentTable"  class="table table-striped table-bordered table-condensed">
 			<thead>
 			<tr>
+				<c:if test="${bizPoHeader.id==null}">
+					<td><input id="select_all" type="checkbox" />订单号/备货单号</td>
+					<th>单选</th>
+				</c:if>
 				<th>产品图片</th>
 				<th>品牌名称</th>
 				<th>商品名称</th>
@@ -253,29 +333,55 @@
 						</c:forEach>
 					</c:if>
 					<c:if test="${bizPoHeader.poDetailList==null}">
-						<c:forEach items="${skuInfoMap}" var="map">
-							<tr>
-					<td><img style="max-width: 120px" src="${map.key.productInfo.imgUrl}"/></td>
-					<td>${map.key.productInfo.brandName}</td>
-					<td>${map.key.name}</td>
-					<td>${map.key.partNo}</td>
-					<td>${map.key.itemNo}</td>
-					<td>${map.key.skuPropertyInfos}</td>
-					<td>${map.value.reqQty-map.value.sentQty}
-						<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>
-						<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>
-						<input type='hidden' name='orderDetailIds' value='${map.value.orderDetailIds}'/>
-					<%--<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>--%>
-					<%--<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>--%>
-					</td>
-					<%--<td>${reqDetail.recvQty}</td>--%>
-					<td><input  name="ordQtys" readonly="readonly"  value="${map.value.reqQty-map.value.sentQty}" class="input-mini" type='text'/></td>
-					<td>
-					<input readonly="readonly" type="text" name="unitPrices" value="${map.value.buyPrice}" class="input-mini">
-					</td>
+						<c:if test="${not empty reqDetailMap}">
+							<c:forEach items="${reqDetailMap}" var="map">
+								<tr>
+									<%--<c:set value="${fn:split(map.key, ',')}" var="detail"></c:set>--%>
+									<td><input name="${map.value.requestHeader.reqNo}" type="checkbox" onclick="selectRequest('${map.value.requestHeader.reqNo}')"/>${map.value.requestHeader.reqNo}</td>
+									<td name="reqs"><input name="reqDetailIds" title="num" about="${map.value.requestHeader.reqNo}" type="checkbox" value="${map.value.id}"/></td>
+									<td><img style="max-width: 120px" src="${map.value.skuInfo.productInfo.imgUrl}"/></td>
+									<td>${map.value.skuInfo.productInfo.brandName}</td>
+									<td>${map.value.skuInfo.name}</td>
+									<td>${map.value.skuInfo.partNo}</td>
+									<td>${map.value.skuInfo.itemNo}</td>
+									<td>${map.value.skuInfo.skuPropertyInfos}</td>
+									<td>${map.value.reqQty-map.value.recvQty}
+										<%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
+										<%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
+										<%--<input type='hidden' name='orderDetailIds' value='${map.value.orderDetailIds}'/>--%>
+									</td>
+									<td><input  name="ordQtys" readonly="readonly"  value="${map.value.reqQty-map.value.recvQty}" class="input-mini" type='text'/></td>
+									<td>
+									<input readonly="readonly" type="text" name="unitPrices" value="${map.value.skuInfo.buyPrice}" class="input-mini">
+									</td>
 
-					</tr>
-					</c:forEach>
+								</tr>
+							</c:forEach>
+						</c:if>
+						<c:if test="${not empty orderDetailMap}">
+							<c:forEach items="${orderDetailMap}" var="map">
+								<tr>
+									<td><input name="${map.value.orderHeader.orderNum}" type="checkbox" onclick="selectOrder('${map.value.orderHeader.orderNum}')"/>${map.value.orderHeader.orderNum}</td>
+									<td name="ords"><input name="orderDetailIds" title="num" about="${map.value.orderHeader.orderNum}" type="checkbox" value="${map.value.id}" /></td>
+									<td><img style="max-width: 120px" src="${map.value.skuInfo.productInfo.imgUrl}"/></td>
+									<td>${map.value.skuInfo.productInfo.brandName}</td>
+									<td>${map.value.skuInfo.name}</td>
+									<td>${map.value.skuInfo.partNo}</td>
+									<td>${map.value.skuInfo.itemNo}</td>
+									<td>${map.value.skuInfo.skuPropertyInfos}</td>
+									<td>${map.value.ordQty-map.value.sentQty}
+										<%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
+										<%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
+										<%--<input type='hidden' name='orderDetailIds' value='${map.value.orderDetailIds}'/>--%>
+									</td>
+									<td><input  name="ordQtys" readonly="readonly"  value="${map.value.ordQty-map.value.sentQty}" class="input-mini" type='text'/></td>
+									<td>
+										<input readonly="readonly" type="text" name="unitPrices" value="${map.value.skuInfo.buyPrice}" class="input-mini">
+									</td>
+
+								</tr>
+							</c:forEach>
+						</c:if>
 					</c:if>
 			</tbody>
 		</table>
