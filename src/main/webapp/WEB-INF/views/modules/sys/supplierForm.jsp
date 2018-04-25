@@ -281,7 +281,12 @@
         <div id="compactImgDiv">
             <c:if test="${office.bizVendInfo.compactPhotos != null && office.bizVendInfo.compactPhotos != ''}">
             <c:forEach items='${fn:split(office.bizVendInfo.compactPhotos,"|")}' var="v" varStatus="status">
-                <img src="${v}" customInput="compactImgImg" style='width: 100px' onclick="$(this).remove();">
+                <c:if test="${gysFlag != 'gys_audit'}">
+                    <img src="${v}" customInput="compactImgImg" style='width: 100px' onclick="$(this).remove();">
+                </c:if>
+                <c:if test="${gysFlag == 'gys_audit'}">
+                    <a target="_blank" href="${v}"><img src="${v}" customInput="compactImgImg" style='width: 100px'></a>
+                </c:if>
             </c:forEach>
             </c:if>
         </div>
@@ -295,9 +300,9 @@
         </div>
         <div id="idCardImgDiv">
             <c:if test="${office.bizVendInfo.idCardPhotos != null && office.bizVendInfo.idCardPhotos != ''}">
-            <c:forEach items='${fn:split(office.bizVendInfo.idCardPhotos,"|")}' var="v" varStatus="status">
-                <img src="${v}" customInput="idCardImgImg" style='width: 100px' onclick="$(this).remove();">
-            </c:forEach>
+                <c:forEach items='${fn:split(office.bizVendInfo.idCardPhotos,"|")}' var="v" varStatus="status">
+                    <img src="${v}" customInput="idCardImgImg" style='width: 100px' onclick="$(this).remove();">
+                </c:forEach>
             </c:if>
         </div>
     </div>
