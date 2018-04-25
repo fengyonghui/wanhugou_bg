@@ -11,10 +11,12 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -57,6 +59,8 @@ public class BizSkuInfoController extends BaseController {
 	private BizInventoryInfoService bizInventoryInfoService;
 	@Autowired
 	private AttributeValueV2Service attributeValueV2Service;
+	@Autowired
+	private BizSkuViewLogService bizSkuViewLogService;
 
 
 
