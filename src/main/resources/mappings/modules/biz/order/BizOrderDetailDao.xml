@@ -13,8 +13,9 @@
 		a.sku_id AS "skuInfo.id",
 		a.suply_id AS "suplyis.id",
 		bsi.name as "skuInfo.name",
-		bsi.buy_price AS "buyPrice",
-		<!--a.quality as "quality",
+		a.buy_price as "buyPrice",
+		<!--bsi.buy_price AS "buyPrice",
+		a.quality as "quality",
 		a.color as "color",
 		a.standard as "standard",-->
 		a.part_no AS "partNo",
