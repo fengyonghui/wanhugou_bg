@@ -236,9 +236,18 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderDetail:view")
     @RequestMapping(value = "findByOrder")
     public Map<String, Object> findByOrder(BizOrderHeader bizOrderHeader, String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user= UserUtils.getUser();
         if (StringUtils.isNotBlank(flag) && "0".equals(flag)) {
             bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
-            bizOrderHeader.setSuplyIds("0");
+            List<Role>roleList= user.getRoleList();
+            Role role=new Role();
+            role.setEnname(RoleEnNameEnum.DEPT.getState());
+            if(user.isAdmin() ||roleList.contains(role) ){
+                bizOrderHeader.setSupplyId(-1); //判断orderDetail不等于0
+            }else {
+                bizOrderHeader.setSupplyId(user.getCompany()==null?0:user.getCompany().getId());
+            }
+
 
         } else {
             bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());

@@ -94,9 +94,11 @@
                 <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
         </div>
         <div id="prodMainImgDiv">
-            <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
-                <img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();">
-            </c:forEach>
+            <c:if test="${entity.photos != null && entity.photos != ''}">
+                <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
+                    <img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();">
+                </c:forEach>
+            </c:if>
         </div>
     </div>
     <div class="control-group">
@@ -109,7 +111,9 @@
                 <input class="btn" type="file" name="productImg" onchange="submitPic('prodBannerImg', false)" value="上传图片" id="prodBannerImg"/>
         </div>
         <div id="prodBannerImgDiv">
+            <c:if test="${entity.imgUrl != null && entity.imgUrl != ''}">
                 <img src="${entity.imgUrl}" customInput="prodBannerImgImg" style='width: 100px' onclick="$(this).remove();">
+            </c:if>
         </div>
     </div>
     <div class="control-group">
@@ -135,9 +139,11 @@
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodDetailImg', true)" value="上传图片" multiple="multiple" id="prodDetailImg"/>
         </div>
         <div id="prodDetailImgDiv">
-            <c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">
-                <img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">
-            </c:forEach>
+            <c:if test="${entity.photoDetails != null && entity.photoDetails != ''}">
+                <c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">
+                    <img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">
+                </c:forEach>
+            </c:if>
         </div>
     </div>
     <div class="control-group">
