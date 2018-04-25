@@ -274,10 +274,10 @@
     <div class="control-group">
         <label class="control-label">合同图:
             <c:if test="${gysFlag != 'gys_audit'}">
-                <p style="opacity: 0.5;">点击图片删除</p>
+                <p style="opacity: 0.5; color: red;">点击图片删除</p>
             </c:if>
             <c:if test="${gysFlag == 'gys_audit'}">
-                <p style="opacity: 0.5;">点击图片查看大图</p>
+                <p style="opacity: 0.5; color: red;">点击图片查看大图</p>
             </c:if>
         </label>
         <div class="controls">
@@ -299,10 +299,10 @@
     <div class="control-group">
         <label class="control-label">身份证图:
             <c:if test="${gysFlag != 'gys_audit'}">
-                <p style="opacity: 0.5;">点击图片删除</p>
+                <p style="opacity: 0.5; color: red;">点击图片删除</p>
             </c:if>
             <c:if test="${gysFlag == 'gys_audit'}">
-                <p style="opacity: 0.5;">点击图片查看大图</p>
+                <p style="opacity: 0.5; color: red;">点击图片查看大图</p>
             </c:if>
         </label>
         <div class="controls">
