@@ -117,7 +117,8 @@
 			code = #{code},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
-			update_time = #{updateDate}
+			update_time = #{updateDate},
+			audit_status = #{auditStatus}
 		WHERE office_id = #{office.id}
 	</update>
 

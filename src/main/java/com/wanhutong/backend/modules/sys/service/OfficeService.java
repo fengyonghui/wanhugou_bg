@@ -299,6 +299,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
             bizVendInfo.setBizCategoryInfo(bizCategoryInfo);
             bizVendInfo.setCateName(bizVarietyInfo.getName());
             bizVendInfo.setCode(office.getCode());
+            bizVendInfo.setAuditStatus(BizVendInfo.AuditStatus.UNAUDITED.getStatus());
             bizVendInfoService.save(bizVendInfo);
         }
 

@@ -90,7 +90,7 @@
 							</c:if>
 						</shiro:hasPermission>
 						<shiro:hasPermission name="sys:office:edit">
-							<c:if test="${off.bizVendInfo.auditStatus == 0}">
+							<c:if test="${off.bizVendInfo.auditStatus == 0 || off.bizVendInfo.auditStatus == 2}">
 								<a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_save">修改</a>
 							</c:if>
 							<a href="${ctx}/sys/office/delete?id=${off.id}&gysFlag=gys_delete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
