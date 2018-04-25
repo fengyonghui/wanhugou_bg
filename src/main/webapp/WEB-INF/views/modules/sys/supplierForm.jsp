@@ -301,7 +301,12 @@
         <div id="idCardImgDiv">
             <c:if test="${office.bizVendInfo.idCardPhotos != null && office.bizVendInfo.idCardPhotos != ''}">
                 <c:forEach items='${fn:split(office.bizVendInfo.idCardPhotos,"|")}' var="v" varStatus="status">
-                    <img src="${v}" customInput="idCardImgImg" style='width: 100px' onclick="$(this).remove();">
+                    <c:if test="${gysFlag != 'gys_audit'}">
+                        <img src="${v}" customInput="idCardImgImg" style='width: 100px' onclick="$(this).remove();">
+                    </c:if>
+                    <c:if test="${gysFlag == 'gys_audit'}">
+                        <a target="_blank" href="${v}"><img src="${v}" customInput="idCardImgImg" style='width: 100px'></a>
+                    </c:if>
                 </c:forEach>
             </c:if>
         </div>
