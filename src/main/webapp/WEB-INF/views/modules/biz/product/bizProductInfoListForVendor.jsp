@@ -142,12 +142,12 @@
 				<td>
 					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
 						<c:if test="${bizProductInfo.bizStatus == 1}">
-							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>
+							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改/审核&nbsp;&nbsp;</a>
 						</c:if>
 						<c:if test="${bizProductInfo.bizStatus != 1}">
-							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">查看</a>
+							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">查看&nbsp;&nbsp;</a>
 						</c:if>
-						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
+						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除&nbsp;&nbsp;</a>
 					</shiro:hasPermission>
 				</td>
 			</tr>

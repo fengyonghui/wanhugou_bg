@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
@@ -26,18 +25,18 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoV2Service;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
-import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,20 +46,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * 产品信息表Controller
@@ -130,7 +125,13 @@ public class BizProductInfoForVendorController extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model, String view) {
         User user = UserUtils.getUser();
-        bizProductInfo.setCreateBy(user);
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.MARKETINGMANAGER.getState());
+        if (!user.isAdmin() && !roleList.contains(role)) {
+            bizProductInfo.setOffice(user.getCompany());
+        }
+
         Page<BizProductInfo> page = bizProductInfoForVendorService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
         model.addAttribute("page", page);
         model.addAttribute("view", view);
@@ -281,6 +282,13 @@ public class BizProductInfoForVendorController extends BaseController {
             }
         }
 
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            model.addAttribute("supply", user.getCompany());
+        }
         model.addAttribute("prodPropertyInfo", new BizProdPropertyInfo());
         model.addAttribute("prodCategoryIdList", prodCategoryIdList);
         model.addAttribute("entity", bizProductInfo);

@@ -588,7 +588,7 @@ public class BizProductInfoV2Controller extends BaseController {
      * 查询货号是否存在
      * */
     @ResponseBody
-    @RequiresPermissions("biz:product:bizProductInfo:edit")
+    @RequiresPermissions("biz:product:bizProductInfo:view")
     @RequestMapping(value = "getItemNoExist")
     public String getItemNoExist(String itemNo, Integer id, String officeName) {
         String vFullName = HanyuPinyinHelper.getFirstLetters(officeName, HanyuPinyinCaseType.UPPERCASE);
