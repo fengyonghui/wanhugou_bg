@@ -142,6 +142,9 @@
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">
 			AND oh.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
 		</if>
+		<if test="bizStatusNot != null">
+			AND oh.biz_status != #{bizStatusNot}
+		</if>
 		GROUP BY
 		pi.vendor_id
 	</select>
