@@ -19,11 +19,13 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.sys.entity.*;
@@ -87,6 +89,8 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
     private AttributeValueV2Service attributeValueV2Service;
     @Resource
     private BizSkuInfoV2Service bizSkuInfoV2Service;
+    @Autowired
+    private BizSkuViewLogService bizSkuViewLogService;
 
 
     /**
@@ -199,11 +203,36 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
                 String type = split[3];
                 String id = split[4];
                 String img = split.length >= 6 ? split[5] : StringUtils.EMPTY;
-
                 BizSkuInfo bizSkuInfo = new BizSkuInfo();
                 if (StringUtils.isNotBlank(id) && !"undefined".equals(id) && !"0".equals(id) && !copy) {
                     bizSkuInfo.setId(Integer.valueOf(id));
                 }
+
+                String a="0";
+                String b="undefined";
+                if(bizSkuInfo.getId()!=null && !bizSkuInfo.getId().equals(a) && !bizSkuInfo.getId().equals(b)){
+                    //保存商品出厂价日志表
+                    Double aftBuyPrice=StringUtils.isBlank(price)? 0 : Double.valueOf(price);
+                    BizSkuViewLog skuViewLog = new BizSkuViewLog();
+                    BizSkuInfo skuInfo = bizSkuInfoV2Service.get(bizSkuInfo);
+                    if(skuInfo!=null){
+                        if(!aftBuyPrice.equals(skuInfo.getBuyPrice())) {
+                            skuViewLog.setSkuInfo(skuInfo);//商品名称
+                            skuViewLog.setItemNo(skuInfo.getItemNo());//货号
+                            skuViewLog.setUpdateDate(skuInfo.getUpdateDate());//商品修改时间
+                            skuViewLog.setUpdateBy(skuInfo.getCreateBy());//商品修改人
+                            Double buyPrice = 0.0;
+                            if (skuInfo.getBuyPrice() != null) {
+                                buyPrice = skuInfo.getBuyPrice();
+                            }
+                            skuViewLog.setFrontBuyPrice(buyPrice);//修改前价格
+                            skuViewLog.setAfterBuyPrice(aftBuyPrice);//修改后价格
+                            skuViewLog.setChangePrice(buyPrice - aftBuyPrice);//改变价格
+                            bizSkuViewLogService.save(skuViewLog);
+                        }
+                    }
+                }
+
                 bizSkuInfo.setProductInfo(bizProductInfo);
                 bizSkuInfo.setBuyPrice(StringUtils.isBlank(price) ? 0 : Double.valueOf(price));
                 bizSkuInfo.setSkuType(Integer.valueOf(type));
