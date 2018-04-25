@@ -273,7 +273,8 @@
     </div>
     <div class="control-group">
         <label class="control-label">合同图:
-            <p style="opacity: 0.5;">点击图片删除</p>
+            <p style="opacity: 0.5;">编辑状态点击图片删除</p>
+            <p style="opacity: 0.5;">审核状态点击图片删除</p>
         </label>
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('compactImg', true)" value="上传图片" multiple="multiple" id="compactImg"/>
@@ -293,7 +294,8 @@
     </div>
     <div class="control-group">
         <label class="control-label">身份证图:
-            <p style="opacity: 0.5;">点击图片删除</p>
+            <p style="opacity: 0.5;">编辑状态点击图片删除</p>
+            <p style="opacity: 0.5;">审核状态点击图片删除</p>
         </label>
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('idCardImg', true)" value="上传图片" multiple="multiple" id="idCardImg"/>
