@@ -269,7 +269,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 for (BizOrderDetail orderDetail:orderDetailList){
                     BizSkuInfo skuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                     if(skuInfo!=null){
-                        totalBuyPrice += skuInfo.getBuyPrice() * (orderDetail.getOrdQty()==null?0:orderDetail.getOrdQty());
+                        if(orderDetail.getBuyPrice()!=null && orderDetail.getBuyPrice()!=0){
+                            totalBuyPrice += orderDetail.getBuyPrice() * (orderDetail.getOrdQty()==null?0:orderDetail.getOrdQty());
+                        }else {
+                            totalBuyPrice += skuInfo.getBuyPrice() * (orderDetail.getOrdQty() == null ? 0 : orderDetail.getOrdQty());
+                        }
                     }
 
                 }
