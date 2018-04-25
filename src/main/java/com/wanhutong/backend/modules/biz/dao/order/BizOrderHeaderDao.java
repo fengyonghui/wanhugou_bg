@@ -284,9 +284,4 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      */
     List<Integer> findOrderCountFrequency(@Param("custId") Integer custId, @Param("statusList") List<OrderHeaderBizStatusEnum> invalidStatus);
 
-    /**
-     * 查询线下支付订单
-     * @return
-     */
-    List<BizOrderHeader> findUnlineOrder();
 }
