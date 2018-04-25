@@ -279,9 +279,11 @@
             <input class="btn" type="file" name="productImg" onchange="submitPic('compactImg', true)" value="上传图片" multiple="multiple" id="compactImg"/>
         </div>
         <div id="compactImgDiv">
+            <c:if test="${office.bizVendInfo.compactPhotos != null && office.bizVendInfo.compactPhotos != ''}">
             <c:forEach items='${fn:split(office.bizVendInfo.compactPhotos,"|")}' var="v" varStatus="status">
                 <img src="${v}" customInput="compactImgImg" style='width: 100px' onclick="$(this).remove();">
             </c:forEach>
+            </c:if>
         </div>
     </div>
     <div class="control-group">
@@ -292,9 +294,11 @@
             <input class="btn" type="file" name="productImg" onchange="submitPic('idCardImg', true)" value="上传图片" multiple="multiple" id="idCardImg"/>
         </div>
         <div id="idCardImgDiv">
+            <c:if test="${office.bizVendInfo.idCardPhotos != null && office.bizVendInfo.idCardPhotos != ''}">
             <c:forEach items='${fn:split(office.bizVendInfo.idCardPhotos,"|")}' var="v" varStatus="status">
                 <img src="${v}" customInput="idCardImgImg" style='width: 100px' onclick="$(this).remove();">
             </c:forEach>
+            </c:if>
         </div>
     </div>
     <div class="control-group">
