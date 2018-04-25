@@ -22,6 +22,7 @@ public class BizOrderHeaderUnline extends DataEntity<BizOrderHeaderUnline> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizOrderHeader orderHeader;		// 订单ID
+	private String serialNum;		//流水号
 	private String imgUrl;		// 单据凭证图
 	private BigDecimal unlinePayMoney;		// 线下付款金额
 	private BigDecimal realMoney;		// 实收金额
@@ -64,5 +65,13 @@ public class BizOrderHeaderUnline extends DataEntity<BizOrderHeaderUnline> {
 
 	public void setRealMoney(BigDecimal realMoney) {
 		this.realMoney = realMoney;
+	}
+
+	public String getSerialNum() {
+		return serialNum;
+	}
+
+	public void setSerialNum(String serialNum) {
+		this.serialNum = serialNum;
 	}
 }

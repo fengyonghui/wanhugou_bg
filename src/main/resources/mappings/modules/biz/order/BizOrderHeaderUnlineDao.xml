@@ -5,6 +5,7 @@
 	<sql id="bizOrderHeaderUnlineColumns">
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
+		a.serial_num AS "serialNum",
 		a.img_url AS "imgUrl",
 		a.unline_pay_money AS "unlinePayMoney",
 		a.real_money AS "realMoney",
@@ -68,6 +69,7 @@
 		INSERT INTO biz_order_header_unline(
 			id,
 			order_id,
+			serial_num,
 			img_url,
 			unline_pay_money,
 			real_money,
@@ -80,6 +82,7 @@
 		) VALUES (
 			#{id},
 			#{orderHeader.id},
+			#{serialNum},
 			#{imgUrl},
 			#{unlinePayMoney},
 			#{realMoney},
@@ -95,6 +98,7 @@
 	<update id="update">
 		UPDATE biz_order_header_unline SET 	
 			order_id = #{orderHeader.id},
+			serial_num = #{serialNum},
 			img_url = #{imgUrl},
 			unline_pay_money = #{unlinePayMoney},
 			real_money = #{realMoney},

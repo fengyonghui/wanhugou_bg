@@ -883,6 +883,12 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">流水号：</label>
+			<div class="controls">
+				${bizOrderHeader.orderHeaderUnline.serialNum}
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">单据凭证：</label>
 			<div class="controls">
 				<img src="${bizOrderHeader.orderHeaderUnline.imgUrl}" style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
