@@ -116,26 +116,7 @@ public class BizOpShelfSkuController extends BaseController {
             }else {
                 bizOpShelfSku.setId(null);
             }
-			//保存商品出厂价日志表
-			BizSkuViewLog skuViewLog = new BizSkuViewLog();
 			BizSkuInfo bizSkuInfo=bizSkuInfoService.get(Integer.parseInt(skuIdArr[i].trim()));
-			if(bizOpShelfSkus.getId()!=null){
-				BizOpShelfSku OpShelfSku = bizOpShelfSkuService.get(bizOpShelfSkus.getId());
-				if(OpShelfSku!=null){
-					skuViewLog.setSkuInfo(OpShelfSku.getSkuInfo());//商品名称
-					skuViewLog.setItemNo(OpShelfSku.getSkuInfo().getItemNo());//货号
-					skuViewLog.setUpdateDate(OpShelfSku.getUpdateDate());//商品修改时间
-					skuViewLog.setUpdateBy(OpShelfSku.getCreateBy());//商品修改人
-					Double buyPrice=0.0;
-					if(OpShelfSku.getOrgPrice()!=null){
-						buyPrice=OpShelfSku.getOrgPrice();
-					}
-					skuViewLog.setFrontBuyPrice(buyPrice);//修改前价格
-					skuViewLog.setAfterBuyPrice(Double.parseDouble(orgPriceArr[i].trim()));//修改后价格
-					skuViewLog.setChangePrice(buyPrice-Double.parseDouble(orgPriceArr[i].trim()));//改变价格
-					bizSkuViewLogService.save(skuViewLog);
-				}
-			}
 			bizOpShelfSku.setSkuInfo(bizSkuInfo);
 			bizOpShelfSku.setProductInfo(bizSkuInfo.getProductInfo());
 			bizOpShelfSku.setCenterOffice(bizOpShelfSkus.getCenterOffice());
