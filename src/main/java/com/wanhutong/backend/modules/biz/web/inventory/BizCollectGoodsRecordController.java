@@ -112,26 +112,21 @@ public class BizCollectGoodsRecordController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizCollectGoodsRecord/?repage";
 	}
 
-//	用于库存变更记录列表
+    /**
+     * 库存变更记录列表
+     * */
 	@RequiresPermissions("biz:inventory:bizCollectGoodsRecord:view")
 	@RequestMapping(value = "stockChangeList")
 	public String stockChangeList(BizCollectGoodsRecord bizCollectGoodsRecord,HttpServletRequest request, HttpServletResponse response, Model model) {
-		BizSendGoodsRecord bizSendGoodsRecord = new BizSendGoodsRecord();
-        bizSendGoodsRecord.setBizStatus(SendGoodsRecordBizStatusEnum.CENTER.getState());//0
-		if(bizCollectGoodsRecord.getQueryClass()==null){
-			Page<BizSendGoodsRecord> pageSend = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), bizSendGoodsRecord);
-			model.addAttribute("pageSend", pageSend);
-			Page<BizCollectGoodsRecord> pageGods = bizCollectGoodsRecordService.findPage(new Page<BizCollectGoodsRecord>(request, response), bizCollectGoodsRecord);
-			model.addAttribute("pageGods", pageGods);
-		}else if(bizCollectGoodsRecord.getQueryClass()==1){
-//			入库记录
-			Page<BizCollectGoodsRecord> pageGods = bizCollectGoodsRecordService.findPage(new Page<BizCollectGoodsRecord>(request, response), bizCollectGoodsRecord);
-			model.addAttribute("pageGods", pageGods);
-		}else{
-			//出库记录
-            Page<BizSendGoodsRecord> pageSend = bizSendGoodsRecordService.findPage(new Page<BizSendGoodsRecord>(request, response), bizSendGoodsRecord);
-			model.addAttribute("pageSend", pageSend);
-		}
+        Page<BizCollectGoodsRecord> bizCollectGoodsRecordPage = bizCollectGoodsRecordService.collectSendFindPage(new Page<BizCollectGoodsRecord>(request, response), bizCollectGoodsRecord);
+        bizCollectGoodsRecordPage.getList().forEach(send->{
+            if(send.getCustomer()!=null && send.getCustomer().getId()!=null){
+                send.setChangeState("出库记录");
+            }else{
+                send.setChangeState("入库记录");
+            }
+        });
+        model.addAttribute("page", bizCollectGoodsRecordPage);
 		return "modules/biz/inventory/bizCollectStockChangeRecordList";
 	}
 }

@@ -196,5 +196,71 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<!-- 用于库存变更记录  -->
+	<select id="collectSendFindPage" resultType="BizCollectGoodsRecord">
+		select collectSend.* from (select
+		a.id as "id",
+		a.inv_id AS "invInfo.id",
+		inv.name AS "invInfo.name",
+		a.sku_id AS "skuInfo.id",
+		sku.part_no AS "skuInfo.partNo",
+		sku.item_no as "skuInfo.itemNo",
+		sku.name AS "skuInfo.name",
+		a.order_num as "orderNum",
+		a.inv_old_num as "invOldNum",
+		a.send_num as "sendNum",
+		IFNULL(inv_old_num,0)-send_num as "changeNumber",
+		a.send_time as "createDate",
+		a.cust_id AS "customer.id",
+		s.name AS "customer.name",
+		a.order_id AS "bizOrderHeader.id",
+		a.status as "delFlag"
+		from biz_send_goods_record a
+		LEFT JOIN biz_inventory_info inv ON inv.id = a.inv_id
+		LEFT JOIN biz_sku_info sku ON a.sku_id = sku.id
+		LEFT JOIN sys_office s ON a.cust_id = s.id
+		where a.biz_status = 0
+		union all
+		select
+		b.id as "id",
+		b.inv_id AS "invInfo.id",
+		inv.name AS "invInfo.name",
+		b.sku_id AS "skuInfo.id",
+		sku.part_no AS "skuInfo.partNo",
+		sku.item_no as "skuInfo.itemNo",
+		sku.name AS "skuInfo.name",
+		b.order_num as "orderNum",
+		b.inv_old_num as "invOldNum",
+		b.receive_num as "receiveNum",
+		IFNULL(inv_old_num,0)+receive_num as "changeNumber",
+		b.receive_time as "createDate",
+		null,
+		null,
+		b.order_id AS "bizOrderHeader.id",
+		b.status as "delFlag"
+		from biz_collect_goods_record b
+		LEFT JOIN biz_inventory_info inv ON b.inv_id = inv.id
+		LEFT JOIN sys_office cent ON cent.id = inv.cust_id
+		LEFT JOIN biz_sku_info sku ON b.sku_id = sku.id
+		) collectSend
+		<where>
+			collectSend.delFlag=1
+			<if test="orderNum != null and orderNum != ''">
+				AND collectSend.orderNum LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY collectSend.createDate desc
+			</otherwise>
+		</choose>
+	</select>
+
 </mapper>
