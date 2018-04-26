@@ -24,11 +24,8 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>查询类别：</label>
-				<form:select path="queryClass" class="input-xlarge">
-					<form:option value="" label="请选择"/>
-					<form:options items="${fns:getDictList('change_record')}" itemLabel="label" itemValue="value"
-								  htmlEscape="false"/></form:select>
+			<li><label>订单编号：</label>
+				<form:input path="orderNum" htmlEscape="false" maxlength="80" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -50,11 +47,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<%--出库记录--%>
-		<c:forEach items="${pageSend.list}" var="collectGoods">
+		<c:forEach items="${page.list}" var="collectGoods">
 			<tr>
 				<td>
-				<%--<td><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${collectGoods.id}"></a>--%>
 					${collectGoods.invInfo.name}
 				</td>
 				<td>
@@ -66,50 +61,28 @@
 				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizOrderHeader.id}&source=ghs">
 						${collectGoods.orderNum}</a>
 				</td>
-				<td><font color="#B40404">出库记录</font></td>
+				<td>
+					<c:if test="${collectGoods.changeState !=null && collectGoods.changeState eq '出库记录'}">
+						<font color="#CD3700">${collectGoods.changeState}</font>
+					</c:if>
+					<c:if test="${collectGoods.changeState !=null && collectGoods.changeState eq '入库记录'}">
+						<font color="#3CB371">${collectGoods.changeState}</font>
+					</c:if>
+				</td>
 				<td>${collectGoods.invOldNum}</td>
 				<td>
-					<font color="#B40404">-</font>${collectGoods.sendNum}
+					${collectGoods.changeNumber}
 				</td>
 				<td>
-						${collectGoods.customer.name}
+					${collectGoods.customer.name}
 				</td>
 				<td>
-					<fmt:formatDate value="${collectGoods.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${collectGoods.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 					<%--<shiro:hasPermission name="biz:inventory:bizSendGoodsRecord:edit"><td>
                         <%--<a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">修改</a>--%>
 					<%--<a href="${ctx}/biz/inventory/bizSendGoodsRecord/delete?id=${bizSendGoodsRecord.id}" onclick="return confirmx('确认要删除该供货记录吗？', this.href)">删除</a>--%>
 					<%--</td></shiro:hasPermission>&ndash;%&gt;--%>
-			</tr>
-		</c:forEach>
-		<%--入库记录--%>
-		<c:forEach items="${pageGods.list}" var="collectGoodsRecord">
-			<tr>
-				<td>
-						<%--<a href="${ctx}/biz/inventory/bizCollectGoodsRecord/form?id=${bizCollectGoodsRecord.id}"></a>--%>
-						${collectGoodsRecord.invInfo.name}
-				</td>
-				<td>
-						${collectGoodsRecord.skuInfo.name}
-				</td>
-				<td>
-						${collectGoodsRecord.skuInfo.partNo}
-				</td>
-				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoodsRecord.bizRequestHeader.id}&source=gh">
-						${collectGoodsRecord.orderNum}</a>
-				</td>
-				<td><font color="#0B610B">入库记录</font></td>
-				<td>${collectGoodsRecord.invOldNum}</td>
-				<td>
-					<font color="#0B610B">+</font>${collectGoodsRecord.receiveNum}
-				</td>
-				<td>
-					${collectGoodsRecord.customer.id}
-				</td>
-				<td>
-					<fmt:formatDate value="${collectGoodsRecord.receiveDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
 			</tr>
 		</c:forEach>
 		</tbody>

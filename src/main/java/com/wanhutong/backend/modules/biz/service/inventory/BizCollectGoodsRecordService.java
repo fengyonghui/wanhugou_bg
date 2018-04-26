@@ -220,5 +220,14 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	public void delete(BizCollectGoodsRecord bizCollectGoodsRecord) {
 		super.delete(bizCollectGoodsRecord);
 	}
-	
+
+	/**
+	 * 库存变更记录，分页
+	 * */
+	public Page<BizCollectGoodsRecord> collectSendFindPage(Page<BizCollectGoodsRecord> page, BizCollectGoodsRecord bizCollectGoodsRecord) {
+		bizCollectGoodsRecord.setPage(page);
+		page.setList(dao.collectSendFindPage(bizCollectGoodsRecord));
+		return page;
+	}
+
 }
