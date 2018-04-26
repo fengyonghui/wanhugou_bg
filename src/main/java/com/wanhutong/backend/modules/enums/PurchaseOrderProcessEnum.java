@@ -90,5 +90,9 @@ public enum  PurchaseOrderProcessEnum {
         }
         return result;
     }
+
+    public static Map<Integer, PurchaseOrderProcessEnum> getProcessEnumMap() {
+        return PROCESS_ENUM_MAP;
+    }
 }
 
