@@ -472,7 +472,11 @@ public class BizOrderHeaderController extends BaseController {
                             //商品编码
                             detailListData.add(String.valueOf(d.getPartNo()));
                             //供应商
-                            detailListData.add(String.valueOf(d.getVendor().getName()));
+                            if(d.getVendor()!=null && d.getVendor().getName()!=null){
+                                detailListData.add(String.valueOf(d.getVendor().getName()));
+                            }else{
+                                detailListData.add("");
+                            }
                             //商品单价
                             detailListData.add(String.valueOf(d.getUnitPrice()));
                             //商品工厂价
@@ -585,7 +589,11 @@ public class BizOrderHeaderController extends BaseController {
                                 //商品编码
                                 detailListData.add(String.valueOf(d.getPartNo()));
                                 //供应商
-                                detailListData.add(String.valueOf(d.getVendor().getName()));
+                                if(d.getVendor()!=null && d.getVendor().getName()!=null){
+                                    detailListData.add(String.valueOf(d.getVendor().getName()));
+                                }else{
+                                    detailListData.add("");
+                                }
                                 //商品单价
                                 detailListData.add(String.valueOf(d.getUnitPrice()));
                                 //商品工厂价
