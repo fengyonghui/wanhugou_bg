@@ -346,7 +346,7 @@
     <form:input path="imgUrl" id="imgUrl" cssStyle="display: none"/>
 
     <div class="form-actions">
-        <c:if test="${view != 'true'}">
+        <c:if test="${view != 'true' && (bizProductInfo.bizStatus == 1 || bizProductInfo.bizStatus == 3)}">
             <shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
                 <input id="btnSubmit" class="btn btn-primary" type="button" value="保 存" onclick="submitCustomForm()"/>&nbsp;
             </shiro:hasPermission>
