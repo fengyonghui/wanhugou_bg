@@ -38,7 +38,14 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	private BizOrderDetail bizOrderDetail;
 	private List<BizCollectGoodsRecord> bizCollectGoodsRecordList;
 
-	private Integer queryClass;		//用于库存变更记录查询 类别展示
+	/**
+	 * 变更的数量
+	 * */
+	private Double changeNumber;
+	/**
+	 * 变更记录
+	 * */
+	private String changeState;
 
 	public BizCollectGoodsRecord() {
 		super();
@@ -147,19 +154,27 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 		this.bizCollectGoodsRecordList = bizCollectGoodsRecordList;
 	}
 
-	public Integer getQueryClass() {
-		return queryClass;
-	}
-
-	public void setQueryClass(Integer queryClass) {
-		this.queryClass = queryClass;
-	}
-
 	public Integer getInvOldNum() {
 		return invOldNum;
 	}
 
 	public void setInvOldNum(Integer invOldNum) {
 		this.invOldNum = invOldNum;
+	}
+
+	public Double getChangeNumber() {
+		return changeNumber;
+	}
+
+	public void setChangeNumber(Double changeNumber) {
+		this.changeNumber = changeNumber;
+	}
+
+	public String getChangeState() {
+		return changeState;
+	}
+
+	public void setChangeState(String changeState) {
+		this.changeState = changeState;
 	}
 }

@@ -30,8 +30,12 @@ public class BizInventoryViewLog extends DataEntity<BizInventoryViewLog> {
 	private BizInventoryInfo invInfo;
 	private Integer invType;
 	private BizSkuInfo skuInfo;
+	//原库存数量
 	private Integer stockQty;
+	//改变数量
 	private Integer stockChangeQty;
+	//现库存数量
+	private Integer nowStockQty;
 	
 	public BizInventoryViewLog() {
 		super();
@@ -79,5 +83,13 @@ public class BizInventoryViewLog extends DataEntity<BizInventoryViewLog> {
 
 	public void setStockChangeQty(Integer stockChangeQty) {
 		this.stockChangeQty = stockChangeQty;
+	}
+
+	public Integer getNowStockQty() {
+		return nowStockQty;
+	}
+
+	public void setNowStockQty(Integer nowStockQty) {
+		this.nowStockQty = nowStockQty;
 	}
 }

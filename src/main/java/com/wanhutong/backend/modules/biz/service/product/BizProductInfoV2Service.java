@@ -224,7 +224,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
                             }
                             skuViewLog.setFrontBuyPrice(buyPrice);//修改前价格
                             skuViewLog.setAfterBuyPrice(aftBuyPrice);//修改后价格
-                            skuViewLog.setChangePrice(buyPrice - aftBuyPrice);//改变价格
+                            skuViewLog.setChangePrice(aftBuyPrice - buyPrice);//改变价格
                             bizSkuViewLogService.save(skuViewLog);
                         }
                     }

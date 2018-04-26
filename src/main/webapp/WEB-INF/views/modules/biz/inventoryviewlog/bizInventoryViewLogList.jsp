@@ -42,7 +42,8 @@
 				<th>仓库</th>
 				<th>库存类型</th>
 				<th>商品</th>
-				<th>库存数量</th>
+				<th>原库存数量</th>
+				<th>现库存数量</th>
 				<th>改变数量</th>
 				<th>创建人</th>
 				<th>创建时间</th>
@@ -63,6 +64,9 @@
 				</td>
 				<td>
 					${bizInventoryViewLog.stockQty}
+				</td>
+				<td>
+					${bizInventoryViewLog.nowStockQty}
 				</td>
 				<td>
 					${bizInventoryViewLog.stockChangeQty}
