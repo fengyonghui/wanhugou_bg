@@ -140,7 +140,7 @@
 					<c:if test="${bizProductInfo.bizStatus == 3}">审核失败</c:if>
 				</td>
 				<td>
-					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
+					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
                         <c:if test="${bizProductInfo.bizStatus == 1}">
                             <a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=audit">审核&nbsp;&nbsp;</a>
                         </c:if>
