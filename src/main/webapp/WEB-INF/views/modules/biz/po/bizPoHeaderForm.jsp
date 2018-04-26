@@ -382,7 +382,7 @@
 									<td>${orderDetail.skuInfo.partNo}</td>
 									<td>${orderDetail.skuInfo.itemNo}</td>
 									<td>${orderDetail.skuInfo.skuPropertyInfos}</td>
-									<td>${morderDetail.ordQty-orderDetail.sentQty}
+									<td>${orderDetail.ordQty-orderDetail.sentQty}
 										<%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
 										<%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
 										<%--<input type='hidden' name='orderDetailIds' value='${map.value.orderDetailIds}'/>--%>
