@@ -207,10 +207,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
                 if (StringUtils.isNotBlank(id) && !"undefined".equals(id) && !"0".equals(id) && !copy) {
                     bizSkuInfo.setId(Integer.valueOf(id));
                 }
-
-                String a="0";
-                String b="undefined";
-                if(bizSkuInfo.getId()!=null && !bizSkuInfo.getId().equals(a) && !bizSkuInfo.getId().equals(b)){
+                if(bizSkuInfo.getId()!=null && !bizSkuInfo.getId().equals("0") && !bizSkuInfo.getId().equals("undefined")){
                     //保存商品出厂价日志表
                     Double aftBuyPrice=StringUtils.isBlank(price)? 0 : Double.valueOf(price);
                     BizSkuViewLog skuViewLog = new BizSkuViewLog();
