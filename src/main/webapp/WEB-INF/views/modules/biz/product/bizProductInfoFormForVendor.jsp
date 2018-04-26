@@ -346,7 +346,7 @@
     <form:input path="imgUrl" id="imgUrl" cssStyle="display: none"/>
 
     <div class="form-actions">
-        <c:if test="${view != 'true' && (bizProductInfo.bizStatus == 1 || bizProductInfo.bizStatus == 3)}">
+        <c:if test="${view != 'true' && view != 'audit' && (bizProductInfo.bizStatus == 1 || bizProductInfo.bizStatus == 3)}">
             <shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
                 <input id="btnSubmit" class="btn btn-primary" type="button" value="保 存" onclick="submitCustomForm()"/>&nbsp;
             </shiro:hasPermission>
@@ -358,7 +358,7 @@
                        value="审核通过" onclick="checkPass(${bizProductInfo.id})"/>
                 <input id="btnSubmit" class="btn btn-primary"
                        type="button"
-                       value="审核不通过" onclick="checkUnPass(${bizProductInfo.id})"/>
+                       value="审核驳回" onclick="checkUnPass(${bizProductInfo.id})"/>
             </c:if>
         </shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
