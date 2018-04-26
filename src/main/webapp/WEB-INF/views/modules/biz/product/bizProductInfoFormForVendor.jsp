@@ -149,7 +149,7 @@
     <div class="control-group">
         <label class="control-label">请选择供应商：</label>
         <div class="controls">
-            <c:if test="${supply != null}">
+            <c:if test="${supply == null}">
                 <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.name"
                             labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
                             title="供应商" url="/sys/office/queryTreeList?type=7" extId="${office.id}"
@@ -157,12 +157,9 @@
                             allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
             </c:if>
             <c:if test="${supply != null}">
-                <form:input path="photos" id="photos" value=""/>
-                <form:input id="office" name="office.id" value="${entity.office.id}" labelName="office.name"
-                            labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-                            title="供应商" url="/sys/office/queryTreeList?type=7" extId="${office.id}"
-                            cssClass="input-xlarge required"
-                            allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
+                <form:select id="officeName" path="office.id" class="input-medium required">
+                    <form:options items="${supply}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+                </form:select>
             </c:if>
             <span class="help-inline"><font color="red">*</font> </span>
         </div>

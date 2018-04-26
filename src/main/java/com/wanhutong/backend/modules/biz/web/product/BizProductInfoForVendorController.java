@@ -287,7 +287,7 @@ public class BizProductInfoForVendorController extends BaseController {
         Role role = new Role();
         role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
         if (roleList.contains(role)) {
-            model.addAttribute("supply", user.getCompany());
+            model.addAttribute("supply", Lists.newArrayList(user.getCompany()));
         }
         model.addAttribute("prodPropertyInfo", new BizProdPropertyInfo());
         model.addAttribute("prodCategoryIdList", prodCategoryIdList);
