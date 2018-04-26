@@ -201,8 +201,9 @@
 		</c:if>
 
 		<c:if test="${source == 'kc' && ship=='xs'||bizStatu == 0 || source=='gh'}">
-			<c:forEach items="${page.list}" var="orderHeader">
+			<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
 				<tr>
+					<td>${state.index+1}</td>
 					<c:if test="${source=='gh'}">
 						<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
 					</c:if>

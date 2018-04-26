@@ -160,7 +160,7 @@
                                 if(detail.ordQty==detail.sentQty){
                                     tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
                                 }else {
-                                    tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' value='0'></td>";
+                                    tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='0'></td>";
                                 }
 
                                 tr_tds+="</tr>";
@@ -187,6 +187,12 @@
 			});
 
             });
+		function checkNum(ordQty,sentQty, sendQty) {
+			if (parseInt(sendQty.value)+parseInt(sentQty) > parseInt(ordQty)){
+			    alert("发货数量大于需求数量，请修改");
+			    $(sendQty).val(0);
+			}
+        }
 
 
 	</script>
