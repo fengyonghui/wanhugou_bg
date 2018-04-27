@@ -577,7 +577,6 @@ public class BizProductInfoV2Controller extends BaseController {
      * 查询货号是否存在
      * */
     @ResponseBody
-    @RequiresPermissions("biz:product:bizProductInfo:edit")
     @RequestMapping(value = "getItemNoExist")
     public String getItemNoExist(String itemNo, Integer id, String officeName) {
         String vFullName = HanyuPinyinHelper.getFirstLetters(officeName, HanyuPinyinCaseType.UPPERCASE);
@@ -587,7 +586,7 @@ public class BizProductInfoV2Controller extends BaseController {
         }
 
         BizProductInfo b = new BizProductInfo();
-        b.setItemNo(itemNo);
+        b.setItemNoComplete(itemNo);
         List<BizProductInfo> list = bizProductInfoService.findList(b);
         List<BizProductInfo> listForVendor = bizProductInfoForVendorService.findList(b);
         if(id != null) {

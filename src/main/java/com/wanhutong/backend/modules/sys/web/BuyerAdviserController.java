@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,8 +48,9 @@ public class BuyerAdviserController extends BaseController {
 		}
 		BuyerAdviser adviser = buyerAdviserService.get(buyerAdviser.getCustId());
 		buyerAdviser.setIsNewRecord(true);
-		if(adviser != null){
+		if (adviser != null) {
 			buyerAdviser.setIsNewRecord(false);
+			buyerAdviserService.delete(adviser);
 		}
 		buyerAdviser.setStatus("1");
 		buyerAdviserService.save(buyerAdviser);
@@ -74,7 +76,16 @@ public class BuyerAdviserController extends BaseController {
 		if(office!=null){
 			buyerAdviser = buyerAdviserService.get(office.getId());
 			if(buyerAdviser != null){
-				buyerAdviser.setConsultantName(systemService.getUser(buyerAdviser.getConsultantId()).getName());
+				if(!buyerAdviser.getStatus().equals("0")){
+					User user = systemService.getUser(buyerAdviser.getConsultantId());
+					if(user!=null && user.getName()!=null && !user.getName().equals("") && !user.getDelFlag().equals("0")){
+						buyerAdviser.setConsultantName(user.getName());
+					}else{
+						buyerAdviser=null;
+					}
+				}else{
+					buyerAdviser=null;
+				}
 			}
 		}
 		model.addAttribute("office", office);

@@ -13,8 +13,9 @@
 		a.sku_id AS "skuInfo.id",
 		a.suply_id AS "suplyis.id",
 		bsi.name as "skuInfo.name",
-		bsi.buy_price AS "buyPrice",
-		<!--a.quality as "quality",
+		a.buy_price as "buyPrice",
+		<!--bsi.buy_price AS "buyPrice",
+		a.quality as "quality",
 		a.color as "color",
 		a.standard as "standard",-->
 		a.part_no AS "partNo",
@@ -141,6 +142,9 @@
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">
 			AND oh.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
 		</if>
+		<if test="bizStatusNot != null">
+			AND oh.biz_status != #{bizStatusNot}
+		</if>
 		GROUP BY
 		pi.vendor_id
 	</select>
@@ -182,6 +186,7 @@
 			part_no,
 			sku_name,
 			unit_price,
+			buy_price,
 			sent_qty,
 			ord_qty,
 		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
@@ -211,6 +216,7 @@
 			#{partNo},
 			#{skuName},
 			#{unitPrice},
+			#{buyPrice},
 			#{sentQty},
 			#{ordQty},
 		<if test="suplyis !=null and suplyis.id !=null and suplyis.id !=''">
@@ -243,6 +249,7 @@
 			part_no = #{partNo},
 			sku_name = #{skuName},
 			unit_price = #{unitPrice},
+			buy_price = #{buyPrice},
 			sent_qty = #{sentQty},
 			ord_qty = #{ordQty},
 		<choose>

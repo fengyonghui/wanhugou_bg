@@ -158,6 +158,19 @@
 		<if test="dbName == 'oracle'">('%,'||#{id}||',%')</if>
 		<if test="dbName == 'mssql'">('%,'+#{id}+',%')</if>
 		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+
+		<if test="shelfInfoUser!=null and shelfInfoUser.name !=null and shelfInfoUser.name!=''">
+			and a.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{shelfInfoUser.name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{shelfInfoUser.name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{shelfInfoUser.name},'%')</if>
+		</if>
+		<if test="shelfInfoUser!=null and shelfInfoUser.mobile !=null and shelfInfoUser.mobile!=''">
+			and a.mobile LIKE
+			<if test="dbName == 'oracle'">'%'||#{shelfInfoUser.mobile}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{shelfInfoUser.mobile}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{shelfInfoUser.mobile},'%')</if>
+		</if>
 	</select>
 	<!-- 分页查询用户信息 -->
 	<select id="findList" resultType="User">

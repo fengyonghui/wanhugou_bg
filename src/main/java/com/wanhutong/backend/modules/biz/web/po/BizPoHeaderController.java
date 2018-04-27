@@ -92,7 +92,7 @@ public class BizPoHeaderController extends BaseController {
 			BizPoOrderReq bizPoOrderReq=new BizPoOrderReq();
 			bizPoOrderReq.setPoHeader(entity);
 			List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
-			List<Map<String,Integer>> poOrderReqs= Lists.newArrayList();
+//			List<Map<String,Integer>> poOrderReqs= Lists.newArrayList();
 			BizOrderDetail bizOrderDetail=new BizOrderDetail();
 			BizRequestDetail bizRequestDetail=new BizRequestDetail();
 			Map<Integer,List<BizPoOrderReq>> map=new HashMap<>();

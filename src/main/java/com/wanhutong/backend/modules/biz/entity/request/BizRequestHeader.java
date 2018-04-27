@@ -50,6 +50,12 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Byte bizStatusStart;
 	private Byte bizStatusEnd; //用于查询业务状态的区间
 
+	private Byte bizStatusNot;		//不包含的状态
+	/**
+	 * 列表序号
+	 * */
+	private Integer numberRownum;
+
 	private List<BizRequestDetail> requestDetailList;
 
 	private List<BizPoDetail> poDetailList;
@@ -322,5 +328,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setTotalMoney(Double totalMoney) {
 		this.totalMoney = totalMoney;
+	}
+
+	public Integer getNumberRownum() {
+		return numberRownum;
+	}
+
+	public void setNumberRownum(Integer numberRownum) {
+		this.numberRownum = numberRownum;
+	}
+
+	public Byte getBizStatusNot() {
+		return bizStatusNot;
+	}
+
+	public void setBizStatusNot(Byte bizStatusNot) {
+		this.bizStatusNot = bizStatusNot;
 	}
 }

@@ -12,16 +12,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,7 +73,19 @@ public class OfficeController extends BaseController {
     @ModelAttribute("office")
     public Office get(@RequestParam(required = false) Integer id) {
         if (id != null) {
-            return officeService.get(id);
+            Office office = officeService.get(id);
+            List<CommonImg> compactImgList = officeService.getImgList(id, ImgEnum.VEND_COMPACT);
+            List<CommonImg> idCardImgList = officeService.getImgList(id, ImgEnum.VEND_IDENTITY_CARD);
+            StringBuilder compactSb = new StringBuilder();
+            StringBuilder idCardSb = new StringBuilder();
+            compactImgList.forEach(o -> compactSb.append(o.getImgServer().concat(o.getImgPath())).append("|"));
+            idCardImgList.forEach(o -> idCardSb.append(o.getImgServer().concat(o.getImgPath())).append("|"));
+            if (office.getBizVendInfo() == null) {
+                office.setBizVendInfo(new BizVendInfo());
+            }
+            office.getBizVendInfo().setCompactPhotos(compactSb.toString());
+            office.getBizVendInfo().setIdCardPhotos(idCardSb.toString());
+            return office;
         } else {
             return new Office();
         }
@@ -193,7 +208,7 @@ public class OfficeController extends BaseController {
 
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "supplierForm")
-    public String supplierForm(Office office, Model model) {
+    public String supplierForm(Office office, Model model, String gysFlag) {
         User user = UserUtils.getUser();
         if (office.getParent() == null || office.getParent().getId() == null) {
             if (OfficeTypeEnum.VENDOR.getType().equals(office.getType())) {
@@ -242,6 +257,7 @@ public class OfficeController extends BaseController {
         //查询所有商品品类
         model.addAttribute("varietyList",bizVarietyInfoService.findList(new BizVarietyInfo()));
         model.addAttribute("office", office);
+        model.addAttribute("gysFlag", gysFlag);
         return "modules/sys/supplierForm";
     }
 
@@ -315,7 +331,7 @@ public class OfficeController extends BaseController {
             return "redirect:" + adminPath + "/sys/office/";
         }
         if (!beanValidator(model, office)) {
-            return form(office, model, null);
+            return form(office, model, null, null);
         }
 //        BizCustCredit bizCustCredit = new BizCustCredit();
 //        bizCustCredit.setLevel(office.getLevel());
@@ -347,7 +363,7 @@ public class OfficeController extends BaseController {
 
     @RequiresPermissions("sys:office:view")
     @RequestMapping(value = "form")
-    public String form(Office office, Model model, String flag) {
+    public String form(Office office, Model model, String flag, String gysFlag) {
         User user = UserUtils.getUser();
         if (office.getParent() == null || office.getParent().getId() == null) {
             office.setParent(user.getOffice());
@@ -384,6 +400,7 @@ public class OfficeController extends BaseController {
             BizVendInfo bizVendInfo = bizVendInfoService.get(office.getId());
             office.setBizVendInfo(bizVendInfo);
         }
+        model.addAttribute("gysFlag", gysFlag);
         model.addAttribute("office", office);
         return "modules/sys/officeForm";
     }
@@ -396,7 +413,7 @@ public class OfficeController extends BaseController {
             return "redirect:" + adminPath + "/sys/office/";
         }
         if (!beanValidator(model, office)) {
-            return form(office, model, null);
+            return form(office, model, null, null);
         }
         officeService.save(office);
 
@@ -598,5 +615,19 @@ public class OfficeController extends BaseController {
             addMessage(redirectAttributes, "列表不存在");
         }
         return convertList(list);
+    }
+
+    /**
+     * 供应商审核状态修改
+     * @param id 供应商ID
+     * @param status 审核状态
+     * @return 操作结果
+     */
+    @RequestMapping(value = "auditSupplier")
+    @RequiresPermissions("sys:supplier:audit")
+    public String auditSupplier(int id, int status, RedirectAttributes redirectAttributes) {
+        Pair<Boolean, String> result = officeService.auditSupplier(id, status);
+        addMessage(redirectAttributes, result.getRight());
+        return "redirect:" + adminPath + "/sys/office/supplierListGys";
     }
 }

@@ -307,4 +307,18 @@ public class Role extends DataEntity<Role> {
 	public void setOfficeRoleList(List<Office> officeRoleList) {
 		this.officeRoleList = officeRoleList;
 	}
+
+	@Override
+	public boolean equals(Object object){
+		if(this == object)
+			return true;
+		if(object == null)
+			return false;
+		if(this.getClass() != object.getClass())
+			return false;
+		final Role r = (Role) object;
+		if(!this.getEnname().equals(r.getEnname()) )
+			return false;
+		return true;
+	}
 }

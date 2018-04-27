@@ -11,6 +11,7 @@ import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
@@ -227,5 +228,32 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	public void delete(BizRequestHeader bizRequestHeader) {
 		super.delete(bizRequestHeader);
 	}
-	
+
+	/**
+	 * 用于备货清单导出
+	 * */
+	public List<BizRequestHeader> findListExport(BizRequestHeader bizRequestHeader) {
+		List<BizRequestHeader> list = super.findList(bizRequestHeader);
+		list.forEach(header->{
+			BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
+			bizRequestDetail1.setRequestHeader(header);
+			BizSkuInfo bizSkuInfo=new BizSkuInfo();
+			bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
+			bizSkuInfo.setVendorName(bizRequestHeader.getName());
+			bizRequestDetail1.setSkuInfo(bizSkuInfo);
+			List<BizRequestDetail> detilDetailList = bizRequestDetailService.findList(bizRequestDetail1);
+			Integer reqQtys = 0;
+			Integer recvQtys = 0;
+			Double money=0.0;
+			for (BizRequestDetail requestDetail:detilDetailList) {
+				money+=(requestDetail.getReqQty()==null?0:requestDetail.getReqQty())*requestDetail.getSkuInfo().getBuyPrice();
+				reqQtys += requestDetail.getReqQty();
+				recvQtys += requestDetail.getRecvQty();
+			}
+			header.setTotalMoney(money);
+			header.setReqQtys(String.valueOf(reqQtys));
+			header.setRecvQtys(String.valueOf(recvQtys));
+		});
+		return list;
+	}
 }

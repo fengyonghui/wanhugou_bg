@@ -11,8 +11,10 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -49,6 +51,8 @@ public class BizOpShelfSkuController extends BaseController {
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
 	private AttributeValueV2Service attributeValueService;
+	@Autowired
+	private BizSkuViewLogService bizSkuViewLogService;
 
 	
 	@ModelAttribute
@@ -105,6 +109,7 @@ public class BizOpShelfSkuController extends BaseController {
 			BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
 			if(bizOpShelfSkus.getId()!=null){
                 bizOpShelfSku.setId(bizOpShelfSkus.getId());
+
 				if (flag) {
 					bizOpShelfSku.setId(null);
 				}
@@ -112,7 +117,6 @@ public class BizOpShelfSkuController extends BaseController {
             }else {
                 bizOpShelfSku.setId(null);
             }
-
 			BizSkuInfo bizSkuInfo=bizSkuInfoService.get(Integer.parseInt(skuIdArr[i].trim()));
 			bizOpShelfSku.setSkuInfo(bizSkuInfo);
 			bizOpShelfSku.setProductInfo(bizSkuInfo.getProductInfo());
@@ -131,7 +135,6 @@ public class BizOpShelfSkuController extends BaseController {
 				}
             }
 			bizOpShelfSkuService.save(bizOpShelfSku);
-
 		}
 		addMessage(redirectAttributes, "保存商品上架成功");
 		String a="cend_save";

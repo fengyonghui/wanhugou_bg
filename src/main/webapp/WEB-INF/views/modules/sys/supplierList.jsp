@@ -62,27 +62,9 @@
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
-	<%--<table id="treeTable" class="table table-striped table-bordered table-condensed">--%>
-		<%--<thead><tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>机构类型</th><th>备注</th><shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr></thead>--%>
-		<%--<tbody id="treeTableList"></tbody>--%>
-	<%--</table>--%>
-	<%--<script type="text/template" id="treeTableTpl">--%>
-		<%--<tr id="{{row.id}}" pId="{{pid}}">--%>
-			<%--<td><a href="${ctx}/sys/office/supplierForm?id={{row.id}}&gysFlag=gys_save">{{row.name}}</a></td>--%>
-			<%--<td>{{row.area.name}}</td>--%>
-			<%--<td>{{row.code}}</td>--%>
-			<%--<td>{{dict.type}}</td>--%>
-			<%--<td>{{row.remarks}}</td>--%>
-			<%--<shiro:hasPermission name="sys:office:edit"><td>--%>
-				<%--<a href="${ctx}/sys/office/supplierForm?id={{row.id}}&gysFlag=gys_save">修改</a>--%>
-				<%--<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>--%>
-				<%--<a href="${ctx}/sys/office/supplierForm?parent.id={{row.id}}&gysFlag=gys_save">添加下级机构</a>--%>
-			<%--</td></shiro:hasPermission>--%>
-		<%--</tr>--%>
-	<%--</script>--%>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
 		<thead>
-		<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>联系人电话</th><th>机构类型</th><th>备注</th>
+		<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>联系人电话</th><th>机构类型</th><th>备注</th><th>审核状态</th>
 			<shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr>
 		</thead>
 		<tbody>
@@ -96,11 +78,25 @@
 						${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
 					</td>
 					<td>${off.remarks}</td>
-					<shiro:hasPermission name="sys:office:edit"><td>
-						<a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_save">修改</a>
-						<a href="${ctx}/sys/office/delete?id=${off.id}&gysFlag=gys_delete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
-						<a href="${ctx}/sys/office/supplierForm?parent.id=${off.id}&gysFlag=gys_save">添加下级机构</a>
-					</td></shiro:hasPermission>
+					<td>
+						<c:if test="${off.bizVendInfo.auditStatus == 0}">未审核</c:if>
+						<c:if test="${off.bizVendInfo.auditStatus == 1}">审核通过</c:if>
+						<c:if test="${off.bizVendInfo.auditStatus == 2}">未通过审核</c:if>
+					</td>
+					<td>
+						<shiro:hasPermission name="sys:supplier:audit">
+							<c:if test="${off.bizVendInfo.auditStatus == 0}">
+								<a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_audit">审核</a>
+							</c:if>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="sys:office:edit">
+							<c:if test="${off.bizVendInfo.auditStatus == 0 || off.bizVendInfo.auditStatus == 2}">
+								<a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_save">修改</a>
+							</c:if>
+							<a href="${ctx}/sys/office/delete?id=${off.id}&gysFlag=gys_delete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
+							<a href="${ctx}/sys/office/supplierForm?parent.id=${off.id}&gysFlag=gys_save">添加下级机构</a>
+						</shiro:hasPermission>
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>

@@ -238,9 +238,18 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderDetail:view")
     @RequestMapping(value = "findByOrder")
     public Map<String, Object> findByOrder(BizOrderHeader bizOrderHeader, String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user= UserUtils.getUser();
         if (StringUtils.isNotBlank(flag) && "0".equals(flag)) {
             bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
-            bizOrderHeader.setSuplyIds("0");
+            List<Role>roleList= user.getRoleList();
+            Role role=new Role();
+            role.setEnname(RoleEnNameEnum.DEPT.getState());
+            if(user.isAdmin() ||roleList.contains(role) ){
+                bizOrderHeader.setSupplyId(-1); //判断orderDetail不等于0
+            }else {
+                bizOrderHeader.setSupplyId(user.getCompany()==null?0:user.getCompany().getId());
+            }
+
 
         } else {
             bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.PURCHASING.getState());
@@ -472,7 +481,11 @@ public class BizOrderHeaderController extends BaseController {
                             //商品编码
                             detailListData.add(String.valueOf(d.getPartNo()));
                             //供应商
-                            detailListData.add(String.valueOf(d.getVendor().getName()));
+                            if(d.getVendor()!=null && d.getVendor().getName()!=null){
+                                detailListData.add(String.valueOf(d.getVendor().getName()));
+                            }else{
+                                detailListData.add("");
+                            }
                             //商品单价
                             detailListData.add(String.valueOf(d.getUnitPrice()));
                             //商品工厂价
@@ -583,7 +596,11 @@ public class BizOrderHeaderController extends BaseController {
                                 //商品编码
                                 detailListData.add(String.valueOf(d.getPartNo()));
                                 //供应商
-                                detailListData.add(String.valueOf(d.getVendor().getName()));
+                                if(d.getVendor()!=null && d.getVendor().getName()!=null){
+                                    detailListData.add(String.valueOf(d.getVendor().getName()));
+                                }else{
+                                    detailListData.add("");
+                                }
                                 //商品单价
                                 detailListData.add(String.valueOf(d.getUnitPrice()));
                                 //商品工厂价

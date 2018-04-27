@@ -331,10 +331,12 @@
 			<if test="invStatus !=null and invStatus!=''">
 				AND a.inv_status=#{invStatus}
 			</if>
-			<if test="suplyIds!=null">
+			<if test="supplyId !=null and supplyId ==-1">
 				and od.suply_id !=0
 			</if>
-
+			<if test="supplyId !=null and supplyId !=-1 and supplyId !=0">
+				and od.suply_id = #{supplyId}
+			</if>
 			<if test="consultantId!=null">
 				and ccs.consultant_id = #{consultantId}
 			</if>
