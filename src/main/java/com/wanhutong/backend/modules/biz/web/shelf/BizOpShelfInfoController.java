@@ -151,9 +151,14 @@ public class BizOpShelfInfoController extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
 	@RequestMapping(value = "shelfManagementForm")
 	public String shelfManagementForm(BizOpShelfInfo bizOpShelfInfo, Model model) {
-
 		//查询营销中心下的用户
 		Office office = officeService.get(SupportCenterStatusEnum.MAKER_CENTER.getState());
+		if(bizOpShelfInfo.getUser()!=null){
+		    if(bizOpShelfInfo.getUser().getName()!=null || bizOpShelfInfo.getUser().getMobile()!=null){
+                //查询姓名,手机
+                office.setShelfInfoUser(bizOpShelfInfo.getUser());
+            }
+        }
 		List<User> userList = systemService.findYzUser(office);
 //		bizOpShelfInfo.setUserList(userList);
         model.addAttribute("bizOpShelfInfo", bizOpShelfInfo);
