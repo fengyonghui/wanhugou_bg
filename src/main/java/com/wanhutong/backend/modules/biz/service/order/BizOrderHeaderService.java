@@ -99,6 +99,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
+            bizOrderHeader.setDataStatus("filter");
            // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
           // page.setCount(count);
@@ -108,7 +109,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
             return orderHeaderPage;
         }else {
-            bizOrderHeader.setDataStatus("filter");
+
             boolean flag=false;
             boolean roleFlag = false;
             if(user.getRoleList()!=null) {
@@ -227,6 +228,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderHeader.setOrderDetailList(orderDetailList);
             super.save(bizOrderHeader);
         }
+
         bizLocation.setId(bizOrderHeader.getBizLocation().getId());
         bizLocation.setOrderHeaderID(bizOrderHeader);
         bizOrderAddressService.save(bizLocation);
@@ -282,6 +284,43 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         return orderHeaderList;
     }
 
+    /**
+     * 订单发货分页
+     * */
+    public Page<BizOrderHeader> pageFindList(Page<BizOrderHeader> page,BizOrderHeader bizOrderHeader) {
+        User user= UserUtils.getUser();
+//        boolean flag=false;
+        boolean oflag = false;
+        /*if(user.getRoleList()!=null){
+            for(Role role:user.getRoleList()){
+                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+                    flag=true;
+                    break;
+                }
+            }
+        }*/
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
+                }
+            }
+        }
+        if(user.isAdmin()){
+            bizOrderHeader.setPage(page);
+            page.setList(dao.findList(bizOrderHeader));
+            return page;
+        }else {
+            if(oflag){
+
+            }else {
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            }
+            bizOrderHeader.setPage(page);
+            page.setList(dao.findList(bizOrderHeader));
+            return page;
+        }
+    }
 
     /**
      * C端订单列表
