@@ -110,11 +110,93 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 	public void savePoHeaderDetail(BizPoHeader bizPoHeader) {
 		String orderDetailIds=bizPoHeader.getOrderDetailIds();
 		String reqDetailIds=bizPoHeader.getReqDetailIds();
-		String unitPrices=bizPoHeader.getUnitPrices();
-		String skuInfoIds=bizPoHeader.getSkuInfoIds();
-		String ordQtys=bizPoHeader.getOrdQtys();
-		BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-		if(StringUtils.isNotBlank(skuInfoIds)){
+		Map<Integer,BizSkuInfo> skuMap = new HashMap<>();
+		if(StringUtils.isNotBlank(orderDetailIds)) {
+			String[] orderDetailArr = orderDetailIds.split(",");
+			for (String orderDetailId:orderDetailArr) {
+                BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailId));
+                BizSkuInfo skuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+                if (skuMap.containsKey(skuInfo.getId())){
+                    BizSkuInfo sku = skuMap.get(skuInfo.getId());
+                    Integer ordQty = sku.getReqQty()+bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty();
+                    sku.setReqQty(ordQty);
+                    skuMap.put(skuInfo.getId(),sku);
+                }else {
+//                    BizSkuInfo sku = skuMap.get(skuInfo.getId());
+                    skuInfo.setReqQty(bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty());
+                    skuMap.put(skuInfo.getId(),skuInfo);
+                }
+
+            }
+		}
+		if (StringUtils.isNotBlank(reqDetailIds)) {
+		    String[] reqDetailArr = reqDetailIds.split(",");
+            for (String reqDetailId:reqDetailArr) {
+                BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailId));
+                BizSkuInfo skuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+                if (skuMap.containsKey(skuInfo.getId())) {
+                    BizSkuInfo sku = skuMap.get(skuInfo.getId());
+                    Integer reqQty = sku.getReqQty()+bizRequestDetail.getReqQty()-bizRequestDetail.getRecvQty();
+                    sku.setReqQty(reqQty);
+                    skuMap.put(skuInfo.getId(),sku);
+                }else {
+                    skuInfo.setReqQty(bizRequestDetail.getReqQty()-bizRequestDetail.getRecvQty());
+                    skuMap.put(skuInfo.getId(),skuInfo);
+                }
+            }
+        }
+        int t =0;
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        BizPoDetail poDetail=new BizPoDetail();
+        for (Map.Entry<Integer,BizSkuInfo> entry:skuMap.entrySet()) {
+            BizSkuInfo skuInfo = entry.getValue();
+            bizPoOrderReq.setId(null);
+            poDetail.setId(null);
+            poDetail.setPoHeader(bizPoHeader);
+            poDetail.setSkuInfo(skuInfo);
+            poDetail.setLineNo(++t);
+            poDetail.setPartNo(skuInfo.getPartNo());
+            poDetail.setSkuName(skuInfo.getName());
+            poDetail.setOrdQty(skuInfo.getReqQty());
+            poDetail.setUnitPrice(skuInfo.getBuyPrice());
+            bizPoDetailService.save(poDetail);
+            bizPoDetailService.calculateTotalOrderPrice(poDetail);
+            bizPoOrderReq.setPoHeader(poDetail.getPoHeader());
+            bizPoOrderReq.setPoLineNo(poDetail.getLineNo());
+            if(StringUtils.isNotBlank(orderDetailIds)){
+                String[] orderDetailArr=orderDetailIds.split(",");
+                for (String orderDetailId:orderDetailArr) {
+                    BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailId));
+                    if (bizOrderDetail.getSkuInfo().getId().equals(skuInfo.getId())) {
+                        bizPoOrderReq.setOrderHeader(bizOrderDetail.getOrderHeader());
+                        bizPoOrderReq.setRequestHeader(null);
+                        bizPoOrderReq.setSoLineNo(bizOrderDetail.getLineNo());
+                        bizPoOrderReq.setSoQty(bizOrderDetail.getOrdQty());
+                        bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
+                        bizPoOrderReqService.save(bizPoOrderReq);
+                    }
+                }
+            }
+            if (StringUtils.isNotBlank(reqDetailIds)) {
+                String[] reqDetailArr = reqDetailIds.split(",");
+                for (String reqDetailId:reqDetailArr) {
+                    BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailId));
+                    if (bizRequestDetail.getSkuInfo().getId().equals(skuInfo.getId())) {
+                        bizPoOrderReq.setRequestHeader(bizRequestDetail.getRequestHeader());
+                        bizPoOrderReq.setOrderHeader(null);
+                        bizPoOrderReq.setSoLineNo(bizRequestDetail.getLineNo());
+                        bizPoOrderReq.setSoQty(bizRequestDetail.getReqQty());
+                        bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType()));
+                        bizPoOrderReqService.save(bizPoOrderReq);
+                    }
+                }
+            }
+        }
+//		String unitPrices=bizPoHeader.getUnitPrices();
+//		String skuInfoIds=bizPoHeader.getSkuInfoIds();
+//		String ordQtys=bizPoHeader.getOrdQtys();
+
+		/*if(StringUtils.isNotBlank(skuInfoIds)){
 			String[] skuIdArr=skuInfoIds.split(",");
 			String[] ordQtyArr=ordQtys.split(",");
 			String[] unitPriceArr=unitPrices.split(",");
@@ -196,7 +278,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
 			}
 
-		}
+		}*/
 	}
 
 	@Transactional(readOnly = false)

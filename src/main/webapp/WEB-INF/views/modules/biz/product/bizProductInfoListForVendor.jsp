@@ -140,20 +140,26 @@
 					<c:if test="${bizProductInfo.bizStatus == 3}">审核失败</c:if>
 				</td>
 				<td>
+					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
+                        <c:if test="${bizProductInfo.bizStatus == 1}">
+                            <a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=audit">审核</a>&nbsp;&nbsp;
+                        </c:if>
+                    </shiro:hasPermission>
 					<shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
-						<c:if test="${bizProductInfo.bizStatus == 1}">
-							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>
+						<c:if test="${bizProductInfo.bizStatus == 1 || bizProductInfo.bizStatus == 3}">
+							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">修改</a>&nbsp;&nbsp;
 						</c:if>
 						<c:if test="${bizProductInfo.bizStatus != 1}">
-							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">查看</a>
+							<a href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}&view=true">查看</a>&nbsp;&nbsp;
 						</c:if>
-						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
+						<a href="${ctx}/biz/product/bizProductInfoForVendor/copy?id=${bizProductInfo.id}">复制</a>&nbsp;&nbsp;
+						<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>&nbsp;&nbsp;
 					</shiro:hasPermission>
 				</td>
 			</tr>
 		</c:forEach>
 		</tbody>
 	</table>
-	<div class="pagination">${page}</div>
+	<div class="pagination ">${page}</div>
 </body>
 </html>

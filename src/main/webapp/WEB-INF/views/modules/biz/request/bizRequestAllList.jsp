@@ -117,7 +117,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-					<th>序号</th>
+				<th>序号</th>
 				<c:if test="${source eq 'gh'}">
 					<th><input id="select_all" type="checkbox" /></th>
 				</c:if>
