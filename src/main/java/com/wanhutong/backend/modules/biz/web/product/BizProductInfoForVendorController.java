@@ -453,7 +453,7 @@ public class BizProductInfoForVendorController extends BaseController {
     }
 
 
-    @RequiresPermissions("biz:product:bizProductInfo:view")
+    @RequiresPermissions("biz:product:bizProductInfoForVendor:view")
     @RequestMapping(value = "copy")
     public String copy(BizProductInfo bizProductInfo, Model model) {
         CommonImg commonImg = new CommonImg();
@@ -611,7 +611,7 @@ public class BizProductInfoForVendorController extends BaseController {
         return "modules/biz/product/bizProductInfoCopyFormVendor";
     }
 
-    @RequiresPermissions("biz:product:bizProductInfo:edit")
+    @RequiresPermissions("biz:product:bizProductInfoForVendor:edit")
     @RequestMapping(value = "saveCopy")
     public String saveCopy(BizProductInfo bizProductInfo, Model model, RedirectAttributes redirectAttributes) {
         if (!beanValidator(model, bizProductInfo)) {
