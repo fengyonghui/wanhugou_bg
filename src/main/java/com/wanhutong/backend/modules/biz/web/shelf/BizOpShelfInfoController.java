@@ -160,6 +160,23 @@ public class BizOpShelfInfoController extends BaseController {
             }
         }
 		List<User> userList = systemService.findYzUser(office);
+		BizShelfUser bizShelfUser = new BizShelfUser();
+		BizOpShelfInfo bizOpShelfInfo1 = bizOpShelfInfoService.get(bizOpShelfInfo.getId());
+		List<BizShelfUser> bizShelfUserList =null;
+		if(bizOpShelfInfo1!=null){
+			bizShelfUser.setShelfInfo(bizOpShelfInfo1);
+		}
+		for (int j = 0; j < userList.size(); j++) {
+			bizShelfUser.setUser(userList.get(j));
+			List<BizShelfUser> list = bizShelfUserService.findList(bizShelfUser);
+			if(list.size()!=0){
+				for (int i = 0; i < list.size(); i++) {
+					if(list.get(i).getUser().getId().equals(userList.get(j).getId())){
+						userList.remove(j);
+					}
+				}
+			}
+		}
 //		bizOpShelfInfo.setUserList(userList);
         model.addAttribute("bizOpShelfInfo", bizOpShelfInfo);
 		model.addAttribute("userList", userList);
