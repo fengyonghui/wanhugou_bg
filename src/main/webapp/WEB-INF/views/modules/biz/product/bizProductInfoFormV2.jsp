@@ -119,7 +119,7 @@
     <div class="control-group">
         <label class="control-label">产品货号：</label>
         <div class="controls">
-            <form:input id="itemNo" path="itemNo" htmlEscape="false" maxlength="10" class="input-xlarge required"/>
+            <form:input id="itemNo" path="itemNo" htmlEscape="false" maxlength="30" class="input-xlarge required"/>
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
     </div>

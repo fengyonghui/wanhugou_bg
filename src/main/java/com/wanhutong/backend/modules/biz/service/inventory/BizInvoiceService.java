@@ -149,6 +149,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         Double valuePrice = 0.0;
 //        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if(StringUtils.isNotBlank(orderHeaders)) {
+            boolean ordFlag = true;
             String[] orders = orderHeaders.split(",".trim());
             for (int a = 0; a < orders.length; a++) {
                 String[] oheaders = orders[a].split("#".trim());
@@ -281,9 +282,17 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         bizSendGoodsRecordService.save(bsgr);
                     }
                 }
+                BizOrderDetail ordDetail = new BizOrderDetail();
+                ordDetail.setOrderHeader(orderHeader);
+                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(ordDetail);
+                for (BizOrderDetail orderDetail:orderDetailList) {
+                    if (!orderDetail.getOrdQty().equals(orderDetail.getSentQty())) {
+                        ordFlag = false;
+                    }
+                }
 
                 //销售单完成时，更该销售单状态为已供货（20）
-                if (flagOrder) {
+                if (ordFlag) {
                     orderHeader.setBizStatus(OrderHeaderBizStatusEnum.SEND.getState());
                     bizOrderHeaderService.saveOrderHeader(orderHeader);
                     if (bizInvoice.getBizStatus()==0) {
@@ -344,13 +353,11 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 
 
         if(StringUtils.isNotBlank(requestHeaders)) {
+            boolean reqFlag = true;
             String[] requests = requestHeaders.split(",".trim());
             for (int b = 0; b < requests.length; b++) {
                 String[] rheaders = requests[b].split("#".trim());
                 BizRequestHeader requestHeader = bizRequestHeaderService.get(Integer.parseInt(rheaders[0]));
-//                BizRequestDetail reqDetail = new BizRequestDetail();
-//                reqDetail.setRequestHeader(requestHeader);
-//                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(reqDetail);
                 //加入中间表关联关系
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(bizInvoice);
@@ -416,8 +423,16 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     bsgr.setSendDate(bizInvoice.getSendDate());
                     bizSendGoodsRecordService.save(bsgr);
                 }
+                BizRequestDetail reqDetail = new BizRequestDetail();
+                reqDetail.setRequestHeader(requestHeader);
+                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(reqDetail);
+                for (BizRequestDetail requestDetail:requestDetailList) {
+                    if (!requestDetail.getReqQty().equals(requestDetail.getSendQty())) {
+                        reqFlag = false;
+                    }
+                }
                 //更改备货单状态
-                if (flagRequest) {
+                if (reqFlag) {
                     requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
                     bizRequestHeaderService.saveRequestHeader(requestHeader);
                 }

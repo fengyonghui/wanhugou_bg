@@ -260,13 +260,13 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">微信号:</label>
+        <label class="control-label">传真:</label>
         <div class="controls">
             <form:input path="fax" htmlEscape="false" maxlength="50"/>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">QQ号:</label>
+        <label class="control-label">邮箱:</label>
         <div class="controls">
             <form:input path="email" htmlEscape="false" maxlength="50"/>
         </div>
