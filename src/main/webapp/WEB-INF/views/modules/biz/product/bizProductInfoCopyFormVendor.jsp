@@ -47,9 +47,9 @@
 <ul class="nav nav-tabs">
     <li><a href="${ctx}/biz/product/bizProductInfoForVendor/">产品信息表列表</a></li>
     <li class="active"><a
-            href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">产品信息表<shiro:hasPermission
-            name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
-            name="biz:product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
+            href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">产品信息表
+        <shiro:hasPermission name="biz:product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission>
+        <shiro:lacksPermission name="biz:product:bizProductInfoForVendor:edit">查看</shiro:lacksPermission></a></li>
 </ul>
 <br/>
 <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
@@ -312,7 +312,7 @@
     </div>
 
     <div class="form-actions">
-        <shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary"
+        <shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                            type="button"
                                                                            value="保 存" onclick="submitCustomForm()"/>&nbsp;</shiro:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
@@ -528,7 +528,7 @@
 
     function ajaxFileUploadPic(id) {
         $.ajaxFileUpload({
-            url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
+            url : '${ctx}/biz/product/bizProductInfoForVendor/saveColorImg', //用于文件上传的服务器端请求地址
             secureuri : false, //一般设置为false
             fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
             type : 'POST',

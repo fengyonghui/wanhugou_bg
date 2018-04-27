@@ -619,7 +619,7 @@ public class BizProductInfoForVendorController extends BaseController {
         }
         bizProductInfoForVendorService.save(bizProductInfo, true);
         addMessage(redirectAttributes, "保存产品信息表成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
     }
 
 }
