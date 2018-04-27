@@ -4,8 +4,12 @@
 package com.wanhutong.backend.modules.biz.dao.inventory;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
+import org.apache.poi.ss.formula.functions.T;
+
+import java.util.List;
 
 /**
  * 收货记录表DAO接口
@@ -14,5 +18,6 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
  */
 @MyBatisDao
 public interface BizCollectGoodsRecordDao extends CrudDao<BizCollectGoodsRecord> {
-	
+    public List<BizCollectGoodsRecord> collectSendFindPage(BizCollectGoodsRecord bizCollectGoodsRecord);
+
 }
