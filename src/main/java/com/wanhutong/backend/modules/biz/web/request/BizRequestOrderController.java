@@ -62,20 +62,27 @@ public class BizRequestOrderController extends BaseController {
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
     public String list(String source, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader,HttpServletRequest request,HttpServletResponse response) {
-        Page<BizRequestHeader> requestHeaderList = null;
+        List<BizRequestHeader> requestHeaderList = null;
+        Page<BizRequestHeader> requestHeaderPage = null;
         List<BizOrderHeader> orderHeaderList = null;
+        Page<BizOrderHeader> orderHeaderPage = null;
         if ("bhgh".equals(source)) {
-            Page<BizRequestHeader> list = findBizRequest(bizRequestHeader, requestHeaderList,request,response);
-            model.addAttribute("requestHeaderList", list.getList());
-            //分页
-            model.addAttribute("page", list);
+//            List<BizRequestHeader> list = findBizRequest(bizRequestHeader, requestHeaderList);
+            Page<BizRequestHeader> page = findBizRequest(bizRequestHeader, requestHeaderPage,request,response);
+//            model.addAttribute("requestHeaderList", list); //原来的不分页
+            //分页 20180427 改
+            model.addAttribute("page", page);
+            //判断
+            model.addAttribute("requestHeaderPage", page.getList());
         } else if ("xsgh".equals(source)) {
             bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
             bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
-            orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
+//            orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
+            orderHeaderPage=bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), bizOrderHeader);
             Set<Integer> set = new HashSet();
             List<BizOrderHeader> list = Lists.newArrayList();
-            for (BizOrderHeader bizOrderHeader1 : orderHeaderList) {
+            Page<BizOrderHeader> page = new Page<BizOrderHeader>(request, response);
+            for (BizOrderHeader bizOrderHeader1 : orderHeaderPage.getList()) {
                 boolean flag = false;
                 BizOrderDetail bizOrderDetail = new BizOrderDetail();
                 bizOrderDetail.setOrderHeader(bizOrderHeader1);
@@ -103,9 +110,14 @@ public class BizRequestOrderController extends BaseController {
                     list.add(bizOrderHeader1);
                 }
 
-
             }
-            model.addAttribute("orderHeaderList", list);
+            page.setList(list);
+            page.setCount(list.size());
+//            model.addAttribute("orderHeaderList", list);
+            //20180427 分页
+            model.addAttribute("page", page);
+            //判断
+            model.addAttribute("orderHeaderPage", page.getList());
         }
 
         model.addAttribute("source", source);
@@ -301,9 +313,6 @@ public class BizRequestOrderController extends BaseController {
         requestHeaderList = bizRequestHeaderService.pageFindList(new Page<BizRequestHeader>(request, response), bizRequestHeader);
         List<BizRequestHeader> list = Lists.newArrayList();
         Page<BizRequestHeader> page = new Page<BizRequestHeader>(request, response);
-        page.setList(list);
-        int size = list.size();
-        page.setCount(size);
         for (BizRequestHeader bizRequestHeader1 : requestHeaderList.getList()) {
             BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
             bizRequestDetail1.setRequestHeader(bizRequestHeader1);
@@ -335,6 +344,8 @@ public class BizRequestOrderController extends BaseController {
             bizRequestHeader1.setRecvQtys(recvQtys.toString());
             list.add(bizRequestHeader1);
         }
+        page.setList(list);
+        page.setCount(list.size());
         return page;
     }
 

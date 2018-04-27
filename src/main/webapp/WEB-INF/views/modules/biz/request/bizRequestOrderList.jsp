@@ -39,7 +39,7 @@
 			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/list?source=${source}">销售清单列表</a></li>
 		</c:if>
 	</ul>
-	<c:if test="${requestHeaderList!=null}">
+	<c:if test="${requestHeaderPage!=null}">
 		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
 			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -74,7 +74,7 @@
 			</ul>
 		</form:form>
 	</c:if>
-	<c:if test="${orderHeaderList!=null}">
+	<c:if test="${orderHeaderPage!=null}">
 		<form:form id="searchForm2" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
 			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -119,7 +119,7 @@
 
 	</c:if>
 	<sys:message content="${message}"/>
-	<c:if test="${requestHeaderList!=null}">
+	<c:if test="${requestHeaderPage!=null}">
 		<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -183,7 +183,7 @@
 		</tbody>
 	</table>
 	</c:if>
-	<c:if test="${orderHeaderList!=null}">
+	<c:if test="${orderHeaderPage!=null}">
 		<table id="contentTable" class="table table-striped table-bordered table-condensed">
 			<thead>
 			<tr>
@@ -203,7 +203,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<c:forEach items="${orderHeaderList}" var="orderHeader">
+			<c:forEach items="${page.list}" var="orderHeader">
 				<tr>
 					<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">
 									${orderHeader.orderNum}</a>
