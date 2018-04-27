@@ -65,6 +65,10 @@ public class Office extends TreeEntity<Office> {
 	 * 供应商新增页面显示，新增地址
 	 * */
 	private SysOfficeAddress officeAddress;
+	/**
+	 * 用于添加货架管理员查询
+	 * */
+	private User shelfInfoUser;
 	private Integer locationId;
 
 	private String delRemark ;
@@ -376,5 +380,13 @@ public class Office extends TreeEntity<Office> {
 
 	public void setBizVendInfo(BizVendInfo bizVendInfo) {
 		this.bizVendInfo = bizVendInfo;
+	}
+
+	public User getShelfInfoUser() {
+		return shelfInfoUser;
+	}
+
+	public void setShelfInfoUser(User shelfInfoUser) {
+		this.shelfInfoUser = shelfInfoUser;
 	}
 }

@@ -74,6 +74,7 @@ public class BizRequestOrderController extends BaseController {
             Set<Integer> set = new HashSet();
             List<BizOrderHeader> list = Lists.newArrayList();
             for (BizOrderHeader bizOrderHeader1 : orderHeaderList) {
+                set.clear();
                 boolean flag = false;
                 BizOrderDetail bizOrderDetail = new BizOrderDetail();
                 bizOrderDetail.setOrderHeader(bizOrderHeader1);
@@ -81,7 +82,7 @@ public class BizRequestOrderController extends BaseController {
                 StringBuffer sb = new StringBuffer();
                 List<BizOrderDetail> orderDetails = bizOrderDetailService.findList(bizOrderDetail);
                 for (BizOrderDetail bizOrderDetail1 : orderDetails) {
-                    if (bizOrderDetail1.getSuplyis().getId() == 0 || bizOrderDetail1.getSuplyis().getId()== 731) {
+                    if (bizOrderDetail1.getSuplyis().getId() == 0 || bizOrderDetail1.getSuplyis().getId()== 721) {
                         flag = true;
                     }
                     BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail1.getSkuInfo().getId());
@@ -181,7 +182,7 @@ public class BizRequestOrderController extends BaseController {
                     String[] supplyIdArr = StringUtils.split(bizOrderDetail.getSuplyIds(), ",");
                     String[] detailIdArr = StringUtils.split(bizOrderDetail.getDetailIds(), ",");
                     for (int i = 0; i < supplyIdArr.length; i++) {
-                        if (Integer.parseInt(supplyIdArr[i].trim()) == 0 || Integer.parseInt(supplyIdArr[i].trim()) == 731) {
+                        if (Integer.parseInt(supplyIdArr[i].trim()) == 0 || Integer.parseInt(supplyIdArr[i].trim()) == 721) {
                             sb.append(detailIdArr[i].trim());
                             if (i != supplyIdArr.length - 1) {
                                 sb.append(",");
