@@ -41,6 +41,9 @@
 	</ul>
 	<c:if test="${requestHeaderList!=null}">
 		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
+			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+
 			<input type="hidden" name="source" value="${source}"/>
 			<ul class="ul-form">
 				<li><label>备货单号：</label>
@@ -73,8 +76,10 @@
 	</c:if>
 	<c:if test="${orderHeaderList!=null}">
 		<form:form id="searchForm2" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
-			<input type="hidden" name="source" value="${source}"/>
+			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 
+			<input type="hidden" name="source" value="${source}"/>
 			<form:hidden path="consultantId"/>
 			<ul class="ul-form">
 				<li><label>订单编号：</label>
@@ -136,7 +141,7 @@
 		<tbody>
 		<%--<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">--%>
 
-			<c:forEach items="${requestHeaderList}" var="requestHeader">
+			<c:forEach items="${page.list}" var="requestHeader">
 				<tr>
 					<%--<c:if test="${source=='gh'}">--%>
 					<%--<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>--%>
@@ -244,5 +249,6 @@
 			</tbody>
 		</table>
 	</c:if>
+	<div class="pagination">${page}</div>
 </body>
 </html>
