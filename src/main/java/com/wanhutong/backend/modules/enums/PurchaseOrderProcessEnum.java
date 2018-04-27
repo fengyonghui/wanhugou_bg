@@ -7,39 +7,44 @@ import java.util.Map;
 
 /**
  * 采购单审核流程状态
+ *
  * @author Ma.Qiang
  */
-public enum  PurchaseOrderProcessEnum {
+public enum PurchaseOrderProcessEnum {
 
     /**
      * 采购中心负责人审批
      */
-    PURCHASE_CENTER (1, RoleEnNameEnum.P_CENTER_MANAGER, 2),
+    PURCHASE_CENTER(1, RoleEnNameEnum.P_CENTER_MANAGER, 2, 0),
     /**
      * 供货部
      */
-    PROVIDER_CENTER (2, RoleEnNameEnum.PROVIDER_MANAGER, 3),
+    PROVIDER_CENTER(2, RoleEnNameEnum.PROVIDER_MANAGER, 3, 0),
     /**
      * 会计
      */
-    FINANCE (3, RoleEnNameEnum.FINANCE, 4),
+    FINANCE(3, RoleEnNameEnum.FINANCE, 4, 0),
     /**
      * 运营总监
      */
-    OPERATION (4, RoleEnNameEnum.OP_DIRECTOR, 5),
+    OPERATION(4, RoleEnNameEnum.OP_DIRECTOR, 5, 0),
     /**
      * 总经理
      */
-    GENERAL_MANAGER (5, RoleEnNameEnum.GENERAL_MANAGER, 6),
+    GENERAL_MANAGER(5, RoleEnNameEnum.GENERAL_MANAGER, 6, 0),
     /**
      * 财会待付款
      */
-    PAYMENT (6, RoleEnNameEnum.FINANCE, 7),
+    PAYMENT(6, RoleEnNameEnum.FINANCE, 7, 0),
     /**
-       * 支付完成
-       */
-    FINISH (7, null, 0),
-    ;
+     * 支付完成
+     */
+    FINISH(7, null, 0, 0),
+
+    /**
+     * 终止
+     */
+    TERMINATION(-1, null, 0, 0),;
 
     /**
      * 数据MAP
@@ -59,15 +64,21 @@ public enum  PurchaseOrderProcessEnum {
 
 
     /**
-     * 待处理状态
+     * 通过之后的状态
      */
-    private int nextCode;
+    private int passCode;
+
+    /**
+     * 拒绝之后的状态
+     */
+    private int rejectCode;
 
 
-    PurchaseOrderProcessEnum(int code, RoleEnNameEnum roleEnNameEnum, int nextCode) {
+    PurchaseOrderProcessEnum(int code, RoleEnNameEnum roleEnNameEnum, int passCode, int rejectCode) {
         this.code = code;
         this.roleEnNameEnum = roleEnNameEnum;
-        this.nextCode = nextCode;
+        this.passCode = passCode;
+        this.rejectCode = rejectCode;
     }
 
     public int getCode() {
@@ -78,11 +89,19 @@ public enum  PurchaseOrderProcessEnum {
         return roleEnNameEnum;
     }
 
-    public int getNextCode() {
-        return nextCode;
+    public int getPassCode() {
+        return passCode;
     }
 
+    public int getRejectCode() {
+        return rejectCode;
+    }
 
+    /**
+     * 取封装好的数据MAP
+     *
+     * @return 封装好的数据MAP
+     */
     private static Map<Integer, PurchaseOrderProcessEnum> getEnumMap() {
         Map<Integer, PurchaseOrderProcessEnum> result = Maps.newHashMap();
         for (PurchaseOrderProcessEnum e : values()) {
@@ -91,8 +110,24 @@ public enum  PurchaseOrderProcessEnum {
         return result;
     }
 
-    public static Map<Integer, PurchaseOrderProcessEnum> getProcessEnumMap() {
-        return PROCESS_ENUM_MAP;
+    /**
+     * 取当前状态通过后的状态
+     *
+     * @param currentEnum 当前状态
+     * @return 通过后的状态
+     */
+    public static PurchaseOrderProcessEnum getPassEnum(PurchaseOrderProcessEnum currentEnum) {
+        return PROCESS_ENUM_MAP.get(currentEnum.getPassCode());
+    }
+
+    /**
+     * 取当前状态拒绝后的状态
+     *
+     * @param currentEnum 当前状态
+     * @return 通过后的状态
+     */
+    public static PurchaseOrderProcessEnum getRejectEnum(PurchaseOrderProcessEnum currentEnum) {
+        return PROCESS_ENUM_MAP.get(currentEnum.getRejectCode());
     }
 }
 
