@@ -1677,7 +1677,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
     </select>
 
 	<!-- 订单采购列表  -->
-	<select id="requestFindList" resultMap="orderHeaderResult">
+	<select id="headerFindList" resultType="BizOrderHeader">
 		SELECT
         a.id AS "id",
         a.order_num AS "orderNum",
