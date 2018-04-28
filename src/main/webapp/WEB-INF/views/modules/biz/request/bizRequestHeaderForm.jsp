@@ -166,8 +166,8 @@
                 var skuPrice=$("#skuPrice").val();
                 $.ajax({
                     type:"post",
-                    url:" ${ctx}/biz/sku/bizSkuInfo/saveSkuInfo",
-                    data:{skuId:$("#skuId").val(),money:skuPrice},
+                    url:" ${ctx}/biz/request/bizRequestDetail/saveRequestDetail",
+                    data:{detailId:$("#detailId").val(),money:skuPrice},
                     success:function(flag){
                         if(flag=="ok"){
                             alert(" 修改成功 ");
@@ -264,7 +264,7 @@
 					<th>商品编码</th>
 					<th>商品货号</th>
 					<th>商品属性</th>
-					<th>工厂价</th>
+					<th>价格</th>
 					<th>申报数量</th>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
@@ -293,10 +293,10 @@
 								<c:choose>
 									<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
 									<span style="float: left">
-										<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.skuInfo.buyPrice}"/>
+										<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.unitPrice}"/>
 										<a href="#"  id="updateMoney" class="icon-ok-circle"></a>
 									</span>
-										<input type="hidden"  id="skuId" value="${reqDetail.skuInfo.id}"/>
+										<input type="hidden"  id="detailId" value="${reqDetail.id}"/>
 									</c:when>
 									<c:otherwise>
 										${reqDetail.skuInfo.buyPrice}
