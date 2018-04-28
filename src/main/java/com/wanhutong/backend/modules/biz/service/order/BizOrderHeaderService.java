@@ -308,7 +308,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
         if(user.isAdmin()){
             bizOrderHeader.setPage(page);
-            page.setList(dao.findList(bizOrderHeader));
+            page.setList(dao.requestFindList(bizOrderHeader));
             return page;
         }else {
             if(oflag){
@@ -316,8 +316,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
-            Page<BizOrderHeader> findPage = super.findPage(page, bizOrderHeader);
-            return findPage;
+            bizOrderHeader.setPage(page);
+            page.setList(dao.requestFindList(bizOrderHeader));
+            return page;
         }
     }
 

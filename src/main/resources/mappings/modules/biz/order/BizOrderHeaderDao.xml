@@ -1675,4 +1675,44 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 		GROUP BY
   		date_format(oh.create_time, '%Y-%m')
     </select>
+
+	<!-- 订单采购列表  -->
+	<select id="requestFindList" resultMap="orderHeaderResult">
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>,
+		od.id AS "orderDetailList.id",
+		od.unit_price AS "orderDetailList.unitPrice",
+		od.ord_qty AS "orderDetailList.ordQty",
+		od.sent_qty AS "orderDetailList.sentQty",
+		od.line_no AS "orderDetailList.lineNo",
+		si.id AS "orderDetailList.skuInfo.id",
+		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
+		si.item_no AS "orderDetailList.skuInfo.itemNo",
+		pi.vendor_name AS "orderDetailList.vendor.name"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
+		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
+		<include refid="bizOrderHeaderJoins"/>
+		<where>
+			a.status=#{DEL_FLAG_NORMAL}
+			and od.status=#{DEL_FLAG_NORMAL}
+			and (od.suply_id=0 or od.suply_id=721)
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				GROUP  BY a.id
+			</otherwise>
+		</choose>
+	</select>
+
 </mapper>

@@ -112,7 +112,6 @@ public class BizRequestOrderController extends BaseController {
 
             }
             orderHeaderPage.setList(list);
-            orderHeaderPage.setCount(list.size());
 //            model.addAttribute("orderHeaderList", list);
             //20180427 分页
             model.addAttribute("page", orderHeaderPage);
