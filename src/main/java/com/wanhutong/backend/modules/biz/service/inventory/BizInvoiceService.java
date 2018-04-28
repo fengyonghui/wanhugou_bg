@@ -107,7 +107,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             bizInvoice.setDataStatus("filter");
             return super.findPage(page, bizInvoice);
         }else {
-            bizInvoice.getSqlMap().put("bizInvoice", BaseService.dataScopeFilter(user, "", "su"));
+            bizInvoice.getSqlMap().put("bizInvoice", BaseService.dataScopeFilter(user, "so", "su"));
         }
 	    return super.findPage(page, bizInvoice);
 	}

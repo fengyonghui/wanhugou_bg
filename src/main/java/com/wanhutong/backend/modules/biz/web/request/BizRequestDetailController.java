@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,6 +72,25 @@ public class BizRequestDetailController extends BaseController {
 		bizRequestDetailService.save(bizRequestDetail);
 		addMessage(redirectAttributes, "保存备货清单详细信息成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestDetail/?repage";
+	}
+
+
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestDetail:edit")
+	@RequestMapping(value = "saveRequestDetail")
+	public String saveRequestDetail(Integer detailId, Double money) {
+		String flag = "";
+		try {
+			BizRequestDetail bizRequestDetail = bizRequestDetailService.get(detailId);
+			bizRequestDetail.setUnitPrice(money);
+			bizRequestDetailService.save(bizRequestDetail);
+			flag = "ok";
+
+		} catch (Exception e) {
+			flag = "error";
+			logger.error(e.getMessage());
+		}
+		return flag;
 	}
 	
 	@RequiresPermissions("biz:request:bizRequestDetail:edit")
