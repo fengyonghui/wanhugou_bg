@@ -70,21 +70,21 @@
 		<div class="control-group">
 			<label class="control-label">最小数量：</label>
 			<div class="controls">
-				<form:input path="minQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<input id="minQty" name="minQty" type="number" value="${bizVarietyFactor.minQty}" htmlEscape="false" maxlength="11" class="input-mini required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">最大数量：</label>
 			<div class="controls">
-				<form:input path="maxQty" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<input id="maxQty" name="maxQty" type="number" value="${bizVarietyFactor.maxQty}" htmlEscape="false" maxlength="11" class="input-mini required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">服务费系数：</label>
 			<div class="controls">
-				<form:input path="serviceFactor" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<input id="serviceFactor" name="serviceFactor" type="number" value="${bizVarietyFactor.serviceFactor}" htmlEscape="false" maxlength="11" class="input-mini required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
