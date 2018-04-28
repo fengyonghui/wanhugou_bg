@@ -25,7 +25,8 @@
         <li><a href="${ctx}/biz/shelf/bizOpShelfInfo/shelfManagementForm?id=${bizOpShelfInfo.id}">货架管理员添加</a></li>
     </shiro:hasPermission>
 </ul>
-
+<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>

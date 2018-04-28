@@ -308,7 +308,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
         if(user.isAdmin()){
             bizOrderHeader.setPage(page);
-            page.setList(dao.findList(bizOrderHeader));
+            page.setList(dao.headerFindList(bizOrderHeader));
             return page;
         }else {
             if(oflag){
@@ -317,8 +317,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
             bizOrderHeader.setPage(page);
-            page.setList(dao.findList(bizOrderHeader));
+            page.setList(dao.headerFindList(bizOrderHeader));
             return page;
         }
     }
+
 }

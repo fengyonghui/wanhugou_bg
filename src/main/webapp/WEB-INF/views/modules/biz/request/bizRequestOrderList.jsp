@@ -75,7 +75,7 @@
 		</form:form>
 	</c:if>
 	<c:if test="${orderHeaderPage!=null}">
-		<form:form id="searchForm2" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
+		<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
 			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 

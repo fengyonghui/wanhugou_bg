@@ -81,7 +81,6 @@ public class BizRequestOrderController extends BaseController {
             orderHeaderPage=bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), bizOrderHeader);
             Set<Integer> set = new HashSet();
             List<BizOrderHeader> list = Lists.newArrayList();
-            Page<BizOrderHeader> page = new Page<BizOrderHeader>(request, response);
             for (BizOrderHeader bizOrderHeader1 : orderHeaderPage.getList()) {
                 set.clear();
                 boolean flag = false;
@@ -112,13 +111,12 @@ public class BizRequestOrderController extends BaseController {
                 }
 
             }
-            page.setList(list);
-            page.setCount(list.size());
+            orderHeaderPage.setList(list);
 //            model.addAttribute("orderHeaderList", list);
             //20180427 分页
-            model.addAttribute("page", page);
+            model.addAttribute("page", orderHeaderPage);
             //判断
-            model.addAttribute("orderHeaderPage", page.getList());
+            model.addAttribute("orderHeaderPage", orderHeaderPage.getList());
         }
 
         model.addAttribute("source", source);
@@ -359,7 +357,6 @@ public class BizRequestOrderController extends BaseController {
         bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
         requestHeaderList = bizRequestHeaderService.pageFindList(new Page<BizRequestHeader>(request, response), bizRequestHeader);
         List<BizRequestHeader> list = Lists.newArrayList();
-        Page<BizRequestHeader> page = new Page<BizRequestHeader>(request, response);
         for (BizRequestHeader bizRequestHeader1 : requestHeaderList.getList()) {
             BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
             bizRequestDetail1.setRequestHeader(bizRequestHeader1);
@@ -391,9 +388,8 @@ public class BizRequestOrderController extends BaseController {
             bizRequestHeader1.setRecvQtys(recvQtys.toString());
             list.add(bizRequestHeader1);
         }
-        page.setList(list);
-        page.setCount(list.size());
-        return page;
+        requestHeaderList.setList(list);
+        return requestHeaderList;
     }
 
 }
