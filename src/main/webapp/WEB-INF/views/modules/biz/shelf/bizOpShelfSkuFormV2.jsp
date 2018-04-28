@@ -224,10 +224,11 @@
                     dataType:"json",
                     success:function(data){
                         var htmlInfo = "";
+                        var pri = 10;
                         $.each(data,function(index,item) {
                             $.each(item.bvFactorList,function(index,bvFactor){
 								htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
-									"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
+									"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
 									"<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
 									"<td><input name=\"salePrices\" value=\""+bvFactor.salePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
 									"<td><input name=\"minQtys\" value=\""+bvFactor.minQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
@@ -237,8 +238,9 @@
 
 									"<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
 									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-									"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
+									"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
 									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+								pri += 10;
                             });
                         });
                         $("#tbody").append(htmlInfo);
