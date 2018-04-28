@@ -15,27 +15,27 @@ public enum PurchaseOrderProcessEnum {
     /**
      * 采购中心负责人审批
      */
-    PURCHASE_CENTER(1, RoleEnNameEnum.P_CENTER_MANAGER, 2, 0),
+    PURCHASE_CENTER(1, RoleEnNameEnum.P_CENTER_MANAGER, 2, -1),
     /**
      * 供货部
      */
-    PROVIDER_CENTER(2, RoleEnNameEnum.PROVIDER_MANAGER, 3, 0),
+    PROVIDER_CENTER(2, RoleEnNameEnum.PROVIDER_MANAGER, 3, -1),
     /**
      * 会计
      */
-    FINANCE(3, RoleEnNameEnum.FINANCE, 4, 0),
+    FINANCE(3, RoleEnNameEnum.FINANCE, 4, -1),
     /**
      * 运营总监
      */
-    OPERATION(4, RoleEnNameEnum.OP_DIRECTOR, 5, 0),
+    OPERATION(4, RoleEnNameEnum.OP_DIRECTOR, 6, -1),
     /**
      * 总经理
      */
-    GENERAL_MANAGER(5, RoleEnNameEnum.GENERAL_MANAGER, 6, 0),
+    GENERAL_MANAGER(5, RoleEnNameEnum.GENERAL_MANAGER, 6, -1),
     /**
      * 财会待付款
      */
-    PAYMENT(6, RoleEnNameEnum.FINANCE, 7, 0),
+    PAYMENT(6, RoleEnNameEnum.FINANCE, 7, -1),
     /**
      * 支付完成
      */
