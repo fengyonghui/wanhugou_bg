@@ -217,4 +217,26 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 		}
 		return result;
 	}
+
+    /**
+     * 分页列表
+     * */
+    @Transactional(readOnly = true)
+    public Page<BizCategoryInfo> pageFindList(Page<BizCategoryInfo> page,BizCategoryInfo bizCategoryInfo){
+        if(bizCategoryInfo != null){
+            if(bizCategoryInfo.getParentIds()!=null && !bizCategoryInfo.getParentIds().equals("undefined")){
+                bizCategoryInfo.setParentIds(bizCategoryInfo.getParentIds()+bizCategoryInfo.getCid()+","+"%");
+            }else{
+                bizCategoryInfo.setParentIds(null);
+            }
+            bizCategoryInfo.setPage(page);
+            page.setList(dao.findByParentIdsLike(bizCategoryInfo));
+            if(page.getList().size()==0){
+                page.getList().add(dao.get(bizCategoryInfo.getCid()));
+            }
+            return page;
+        }
+        return  page;
+    }
+
 }
