@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.shelf;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
@@ -160,25 +161,20 @@ public class BizOpShelfInfoController extends BaseController {
             }
         }
 		List<User> userList = systemService.findYzUser(office);
-		BizShelfUser bizShelfUser = new BizShelfUser();
+        ArrayList<User> listUser = Lists.newArrayList();
+        BizShelfUser bizShelfUser = new BizShelfUser();
 		BizOpShelfInfo opShelfInfo = bizOpShelfInfoService.get(bizOpShelfInfo.getId());
 		for (int j = 0; j < userList.size(); j++) {
 			bizShelfUser.setShelfInfo(opShelfInfo);
 			bizShelfUser.setUser(userList.get(j));
 			List<BizShelfUser> list = bizShelfUserService.findList(bizShelfUser);
-			if(list.size()!=0){
-				for (int i = 0; i < list.size(); i++) {
-					Integer shelf = list.get(i).getUser().getId();
-					Integer user = userList.get(j).getId();
-					if(user.equals(shelf)){
-						userList.remove(j);
-					}
-				}
+			if(list.size()==0 && userList.get(j).getDelFlag().equals("1")){
+                listUser.add(userList.get(j));
 			}
 		}
 //		bizOpShelfInfo.setUserList(userList);
         model.addAttribute("bizOpShelfInfo", bizOpShelfInfo);
-		model.addAttribute("userList", userList);
+		model.addAttribute("userList", listUser);
 		return "modules/biz/shelf/bizOpShelfManagementForm";
 	}
 
