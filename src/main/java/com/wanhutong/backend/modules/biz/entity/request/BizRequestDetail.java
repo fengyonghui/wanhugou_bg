@@ -24,6 +24,7 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private BizRequestHeader requestHeader;		// biz_request_header.id
 	private Integer lineNo;		// 行号
 	private BizSkuInfo skuInfo;		// biz_sku_info.id
+	private Double unitPrice;      //单价
 	private Integer reqQty;		// 请求数量
 	private Integer recvQty;		// 收货数量
 	private Integer sendQty;		//已发货数量
@@ -158,5 +159,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setSendNum(Integer sendNum) {
 		this.sendNum = sendNum;
+	}
+
+	public Double getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(Double unitPrice) {
+		this.unitPrice = unitPrice;
 	}
 }
