@@ -52,19 +52,19 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="user">
 			<tr>
-				<td><a href="${ctx}/sys/office/form?id=${user.company.id}">
+				<td><a href="${ctx}/sys/office/form?id=${user.company.id}&source=contact_ck">
 						${user.company.name}</a>
 				</td>
-				<td><a href="${ctx}/sys/user/form?id=${user.id}">
+				<td><a href="${ctx}/sys/user/form?id=${user.id}&conn=contact_ck">
 						${user.name}</a>
 				</td>
 				<td>
 					${user.mobile}
 				</td>
-				<td><a href="${ctx}/sys/user/form?id=${user.user.id}">
+				<td><a href="${ctx}/sys/user/form?id=${user.user.id}&conn=contact_ck">
 						${user.user.name}</a>
 				</td>
-				<td><a href="${ctx}/sys/office/form?id=${user.cent.id}">
+				<td><a href="${ctx}/sys/office/form?id=${user.cent.id}&source=contact_ck">
 						${user.cent.name}</a>
 				</td>
 			</tr>
