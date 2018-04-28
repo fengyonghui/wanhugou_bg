@@ -19,10 +19,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSku/">商品上架列表</a></li>
-		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfSku/form?shelfSign=0">商品上架添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/">商品上架列表</a></li>
+		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><li><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?shelfSign=0">商品上架添加</a></li></shiro:hasPermission>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSku/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSkuV2/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
@@ -112,7 +112,7 @@
 				<td>
 					<img src="${bizOpShelfSku.productInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				</td>
-				<td><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">
+				<td><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?id=${bizOpShelfSku.id}">
 					${bizOpShelfSku.skuInfo.name}
 				</a></td>
 				<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizOpShelfSku.productInfo.id}">
@@ -173,19 +173,19 @@
 
                 <shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
 					<c:if test="${bizOpShelfSku.delFlag!=null && bizOpShelfSku.delFlag!=0}">
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
+						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?id=${bizOpShelfSku.id}">修改</a>
 						<c:choose>
 							<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
-								<a href="${ctx}/biz/shelf/bizOpShelfSku/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
+								<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
 							</c:when>
 							<c:otherwise>
-								<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
+								<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
 							</c:otherwise>
 						</c:choose>
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
+						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
 					</c:if>
 					<c:if test="${bizOpShelfSku.delFlag!=null && bizOpShelfSku.delFlag==0}">
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/recovery?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要恢复该上架商品吗？', this.href)">恢复</a>
+						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/recovery?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要恢复该上架商品吗？', this.href)">恢复</a>
 					</c:if>
 				</td></shiro:hasPermission>
 			</tr>

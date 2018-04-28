@@ -6,7 +6,7 @@ package com.wanhutong.backend.modules.biz.service.shelf;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuDao;
+import com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuV2Dao;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -28,13 +28,13 @@ import java.util.List;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuDao, BizOpShelfSku> {
+public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizOpShelfSku> {
 	@Resource
 	private BizProductInfoService bizProductInfoService;
 	@Resource
 	private BizSkuInfoService bizSkuInfoService;
 	@Autowired
-	private BizOpShelfSkuDao bizOpShelfSkuDao;
+	private BizOpShelfSkuV2Dao bizOpShelfSkuV2Dao;
 	public BizOpShelfSku get(Integer id) {
 		return super.get(id);
 	}
@@ -86,12 +86,12 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuDao, BizOpS
 
 	@Transactional(readOnly = false)
 	public void updateShelves(BizOpShelfSku bizOpShelfSku){
-		bizOpShelfSkuDao.shelvesUpdate(bizOpShelfSku);
+		bizOpShelfSkuV2Dao.shelvesUpdate(bizOpShelfSku);
 	}
 
 	@Transactional(readOnly = false)
 	public void updateDateTime(BizOpShelfSku bizOpShelfSku){
-		bizOpShelfSkuDao.dateTimeUpdate(bizOpShelfSku);
+		bizOpShelfSkuV2Dao.dateTimeUpdate(bizOpShelfSku);
 	}
 
 }

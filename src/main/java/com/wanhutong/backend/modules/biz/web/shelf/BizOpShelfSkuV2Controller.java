@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
@@ -51,6 +52,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	private AttributeValueV2Service attributeValueService;
 	@Autowired
 	private BizSkuViewLogService bizSkuViewLogService;
+	@Autowired
+	private BizOpShelfInfoService bizOpShelfInfoService;
 
 	
 	@ModelAttribute
@@ -83,6 +86,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
             model.addAttribute("bizOpShelfSku", bizOpShelfSku);
         }
         model.addAttribute("bizSkuInfo", new BizSkuInfo());
+		model.addAttribute("shelfList",bizOpShelfInfoService.findList(new BizOpShelfInfo()));
 		return "modules/biz/shelf/bizOpShelfSkuFormV2";
 	}
 
@@ -102,38 +106,76 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		String[] shelfQtyArr=bizOpShelfSkus.getShelfQtys().split(",");
 		String[] shelfTimeArr=bizOpShelfSkus.getShelfTimes().split(",");
 		String[] unShelfTimeArr=bizOpShelfSkus.getUnshelfTimes().split(",");
-		boolean flag = false;
-		for(int i=0;i<skuIdArr.length;i++){
-			BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
-			if(bizOpShelfSkus.getId()!=null){
-                bizOpShelfSku.setId(bizOpShelfSkus.getId());
+        boolean flag = false;
+        if (bizOpShelfSkus.getShelfs() != null && !"".equals(bizOpShelfSkus.getShelfs())) {
+            String[] shelfArr = bizOpShelfSkus.getShelfs().split(",");
+            for (int j = 0; j < shelfArr.length; j++) {
+                for (int i = 0; i < skuIdArr.length; i++) {
+                    BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+                    if (bizOpShelfSkus.getId() != null) {
+                        bizOpShelfSku.setId(bizOpShelfSkus.getId());
 
-				if (flag) {
-					bizOpShelfSku.setId(null);
-				}
-				flag = true;
-            }else {
-                bizOpShelfSku.setId(null);
+                        if (flag) {
+                            bizOpShelfSku.setId(null);
+                        }
+                        flag = true;
+                    } else {
+                        bizOpShelfSku.setId(null);
+                    }
+                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(Integer.parseInt(skuIdArr[i].trim()));
+                    bizOpShelfSku.setSkuInfo(bizSkuInfo);
+                    bizOpShelfSku.setProductInfo(bizSkuInfo.getProductInfo());
+                    bizOpShelfSku.setCenterOffice(bizOpShelfSkus.getCenterOffice());
+                    bizOpShelfSku.setOpShelfInfo(new BizOpShelfInfo(Integer.parseInt(shelfArr[j].trim())));
+                    bizOpShelfSku.setMaxQty(Integer.parseInt(maxQtyArr[i].trim()));
+                    bizOpShelfSku.setMinQty(Integer.parseInt(minQtyArr[i].trim()));
+                    bizOpShelfSku.setOrgPrice(Double.parseDouble(orgPriceArr[i].trim()));
+                    bizOpShelfSku.setPriority(Integer.parseInt(priorityArr[i].trim()));
+                    bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
+                    bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
+                    bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
+                    if (unShelfTimeArr.length > 0) {
+                        if (!unShelfTimeArr[i].equals("0")) {
+                            bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+                        }
+                    }
+                    bizOpShelfSkuV2Service.save(bizOpShelfSku);
+                }
             }
-			BizSkuInfo bizSkuInfo=bizSkuInfoService.get(Integer.parseInt(skuIdArr[i].trim()));
-			bizOpShelfSku.setSkuInfo(bizSkuInfo);
-			bizOpShelfSku.setProductInfo(bizSkuInfo.getProductInfo());
-			bizOpShelfSku.setCenterOffice(bizOpShelfSkus.getCenterOffice());
-			bizOpShelfSku.setOpShelfInfo(bizOpShelfSkus.getOpShelfInfo());
-			bizOpShelfSku.setMaxQty(Integer.parseInt(maxQtyArr[i].trim()));
-			bizOpShelfSku.setMinQty(Integer.parseInt(minQtyArr[i].trim()));
-			bizOpShelfSku.setOrgPrice(Double.parseDouble(orgPriceArr[i].trim()));
-			bizOpShelfSku.setPriority(Integer.parseInt(priorityArr[i].trim()));
-			bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
-			bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
-			bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
-			if (unShelfTimeArr.length > 0) {
-				if (!unShelfTimeArr[i].equals("0")) {
-					bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
-				}
+        }
+        if (bizOpShelfSkus.getOpShelfInfo() != null) {
+            for (int i = 0; i < skuIdArr.length; i++) {
+                BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+                if (bizOpShelfSkus.getId() != null) {
+                    bizOpShelfSku.setId(bizOpShelfSkus.getId());
+
+                    if (flag) {
+                        bizOpShelfSku.setId(null);
+                    }
+                    flag = true;
+                } else {
+                    bizOpShelfSku.setId(null);
+                }
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(Integer.parseInt(skuIdArr[i].trim()));
+                bizOpShelfSku.setSkuInfo(bizSkuInfo);
+                bizOpShelfSku.setProductInfo(bizSkuInfo.getProductInfo());
+                bizOpShelfSku.setCenterOffice(bizOpShelfSkus.getCenterOffice());
+                bizOpShelfSku.setOpShelfInfo(bizOpShelfSkus.getOpShelfInfo());
+                bizOpShelfSku.setMaxQty(Integer.parseInt(maxQtyArr[i].trim()));
+                bizOpShelfSku.setMinQty(Integer.parseInt(minQtyArr[i].trim()));
+                bizOpShelfSku.setOrgPrice(Double.parseDouble(orgPriceArr[i].trim()));
+                bizOpShelfSku.setPriority(Integer.parseInt(priorityArr[i].trim()));
+                bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
+                bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
+                bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
+                if (unShelfTimeArr.length > 0) {
+                    if (!unShelfTimeArr[i].equals("0")) {
+                        bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+                    }
+                }
+                bizOpShelfSkuV2Service.save(bizOpShelfSku);
             }
-			bizOpShelfSkuV2Service.save(bizOpShelfSku);
-		}
+        }
 
 		addMessage(redirectAttributes, "保存商品上架成功");
 		if(bizOpShelfSkus.getShelfSign()==0){

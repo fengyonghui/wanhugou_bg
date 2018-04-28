@@ -8,13 +8,19 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -35,6 +41,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +69,10 @@ public class BizSkuInfoController extends BaseController {
 	private AttributeValueV2Service attributeValueV2Service;
 	@Autowired
 	private BizSkuViewLogService bizSkuViewLogService;
+	@Autowired
+	private BizProductInfoV2Service bizProductInfoV2Service;
+	@Autowired
+    private BizVarietyFactorService bizVarietyFactorService;
 
 
 
@@ -187,6 +199,37 @@ public class BizSkuInfoController extends BaseController {
 			}
         }
         return bizSkuInfoList;
+	}
+
+	//根据多个id选择商品
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findSkuNameListV2")
+	public List<BizSkuInfo> findSkuNameListV2(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+		List<BizSkuInfo> bizSkuInfoList = new ArrayList<>();
+		if (ids != null && !"".equals(ids)){
+			String[] id = ids.split(",");
+			for (int i = 0; i < id.length; i++) {
+				if(id[i].trim().equals("on")){
+					System.out.println(id[i].trim()+" 不是skuID值不操作");
+				}else {
+					BizSkuInfo bizSkuInfo1 = bizSkuInfoService.get(Integer.parseInt(id[i].trim()));
+                    BizProductInfo bizProductInfo = bizProductInfoV2Service.get(bizSkuInfo1.getProductInfo().getId());
+                    BizVarietyFactor bizVarietyFactor = new BizVarietyFactor();
+                    bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(bizProductInfo.getBizVarietyInfo().getId()));
+                    List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    for (BizVarietyFactor varietyFactor:bvFactorList) {
+                        Double salePrice = bizSkuInfo1.getBuyPrice()*(1+(float)varietyFactor.getServiceFactor()/100);
+                        String price = df.format(salePrice);
+                        varietyFactor.setSalePrice(Double.parseDouble(price));
+                    }
+                    bizSkuInfo1.setBvFactorList(bvFactorList);
+                    bizSkuInfoList.add(bizSkuInfo1);
+				}
+			}
+		}
+		return bizSkuInfoList;
 	}
 
 	@ResponseBody

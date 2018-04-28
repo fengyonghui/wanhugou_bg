@@ -66,7 +66,7 @@
                         }
                     });
                         $.ajax({
-							url:"${ctx}/biz/shelf/bizOpShelfSku/checkNum",
+							url:"${ctx}/biz/shelf/bizOpShelfSkuV2/checkNum",
 							type:"post",
 							cache:false,
 							data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId,centId:centId},
@@ -106,26 +106,26 @@
                 }
             });
             <%--属于选择货架名称--%>
-            var opShelfId=$("#opShelfId").val();
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/shelf/bizOpShelfInfo/findShelf",
-                success:function (data) {
-                    $.each(data,function(index,shelfInfo) {
-                        if(opShelfId==shelfInfo.id){
-                            if(shelfInfo.type==3){
-                                $("#PurchaseID").css("display","block");
-                            }else{
-                                $("#PurchaseID").css("display","none");
-                            }
-                            $("#s2id_shelfInfoId").find("span").eq(0).text(shelfInfo.name);
-                            $("#shelfInfoId").append("<option selected='selected' value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
-                        }else {
-                            $("#shelfInfoId").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")
-                        }
-                    })
-                }
-            });
+            <%--var opShelfId=$("#opShelfId").val();--%>
+            <%--$.ajax({--%>
+                <%--type:"post",--%>
+                <%--url:"${ctx}/biz/shelf/bizOpShelfInfo/findShelf",--%>
+                <%--success:function (data) {--%>
+                    <%--$.each(data,function(index,shelfInfo) {--%>
+                        <%--if(opShelfId==shelfInfo.id){--%>
+                            <%--if(shelfInfo.type==3){--%>
+                                <%--$("#PurchaseID").css("display","block");--%>
+                            <%--}else{--%>
+                                <%--$("#PurchaseID").css("display","none");--%>
+                            <%--}--%>
+                            <%--$("#s2id_shelfInfoId").find("span").eq(0).text(shelfInfo.name);--%>
+                            <%--$("#shelfInfoId").append("<option selected='selected' value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")--%>
+                        <%--}else {--%>
+                            <%--$("#shelfInfoId").append("<option value='"+shelfInfo.id+"'>"+shelfInfo.name+"</option>")--%>
+                        <%--}--%>
+                    <%--})--%>
+                <%--}--%>
+            <%--});--%>
             $('#select_all').live('click',function(){
                 var choose=$("input[title='shelfIds']");
                 if($(this).attr('checked')){
@@ -220,24 +220,26 @@
                 var now=year+'-'+p(month)+"-"+p(date)+" "+p(h)+':'+p(m)+":"+p(s);
                 $.ajax({
                     type:"POST",
-                    url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameList?ids="+skuIds,
+                    url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameListV2?ids="+skuIds,
                     dataType:"json",
                     success:function(data){
                         var htmlInfo = "";
                         $.each(data,function(index,item) {
-                            htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
-                                "<td><input about='shQtys"+item.id+"' name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
-                                "<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
-                                "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
-                                "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
-                                "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
-                                "<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
-                                "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
+                            $.each(item.bvFactorList,function(index,bvFactor){
+								htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
+									"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
+									"<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
+									"<td><input name=\"salePrices\" value=\""+bvFactor.salePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+									"<td><input name=\"minQtys\" value=\""+bvFactor.minQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
+									"<td><input name=\"maxQtys\" value=\""+bvFactor.maxQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
+									"<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
-                                "<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
-                                "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-                                "<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
-                                "<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+									"<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
+									"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
+									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+                            });
                         });
                         $("#tbody").append(htmlInfo);
                         $("#ShelfSkuTable").tablesMergeCell({
@@ -285,34 +287,34 @@
         }
 	</script>
 	<script type="text/javascript">
-        function selectedColum(){
-            <%--属于选中货架名称下的 本地备货--%>
-            var opShelfId=$("#shelfInfoId").val();
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
-                success:function (data) {
-                    if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){
-                        $("#PurchaseID").css("display","block");
-                    }else{
-                        $("#PurchaseID").css("display","none");
-                        $("#centerOfficeId").prop("value","");
-                    }
-                }
-            });
-        }
+        <%--function selectedColum(){--%>
+            <%--&lt;%&ndash;属于选中货架名称下的 本地备货&ndash;%&gt;--%>
+            <%--var opShelfId=$("#shelfInfoId").val();--%>
+            <%--$.ajax({--%>
+                <%--type:"post",--%>
+                <%--url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,--%>
+                <%--success:function (data) {--%>
+                    <%--if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){--%>
+                        <%--$("#PurchaseID").css("display","block");--%>
+                    <%--}else{--%>
+                        <%--$("#PurchaseID").css("display","none");--%>
+                        <%--$("#centerOfficeId").prop("value","");--%>
+                    <%--}--%>
+                <%--}--%>
+            <%--});--%>
+        <%--}--%>
 	</script>
 	<meta name="decorator" content="default"/>
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li><a href="${ctx}/biz/shelf/bizOpShelfSku/">商品上架列表</a></li>
-	<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">商品上架<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">${not empty bizOpShelfSku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:shelf:bizOpShelfSku:edit">查看</shiro:lacksPermission></a></li>
+	<li><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/">商品上架列表</a></li>
+	<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?id=${bizOpShelfSku.id}">商品上架<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">${not empty bizOpShelfSku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:shelf:bizOpShelfSku:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
-<form:form id="inputForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSku/save" method="post" class="form-horizontal">
-	<form:hidden path="id"/>
+<form:form id="inputForm" modelAttribute="bizOpShelfSku" action="${ctx}/biz/shelf/bizOpShelfSkuV2/save" method="post" class="form-horizontal">
+	<form:hidden path="id" var="id"/>
 	<form:hidden path="shelfSign"/>
-	<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>
+	<%--<input type="hidden" id="opShelfId" value="${bizOpShelfSku.opShelfInfo.id}"/>--%>
 	<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 	<sys:message content="${message}"/>
 
@@ -328,7 +330,7 @@
 	<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 	<%--</div>--%>
 	<%--</div>--%>
-	<div class="control-group">
+	<%--<div class="control-group">
 		<label class="control-label">货架名称：</label>
 		<div class="controls">
 			<select id="shelfInfoId" name="opShelfInfo.id" onchange="selectedColum();" class="input-xlarge required">
@@ -336,8 +338,8 @@
 			</select>
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
-	</div>
-	<div class="control-group" id="PurchaseID" style="display:none">
+	</div>--%>
+	<div class="control-group" id="PurchaseID" style="">
 		<label class="control-label">采购中心：</label>
 		<div class="controls">
 			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
@@ -426,7 +428,7 @@
 						</td>
 							<%--<td><input name="createBy.name" value="${bizOpShelfSku.shelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="number" placeholder="必填！"/></td>--%>
 						<td><input name="shelfQtys" value="${bizOpShelfSku.shelfQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
-						<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
+						<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false" maxlength="6" class="input-medium required" readonly="readonly" type="number" placeholder="必填！"/></td>
 						<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
@@ -444,6 +446,29 @@
 			</table>
 		</div>
 	</div>
+	<c:if test="${bizOpShelfSku.id == null}">
+		<div class="control-group">
+			<label class="control-label">货架名称：</label>
+			<div class="controls">
+				<c:forEach items="${shelfList}" var="shelf">
+					<input name="shelfs" type="checkbox" class="required" value="${shelf.id}"/>${shelf.name}
+				</c:forEach>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+	</c:if>
+	<c:if test="${bizOpShelfSku.id != null}">
+		<div class="control-group">
+			<label class="control-label">货架名称：</label>
+			<div class="controls">
+				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required">
+					<form:option value="">请选择</form:option>
+					<form:options items="${shelfList}" itemLabel="name" itemValue="id"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+	</c:if>
 	<div class="form-actions">
 		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
