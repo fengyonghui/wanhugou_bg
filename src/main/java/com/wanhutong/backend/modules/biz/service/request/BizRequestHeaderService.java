@@ -256,4 +256,42 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		});
 		return list;
 	}
+
+	/**
+	 * 分页查询
+	 * */
+	public Page<BizRequestHeader> pageFindList(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
+		User user = UserUtils.getUser();
+		boolean oflag = false;
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+				}
+			}
+		}
+		if (UserUtils.getOfficeList() != null){
+			for (Office office:UserUtils.getOfficeList()){
+				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+					oflag = true;
+				}
+			}
+		}
+		if (user.isAdmin()) {
+			bizRequestHeader.setPage(page);
+			page.setList(dao.findList(bizRequestHeader));
+			return page;
+		} else {
+			if(oflag){
+
+			}else {
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+			}
+			bizRequestHeader.setPage(page);
+			page.setList(dao.findList(bizRequestHeader));
+			return page;
+		}
+	}
+
 }

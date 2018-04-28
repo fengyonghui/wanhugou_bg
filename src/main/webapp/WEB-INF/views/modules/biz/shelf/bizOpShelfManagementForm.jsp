@@ -74,14 +74,31 @@
 		<li><a href="${ctx}/biz/shelf/bizOpShelfInfo/shelfManagementList?id=${bizOpShelfInfo.id}&&flag=false">货架管理员列表</a></li>
 		<%--<li class="active"><a href="${ctx}/biz/shelf/bizOpShelfInfo/form?id=${bizOpShelfInfo.id}">货架信息<shiro:hasPermission name="biz:shelf:bizOpShelfInfo:edit">${not empty bizOpShelfInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:shelf:bizOpShelfInfo:edit">查看</shiro:lacksPermission></a></li>--%>
 	</ul><br/>
+	<form:form id="searchForm" modelAttribute="bizOpShelfInfo" action="${ctx}/biz/shelf/bizOpShelfInfo/shelfManagementForm" method="post" class="breadcrumb form-search">
+		<form:hidden path="id"/>
+		<ul class="ul-form">
+			<li>
+				<label>姓名：</label>
+				<form:input path="user.name" htmlEscape="false" maxlength="60" class="input-medium"/>
+			</li>
+            <li>
+                <label>联系方式：</label>
+                <form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
+            </li>
+			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="clearfix"></li>
+		</ul>
+	</form:form>
+
 	<form:form id="inputForm" modelAttribute="bizOpShelfInfo" action="${ctx}/biz/shelf/bizOpShelfInfo/shelfManagementCommit" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<form:input path="name" htmlEscape="false" maxlength="50" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<form:input path="name" htmlEscape="false" maxlength="50" readOnly="true" class="input-xlarge required"/>
+                <input name="name" value="${bizOpShelfInfo.name}" htmlEscape="false" type="hidden"/>
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -92,6 +109,7 @@
                     <tr>
                         <th><input class="select_all"  type="checkbox"/></th>
                         <th>人员信息</th>
+						<th>联系方式</th>
                         <%--<th>操作</th>--%>
                     </tr>
                     </thead>
@@ -106,6 +124,9 @@
                                 <td>
                                          ${user.name}
                                 </td>
+								<td>
+										${user.mobile}
+								</td>
                             </tr>
 
                         </c:forEach>
