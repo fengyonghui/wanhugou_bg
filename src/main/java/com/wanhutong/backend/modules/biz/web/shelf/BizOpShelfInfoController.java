@@ -161,17 +161,16 @@ public class BizOpShelfInfoController extends BaseController {
         }
 		List<User> userList = systemService.findYzUser(office);
 		BizShelfUser bizShelfUser = new BizShelfUser();
-		BizOpShelfInfo bizOpShelfInfo1 = bizOpShelfInfoService.get(bizOpShelfInfo.getId());
-		List<BizShelfUser> bizShelfUserList =null;
-		if(bizOpShelfInfo1!=null){
-			bizShelfUser.setShelfInfo(bizOpShelfInfo1);
-		}
+		BizOpShelfInfo opShelfInfo = bizOpShelfInfoService.get(bizOpShelfInfo.getId());
 		for (int j = 0; j < userList.size(); j++) {
+			bizShelfUser.setShelfInfo(opShelfInfo);
 			bizShelfUser.setUser(userList.get(j));
 			List<BizShelfUser> list = bizShelfUserService.findList(bizShelfUser);
 			if(list.size()!=0){
 				for (int i = 0; i < list.size(); i++) {
-					if(list.get(i).getUser().getId().equals(userList.get(j).getId())){
+					Integer shelf = list.get(i).getUser().getId();
+					Integer user = userList.get(j).getId();
+					if(user.equals(shelf)){
 						userList.remove(j);
 					}
 				}

@@ -316,9 +316,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
-            bizOrderHeader.setPage(page);
-            page.setList(dao.findList(bizOrderHeader));
-            return page;
+            Page<BizOrderHeader> findPage = super.findPage(page, bizOrderHeader);
+            return findPage;
         }
     }
+
 }
