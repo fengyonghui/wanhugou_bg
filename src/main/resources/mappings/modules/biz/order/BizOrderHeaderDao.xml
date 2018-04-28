@@ -1679,21 +1679,35 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	<!-- 订单采购列表  -->
 	<select id="requestFindList" resultMap="orderHeaderResult">
 		SELECT
-		<include refid="bizOrderHeaderColumns"/>,
-		od.id AS "orderDetailList.id",
-		od.unit_price AS "orderDetailList.unitPrice",
-		od.ord_qty AS "orderDetailList.ordQty",
-		od.sent_qty AS "orderDetailList.sentQty",
-		od.line_no AS "orderDetailList.lineNo",
-		si.id AS "orderDetailList.skuInfo.id",
-		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
-		si.item_no AS "orderDetailList.skuInfo.itemNo",
-		pi.vendor_name AS "orderDetailList.vendor.name"
+        a.id AS "id",
+        a.order_num AS "orderNum",
+        a.order_type AS "orderType",
+        a.cust_id AS "customer.id",
+        so.name as "customer.name",
+        a.total_detail AS "totalDetail",
+        a.receive_total as "receiveTotal",
+        a.total_exp AS "totalExp",
+        a.freight AS "freight",
+        a.inv_status AS "invStatus",
+        a.biz_status AS "bizStatus",
+        a.biz_type as "bizType",
+        a.plateform_id AS "platformInfo.id",
+        bpi.name as "platformInfo.name",
+        a.ship_to_addr AS "bizLocation.id",
+        a.status AS "delFlag",
+        a.create_id AS "createBy.id",
+        su.name as "createBy.name",
+        a.create_time AS "createDate",
+        a.u_version AS "uVersion",
+        a.update_id AS "updateBy.id",
+        us.name as "updateBy.name",
+        a.update_time AS "updateDate"
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
-		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
-		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
-		<include refid="bizOrderHeaderJoins"/>
+        left join sys_office so on a.cust_id=so.id
+        left join sys_user su on a.create_id=su.id
+        left join sys_user us on a.update_id=us.id
+        left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
 		<where>
 			a.status=#{DEL_FLAG_NORMAL}
 			and od.status=#{DEL_FLAG_NORMAL}
