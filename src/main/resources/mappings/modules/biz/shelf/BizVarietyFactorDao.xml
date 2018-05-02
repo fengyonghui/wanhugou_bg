@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.shelf.BizVarietyFactorDao">
+    
+	<sql id="bizVarietyFactorColumns">
+		a.id AS "id",
+		a.vari_id AS "varietyInfo.id",
+		bvi.name AS "varietyInfo.name",
+		a.service_factor AS "serviceFactor",
+		a.min_qty AS "minQty",
+		a.max_qty AS "maxQty",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizVarietyFactorJoins">
+		LEFT JOIN biz_variety_info bvi ON bvi.id = a.vari_id
+	</sql>
+    
+	<select id="get" resultType="BizVarietyFactor">
+		SELECT 
+			<include refid="bizVarietyFactorColumns"/>
+		FROM biz_variety_factor a
+		<include refid="bizVarietyFactorJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizVarietyFactor">
+		SELECT 
+			<include refid="bizVarietyFactorColumns"/>
+		FROM biz_variety_factor a
+		<include refid="bizVarietyFactorJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo.id != ''">
+				AND a.vari_id = #{varietyInfo.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizVarietyFactor">
+		SELECT 
+			<include refid="bizVarietyFactorColumns"/>
+		FROM biz_variety_factor a
+		<include refid="bizVarietyFactorJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_variety_factor(
+			id,
+			vari_id,
+			service_factor,
+			min_qty,
+			max_qty,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{varietyInfo.id},
+			#{serviceFactor},
+			#{minQty},
+			#{maxQty},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_variety_factor SET 	
+			vari_id = #{varietyInfo.id},
+			service_factor = #{serviceFactor},
+			min_qty = #{minQty},
+			max_qty = #{maxQty},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_variety_factor SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
