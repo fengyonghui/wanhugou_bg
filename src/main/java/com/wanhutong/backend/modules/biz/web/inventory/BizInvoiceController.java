@@ -5,7 +5,10 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
@@ -23,21 +26,22 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +72,8 @@ public class BizInvoiceController extends BaseController {
     private SystemService systemService;
 	@Autowired
     private BizSkuInfoService bizSkuInfoService;
+    @Autowired
+    private DictService dictService;
 
     private static final String DEF_EN_NAME = "shipper";
 
@@ -265,4 +271,93 @@ public class BizInvoiceController extends BaseController {
         return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";
     }
 
+    /**
+     * 导出
+     * */
+    @RequiresPermissions("biz:inventory:bizInvoice:view")
+    @RequestMapping(value = "exportList",method = RequestMethod.POST)
+    public String exportList(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String fileName = "订单发货信息数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+            Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
+            //1订单
+            List<List<String>> data = new ArrayList<List<String>>();
+            //2商品
+            List<List<String>> detailData = new ArrayList<List<String>>();
+            for (BizInvoice invoice : page.getList()) {
+                List<String> headData = new ArrayList();
+                headData.add(String.valueOf(invoice.getSendNumber()));
+                if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
+                    headData.add(String.valueOf(invoice.getLogistics().getName()));
+                }else{
+                    headData.add("");
+                }
+                if(invoice.getFreight()!=null){
+                    headData.add(String.valueOf(invoice.getFreight()));
+                }else{
+                    headData.add("");
+                }
+                if(invoice.getOperation()!=null){
+                    headData.add(String.valueOf(invoice.getOperation()));
+                }else{
+                    headData.add("");
+                }
+                if(invoice.getValuePrice()!=null){
+                    headData.add(String.valueOf(invoice.getValuePrice()));
+                }else{
+                    headData.add("");
+                }
+                Double price=0.0;
+                if(bizInvoice.getFreight()!=null && bizInvoice.getValuePrice()!=null){
+                    price=bizInvoice.getFreight()*100/bizInvoice.getValuePrice();
+                }//运费/货值
+                headData.add(String.valueOf(price));
+                if(bizInvoice.getCarrier()!=null){
+                    headData.add(String.valueOf(bizInvoice.getCarrier()));
+                }else{
+                    headData.add("");
+                }
+                Dict dict = new Dict();
+                dict.setDescription("物流结算方式");
+                dict.setType("biz_settlement_status");
+                List<Dict> dictList = dictService.findList(dict);
+                for (Dict di : dictList) {
+                    if (di.getValue().equals(String.valueOf(bizInvoice.getSettlementStatus()))) {
+                        //结算方式
+                        headData.add(String.valueOf(di.getLabel()));
+                        break;
+                    }
+                }
+                headData.add(String.valueOf(bizInvoice.getSendDate()));
+                data.add(headData);
+                BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+                bizDetailInvoice.setInvoice(bizInvoice);
+                List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
+                if(DetailInvoiceList.size()!=0){
+                    for (BizDetailInvoice detailInvoice : DetailInvoiceList) {
+
+                    }
+                }else{
+
+                }
+            }
+            String[] headers = {"发货号", "物流商", "运费", "操作费", "货值","运费/货值", "发货人", "物流结算方式", "发货时间"};
+            String[] details = {"发货号","物流商", "订单编号", "采购商名称", "业务状态", "商品名称","商品编码", "商品属性", "采购数量","已发货数量"};
+            OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
+            SXSSFWorkbook workbook = new SXSSFWorkbook();
+            eeu.exportExcel(workbook, 0, "发货数据", headers, data, fileName);
+            eeu.exportExcel(workbook, 1, "已发货详情", details, detailData, fileName);
+            response.reset();
+            response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+            workbook.write(response.getOutputStream());
+            workbook.dispose();
+            return null;
+        }catch (Exception e){
+            e.printStackTrace();
+            addMessage(redirectAttributes, "导出订单发货信息数据失败！失败信息：" + e.getMessage());
+        }
+        return "modules/biz/inventory/bizInvoiceList";
+    }
 }
