@@ -170,7 +170,7 @@
 			#{lineNo},
 			#{skuInfo.id},
 			#{reqQty},
-			#{unitPrice},
+			#{skuInfo.buyPrice},
 			<if test="recvQty!=null">
 				#{recvQty},
 			</if>

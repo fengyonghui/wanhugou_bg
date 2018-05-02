@@ -189,7 +189,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 					continue;
 				}
 				bizRequestDetail.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
-				bizRequestDetail.setReqQty(Integer.parseInt(reqArr[i].trim()));
+				bizRequestDetail.setReqQty(Integer.parseInt(reqArr[i]
+						.trim()));
 
 				if(bizRequestHeader.getReqDetailIds()!=null){
 					String [] detailIdArr=StringUtils.split(bizRequestHeader.getReqDetailIds(),",");
