@@ -452,8 +452,9 @@
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<c:forEach items="${shelfList}" var="shelf">
-					<input name="shelfs" type="checkbox" class="required" value="${shelf.id}"/>${shelf.name}
+				<c:forEach items="${shelfList}" var="shelf" varStatus="i">
+					<input id="shelfs_${i.index}" name="shelfs" type="checkbox" class="required" value="${shelf.id}"/>
+					<label for="shelfs_${i.index}">${shelf.name}</label>
 				</c:forEach>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>

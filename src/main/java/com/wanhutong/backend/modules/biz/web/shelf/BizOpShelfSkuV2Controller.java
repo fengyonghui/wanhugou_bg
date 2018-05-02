@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
+import com.wanhutong.backend.modules.enums.BizOpShelfInfoEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -85,8 +86,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
         }else {
             model.addAttribute("bizOpShelfSku", bizOpShelfSku);
         }
+
         model.addAttribute("bizSkuInfo", new BizSkuInfo());
-		model.addAttribute("shelfList",bizOpShelfInfoService.findList(new BizOpShelfInfo()));
+		BizOpShelfInfo opShelfInfo=new BizOpShelfInfo();
+		opShelfInfo.setType(BizOpShelfInfoEnum.LOCAL_STOCK.getLocal());
+		model.addAttribute("shelfList",bizOpShelfInfoService.findList(opShelfInfo));
 		return "modules/biz/shelf/bizOpShelfSkuFormV2";
 	}
 
