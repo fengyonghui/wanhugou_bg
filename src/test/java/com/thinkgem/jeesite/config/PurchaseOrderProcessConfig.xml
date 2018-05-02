@@ -1,5 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<purchaseOrderProcessConfig>
-    <bossStoryImg>ccc</bossStoryImg>
-    <!--// banner-->
-</purchaseOrderProcessConfig>
+<PurchaseOrderProcessConfig>
+    <!--流程节点-->
+    <!--采购中心负责人审批-->
+    <process>
+        <name>采购中心负责人审批</name>
+        <code>1</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>2</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--供货部-->
+    <process>
+        <name>供货部</name>
+        <code>2</code>
+        <roleEnNameEnum>PROVIDER_MANAGER</roleEnNameEnum>
+        <passCode>3</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--会计-->
+    <process>
+        <name>会计</name>
+        <code>3</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>4</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--运营总监-->
+    <process>
+        <name>运营总监</name>
+        <code>4</code>
+        <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+        <passCode>5</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--总经理-->
+    <process>
+        <name>总经理</name>
+        <code>5</code>
+        <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+        <passCode>5</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--财会待付款-->
+    <process>
+        <name>财会待付款</name>
+        <code>6</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>5</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <!--支付完成-->
+    <process>
+        <name>支付完成</name>
+        <code>7</code>
+        <roleEnNameEnum></roleEnNameEnum>
+        <passCode>0</passCode>
+        <rejectCode>0</rejectCode>
+    </process>
+    <!--终止-->
+    <process>
+        <name>终止</name>
+        <code>-1</code>
+        <roleEnNameEnum></roleEnNameEnum>
+        <passCode>0</passCode>
+        <rejectCode>0</rejectCode>
+    </process>
+</PurchaseOrderProcessConfig>
