@@ -41,6 +41,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -308,13 +310,17 @@ public class BizInvoiceController extends BaseController {
                 }else{
                     headData.add("");
                 }
+                NumberFormat nf = NumberFormat.getPercentInstance();
+                //设置2位小数、四舍五入
+                nf.setMaximumFractionDigits(2);
+                nf.setRoundingMode(RoundingMode.HALF_UP);
                 Double price=0.0;
-                if(bizInvoice.getFreight()!=null && bizInvoice.getValuePrice()!=null){
-                    price=bizInvoice.getFreight()*100/bizInvoice.getValuePrice();
+                if(invoice.getFreight()!=null && invoice.getValuePrice()!=null){
+                    price=invoice.getFreight()*100/invoice.getValuePrice();
                 }//运费/货值
-                headData.add(String.valueOf(price));
-                if(bizInvoice.getCarrier()!=null){
-                    headData.add(String.valueOf(bizInvoice.getCarrier()));
+                headData.add(String.valueOf(nf.format(price)));
+                if(invoice.getCarrier()!=null){
+                    headData.add(String.valueOf(invoice.getCarrier()));
                 }else{
                     headData.add("");
                 }
@@ -323,23 +329,94 @@ public class BizInvoiceController extends BaseController {
                 dict.setType("biz_settlement_status");
                 List<Dict> dictList = dictService.findList(dict);
                 for (Dict di : dictList) {
-                    if (di.getValue().equals(String.valueOf(bizInvoice.getSettlementStatus()))) {
+                    if (di.getValue().equals(String.valueOf(invoice.getSettlementStatus()))) {
                         //结算方式
                         headData.add(String.valueOf(di.getLabel()));
                         break;
                     }
                 }
-                headData.add(String.valueOf(bizInvoice.getSendDate()));
+                headData.add(String.valueOf(invoice.getSendDate()));
                 data.add(headData);
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
-                bizDetailInvoice.setInvoice(bizInvoice);
+                bizDetailInvoice.setInvoice(invoice);
                 List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
                 if(DetailInvoiceList.size()!=0){
                     for (BizDetailInvoice detailInvoice : DetailInvoiceList) {
-
+                        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+                        List<BizOrderDetail> orderDetailList =null;
+                        BizOrderHeader orderHeader = bizOrderHeaderService.get(detailInvoice.getOrderHeader().getId());
+                        if(orderHeader!=null){
+                            bizOrderDetail.setOrderHeader(orderHeader);
+                            orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+                        }
+                        if(orderDetailList!=null && orderDetailList.size()!=0){
+                            for (BizOrderDetail orderDetail:orderDetailList) {
+                                List<String> detaData = new ArrayList();
+                                BizSkuInfo sku = bizSkuInfoService.get(orderDetail.getSkuInfo());
+                                BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
+                                orderDetail.setSkuInfo(skuInfo);
+                                detaData.add(String.valueOf(invoice.getSendNumber()));
+                                if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
+                                    detaData.add(String.valueOf(invoice.getLogistics().getName()));
+                                }else{
+                                    detaData.add("");
+                                }
+                                if(orderHeader!=null){
+                                    detaData.add(String.valueOf(orderDetail.getOrderHeader().getOrderNum()));
+                                    if(orderHeader.getCustomer()!=null && orderHeader.getCustomer().getName()!=null){
+                                        detaData.add(String.valueOf(orderHeader.getCustomer().getName()));
+                                    }else{
+                                        detaData.add("");
+                                    }
+                                }else{
+                                    detaData.add("");
+                                    detaData.add("");
+                                }
+                                Dict detadict = new Dict();
+                                detadict.setDescription("业务状态");
+                                detadict.setType("biz_order_status");
+                                List<Dict> detadictList = dictService.findList(detadict);
+                                for (Dict di : detadictList) {
+                                    if (di.getValue().equals(String.valueOf(orderHeader.getBizStatus()))) {
+                                        //业务状态
+                                        detaData.add(String.valueOf(di.getLabel()));
+                                        break;
+                                    }
+                                }
+                                if(orderDetail.getSkuName()!=null){
+                                    detaData.add(String.valueOf(orderDetail.getSkuName()));
+                                }else{
+                                    detaData.add("");
+                                }
+                                if(orderDetail.getPartNo()!=null){
+                                    detaData.add(String.valueOf(orderDetail.getPartNo()));
+                                }else{
+                                    detaData.add("");
+                                }
+                                if(orderDetail!=null && orderDetail.getSkuInfo()!=null && orderDetail.getSkuInfo().getSkuPropertyInfos()!=null){
+                                    detaData.add(String.valueOf(orderDetail.getSkuInfo().getSkuPropertyInfos()));
+                                }else{
+                                    detaData.add("");
+                                }
+                                detaData.add(String.valueOf(orderDetail.getOrdQty()));
+                                detaData.add(String.valueOf(orderDetail.getSentQty()));
+                                detailData.add(detaData);
+                                }
+                            }
                     }
                 }else{
-
+                    List<String> detaData = new ArrayList();
+                    detaData.add("");
+                    detaData.add("");
+                    detaData.add("");
+                    detaData.add("");
+                    detaData.add("");
+                    detaData.add("");
+                    detaData.add("");
+                    detaData.add("");
+                    detaData.add("");
+                    detaData.add("");
+                    detailData.add(detaData);
                 }
             }
             String[] headers = {"发货号", "物流商", "运费", "操作费", "货值","运费/货值", "发货人", "物流结算方式", "发货时间"};

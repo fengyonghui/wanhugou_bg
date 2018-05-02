@@ -9,7 +9,7 @@
 			$("#invoiceExport").click(function(){
 				top.$.jBox.confirm("确认要导出订单发货信息数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/exportList?bizInvoice.ship=${bizInvoice.ship}&bizInvoice.bizStatus=${bizInvoice.bizStatus}");
+						$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/exportList?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}");
 						$("#searchForm").submit();
 						$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/");
 					}
