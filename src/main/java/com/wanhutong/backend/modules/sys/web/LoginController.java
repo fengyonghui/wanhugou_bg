@@ -41,13 +41,19 @@ public class LoginController extends BaseController{
 	
 	@Autowired
 	private SessionDAO sessionDAO;
-	
+
+	private final static String VENDOR_DOMAIN = "192.168.1.69";
+	private final static String VENDOR_PRODUCT_NAME = "万户通供应商后台";
+
 	/**
 	 * 管理登录
 	 */
 	@RequestMapping(value = "${adminPath}/login", method = RequestMethod.GET)
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Principal principal = UserUtils.getPrincipal();
+
+		String serverName = request.getServerName();
+		model.addAttribute("productName", VENDOR_DOMAIN.equalsIgnoreCase(serverName) ? VENDOR_PRODUCT_NAME : Global.getConfig("productName"));
 
 //		// 默认页签模式
 //		String tabmode = CookieUtils.getCookie(request, "tabmode");
@@ -83,7 +89,10 @@ public class LoginController extends BaseController{
 	@RequestMapping(value = "${adminPath}/login", method = RequestMethod.POST)
 	public String loginFail(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Principal principal = UserUtils.getPrincipal();
-		
+
+		String serverName = request.getServerName();
+		model.addAttribute("productName", VENDOR_DOMAIN.equalsIgnoreCase(serverName) ? VENDOR_PRODUCT_NAME : Global.getConfig("productName"));
+
 		// 如果已经登录，则跳转到管理首页
 		if(principal != null){
 			return "redirect:" + adminPath;
