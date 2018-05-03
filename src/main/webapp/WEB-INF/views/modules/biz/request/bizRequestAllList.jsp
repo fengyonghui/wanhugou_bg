@@ -147,6 +147,9 @@
 					<th>采购客户</th>
 				</c:if>
 				<th>期望收货时间</th>
+				<c:if test="${ship eq 'xs'}">
+					<th>收货地址</th>
+				</c:if>
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>更新人</th>
@@ -228,9 +231,16 @@
 					<td>
 							${orderHeader.customer.name}
 					</td>
+
 					<td>
 						<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
+					<c:if test="${ship eq 'xs'}">
+						<td>
+							${orderHeader.bizLocation.province.name}${orderHeader.bizLocation.city.name}
+							${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
+						</td>
+					</c:if>
 					<td>
 							<%--${orderHeader.remark}--%>
 					</td>
