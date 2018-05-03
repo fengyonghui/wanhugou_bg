@@ -84,6 +84,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>备货单号</th>
 				<th>采购中心</th>
 				<th>期望收货时间</th>
@@ -99,8 +100,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="requestHeader">
+		<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					<c:choose>
 						<c:when test="${fns:getUser().isAdmin()}">

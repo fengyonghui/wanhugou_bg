@@ -42,6 +42,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>会员名称</th>
 				<th>联系人姓名</th>
 				<th>联系人电话</th>
@@ -50,8 +51,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="user">
+		<c:forEach items="${page.list}" var="user" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td><a href="${ctx}/sys/office/form?id=${user.company.id}&source=contact_ck">
 						${user.company.name}</a>
 				</td>

@@ -35,6 +35,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>仓库名称</th>
 				<th>商品名称</th>
 				<th>商品编号</th>
@@ -47,8 +48,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="collectGoods">
+		<c:forEach items="${page.list}" var="collectGoods" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${collectGoods.invInfo.name}
 				</td>

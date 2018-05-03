@@ -42,6 +42,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>发货号</th>
 				<th>物流商</th>
 				<th>运费</th>
@@ -57,8 +58,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizInvoice">
+		<c:forEach items="${page.list}" var="bizInvoice" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>${bizInvoice.sendNumber}</td>
 				<td>${bizInvoice.logistics.name}</td>
 				<td>${bizInvoice.freight}</td>
