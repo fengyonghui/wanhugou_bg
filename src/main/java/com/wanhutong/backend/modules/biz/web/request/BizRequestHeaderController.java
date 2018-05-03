@@ -23,6 +23,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -62,7 +63,7 @@ public class BizRequestHeaderController extends BaseController {
 	@Autowired
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
+	private BizSkuInfoV2Service bizSkuInfoService;
 	@Autowired
 	private BizPoOrderReqService bizPoOrderReqService;
 	@Autowired
