@@ -103,6 +103,16 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(entity);
             List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
+            for (BizOrderDetail orderDetail : list) {
+                if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=null){
+                    if(orderDetail.getSuplyis().getId().equals(0) || orderDetail.getSuplyis().getId().equals(721)){
+                        Office office = new Office();
+                        office.setName("供货部");
+                        office.setId(orderDetail.getSuplyis().getId());
+                        orderDetail.setSuplyis(office);
+                    }
+                }
+            }
             entity.setTotalDetail(entity.getTotalDetail());
             entity.setOrderDetailList(list);
         }
