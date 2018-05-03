@@ -14,6 +14,7 @@ import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
@@ -57,6 +58,8 @@ public class BizRequestOrderController extends BaseController {
     private BizRequestDetailService bizRequestDetailService;
     @Autowired
     private BizSkuInfoService bizSkuInfoService;
+    @Autowired
+    private BizOrderAddressService bizOrderAddressService;
 
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
@@ -82,6 +85,9 @@ public class BizRequestOrderController extends BaseController {
             Set<Integer> set = new HashSet();
             List<BizOrderHeader> list = Lists.newArrayList();
             for (BizOrderHeader bizOrderHeader1 : orderHeaderPage.getList()) {
+                if(bizOrderHeader1.getBizLocation()!=null && bizOrderHeader1.getBizLocation().getId()!=null){
+                    bizOrderHeader1.setBizLocation(bizOrderAddressService.get(bizOrderHeader1.getBizLocation().getId()));
+                }
                 set.clear();
                 boolean flag = false;
                 BizOrderDetail bizOrderDetail = new BizOrderDetail();

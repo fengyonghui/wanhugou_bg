@@ -13,6 +13,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
@@ -71,6 +72,8 @@ public class BizRequestAllController {
     private BizLogisticsService bizLogisticsService;
     @Autowired
     private OfficeService officeService;
+    @Autowired
+    private BizOrderAddressService bizOrderAddressService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -126,6 +129,11 @@ public class BizRequestAllController {
             if (ship.equals("xs")) {
                 Page<BizOrderHeader> page = new Page<>(request, response);
                 page = bizOrderHeaderService.findPageForSendGoods(page, bizOrderHeader);
+                for (BizOrderHeader orderHeader : page.getList()) {
+                    if(orderHeader.getBizLocation()!=null && orderHeader.getBizLocation().getId()!=null){
+                        orderHeader.setBizLocation(bizOrderAddressService.get(orderHeader.getBizLocation().getId()));
+                    }
+                }
                 model.addAttribute("page", page);
             } else {
                 Page<BizRequestHeader> page = new Page<>(request, response);
