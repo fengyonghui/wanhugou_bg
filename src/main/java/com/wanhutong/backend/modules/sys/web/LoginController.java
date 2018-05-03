@@ -42,9 +42,6 @@ public class LoginController extends BaseController{
 	@Autowired
 	private SessionDAO sessionDAO;
 
-	private final static String VENDOR_DOMAIN = "192.168.1.69";
-	private final static String VENDOR_PRODUCT_NAME = "万户通供应商后台";
-
 	/**
 	 * 管理登录
 	 */
@@ -52,8 +49,7 @@ public class LoginController extends BaseController{
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Principal principal = UserUtils.getPrincipal();
 
-		String serverName = request.getServerName();
-		model.addAttribute("productName", VENDOR_DOMAIN.equalsIgnoreCase(serverName) ? VENDOR_PRODUCT_NAME : Global.getConfig("productName"));
+		model.addAttribute("productName", getProductName());
 
 //		// 默认页签模式
 //		String tabmode = CookieUtils.getCookie(request, "tabmode");
@@ -90,8 +86,7 @@ public class LoginController extends BaseController{
 	public String loginFail(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Principal principal = UserUtils.getPrincipal();
 
-		String serverName = request.getServerName();
-		model.addAttribute("productName", VENDOR_DOMAIN.equalsIgnoreCase(serverName) ? VENDOR_PRODUCT_NAME : Global.getConfig("productName"));
+		model.addAttribute("productName", getProductName());
 
 		// 如果已经登录，则跳转到管理首页
 		if(principal != null){
@@ -140,8 +135,10 @@ public class LoginController extends BaseController{
 	 */
 	@RequiresPermissions("user")
 	@RequestMapping(value = "${adminPath}")
-	public String index(HttpServletRequest request, HttpServletResponse response) {
+	public String index(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Principal principal = UserUtils.getPrincipal();
+
+		model.addAttribute("productName", getProductName());
 
 		// 登录成功后，验证码计算器清零
 		isValidateCodeLogin(principal.getLoginName(), false, true);
