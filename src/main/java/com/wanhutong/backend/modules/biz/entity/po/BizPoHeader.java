@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.entity.po;
 
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -53,6 +54,8 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Map<String,Integer> orderSourceMap;
 
 	private int isPrew = 1;
+
+	private CommonProcessEntity commonProcess;
 
 	public BizPoHeader() {
 		super();
@@ -253,5 +256,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setOrderSourceMap(Map<String, Integer> orderSourceMap) {
 		this.orderSourceMap = orderSourceMap;
+	}
+
+	public CommonProcessEntity getCommonProcess() {
+		return commonProcess;
+	}
+
+	public void setCommonProcess(CommonProcessEntity commonProcess) {
+		this.commonProcess = commonProcess;
 	}
 }

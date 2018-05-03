@@ -46,7 +46,6 @@
 				</form:select>
 			</li>
 			<li><label>订单来源：</label>
-
 				<form:select path="plateformInfo.id" class="input-medium">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getPlatformInfoList()}" itemLabel="name" itemValue="id" htmlEscape="false"/>
@@ -69,6 +68,7 @@
 				<th>订单状态</th>
 				<th>订单来源</th>
 				<th>创建时间</th>
+				<th>审核状态</th>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -105,9 +105,20 @@
 					${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+						${bizPoHeader.commonProcess.purchaseOrderProcess.name == null ? '未审核' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view"><td>
+				<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+					<c:if test="${(fn:contains(roleSet, bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+					&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '终止'
+					&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '完成'
+					}">
+						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
+					</c:if>
+				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit">
     				<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
 				</shiro:hasPermission>

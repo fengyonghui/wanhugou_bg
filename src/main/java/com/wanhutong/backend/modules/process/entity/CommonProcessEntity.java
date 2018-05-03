@@ -3,6 +3,8 @@
  */
 package com.wanhutong.backend.modules.process.entity;
 
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -20,16 +22,20 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private static final long serialVersionUID = 1L;
 	private String objectId;		// object_id
 	private String objectName;		// object_name
-	private String prevId;		// 前一个ID.起始为0
-	private String bizStatus;		// 处理结果 0:未处理 1:通过 2:驳回
+	private int prevId = 0;		// 前一个ID.起始为0
+	private int bizStatus = 0;		// 处理结果 0:未处理 1:通过 2:驳回
 	private String processor;		// 处理人
 	private String description;		// 描述
 	private String type;		// 类型, 对应JAVA中的枚举数据
-	private String nextType;		// 下一下类型
 	private Date createTime;		// 创建时间
-	private Date beginCreateTime;		// 开始 创建时间
-	private Date endCreateTime;		// 结束 创建时间
-	
+
+	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
+
+	/**
+	 * 前一个流程
+	 */
+	private CommonProcessEntity prevProcess;
+
 	public CommonProcessEntity() {
 		super();
 	}
@@ -57,20 +63,20 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	}
 
 	@Length(min=1, max=11, message="起始为0长度必须介于 1 和 11 之间")
-	public String getPrevId() {
+	public int getPrevId() {
 		return prevId;
 	}
 
-	public void setPrevId(String prevId) {
+	public void setPrevId(int prevId) {
 		this.prevId = prevId;
 	}
 	
-	@Length(min=1, max=4, message="处理结果 0:未处理 1:通过 2:驳回长度必须介于 1 和 4 之间")
-	public String getBizStatus() {
+	@Length(min=1, max=4, message="处理结果 0:未处理 1:通过 2:驳回 长度必须介于 1 和 4 之间")
+	public int getBizStatus() {
 		return bizStatus;
 	}
 
-	public void setBizStatus(String bizStatus) {
+	public void setBizStatus(int bizStatus) {
 		this.bizStatus = bizStatus;
 	}
 	
@@ -101,15 +107,6 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		this.type = type;
 	}
 	
-	@Length(min=1, max=11, message="下一下类型长度必须介于 1 和 11 之间")
-	public String getNextType() {
-		return nextType;
-	}
-
-	public void setNextType(String nextType) {
-		this.nextType = nextType;
-	}
-	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@NotNull(message="创建时间不能为空")
 	public Date getCreateTime() {
@@ -120,20 +117,36 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 		this.createTime = createTime;
 	}
 	
-	public Date getBeginCreateTime() {
-		return beginCreateTime;
+	public CommonProcessEntity getPrevProcess() {
+		return prevProcess;
 	}
 
-	public void setBeginCreateTime(Date beginCreateTime) {
-		this.beginCreateTime = beginCreateTime;
-	}
-	
-	public Date getEndCreateTime() {
-		return endCreateTime;
+	public void setPrevProcess(CommonProcessEntity prevProcess) {
+		this.prevProcess = prevProcess;
 	}
 
-	public void setEndCreateTime(Date endCreateTime) {
-		this.endCreateTime = endCreateTime;
+	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderProcess() {
+		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
-		
+
+	public enum AuditType {
+		/**
+		 * 通过
+		 */
+		PASS(1),
+		/**
+		 * 拒绝
+		 */
+		REJECT(2)
+		;
+		private int code;
+
+		public int getCode() {
+			return code;
+		}
+
+		AuditType(int code) {
+			this.code = code;
+		}
+	}
 }

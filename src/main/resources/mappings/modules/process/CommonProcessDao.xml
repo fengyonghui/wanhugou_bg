@@ -11,11 +11,20 @@
 		a.processor AS "processor",
 		a.description AS "description",
 		a.type AS "type",
-		a.next_type AS "nextType",
-		a.create_time AS "createTime"
+		a.create_time AS "createTime",
+		b.id AS "prevProcess.id",
+		b.object_id AS "prevProcess.objectId",
+		b.object_name AS "prevProcess.objectName",
+		b.prev_id AS "prevProcess.prevId",
+		b.biz_status AS "prevProcess.bizStatus",
+		b.processor AS "prevProcess.processor",
+		b.description AS "prevProcess.description",
+		b.type AS "prevProcess.type",
+		b.create_time AS "prevProcess.createTime"
 	</sql>
 	
 	<sql id="commonProcessEntityJoins">
+		LEFT JOIN common_process AS b on a.prev_id = b.id
 	</sql>
     
 	<select id="get" resultType="CommonProcessEntity">
@@ -57,9 +66,6 @@
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
 			</if>
-			<if test="nextType != null and nextType != ''">
-				AND a.next_type = #{nextType}
-			</if>
 			<if test="beginCreateTime != null and endCreateTime != null and beginCreateTime != '' and endCreateTime != ''">
 				AND a.create_time BETWEEN #{beginCreateTime} AND #{endCreateTime}
 			</if>
@@ -90,7 +96,7 @@
 		</choose>
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO common_process(
 			id,
 			object_id,
@@ -100,7 +106,6 @@
 			processor,
 			description,
 			type,
-			next_type,
 			create_time
 		) VALUES (
 			#{id},
@@ -111,7 +116,6 @@
 			#{processor},
 			#{description},
 			#{type},
-			#{nextType},
 			#{createTime}
 		)
 	</insert>
@@ -125,7 +129,6 @@
 			processor = #{processor},
 			description = #{description},
 			type = #{type},
-			next_type = #{nextType},
 			create_time = #{createTime}
 		WHERE id = #{id}
 	</update>

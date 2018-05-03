@@ -39,7 +39,7 @@ public abstract class ConfigGeneral {
 	/**
 	 * 新首页配置文件
 	 */
-	public static final ConfigWrapper<PurchaseOrderProcessConfig> INDEX_PAGE_CONFIG = new ConfigWrapper<>(
+	public static final ConfigWrapper<PurchaseOrderProcessConfig> PURCHASE_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PurchaseOrderProcessConfig.xml",new PurchaseOrderProcessConfig());
 
 

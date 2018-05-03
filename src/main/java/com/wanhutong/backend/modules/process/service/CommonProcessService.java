@@ -38,7 +38,7 @@ public class CommonProcessService extends CrudService<CommonProcessDao, CommonPr
 	}
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void save(CommonProcessEntity commonProcessEntity) {
 		super.save(commonProcessEntity);
 	}

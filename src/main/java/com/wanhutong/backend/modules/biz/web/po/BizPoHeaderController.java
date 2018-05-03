@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.web.po;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
@@ -25,17 +26,29 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +56,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 采购订单表Controller
@@ -73,11 +87,21 @@ public class BizPoHeaderController extends BaseController {
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private CommonProcessService commonProcessService;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
+
+
 	@ModelAttribute
 	public BizPoHeader get(@RequestParam(required=false) Integer id) {
 		BizPoHeader entity = null;
 		if (id!=null){
 			entity = bizPoHeaderService.get(id);
+			if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
+				entity.setCommonProcess(commonProcessService.get(entity.getCommonProcess().getId()));
+			}
+
 			BizPoDetail bizPoDetail=new BizPoDetail();
 			bizPoDetail.setPoHeader(entity);
 			List<BizPoDetail> poDetailList=bizPoDetailService.findList(bizPoDetail);
@@ -188,14 +212,23 @@ public class BizPoHeaderController extends BaseController {
 	@RequiresPermissions("biz:po:bizPoHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader); 
+		Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
+		List<Role> roleList = UserUtils.getUser().getRoleList();
+		Set<String> roleSet = Sets.newHashSet();
+		for(Role r : roleList) {
+			RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+			if (parse != null) {
+				roleSet.add(parse.name());
+			}
+		}
+		model.addAttribute("roleSet", roleSet);
 		model.addAttribute("page", page);
 		return "modules/biz/po/bizPoHeaderList";
 	}
 
 	@RequiresPermissions("biz:po:bizPoHeader:view")
 	@RequestMapping(value = "form")
-	public String form(BizPoHeader bizPoHeader, Model model, String prewStatus) {
+	public String form(BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
 		if(bizPoHeader.getDeliveryOffice()!=null && bizPoHeader.getDeliveryOffice().getId()!=null && bizPoHeader.getDeliveryOffice().getId()!=0){
 			Office office=officeService.get(bizPoHeader.getDeliveryOffice().getId());
 			if("8".equals(office.getType())){
@@ -204,16 +237,90 @@ public class BizPoHeaderController extends BaseController {
 				bizPoHeader.setDeliveryStatus(1);
 			}
 		}
+		if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() == null) {
+			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(BizPoHeaderService.DEFAULT_START_PROCESS);
+			CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+			commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
+			commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+			commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+			commonProcessService.save(commonProcessEntity);
+			bizPoHeader.setCommonProcess(commonProcessEntity);
+			bizPoHeaderService.updatePoHeaderProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
+		}
+		if ("audit".equalsIgnoreCase(type)) {
+			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+		}
+		List<Role> roleList = UserUtils.getUser().getRoleList();
+		Set<String> roleSet = Sets.newHashSet();
+		for(Role r : roleList) {
+			RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+			if (parse != null) {
+				roleSet.add(parse.name());
+			}
+		}
+		model.addAttribute("roleSet", roleSet);
+
 		model.addAttribute("bizPoHeader", bizPoHeader);
+		model.addAttribute("type", type);
 		model.addAttribute("prewStatus", prewStatus);
 		return "modules/biz/po/bizPoHeaderForm";
 	}
+
+	@RequiresPermissions("biz:po:bizPoHeader:audit")
+	@RequestMapping(value = "audit")
+	@ResponseBody
+	public String audit(int id, String currentType, int auditType, String description) {
+		BizPoHeader bizPoHeader = bizPoHeaderService.get(id);
+		CommonProcessEntity cureentProcessEntity = bizPoHeader.getCommonProcess();
+		if (cureentProcessEntity == null) {
+			return "操作失败,当前订单无审核状态!";
+		}
+		cureentProcessEntity = commonProcessService.get(bizPoHeader.getCommonProcess().getId());
+		if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+			LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", id, currentType);
+			return "操作失败,当前审核状态异常!";
+		}
+		// 当前流程
+		PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(currentType));
+		// 下一流程
+		PurchaseOrderProcessConfig.PurchaseOrderProcess nextProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+		if (nextProcess == null) {
+			return "操作失败,当前流程已经结束!";
+		}
+
+
+		User user = UserUtils.getUser();
+		RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+		if (!user.isAdmin() && !user.getRoleList().contains(roleEnNameEnum)) {
+			return "操作失败,该用户没有权限!";
+		}
+
+		if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && StringUtils.isBlank(description)) {
+			return "请输入驳回理由!";
+		}
+
+		cureentProcessEntity.setBizStatus(auditType);
+		cureentProcessEntity.setProcessor(user.getId().toString());
+		cureentProcessEntity.setDescription(description);
+		commonProcessService.save(cureentProcessEntity);
+
+		CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+		nextProcessEntity.setObjectId(bizPoHeader.getId().toString());
+		nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+		nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+		nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+		commonProcessService.save(nextProcessEntity);
+		bizPoHeaderService.updatePoHeaderProcessId(bizPoHeader.getId(), nextProcessEntity.getId());
+		return "操作成功!";
+	}
+
 
 	@RequiresPermissions("biz:po:bizPoHeader:edit")
 	@RequestMapping(value = "save")
 	public String save(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus) {
 		if (!beanValidator(model, bizPoHeader)){
-			return form(bizPoHeader, model, prewStatus);
+			return form(bizPoHeader, model, prewStatus, null);
 		}
 		int deOfifceId=0;
 		if(bizPoHeader.getDeliveryOffice()!=null && bizPoHeader.getDeliveryOffice().getId()!=null){
@@ -238,7 +345,7 @@ public class BizPoHeaderController extends BaseController {
 	@RequestMapping(value = "savePoHeader")
 	public String savePoHeader(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus) {
 		if (!beanValidator(model, bizPoHeader)){
-			return form(bizPoHeader, model, prewStatus);
+			return form(bizPoHeader, model, prewStatus, null);
 		}
 		bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
 		bizPoHeaderService.savePoHeader(bizPoHeader);

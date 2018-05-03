@@ -3,47 +3,35 @@
  */
 package com.wanhutong.backend.modules.biz.service.po;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.dao.po.BizPoDetailDao;
+import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
-import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -70,6 +58,16 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
 	private BizRequestHeaderService bizRequestHeaderService;
+
+	/**
+	 * 默认表名
+	 */
+	public static final String DATABASE_TABLE_NAME = "biz_po_header";
+
+	/**
+	 * 默认起始流程序号
+	 */
+	public static final int DEFAULT_START_PROCESS = 1;
 
 
 	public BizPoHeader get(Integer id) {
@@ -349,8 +347,19 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		super.save(bizPoHeader);
 	}
 	@Transactional(readOnly = false)
+	@Override
 	public void delete(BizPoHeader bizPoHeader) {
 		super.delete(bizPoHeader);
 	}
-	
+
+	/**
+	 * 更新流程ID
+	 * @param headerId
+	 * @param processId
+	 * @return
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public int updatePoHeaderProcessId(int headerId, int processId) {
+		return dao.updatePoHeaderProcessId(headerId, processId);
+	}
 }

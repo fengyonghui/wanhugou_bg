@@ -22,11 +22,21 @@
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		so.name AS "vendOffice.name"
+		so.name AS "vendOffice.name",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		process.create_time AS "commonProcess.createTime"
 	</sql>
 	
 	<sql id="bizPoHeaderJoins">
 		LEFT JOIN  sys_office so on so.id=a.vend_id
+		LEFT JOIN  common_process process on process.id = a.process_id
 	</sql>
     
 	<select id="get" resultType="BizPoHeader">
@@ -232,6 +242,12 @@
 		UPDATE biz_po_header SET 
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
+	</update>
+
+	<update id="updatePoHeaderProcessId">
+		UPDATE biz_po_header SET
+			process_id  = #{processId}
+		WHERE id = #{headerId}
 	</update>
 	
 </mapper>

@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.po;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 采购订单表DAO接口
@@ -14,5 +15,6 @@ import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
  */
 @MyBatisDao
 public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
-	
+
+    int updatePoHeaderProcessId(@Param("headerId")Integer headerId, @Param("processId") Integer processId);
 }
