@@ -85,6 +85,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>商品图片</th>
 				<th>商品名称</th>
 				<th>产品名称</th>
@@ -107,8 +108,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizOpShelfSku">
+		<c:forEach items="${page.list}" var="bizOpShelfSku" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					<img src="${bizOpShelfSku.productInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				</td>

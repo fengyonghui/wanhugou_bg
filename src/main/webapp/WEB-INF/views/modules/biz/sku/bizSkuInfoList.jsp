@@ -49,6 +49,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>商品图片</th>
 				<th>商品名称</th>
 				<th>商品类型</th>
@@ -66,8 +67,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizSkuInfo">
+		<c:forEach items="${page.list}" var="bizSkuInfo" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 						<img src="${bizSkuInfo.productInfo.imgUrl}" width="80px" height="80px"/>
 				</td>

@@ -39,6 +39,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>商品名称</th>
 				<th>商品货号</th>
 				<th>商品修改时间</th>
@@ -51,8 +52,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizSkuViewLog">
+		<c:forEach items="${page.list}" var="bizSkuViewLog" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${bizSkuViewLog.skuInfo.name}
 				</td>

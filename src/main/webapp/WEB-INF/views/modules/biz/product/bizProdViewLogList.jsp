@@ -48,6 +48,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>货架</th>
 				<th>采购中心</th>
 				<th>产品名称</th>
@@ -57,8 +58,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizProdViewLog">
+		<c:forEach items="${page.list}" var="bizProdViewLog" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${bizProdViewLog.opShelfInfo.name}
 				</td>
