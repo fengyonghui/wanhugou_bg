@@ -70,6 +70,15 @@
 			<li><label>品牌名称：</label>
 				<form:input id="cpBr" path="brandName" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
+			<li><label>创建日期：</label>
+				<input name="createDateStart" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizProductInfo.createDateStart}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="createDateEnd" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizProductInfo.createDateEnd}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -86,6 +95,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>序号</th>
 				<th>产品图片</th>
 				<th>产品品类</th>
 				<th>产品名称</th>
@@ -96,13 +106,14 @@
 				<th>供应商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
-				
+				<th>创建时间</th>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizProductInfo">
+		<c:forEach items="${page.list}" var="bizProductInfo" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td><img src="${bizProductInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				<td>
 					${bizProductInfo.bizVarietyInfo.name}
@@ -130,6 +141,9 @@
 				</td>
 				<td>
 					${bizProductInfo.maxPrice}
+				</td>
+				<td>
+					<fmt:formatDate value="${bizProductInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit">
 					<td>
