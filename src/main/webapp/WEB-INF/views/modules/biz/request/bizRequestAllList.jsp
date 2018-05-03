@@ -14,6 +14,16 @@
                     choose.attr('checked',false);
                 }
             });
+            $("#requestShExport").click(function(){
+				top.$.jBox.confirm("确认要导出备货单收货数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/listExport");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
 		});
 		function saveOrderIds() {
             if($("input[title='orderIds']:checked").length <= 0){
@@ -33,7 +43,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${source eq 'sh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}">收货清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&ship=${ship}">收货清单列表</a></li>
 		</c:if>
 		<c:if test="${source eq 'kc'}">
 			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&bizStatu=${bizStatu}&ship=${ship}">供货清单列表</a></li>
@@ -63,6 +73,7 @@
 					</form:select>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+				<li class="btns"><input id="requestShExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<li class="clearfix"></li>
 			</ul>
 		</form:form>
@@ -105,6 +116,7 @@
 					</c:if>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+				<li class="btns"><input id="requestShExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
 

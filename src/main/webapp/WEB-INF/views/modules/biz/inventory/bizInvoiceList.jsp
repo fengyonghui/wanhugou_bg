@@ -6,7 +6,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+			$("#invoiceExport").click(function(){
+				top.$.jBox.confirm("确认要导出订单发货信息数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/exportList?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -24,6 +33,8 @@
 	<form:form id="searchForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<input id="pageSize" name="ship" type="hidden" value="${bizInvoice.ship}"/>
+		<input id="pageNo" name="bizStatus" type="hidden" value="${bizInvoice.bizStatus}"/>
 		<ul class="ul-form">
 			<li><label>发货单号：</label>
 				<form:input path="sendNumber" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -35,6 +46,7 @@
 				<form:input path="carrier" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="invoiceExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
