@@ -60,6 +60,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>订单编号</th>
 				<th>供应商</th>
 				<th>订单总价</th>
@@ -73,8 +74,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizPoHeader">
+		<c:forEach items="${page.list}" var="bizPoHeader" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">
 					${bizPoHeader.orderNum}
 				</a></td>
