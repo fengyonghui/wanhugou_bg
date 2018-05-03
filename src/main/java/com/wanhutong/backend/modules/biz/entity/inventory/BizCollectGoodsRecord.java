@@ -46,6 +46,15 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 	 * 变更记录
 	 * */
 	private String changeState;
+	/**
+	 * 变更记录 列表查询字段
+	 * */
+	private String skuInfoName;
+	private String skuInfoPartNo;
+	private String invInfoName;
+	private Date createDateStart;
+	private Date createDateEnd;
+	private String skuInfoItemNo;
 
 	public BizCollectGoodsRecord() {
 		super();
@@ -176,5 +185,53 @@ public class BizCollectGoodsRecord extends DataEntity<BizCollectGoodsRecord> {
 
 	public void setChangeState(String changeState) {
 		this.changeState = changeState;
+	}
+
+	public String getSkuInfoName() {
+		return skuInfoName;
+	}
+
+	public void setSkuInfoName(String skuInfoName) {
+		this.skuInfoName = skuInfoName;
+	}
+
+	public String getSkuInfoPartNo() {
+		return skuInfoPartNo;
+	}
+
+	public void setSkuInfoPartNo(String skuInfoPartNo) {
+		this.skuInfoPartNo = skuInfoPartNo;
+	}
+
+	public String getInvInfoName() {
+		return invInfoName;
+	}
+
+	public void setInvInfoName(String invInfoName) {
+		this.invInfoName = invInfoName;
+	}
+
+	public Date getCreateDateStart() {
+		return createDateStart;
+	}
+
+	public void setCreateDateStart(Date createDateStart) {
+		this.createDateStart = createDateStart;
+	}
+
+	public Date getCreateDateEnd() {
+		return createDateEnd;
+	}
+
+	public void setCreateDateEnd(Date createDateEnd) {
+		this.createDateEnd = createDateEnd;
+	}
+
+	public String getSkuInfoItemNo() {
+		return skuInfoItemNo;
+	}
+
+	public void setSkuInfoItemNo(String skuInfoItemNo) {
+		this.skuInfoItemNo = skuInfoItemNo;
 	}
 }
