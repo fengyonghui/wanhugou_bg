@@ -211,6 +211,8 @@
 		sku.item_no AS "skuInfoItemNo",
 		sku.name AS "skuInfo.name",
 		sku. NAME AS "skuInfoName",
+		a.order_id AS "bizOrderHeader.id",
+		a.request_id AS "bizRequestHeader.id",
 		a.order_num as "orderNum",
 		a.inv_old_num as "invOldNum",
 		a.send_num as "sendNum",
@@ -220,7 +222,6 @@
 		su.name AS "createBy.name",
 		a.cust_id AS "customer.id",
 		s.name AS "customer.name",
-		a.order_id AS "bizOrderHeader.id",
 		a.status as "delFlag"
 		from biz_send_goods_record a
 		LEFT JOIN biz_inventory_info inv ON inv.id = a.inv_id
@@ -241,6 +242,8 @@
 		sku.item_no AS "skuInfoItemNo",
 		sku.name AS "skuInfo.name",
 		sku. NAME AS "skuInfoName",
+		b.order_id AS "bizOrderHeader.id",
+		b.request_id AS "bizRequestHeader.id",
 		b.order_num as "orderNum",
 		b.inv_old_num as "invOldNum",
 		b.receive_num as "receiveNum",
@@ -250,7 +253,6 @@
 		su.name AS "createBy.name",
 		null,
 		null,
-		b.order_id AS "bizOrderHeader.id",
 		b.status as "delFlag"
 		from biz_collect_goods_record b
 		LEFT JOIN biz_inventory_info inv ON b.inv_id = inv.id

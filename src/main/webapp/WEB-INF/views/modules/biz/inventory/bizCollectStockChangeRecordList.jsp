@@ -86,8 +86,15 @@
 				<td>
 						${collectGoods.skuInfo.partNo}
 				</td>
-				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizOrderHeader.id}&source=ghs">
-						${collectGoods.orderNum}</a>
+				<td>
+					<c:if test="${fn:contains(collectGoods.orderNum,'RE')}">
+						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizRequestHeader.id}&source=gh">
+								${collectGoods.orderNum}</a>
+					</c:if>
+					<c:if test="${!fn:contains(collectGoods.orderNum,'RE')}">
+						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizOrderHeader.id}&source=ghs">
+								${collectGoods.orderNum}</a>
+					</c:if>
 				</td>
 				<td>
 					<c:if test="${collectGoods.changeState !=null && collectGoods.changeState eq '出库记录'}">
