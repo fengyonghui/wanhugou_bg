@@ -110,11 +110,7 @@
 		FROM biz_sku_info a
 		<include refid="bizSkuInfoJoins"/>
 		<where>
-			1=1
-			<if test="dataStatus==null ">
-				AND a.status = #{DEL_FLAG_NORMAL}
-			</if>
-
+			a.status = #{DEL_FLAG_NORMAL}
 			<if test="id != null and id != ''">
 				AND a.id =#{id}
 			</if>
@@ -415,6 +411,11 @@
 	<update id="delete">
 		UPDATE biz_sku_info SET 
 			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	<update id="recovery">
+		UPDATE biz_sku_info SET
+		status = #{DEL_FLAG_NORMAL}
 		WHERE id = #{id}
 	</update>
 

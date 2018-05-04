@@ -284,4 +284,9 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param 0428
      * */
     List<BizOrderHeader> headerFindList(BizOrderHeader bizOrderHeader);
+
+    /**
+     * 用于C端订单列表
+     * */
+    public List<BizOrderHeader> cendfindList(BizOrderHeader bizOrderHeader);
 }

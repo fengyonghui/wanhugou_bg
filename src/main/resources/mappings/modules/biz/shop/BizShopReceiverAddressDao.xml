@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.shop.BizShopReceiverAddressDao">
+    
+	<sql id="bizShopReceiverAddressColumns">
+		a.id AS "id",
+		a.user_id AS "user.id",
+		a.addr_id AS "bizLocation.id",
+		a.receiver AS "receiver",
+		a.phone AS "phone",
+		a.default_status AS "defaultStatus",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		u2.name AS "user.name",
+		su.name as "createBy.name",
+		su.name as "updateBy.name",
+		c.province_id as "bizLocation.province.id",
+		province.name as "bizLocation.province.name",
+		c.city_id as "bizLocation.city.id",
+		city.name as "bizLocation.city.name",
+		c.region_id as "bizLocation.region.id",
+		reg.name as "bizLocation.region.name",
+		c.address as "bizLocation.address",
+		c.pcr_name AS "bizLocation.pcrName"
+	</sql>
+	
+	<sql id="bizShopReceiverAddressJoins">
+		LEFT JOIN sys_user u2 ON u2.id = a.user_id
+		left join sys_user su on a.create_id=su.id
+		<!-- 收货地址 -->
+		LEFT JOIN common_location c ON c.id=a.addr_id
+		LEFT JOIN sys_region province ON c.province_id = province.id
+		LEFT JOIN sys_region city ON c.city_id = city.id
+		LEFT JOIN sys_region reg ON c.region_id = reg.id
+	</sql>
+    
+	<select id="get" resultType="BizShopReceiverAddress">
+		SELECT 
+			<include refid="bizShopReceiverAddressColumns"/>
+		FROM biz_shop_receiver_address a
+		<include refid="bizShopReceiverAddressJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizShopReceiverAddress">
+		SELECT 
+			<include refid="bizShopReceiverAddressColumns"/>
+		FROM biz_shop_receiver_address a
+		<include refid="bizShopReceiverAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="user != null and user.name != null and user.name != ''">
+				AND u2.name like
+				<if test="dbName == 'oracle'">'%'||#{user.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{user.name},'%')</if>
+			</if>
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id =#{user.id}
+			</if>
+			<if test="receiver != null and receiver != ''">
+				AND a.receiver = #{receiver}
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone = #{phone}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		order by a.update_time desc
+	</select>
+	
+	<select id="findAllList" resultType="BizShopReceiverAddress">
+		SELECT 
+			<include refid="bizShopReceiverAddressColumns"/>
+		FROM biz_shop_receiver_address a
+		<include refid="bizShopReceiverAddressJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_shop_receiver_address(
+			id,
+			user_id,
+			addr_id,
+			receiver,
+			phone,
+			default_status,
+			status,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{user.id},
+			#{bizLocation.id},
+			#{receiver},
+			#{phone},
+			#{defaultStatus},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_shop_receiver_address SET 	
+			user_id = #{user.id},
+			addr_id = #{bizLocation.id},
+			receiver = #{receiver},
+			phone = #{phone},
+			default_status = #{defaultStatus},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_shop_receiver_address SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

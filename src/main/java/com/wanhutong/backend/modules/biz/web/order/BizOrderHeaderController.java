@@ -9,12 +9,9 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.utils.excel.ExportExcel;
-import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
@@ -37,7 +34,6 @@ import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +45,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,6 +98,16 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(entity);
             List<BizOrderDetail> list = bizOrderDetailService.findList(bizOrderDetail);
+            for (BizOrderDetail orderDetail : list) {
+                if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=null){
+                    if(orderDetail.getSuplyis().getId().equals(0) || orderDetail.getSuplyis().getId().equals(721)){
+                        Office office = new Office();
+                        office.setName("供货部");
+                        office.setId(orderDetail.getSuplyis().getId());
+                        orderDetail.setSuplyis(office);
+                    }
+                }
+            }
             entity.setTotalDetail(entity.getTotalDetail());
             entity.setOrderDetailList(list);
         }
@@ -190,7 +195,7 @@ public class BizOrderHeaderController extends BaseController {
             return form(bizOrderHeader, model, null, null);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
-            bizOrderHeader.getPlatformInfo().setId(1);
+            bizOrderHeader.getPlatformInfo().setId(6);
         }
         bizOrderHeaderService.save(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
@@ -201,7 +206,6 @@ public class BizOrderHeaderController extends BaseController {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?oneOrder=" + oneOrder;
-        //	return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderDetail/form?orderHeader.id="+orId+"&orderHeader.oneOrder="+oneOrder;
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
@@ -210,6 +214,10 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "删除订单信息成功");
+        String a="cendDelete";
+        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(a)){
+            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
+        }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
@@ -220,6 +228,10 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "恢复订单信息成功");
+        String a="cendRecover";
+        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(a)){
+            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
+        }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
 
@@ -436,14 +448,23 @@ public class BizOrderHeaderController extends BaseController {
      */
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "orderHeaderExport", method = RequestMethod.POST)
-    public String orderHeaderExportFile(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public String orderHeaderExportFile(BizOrderHeader bizOrderHeader,String cendExportbs, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        String a="cend_listPage";
         try {
             DecimalFormat df = new DecimalFormat();
             BizOrderDetail orderDetail = new BizOrderDetail();
             BizPayRecord bizPayRecord = new BizPayRecord();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-            List<BizOrderHeader> pageList = bizOrderHeaderService.findList(bizOrderHeader);
+            List<BizOrderHeader> pageList =null;
+            if(cendExportbs!=null && cendExportbs.equals(a)) {
+                //C端导出
+                bizOrderHeader.setDataStatus("filter");
+                Page<BizOrderHeader> bizOrderHeaderPage = bizOrderHeaderService.cendfindPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+                pageList = bizOrderHeaderPage.getList();
+            }else{
+                pageList = bizOrderHeaderService.findList(bizOrderHeader);
+            }
             //1订单
             List<List<String>> data = new ArrayList<List<String>>();
             //2商品
@@ -463,8 +484,6 @@ public class BizOrderHeaderController extends BaseController {
                             o.setOrderDetailList(list);
                             dou+=d.getBuyPrice()*d.getOrdQty();
                             List<String> detailListData = new ArrayList();
-                            //ID
-                            //                        detailListData.add(String.valueOf(d.getId()));
                             //订单编号
                             detailListData.add(String.valueOf(d.getOrderHeader().getOrderNum()));
                             //商品名称
@@ -493,8 +512,6 @@ public class BizOrderHeaderController extends BaseController {
                     //地址查询
                     o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
                     List<String> rowData = new ArrayList();
-                    //id
-                    //                rowData.add(String.valueOf(o.getId()));
                     //订单编号
                     rowData.add(String.valueOf(o.getOrderNum()));
                     //描述
@@ -610,8 +627,6 @@ public class BizOrderHeaderController extends BaseController {
                         //地址查询
                         o.setBizLocation(bizOrderAddressService.get(o.getBizLocation().getId()));
                         List<String> rowData = new ArrayList();
-                        //id
-                        //                rowData.add(String.valueOf(o.getId()));
                         //订单编号
                         rowData.add(String.valueOf(o.getOrderNum()));
                         //描述
@@ -684,7 +699,6 @@ public class BizOrderHeaderController extends BaseController {
                                 break;
                             }
                         }
-
                         //支付类型名称
                         rowData.add(String.valueOf(p.getPayTypeName()));
                         //业务流水号
@@ -697,29 +711,6 @@ public class BizOrderHeaderController extends BaseController {
                         data.add(rowData);
                     });
                 }
-                //订单来源
-//                rowData.add(String.valueOf(o.getPlatformInfo().getName()));
-//                if (o.getBizLocation() != null) {
-//                    //收货人
-//                    rowData.add(String.valueOf(o.getBizLocation().getReceiver()));
-//                    //联系电话
-//                    rowData.add(String.valueOf(o.getBizLocation().getPhone()));
-//                    //订单收货地址
-//                    rowData.add(String.valueOf(o.getBizLocation().getProvince().getName() + o.getBizLocation().getCity().getName() +
-//                            o.getBizLocation().getRegion().getName() + o.getBizLocation().getAddress()));
-//                } else {
-//                    rowData.add("");
-//                    rowData.add("");
-//                    rowData.add("");
-//                }
-//                //创建人
-//                rowData.add(String.valueOf(o.getCreateBy().getName()));
-//                //创建时间
-//                rowData.add(String.valueOf(sdf.format(o.getCreateDate())));
-//                //更新人
-//                rowData.add(String.valueOf(o.getUpdateBy().getName()));
-//                //更新时间
-//                rowData.add(String.valueOf(sdf.format(o.getUpdateDate())));
             }
             String[] headers = {"订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价","商品工厂总价", "调整金额", "运费",
                     "应付金额", "已收货款", "尾款信息", "利润", "发票状态", "业务状态","支付类型名称","业务流水号","支付金额","交易时间"};
@@ -735,9 +726,90 @@ public class BizOrderHeaderController extends BaseController {
             workbook.dispose();
             return null;
         } catch (Exception e) {
-            e.printStackTrace();
+           e.printStackTrace();
             addMessage(redirectAttributes, "导出订单数据失败！失败信息：" + e.getMessage());
+        }
+        if(cendExportbs!=null && cendExportbs.equals(a)){
+            //跳转C端列表
+            return "redirect:" + adminPath + "/biz/order/bizOrderHeader/cendList";
         }
         return "redirect:" + adminPath + "/biz/order/bizOrderHeader/";
     }
+
+    /**
+     * C端订单列表
+     * */
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = "cendList")
+    public String cendList(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        Page<BizOrderHeader> page = bizOrderHeaderService.cendfindPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        model.addAttribute("page", page);
+        return "modules/biz/order/bizOrderHeaderCendList";
+    }
+
+    /**
+     * C端订单编辑
+     * */
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = "cendform")
+    public String cendform(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
+        if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
+            Office office = new Office();
+            User user = systemService.getUser(bizOrderHeader.getCustomer().getId());
+            office.setId(user.getId());
+            office.setName(user.getName());
+            bizOrderHeader.setCustomer(office);
+        }
+        BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
+        if (bizOrderHeader.getId() != null) {
+            Double totalDetail = bizOrderHeaderTwo.getTotalDetail();
+            Double totalExp = bizOrderHeaderTwo.getTotalExp();
+            Double freight = bizOrderHeaderTwo.getFreight();
+            Double orderHeaderTotal = totalDetail + totalExp + freight;
+            //cendForm页面显示待支付总价
+            bizOrderHeader.setTobePaid(orderHeaderTotal - bizOrderHeaderTwo.getReceiveTotal());
+            //不可编辑标识符
+            String a="editable";
+            String b="details";
+            if (orderNoEditable != null && orderNoEditable.equals(a)) {
+                //待支付cendForm页面不能修改
+                bizOrderHeaderTwo.setOrderNoEditable(a);
+            }
+            if (orderDetails != null && orderDetails.equals(b)) {
+                //查看详情cendForm页面不能修改
+                bizOrderHeaderTwo.setOrderDetails(b);
+            }
+            BizOrderAddress bizOrderAddress = new BizOrderAddress();
+            bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
+            List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
+            if(list.size()!=0){
+                for (BizOrderAddress orderAddress : list) {
+    //				    收货地址
+                    if (orderAddress.getType() == 1) {
+                        model.addAttribute("orderAddress", orderAddress);
+                    }
+                }
+            }
+        }
+        model.addAttribute("entity", bizOrderHeader);
+        return "modules/biz/order/bizOrderHeaderCendForm";
+    }
+
+    /**
+     * C端订单保存
+     * */
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "cendSave")
+    public String cendSave(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        if (!beanValidator(model, bizOrderHeader)) {
+            return cendform(bizOrderHeader, model, null, null);
+        }
+        if (bizOrderHeader.getPlatformInfo() == null) {
+            bizOrderHeader.getPlatformInfo().setId(6);
+        }
+        bizOrderHeaderService.CendorderSave(bizOrderHeader);
+        addMessage(redirectAttributes, "保存订单信息成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
+    }
+
 }
