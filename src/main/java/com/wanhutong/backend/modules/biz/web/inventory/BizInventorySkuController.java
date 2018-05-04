@@ -361,8 +361,6 @@ public class BizInventorySkuController extends BaseController {
             List<List<String>> data = new ArrayList<List<String>>();
             invList.forEach(tory -> {
                 List<String> rowData = new ArrayList();
-                //ID
-                rowData.add(String.valueOf(tory.getId()));
                 Dict dict = new Dict();
                 dict.setDescription("库存中SKU类型");
                 dict.setType("inv_type");
@@ -429,7 +427,7 @@ public class BizInventorySkuController extends BaseController {
                 rowData.add(String.valueOf(sdf.format(tory.getUpdateDate())));
                 data.add(rowData);
             });
-            String[] toryHeads = {"ID", "库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "供应商", "库存数量", "销售订单数量", "调入数量",
+            String[] toryHeads = {"库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "供应商", "库存数量", "销售订单数量", "调入数量",
                     "调出数量", "创建人", "创建时间", "更新人", "更新时间"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
