@@ -23,6 +23,7 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -227,5 +228,23 @@ public class BizOpShelfInfoController extends BaseController {
 			return null;
 		}
 
+	}
+
+	/**
+	 *C端上下架 货架选择
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
+	@RequestMapping(value = "cendFindShelf")
+	public BizOpShelfInfo cendFindShelf(BizOpShelfInfo bizOpShelfInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+		User user= UserUtils.getUser();
+		String supplierId = DictUtils.getDictValue("微店", "biz_opshel_cend", "");
+		bizOpShelfInfo.setId(Integer.parseInt(supplierId));
+		if(user.isAdmin()){
+			return bizOpShelfInfoService.get(bizOpShelfInfo);
+		}else {
+			bizOpShelfInfo.getSqlMap().put("shelfInfo", BaseService.dataScopeFilter(user, "so", "s"));
+			return bizOpShelfInfoService.get(bizOpShelfInfo);
+		}
 	}
 }

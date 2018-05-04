@@ -18,13 +18,17 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/category/bizCategoryInfo/list?cid=${bizCategoryInfo.parentId}">商品类别列表</a></li>
+		<li class="active"><a href="${ctx}/biz/category/bizCategoryInfo/list?id=${bizCategoryInfo.parentId}&parentIds=${bizCategoryInfo.parentIds}&cid=${bizCategoryInfo.id}">商品类别列表</a></li>
 		<shiro:hasPermission name="biz:category:bizCategoryInfo:edit"><li><a href="${ctx}/biz/category/bizCategoryInfo/form?parent.id=${bizCategoryInfo.cid}">商品类别添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCategoryInfo" action="${ctx}/biz/category/bizCategoryInfo/list" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<form:hidden path="parentIds"/>
 		<ul class="ul-form">
+			<%--<li><label>父ID：</label>--%>
+				<%--<form:input path="pId" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
+			<%--</li>--%>
 			<li><label>分类名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
@@ -37,6 +41,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+
 				<th>分类名称</th>
 				<th>分类描述</th>
 				<th>创建人</th>
@@ -48,6 +53,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizCategoryInfo">
 			<tr>
+
 				<td><a href="${ctx}/biz/category/bizCategoryInfo/form?id=${bizCategoryInfo.id}">
 						${bizCategoryInfo.name}</a>
 				</td>

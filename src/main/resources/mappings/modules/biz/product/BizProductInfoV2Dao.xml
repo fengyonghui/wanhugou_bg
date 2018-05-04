@@ -92,10 +92,7 @@
 		FROM biz_product_info a
 		<include refid="bizProductInfoJoins"/>
 		<where>
-			1=1
-			<if test="dataStatus==null">
-			 AND a.status = #{DEL_FLAG_NORMAL}
-			</if>
+			  a.status = #{DEL_FLAG_NORMAL}
 			<if test="bizVarietyInfo != '' and bizVarietyInfo != null and  bizVarietyInfo.name != ''">
 				AND vi.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{bizVarietyInfo.name}||'%'</if>
@@ -162,7 +159,6 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -263,7 +259,7 @@
 	
 	<update id="delete">
 		UPDATE biz_product_info SET 
-			status = #{delFlag}
+			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 

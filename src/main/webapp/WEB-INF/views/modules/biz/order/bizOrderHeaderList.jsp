@@ -253,8 +253,10 @@
 						</c:if>
 					</c:when>
 					<c:otherwise>
-						<%--<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">--%>
-							<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>--%>
+						<%--<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">--%>
+							<%--<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">--%>
+								<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>--%>
+							<%--</c:if>--%>
 						<%--</c:if>--%>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
@@ -268,7 +270,6 @@
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
 					<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
 				</c:if>
-
 			</td></shiro:hasPermission>
 		</tr>
 	</c:forEach>

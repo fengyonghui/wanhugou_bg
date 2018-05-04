@@ -178,21 +178,16 @@
 				<%--</td>--%>
 
                 <shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
-					<c:if test="${bizOpShelfSku.delFlag!=null && bizOpShelfSku.delFlag!=0}">
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
-						<c:choose>
-							<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
-								<a href="${ctx}/biz/shelf/bizOpShelfSku/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
-							</c:when>
-							<c:otherwise>
-								<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
-							</c:otherwise>
-						</c:choose>
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
-					</c:if>
-					<c:if test="${bizOpShelfSku.delFlag!=null && bizOpShelfSku.delFlag==0}">
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/recovery?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要恢复该上架商品吗？', this.href)">恢复</a>
-					</c:if>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
+					<c:choose>
+						<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
+						    <a href="${ctx}/biz/shelf/bizOpShelfSku/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
+						</c:when>
+						<c:otherwise>
+							<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
+						</c:otherwise>
+					</c:choose>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

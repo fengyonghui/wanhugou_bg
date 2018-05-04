@@ -70,16 +70,8 @@ public class BizCategoryInfoService extends TreeService<BizCategoryInfoDao, BizC
 	@Transactional(readOnly = true)
 	public List<BizCategoryInfo> findList(BizCategoryInfo bizCategoryInfo){
 		if(bizCategoryInfo != null){
-			if(bizCategoryInfo.getParentIds()!=null && !bizCategoryInfo.getParentIds().equals("undefined")){
-				bizCategoryInfo.setParentIds(bizCategoryInfo.getParentIds()+bizCategoryInfo.getCid()+","+"%");
-			}else{
-				bizCategoryInfo.setParentIds(null);
-			}
-			List<BizCategoryInfo> byParentIdsLike = dao.findByParentIdsLike(bizCategoryInfo);
-			if(byParentIdsLike.size()==0){
-				byParentIdsLike.add(dao.get(bizCategoryInfo.getCid()));
-			}
-			return byParentIdsLike;
+			bizCategoryInfo.setParentIds(bizCategoryInfo.getParentIds()+"%");
+			return dao.findByParentIdsLike(bizCategoryInfo);
 		}
 		return  new ArrayList<BizCategoryInfo>();
 	}

@@ -60,6 +60,10 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 	private String skuIds;
 	private List<BizSkuInfo> skuInfoList = Lists.newArrayList();
 
+	/**
+	 * C端商品上下架
+	 * */
+	private String cendShelf;
 	
 	public BizOpShelfSku() {
 		super();
@@ -263,5 +267,13 @@ public class BizOpShelfSku extends DataEntity<BizOpShelfSku> {
 
 	public void setUdshelf(String udshelf) {
 		this.udshelf = udshelf;
+	}
+
+	public String getCendShelf() {
+		return cendShelf;
+	}
+
+	public void setCendShelf(String cendShelf) {
+		this.cendShelf = cendShelf;
 	}
 }

@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.shop.BizShopCart;
 import com.wanhutong.backend.modules.biz.service.shop.BizShopCartService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,7 +48,7 @@ public class BizShopCartController extends BaseController {
 	@RequiresPermissions("biz:shop:bizShopCart:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizShopCart bizShopCart, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizShopCart> page = bizShopCartService.findPage(new Page<BizShopCart>(request, response), bizShopCart); 
+		Page<BizShopCart> page = bizShopCartService.findPage(new Page<BizShopCart>(request, response), bizShopCart);
 		model.addAttribute("page", page);
 		return "modules/biz/shop/bizShopCartList";
 	}
@@ -76,6 +77,10 @@ public class BizShopCartController extends BaseController {
 		bizShopCart.setDelFlag(BizShopCart.DEL_FLAG_DELETE);
 		bizShopCartService.delete(bizShopCart);
 		addMessage(redirectAttributes, "删除购物车成功");
+		String a="cendShopDele";
+		if(bizShopCart.getCendDele()!=null && bizShopCart.getCendDele().equals(a)){
+			return "redirect:"+Global.getAdminPath()+"/biz/shop/bizShopCart/CendList?repage";
+		}
 		return "redirect:"+Global.getAdminPath()+"/biz/shop/bizShopCart/?repage";
 	}
 	@RequiresPermissions("biz:shop:bizShopCart:edit")
@@ -84,6 +89,23 @@ public class BizShopCartController extends BaseController {
 		bizShopCart.setDelFlag(BizShopCart.DEL_FLAG_NORMAL);
 		bizShopCartService.delete(bizShopCart);
 		addMessage(redirectAttributes, "恢复购物车成功");
+		String a="cendShopDele";
+		if(bizShopCart.getCendDele()!=null && bizShopCart.getCendDele().equals(a)){
+			return "redirect:"+Global.getAdminPath()+"/biz/shop/bizShopCart/CendList?repage";
+		}
 		return "redirect:"+Global.getAdminPath()+"/biz/shop/bizShopCart/?repage";
+	}
+
+	/**
+	 * C端购物车
+	 * */
+	@RequiresPermissions("biz:shop:bizShopCart:view")
+	@RequestMapping(value ="CendList")
+	public String CendList(BizShopCart bizShopCart, HttpServletRequest request, HttpServletResponse response, Model model) {
+		String supplierId = DictUtils.getDictValue("微信端", "biz_shop_cartType", "");
+		bizShopCart.setCustType(Integer.parseInt(supplierId));
+		Page<BizShopCart> page = bizShopCartService.findPage(new Page<BizShopCart>(request, response), bizShopCart);
+		model.addAttribute("page", page);
+		return "modules/biz/shop/bizShopCartCendList";
 	}
 }

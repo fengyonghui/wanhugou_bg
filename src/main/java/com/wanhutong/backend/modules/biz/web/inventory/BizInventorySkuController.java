@@ -125,7 +125,6 @@ public class BizInventorySkuController extends BaseController {
         }
         Page<BizInventorySku> page = null;
         if (user.isAdmin()) {
-            bizInventorySku.setDataStatus("filter");
             page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         } else {
             if (flag) {

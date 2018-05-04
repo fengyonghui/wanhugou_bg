@@ -90,27 +90,20 @@
 				</td>
 				<td><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				<td>
-					<c:if test="${bizInvoice.delFlag!=null && bizInvoice.delFlag!=0}">
-						<c:if test="${bizInvoice.ship==0}">
+					<c:if test="${bizInvoice.ship==0}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
 							<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}">修改</a>
 						</shiro:hasPermission>
 						<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&source=xq">发货单详情</a>
 					</c:if>
-						<c:if test="${bizInvoice.ship==1}">
+					<c:if test="${bizInvoice.ship==1}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
 							<a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}">修改</a>
 						</shiro:hasPermission>
 						<a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&source=xq">发货单详情</a>
 					</c:if>
-					</c:if>
 					<c:if test="${fns:getUser().isAdmin()}">
-						<c:if test="${bizInvoice.delFlag!=null && bizInvoice.delFlag!=0}">
-							<a href="${ctx}/biz/inventory/bizInvoice/delete?id=${bizInvoice.id}" onclick="return confirmx('确认要删除该发货单吗？', this.href)">删除</a>
-						</c:if>
-						<c:if test="${bizInvoice.delFlag!=null && bizInvoice.delFlag==0}">
-							<a href="${ctx}/biz/inventory/bizInvoice/recovery?id=${bizInvoice.id}" onclick="return confirmx('确认要恢复该发货单吗？', this.href)">恢复</a>
-						</c:if>
+						<a href="${ctx}/biz/inventory/bizInvoice/delete?id=${bizInvoice.id}" onclick="return confirmx('确认要删除该发货单吗？', this.href)">删除</a>
 					</c:if>
 				</td>
 				<%--<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><td>

@@ -20,7 +20,6 @@
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
 		bsi.item_no AS "skuInfo.itemNo",
-		a.sku_img_url as "skuImgUrl",
 		a.unit_price AS "unitPrice",
 		a.sent_qty as "sentQty",
 		a.ord_qty AS "ordQty",
@@ -185,9 +184,6 @@
 		</if>
 			part_no,
 			sku_name,
-		<if test="skuImgUrl !=null and skuImgUrl !=''">
-			sku_img_url,
-		</if>
 			unit_price,
 			buy_price,
 			sent_qty,
@@ -218,9 +214,6 @@
 		</if>
 			#{partNo},
 			#{skuName},
-		<if test="skuImgUrl !=null and skuImgUrl !=''">
-			#{skuImgUrl},
-		</if>
 			#{unitPrice},
 			#{buyPrice},
 			#{sentQty},
@@ -254,9 +247,6 @@
 		</if>
 			part_no = #{partNo},
 			sku_name = #{skuName},
-		<if test="skuImgUrl !=null and skuImgUrl !=''">
-			sku_img_url=#{skuImgUrl},
-		</if>
 			unit_price = #{unitPrice},
 			buy_price = #{buyPrice},
 			sent_qty = #{sentQty},
