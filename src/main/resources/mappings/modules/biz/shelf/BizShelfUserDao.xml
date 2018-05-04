@@ -8,6 +8,7 @@
 		a.user_id AS "user.id",
 		a.status AS "delFlag",
 		u3.name AS "user.name",
+		u3.mobile AS "user.mobile",
 		shelf.name AS "shelfInfo.name"
 	</sql>
 	
@@ -36,6 +37,18 @@
 			</if>
 			<if test="user != null and user.id != null and user.id != ''">
 				AND a.user_id = #{user.id}
+			</if>
+			<if test="user != null and user.name != null and user.name != ''">
+				AND u3.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{user.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{user.name},'%')</if>
+			</if>
+			<if test="user != null and user.mobile != null and user.mobile != ''">
+				AND u3.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{user.mobile}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{user.mobile}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{user.mobile},'%')</if>
 			</if>
 		</where>
 		<choose>

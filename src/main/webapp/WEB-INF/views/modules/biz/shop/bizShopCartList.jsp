@@ -42,6 +42,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>商品货架</th>
 				<th>采购商名称</th>
 				<th>采购商电话</th>
@@ -54,8 +55,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizShopCart">
+		<c:forEach items="${page.list}" var="bizShopCart" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${bizShopCart.skuShelfinfo.opShelfInfo.name}
                 </td>

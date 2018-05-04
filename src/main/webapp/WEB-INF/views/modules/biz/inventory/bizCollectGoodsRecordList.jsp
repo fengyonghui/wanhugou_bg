@@ -45,6 +45,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>仓库名称</th>
 				<th>商品名称</th>
 				<th>商品编号</th>
@@ -56,8 +57,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizCollectGoodsRecord">
+		<c:forEach items="${page.list}" var="bizCollectGoodsRecord" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					<%--<a href="${ctx}/biz/inventory/bizCollectGoodsRecord/form?id=${bizCollectGoodsRecord.id}"></a>--%>
 					${bizCollectGoodsRecord.invInfo.name}

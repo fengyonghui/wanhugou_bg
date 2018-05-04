@@ -52,15 +52,15 @@
 			<li><label>备货单号：</label>
 				<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
-			<li><label>货号：</label>
-				<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>
-			</li>
-			<li><label>供应商：</label>
-				<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>
-			</li>
+			<%--<li><label>货号：</label>--%>
+				<%--<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
+			<%--</li>--%>
+			<%--<li><label>供应商：</label>--%>
+				<%--<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
+			<%--</li>--%>
 			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-								labelValue="${entity.fromOffice.name}"
+								labelValue="${entity.fromOffice.name}" allowClear="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-medium required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 			</li>
@@ -84,6 +84,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>备货单号</th>
 				<th>采购中心</th>
 				<th>期望收货时间</th>
@@ -99,8 +100,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="requestHeader">
+		<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					<c:choose>
 						<c:when test="${fns:getUser().isAdmin()}">

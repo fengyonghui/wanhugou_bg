@@ -1715,6 +1715,18 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 			<if test="bizStatusStart !=null and bizStatusEnd !=null">
 				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
 			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="customer != null and customer.id != null and customer.id!=''">
+				AND a.cust_id LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.id}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.id}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.id},'%')</if>
+			</if>
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
 			</if>
@@ -1727,6 +1739,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 				GROUP  BY a.id
 			</otherwise>
 		</choose>
+		ORDER BY a.update_time desc
 	</select>
 
 </mapper>

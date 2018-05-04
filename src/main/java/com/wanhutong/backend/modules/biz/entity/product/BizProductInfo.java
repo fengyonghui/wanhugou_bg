@@ -90,6 +90,12 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	 */
 	private String textureStr;
 
+	/**
+	 * 日期查询
+	 * */
+	private Date createDateStart;
+	private Date createDateEnd;
+
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
 
@@ -479,5 +485,21 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		public String getDesc() {
 			return desc;
 		}
+	}
+
+	public Date getCreateDateStart() {
+		return createDateStart;
+	}
+
+	public void setCreateDateStart(Date createDateStart) {
+		this.createDateStart = createDateStart;
+	}
+
+	public Date getCreateDateEnd() {
+		return createDateEnd;
+	}
+
+	public void setCreateDateEnd(Date createDateEnd) {
+		this.createDateEnd = createDateEnd;
 	}
 }

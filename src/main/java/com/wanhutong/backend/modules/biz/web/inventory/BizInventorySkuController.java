@@ -361,8 +361,6 @@ public class BizInventorySkuController extends BaseController {
             List<List<String>> data = new ArrayList<List<String>>();
             invList.forEach(tory -> {
                 List<String> rowData = new ArrayList();
-                //ID
-                rowData.add(String.valueOf(tory.getId()));
                 Dict dict = new Dict();
                 dict.setDescription("库存中SKU类型");
                 dict.setType("inv_type");
@@ -375,13 +373,42 @@ public class BizInventorySkuController extends BaseController {
                     }
                 }
                 //仓库名称
-                rowData.add(String.valueOf(tory.getInvInfo().getName()));
-                //商品名称
-                rowData.add(String.valueOf(tory.getSkuInfo().getName()));
-                //商品编号
-                rowData.add(String.valueOf(tory.getSkuInfo().getPartNo()));
-                //商品货号
-                rowData.add(String.valueOf(tory.getSkuInfo().getItemNo()));
+                if(tory.getInvInfo()!=null && tory.getInvInfo().getName()!=null){
+                    rowData.add(String.valueOf(tory.getInvInfo().getName()));
+                }else{
+                    rowData.add("");
+                }
+                if(tory.getSkuInfo()!=null){
+                    if(tory.getSkuInfo().getName()!=null){
+                        //商品名称
+                        rowData.add(String.valueOf(tory.getSkuInfo().getName()));
+                    }else{
+                        rowData.add("");
+                    }
+                    if(tory.getSkuInfo().getPartNo()!=null){
+                        //商品编号
+                        rowData.add(String.valueOf(tory.getSkuInfo().getPartNo()));
+                    }else{
+                        rowData.add("");
+                    }
+                    if(tory.getSkuInfo().getItemNo()!=null){
+                        //商品货号
+                        rowData.add(String.valueOf(tory.getSkuInfo().getItemNo()));
+                    }else{
+                        rowData.add("");
+                    }
+                    if(tory.getSkuInfo().getVendorName()!=null){
+                        //供应商
+                        rowData.add(String.valueOf(tory.getSkuInfo().getVendorName()));
+                    }else{
+                        rowData.add("");
+                    }
+                }else{
+                    rowData.add("");
+                    rowData.add("");
+                    rowData.add("");
+                    rowData.add("");
+                }
                 //库存数量
                 rowData.add(String.valueOf(tory.getStockQty()));
                 //销售订单数量
@@ -400,7 +427,7 @@ public class BizInventorySkuController extends BaseController {
                 rowData.add(String.valueOf(sdf.format(tory.getUpdateDate())));
                 data.add(rowData);
             });
-            String[] toryHeads = {"ID", "库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "库存数量", "销售订单数量", "调入数量",
+            String[] toryHeads = {"库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "供应商", "库存数量", "销售订单数量", "调入数量",
                     "调出数量", "创建人", "创建时间", "更新人", "更新时间"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
