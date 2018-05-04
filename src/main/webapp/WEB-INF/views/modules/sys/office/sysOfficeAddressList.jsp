@@ -31,7 +31,7 @@
 								labelValue="${sysOfficeAddress.office.name}" notAllowSelectParent="true"
 								title="采购商"  url="/sys/office/queryTreeList?type=6&source=cgs"
 								cssClass="input-xlarge required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+								allowClear="true" dataMsgRequired="必填信息"/>
 			</li>
 			<%--<li><label>地址类型：</label>
                  <form:select path="type" class="input-medium required">

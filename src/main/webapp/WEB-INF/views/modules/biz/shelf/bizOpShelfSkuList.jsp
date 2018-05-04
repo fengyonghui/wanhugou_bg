@@ -58,7 +58,7 @@
 			<c:if test="${fns:getUser().isAdmin()}">
 				<li><label>采购中心：</label>
 					<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
-									labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
+									labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true" allowClear="true"
 									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>

@@ -62,7 +62,7 @@
 				</li>
 				<li><label>采购中心：</label>
 					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>
@@ -103,7 +103,7 @@
 										labelValue="" notAllowSelectParent="true"
 										title="采购商"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
-										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+										allowClear="true" dataMsgRequired="必填信息"/>
 						<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
 						<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
 					</c:if>
@@ -112,7 +112,7 @@
 										labelValue="" notAllowSelectParent="true"
 										title="采购商"  url="/sys/office/queryTreeList?type=6&source=cgs"
 										cssClass="input-medium required"
-										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>

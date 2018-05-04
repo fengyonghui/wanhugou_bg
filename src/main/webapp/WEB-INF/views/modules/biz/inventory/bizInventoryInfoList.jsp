@@ -35,7 +35,7 @@
 								labelValue="" notAllowSelectParent="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" extId="${centerOffice.id}"
 								cssClass="input-medium"
-								allowClear="${office.currentUser.admin}">
+								allowClear="true">
 				</sys:treeselect>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
