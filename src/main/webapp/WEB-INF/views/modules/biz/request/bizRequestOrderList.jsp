@@ -147,6 +147,7 @@
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>申请人</th>
+				<th>创建时间</th>
 				<th>更新时间</th>
 				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
 			</tr>
@@ -179,6 +180,9 @@
 					</td>
 					<td>
 						${requestHeader.createBy.name}
+					</td>
+					<td>
+						<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
 					<td>
 						<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -215,6 +219,7 @@
 				<th>订单来源</th>
 				<th>订单收货地址</th>
 				<th>创建人</th>
+				<th>创建时间</th>
 				<th>更新时间</th>
 				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
 			</tr>
@@ -256,6 +261,9 @@
 					</td>
 					<td>
 							${orderHeader.createBy.name}
+					</td>
+					<td>
+						<fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
 					<td>
 						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
