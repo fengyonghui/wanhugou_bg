@@ -13,6 +13,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -22,6 +23,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -70,6 +72,8 @@ public class BizPoHeaderController extends BaseController {
 	@Autowired
 	private BizPoHeaderService bizPoHeaderService;
 	@Autowired
+	private BizPoPaymentOrderService bizPoPaymentOrderService;
+	@Autowired
 	private BizPoDetailService bizPoDetailService;
 	@Autowired
 	private BizPlatformInfoService bizPlatformInfoService;
@@ -98,9 +102,6 @@ public class BizPoHeaderController extends BaseController {
 		BizPoHeader entity = null;
 		if (id!=null){
 			entity = bizPoHeaderService.get(id);
-			if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
-				entity.setCommonProcess(commonProcessService.get(entity.getCommonProcess().getId()));
-			}
 
 			BizPoDetail bizPoDetail=new BizPoDetail();
 			bizPoDetail.setPoHeader(entity);
@@ -237,20 +238,22 @@ public class BizPoHeaderController extends BaseController {
 				bizPoHeader.setDeliveryStatus(1);
 			}
 		}
-		if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() == null) {
-			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(BizPoHeaderService.DEFAULT_START_PROCESS);
-			CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-			commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
-			commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-			commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-			commonProcessService.save(commonProcessEntity);
-			bizPoHeader.setCommonProcess(commonProcessEntity);
-			bizPoHeaderService.updatePoHeaderProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
-		}
-		if ("audit".equalsIgnoreCase(type)) {
-			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
-			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
-		}
+
+//		if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() == null) {
+//			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(BizPoHeaderService.DEFAULT_START_PROCESS);
+//			CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+//			commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
+//			commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+//			commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+//			commonProcessService.save(commonProcessEntity);
+//			bizPoHeader.setCommonProcess(commonProcessEntity);
+//			bizPoHeaderService.updatePoHeaderProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
+//		}
+
+//		if ("audit".equalsIgnoreCase(type)) {
+//			PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+//			model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+//		}
 		List<Role> roleList = UserUtils.getUser().getRoleList();
 		Set<String> roleSet = Sets.newHashSet();
 		for(Role r : roleList) {
@@ -271,12 +274,12 @@ public class BizPoHeaderController extends BaseController {
 	@RequestMapping(value = "audit")
 	@ResponseBody
 	public String audit(int id, String currentType, int auditType, String description) {
-		BizPoHeader bizPoHeader = bizPoHeaderService.get(id);
-		CommonProcessEntity cureentProcessEntity = bizPoHeader.getCommonProcess();
+		BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(id);
+		CommonProcessEntity cureentProcessEntity = bizPoPaymentOrder.getCommonProcess();
 		if (cureentProcessEntity == null) {
 			return "操作失败,当前订单无审核状态!";
 		}
-		cureentProcessEntity = commonProcessService.get(bizPoHeader.getCommonProcess().getId());
+		cureentProcessEntity = commonProcessService.get(bizPoPaymentOrder.getCommonProcess().getId());
 		if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
 			LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", id, currentType);
 			return "操作失败,当前审核状态异常!";
@@ -306,12 +309,12 @@ public class BizPoHeaderController extends BaseController {
 		commonProcessService.save(cureentProcessEntity);
 
 		CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-		nextProcessEntity.setObjectId(bizPoHeader.getId().toString());
+		nextProcessEntity.setObjectId(bizPoPaymentOrder.getId().toString());
 		nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
 		nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
 		nextProcessEntity.setPrevId(cureentProcessEntity.getId());
 		commonProcessService.save(nextProcessEntity);
-		bizPoHeaderService.updatePoHeaderProcessId(bizPoHeader.getId(), nextProcessEntity.getId());
+		bizPoPaymentOrderService.updatePoHeaderProcessId(bizPoPaymentOrder.getId(), nextProcessEntity.getId());
 		return "操作成功!";
 	}
 

@@ -23,20 +23,25 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		so.name AS "vendOffice.name",
-		process.id AS "commonProcess.id",
-		process.object_id AS "commonProcess.objectId",
-		process.object_name AS "commonProcess.objectName",
-		process.prev_id AS "commonProcess.prevId",
-		process.biz_status AS "commonProcess.bizStatus",
-		process.processor AS "commonProcess.processor",
-		process.description AS "commonProcess.description",
-		process.type AS "commonProcess.type",
-		process.create_time AS "commonProcess.createTime"
+		payment.id AS "bizPoPaymentOrder.id",
+		payment.po_header_id AS "bizPoPaymentOrder.poHeaderId",
+		payment.total AS "bizPoPaymentOrder.total",
+		payment.process_id AS "bizPoPaymentOrder.processId",
+		process.id AS "bizPoPaymentOrder.commonProcess.id",
+		process.object_id AS "bizPoPaymentOrder.commonProcess.objectId",
+		process.object_name AS "bizPoPaymentOrder.commonProcess.objectName",
+		process.prev_id AS "bizPoPaymentOrder.commonProcess.prevId",
+		process.biz_status AS "bizPoPaymentOrder.commonProcess.bizStatus",
+		process.processor AS "bizPoPaymentOrder.commonProcess.processor",
+		process.description AS "bizPoPaymentOrder.commonProcess.description",
+		process.type AS "bizPoPaymentOrder.commonProcess.type",
+		process.create_time AS "bizPoPaymentOrder.commonProcess.createTime"
 	</sql>
 	
 	<sql id="bizPoHeaderJoins">
 		LEFT JOIN  sys_office so on so.id=a.vend_id
-		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN  biz_po_payment_order payment on payment.id = a.current_payment_id
+		LEFT JOIN  common_process process on process.id = payment.process_id
 	</sql>
     
 	<select id="get" resultType="BizPoHeader">
@@ -244,10 +249,4 @@
 		WHERE id = #{id}
 	</update>
 
-	<update id="updatePoHeaderProcessId">
-		UPDATE biz_po_header SET
-			process_id  = #{processId}
-		WHERE id = #{headerId}
-	</update>
-	
 </mapper>

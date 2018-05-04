@@ -108,22 +108,24 @@
 					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-						${bizPoHeader.commonProcess.purchaseOrderProcess.name == null ? '未审核' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
+
 				</td>
-				<shiro:hasPermission name="biz:po:bizPoHeader:view"><td>
-				<shiro:hasPermission name="biz:po:bizPoHeader:audit">
-					<c:if test="${(fn:contains(roleSet, bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
-					&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '终止'
-					&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '完成'
-					}">
-						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
-					</c:if>
+				<shiro:hasPermission name="biz:po:bizPoHeader:view">
+					<td>
+						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+							<c:if test="${bizPoHeader.bizPoPaymentOrder == null}">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">申请付款</a>
+							</c:if>
+							<c:if test="${bizPoHeader.bizPoPaymentOrder != null}">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
+							</c:if>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:po:bizPoHeader:edit">
+							<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
+						</shiro:hasPermission>
+						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
+					</td>
 				</shiro:hasPermission>
-				<shiro:hasPermission name="biz:po:bizPoHeader:edit">
-    				<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
-				</shiro:hasPermission>
-					<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
-				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
 		</tbody>

@@ -55,7 +55,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	private int isPrew = 1;
 
-	private CommonProcessEntity commonProcess;
+	private BizPoPaymentOrder bizPoPaymentOrder;
 
 	public BizPoHeader() {
 		super();
@@ -258,11 +258,11 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		this.orderSourceMap = orderSourceMap;
 	}
 
-	public CommonProcessEntity getCommonProcess() {
-		return commonProcess;
+	public BizPoPaymentOrder getBizPoPaymentOrder() {
+		return bizPoPaymentOrder;
 	}
 
-	public void setCommonProcess(CommonProcessEntity commonProcess) {
-		this.commonProcess = commonProcess;
+	public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
+		this.bizPoPaymentOrder = bizPoPaymentOrder;
 	}
 }

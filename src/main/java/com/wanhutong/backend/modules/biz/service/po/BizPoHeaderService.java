@@ -352,14 +352,4 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		super.delete(bizPoHeader);
 	}
 
-	/**
-	 * 更新流程ID
-	 * @param headerId
-	 * @param processId
-	 * @return
-	 */
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public int updatePoHeaderProcessId(int headerId, int processId) {
-		return dao.updatePoHeaderProcessId(headerId, processId);
-	}
 }
