@@ -38,9 +38,9 @@
 			<li><label>供应商：</label>
 				<form:input path="productInfo.vendorName" htmlEscape="false"  class="input-medium"/>
 			</li>
-			<li><label>商品编号：</label>
-				<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>
-			</li>
+			<%--<li><label>商品编号：</label>--%>
+				<%--<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>--%>
+			<%--</li>--%>
 			<li><label>上架时间：</label>
 				<input name="shelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					   value="<fmt:formatDate value="${bizOpShelfSku.shelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
@@ -89,7 +89,7 @@
 				<th>商品图片</th>
 				<th>商品名称</th>
 				<th>产品名称</th>
-				<th>商品编号</th>
+				<%--<th>商品编号</th>--%>
 				<th>商品货号</th>
 				<th>货架名称</th>
 				<th>采购中心</th>
@@ -121,9 +121,9 @@
 				<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizOpShelfSku.productInfo.id}">
 					${bizOpShelfSku.productInfo.name}
 				</a></td>
-				<td>
-					${bizOpShelfSku.skuInfo.partNo}
-				</td>
+				<%--<td>--%>
+					<%--${bizOpShelfSku.skuInfo.partNo}--%>
+				<%--</td>--%>
 				<td>
 					${bizOpShelfSku.skuInfo.itemNo}
 				</td>
