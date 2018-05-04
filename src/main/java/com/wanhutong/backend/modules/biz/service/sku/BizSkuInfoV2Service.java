@@ -313,4 +313,9 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	public List<BizSkuInfo> findListIgnoreStatus(BizSkuInfo oldSkuEntity) {
 		return bizSkuInfoDao.findListIgnoreStatus(oldSkuEntity);
 	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void recovery(BizSkuInfo bizSkuInfo) {
+		bizSkuInfoDao.recovery(bizSkuInfo);
+	}
 }
