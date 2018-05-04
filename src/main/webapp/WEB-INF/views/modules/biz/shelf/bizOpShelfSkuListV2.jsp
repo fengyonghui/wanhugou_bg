@@ -77,6 +77,8 @@
                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input class="btn btn-primary" type="button" value="一键排序（慎用）"/></li>
+
 			<li class="clearfix"></li>
 
 		</ul>

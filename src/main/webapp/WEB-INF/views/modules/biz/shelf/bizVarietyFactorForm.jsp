@@ -70,24 +70,25 @@
 		<div class="control-group">
 			<label class="control-label">最小数量：</label>
 			<div class="controls">
-				<input id="minQty" name="minQty" type="number" value="${bizVarietyFactor.minQty}" htmlEscape="false" maxlength="11" class="input-mini required"/>
+				<input id="minQty" name="minQty" type="number" value="${bizVarietyFactor.minQty}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">最大数量：</label>
 			<div class="controls">
-				<input id="maxQty" name="maxQty" type="number" value="${bizVarietyFactor.maxQty}" htmlEscape="false" maxlength="11" class="input-mini required"/>
+				<input id="maxQty" name="maxQty" type="number" value="${bizVarietyFactor.maxQty}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">服务费系数：</label>
 			<div class="controls">
-				<input id="serviceFactor" name="serviceFactor" type="number" value="${bizVarietyFactor.serviceFactor}" htmlEscape="false" maxlength="11" class="input-mini required"/>
+				<input id="serviceFactor" name="serviceFactor" type="number" value="${bizVarietyFactor.serviceFactor}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:shelf:bizVarietyFactor:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

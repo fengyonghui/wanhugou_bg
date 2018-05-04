@@ -46,16 +46,25 @@
                         var minQty = $(this).find("td").find("input[name='minQtys']").val();
                         var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
                         var nextMinQty=$(this).next().find("td").find("input[name='minQtys']").val();
-                        var nextMinQty=$(this).next().find("td").find("input[name='minQtys']").val();
                         if (parseInt(minQty) >= parseInt(maxQty)){
                             alert("最高销售数量必须大于最低销售数量");
                             numFlag = false;
                             return;
                         }
-                        if(parseInt(nextMinQty)>parseInt(minQty)){
+
+
+                        if(parseInt(nextMinQty)<parseInt(maxQty)){
                             alert("销售数量重复");
                             numFlag = false;
-                            return;
+                            return false;
+						}
+
+                        var orgPrice = $(this).find("td").find("input[name='orgPrices']").val();
+                        var salePrice = $(this).find("td").find("input[name='salePrices']").val();
+                        if(parseInt(orgPrice)>parseInt(salePrice)){
+                            alert("售价不能低于工厂价");
+                            numFlag = false;
+                            return false;
 						}
                     });
                     $("#tbody").find("td").each(function () {
@@ -72,18 +81,20 @@
                             maxQtys += maxQty+",";
                         }
                     });
+                    if(numFlag){
+
                         $.ajax({
-							url:"${ctx}/biz/shelf/bizOpShelfSkuV2/checkNum",
-							type:"post",
-							cache:false,
-							data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId,centId:centId},
-							success:function(data){
-								if (data=="false"){
-								    checkFlag = true;
-								    checkMassege = "您添加的商品在该阶梯价已经存在，请查询后再添加";
+                            url:"${ctx}/biz/shelf/bizOpShelfSkuV2/checkNum",
+                            type:"post",
+                            cache:false,
+                            data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId,centId:centId},
+                            success:function(data){
+                                if (data=="false"){
+                                    checkFlag = true;
+                                    checkMassege = "您添加的商品在该阶梯价已经存在，请查询后再添加";
                                 }
                                 if (data=="true"){
-								    vflag = true;
+                                    vflag = true;
                                 }
                                 if(checkFlag) {
                                     alert(checkMassege);
@@ -97,8 +108,10 @@
                                     loading('正在提交，请稍等...');
                                     form.submit();
                                 }
-							}
-						});
+                            }
+                        });
+					}
+
 
 
                 },
@@ -155,22 +168,38 @@
                 $("#itemNoCopy").val(itemNo);
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
+                    url:"${ctx}/biz/sku/bizSkuInfo/findSkuListV2",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                         if(id==''){
                             $("#prodInfo2").empty();
                         }
 
-                        $.each(data,function (keys,skuInfoList) {
+
+                        $.each(data.skuMap,function (keys,skuInfoList) {
+
                             var prodKeys= keys.split(",");
                             var prodId= prodKeys[0];
                             var prodUrl= prodKeys[2];
-                            var  brandName=prodKeys[6];
+                            var brandName=prodKeys[6];
+                            var varietyId = prodKeys[7];
+                            var varietyName= prodKeys[8];
+
                             var flag=true;
 
                             var tr_tds="";
                             var t=0;
+
+                            var factorMap=data.serviceFactor;
+                            var factorStr=factorMap[varietyId];
+
+                          //  var factorArr=$(factorStr).split(",");
+                            var f="";
+                            $.each(factorStr,function (i){
+                               f+=factorStr[i]+"<br/>";
+							});
+
+
                             $.each(skuInfoList,function (index,skuInfo) {
 
                                 tr_tds+= "<tr class='"+prodId+"'>";
@@ -178,6 +207,7 @@
                                 tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td>" ;
 
                                 if(flag){
+                                    tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+varietyName+"<br/>"+f+"</td>";
                                     tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
                                     tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img style='width: 160px;height: 160px' src='"+prodUrl+"' maxWidth='100' maxHeight='100'></td>"
                                 }
@@ -209,7 +239,7 @@
             <%--点击确定时填写商品数量--%>
             $("#ensureData").click(function () {
                 var skuIds="";
-                $('input:checkbox:checked').each(function(i){
+                $("#prodInfo2").find($('input:checkbox:checked')).each(function(i){
                     skuIds+=$(this).val()+",";
                 });
                 skuIds=skuIds.substring(0,skuIds.length-1);
@@ -393,6 +423,7 @@
 					<th>商品编码</th>
 					<th>商品货号</th>
 					<th>商品属性</th>
+					<th>分类与服务系数</th>
 					<th>品牌名称</th>
 					<th>产品图片</th>
 						<%--<th>操作</th>--%>
