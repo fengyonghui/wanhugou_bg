@@ -258,6 +258,10 @@ public class UserController extends BaseController {
 //			添加 跳回用户管理列表
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
 		}
+		if(user.getConn()!=null && user.getConn().equals("contact_ck")){
+			//跳回会员搜索
+			return "redirect:" + adminPath + "/sys/user/contact";
+		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
 

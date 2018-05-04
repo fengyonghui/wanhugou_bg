@@ -931,6 +931,9 @@
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
+        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+            <th>商品出厂价</th>
+        </c:if>
         <th>供应商</th>
         <th>供应商电话</th>
         <th>商品单价</th>
@@ -978,6 +981,11 @@
             <td>
                 ${bizOrderDetail.skuInfo.itemNo}
             </td>
+            <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                <td>
+                        ${bizOrderDetail.buyPrice}
+                </td>
+            </c:if>
             <td>
                     ${bizOrderDetail.vendor.name}
             </td>

@@ -189,7 +189,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 					continue;
 				}
 				bizRequestDetail.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
-				bizRequestDetail.setReqQty(Integer.parseInt(reqArr[i].trim()));
+				bizRequestDetail.setReqQty(Integer.parseInt(reqArr[i]
+						.trim()));
 
 				if(bizRequestHeader.getReqDetailIds()!=null){
 					String [] detailIdArr=StringUtils.split(bizRequestHeader.getReqDetailIds(),",");
@@ -258,7 +259,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	}
 
 	/**
-	 * 分页查询
+	 * 备货清单分页查询
 	 * */
 	public Page<BizRequestHeader> pageFindList(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
 		User user = UserUtils.getUser();
@@ -279,18 +280,14 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			}
 		}
 		if (user.isAdmin()) {
-			bizRequestHeader.setPage(page);
-			page.setList(dao.findList(bizRequestHeader));
-			return page;
+			return super.findPage(page,bizRequestHeader);
 		} else {
 			if(oflag){
 
 			}else {
 				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
 			}
-			bizRequestHeader.setPage(page);
-			page.setList(dao.findList(bizRequestHeader));
-			return page;
+			return super.findPage(page,bizRequestHeader);
 		}
 	}
 

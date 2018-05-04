@@ -176,7 +176,7 @@
 
                                 if(flag){
                                     tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img style='width: 160px;height: 160px' src='"+prodUrl+"' maxWidth='100' maxHeight='100'></td>"
+                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img style='width: 80px;height: 80px' src='"+prodUrl+"' maxWidth='85' maxHeight='85'></td>"
                                 }
 
                                 tr_tds+="</tr>";

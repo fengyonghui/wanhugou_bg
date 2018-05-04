@@ -8,6 +8,7 @@
 		reheader.req_no AS "requestHeader.reqNo",
 		a.line_no AS "lineNo",
 		a.sku_id AS "skuInfo.id",
+		a.unit_price AS "unitPrice",
 		si.item_no AS "skuInfo.itemNo",
 		bpi.vendor_name AS "skuInfo.vendorName",
 		si.buy_price AS "skuInfo.buyPrice",
@@ -149,6 +150,7 @@
 			line_no,
 			sku_id,
 			req_qty,
+			unit_price,
 			<if test="recvQty!=null">
 				recv_qty,
 			</if>
@@ -168,6 +170,7 @@
 			#{lineNo},
 			#{skuInfo.id},
 			#{reqQty},
+			#{skuInfo.buyPrice},
 			<if test="recvQty!=null">
 				#{recvQty},
 			</if>
@@ -195,6 +198,9 @@
 			</if>
 			<if test="reqQty!=null">
 				req_qty = #{reqQty},
+			</if>
+			<if test="unitPrice!=null">
+				unit_price = #{unitPrice},
 			</if>
 			<if test="recvQty!=null">
 				recv_qty = #{recvQty},

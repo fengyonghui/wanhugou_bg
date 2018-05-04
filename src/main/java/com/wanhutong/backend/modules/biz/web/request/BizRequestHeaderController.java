@@ -23,6 +23,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -62,7 +63,7 @@ public class BizRequestHeaderController extends BaseController {
 	@Autowired
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
+	private BizSkuInfoV2Service bizSkuInfoService;
 	@Autowired
 	private BizPoOrderReqService bizPoOrderReqService;
 	@Autowired
@@ -98,7 +99,7 @@ public class BizRequestHeaderController extends BaseController {
             Integer recvQtys = 0;
             Double money=0.0;
             for (BizRequestDetail bizRequestDetail:requestDetailList) {
-				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*(bizRequestDetail.getSkuInfo().getBuyPrice()==null?0:bizRequestDetail.getSkuInfo().getBuyPrice());
+				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*(bizRequestDetail.getUnitPrice()==null?0:bizRequestDetail.getUnitPrice());
                 reqQtys += bizRequestDetail.getReqQty();
                 recvQtys += bizRequestDetail.getRecvQty();
             }

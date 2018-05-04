@@ -92,6 +92,7 @@
 				<th>已到货数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
+				<th>下单时间</th>
 				<th>申请人</th>
 				<th>更新时间</th>
 				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
@@ -129,6 +130,9 @@
 				</td>
 				<td>
 					${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
+				</td>
+				<td>
+					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 					${requestHeader.createBy.name}

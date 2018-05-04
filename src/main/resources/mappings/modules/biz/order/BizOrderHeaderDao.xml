@@ -1727,6 +1727,60 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
   		date_format(oh.create_time, '%Y-%m')
     </select>
 
+	<!-- 订单采购列表  -->
+	<select id="headerFindList" resultType="BizOrderHeader">
+		SELECT
+        a.id AS "id",
+        a.order_num AS "orderNum",
+        a.order_type AS "orderType",
+        a.cust_id AS "customer.id",
+        so.name as "customer.name",
+        a.total_detail AS "totalDetail",
+        a.receive_total as "receiveTotal",
+        a.total_exp AS "totalExp",
+        a.freight AS "freight",
+        a.inv_status AS "invStatus",
+        a.biz_status AS "bizStatus",
+        a.biz_type as "bizType",
+        a.plateform_id AS "platformInfo.id",
+        bpi.name as "platformInfo.name",
+        a.ship_to_addr AS "bizLocation.id",
+        a.status AS "delFlag",
+        a.create_id AS "createBy.id",
+        su.name as "createBy.name",
+        a.create_time AS "createDate",
+        a.u_version AS "uVersion",
+        a.update_id AS "updateBy.id",
+        us.name as "updateBy.name",
+        a.update_time AS "updateDate"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+        left join sys_office so on a.cust_id=so.id
+        left join sys_user su on a.create_id=su.id
+        left join sys_user us on a.update_id=us.id
+        left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
+		<where>
+			a.status=#{DEL_FLAG_NORMAL}
+			and od.status=#{DEL_FLAG_NORMAL}
+			and (od.suply_id=0 or od.suply_id=721)
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				GROUP  BY a.id
+			</otherwise>
+		</choose>
+	</select>
+
+
 	<!-- C端订单管理 -->
 	<select id="cendfindList" resultMap="orderHeaderResult">
 		SELECT

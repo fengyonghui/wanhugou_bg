@@ -105,9 +105,10 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 		User user=UserUtils.getUser();
 		if(user.isAdmin()){
             return super.findPage(page, bizInvoice);
-        }else {
-            bizInvoice.getSqlMap().put("bizInvoice", BaseService.dataScopeFilter(user, "", "su"));
         }
+//        else {
+//            bizInvoice.getSqlMap().put("bizInvoice", BaseService.dataScopeFilter(user, "so", ""));
+//        }
 	    return super.findPage(page, bizInvoice);
 	}
 	
