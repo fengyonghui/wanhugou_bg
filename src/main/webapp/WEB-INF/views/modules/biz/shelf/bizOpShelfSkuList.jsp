@@ -93,8 +93,8 @@
 				<th>采购中心</th>
 				<th>供应商</th>
 				<%--<th>上架数量(个)</th>--%>
-				<th>工厂价(元)</th>
-				<th>现价(元)</th>
+				<%--<th>工厂价(元)</th>--%>
+				<th>销售价(元)</th>
 				<th>最低销售数量(个)</th>
 				<th>最高销售数量(个，9999：不限制)</th>
                 <th>显示次序</th>
@@ -140,9 +140,9 @@
 				<%--<td>--%>
 					<%--${bizOpShelfSku.shelfQty}--%>
 				<%--</td>--%>
-				<td>
-					${bizOpShelfSku.orgPrice}
-				</td>
+				<%--<td>--%>
+					<%--${bizOpShelfSku.orgPrice}--%>
+				<%--</td>--%>
 				<td>
 					${bizOpShelfSku.salePrice}
 				</td>
