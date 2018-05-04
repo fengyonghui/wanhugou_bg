@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.po.dao.bizpopaymentorder.BizPoPaymentOrderDao">
+    
+	<sql id="bizPoPaymentOrderColumns">
+		a.id AS "id",
+		a.po_header_id AS "poHeaderId",
+		a.total AS "total",
+		a.process_id AS "processId",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		process.create_time AS "commonProcess.createTime"
+	</sql>
+	
+	<sql id="bizPoPaymentOrderJoins">
+		LEFT JOIN  common_process process on process.id = a.process_id
+	</sql>
+    
+	<select id="get" resultType="BizPoPaymentOrder">
+		SELECT 
+			<include refid="bizPoPaymentOrderColumns"/>
+		FROM biz_po_payment_order a
+		<include refid="bizPoPaymentOrderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizPoPaymentOrder">
+		SELECT 
+			<include refid="bizPoPaymentOrderColumns"/>
+		FROM biz_po_payment_order a
+		<include refid="bizPoPaymentOrderJoins"/>
+		<where>
+			
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="poHeaderId != null and poHeaderId != ''">
+				AND a.po_header_id = #{poHeaderId}
+			</if>
+			<if test="total != null and total != ''">
+				AND a.total = #{total}
+			</if>
+			<if test="processId != null and processId != ''">
+				AND a.process_id = #{processId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizPoPaymentOrder">
+		SELECT 
+			<include refid="bizPoPaymentOrderColumns"/>
+		FROM biz_po_payment_order a
+		<include refid="bizPoPaymentOrderJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_po_payment_order(
+			id,
+			po_header_id,
+			total,
+			process_id
+		) VALUES (
+			#{id},
+			#{poHeaderId},
+			#{total},
+			#{processId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_po_payment_order SET 	
+			po_header_id = #{poHeaderId},
+			total = #{total},
+			process_id = #{processId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_po_payment_order
+		WHERE id = #{id}
+	</update>
+
+
+	<update id="updatePoHeaderProcessId">
+		UPDATE biz_po_header SET
+		process_id  = #{processId}
+		WHERE id = #{headerId}
+	</update>
+
+</mapper>
