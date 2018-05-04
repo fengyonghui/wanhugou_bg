@@ -19,7 +19,7 @@
                         alert("请选择品牌");
                         return;
                     }
-                   var  varietyInfoId=$("#varietyInfoId").val();
+                    var  varietyInfoId=$("#varietyInfoId").val();
                     if(varietyInfoId==''){
                         alert("请选择分类");
                         return;
@@ -53,7 +53,7 @@
 </ul>
 <br/>
 <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
-<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoForVendor/save" method="post"
+<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoForVendor/saveCopy" method="post"
            class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
@@ -68,10 +68,10 @@
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
         <div style="margin-left: 180px">
-                <form:select  about="choose" path="brandId" class="input-xlarge required">
-                    <form:option value="" label="请选择"/>
-                    <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
-                                  htmlEscape="false"/></form:select>
+            <form:select  about="choose" path="brandId" class="input-xlarge required">
+                <form:option value="" label="请选择"/>
+                <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
+                              htmlEscape="false"/></form:select>
 
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
@@ -152,10 +152,10 @@
             <c:if test="${supply == null}">
                 <input type="hidden" value="1" id="supplyIsNull">
                 <sys:treeselect id="office" name="office.id" value="${entity.office.id}" labelName="office.name"
-                            labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
-                            title="供应商" url="/sys/office/queryTreeList?type=7" extId="${office.id}"
-                            cssClass="input-xlarge required"
-                            allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
+                                labelValue="${entity.office.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+                                title="供应商" url="/sys/office/queryTreeList?type=7" extId="${office.id}"
+                                cssClass="input-xlarge required"
+                                allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
             </c:if>
             <c:if test="${supply != null}">
                 <input type="hidden" value="0" id="supplyIsNull">
@@ -226,7 +226,7 @@
 
                                 <select  title="search"  id="search_${tagInfo.id}" class="input-xlarge" multiple="multiple" size="8">
                                     <c:forEach items="${tagInfo.dictList}" var="dict">
-                                            <option value="${dict.value}">${dict.label}</option>
+                                        <option value="${dict.value}">${dict.label}</option>
                                     </c:forEach>
                                 </select>
 
@@ -265,17 +265,17 @@
         </div>
         <br/>
         <div class="controls">
-           <table class="table  table-bordered table-condensed" id="uploadPicTable">
-               <thead>
-               <tr>
+            <table class="table  table-bordered table-condensed" id="uploadPicTable">
+                <thead>
+                <tr>
                     <th>颜色</th>
                     <th>图片</th>
                     <th>图片操作</th>
                     <th>操作</th>
-               </tr>
-               </thead>
-               <tbody id="uploadPicTableData"></tbody>
-           </table>
+                </tr>
+                </thead>
+                <tbody id="uploadPicTableData"></tbody>
+            </table>
 
         </div>
     </div>
@@ -289,9 +289,9 @@
         </div>
         <br/>
         <div class="controls">
-           <table class="table  table-bordered table-condensed" id="skuTable">
-               <thead>
-               <tr>
+            <table class="table  table-bordered table-condensed" id="skuTable">
+                <thead>
+                <tr>
                     <th style="display: none">id</th>
                     <th>货号</th>
                     <th>尺寸</th>
@@ -301,43 +301,43 @@
                     <th style="display: none">图片地址</th>
                     <th>类型</th>
                     <th>操作</th>
-               </tr>
-               </thead>
-               <tbody id="skuTableData">
-               <c:forEach items="${entity.skuInfosList}" var="v">
-                   <tr customType="skuTr">
-                       <td style="display: none"><input type="text" value="${v.id}" customInput="idInput" readonly/></td>
-                       <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
-                       <td><input type="text" value="${v.attrValueMap['2'][0].value}" customInput="sizeInput" readonly/></td>
-                       <td><input type="text" value="${v.attrValueMap['3'][0].value}" customInput="colorInput" readonly/></td>
-                       <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
-                       <td><img customInput="imgInputLab" style="width: 160px" src="${v.defaultImg}"></td>
-                       <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
-                       <th><select customInput="skuTypeSelect">
+                </tr>
+                </thead>
+                <tbody id="skuTableData">
+                <c:forEach items="${entity.skuInfosList}" var="v">
+                    <tr customType="skuTr">
+                        <td style="display: none"><input type="text" value="${v.id}" customInput="idInput" readonly/></td>
+                        <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
+                        <td><input type="text" value="${v.attrValueMap['2'][0].value}" customInput="sizeInput" readonly/></td>
+                        <td><input type="text" value="${v.attrValueMap['3'][0].value}" customInput="colorInput" readonly/></td>
+                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
+                        <td><img customInput="imgInputLab" style="width: 160px" src="${v.defaultImg}"></td>
+                        <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
+                        <th><select customInput="skuTypeSelect">
                             <c:if test="${v.skuType == 1}">
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='2' label='定制商品'>定制商品</option>
                                 <option value='3' label='非自选商品'>非自选商品</option>
                             </c:if>
-                           <c:if test="${v.skuType == 2}">
+                            <c:if test="${v.skuType == 2}">
                                 <option value='2' label='定制商品'>定制商品</option>
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='3' label='非自选商品'>非自选商品</option>
                             </c:if>
-                           <c:if test="${v.skuType == 3}">
+                            <c:if test="${v.skuType == 3}">
                                 <option value='3' label='非自选商品'>非自选商品</option>
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='2' label='定制商品'>定制商品</option>
                             </c:if>
-                       </select></th>
-                       <td>
-                           <input onclick='deleteImgEle(this)' class="btn" type="button" value="删除图片"/>
-                           <input onclick='deleteParentParentEle(this)' class="btn" type="button" value="删除"/>
-                       </td>
-                   </tr>
-               </c:forEach>
-               </tbody>
-           </table>
+                        </select></th>
+                        <td>
+                            <input onclick='deleteImgEle(this)' class="btn" type="button" value="删除图片"/>
+                            <input onclick='deleteParentParentEle(this)' class="btn" type="button" value="删除"/>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
 
         </div>
     </div>
@@ -346,21 +346,7 @@
     <form:input path="imgUrl" id="imgUrl" cssStyle="display: none"/>
 
     <div class="form-actions">
-        <c:if test="${view != 'true' && view != 'audit' && (bizProductInfo.bizStatus == 1 || bizProductInfo.bizStatus == 3 || bizProductInfo == null || bizProductInfo.bizStatus == null)}">
-            <shiro:hasPermission name="biz:product:bizProductInfoForVendor:edit">
-                <input id="btnSubmit" class="btn btn-primary" type="button" value="保 存" onclick="submitCustomForm()"/>&nbsp;
-            </shiro:hasPermission>
-        </c:if>
-        <shiro:hasPermission name="biz:product:bizProductInfoForVendor:check">
-            <c:if test="${bizProductInfo.bizStatus == 1}">
-                <input id="btnSubmit" class="btn btn-primary"
-                       type="button"
-                       value="审核通过" onclick="checkPass(${bizProductInfo.id})"/>
-                <input id="btnSubmit" class="btn btn-primary"
-                       type="button"
-                       value="审核驳回" onclick="checkUnPass(${bizProductInfo.id})"/>
-            </c:if>
-        </shiro:hasPermission>
+        <input id="btnSubmit" class="btn btn-primary" type="button" value="保 存" onclick="submitCustomForm()"/>&nbsp;
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 </form:form>
@@ -505,7 +491,7 @@
             });
         }
     }
-    
+
     function deleteImgEle(that) {
         var p = $(that).parent().parent();
         var imgInput = $($(p).find("[customInput = 'imgInput']"));

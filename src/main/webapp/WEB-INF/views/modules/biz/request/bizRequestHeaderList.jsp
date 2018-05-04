@@ -7,7 +7,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+			$("#buttonExport").click(function(){
+				top.$.jBox.confirm("确认要导出备货清单数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestHeader/requestHeaderExport");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestHeader/");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -67,6 +76,7 @@
 				</form:select>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -82,6 +92,7 @@
 				<th>已到货数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
+				<th>下单时间</th>
 				<th>申请人</th>
 				<th>更新时间</th>
 				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
@@ -119,6 +130,9 @@
 				</td>
 				<td>
 					${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
+				</td>
+				<td>
+					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 					${requestHeader.createBy.name}

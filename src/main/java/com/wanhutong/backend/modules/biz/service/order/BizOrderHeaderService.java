@@ -269,7 +269,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 for (BizOrderDetail orderDetail:orderDetailList){
                     BizSkuInfo skuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
                     if(skuInfo!=null){
-                        totalBuyPrice += skuInfo.getBuyPrice() * (orderDetail.getOrdQty()==null?0:orderDetail.getOrdQty());
+                        if(orderDetail.getBuyPrice()!=null && orderDetail.getBuyPrice()!=0){
+                            totalBuyPrice += orderDetail.getBuyPrice() * (orderDetail.getOrdQty()==null?0:orderDetail.getOrdQty());
+                        }else {
+                            totalBuyPrice += skuInfo.getBuyPrice() * (orderDetail.getOrdQty() == null ? 0 : orderDetail.getOrdQty());
+                        }
                     }
 
                 }
@@ -286,6 +290,44 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      */
     public List<BizOrderHeader> findUnlineOrder() {
         return bizOrderHeaderDao.findUnlineOrder();
+    }
+
+    /**
+     * 订单发货分页
+     * */
+    public Page<BizOrderHeader> pageFindList(Page<BizOrderHeader> page,BizOrderHeader bizOrderHeader) {
+        User user= UserUtils.getUser();
+//        boolean flag=false;
+        boolean oflag = false;
+        /*if(user.getRoleList()!=null){
+            for(Role role:user.getRoleList()){
+                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+                    flag=true;
+                    break;
+                }
+            }
+        }*/
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
+                }
+            }
+        }
+        if(user.isAdmin()){
+            bizOrderHeader.setPage(page);
+            page.setList(dao.headerFindList(bizOrderHeader));
+            return page;
+        }else {
+            if(oflag){
+
+            }else {
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            }
+            bizOrderHeader.setPage(page);
+            page.setList(dao.headerFindList(bizOrderHeader));
+            return page;
+        }
     }
 
 }

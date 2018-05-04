@@ -27,6 +27,7 @@
 	<sql id="bizInvoiceJoins">
 		LEFT JOIN biz_logistics bl ON bl.id = a.logistics_id
 		LEFT JOIN sys_user su on su.id =a.create_id
+
 	</sql>
     
 	<select id="get" resultType="BizInvoice">

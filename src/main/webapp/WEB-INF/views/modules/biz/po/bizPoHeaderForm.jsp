@@ -75,57 +75,37 @@
             }
 		}
 		function selectOrder(obj) {
-		    alert(obj);
+		    // alert(obj);
             var flag = false;
-            $("input[name='orderDetailIds']").each(function () {
-                var reqNo = $(this).attr("about");
-                alert($(this).attr("about"));
-                if (reqNo==obj){
-                    if ($(this).attr("checked")==undefined){
-                        flag = true;
-                    }
-                }
-            });
-            if (flag) {
-                alert($(this).text());
-                $(this).attr("checked","checked");
+            var aflag = false;
+            if ($("input[name='"+obj+"']").attr("checked")!=undefined){
                 $("input[name='orderDetailIds']").each(function () {
-                    var reqNo = $(this).attr("about");
-                    if (reqNo==obj){
+                    var ordNum = $(this).attr("about");
+                    if (ordNum==obj){
                         $(this).attr("checked","checked");
                     }
                 })
-            } else {
+            }else {
                 $("input[name='orderDetailIds']").each(function () {
-                    var reqNo = $(this).attr("about");
-                    if (reqNo==obj){
+                    var ordNum = $(this).attr("about");
+                    if (ordNum==obj){
                         $(this).removeAttr("checked");
                     }
                 })
             }
         }
         function selectRequest(obj) {
-            alert(obj);
+            // alert(obj);
             var flag = false;
-			$("input[name='reqDetailIds']").each(function () {
-			    var reqNo = $(this).attr("about");
-					alert($(this).attr("about"));
-					if (reqNo==obj){
-					    if ($(this).attr("checked")==undefined){
-					        flag = true;
-                        }
-					}
-                });
-			if (flag) {
-			    alert($(this).text());
-			    $(this).attr("checked","checked");
+            var aflag = false;
+			if ($("input[name='"+obj+"']").attr("checked")!=undefined){
                 $("input[name='reqDetailIds']").each(function () {
                     var reqNo = $(this).attr("about");
                     if (reqNo==obj){
                         $(this).attr("checked","checked");
                     }
                 })
-			} else {
+            }else {
                 $("input[name='reqDetailIds']").each(function () {
                     var reqNo = $(this).attr("about");
                     if (reqNo==obj){
@@ -133,6 +113,36 @@
                     }
                 })
 			}
+            // $("input[name='reqDetailIds']").each(function () {
+			 //    var reqNo = $(this).attr("about");
+				// 	alert($(this).attr("about"));
+				// 	if (reqNo==obj){
+				// 	    if ($(this).attr("checked")==undefined){
+				// 	        flag = true;
+            //             }
+            //             if ($(this).attr("checked")!=undefined){
+				// 	        aflag = true;
+				// 		}
+				// 	}
+            //     });
+            // if (flag) {
+			 //    alert($(this).text());
+			 //    $(this).attr("checked","checked");
+            //     $("input[name='reqDetailIds']").each(function () {
+            //         var reqNo = $(this).attr("about");
+            //         if (reqNo==obj){
+            //             $(this).attr("checked","checked");
+            //         }
+            //     })
+            // }
+            // if (aflag) {
+            //     $("input[name='reqDetailIds']").each(function () {
+            //         var reqNo = $(this).attr("about");
+            //         if (reqNo==obj){
+            //             $(this).removeAttr("checked");
+            //         }
+            //     })
+            // }
         }
 
 	</script>
@@ -335,51 +345,55 @@
 					<c:if test="${bizPoHeader.poDetailList==null}">
 						<c:if test="${not empty reqDetailMap}">
 							<c:forEach items="${reqDetailMap}" var="map">
+								<c:forEach items="${map.value}" var="reqDetail">
 								<tr>
 									<%--<c:set value="${fn:split(map.key, ',')}" var="detail"></c:set>--%>
-									<td><input name="${map.value.requestHeader.reqNo}" type="checkbox" onclick="selectRequest('${map.value.requestHeader.reqNo}')"/>${map.value.requestHeader.reqNo}</td>
-									<td name="reqs"><input name="reqDetailIds" title="num" about="${map.value.requestHeader.reqNo}" type="checkbox" value="${map.value.id}"/></td>
-									<td><img style="max-width: 120px" src="${map.value.skuInfo.productInfo.imgUrl}"/></td>
-									<td>${map.value.skuInfo.productInfo.brandName}</td>
-									<td>${map.value.skuInfo.name}</td>
-									<td>${map.value.skuInfo.partNo}</td>
-									<td>${map.value.skuInfo.itemNo}</td>
-									<td>${map.value.skuInfo.skuPropertyInfos}</td>
-									<td>${map.value.reqQty-map.value.recvQty}
+									<td><input title="num" name="${reqDetail.requestHeader.reqNo}" type="checkbox" onclick="selectRequest('${reqDetail.requestHeader.reqNo}')"/>${reqDetail.requestHeader.reqNo}</td>
+									<td name="reqs"><input title="num" name="reqDetailIds" about="${reqDetail.requestHeader.reqNo}" type="checkbox" value="${reqDetail.id}"/></td>
+									<td><img style="max-width: 120px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
+									<td>${reqDetail.skuInfo.productInfo.brandName}</td>
+									<td>${reqDetail.skuInfo.name}</td>
+									<td>${reqDetail.skuInfo.partNo}</td>
+									<td>${reqDetail.skuInfo.itemNo}</td>
+									<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
+									<td>${reqDetail.reqQty-reqDetail.recvQty}
 										<%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
 										<%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
 										<%--<input type='hidden' name='orderDetailIds' value='${map.value.orderDetailIds}'/>--%>
 									</td>
-									<td><input  name="ordQtys" readonly="readonly"  value="${map.value.reqQty-map.value.recvQty}" class="input-mini" type='text'/></td>
+									<td><input  name="ordQtys" readonly="readonly"  value="${reqDetail.reqQty-reqDetail.recvQty}" class="input-mini" type='text'/></td>
 									<td>
-									<input readonly="readonly" type="text" name="unitPrices" value="${map.value.skuInfo.buyPrice}" class="input-mini">
+									<input readonly="readonly" type="text" name="unitPrices" value="${reqDetail.skuInfo.buyPrice}" class="input-mini">
 									</td>
 
 								</tr>
+								</c:forEach>
 							</c:forEach>
 						</c:if>
 						<c:if test="${not empty orderDetailMap}">
 							<c:forEach items="${orderDetailMap}" var="map">
+								<c:forEach items="${map.value}" var="orderDetail">
 								<tr>
-									<td><input name="${map.value.orderHeader.orderNum}" type="checkbox" onclick="selectOrder('${map.value.orderHeader.orderNum}')"/>${map.value.orderHeader.orderNum}</td>
-									<td name="ords"><input name="orderDetailIds" title="num" about="${map.value.orderHeader.orderNum}" type="checkbox" value="${map.value.id}" /></td>
-									<td><img style="max-width: 120px" src="${map.value.skuInfo.productInfo.imgUrl}"/></td>
-									<td>${map.value.skuInfo.productInfo.brandName}</td>
-									<td>${map.value.skuInfo.name}</td>
-									<td>${map.value.skuInfo.partNo}</td>
-									<td>${map.value.skuInfo.itemNo}</td>
-									<td>${map.value.skuInfo.skuPropertyInfos}</td>
-									<td>${map.value.ordQty-map.value.sentQty}
+									<td><input title="num" name="${orderDetail.orderHeader.orderNum}" type="checkbox" onclick="selectOrder('${orderDetail.orderHeader.orderNum}')"/>${orderDetail.orderHeader.orderNum}</td>
+									<td name="ords"><input title="num" name="orderDetailIds" about="${orderDetail.orderHeader.orderNum}" type="checkbox" value="${orderDetail.id}" /></td>
+									<td><img style="max-width: 120px" src="${orderDetail.skuInfo.productInfo.imgUrl}"/></td>
+									<td>${orderDetail.skuInfo.productInfo.brandName}</td>
+									<td>${orderDetail.skuInfo.name}</td>
+									<td>${orderDetail.skuInfo.partNo}</td>
+									<td>${orderDetail.skuInfo.itemNo}</td>
+									<td>${orderDetail.skuInfo.skuPropertyInfos}</td>
+									<td>${orderDetail.ordQty-orderDetail.sentQty}
 										<%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
 										<%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
 										<%--<input type='hidden' name='orderDetailIds' value='${map.value.orderDetailIds}'/>--%>
 									</td>
-									<td><input  name="ordQtys" readonly="readonly"  value="${map.value.ordQty-map.value.sentQty}" class="input-mini" type='text'/></td>
+									<td><input  name="ordQtys" readonly="readonly"  value="${orderDetail.ordQty-orderDetail.sentQty}" class="input-mini" type='text'/></td>
 									<td>
-										<input readonly="readonly" type="text" name="unitPrices" value="${map.value.skuInfo.buyPrice}" class="input-mini">
+										<input readonly="readonly" type="text" name="unitPrices" value="${orderDetail.skuInfo.buyPrice}" class="input-mini">
 									</td>
 
 								</tr>
+								</c:forEach>
 							</c:forEach>
 						</c:if>
 					</c:if>

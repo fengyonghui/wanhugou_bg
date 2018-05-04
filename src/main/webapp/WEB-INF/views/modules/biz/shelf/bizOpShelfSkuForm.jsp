@@ -176,7 +176,7 @@
 
                                 if(flag){
                                     tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img style='width: 160px;height: 160px' src='"+prodUrl+"' maxWidth='100' maxHeight='100'></td>"
+                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img style='width: 80px;height: 80px' src='"+prodUrl+"' maxWidth='85' maxHeight='85'></td>"
                                 }
 
                                 tr_tds+="</tr>";
@@ -426,7 +426,7 @@
 						</td>
 							<%--<td><input name="createBy.name" value="${bizOpShelfSku.shelfUser.name}" htmlEscape="false" maxlength="11" class="input-medium" readonly="true" type="number" placeholder="必填！"/></td>--%>
 						<td><input name="shelfQtys" value="${bizOpShelfSku.shelfQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
-						<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
+						<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false" maxlength="6" class="input-medium required" readonly="readonly" type="number" placeholder="必填！"/></td>
 						<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>
 						<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6" class="input-medium required" type="number" placeholder="必填！"/></td>

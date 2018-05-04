@@ -49,6 +49,8 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String name;		//根據供應商姓名搜索
 	private Byte bizStatusStart;
 	private Byte bizStatusEnd; //用于查询业务状态的区间
+
+	private Byte bizStatusNot;		//不包含的状态
 	/**
 	 * 列表序号
 	 * */
@@ -334,5 +336,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setNumberRownum(Integer numberRownum) {
 		this.numberRownum = numberRownum;
+	}
+
+	public Byte getBizStatusNot() {
+		return bizStatusNot;
+	}
+
+	public void setBizStatusNot(Byte bizStatusNot) {
+		this.bizStatusNot = bizStatusNot;
 	}
 }

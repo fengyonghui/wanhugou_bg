@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.shelf;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
@@ -151,13 +152,29 @@ public class BizOpShelfInfoController extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfInfo:view")
 	@RequestMapping(value = "shelfManagementForm")
 	public String shelfManagementForm(BizOpShelfInfo bizOpShelfInfo, Model model) {
-
 		//查询营销中心下的用户
 		Office office = officeService.get(SupportCenterStatusEnum.MAKER_CENTER.getState());
+		if(bizOpShelfInfo.getUser()!=null){
+		    if(bizOpShelfInfo.getUser().getName()!=null || bizOpShelfInfo.getUser().getMobile()!=null){
+                //查询姓名,手机
+                office.setShelfInfoUser(bizOpShelfInfo.getUser());
+            }
+        }
 		List<User> userList = systemService.findYzUser(office);
+        ArrayList<User> listUser = Lists.newArrayList();
+        BizShelfUser bizShelfUser = new BizShelfUser();
+		BizOpShelfInfo opShelfInfo = bizOpShelfInfoService.get(bizOpShelfInfo.getId());
+		for (int j = 0; j < userList.size(); j++) {
+			bizShelfUser.setShelfInfo(opShelfInfo);
+			bizShelfUser.setUser(userList.get(j));
+			List<BizShelfUser> list = bizShelfUserService.findList(bizShelfUser);
+			if(list.size()==0 && userList.get(j).getDelFlag().equals("1")){
+                listUser.add(userList.get(j));
+			}
+		}
 //		bizOpShelfInfo.setUserList(userList);
         model.addAttribute("bizOpShelfInfo", bizOpShelfInfo);
-		model.addAttribute("userList", userList);
+		model.addAttribute("userList", listUser);
 		return "modules/biz/shelf/bizOpShelfManagementForm";
 	}
 

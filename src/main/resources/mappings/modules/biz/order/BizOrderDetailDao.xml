@@ -13,8 +13,9 @@
 		a.sku_id AS "skuInfo.id",
 		a.suply_id AS "suplyis.id",
 		bsi.name as "skuInfo.name",
-		bsi.buy_price AS "buyPrice",
-		<!--a.quality as "quality",
+		a.buy_price as "buyPrice",
+		<!--bsi.buy_price AS "buyPrice",
+		a.quality as "quality",
 		a.color as "color",
 		a.standard as "standard",-->
 		a.part_no AS "partNo",
@@ -141,6 +142,9 @@
 		WHERE oh.STATUS = 1
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">
 			AND oh.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+		</if>
+		<if test="bizStatusNot != null">
+			AND oh.biz_status != #{bizStatusNot}
 		</if>
 		GROUP BY
 		pi.vendor_id

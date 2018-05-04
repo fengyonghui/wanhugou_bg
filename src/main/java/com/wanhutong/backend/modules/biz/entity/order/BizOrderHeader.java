@@ -42,6 +42,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private Integer bizStatusStart;
     private Integer bizStatusEnd;
+    private Byte bizStatusNot;      //不包含状态
     private Integer consultantId;    //采购顾问ID，用于查询
     private Integer centerId;         //采购中心
     private Date deliveryDate;        //预计到货日期
@@ -441,6 +442,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setOrderUpdaEndTime(Date orderUpdaEndTime) {
         this.orderUpdaEndTime = orderUpdaEndTime;
+    }
+
+    public Byte getBizStatusNot() {
+        return bizStatusNot;
+    }
+
+    public void setBizStatusNot(Byte bizStatusNot) {
+        this.bizStatusNot = bizStatusNot;
     }
 
     public BizOrderHeaderUnline getOrderHeaderUnline() {

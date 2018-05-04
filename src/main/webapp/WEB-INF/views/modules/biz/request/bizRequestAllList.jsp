@@ -117,7 +117,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-					<th>序号</th>
+				<th>序号</th>
 				<c:if test="${source eq 'gh'}">
 					<th><input id="select_all" type="checkbox" /></th>
 				</c:if>
@@ -201,8 +201,9 @@
 		</c:if>
 
 		<c:if test="${source == 'kc' && ship=='xs'||bizStatu == 0 || source=='gh'}">
-			<c:forEach items="${page.list}" var="orderHeader">
+			<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
 				<tr>
+					<td>${state.index+1}</td>
 					<c:if test="${source=='gh'}">
 						<td><input name="orderIds" title="orderIds" type="checkbox" value="${orderHeader.id}" /></td>
 					</c:if>

@@ -63,6 +63,7 @@ public class PropertyInfoController extends BaseController {
 	}
 
 	@InitBinder
+	@Override
 	public void initBinder(WebDataBinder binder) {
 		// 设置List的最大长度
 		binder.setAutoGrowCollectionLimit(10000);
