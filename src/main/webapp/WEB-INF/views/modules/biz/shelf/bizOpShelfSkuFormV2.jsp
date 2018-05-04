@@ -42,14 +42,21 @@
                             }
                         });
                     }) ;
-                    $("#tbody").find("tr").each(function () {
+                    $("#tbody").find("tr").each(function (i) {
                         var minQty = $(this).find("td").find("input[name='minQtys']").val();
                         var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
+                        var nextMinQty=$(this).next().find("td").find("input[name='minQtys']").val();
+                        var nextMinQty=$(this).next().find("td").find("input[name='minQtys']").val();
                         if (parseInt(minQty) >= parseInt(maxQty)){
                             alert("最高销售数量必须大于最低销售数量");
                             numFlag = false;
                             return;
                         }
+                        if(parseInt(nextMinQty)>parseInt(minQty)){
+                            alert("销售数量重复");
+                            numFlag = false;
+                            return;
+						}
                     });
                     $("#tbody").find("td").each(function () {
                         var skuId = $(this).find("input[name='skuInfoIds']").val();
@@ -158,11 +165,7 @@
                         $.each(data,function (keys,skuInfoList) {
                             var prodKeys= keys.split(",");
                             var prodId= prodKeys[0];
-//                            var prodName= prodKeys[1];
                             var prodUrl= prodKeys[2];
-//                            var cateName= prodKeys[3];
-//                            var prodCode= prodKeys[4];
-//                            var prodOfficeName= prodKeys[5];
                             var  brandName=prodKeys[6];
                             var flag=true;
 
@@ -264,13 +267,13 @@
                 })
 
             });
-            /*
-                        $("#contentTable2").tablesMergeCell({
-                            // automatic: true,
+
+                        $("#contentTableService").tablesMergeCell({
+                             automatic: true,
                             // 是否根据内容来合并
-                            cols:[0,3]
+                            cols:[0,0]
                             // rows:[0,2]
-                        });*/
+                        });
 
         });
         function removeItem(obj) {
@@ -320,28 +323,7 @@
 	<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 	<sys:message content="${message}"/>
 
-	<%--<div class="control-group">--%>
-	<%--<label class="control-label">栏目类型：</label>--%>
-	<%--<div class="controls">--%>
-	<%--<select class="input-xlarge required" onchange="selectedColum();" id="columInfoShelf">--%>
-	<%--<option value="">请选择</option>--%>
-	<%--<c:forEach items="${fns:getDictList('biz_cms_colum')}" var="colu">--%>
-	<%--<option value="${colu.value}" >${colu.label}</option>--%>
-	<%--</c:forEach>--%>
-	<%--</select>--%>
-	<%--<span class="help-inline"><font color="red">*</font> </span>--%>
-	<%--</div>--%>
-	<%--</div>--%>
-	<%--<div class="control-group">
-		<label class="control-label">货架名称：</label>
-		<div class="controls">
-			<select id="shelfInfoId" name="opShelfInfo.id" onchange="selectedColum();" class="input-xlarge required">
-				<option value="">请选择</option>
-			</select>
-			<span class="help-inline"><font color="red">*</font> </span>
-		</div>
-	</div>--%>
-	<div class="control-group" id="PurchaseID" style="">
+	<div class="control-group" id="PurchaseID">
 		<label class="control-label">采购中心：</label>
 		<div class="controls">
 			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
@@ -352,6 +334,32 @@
 		</div>
 	</div>
 	<%--<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">--%>
+
+	<c:if test="${bizOpShelfSku.id == null}">
+		<div class="control-group">
+			<label class="control-label">货架名称：</label>
+			<div class="controls">
+				<c:forEach items="${shelfList}" var="shelf" varStatus="i">
+					<input id="shelfs_${i.index}" name="shelfs" type="checkbox" class="required" value="${shelf.id}"/>
+					<label for="shelfs_${i.index}">${shelf.name}</label>
+				</c:forEach>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+	</c:if>
+	<c:if test="${bizOpShelfSku.id != null}">
+		<div class="control-group">
+			<label class="control-label">货架名称：</label>
+			<div class="controls">
+				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required">
+					<form:option value="">请选择</form:option>
+					<form:options items="${shelfList}" itemLabel="name" itemValue="id"/>
+				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+	</c:if>
+
 	<div class="control-group">
 		<label class="control-label">选择商品：</label>
 		<div class="controls">
@@ -448,30 +456,7 @@
 			</table>
 		</div>
 	</div>
-	<c:if test="${bizOpShelfSku.id == null}">
-		<div class="control-group">
-			<label class="control-label">货架名称：</label>
-			<div class="controls">
-				<c:forEach items="${shelfList}" var="shelf" varStatus="i">
-					<input id="shelfs_${i.index}" name="shelfs" type="checkbox" class="required" value="${shelf.id}"/>
-					<label for="shelfs_${i.index}">${shelf.name}</label>
-				</c:forEach>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-	</c:if>
-	<c:if test="${bizOpShelfSku.id != null}">
-		<div class="control-group">
-			<label class="control-label">货架名称：</label>
-			<div class="controls">
-				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required">
-					<form:option value="">请选择</form:option>
-					<form:options items="${shelfList}" itemLabel="name" itemValue="id"/>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-	</c:if>
+
 	<div class="form-actions">
 		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>

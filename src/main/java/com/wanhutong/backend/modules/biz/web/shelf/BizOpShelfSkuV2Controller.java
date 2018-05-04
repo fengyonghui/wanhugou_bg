@@ -10,9 +10,11 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuV2Service;
+import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.BizOpShelfInfoEnum;
@@ -52,9 +54,9 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@Autowired
 	private AttributeValueV2Service attributeValueService;
 	@Autowired
-	private BizSkuViewLogService bizSkuViewLogService;
-	@Autowired
 	private BizOpShelfInfoService bizOpShelfInfoService;
+	@Autowired
+	private BizVarietyFactorService bizVarietyFactorService;
 
 	
 	@ModelAttribute
@@ -86,7 +88,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
         }else {
             model.addAttribute("bizOpShelfSku", bizOpShelfSku);
         }
-
+		model.addAttribute("varietyFactorList",bizVarietyFactorService.findList(new BizVarietyFactor()));
         model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		BizOpShelfInfo opShelfInfo=new BizOpShelfInfo();
 		opShelfInfo.setType(BizOpShelfInfoEnum.LOCAL_STOCK.getLocal());

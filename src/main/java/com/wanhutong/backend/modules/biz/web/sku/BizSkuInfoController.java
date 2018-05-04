@@ -24,6 +24,7 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
@@ -169,9 +170,30 @@ public class BizSkuInfoController extends BaseController {
 			String[] ids =StringUtils.split(skuIds, ",");
 			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
 		}
-	//	bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
+		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
 		return listMap;
+
+	}
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findSkuListV2")
+	public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds){
+		if (skuIds != null && !"".equals(skuIds)){
+			String[] ids =StringUtils.split(skuIds, ",");
+			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
+		}
+		Map<String,Object> map =new HashMap<>();
+		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
+		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
+		List<BizVarietyFactor> varietyInfoList=bizVarietyFactorService.findList(new BizVarietyFactor());
+		for(BizVarietyFactor varietyFactor:varietyInfoList){
+
+		}
+		map.put("skuMap",listMap);
+		//map.put("");
+		return map;
+
 	}
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
