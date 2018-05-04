@@ -108,15 +108,19 @@
 					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-
+						${bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name == null ?
+						 '未申请' : bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name}
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>
+						<%--TODO 权限--%>
 						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
 							<c:if test="${bizPoHeader.bizPoPaymentOrder == null}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">申请付款</a>
 							</c:if>
-							<c:if test="${bizPoHeader.bizPoPaymentOrder != null}">
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+							<c:if test="${bizPoHeader.bizPoPaymentOrder != null && bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name != '驳回'}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
 							</c:if>
 						</shiro:hasPermission>

@@ -53,8 +53,16 @@
             }
         });
 
-        function saveMon() {
-            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeader/savePoHeader");
+        function saveMon(type) {
+            if (type == 'audit') {
+                var payTotal = $("#payTotal").val();
+                if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
+                    alert("请输入申请金额!");
+                    return false;
+                }
+            }
+
+            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeader/savePoHeader?type=" + type);
             $("#inputForm").submit();
         }
 
@@ -118,36 +126,6 @@
                     }
                 })
             }
-            // $("input[name='reqDetailIds']").each(function () {
-            //    var reqNo = $(this).attr("about");
-            // 	alert($(this).attr("about"));
-            // 	if (reqNo==obj){
-            // 	    if ($(this).attr("checked")==undefined){
-            // 	        flag = true;
-            //             }
-            //             if ($(this).attr("checked")!=undefined){
-            // 	        aflag = true;
-            // 		}
-            // 	}
-            //     });
-            // if (flag) {
-            //    alert($(this).text());
-            //    $(this).attr("checked","checked");
-            //     $("input[name='reqDetailIds']").each(function () {
-            //         var reqNo = $(this).attr("about");
-            //         if (reqNo==obj){
-            //             $(this).attr("checked","checked");
-            //         }
-            //     })
-            // }
-            // if (aflag) {
-            //     $("input[name='reqDetailIds']").each(function () {
-            //         var reqNo = $(this).attr("about");
-            //         if (reqNo==obj){
-            //             $(this).removeAttr("checked");
-            //         }
-            //     })
-            // }
         }
 
     </script>
@@ -293,6 +271,17 @@
         </div>
         <c:if test="${type == 'audit'}">
             <div class="control-group">
+                <label class="control-label">申请金额：</label>
+                <div class="controls">
+                    <input id="payTotal" name="payTotal" type="text" <c:if test="${bizPoHeader.bizPoPaymentOrder != null}">readonly</c:if>
+                           value="${bizPoHeader.bizPoPaymentOrder != null ?
+                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight)}"
+                           htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                </div>
+            </div>
+        </c:if>
+        <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder != null}">
+            <div class="control-group">
                 <label class="control-label">审核状态：</label>
                 <div class="controls">
                     <input type="text" disabled="disabled"
@@ -308,17 +297,20 @@
     <c:if test="${bizPoHeader.poDetailList!=null}">
         <div class="form-actions">
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
-                <c:if test="${type == 'audit'}">
+                <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder != null}">
                     <input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
                     <input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>
+                </c:if>
+                <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder == null}">
+                    <input id="btnSubmit" type="button" onclick="saveMon('audit')" class="btn btn-primary" value="申请付款"/>
                 </c:if>
             </shiro:hasPermission>
             <shiro:hasPermission name="biz:po:bizPoHeader:edit">
                 <c:if test="${type != 'audit' && prewStatus == 'prew'}">
-                    <input id="btnSubmit" type="button" onclick="saveMon()" class="btn btn-primary" value="确认生成"/>
+                    <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="确认生成"/>
                 </c:if>
                 <c:if test="${type != 'audit' && prewStatus != 'prew'}">
-                    <input id="btnSubmit" type="button" onclick="saveMon()" class="btn btn-primary" value="保存"/>
+                    <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="保存"/>
                 </c:if>
                 &nbsp;</shiro:hasPermission>
         </div>
@@ -513,7 +505,7 @@
             success: function (result) {
                 alert(result);
                 if(result == '操作成功!') {
-                    window.history.go(-1);
+                    window.location.href = "${ctx}/biz/po/bizPoHeader";
                 }
             },
             error: function (error) {

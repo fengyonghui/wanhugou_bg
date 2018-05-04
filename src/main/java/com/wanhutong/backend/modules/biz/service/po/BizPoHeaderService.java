@@ -62,12 +62,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 	/**
 	 * 默认表名
 	 */
-	public static final String DATABASE_TABLE_NAME = "biz_po_header";
-
-	/**
-	 * 默认起始流程序号
-	 */
-	public static final int DEFAULT_START_PROCESS = 1;
+	public static final String DATABASE_TABLE_NAME = "biz_po_payment_order";
 
 
 	public BizPoHeader get(Integer id) {
@@ -352,4 +347,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		super.delete(bizPoHeader);
 	}
 
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public int updatePaymentOrderId(Integer id, Integer paymentId) {
+		return dao.updatePaymentOrderId(id, paymentId);
+	}
 }

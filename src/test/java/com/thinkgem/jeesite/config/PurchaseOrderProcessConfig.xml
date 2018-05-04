@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PurchaseOrderProcessConfig>
+    <defaultProcessId>1</defaultProcessId>
+
     <!--流程节点-->
     <!--采购中心负责人审批-->
     <process>
-        <name>采购中心负责人审批</name>
+        <name>待采购中心负责人审批</name>
         <code>1</code>
         <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
         <passCode>2</passCode>
@@ -11,7 +13,7 @@
     </process>
     <!--供货部-->
     <process>
-        <name>供货部</name>
+        <name>待供货部审批</name>
         <code>2</code>
         <roleEnNameEnum>PROVIDER_MANAGER</roleEnNameEnum>
         <passCode>3</passCode>
@@ -19,7 +21,7 @@
     </process>
     <!--会计-->
     <process>
-        <name>会计</name>
+        <name>待会计审批</name>
         <code>3</code>
         <roleEnNameEnum>FINANCE</roleEnNameEnum>
         <passCode>4</passCode>
@@ -27,7 +29,7 @@
     </process>
     <!--运营总监-->
     <process>
-        <name>运营总监</name>
+        <name>待运营总监审批</name>
         <code>4</code>
         <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
         <passCode>5</passCode>
@@ -35,10 +37,10 @@
     </process>
     <!--总经理-->
     <process>
-        <name>总经理</name>
+        <name>待总经理审批</name>
         <code>5</code>
         <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-        <passCode>5</passCode>
+        <passCode>6</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <!--财会待付款-->
@@ -51,7 +53,7 @@
     </process>
     <!--支付完成-->
     <process>
-        <name>支付完成</name>
+        <name>完成</name>
         <code>7</code>
         <roleEnNameEnum></roleEnNameEnum>
         <passCode>0</passCode>
@@ -59,7 +61,7 @@
     </process>
     <!--终止-->
     <process>
-        <name>终止</name>
+        <name>驳回</name>
         <code>-1</code>
         <roleEnNameEnum></roleEnNameEnum>
         <passCode>0</passCode>

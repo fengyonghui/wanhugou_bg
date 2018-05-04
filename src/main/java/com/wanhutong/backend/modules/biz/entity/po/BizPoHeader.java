@@ -10,6 +10,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,8 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private int isPrew = 1;
 
 	private BizPoPaymentOrder bizPoPaymentOrder;
+
+	private BigDecimal payTotal;
 
 	public BizPoHeader() {
 		super();
@@ -264,5 +267,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
 		this.bizPoPaymentOrder = bizPoPaymentOrder;
+	}
+
+	public BigDecimal getPayTotal() {
+		return payTotal;
+	}
+
+	public void setPayTotal(BigDecimal payTotal) {
+		this.payTotal = payTotal;
 	}
 }

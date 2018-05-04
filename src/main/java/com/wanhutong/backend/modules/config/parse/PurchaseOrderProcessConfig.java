@@ -29,6 +29,9 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
     private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseOrderProcessConfig.class);
 
 
+    @XStreamAlias("defaultProcessId")
+    private int defaultProcessId;
+
     @XStreamImplicit(itemFieldName = "process")
     private List<PurchaseOrderProcess> processList;
 
@@ -67,6 +70,10 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
      */
     public PurchaseOrderProcess getRejectProcess(PurchaseOrderProcess currentEnum) {
         return processMap.get(currentEnum.getRejectCode());
+    }
+
+    public int getDefaultProcessId() {
+        return defaultProcessId;
     }
 
     @XStreamAlias("process")
@@ -122,6 +129,5 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
         }
 
     }
-
 
 }

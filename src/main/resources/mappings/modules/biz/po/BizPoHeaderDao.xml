@@ -249,4 +249,10 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updatePaymentOrderId">
+		UPDATE biz_po_header SET
+			current_payment_id = #{paymentId}
+		WHERE id = #{id}
+	</update>
+
 </mapper>
