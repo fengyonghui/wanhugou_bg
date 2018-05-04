@@ -1739,6 +1739,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 				GROUP  BY a.id
 			</otherwise>
 		</choose>
+		ORDER BY a.update_time desc
 	</select>
 
 </mapper>
