@@ -317,6 +317,12 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "save")
     public String save(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+        if ("audit".equalsIgnoreCase(type)) {
+            String msg = genPaymentOrder(bizPoHeader);
+            addMessage(redirectAttributes, msg);
+            return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
+        }
+
         if (!beanValidator(model, bizPoHeader)) {
             return form(bizPoHeader, model, prewStatus, null);
         }
@@ -335,10 +341,6 @@ public class BizPoHeaderController extends BaseController {
             bizPoHeaderService.savePoHeader(bizPoHeader);
         }
 
-        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getBizPoPaymentOrder() == null) {
-            genPaymentOrder(bizPoHeader);
-        }
-
         addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/form/?id=" + bizPoHeader.getId() + "&prewStatus=" + prewStatus;
     }
@@ -346,15 +348,17 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "savePoHeader")
     public String savePoHeader(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
+        if ("audit".equalsIgnoreCase(type)) {
+            String msg = genPaymentOrder(bizPoHeader);
+            addMessage(redirectAttributes, msg);
+            return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
+        }
+
         if (!beanValidator(model, bizPoHeader)) {
             return form(bizPoHeader, model, prewStatus, null);
         }
         bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
         bizPoHeaderService.savePoHeader(bizPoHeader);
-
-        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getBizPoPaymentOrder() == null) {
-            genPaymentOrder(bizPoHeader);
-        }
 
         addMessage(redirectAttributes, "保存采购订单成功");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
@@ -369,7 +373,11 @@ public class BizPoHeaderController extends BaseController {
     }
 
 
-    private void genPaymentOrder(BizPoHeader bizPoHeader) {
+    private String genPaymentOrder(BizPoHeader bizPoHeader) {
+        if(bizPoHeader.getBizPoPaymentOrder() != null) {
+            return "操作失败,该订单已经有正在申请的支付单!";
+        }
+
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
         CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
@@ -386,5 +394,6 @@ public class BizPoHeaderController extends BaseController {
 
         bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
         bizPoHeaderService.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());
+        return "操作成功!";
     }
 }
