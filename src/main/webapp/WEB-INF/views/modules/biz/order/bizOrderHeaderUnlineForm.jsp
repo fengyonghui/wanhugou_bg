@@ -891,7 +891,9 @@
 		<div class="control-group">
 			<label class="control-label">单据凭证：</label>
 			<div class="controls">
-				<img src="${bizOrderHeader.orderHeaderUnline.imgUrl}" style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
+				<c:forEach items="${imgUrlList}" var="imgUrl">
+					<img src="${imgUrl}" style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
+				</c:forEach>
 			</div>
 		</div>
 		<div class="control-group">

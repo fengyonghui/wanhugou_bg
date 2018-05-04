@@ -221,6 +221,9 @@
 		pi.vendor_name AS "orderDetailList.vendor.name"
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		<if test="statu != null and statu =='unline'">
+			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		</if>
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
 		<include refid="bizOrderHeaderJoins"/>
@@ -325,7 +328,9 @@
 				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
 			</if>
-
+			<if test="statu != null and statu =='unline'">
+				AND ohu.id is not NULL
+			</if>
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
 			</if>
@@ -1759,5 +1764,8 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		WHERE a.status = 1
 		AND ohu.id is not NULL
+		<if test="page !=null and page.orderBy != null and page.orderBy != ''">
+			ORDER BY ${page.orderBy}
+		</if>
 	</select>
 </mapper>
