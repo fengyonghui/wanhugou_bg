@@ -99,7 +99,7 @@
 								labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 								title="采购商"  url="/sys/office/queryTreeList?type=6"
 								cssClass="input-medium required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+								allowClear="true"  dataMsgRequired="必填信息"/>
 				<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
 				<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
 			</c:if>
@@ -108,7 +108,7 @@
 								labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 								title="采购商"  url="/sys/office/queryTreeList?type=6"
 								cssClass="input-medium required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+								allowClear="true"  dataMsgRequired="必填信息"/>
 			</c:if>
 		</li>
 		<li><label>采购中心：</label>

@@ -93,7 +93,7 @@
 							labelValue="" notAllowSelectParent="true"
 							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" extId="${centerOffice.id}"
 							cssClass="input-medium"
-							allowClear="${office.currentUser.admin}">
+							allowClear="true">
 			</sys:treeselect>
 			<input id="btn" class="btn btn-primary" type="button" value="查询库存数量"/>
 			<label style="width: 80px;text-align:right;">库存数量：</label>
