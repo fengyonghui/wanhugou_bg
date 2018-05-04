@@ -93,7 +93,7 @@
 							labelValue="" notAllowSelectParent="true"
 							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" extId="${centerOffice.id}"
 							cssClass="input-medium"
-							allowClear="${office.currentUser.admin}">
+							allowClear="true">
 			</sys:treeselect>
 			<input id="btn" class="btn btn-primary" type="button" value="查询库存数量"/>
 			<label style="width: 80px;text-align:right;">库存数量：</label>
@@ -105,6 +105,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>库存类型</th>
 				<th>仓库名称</th>
 				<th style="width: 15%">商品名称</th>
@@ -134,8 +135,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizInventorySku">
+		<c:forEach items="${page.list}" var="bizInventorySku" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					<%--<a href="${ctx}/biz/inventory/bizInventorySku/form?id=${bizInventorySku.id}">--%>
 					${fns:getDictLabel(bizInventorySku.invType, 'inv_type', '未知状态')}

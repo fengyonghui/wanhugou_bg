@@ -18,9 +18,9 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/shop/bizShopCart/list">购物车列表</a></li>
+		<li class="active"><a href="${ctx}/biz/shop/bizShopCart/">购物车列表</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizShopCart" action="${ctx}/biz/shop/bizShopCart/list" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizShopCart" action="${ctx}/biz/shop/bizShopCart/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
@@ -48,6 +48,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>客户端</th>
 				<th>商品货架</th>
 				<th>采购商名称</th>
@@ -61,8 +62,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizShopCart">
+		<c:forEach items="${page.list}" var="bizShopCart" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${fns:getDictLabel(bizShopCart.custType, 'biz_shop_cartType', '未知状态')}
 				</td>

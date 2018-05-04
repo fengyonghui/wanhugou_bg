@@ -99,7 +99,7 @@
 								labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 								title="采购商"  url="/sys/office/queryTreeList?type=6"
 								cssClass="input-medium required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+								allowClear="true"  dataMsgRequired="必填信息"/>
 				<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
 				<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
 			</c:if>
@@ -108,7 +108,7 @@
 								labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 								title="采购商"  url="/sys/office/queryTreeList?type=6"
 								cssClass="input-medium required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+								allowClear="true"  dataMsgRequired="必填信息"/>
 			</c:if>
 		</li>
 		<li><label>采购中心：</label>
@@ -147,6 +147,7 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>
 	<tr>
+		<td>序号</td>
 		<th>订单编号</th>
 		<th>订单类型</th>
 		<th>采购商名称</th>
@@ -167,8 +168,9 @@
 	</tr>
 	</thead>
 	<tbody>
-	<c:forEach items="${page.list}" var="orderHeader">
+	<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
 		<tr>
+			<td>${state.index+1}</td>
 			<td>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">

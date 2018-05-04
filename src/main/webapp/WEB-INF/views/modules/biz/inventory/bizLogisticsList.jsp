@@ -28,6 +28,9 @@
 			<li><label>物流商名称：</label>
 				<form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
+			<li><label>承运人：</label>
+				<form:input path="carrier" htmlEscape="false" maxlength="50" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -37,6 +40,7 @@
 		<thead>
 			<tr>
 				<th>物流商名称</th>
+				<th>承运人</th>
 				<th>电话</th>
 				<shiro:hasPermission name="biz:inventory:bizLogistics:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -45,6 +49,7 @@
 		<c:forEach items="${page.list}" var="bizLogistics">
 			<tr>
 				<td>${bizLogistics.name}</td>
+				<td>${bizLogistics.carrier}</td>
 				<td>${bizLogistics.phone}</td>
 				<shiro:hasPermission name="biz:inventory:bizLogistics:edit"><td>
     				<a href="${ctx}/biz/inventory/bizLogistics/form?id=${bizLogistics.id}">修改</a>

@@ -27,10 +27,11 @@
 	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead><tr><th>品牌名称</th><th>类型</th><th>描述</th><th>排序</th><td>备注</td><shiro:hasPermission name="biz:product:brand:edit"><th>操作</th></shiro:hasPermission></tr></thead>
+		<thead><tr><th>序号</th><th>品牌名称</th><th>类型</th><th>描述</th><th>排序</th><td>备注</td><shiro:hasPermission name="biz:product:brand:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="dict">
+		<c:forEach items="${page.list}" var="dict" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td><a href="${ctx}/biz/product/brand/form?id=${dict.id}">${dict.label}</a></td>
 				<td><a href="javascript:" onclick="$('#type').val('${dict.type}');$('#searchForm').submit();return false;">${dict.type}</a></td>
 				<td>${dict.description}</td>

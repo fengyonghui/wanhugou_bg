@@ -413,6 +413,11 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+	<update id="recovery">
+		UPDATE biz_sku_info SET
+		status = #{DEL_FLAG_NORMAL}
+		WHERE id = #{id}
+	</update>
 
 	<select id="getSkuInfoByItemNoProdId" resultType="BizSkuInfo">
 		SELECT

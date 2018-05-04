@@ -142,7 +142,12 @@ public class BizOpShelfInfoController extends BaseController {
         BizShelfUser bizShelfUser = new BizShelfUser();
 		BizOpShelfInfo bizOpShelfInfo1 = bizOpShelfInfoService.get(bizOpShelfInfo.getId());
 		bizShelfUser.setShelfInfo(bizOpShelfInfo1);
-		List<BizShelfUser> bizShelfUserList = bizShelfUserService.findList(bizShelfUser);
+		if(bizOpShelfInfo.getUser()!=null){
+			if(bizOpShelfInfo.getUser().getName()!=null || bizOpShelfInfo.getUser().getMobile()!=null){
+				bizShelfUser.setUser(bizOpShelfInfo.getUser());
+			}
+		}
+		Page<BizShelfUser> bizShelfUserList = bizShelfUserService.findPage(new Page<BizShelfUser>(request, response), bizShelfUser);
 
 		model.addAttribute("page", page);
 		model.addAttribute("bizShelfUserList",bizShelfUserList);

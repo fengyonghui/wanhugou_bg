@@ -51,7 +51,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${list}" var="bizCategoryInfo">
+		<c:forEach items="${page.list}" var="bizCategoryInfo">
 			<tr>
 
 				<td><a href="${ctx}/biz/category/bizCategoryInfo/form?id=${bizCategoryInfo.id}">

@@ -103,6 +103,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>订单编号</th>
 				<th>业务流水号</th>
 				<th>支付金额</th>
@@ -120,8 +121,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizPayRecord">
+		<c:forEach items="${page.list}" var="bizPayRecord" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${bizPayRecord.payNum}
 				</td>
