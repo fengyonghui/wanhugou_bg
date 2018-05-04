@@ -266,6 +266,9 @@
 					<li><label>商品编码：</label>
 						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
+					<li><label>商品货号：</label>
+						<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
+					</li>
 					<%--<li><label>商品类型：</label>--%>
 						<%--<select id="skuType" class="input-medium">--%>
 							<%--<option value="">请选择</option>--%>
