@@ -9,11 +9,17 @@
 	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
 	<script type="text/javascript">
         $(document).ready(function() {
+
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
                     var shelfSkuId = $("#bizOpShelfSkuId").val();
-                    var shelfInfoId = $("#shelfInfoId").val();
+                    var shelfInfoIds = "";
+                    $("input:checkbox[name='shelfs']:checked").each(function (i) {
+                        alert(this.value);
+                        shelfInfoIds += this.value+",";
+                    });
+                    // alert(shelfInfoIds);
                     var centId = $("#centerOfficeId").val();
                     var flag = true;
                     var vflag = false;
@@ -82,12 +88,11 @@
                         }
                     });
                     if(numFlag){
-
                         $.ajax({
                             url:"${ctx}/biz/shelf/bizOpShelfSkuV2/checkNum",
                             type:"post",
                             cache:false,
-                            data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoId:shelfInfoId,centId:centId},
+                            data:{skuInfoIds:skuInfoIds,minQtys:minQtys,maxQtys:maxQtys,shelfSkuId:shelfSkuId,shelfInfoIds:shelfInfoIds,centId:centId},
                             success:function(data){
                                 if (data=="false"){
                                     checkFlag = true;
@@ -322,22 +327,38 @@
         }
 	</script>
 	<script type="text/javascript">
-        <%--function selectedColum(){--%>
-            <%--&lt;%&ndash;属于选中货架名称下的 本地备货&ndash;%&gt;--%>
-            <%--var opShelfId=$("#shelfInfoId").val();--%>
-            <%--$.ajax({--%>
-                <%--type:"post",--%>
-                <%--url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,--%>
-                <%--success:function (data) {--%>
-                    <%--if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){--%>
-                        <%--$("#PurchaseID").css("display","block");--%>
-                    <%--}else{--%>
-                        <%--$("#PurchaseID").css("display","none");--%>
-                        <%--$("#centerOfficeId").prop("value","");--%>
-                    <%--}--%>
-                <%--}--%>
-            <%--});--%>
-        <%--}--%>
+        function selectedColum(){
+            <%--属于选中货架名称下的 本地备货--%>
+            var type = 0;
+            $("input:checkbox[name='shelfs']:checked").each(function (i) {
+                var opshelf = $(this);
+                var opShelfId=$(this).val();
+                $.ajax({
+					type:"post",
+					url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
+					success:function (data) {
+						if(data.type==${BizOpShelfInfoEnum.LOCAL_STOCK.getLocal()}){
+                            if (type != 0 && type != data.type) {
+                                alert("平台商品和本地商品不能同时选择");
+                                opshelf.removeAttr("checked");
+                                return false;
+                            }
+                            type = data.type;
+                            $("#PurchaseID").css("display","block");
+						}else{
+                            if (type != 0 && type != data.type) {
+                                alert("平台商品和本地商品不能同时选择");
+                                opshelf.removeAttr("checked");
+                                return false;
+                            }
+                            type = data.type;
+                            $("#PurchaseID").css("display","none");
+                            $("#centerOfficeId").prop("value","");
+						}
+					}
+				});
+			});
+        }
 	</script>
 	<meta name="decorator" content="default"/>
 </head>
@@ -353,16 +374,6 @@
 	<%--<form:hidden id="shelfId" path="opShelfInfo.id"/>--%>
 	<sys:message content="${message}"/>
 
-	<div class="control-group" id="PurchaseID">
-		<label class="control-label">采购中心：</label>
-		<div class="controls">
-			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
-							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
-							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
-			</sys:treeselect>
-			<span class="help-inline"><font color="red">*</font> </span>
-		</div>
-	</div>
 	<%--<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit">--%>
 
 	<c:if test="${bizOpShelfSku.id == null}">
@@ -370,7 +381,7 @@
 			<label class="control-label">货架名称：</label>
 			<div class="controls">
 				<c:forEach items="${shelfList}" var="shelf" varStatus="i">
-					<input id="shelfs_${i.index}" name="shelfs" type="checkbox" class="required" value="${shelf.id}"/>
+					<input id="shelfs_${i.index}" name="shelfs" type="checkbox" onchange="selectedColum()" class="required" value="${shelf.id}"/>
 					<label for="shelfs_${i.index}">${shelf.name}</label>
 				</c:forEach>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -389,6 +400,17 @@
 			</div>
 		</div>
 	</c:if>
+
+	<div class="control-group" id="PurchaseID" style="display:none">
+		<label class="control-label">采购中心：</label>
+		<div class="controls">
+			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
+							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
+							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+			</sys:treeselect>
+			<span class="help-inline"><font color="red">*</font> </span>
+		</div>
+	</div>
 
 	<div class="control-group">
 		<label class="control-label">选择商品：</label>
