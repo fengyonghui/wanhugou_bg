@@ -15,7 +15,7 @@
 			var brccID = $("#prcIdcc").val();
 			 $("#adviserId").html("");
 				 if(brccID!=id){
-				 	$("#adviserId").append("<option value='' selected = 'selected'>==请选择采购顾问==</option>");
+				 	$("#adviserId").append("<option value='' selected = 'selected'>请选择采购顾问</option>");
 					$("#s2id_adviserId span:eq(0)").html("==请选择采购顾问==");
 				 }else{
 				 	$("#adviserId").append("<option value='${buyerAdviser.consultantId}' selected = 'selected'>==请选择采购顾问==</option>");
