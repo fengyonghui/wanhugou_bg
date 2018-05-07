@@ -248,7 +248,7 @@ public class BizInventorySkuController extends BaseController {
             String[] skuInfoIdArr = bizInventorySkus.getSkuInfoIds().split(",");
             String[] stockQtyArr = bizInventorySkus.getStockQtys().split(",");
             BizInventorySku bizInventorySku = new BizInventorySku();
-//            BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
+            BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
             for (int i = 0; i < skuInfoIdArr.length; i++) {
                 bizInventorySku.setId(null);
                 bizInventorySku.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
@@ -257,26 +257,28 @@ public class BizInventorySkuController extends BaseController {
                 }
                 bizInventorySku.setInvInfo(bizInventoryInfoService.get(Integer.parseInt(invInfoIdArr[i].trim())));
                 bizInventorySku.setInvType(Integer.parseInt(invTypeArr[i].trim()));
-//                bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
-//                bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
-//                bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
+                bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+                bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+                bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
                 //查询是否有已删除的该商品库存
                 BizInventorySku only = bizInventorySkuService.findOnly(bizInventorySku);
                 if (only == null) {
+                    bizInventoryViewLog.setStockQty(0);
                     bizInventorySku.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
+                    bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
+                    bizInventoryViewLog.setNowStockQty(bizInventorySku.getStockQty());
                     bizInventorySkuService.save(bizInventorySku);
-//                    bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());
-//                    bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
                 } else {
-                    only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
                     if (bizInventorySkus.getCustomerIds() != null && !bizInventorySkus.getCustomerIds().isEmpty()) {
                         only.setCust(officeService.get(Integer.parseInt(customerIdArr[i].trim())));
                     }
+                    bizInventoryViewLog.setStockQty(0);
+                    only.setStockQty(Integer.parseInt(stockQtyArr[i].trim()));
+                    bizInventoryViewLog.setStockChangeQty(only.getStockQty());
+                    bizInventoryViewLog.setNowStockQty(only.getStockQty());
                     bizInventorySkuService.save(only);
-//                    bizInventoryViewLog.setStockQty(only.getStockQty());
-//                    bizInventoryViewLog.setStockChangeQty(only.getStockQty());
                 }
-//                bizInventoryViewLogService.save(bizInventoryViewLog);
+                bizInventoryViewLogService.save(bizInventoryViewLog);
             }
         }//修改
         else if (bizInventorySkus != null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")) {
@@ -307,17 +309,18 @@ public class BizInventorySkuController extends BaseController {
     @RequiresPermissions("biz:inventory:bizInventorySku:edit")
     @RequestMapping(value = "delete")
     public String delete(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-//        BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
+        BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
         bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_DELETE);
-        bizInventorySkuService.delete(bizInventorySku);
         String zt = request.getParameter("zt");
         addMessage(redirectAttributes, "删除商品库存详情成功");
-//        bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
-//        bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
-//        bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
-//        bizInventoryViewLog.setStockQty(0);
-//        bizInventoryViewLog.setStockChangeQty(0-bizInventorySku.getStockQty());
-//        bizInventoryViewLogService.save(bizInventoryViewLog);
+        bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+        bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
+        bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+        bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());
+        bizInventoryViewLog.setStockChangeQty(0-bizInventorySku.getStockQty());
+        bizInventoryViewLog.setNowStockQty(0);
+        bizInventorySkuService.delete(bizInventorySku);
+        bizInventoryViewLogService.save(bizInventoryViewLog);
         return "redirect:" + Global.getAdminPath() + "/biz/inventory/bizInventorySku/?repage&zt=" + zt;
     }
 
@@ -326,6 +329,14 @@ public class BizInventorySkuController extends BaseController {
     public String recovery(BizInventorySku bizInventorySku, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         bizInventorySku.setDelFlag(BizInventorySku.DEL_FLAG_NORMAL);
         bizInventorySkuService.delete(bizInventorySku);
+        BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
+        bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
+        bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
+        bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
+        bizInventoryViewLog.setStockQty(0);//原
+        bizInventoryViewLog.setStockChangeQty(bizInventorySku.getStockQty());
+        bizInventoryViewLog.setNowStockQty(bizInventorySku.getStockQty());//现
+        bizInventoryViewLogService.save(bizInventoryViewLog);
         String zt = request.getParameter("zt");
         addMessage(redirectAttributes, "恢复商品库存详情成功");
 
