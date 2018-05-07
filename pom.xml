@@ -62,7 +62,7 @@
     <repository>
     <id>jeesite-repos</id>
     <name>Jeesite Repository</name>
-    <url>http://192.168.1.252:8081/nexus/content/groups/public</url>
+    <url>http://124.204.36.166:8899/nexus/content/groups/public</url>
     </repository>
 
     </repositories>
@@ -73,7 +73,7 @@
     <pluginRepository>
     <id>jeesite-repos</id>
     <name>Jeesite Repository</name>
-    <url>http://192.168.1.252:8081/nexus/content/groups/public</url>
+    <url>http://124.204.36.166:8899/nexus/content/groups/public</url>
     </pluginRepository>
 
     </pluginRepositories>
@@ -624,14 +624,14 @@
         </dependency>
 
 
-        <!-- 自定义jar依赖包
-        <dependency>
-            <groupId>com.wanhutong.backend</groupId>
-            <artifactId>test-core</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/test-core-1.0.jar</systemPath>
-        </dependency> -->
+        <!-- 自定义jar依赖包-->
+        <!--<dependency>-->
+            <!--<groupId>com.wanhutong.backend</groupId>-->
+            <!--<artifactId>test-core</artifactId>-->
+            <!--<version>1.0</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/test-core-1.0.jar</systemPath>-->
+        <!--</dependency>-->
 
         <!-- 使用 Jetty JSP引擎
         <dependency>

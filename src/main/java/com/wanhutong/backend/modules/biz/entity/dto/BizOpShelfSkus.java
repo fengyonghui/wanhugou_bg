@@ -42,6 +42,11 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 
 	private int shelfSign; //货架删除返回标志
 
+	/**
+	 * C端商品上下架
+	 * */
+	private String cendShelf;
+
 
 	public BizOpShelfSkus() {
 		super();
@@ -169,5 +174,13 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 
 	public void setSkuInfoIds(String skuInfoIds) {
 		this.skuInfoIds = skuInfoIds;
+	}
+
+	public String getCendShelf() {
+		return cendShelf;
+	}
+
+	public void setCendShelf(String cendShelf) {
+		this.cendShelf = cendShelf;
 	}
 }

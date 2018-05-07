@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,8 +136,11 @@ public class BizOpShelfSkuController extends BaseController {
             }
 			bizOpShelfSkuService.save(bizOpShelfSku);
 		}
-
 		addMessage(redirectAttributes, "保存商品上架成功");
+		String a="cend_save";
+		if(bizOpShelfSkus.getCendShelf()!=null && bizOpShelfSkus.getCendShelf().equals(a)){
+			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/cendList";
+		}
 		if(bizOpShelfSkus.getShelfSign()==0){
 			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
 		}
@@ -193,7 +197,6 @@ public class BizOpShelfSkuController extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
-		bizOpShelfSku.setDelFlag(BizOpShelfSku.DEL_FLAG_DELETE);
 		bizOpShelfSkuService.delete(bizOpShelfSku);
 		addMessage(redirectAttributes, "删除商品上架成功");
 		if(bizOpShelfSku.getShelfSign()==0){
@@ -201,17 +204,7 @@ public class BizOpShelfSkuController extends BaseController {
 		}
 		return "redirect:"+Global.getAdminPath()+"//biz/shelf/bizOpShelfInfo/form?id="+bizOpShelfSku.getOpShelfInfo().getId();
 	}
-	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
-	@RequestMapping(value = "recovery")
-	public String recovery(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
-		bizOpShelfSku.setDelFlag(BizOpShelfSku.DEL_FLAG_NORMAL);
-		bizOpShelfSkuService.delete(bizOpShelfSku);
-		addMessage(redirectAttributes, "恢复商品上架成功");
-		if(bizOpShelfSku.getShelfSign()==0){
-			return "redirect:"+Global.getAdminPath()+"/biz/shelf/bizOpShelfSku/?repage";
-		}
-		return "redirect:"+Global.getAdminPath()+"//biz/shelf/bizOpShelfInfo/form?id="+bizOpShelfSku.getOpShelfInfo().getId();
-	}
+
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "dateTimeSave")
 	public String dateTimeSave(BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
@@ -290,5 +283,36 @@ public class BizOpShelfSkuController extends BaseController {
         }
         return flag;
     }
+
+	/**
+	 * C端上下架管理列表
+	 * */
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@RequestMapping(value ="cendList")
+	public String cendList(BizOpShelfSku bizOpShelfSku, HttpServletRequest request, HttpServletResponse response, Model model) {
+		String supplierId = DictUtils.getDictValue("微店", "biz_opshel_cend", "");
+		BizOpShelfInfo bizOpShelfInfo = new BizOpShelfInfo();
+		bizOpShelfInfo.setId(Integer.parseInt(supplierId));
+		bizOpShelfSku.setOpShelfInfo(bizOpShelfInfo);
+		Page<BizOpShelfSku> page = bizOpShelfSkuService.findPage(new Page<BizOpShelfSku>(request, response), bizOpShelfSku);
+		model.addAttribute("page", page);
+		return "modules/biz/shelf/bizOpShelfSkuCendList";
+	}
+
+	/**
+	 * C端上下架管理form
+	 * */
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+	@RequestMapping(value = "cendForm")
+	public String cendForm(BizOpShelfSkus bizOpShelfSku, Model model) {
+		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null){
+			BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuService.get(bizOpShelfSku.getId());
+			model.addAttribute("bizOpShelfSku",bizOpShelfSku1);
+		}else {
+			model.addAttribute("bizOpShelfSku", bizOpShelfSku);
+		}
+		model.addAttribute("bizSkuInfo", new BizSkuInfo());
+		return "modules/biz/shelf/bizOpShelfSkuCendForm";
+	}
 }
 

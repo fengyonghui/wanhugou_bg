@@ -125,12 +125,16 @@ public class BizOrderDetailController extends BaseController {
 //		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 ////		}
 		String consultantId ="";
+		String a="header_save";
 		if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getConsultantId()!=null){
 			consultantId = String.valueOf(bizOrderDetail.getOrderHeader().getConsultantId());
 		}
 		if(bizOrderDetail.getOrderHeader().getClientModify()!=null && bizOrderDetail.getOrderHeader().getClientModify().equals("client_modify")){
 			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId+"&clientModify=client_modify"+
 					"&consultantId="+consultantId;
+		}else if(bizOrderDetail.getDetailFlag()!=null && bizOrderDetail.getDetailFlag().equals(a)){
+			//跳回C端
+			return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/cendform?id="+orderId;
 		}
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
 	}

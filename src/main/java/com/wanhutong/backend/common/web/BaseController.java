@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 
+import com.wanhutong.backend.common.config.Global;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.slf4j.Logger;
@@ -24,6 +26,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wanhutong.backend.common.beanvalidator.BeanValidators;
@@ -65,6 +69,8 @@ public abstract class BaseController {
 	 */
 	@Autowired
 	protected Validator validator;
+
+	protected String productName;
 
 	/**
 	 * 服务端参数有效性验证
@@ -212,5 +218,13 @@ public abstract class BaseController {
 //			}
 		});
 	}
-	
+
+	private final static String VENDOR_DOMAIN = "vendor.wanhutong.com";
+	private final static String VENDOR_PRODUCT_NAME = "万户通供应商后台";
+
+	public static String getProductName() {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String serverName = request.getServerName();
+		return VENDOR_DOMAIN.equalsIgnoreCase(serverName) ? VENDOR_PRODUCT_NAME : Global.getConfig("productName");
+	}
 }

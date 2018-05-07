@@ -39,6 +39,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>仓库</th>
 				<th>库存类型</th>
 				<th>商品</th>
@@ -51,8 +52,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizInventoryViewLog">
+		<c:forEach items="${page.list}" var="bizInventoryViewLog" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${bizInventoryViewLog.invInfo.name}
 				</td>

@@ -99,7 +99,7 @@
 								labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 								title="采购商"  url="/sys/office/queryTreeList?type=6"
 								cssClass="input-medium required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+								allowClear="true"  dataMsgRequired="必填信息"/>
 				<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
 				<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
 			</c:if>
@@ -108,7 +108,7 @@
 								labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 								title="采购商"  url="/sys/office/queryTreeList?type=6"
 								cssClass="input-medium required"
-								allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+								allowClear="true"  dataMsgRequired="必填信息"/>
 			</c:if>
 		</li>
 		<li><label>采购中心：</label>
@@ -147,6 +147,7 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>
 	<tr>
+		<td>序号</td>
 		<th>订单编号</th>
 		<th>订单类型</th>
 		<th>采购商名称</th>
@@ -167,8 +168,9 @@
 	</tr>
 	</thead>
 	<tbody>
-	<c:forEach items="${page.list}" var="orderHeader">
+	<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
 		<tr>
+			<td>${state.index+1}</td>
 			<td>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
@@ -214,7 +216,7 @@
 					<a style="display: none">
 					<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 					</a>
-			<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40 && total != orderHeader.receiveTotal}">
+			<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && total != orderHeader.receiveTotal}">
 					<font color="#FF0000">(有尾款)</font>
 				</c:if>
 			</td>
@@ -251,8 +253,10 @@
 						</c:if>
 					</c:when>
 					<c:otherwise>
-						<%--<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40 && orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">--%>
-							<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>--%>
+						<%--<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">--%>
+							<%--<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">--%>
+								<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>--%>
+							<%--</c:if>--%>
 						<%--</c:if>--%>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
@@ -266,7 +270,6 @@
 				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
 					<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
 				</c:if>
-
 			</td></shiro:hasPermission>
 		</tr>
 	</c:forEach>

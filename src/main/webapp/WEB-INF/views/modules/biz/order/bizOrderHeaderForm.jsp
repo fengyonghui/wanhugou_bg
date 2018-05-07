@@ -371,7 +371,7 @@
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
-    <form:hidden path="platformInfo.id" value="1"/>
+    <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
 
     <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
@@ -931,12 +931,16 @@
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
+        <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+            <th>商品出厂价</th>
+        </c:if>
         <th>供应商</th>
         <th>供应商电话</th>
         <th>商品单价</th>
         <th>采购数量</th>
         <th>总 额</th>
         <th>已发货数量</th>
+        <th>发货方</th>
         <c:if test="${bizOrderHeader.flag=='check_pending'}">
             <th>本地备货</th>
         </c:if>
@@ -978,6 +982,11 @@
             <td>
                 ${bizOrderDetail.skuInfo.itemNo}
             </td>
+            <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
+                <td>
+                        ${bizOrderDetail.buyPrice}
+                </td>
+            </c:if>
             <td>
                     ${bizOrderDetail.vendor.name}
             </td>
@@ -997,6 +1006,9 @@
             </td>
             <td>
                     ${bizOrderDetail.sentQty}
+            </td>
+            <td>
+                ${bizOrderDetail.suplyis.name}
             </td>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <td>

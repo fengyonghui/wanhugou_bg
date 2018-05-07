@@ -15,7 +15,6 @@ import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import com.wanhutong.backend.modules.enums.userRoleOfficeEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -85,9 +84,7 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
 		String userSou="officeConnIndex";
-
 		if(user.getCompany()!=null && user.getCompany().getSource()!=null && user.getCompany().getSource().equals(userSou)){
-
 			//属于客户专员左边点击菜单查询
 			Office queryOffice = officeService.get(user.getCompany().getId());
 			if(queryOffice!=null){
@@ -103,10 +100,7 @@ public class UserController extends BaseController {
 					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
 				}
 			}
-		}else {
-			user.setDataStatus("filter");
 		}
-
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
 		return "modules/sys/userList";
@@ -189,8 +183,7 @@ public class UserController extends BaseController {
 			list = new ArrayList<>();
 		}else{
 			Role role = new Role();
-//			role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
-			role.setId(Integer.parseInt(userRoleOfficeEnum.PURCHASE.getType()));
+			role.setId(Integer.valueOf(DictUtils.getDictValue("角色", "sys_user_role_adviser","")));
 			user.setRole(role);
 			list = systemService.selectUserByOfficeId(user);
 		}
@@ -264,6 +257,10 @@ public class UserController extends BaseController {
 		if(user.getConn()!=null && user.getConn().equals(officeUser)){
 //			添加 跳回用户管理列表
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
+		}
+		if(user.getConn()!=null && user.getConn().equals("contact_ck")){
+			//跳回会员搜索
+			return "redirect:" + adminPath + "/sys/user/contact";
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
@@ -641,7 +638,7 @@ public class UserController extends BaseController {
                     bflag = false;
                 }
             }
-            if (user.getCompany()!= null && user.getCompany().getId()!=Integer.parseInt(companyId)) {
+            if (user.getCompany().getId()!=Integer.parseInt(companyId)) {
                 flag = true;
             }
             if (flag || bflag) {

@@ -20,6 +20,7 @@ public class BizLogistics extends DataEntity<BizLogistics> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// 物流商名称
+	private String carrier;		//承运人
 	private String phone;		// 物流商电话
 	
 	public BizLogistics() {
@@ -47,5 +48,11 @@ public class BizLogistics extends DataEntity<BizLogistics> {
 		this.phone = phone;
 	}
 
-	
+	public String getCarrier() {
+		return carrier;
+	}
+
+	public void setCarrier(String carrier) {
+		this.carrier = carrier;
+	}
 }

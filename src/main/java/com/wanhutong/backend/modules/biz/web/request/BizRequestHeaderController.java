@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.druid.sql.visitor.functions.Char;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -23,6 +24,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -62,7 +64,7 @@ public class BizRequestHeaderController extends BaseController {
 	@Autowired
 	private BizRequestDetailService bizRequestDetailService;
 	@Autowired
-	private BizSkuInfoService bizSkuInfoService;
+	private BizSkuInfoV2Service bizSkuInfoService;
 	@Autowired
 	private BizPoOrderReqService bizPoOrderReqService;
 	@Autowired
@@ -98,7 +100,7 @@ public class BizRequestHeaderController extends BaseController {
             Integer recvQtys = 0;
             Double money=0.0;
             for (BizRequestDetail bizRequestDetail:requestDetailList) {
-				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*(bizRequestDetail.getSkuInfo().getBuyPrice()==null?0:bizRequestDetail.getSkuInfo().getBuyPrice());
+				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*(bizRequestDetail.getUnitPrice()==null?0:bizRequestDetail.getUnitPrice());
                 reqQtys += bizRequestDetail.getReqQty();
                 recvQtys += bizRequestDetail.getRecvQty();
             }
@@ -217,6 +219,25 @@ public class BizRequestHeaderController extends BaseController {
 		bizRequestHeader.setBizStatus(Integer.parseInt(checkStatus));
 		boolean boo=false;
 		try {
+			if(bizRequestHeader.getRemarkReject()!=null && !bizRequestHeader.getRemarkReject().equals("adopt")){
+				if(bizRequestHeader.getRemark()!=null && bizRequestHeader.getRemark().contains(":驳回原因：")){
+					bizRequestHeader.setRemark(bizRequestHeader.getRemark()+bizRequestHeader.getRemarkReject());
+				}else{
+					bizRequestHeader.setRemark(bizRequestHeader.getRemark()+"\n"+":驳回原因："+bizRequestHeader.getRemarkReject());
+				}
+			}else{
+				if(bizRequestHeader.getRemark()!=null && bizRequestHeader.getRemark().contains(":驳回原因：")){
+					String b="";
+					String[] split = bizRequestHeader.getRemark().split("\n:");
+					for (int i = 0; i < split.length; i++) {
+						if(i==0){
+							b= split[i];
+							break;
+						}
+					}
+					bizRequestHeader.setRemark(String.valueOf(b));
+				}
+			}
 			bizRequestHeaderService.save(bizRequestHeader);
 			boo=true;
 		}catch (Exception e){

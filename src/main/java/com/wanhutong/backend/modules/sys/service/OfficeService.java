@@ -285,7 +285,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     public void save(Office office) {
         super.save(office);
         //保存供应商经营品类
-        if (office.getBizVendInfo() != null && office.getBizVendInfo().getBizCategoryInfo().getId() != null) {
+        if (office.getBizVendInfo() != null && office.getBizVendInfo().getBizCategoryInfo()!=null && office.getBizVendInfo().getBizCategoryInfo().getId() != null) {
             BizVarietyInfo bizVarietyInfo = bizVarietyInfoService.get(office.getBizVendInfo().getBizCategoryInfo().getId());
             BizVendInfo bizVendInfo = new BizVendInfo();
             BizVendInfo vendInfo = bizVendInfoService.get(office.getId());

@@ -72,6 +72,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<c:if test="${bizStatus==0}">
 					<th>仓库名称</th>
 				</c:if>
@@ -101,8 +102,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizSendGoodsRecord">
+		<c:forEach items="${page.list}" var="bizSendGoodsRecord" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<c:if test="${bizStatus==0}">
 					<td><a href="${ctx}/biz/inventory/bizSendGoodsRecord/form?id=${bizSendGoodsRecord.id}">
 					</a>${bizSendGoodsRecord.invInfo.name}

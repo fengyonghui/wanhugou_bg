@@ -9,6 +9,10 @@
 			$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+					<%--if($("#primaryPersonId").val()==""){--%>
+						<%--alert("请选择主负责人");--%>
+						<%--return false;--%>
+					<%--}--%>
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -105,15 +109,15 @@
             <span class="help-inline">“是”代表此账号允许登陆，“否”则表示此账号不允许登陆</span>
         </div>
     </div>
-    <%--<div class="control-group">--%>
-        <%--<label class="control-label">钱包账户:</label>--%>
-        <%--<div class="controls">--%>
-            <%--<form:select path="level" style="width: 18%">--%>
-                <%--<form:options items="${fns:getDictList('biz_cust_credit_level')}" itemLabel="label" itemValue="value"--%>
-                              <%--htmlEscape="false"/>--%>
-            <%--</form:select>--%>
-        <%--</div>--%>
-    <%--</div>--%>
+    <div class="control-group">
+        <label class="control-label">钱包账户:</label>
+        <div class="controls">
+            <form:select path="level" style="width: 18%">
+                <form:options items="${fns:getDictList('biz_cust_credit_level')}" itemLabel="label" itemValue="value"
+                              htmlEscape="false"/>
+            </form:select>
+        </div>
+    </div>
     <div class="control-group">
         <label class="control-label">主负责人:</label>
         <div class="controls">
