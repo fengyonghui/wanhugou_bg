@@ -10,7 +10,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
+import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoV2Dao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -62,14 +62,14 @@ import java.util.*;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizProductInfoV2Service extends CrudService<BizProductInfoDao, BizProductInfo> {
+public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, BizProductInfo> {
 
     @Resource
     private PropertyInfoService propertyInfoService;
     @Resource
     private BizProdPropertyInfoService bizProdPropertyInfoService;
     @Autowired
-    private BizProductInfoDao bizProductInfoDao;
+    private BizProductInfoV2Dao bizProductInfoDao;
     @Resource
     private BizProdPropValueService bizProdPropValueService;
     @Resource
