@@ -17,4 +17,6 @@ import org.apache.ibatis.annotations.Param;
 public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
 
     int updatePaymentOrderId(@Param("id") Integer id, @Param("paymentId")Integer paymentId);
+
+    int updateBizStatus(@Param("id")Integer id, @Param("status")int status);
 }

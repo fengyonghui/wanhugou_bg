@@ -25,7 +25,7 @@ public class DynamicConfigDaoImpl implements DynamicConfigDao {
 				"select max(version) from common_dynamic_config where confName = ?", Integer.class, confName);
 		int currentVersion = maxVersion == null ? 1 : maxVersion + 1;
 		whtJdbcTemplate.getJdbcOperations().update(
-				"insert into common_dynamic_config(confName,content,created,status,version)" + "values(?,?,?,?,?)", confName,
+				"insert into common_dynamic_config(confName,content,create_time,status,version)" + "values(?,?,?,?,?)", confName,
 				content, new Date(), 1, currentVersion);
 	}
 
@@ -53,7 +53,7 @@ public class DynamicConfigDaoImpl implements DynamicConfigDao {
 	@Override
 	public List<DynamicConfigBean> queryDynamicConfByName(String dynamicName) {
 		return whtJdbcTemplate.getJdbcOperations().query(
-				"SELECT `confName`, `content`, `created`, `status`, `version`, `updated`  FROM `common_dynamic_config` WHERE confName LIKE ? and status = 1 ORDER BY `version` DESC",
+				"SELECT `confName`, `content`, create_time, `status`, `version`, `updated`  FROM `common_dynamic_config` WHERE confName LIKE ? and status = 1 ORDER BY `version` DESC",
 				new Object[] { "%" + dynamicName + "%" },
 				new BeanPropertyRowMapper<DynamicConfigBean>(DynamicConfigBean.class));
 	}

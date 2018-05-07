@@ -41,7 +41,6 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Integer deliveryStatus;
 	private String str;//详情标志
 
-
 	private BizPlatformInfo plateformInfo;		// 订单来源； biz_platform_info.id
 	private List<BizPoDetail> poDetailList;
 	private String orderDetailIds;
@@ -58,7 +57,17 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	private BizPoPaymentOrder bizPoPaymentOrder;
 
+	private Integer currentPaymentId;
+
 	private BigDecimal payTotal;
+
+	public Integer getCurrentPaymentId() {
+		return currentPaymentId;
+	}
+
+	public void setCurrentPaymentId(Integer currentPaymentId) {
+		this.currentPaymentId = currentPaymentId;
+	}
 
 	public BizPoHeader() {
 		super();
@@ -275,5 +284,31 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setPayTotal(BigDecimal payTotal) {
 		this.payTotal = payTotal;
+	}
+
+	public enum BizStatus {
+		NO_PAY(0, "未支付"),
+		DOWN_PAYMENT(1, "首付款支付"),
+		ALL_PAY(2, "全部支付"),
+		SHIPMENTS(3, "已发货"),
+		DELIVERY(4, "已收货"),
+		COMPLETE(5, "已完成"),
+		PROCESS(6, "审批中"),
+		;
+		private int status;
+		private String desc;
+
+		BizStatus(int status, String desc) {
+			this.status = status;
+			this.desc = desc;
+		}
+
+		public int getStatus() {
+			return status;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
 	}
 }

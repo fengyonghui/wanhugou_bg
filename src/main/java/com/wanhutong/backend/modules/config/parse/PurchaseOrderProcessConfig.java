@@ -32,6 +32,9 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
     @XStreamAlias("defaultProcessId")
     private int defaultProcessId;
 
+    @XStreamAlias("payProcessId")
+    private int payProcessId;
+
     @XStreamImplicit(itemFieldName = "process")
     private List<PurchaseOrderProcess> processList;
 
@@ -74,6 +77,10 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
 
     public int getDefaultProcessId() {
         return defaultProcessId;
+    }
+
+    public int getPayProcessId() {
+        return payProcessId;
     }
 
     @XStreamAlias("process")

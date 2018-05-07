@@ -6,6 +6,8 @@
 		a.id AS "id",
 		a.po_header_id AS "poHeaderId",
 		a.total AS "total",
+		a.pay_total AS "payTotal",
+		a.img AS "img",
 		a.process_id AS "processId",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",

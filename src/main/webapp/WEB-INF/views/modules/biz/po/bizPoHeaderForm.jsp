@@ -54,7 +54,7 @@
         });
 
         function saveMon(type) {
-            if (type == 'audit') {
+            if (type == 'createPay') {
                 var payTotal = $("#payTotal").val();
                 if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                     alert("请输入申请金额!");
@@ -141,6 +141,7 @@
 <form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/save?prewStatus=prew"
            method="post" class="form-horizontal">
     <form:hidden path="id" id="id"/>
+    <form:hidden path="bizPoPaymentOrder.id" id="paymentOrderId"/>
     <sys:message content="${message}"/>
     <input type="hidden" name="vendOffice.id" value="${vendorId}">
     <input id="str" type="hidden" value="${bizPoHeader.str}"/>
@@ -269,17 +270,38 @@
                        maxlength="30" class="input-xlarge "/>
             </div>
         </div>
-        <c:if test="${type == 'audit'}">
-            <div class="control-group">
-                <label class="control-label">申请金额：</label>
-                <div class="controls">
-                    <input id="payTotal" name="payTotal" type="text" <c:if test="${bizPoHeader.bizPoPaymentOrder != null}">readonly</c:if>
-                           value="${bizPoHeader.bizPoPaymentOrder != null ?
+        <div class="control-group">
+            <label class="control-label">申请金额：</label>
+            <div class="controls">
+                <input id="payTotal" name="payTotal" type="text"   <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
+                       value="${bizPoHeader.bizPoPaymentOrder.id != null ?
                            bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight)}"
+                       htmlEscape="false" maxlength="30" class="input-xlarge"/>
+            </div>
+        </div>
+        <c:if test="${type == 'pay'}">
+            <div class="control-group">
+                <label class="control-label">实际付款金额：</label>
+                <div class="controls">
+                    <input id="truePayTotal" name="payTotal" type="text"
+                           value="${bizPoHeader.bizPoPaymentOrder.payTotal}"
                            htmlEscape="false" maxlength="30" class="input-xlarge "/>
                 </div>
             </div>
+            <div class="control-group">
+                <label class="control-label">上传付款凭证：
+                    <p style="opacity: 0.5;">点击图片删除</p>
+                </label>
+
+                <div class="controls">
+                    <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" id="payImg"/>
+                </div>
+                <div id="payImgDiv">
+                    <img src="${bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
+                </div>
+            </div>
         </c:if>
+
         <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder != null}">
             <div class="control-group">
                 <label class="control-label">审核状态：</label>
@@ -301,17 +323,21 @@
                     <input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
                     <input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>
                 </c:if>
-                <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder == null}">
-                    <input id="btnSubmit" type="button" onclick="saveMon('audit')" class="btn btn-primary" value="申请付款"/>
+                <c:if test="${type == 'createPay'}">
+                    <input id="btnSubmit" type="button" onclick="saveMon('createPay')" class="btn btn-primary" value="申请付款"/>
+                </c:if>
+                <c:if test="${type == 'pay'}">
+                    <input id="btnSubmit" type="button" onclick="pay()" class="btn btn-primary" value="确认支付"/>
                 </c:if>
             </shiro:hasPermission>
             <shiro:hasPermission name="biz:po:bizPoHeader:edit">
-                <c:if test="${type != 'audit' && prewStatus == 'prew'}">
+                <c:if test="${type != 'pay' && type != 'audit' && prewStatus == 'prew'}">
                     <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="确认生成"/>
                 </c:if>
-                <c:if test="${type != 'audit' && prewStatus != 'prew'}">
+                <c:if test="${type != 'pay' && type != 'createPay' && type != 'audit' && prewStatus != 'prew'}">
                     <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="保存"/>
                 </c:if>
+
                 &nbsp;</shiro:hasPermission>
         </div>
     </c:if>
@@ -461,6 +487,7 @@
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 </form:form>
+<script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
 <script type="text/javascript">
     function checkPass() {
         top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
@@ -488,10 +515,6 @@
                 });
             }
         },{buttonsFocus:1});
-
-
-
-
     }
 
     function audit(auditType, description) {
@@ -512,7 +535,106 @@
                 console.info(error);
             }
         });
+    }
 
+
+    function pay() {
+        var id = $("#id").val();
+        var paymentOrderId = $("#paymentOrderId").val();
+        var payTotal = $("#truePayTotal").val();
+
+        var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
+        var img = "";
+        for (var i = 0; i < mainImg.length; i ++) {
+            img += $(mainImg[i]).attr("src");
+        }
+
+        if ($String.isNullOrBlank(payTotal)) {
+            alert("错误提示:请输入支付金额");
+            return false;
+        }
+        if ($String.isNullOrBlank(img)) {
+            alert("错误提示:请上传支付凭证");
+            return false;
+        }
+
+        $.ajax({
+            url: '${ctx}/biz/po/bizPoHeader/payOrder',
+            contentType: 'application/json',
+            data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
+            type: 'get',
+            success: function (result) {
+                alert(result);
+                if(result == '操作成功!') {
+                    window.location.href = "${ctx}/biz/po/bizPoHeader";
+                }
+            },
+            error: function (error) {
+                console.info(error);
+            }
+        });
+
+    }
+
+    function submitPic(id, multiple){
+        var f = $("#" + id).val();
+        if(f==null||f==""){
+            alert("错误提示:上传文件不能为空,请重新选择文件");
+            return false;
+        }else{
+            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
+            extname = extname.toLowerCase();//处理了大小写
+            if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
+                $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+                return false;
+            }
+        }
+        var file = document.getElementById(id).files;
+        var size = file[0].size;
+        if(size>2097152){
+            alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
+            return false;
+        }
+        ajaxFileUploadPic(id, multiple);
+    }
+
+    function ajaxFileUploadPic(id, multiple) {
+        $.ajaxFileUpload({
+            url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
+            secureuri : false, //一般设置为false
+            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            type : 'POST',
+            dataType : 'text', //返回值类型 一般设置为json
+            success : function(data, status) {
+                //服务器成功响应处理函数
+                var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
+                var msgJSON = JSON.parse(msg);
+                var imgList = msgJSON.imgList;
+                var imgDiv = $("#" + id + "Div");
+                var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
+                if (imgList && imgList.length > 0 && multiple) {
+                    for (var i = 0; i < imgList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                    }
+                }else if (imgList && imgList.length > 0 && !multiple) {
+                    imgDiv.empty();
+                    for (var i = 0; i < imgList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                    }
+                }else {
+                    var img = $("#" + id + "Img");
+                    img.attr("src", msgJSON.fullName);
+                }
+            },
+            error : function(data, status, e) {
+                //服务器响应失败处理函数
+                console.info(data);
+                console.info(status);
+                console.info(e);
+                alert("上传失败");
+            }
+        });
+        return false;
     }
 </script>
 </body>

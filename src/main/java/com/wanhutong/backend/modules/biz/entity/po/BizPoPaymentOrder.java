@@ -17,10 +17,12 @@ import java.math.BigDecimal;
  */
 public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1111111111111L;
 	private Integer poHeaderId;		// 采购单ID
-	private BigDecimal total;		// 付款金额
+	private BigDecimal total;		// 申请金额
+	private BigDecimal payTotal;		// 付款金额
 	private Integer processId;		// 当前审核状态ID
+	private String img;		// 图片
 
 	private CommonProcessEntity commonProcess;
 
@@ -64,5 +66,21 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
 	public void setCommonProcess(CommonProcessEntity commonProcess) {
 		this.commonProcess = commonProcess;
+	}
+
+	public BigDecimal getPayTotal() {
+		return payTotal;
+	}
+
+	public void setPayTotal(BigDecimal payTotal) {
+		this.payTotal = payTotal;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
 	}
 }

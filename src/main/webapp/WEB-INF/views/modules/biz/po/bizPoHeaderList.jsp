@@ -117,11 +117,17 @@
 					<td>
 						<shiro:hasPermission name="biz:po:bizPoHeader:createPayOrder">
 							<c:if test="${bizPoHeader.bizPoPaymentOrder == null}">
-								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">申请付款</a>
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 							</c:if>
 						</shiro:hasPermission>
 						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
-							<c:if test="${bizPoHeader.bizPoPaymentOrder != null && bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name != '驳回'}">
+							<c:if test="${bizPoHeader.bizPoPaymentOrder != null && bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.code == payStatus}">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
+							</c:if>
+							<c:if test="${bizPoHeader.bizPoPaymentOrder != null
+							&& bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name != '驳回'
+							&& bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.code != payStatus
+							}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
 							</c:if>
 						</shiro:hasPermission>
@@ -137,4 +143,11 @@
 	</table>
 	<div class="pagination">${page}</div>
 </body>
+<script type="text/javascript">
+	function paymentOrder () {
+	    alert("1");
+
+
+	}
+</script>
 </html>

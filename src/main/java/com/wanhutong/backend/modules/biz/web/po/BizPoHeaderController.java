@@ -13,7 +13,6 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -23,7 +22,6 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
-import com.wanhutong.backend.modules.biz.service.po.BizPoPaymentOrderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -33,14 +31,10 @@ import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
-import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
-import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,8 +68,6 @@ public class BizPoHeaderController extends BaseController {
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
-    private BizPoPaymentOrderService bizPoPaymentOrderService;
-    @Autowired
     private BizPoDetailService bizPoDetailService;
     @Autowired
     private BizPlatformInfoService bizPlatformInfoService;
@@ -93,8 +85,6 @@ public class BizPoHeaderController extends BaseController {
     private BizRequestDetailService bizRequestDetailService;
     @Autowired
     private OfficeService officeService;
-    @Autowired
-    private CommonProcessService commonProcessService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
 
@@ -225,6 +215,7 @@ public class BizPoHeaderController extends BaseController {
         }
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("page", page);
+        model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
         return "modules/biz/po/bizPoHeaderList";
     }
 
@@ -266,51 +257,7 @@ public class BizPoHeaderController extends BaseController {
     @RequestMapping(value = "audit")
     @ResponseBody
     public String audit(int id, String currentType, int auditType, String description) {
-        BizPoHeader bizPoHeader = bizPoHeaderService.get(id);
-        BizPoPaymentOrder bizPoPaymentOrder = bizPoHeader.getBizPoPaymentOrder();
-        CommonProcessEntity cureentProcessEntity = bizPoPaymentOrder.getCommonProcess();
-        if (cureentProcessEntity == null) {
-            return "操作失败,当前订单无审核状态!";
-        }
-        cureentProcessEntity = commonProcessService.get(bizPoPaymentOrder.getCommonProcess().getId());
-        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
-            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", id, currentType);
-            return "操作失败,当前审核状态异常!";
-        }
-        // 当前流程
-        PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(currentType));
-        // 下一流程
-        PurchaseOrderProcessConfig.PurchaseOrderProcess nextProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
-        if (nextProcess == null) {
-            return "操作失败,当前流程已经结束!";
-        }
-
-
-        User user = UserUtils.getUser();
-        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
-        Role role = new Role();
-        role.setEnname(roleEnNameEnum.getState());
-        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
-            return "操作失败,该用户没有权限!";
-        }
-
-        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && StringUtils.isBlank(description)) {
-            return "请输入驳回理由!";
-        }
-
-        cureentProcessEntity.setBizStatus(auditType);
-        cureentProcessEntity.setProcessor(user.getId().toString());
-        cureentProcessEntity.setDescription(description);
-        commonProcessService.save(cureentProcessEntity);
-
-        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-        nextProcessEntity.setObjectId(bizPoPaymentOrder.getId().toString());
-        nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
-        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
-        commonProcessService.save(nextProcessEntity);
-        bizPoPaymentOrderService.updateProcessId(bizPoPaymentOrder.getId(), nextProcessEntity.getId());
-        return "操作成功!";
+        return bizPoHeaderService.audit(id, currentType, auditType, description);
     }
 
 
@@ -318,7 +265,7 @@ public class BizPoHeaderController extends BaseController {
     @RequestMapping(value = "save")
     public String save(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
         if ("audit".equalsIgnoreCase(type)) {
-            String msg = genPaymentOrder(bizPoHeader);
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader);
             addMessage(redirectAttributes, msg);
             return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
         }
@@ -348,8 +295,8 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "savePoHeader")
     public String savePoHeader(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
-        if ("audit".equalsIgnoreCase(type)) {
-            String msg = genPaymentOrder(bizPoHeader);
+        if ("createPay".equalsIgnoreCase(type)) {
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader);
             addMessage(redirectAttributes, msg);
             return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
         }
@@ -372,28 +319,11 @@ public class BizPoHeaderController extends BaseController {
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
     }
 
-
-    private String genPaymentOrder(BizPoHeader bizPoHeader) {
-        if(bizPoHeader.getBizPoPaymentOrder() != null) {
-            return "操作失败,该订单已经有正在申请的支付单!";
-        }
-
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
-        PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
-        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-        commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
-        commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-        commonProcessService.save(commonProcessEntity);
-
-        BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-        bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
-        bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
-        bizPoPaymentOrder.setTotal(bizPoHeader.getPayTotal());
-        bizPoPaymentOrderService.save(bizPoPaymentOrder);
-
-        bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
-        bizPoHeaderService.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());
-        return "操作成功!";
+    @RequiresPermissions("biz:po:bizPoHeader:audit")
+    @RequestMapping(value = "payOrder")
+    @ResponseBody
+    public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+        return bizPoHeaderService.payOrder(poHeaderId, paymentOrderId, payTotal, img);
     }
+
 }
