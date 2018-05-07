@@ -113,8 +113,7 @@
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>
-						<%--TODO 权限--%>
-						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+						<shiro:hasPermission name="biz:po:bizPoHeader:createPayOrder">
 							<c:if test="${bizPoHeader.bizPoPaymentOrder == null}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">申请付款</a>
 							</c:if>
