@@ -12,7 +12,12 @@
 		SELECT 
 			b.cust_id as cust_id,
 			b.center_id as center_id,
-			b.consultant_id as consultant_id
+			b.consultant_id as consultant_id,
+			b.status AS "status",
+			b.create_time AS "createDate",
+			b.create_id AS "createBy.id",
+			b.update_id AS "updateBy.id",
+			b.update_time AS "updateDate"
 		FROM biz_custom_center_consultant b
 		WHERE b.cust_id = #{id} and status = 1 limit 1;
 	</select>
