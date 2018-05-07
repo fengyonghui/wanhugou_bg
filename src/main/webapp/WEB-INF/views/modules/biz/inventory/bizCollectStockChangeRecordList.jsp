@@ -24,8 +24,29 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<li><label>仓库名称：</label>
+				<form:input path="invInfoName" htmlEscape="false" maxlength="80" class="input-medium"/>
+			</li>
 			<li><label>订单编号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="80" class="input-medium"/>
+			</li>
+			<li><label>商品名称：</label>
+				<form:input path="skuInfoName" htmlEscape="false" maxlength="80" class="input-medium"/>
+			</li>
+			<li><label>商品货号：</label>
+				<form:input path="skuInfoItemNo" htmlEscape="false" maxlength="80" class="input-medium"/>
+			</li>
+			<li><label>商品编号：</label>
+				<form:input path="skuInfoPartNo" htmlEscape="false" maxlength="80" class="input-medium"/>
+			</li>
+			<li><label>创建日期：</label>
+				<input name="createDateStart" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizCollectGoodsRecord.createDateStart}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="createDateEnd" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizCollectGoodsRecord.createDateEnd}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -35,20 +56,24 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>仓库名称</th>
 				<th>商品名称</th>
+				<th>商品货号</th>
 				<th>商品编号</th>
 				<th>备货单号/订单号</th>
 				<th>变更记录</th>
 				<th>原库存数</th>
 				<th>变更数量</th>
 				<th>客户名称</th>
+				<th>创建人</th>
 				<th>变更时间</th>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="collectGoods">
+		<c:forEach items="${page.list}" var="collectGoods" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${collectGoods.invInfo.name}
 				</td>
@@ -56,10 +81,20 @@
 						${collectGoods.skuInfo.name}
 				</td>
 				<td>
+						${collectGoods.skuInfo.itemNo}
+				</td>
+				<td>
 						${collectGoods.skuInfo.partNo}
 				</td>
-				<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizOrderHeader.id}&source=ghs">
-						${collectGoods.orderNum}</a>
+				<td>
+					<c:if test="${fn:contains(collectGoods.orderNum,'RE')}">
+						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizRequestHeader.id}&source=gh">
+								${collectGoods.orderNum}</a>
+					</c:if>
+					<c:if test="${!fn:contains(collectGoods.orderNum,'RE')}">
+						<a href="${ctx}/biz/request/bizRequestAll/form?id=${collectGoods.bizOrderHeader.id}&source=ghs">
+								${collectGoods.orderNum}</a>
+					</c:if>
 				</td>
 				<td>
 					<c:if test="${collectGoods.changeState !=null && collectGoods.changeState eq '出库记录'}">
@@ -75,6 +110,9 @@
 				</td>
 				<td>
 					${collectGoods.customer.name}
+				</td>
+				<td>
+						${collectGoods.createBy.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${collectGoods.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

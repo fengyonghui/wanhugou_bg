@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.request;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.druid.sql.visitor.functions.Char;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -218,6 +219,25 @@ public class BizRequestHeaderController extends BaseController {
 		bizRequestHeader.setBizStatus(Integer.parseInt(checkStatus));
 		boolean boo=false;
 		try {
+			if(bizRequestHeader.getRemarkReject()!=null && !bizRequestHeader.getRemarkReject().equals("adopt")){
+				if(bizRequestHeader.getRemark()!=null && bizRequestHeader.getRemark().contains(":驳回原因：")){
+					bizRequestHeader.setRemark(bizRequestHeader.getRemark()+bizRequestHeader.getRemarkReject());
+				}else{
+					bizRequestHeader.setRemark(bizRequestHeader.getRemark()+"\n"+":驳回原因："+bizRequestHeader.getRemarkReject());
+				}
+			}else{
+				if(bizRequestHeader.getRemark()!=null && bizRequestHeader.getRemark().contains(":驳回原因：")){
+					String b="";
+					String[] split = bizRequestHeader.getRemark().split("\n:");
+					for (int i = 0; i < split.length; i++) {
+						if(i==0){
+							b= split[i];
+							break;
+						}
+					}
+					bizRequestHeader.setRemark(String.valueOf(b));
+				}
+			}
 			bizRequestHeaderService.save(bizRequestHeader);
 			boo=true;
 		}catch (Exception e){

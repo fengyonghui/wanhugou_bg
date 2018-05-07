@@ -287,7 +287,7 @@
                     <th>货号</th>
                     <th>尺寸</th>
                     <th>颜色</th>
-                    <th>价格</th>
+                    <th>工厂价</th>
                     <th>图片</th>
                     <th style="display: none">图片地址</th>
                     <th>类型</th>

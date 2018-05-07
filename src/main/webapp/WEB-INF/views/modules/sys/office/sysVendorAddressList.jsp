@@ -31,7 +31,7 @@
                             labelValue="${entity.office.name}" notAllowSelectParent="true"
                             title="供应商"  url="/sys/office/queryTreeList?type=7&source=gys"
                             cssClass="input-xlarge required"
-                            allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+                            allowClear="true" dataMsgRequired="必填信息"/>
         </li>
             <%--<li><label>地址类型：</label>
                  <form:select path="type" class="input-medium required">
@@ -47,6 +47,7 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
+        <td>序号</td>
         <th>机构名称</th>
         <th>联系人</th>
         <th>联系电话</th>
@@ -59,8 +60,9 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach items="${page.list}" var="sysOfficeAddress">
+    <c:forEach items="${page.list}" var="sysOfficeAddress" varStatus="state">
         <tr>
+            <td>${state.index+1}</td>
             <td><a href="${ctx}/sys/office/sysOfficeAddress/form?id=${sysOfficeAddress.id}&&sign=vendoradd">
                     ${sysOfficeAddress.office.name}
             </a></td>

@@ -25,4 +25,6 @@ public interface BizSkuInfoV2Dao extends CrudDao<BizSkuInfo> {
     BizSkuInfo getSkuInfoByItemNoProdId(@Param("itemNo") String itemNo, @Param("prodId")Integer prodId);
 
     List<BizSkuInfo> findListIgnoreStatus(BizSkuInfo oldSkuEntity);
+
+    void recovery(BizSkuInfo bizSkuInfo);
 }

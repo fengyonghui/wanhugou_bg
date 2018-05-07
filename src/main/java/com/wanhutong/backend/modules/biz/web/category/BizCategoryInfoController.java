@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.category;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
@@ -78,8 +80,8 @@ public class BizCategoryInfoController extends BaseController {
 
 	@RequiresPermissions("biz:category:bizCategoryInfo:view")
 	@RequestMapping(value = {"list"})
-	public String list(BizCategoryInfo bizCategoryInfo, Model model) {
-		model.addAttribute("list", bizCategoryInfoService.findList(bizCategoryInfo));
+	public String list(BizCategoryInfo bizCategoryInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+		model.addAttribute("page", bizCategoryInfoService.pageFindList(new Page<BizCategoryInfo>(request, response),bizCategoryInfo));
 		return "modules/biz/category/bizCategoryInfoList";
 	}
 

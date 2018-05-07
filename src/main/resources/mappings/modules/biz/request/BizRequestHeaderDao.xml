@@ -48,7 +48,7 @@
 
 		<where>
 			1=1
-			<if test="dataStatus==null">
+			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
 			<if test="reqNo != null and reqNo != ''">

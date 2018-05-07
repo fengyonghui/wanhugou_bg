@@ -48,6 +48,7 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead>
 	<tr>
+		<td>序号</td>
 		<th>名称</th>
 		<th>年</th>
 		<th>月</th>
@@ -58,8 +59,9 @@
 	</tr>
 	</thead>
 	<tbody>
-	<c:forEach items="${page.list}" var="bizOpPlan">
+	<c:forEach items="${page.list}" var="bizOpPlan" varStatus="state">
 		<tr>
+			<td>${state.index+1}</td>
 			<td>
 				<c:choose>
 					<c:when test="${bizOpPlan.objectName == 'sys_office'}">

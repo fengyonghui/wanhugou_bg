@@ -35,7 +35,7 @@
 								labelValue="" notAllowSelectParent="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" extId="${centerOffice.id}"
 								cssClass="input-medium"
-								allowClear="${office.currentUser.admin}">
+								allowClear="true">
 				</sys:treeselect>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -46,14 +46,16 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>仓库名称</th>
 				<th>采购中心</th>
 				<shiro:hasPermission name="biz:inventory:bizInventoryInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizInventoryInfo">
+		<c:forEach items="${page.list}" var="bizInventoryInfo" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					<%--<a href="${ctx}/biz/inventory/bizInventoryInfo/form?id=${bizInventoryInfo.id}">--%>
 					${bizInventoryInfo.name}

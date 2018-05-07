@@ -15,10 +15,10 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 @MyBatisDao
 public interface BizProductInfoV2Dao extends CrudDao<BizProductInfo> {
 
-    public int  deleteProdCate(BizProductInfo bizProductInfo);
+    int deleteProdCate(BizProductInfo bizProductInfo);
 
-    public int insertProdCate(BizProductInfo bizProductInfo);
+    int insertProdCate(BizProductInfo bizProductInfo);
 
-    public int deleteProdPropInfoReal(BizProductInfo bizProductInfo);
+    int deleteProdPropInfoReal(BizProductInfo bizProductInfo);
 	
 }

@@ -5,6 +5,7 @@
 	<sql id="bizLogisticsColumns">
 		a.id AS "id",
 		a.name AS "name",
+		a.carrier as "carrier",
 		a.phone AS "phone",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -38,6 +39,12 @@
 					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
+			<if test="carrier != null and carrier != ''">
+				AND a.carrier LIKE
+				<if test="dbName == 'oracle'">'%'||#{carrier}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{carrier}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{carrier},'%')</if>
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -69,6 +76,7 @@
 		INSERT INTO biz_logistics(
 			id,
 			name,
+			carrier,
 			phone,
 			status,
 			create_id,
@@ -79,6 +87,7 @@
 		) VALUES (
 			#{id},
 			#{name},
+			#{carrier},
 			#{phone},
 			#{delFlag},
 			#{createBy.id},
@@ -92,6 +101,7 @@
 	<update id="update">
 		UPDATE biz_logistics SET 	
 			name = #{name},
+			carrier=#{carrier},
 			phone = #{phone},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},

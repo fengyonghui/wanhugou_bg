@@ -14,11 +14,13 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -71,6 +73,8 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	private PropertyInfoService propertyInfoService;
 	@Autowired
 	private AttributeValueV2Service attributeValueService;
+	@Autowired
+	private BizOpShelfSkuService bizOpShelfSkuService;
 
 	protected Logger log = LoggerFactory.getLogger(BizSkuInfoV2Service.class);//日志
 
@@ -312,5 +316,59 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 
 	public List<BizSkuInfo> findListIgnoreStatus(BizSkuInfo oldSkuEntity) {
 		return bizSkuInfoDao.findListIgnoreStatus(oldSkuEntity);
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void recovery(BizSkuInfo bizSkuInfo) {
+		bizSkuInfoDao.recovery(bizSkuInfo);
+	}
+
+	/**
+	 * C端商品上下架form查询商品为 已经上架的商品
+	 * */
+	public Map<String, List<BizSkuInfo>> findListForCendProd(BizSkuInfo bizSkuInfo) {
+		List<BizSkuInfo> skuInfoList=super.findList(bizSkuInfo);
+		BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+		Map<BizProductInfo,List<BizSkuInfo>> map=new HashMap<BizProductInfo,List<BizSkuInfo>>();
+		Map<String,List<BizSkuInfo>> listMap=new HashMap<String, List<BizSkuInfo>>();
+		for(BizSkuInfo skuInfo:skuInfoList){
+			bizOpShelfSku.setSkuInfo(skuInfo);
+			List<BizOpShelfSku> list = bizOpShelfSkuService.findList(bizOpShelfSku);
+			if(list.size()!=0){
+				for (BizOpShelfSku opShelfSku : list) {
+					if(opShelfSku.getSkuInfo().getId().equals(skuInfo.getId())){
+						BizSkuInfo info=findListProd(skuInfo);
+						if(skuInfo.getSkuType()!=null && SkuTypeEnum.stateOf(skuInfo.getSkuType())!=null){
+							info.setSkuTypeName(SkuTypeEnum.stateOf(skuInfo.getSkuType()).getName());
+						}
+						BizProductInfo bizProductInfo=info.getProductInfo();
+						if(map.containsKey(bizProductInfo)){
+							List<BizSkuInfo> skuInfos = map.get(bizProductInfo);
+							map.remove(bizProductInfo);
+							skuInfos.add(info);
+							map.put(bizProductInfo,skuInfos);
+						}
+						else {
+							List<BizSkuInfo>infoList=new ArrayList<BizSkuInfo>();
+							infoList.add(info);
+							map.put(bizProductInfo,infoList);
+						}
+					}
+				}
+			}
+		}
+		for(BizProductInfo productInfo :map.keySet()) {
+			String sKey="";
+			if(productInfo.getOffice()==null){
+				sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
+						+productInfo.getProdCode()+","+null+","+productInfo.getBrandName();
+			}else {
+				sKey = productInfo.getId()+","+productInfo.getName()+","+productInfo.getImgUrl()+","+productInfo.getCateNames()+","
+						+productInfo.getProdCode()+","+productInfo.getOffice().getName()+","+productInfo.getBrandName();
+
+			}
+			listMap.put(sKey,map.get(productInfo));
+		}
+		return listMap;
 	}
 }

@@ -86,10 +86,13 @@
 				<form:input path="createBy.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>联系电话：</label>
-				<form:input path="customer.moblieMoeny.mobile" htmlEscape="false" maxlength="12" class="input-medium"/>
+				<form:input path="customer.moblieMoeny.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>采购中心：</label>
-				<form:input path="custConsultant.centers.name" htmlEscape="false" maxlength="30" class="input-medium"/>
+				<form:input path="custConsultant.centers.name" htmlEscape="false" maxlength="50" class="input-medium"/>
+			</li>
+			<li><label>支付账号：</label>
+				<form:input path="account.name" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="payBtnExport" class="btn btn-primary" type="button" value="导出"/></li>
@@ -100,6 +103,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>订单编号</th>
 				<th>业务流水号</th>
 				<th>支付金额</th>
@@ -117,8 +121,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizPayRecord">
+		<c:forEach items="${page.list}" var="bizPayRecord" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${bizPayRecord.payNum}
 				</td>
