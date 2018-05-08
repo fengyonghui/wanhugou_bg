@@ -368,6 +368,15 @@
 				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
 			</if>
 
+			<if test="includeTestData != null and includeTestData != true">
+				AND NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.cust_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
+			</if>
+
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
 			</if>
