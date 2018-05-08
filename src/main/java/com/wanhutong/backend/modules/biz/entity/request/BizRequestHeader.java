@@ -75,7 +75,17 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String str;
 
 	private String recvQtys;
-	
+
+	private boolean includeTestData;
+
+	public boolean isIncludeTestData() {
+		return includeTestData;
+	}
+
+	public void setIncludeTestData(boolean includeTestData) {
+		this.includeTestData = includeTestData;
+	}
+
 	public BizRequestHeader() {
 		super();
 	}
