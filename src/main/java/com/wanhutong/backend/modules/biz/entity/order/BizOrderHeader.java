@@ -91,6 +91,16 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private List<BizPayRecord> BizPayRecordList;
 
+    private boolean includeTestData;
+
+    public boolean isIncludeTestData() {
+        return includeTestData;
+    }
+
+    public void setIncludeTestData(boolean includeTestData) {
+        this.includeTestData = includeTestData;
+    }
+
     public List<BizPayRecord> getBizPayRecordList() {
         return BizPayRecordList;
     }
