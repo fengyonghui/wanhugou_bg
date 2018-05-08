@@ -235,15 +235,12 @@ public class BizRequestOrderController extends BaseController {
         model.addAttribute("map", map);
         return "modules/biz/request/bizRequestPoList";
     }
-
+    @RequiresPermissions("biz:request:selecting:supplier:edit")
     @RequestMapping(value = "goList")
     public String goList(String reqIds, Integer vendorId, String ordIds, Model model) {
-//        Map<Integer, List<BizSkuInfo>> skuInfoMap = null;
         Map<String,List<BizRequestDetail>> reqDetailMap = new LinkedHashMap<>();
         Map<String,List<BizOrderDetail>> orderDetailMap = new LinkedHashMap<>();
         List<BizRequestDetail> requestDetailList = new ArrayList<>();
-//        Map<Integer, List<BizSkuInfo>> map = new HashMap<>();
-//        Map<BizSkuInfo, BizSkuInfo> skuMap = new HashMap<>();
         if (StringUtils.isNotBlank(reqIds)) {
             String[] reqDetailArr = reqIds.split(",");
             for (int i = 0; i < reqDetailArr.length; i++) {

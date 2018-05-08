@@ -81,7 +81,7 @@
 
                                     "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
 								}
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
@@ -232,6 +232,15 @@
 		</c:forEach>
 
 		<sys:message content="${message}"/>
+		<c:if test="${entity.id!=null}">
+			<div class="control-group">
+				<label class="control-label">备货清单编号：</label>
+				<div class="controls">
+					<form:input path="reqNo" cssClass="input-xlarge" disabled="true"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
@@ -296,7 +305,7 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<th>商品属性</th>
+					<%--<th>商品属性</th>--%>
 					<th>价格</th>
 					<th>申报数量</th>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
@@ -321,7 +330,7 @@
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
+							<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 							<td style="white-space: nowrap">
 								<c:choose>
 									<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
@@ -377,7 +386,7 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
-						<th>商品属性</th>
+						<%--<th>商品属性</th>--%>
 						<th>工厂价</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>

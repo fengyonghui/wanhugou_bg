@@ -34,19 +34,19 @@
 	</li>
 </ul><br/>
 <form:form id="inputForm"  method="post" class="form-horizontal">
-	<c:if test="${source!=null && source eq 'bhgh'}">
+
 		<div class="control-group">
-			<label class="control-label">备货单号：</label>
+			<label class="control-label">备货清单号：</label>
 			<div class="controls">
-				<input readonly="readonly" value="${bizRequestHeader.reqNo}"/>
+				<input readonly="readonly" type="text" class="input-xlarge" value="${bizRequestHeader.reqNo}"/>
 				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
-	</c:if>
+
 	<div class="control-group">
 		<label class="control-label">采购中心：</label>
 		<div class="controls">
-			<input readonly="readonly" value="${bizRequestHeader==null?bizOrderHeader.customer.name:bizRequestHeader.fromOffice.name}"/>
+			<input readonly="readonly" type="text" class="input-xlarge" value="${bizRequestHeader==null?bizOrderHeader.customer.name:bizRequestHeader.fromOffice.name}"/>
 			<span class="help-inline"><font color="red">*</font> </span>
 		</div>
 	</div>
@@ -65,18 +65,12 @@
 			<table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 				<tr>
-					<th>商品图片</th>
+					<th>产品图片</th>
+					<th>产品分类</th>
 					<th>商品名称</th>
-					<th>商品分类</th>
-					<th>商品代码</th>
-					<c:if test="${source!=null && source eq 'bhgh'}">
-						<th>商品货号</th>
-						<th>商品属性</th>
-					</c:if>
-					<th>品牌名称</th>
+					<th>商品货号</th>
 					<th>供应商</th>
-					<th>SKU</th>
-					<th>SKU编号</th>
+					<th>品牌</th>
 					<th>申报数量</th>
 					<th>已供货数量</th>
 				</tr>
@@ -86,32 +80,14 @@
 					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
 						<tr id="${reqDetail.id}">
 							<td>
-								<c:if test="${source==null && !source eq 'bhgh'}">
-									<img style="max-width: 120px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/>
-								</c:if>
-								<c:if test="${source!=null && source eq 'bhgh'}">
-									<img style="max-width: 52px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/>
-								</c:if>
+								<img style="max-width: 80px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/>
 							</td>
-							<td>${reqDetail.skuInfo.productInfo.name}</td>
-							<td>
-								<c:forEach items="${reqDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >
-									${cate.name}
-									<c:if test="${!cateIndex.last}">
-										/
-									</c:if>
+							<td>${reqDetail.skuInfo.productInfo.bizVarietyInfo.name}</td>
 
-								</c:forEach>
-							</td>
-							<td>${reqDetail.skuInfo.productInfo.prodCode}</td>
-							<c:if test="${source!=null && source eq 'bhgh'}">
-								<td>${reqDetail.skuInfo.itemNo}</td>
-								<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
-							</c:if>
-							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
-							<td>${reqDetail.skuInfo.productInfo.office.name}</td>
 							<td>${reqDetail.skuInfo.name}</td>
-							<td>${reqDetail.skuInfo.partNo}</td>
+							<td>${reqDetail.skuInfo.itemNo}</td>
+							<td>${reqDetail.skuInfo.productInfo.office.name}</td>
+							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td>
 								<input   value="${reqDetail.reqQty}" readonly="readonly" class="input-medium" type='text'/>
 							</td>

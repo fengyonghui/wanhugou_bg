@@ -58,7 +58,7 @@
 			<%--<li><label>供应商：</label>--%>
 				<%--<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
 			<%--</li>--%>
-			<%--<li><label>采购中心：</label>--%>
+			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
 								labelValue="${entity.fromOffice.name}" allowClear="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-medium required" dataMsgRequired="必填信息">
@@ -75,6 +75,10 @@
 					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
+			<li><label>测试数据</label>
+				<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>
+
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
