@@ -180,7 +180,7 @@ public class BizOrderHeaderController extends BaseController {
             boh.setBizStatus(BizOrderDiscount.ONE_ORDER.getOneOr());//条件为0
             List<BizOrderHeader> list = bizOrderHeaderDao.findListFirstOrder(boh);
             if (list.size() == 0) {
-                System.out.println("--是首单--");
+                logger.info("--是首单--");
                 bizOrderHeader.setOneOrder("firstOrder");
             }
         }

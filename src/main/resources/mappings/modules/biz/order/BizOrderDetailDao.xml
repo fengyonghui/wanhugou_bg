@@ -103,7 +103,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		order by createDate ASC
+		order by a.line_no ASC
 	</select>
 
 	<select id="findOrderTotalByVendor" resultType="BizOrderDetail">

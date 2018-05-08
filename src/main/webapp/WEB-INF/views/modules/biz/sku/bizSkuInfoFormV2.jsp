@@ -114,6 +114,8 @@
 					<form:input path="partNo" disabled="true"  htmlEscape="false" maxlength="30" class="input-xlarge"/>
 				</div>
 			</div>
+
+
 		</c:if>
 
 		<div class="control-group">

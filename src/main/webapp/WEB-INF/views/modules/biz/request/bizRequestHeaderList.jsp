@@ -58,7 +58,7 @@
 			<%--<li><label>供应商：</label>--%>
 				<%--<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
 			<%--</li>--%>
-			<%--<li><label>采购中心：</label>--%>
+			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
 								labelValue="${entity.fromOffice.name}" allowClear="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-medium required" dataMsgRequired="必填信息">

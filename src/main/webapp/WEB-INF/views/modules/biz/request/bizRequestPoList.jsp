@@ -71,7 +71,9 @@
 				<th>待供货商品数量</th>
 				<th>备货清单供货数量</th>
 				<th>销售订单供货数量</th>
+				<shiro:hasPermission name="biz:request:selecting:supplier:edit">
 				<th>操作</th>
+				</shiro:hasPermission>
 			</tr>
 			</thead>
 			<tbody>
@@ -106,7 +108,8 @@
 							</c:otherwise>
 						</c:choose>
 					</td>
-					<td>
+					<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+						<td>
 						<c:choose>
 							<c:when test="${req[2]=='s'}">
 								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${req[1]}&vendorId=${vendor[0]}">供货</a>
@@ -119,6 +122,7 @@
 						</c:choose>
 
 					</td>
+					</shiro:hasPermission>
 				</tr>
 			</c:forEach>
 

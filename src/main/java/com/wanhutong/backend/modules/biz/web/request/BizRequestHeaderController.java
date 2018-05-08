@@ -87,7 +87,6 @@ public class BizRequestHeaderController extends BaseController {
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
 //        List<BizRequestHeader> list = page.getList();
-//        List<BizRequestHeader> orderList=Lists.newArrayList();
 //        for (BizRequestHeader bizRequestHeader1:list) {
 //            BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
 //            bizRequestDetail1.setRequestHeader(bizRequestHeader1);
@@ -107,15 +106,7 @@ public class BizRequestHeaderController extends BaseController {
 //            bizRequestHeader1.setReqQtys(reqQtys.toString());
 //            bizRequestHeader1.setRecvQtys(recvQtys.toString());
 //			bizRequestHeader1.setTotalMoney(money);
-//			if(requestDetailList!=null&&requestDetailList.size()>0){
-//				orderList.add(bizRequestHeader1);
-//			}
-//
 //        }
-
-//			page.setList(orderList);
-
-
         model.addAttribute("page", page);
 		return "modules/biz/request/bizRequestHeaderList";
 	}
