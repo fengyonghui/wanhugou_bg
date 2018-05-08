@@ -9,7 +9,7 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-				    var varietyInfo = $("#varietyInfo").val();
+				    var variety = $("#variety").val();
 				    var serviceFactor = $("#serviceFactor").val();
                     var minQty = $("#minQty").val();
                     var maxQty = $("#maxQty").val();
@@ -23,7 +23,7 @@
 				        $.ajax({
 							type:"post",
 							url:"${ctx}/biz/shelf/bizVarietyFactor/checkRepeat",
-							data:{varietyInfo:varietyInfo,serviceFactor:serviceFactor,minQty:minQty,maxQty:maxQty},
+							data:{variety:variety,serviceFactor:serviceFactor,minQty:minQty,maxQty:maxQty},
 							success:function (data) {
 								if (data=="false") {
 								    alert("已经存在该区间数量");
@@ -60,7 +60,7 @@
 		<div class="control-group">
 			<label class="control-label">品类：</label>
 			<div class="controls">
-				<form:select id="varietyInfo" path="varietyInfo.id" class="input-xlarge required">
+				<form:select id="variety" path="varietyInfo.id" class="input-xlarge required">
 					<form:option label="全部" value=""/>
 					<form:options items="${varietyList}" itemLabel="name" itemValue="id"/>
 				</form:select>
