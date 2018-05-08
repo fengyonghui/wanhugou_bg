@@ -363,5 +363,12 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		}
         return flag;
     }
+
+    @ResponseBody
+    @RequiresPermissions("biz:shelf:bizOpShelfSku:view")
+    @RequestMapping(value = "sort")
+    public void sort() {
+
+    }
 }
 

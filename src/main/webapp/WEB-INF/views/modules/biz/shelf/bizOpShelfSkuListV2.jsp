@@ -7,7 +7,20 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+			$("#sort").click(function () {
+				$.ajax({
+					type:"post",
+					url:"${ctx}/biz/shelf/bizOpShelfSkuV2/sort",
+					success:function (data) {
+                        loading("正在排序");
+                        if (data=="success"){
+							window.location.reload();
+					    }else {
+					        alert("排序失败");
+                        }
+                    }
+				});
+            });
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -77,7 +90,7 @@
                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<li class="btns"><input class="btn btn-primary" type="button" value="一键排序（慎用）"/></li>
+			<li class="btns"><input id="sort" class="btn btn-primary" type="button" value="一键排序（慎用）"/></li>
 
 			<li class="clearfix"></li>
 

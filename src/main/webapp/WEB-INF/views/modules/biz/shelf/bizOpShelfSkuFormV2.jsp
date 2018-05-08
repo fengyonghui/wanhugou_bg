@@ -16,7 +16,6 @@
                     var shelfSkuId = $("#bizOpShelfSkuId").val();
                     var shelfInfoIds = "";
                     $("input:checkbox[name='shelfs']:checked").each(function (i) {
-                        alert(this.value);
                         shelfInfoIds += this.value+",";
                     });
                     // alert(shelfInfoIds);
@@ -51,19 +50,22 @@
                     $("#tbody").find("tr").each(function (i) {
                         var minQty = $(this).find("td").find("input[name='minQtys']").val();
                         var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
-                        var nextMinQty=$(this).next().find("td").find("input[name='minQtys']").val();
-                        if (parseInt(minQty) >= parseInt(maxQty)){
+                        var nextMinQty = $(this).next().find("td").find("input[name='minQtys']").val();
+                        var thisClass = $(this).attr("class");
+                        var nextClass = $(this).next().attr("class");
+                        if (parseInt(minQty) >= parseInt(maxQty)) {
                             alert("最高销售数量必须大于最低销售数量");
                             numFlag = false;
                             return;
                         }
 
-
-                        if(parseInt(nextMinQty)<parseInt(maxQty)){
-                            alert("销售数量重复");
-                            numFlag = false;
-                            return false;
-						}
+                        if (parseInt(thisClass) == parseInt(nextClass)) {
+                            if (parseInt(nextMinQty) <= parseInt(maxQty)) {
+                                alert("销售数量重复");
+                                numFlag = false;
+                                return false;
+                            }
+                        }
 
                         var orgPrice = $(this).find("td").find("input[name='orgPrices']").val();
                         var salePrice = $(this).find("td").find("input[name='salePrices']").val();
@@ -278,8 +280,8 @@
 									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
 									"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
 									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
-								pri += 10;
                             });
+                            pri += 10;
                         });
                         $("#tbody").append(htmlInfo);
                         $("#ShelfSkuTable").tablesMergeCell({
