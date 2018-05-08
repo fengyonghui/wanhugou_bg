@@ -177,19 +177,19 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 		this.skuInfoIds = skuInfoIds;
 	}
 
-	public String getShelfs() {
-		return shelfs;
-	}
-
-	public void setShelfs(String shelfs) {
-		this.shelfs = shelfs;
-	}
-
 	public String getCendShelf() {
 		return cendShelf;
 	}
 
 	public void setCendShelf(String cendShelf) {
 		this.cendShelf = cendShelf;
+	}
+
+	public String getShelfs() {
+		return shelfs;
+	}
+
+	public void setShelfs(String shelfs) {
+		this.shelfs = shelfs;
 	}
 }
