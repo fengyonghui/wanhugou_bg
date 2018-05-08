@@ -9,6 +9,7 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+				    var factorId = $("#id").val();
 				    var variety = $("#variety").val();
 				    var serviceFactor = $("#serviceFactor").val();
                     var minQty = $("#minQty").val();
@@ -23,7 +24,7 @@
 				        $.ajax({
 							type:"post",
 							url:"${ctx}/biz/shelf/bizVarietyFactor/checkRepeat",
-							data:{variety:variety,serviceFactor:serviceFactor,minQty:minQty,maxQty:maxQty},
+							data:{variety:variety,id:factorId,serviceFactor:serviceFactor,minQty:minQty,maxQty:maxQty},
 							success:function (data) {
 								if (data=="false") {
 								    alert("已经存在该区间数量");
