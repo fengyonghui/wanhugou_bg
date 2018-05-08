@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,21 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
 	@Transactional(readOnly = false)
 	public void updateDateTime(BizOpShelfSku bizOpShelfSku){
 		bizOpShelfSkuV2Dao.dateTimeUpdate(bizOpShelfSku);
+	}
+
+	@Transactional(readOnly = false)
+	public void sort() {
+        List<BizOpShelfSku> opShelfSkuList = bizOpShelfSkuV2Dao.selectSort();
+        int priority = 10;
+        for (BizOpShelfSku opShelfSku:opShelfSkuList) {
+
+            opShelfSku.setPriority(priority);
+            if (opShelfSku.getCenterOffice()==null) {
+                opShelfSku.setCenterOffice(new Office(0));
+            }
+            bizOpShelfSkuV2Dao.sort(opShelfSku);
+            priority += 10;
+        }
 	}
 
 }
