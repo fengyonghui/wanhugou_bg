@@ -804,8 +804,6 @@
 		where oh.cust_id = ta.object_id
 		and ta.object_name = 'sys_office'
 		)
-		AND off.name NOT LIKE '%测试%'
-		AND us.name NOT LIKE '%测试%'
 		and oh.`status` = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
@@ -1737,69 +1735,142 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
     </select>
 
 	<!-- 订单采购列表  -->
+	<!--<select id="headerFindList" resultType="BizOrderHeader">-->
+		<!--SELECT-->
+        <!--a.id AS "id",-->
+        <!--a.order_num AS "orderNum",-->
+        <!--a.order_type AS "orderType",-->
+        <!--a.cust_id AS "customer.id",-->
+        <!--so.name as "customer.name",-->
+        <!--a.total_detail AS "totalDetail",-->
+        <!--a.receive_total as "receiveTotal",-->
+        <!--a.total_exp AS "totalExp",-->
+        <!--a.freight AS "freight",-->
+        <!--a.inv_status AS "invStatus",-->
+        <!--a.biz_status AS "bizStatus",-->
+        <!--a.biz_type as "bizType",-->
+        <!--a.plateform_id AS "platformInfo.id",-->
+        <!--bpi.name as "platformInfo.name",-->
+        <!--a.ship_to_addr AS "bizLocation.id",-->
+        <!--a.status AS "delFlag",-->
+        <!--a.create_id AS "createBy.id",-->
+        <!--su.name as "createBy.name",-->
+        <!--a.create_time AS "createDate",-->
+        <!--a.u_version AS "uVersion",-->
+        <!--a.update_id AS "updateBy.id",-->
+        <!--us.name as "updateBy.name",-->
+        <!--a.update_time AS "updateDate"-->
+		<!--FROM biz_order_header a-->
+		<!--LEFT JOIN biz_order_detail od ON od.order_id = a.id-->
+        <!--left join sys_office so on a.cust_id=so.id-->
+        <!--left join sys_user su on a.create_id=su.id-->
+        <!--left join sys_user us on a.update_id=us.id-->
+        <!--left join biz_cms_platform_info bpi on a.plateform_id=bpi.id-->
+		<!--<where>-->
+			<!--a.status=#{DEL_FLAG_NORMAL}-->
+			<!--and od.status=#{DEL_FLAG_NORMAL}-->
+			<!--and (od.suply_id=0 or od.suply_id=721)-->
+			<!--<if test="bizStatusStart !=null and bizStatusEnd !=null">-->
+				<!--AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}-->
+			<!--</if>-->
+			<!--<if test="orderNum != null and orderNum != ''">-->
+				<!--AND a.order_num LIKE-->
+				<!--<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>-->
+				<!--<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="customer != null and customer.id != null and customer.id!=''">-->
+				<!--AND a.cust_id LIKE-->
+				<!--<if test="dbName == 'oracle'">'%'||#{customer.id}||'%'</if>-->
+				<!--<if test="dbName == 'mssql'">'%'+#{customer.id}+'%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%',#{customer.id},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">-->
+				<!--${sqlMap.order}-->
+			<!--</if>-->
+		<!--</where>-->
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+				<!--GROUP  BY a.id-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+		<!--ORDER BY a.update_time desc-->
+	<!--</select>-->
+
 	<select id="headerFindList" resultType="BizOrderHeader">
 		SELECT
-        a.id AS "id",
-        a.order_num AS "orderNum",
-        a.order_type AS "orderType",
-        a.cust_id AS "customer.id",
-        so.name as "customer.name",
-        a.total_detail AS "totalDetail",
-        a.receive_total as "receiveTotal",
-        a.total_exp AS "totalExp",
-        a.freight AS "freight",
-        a.inv_status AS "invStatus",
-        a.biz_status AS "bizStatus",
-        a.biz_type as "bizType",
-        a.plateform_id AS "platformInfo.id",
-        bpi.name as "platformInfo.name",
-        a.ship_to_addr AS "bizLocation.id",
-        a.status AS "delFlag",
-        a.create_id AS "createBy.id",
-        su.name as "createBy.name",
-        a.create_time AS "createDate",
-        a.u_version AS "uVersion",
-        a.update_id AS "updateBy.id",
-        us.name as "updateBy.name",
-        a.update_time AS "updateDate"
-		FROM biz_order_header a
-		LEFT JOIN biz_order_detail od ON od.order_id = a.id
-        left join sys_office so on a.cust_id=so.id
-        left join sys_user su on a.create_id=su.id
-        left join sys_user us on a.update_id=us.id
-        left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
-		<where>
-			a.status=#{DEL_FLAG_NORMAL}
-			and od.status=#{DEL_FLAG_NORMAL}
-			and (od.suply_id=0 or od.suply_id=721)
-			<if test="bizStatusStart !=null and bizStatusEnd !=null">
-				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
-			</if>
-			<if test="orderNum != null and orderNum != ''">
-				AND a.order_num LIKE
-				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
-			</if>
-			<if test="customer != null and customer.id != null and customer.id!=''">
-				AND a.cust_id LIKE
-				<if test="dbName == 'oracle'">'%'||#{customer.id}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{customer.id}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{customer.id},'%')</if>
-			</if>
-			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
-				${sqlMap.order}
-			</if>
-		</where>
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-				GROUP  BY a.id
-			</otherwise>
-		</choose>
-		ORDER BY a.update_time desc
+	a.id AS "id",
+	a.order_num AS "orderNum",
+	a.order_type AS "orderType",
+	a.cust_id AS "customer.id",
+	so.NAME AS "customer.name",
+	a.total_detail AS "totalDetail",
+	a.receive_total AS "receiveTotal",
+	a.total_exp AS "totalExp",
+	a.freight AS "freight",
+	a.inv_status AS "invStatus",
+	a.biz_status AS "bizStatus",
+	a.biz_type AS "bizType",
+	a.plateform_id AS "platformInfo.id",
+	bpi.NAME AS "platformInfo.name",
+	a.ship_to_addr AS "bizLocation.id",
+	a.STATUS AS "delFlag",
+	a.create_id AS "createBy.id",
+	su.NAME AS "createBy.name",
+	a.create_time AS "createDate",
+	a.u_version AS "uVersion",
+	a.update_id AS "updateBy.id",
+	us.NAME AS "updateBy.name",
+	a.update_time AS "updateDate" ,
+	concat(cl.pcr_name, ifnull( cl.address,'')) as locationAddress
+FROM
+	biz_order_header a
+	LEFT JOIN sys_office so ON a.cust_id = so.id
+	LEFT JOIN sys_user su ON a.create_id = su.id
+	LEFT JOIN sys_user us ON a.update_id = us.id
+	LEFT JOIN biz_cms_platform_info bpi ON a.plateform_id = bpi.id
+	LEFT JOIN common_location cl on a.ship_to_addr = cl.id
+	WHERE 1=1
+		<if test="bizStatusStart !=null and bizStatusEnd !=null">
+			AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+		</if>
+	  AND a.STATUS =#{DEL_FLAG_NORMAL}
+	AND EXISTS(
+		SELECT 1 FROM
+			(SELECT
+				DISTINCT a.id, pi.vendor_id
+				FROM biz_order_header a,biz_order_detail bod
+				LEFT JOIN biz_sku_info bsi on bod.sku_id = bsi.id
+				LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+				WHERE bod.order_id = a.id
+				AND bod.status = 1
+				AND  ( bod.suply_id = 0 OR bod.suply_id = 721 )
+				AND a.biz_status BETWEEN 15 AND 17
+				AND a.STATUS =1 ) t
+		WHERE a.id = t.id
+		GROUP BY id
+  		HAVING  count(1) = 1
+	)
+		<if test="orderNum != null and orderNum != ''">
+			AND a.order_num LIKE
+			<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+		</if>
+		<if test="customer != null and customer.id != null and customer.id!=''">
+			AND a.cust_id LIKE
+			<if test="dbName == 'oracle'">'%'||#{customer.id}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{customer.id}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{customer.id},'%')</if>
+		</if>
+        <if test="includeTestData != null and includeTestData != true">
+	        AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.cust_id = ta.object_id AND ta.object_name = 'sys_office' )
+        </if>
+    ORDER BY
+	    a.update_time DESC
 	</select>
 
 

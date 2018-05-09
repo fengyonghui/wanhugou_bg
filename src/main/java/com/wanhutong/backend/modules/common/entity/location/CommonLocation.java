@@ -5,6 +5,10 @@ package com.wanhutong.backend.modules.common.entity.location;
 
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
@@ -19,7 +23,6 @@ import com.wanhutong.backend.common.persistence.DataEntity;
  * @version 2017-12-21
  */
 public class CommonLocation extends DataEntity<CommonLocation> {
-	
 	private static final long serialVersionUID = 1L;
 	private SysRegion province;		// 省份
 	private SysRegion city;		// 城市
