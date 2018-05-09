@@ -79,6 +79,11 @@
 						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 				</li>
+
+				<li><label>测试数据</label>
+					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<li class="clearfix"></li>
@@ -119,6 +124,10 @@
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
+				<li><label>测试数据</label>
+					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
@@ -259,8 +268,7 @@
 									${orderHeader.platformInfo.name}
 							</td>
 					<td>
-						${orderHeader.bizLocation.province.name}${orderHeader.bizLocation.city.name}
-						${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
+						${orderHeader.locationAddress}
 					</td>
 					<td>
 							${orderHeader.createBy.name}
