@@ -702,7 +702,7 @@ public class BizOrderHeaderController extends BaseController {
                         //支付类型名称
                         rowData.add(String.valueOf(p.getPayTypeName()));
                         //业务流水号
-                        rowData.add(String.valueOf(p.getOutTradeNo()));
+                        rowData.add(String.valueOf(p.getOutTradeNo()==null?"":p.getOutTradeNo()));
                         //支付金额
                         rowData.add(String.valueOf(p.getPayMoney()));
                         //交易时间
