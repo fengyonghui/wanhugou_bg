@@ -167,7 +167,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
+				ORDER BY a.priority,a.id DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -287,5 +287,51 @@
 		shelf_time = #{shelfTime},
 		unshelf_time = #{unshelfTime}
 		WHERE id = #{id}
+	</update>
+
+	<!-- 一键排序 -->
+	<select id="selectSort" resultType="BizOpShelfSku">
+		SELECT oss.id,
+				oss.shelf_id AS "opshelfInfo.id",
+				oss.prod_id AS "productInfo.id",
+				oss.sku_id AS "skuInfo.id",
+				oss.center_id AS "centerOffice.id",
+				oss.shelf_user AS "shelfUser.id",
+				oss.shelf_qty AS "shelfQty",
+				oss.org_price AS "orgPrice",
+				oss.sale_price AS "salePrice",
+				oss.min_qty AS "minQty",
+				oss.max_qty AS "maxQty",
+				oss.shelf_time AS "shelfTime",
+				oss.unshelf_user AS "unshelfUser.id",
+				oss.unshelf_time AS "unshelfTime",
+				oss.priority AS "priority",
+				oss.status AS "delFlag",
+				oss.create_id AS "createBy.id",
+				oss.create_time AS "createDate",
+				oss.u_version AS "uVersion",
+				oss.update_id AS "updateBy.id",
+				oss.update_time AS "updateDate"
+		FROM biz_op_shelf_sku oss ,
+			(SELECT boss.center_id,boss.shelf_id,boss.sku_id
+				FROM biz_op_shelf_sku boss
+				GROUP BY boss.center_id,boss.shelf_id,boss.sku_id
+				order by boss.priority,boss.id DESC) t
+		WHERE oss.center_id = t.center_id AND oss.shelf_id = t.shelf_id and oss.sku_id = t.sku_id
+	</select>
+
+	<update id="sort">
+		update biz_op_shelf_sku oss,
+			(SELECT boss.center_id,boss.shelf_id,boss.sku_id
+				FROM biz_op_shelf_sku boss
+				GROUP BY boss.center_id,boss.shelf_id,boss.sku_id
+				order by boss.priority,boss.id DESC) t
+		set oss.priority=#{priority}
+		WHERE oss.center_id = t.center_id AND oss.shelf_id = t.shelf_id and oss.sku_id = t.sku_id
+		<if test="centerOffice != null and centerOffice.id != null ">
+			and oss.center_id = #{centerOffice.id}
+		</if>
+		and oss.sku_id = #{skuInfo.id}
+		and oss.shelf_id  = #{opShelfInfo.id}
 	</update>
 </mapper>

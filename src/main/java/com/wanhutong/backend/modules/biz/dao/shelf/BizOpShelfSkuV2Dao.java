@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 
+import java.util.List;
+
 /**
  * 商品上架管理DAO接口
  * @author liuying
@@ -16,4 +18,6 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 public interface BizOpShelfSkuV2Dao extends CrudDao<BizOpShelfSku> {
 	public void dateTimeUpdate(BizOpShelfSku bizOpShelfSku);
 	void shelvesUpdate(BizOpShelfSku bizOpShelfSku);
+	List<BizOpShelfSku> selectSort();
+	void sort(BizOpShelfSku opShelfSku);
 }

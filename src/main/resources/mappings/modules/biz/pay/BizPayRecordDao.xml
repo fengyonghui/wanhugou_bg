@@ -5,6 +5,7 @@
 	<sql id="bizPayRecordColumns">
 		a.id AS "id",
 		a.pay_num AS "payNum",
+		a.order_num AS "orderNum",
 		a.out_trade_no AS "outTradeNo",
 		a.pay_money AS "payMoney",
 		a.original_amount as"originalAmount",
@@ -76,6 +77,12 @@
 				<if test="dbName == 'oracle'">'%'||#{custConsultant.centers.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{custConsultant.centers.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{custConsultant.centers.name},'%')</if>
+			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
 			<if test="payNum != null and payNum != ''">
 				AND a.pay_num LIKE
@@ -183,6 +190,9 @@
 		<if test="payNum != null and payNum != ''">
 			pay_num,
 		</if>
+		<if test="orderNum != null and orderNum != ''">
+			order_num,
+		</if>
 		<if test="outTradeNo != null and outTradeNo != ''">
 			out_trade_no,
 		</if>
@@ -219,6 +229,9 @@
 			#{id},
 		<if test="payNum != null and payNum != ''">
 			#{payNum},
+		</if>
+		<if test="orderNum != null and orderNum != ''">
+			#{orderNum},
 		</if>
 		<if test="outTradeNo != null and outTradeNo != ''">
 			#{outTradeNo},

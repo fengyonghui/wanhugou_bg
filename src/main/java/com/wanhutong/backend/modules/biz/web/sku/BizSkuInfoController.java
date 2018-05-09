@@ -187,11 +187,23 @@ public class BizSkuInfoController extends BaseController {
 		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
 		List<BizVarietyFactor> varietyInfoList=bizVarietyFactorService.findList(new BizVarietyFactor());
+		Map<Integer,List<String>> factorMap=new HashMap<>();
 		for(BizVarietyFactor varietyFactor:varietyInfoList){
+			Integer key = varietyFactor.getVarietyInfo().getId();
 
+			if(factorMap.containsKey(key)){
+				List<String> stringList=factorMap.get(key);
+				stringList.add((varietyFactor.getServiceFactor().toString().length()<2?"0"+varietyFactor.getServiceFactor():varietyFactor.getServiceFactor())+":["+varietyFactor.getMinQty()+"~"+varietyFactor.getMaxQty()+"]");
+				factorMap.remove(key);
+				factorMap.put(key,stringList);
+			}else {
+				List<String> lists=Lists.newArrayList();
+				lists.add((varietyFactor.getServiceFactor().toString().length()<2?"0"+varietyFactor.getServiceFactor():varietyFactor.getServiceFactor())+":["+varietyFactor.getMinQty()+"~"+varietyFactor.getMaxQty()+"]");
+				factorMap.put(key,lists);
+			}
 		}
 		map.put("skuMap",listMap);
-		//map.put("");
+		map.put("serviceFactor",factorMap);
 		return map;
 
 	}
