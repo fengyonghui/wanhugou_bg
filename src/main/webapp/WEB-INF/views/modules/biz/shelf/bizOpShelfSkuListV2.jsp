@@ -8,11 +8,11 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#sort").click(function () {
+                loading("正在排序");
 				$.ajax({
 					type:"post",
 					url:"${ctx}/biz/shelf/bizOpShelfSkuV2/sort",
 					success:function (data) {
-                        loading("正在排序");
                         if (data=="success"){
 							window.location.reload();
 					    }else {
