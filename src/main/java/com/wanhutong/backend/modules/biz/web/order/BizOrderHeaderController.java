@@ -472,7 +472,7 @@ public class BizOrderHeaderController extends BaseController {
             //3交易记录
             List<List<String>> payData = new ArrayList<List<String>>();
             for (BizOrderHeader o : pageList) {
-                bizPayRecord.setPayNum(o.getOrderNum());
+                bizPayRecord.setOrderNum(o.getOrderNum());
                 List<BizPayRecord> payList = bizPayRecordService.findList(bizPayRecord);
                 if (payList == null || payList.size()==0){
                     orderDetail.setOrderHeader(o);
