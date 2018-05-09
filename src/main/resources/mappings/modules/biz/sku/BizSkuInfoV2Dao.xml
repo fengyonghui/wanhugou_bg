@@ -403,9 +403,6 @@
 			<if test="basePrice != null">
 				base_price = #{basePrice},
 			</if>
-			<if test="itemNo != null">
-				item_no = #{itemNo},
-			</if>
 			buy_price = #{buyPrice},
 			status = #{DEL_FLAG_NORMAL},
 			u_version = #{uVersion},
