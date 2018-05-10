@@ -161,9 +161,9 @@
 		<tbody>
 		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">
 		<c:if test="${source == 'sh' || source=='gh' || bizStatu==1 && ship=='bh'}">
-			<c:forEach items="${page.list}" var="requestHeader">
+			<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
 				<tr>
-					<td>${requestHeader.numberRownum}</td>
+					<td>${state.index+1}</td>
 					<c:if test="${source=='gh'}">
 					<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
 					</c:if>
