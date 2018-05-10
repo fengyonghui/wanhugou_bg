@@ -20,7 +20,6 @@ public class CommonDynamicConfig extends DataEntity<CommonDynamicConfig> {
 	private static final long serialVersionUID = 1L;
 	private String confname;		// 配置文件名称
 	private String content;		// 配置文件内容
-	private Date createTime;		// 创建时间
 	private String status;		// 状态：1:可用  0:不可用
 	private String version;		// 版本号
 	private Date updated;		// 更新时间
@@ -50,15 +49,6 @@ public class CommonDynamicConfig extends DataEntity<CommonDynamicConfig> {
 		this.content = content;
 	}
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@NotNull(message="创建时间不能为空")
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
 
 	@Length(min=1, max=4, message="状态：1:可用  0:不可用长度必须介于 1 和 4 之间")
 	public String getStatus() {

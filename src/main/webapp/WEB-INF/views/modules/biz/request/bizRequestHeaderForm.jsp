@@ -210,7 +210,55 @@
             }
         }
 
+        function checkPass() {
+            top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    audit(1, '');
+                }
+            },{buttonsFocus:1});
+        }
+        function checkReject() {
+            top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+                    var submit = function (v, h, f) {
+                        if ($String.isNullOrBlank(f.description)) {
+                            jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                            return false;
+                        }
+                        audit(2, f.description);
+                        return true;
+                    };
 
+                    jBox(html, {
+                        title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+        }
+
+        function audit(auditType, description) {
+            var id = $("#id").val();
+            var currentType = $("#currentType").val();
+            $.ajax({
+                url: '${ctx}/biz/request/bizRequestHeader/audit',
+                contentType: 'application/json',
+                data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                type: 'get',
+                success: function (result) {
+                    if(result == 'ok') {
+                        alert("操作成功！");
+                        window.location.href = "${ctx}/biz/request/bizRequestHeader";
+                    }else {
+                        alert("操作失败！");
+					}
+                },
+                error: function (error) {
+                    console.info(error);
+                }
+            });
+        }
 
 	</script>
 </head>
@@ -260,7 +308,7 @@
 				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
-		<c:if test="${entity.str!='detail'}">
+		<c:if test="${entity.str!='detail' && entity.str!='audit' }">
 
 		<div class="control-group">
 			<label class="control-label">选择商品：</label>
@@ -313,7 +361,7 @@
 					</c:if>
 
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-						<c:if test="${entity.str!='detail'}">
+						<c:if test="${entity.str!='detail' && entity.str!='audit' }">
 							<th>操作</th>
 						</c:if>
 
@@ -357,7 +405,7 @@
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
 							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
-								<c:if test="${entity.str!='detail'}">
+								<c:if test="${entity.str!='detail'&& entity.str!='audit'}">
 								<td>
 								<a href="#" onclick="delItem(${reqDetail.id})">删除</a>
 
@@ -374,7 +422,7 @@
 				</c:if>
 				</tbody>
 			</table>
-			<c:if test="${entity.str!='detail'}">
+			<c:if test="${entity.str!='detail' && entity.str!='audit'}">
 			<table id="contentTable2" style="width:48%;float: right;background-color:#abcceb;" class="table table-bordered table-condensed">
 					<thead>
 					<tr>
@@ -409,6 +457,20 @@
 				<form:textarea path="remark" htmlEscape="false" maxlength="200" class="input-xlarge "/>
 			</div>
 		</div>
+
+		<c:if test="${entity.str == 'audit'}">
+			<div class="control-group">
+				<label class="control-label">审核状态：</label>
+				<div class="controls">
+					<input type="text" disabled="disabled"
+						   value="${requestOrderProcess.name}" htmlEscape="false"
+						   maxlength="30" class="input-xlarge "/>
+					<input id="currentType" type="hidden" disabled="disabled"
+						   value="${requestOrderProcess.code}" htmlEscape="false"
+						   maxlength="30" class="input-xlarge "/>
+				</div>
+			</div>
+		</c:if>
 		<c:if test="${fns:getUser().isAdmin()}">
 			<div class="control-group">
 				<label class="control-label">业务状态：</label>
@@ -427,15 +489,20 @@
 
 			<shiro:hasPermission name="biz:request:bizRequestHeader:edit">
 
-				<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.APPROVE.state}">
-					<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;
+				<c:if test="${entity.str == 'audit'}">
+					<input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
+					<input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>
 				</c:if>
-				<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
 
-					<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;
-					<input id="btnCheck" class="btn btn-primary" onclick="checkInfo2(${ReqHeaderStatusEnum.APPROVE.state},this.value)" type="button" value="审核通过"/>&nbsp;
-				</c:if>
-				<c:if test="${entity.str!='detail'}">
+				<%--<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.APPROVE.state}">--%>
+					<%--<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;--%>
+				<%--</c:if>--%>
+				<%--<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">--%>
+
+					<%--<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;--%>
+					<%--<input id="btnCheck" class="btn btn-primary" onclick="checkInfo2(${ReqHeaderStatusEnum.APPROVE.state},this.value)" type="button" value="审核通过"/>&nbsp;--%>
+				<%--</c:if>--%>
+				<c:if test="${entity.str!='detail' && entity.str!='audit'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
 				</c:if>
 

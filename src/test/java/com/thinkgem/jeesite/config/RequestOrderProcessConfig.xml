@@ -12,7 +12,7 @@
     <process>
         <name>待渠道部经理审批</name>
         <code>2</code>
-        <roleEnNameEnum>PROVIDER_MANAGER</roleEnNameEnum>
+        <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
         <passCode>3</passCode>
         <rejectCode>-1</rejectCode>
     </process>

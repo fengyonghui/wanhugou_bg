@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
@@ -81,6 +82,9 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String recvQtys;
 
 	private boolean includeTestData;
+
+	private CommonProcessEntity commonProcess;
+
 
 	public boolean isIncludeTestData() {
 		return includeTestData;
@@ -388,4 +392,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	public void setRecvTotal(Double recvTotal) {
 		this.recvTotal = recvTotal;
 	}
+
+	public CommonProcessEntity getCommonProcess() {
+		return commonProcess;
+	}
+
+	public void setCommonProcess(CommonProcessEntity commonProcess) {
+		this.commonProcess = commonProcess;
+	}
+
 }

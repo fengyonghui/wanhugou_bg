@@ -30,10 +30,10 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
 
 
     @XStreamAlias("defaultProcessId")
-    private int defaultProcessId;
+    private Integer defaultProcessId;
 
     @XStreamAlias("autProcessId")
-    private int autProcessId;
+    private Integer autProcessId;
 
     @XStreamImplicit(itemFieldName = "process")
     private List<RequestOrderProcess> processList;
@@ -75,11 +75,11 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
         return processMap.get(currentEnum.getRejectCode());
     }
 
-    public int getDefaultProcessId() {
+    public Integer getDefaultProcessId() {
         return defaultProcessId;
     }
 
-    public int getAutProcessId() {
+    public Integer getAutProcessId() {
         return autProcessId;
     }
 
@@ -95,7 +95,7 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
          * 状态码
          */
         @XStreamAlias("code")
-        private int code;
+        private Integer code;
 
         /**
          * 处理角色
@@ -107,19 +107,19 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
          * 通过之后的状态
          */
         @XStreamAlias("passCode")
-        private int passCode;
+        private Integer passCode;
 
         /**
          * 拒绝之后的状态
          */
         @XStreamAlias("rejectCode")
-        private int rejectCode;
+        private Integer rejectCode;
 
         public String getName() {
             return name;
         }
 
-        public int getCode() {
+        public Integer getCode() {
             return code;
         }
 
@@ -127,11 +127,11 @@ public class RequestOrderProcessConfig extends ConfigGeneral {
             return roleEnNameEnum;
         }
 
-        public int getPassCode() {
+        public Integer getPassCode() {
             return passCode;
         }
 
-        public int getRejectCode() {
+        public Integer getRejectCode() {
             return rejectCode;
         }
 
