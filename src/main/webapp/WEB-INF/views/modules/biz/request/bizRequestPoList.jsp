@@ -81,47 +81,23 @@
 
 			<c:forEach items="${map}" var="orderMap">
 				<tr>
-					<c:set value="${fn:split(orderMap.key, ',') }" var="vendor" />
 					<td>
-						${vendor[1]}
+						${orderMap.vendorName}
 					</td>
-					<c:set value="${fn:split(orderMap.value, '|')}" var="orderReq"></c:set>
-					<c:set value="${fn:split(orderReq[0],'-' )}" var="req"></c:set>
-					<c:set value="${fn:split(orderReq[1],'-' )}" var="ord"></c:set>
 					<td>
 
-							${req[0]+ord[0]}
+							${orderMap.totalReqQty + orderMap.totalOrdQty}
 					</td>
 					<td>
-						<c:if test="${req[2]=='r'}">
-							${req[0]}
-						</c:if>
-
+							${orderMap.totalReqQty}
 					</td>
 					<td>
-						<c:choose>
-							<c:when test="${req[2]=='s'}">
-								${req[0]}
-							</c:when>
-							<c:otherwise>
-								${ord[0]}
-							</c:otherwise>
-						</c:choose>
+							${orderMap.totalOrdQty}
 					</td>
 					<shiro:hasPermission name="biz:request:selecting:supplier:edit">
 						<td>
-						<c:choose>
-							<c:when test="${req[2]=='s'}">
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${req[1]}&vendorId=${vendor[0]}">供货</a>
-
-							</c:when>
-							<c:otherwise>
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${req[1]}&ordIds=${ord[1]}&vendorId=${vendor[0]}">供货</a>
-
-							</c:otherwise>
-						</c:choose>
-
-					</td>
+							<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${orderMap.reqDetailIds}&ordIds=${orderMap.detailIds}&vendorId=${orderMap.vendorId}">供货</a>
+						</td>
 					</shiro:hasPermission>
 				</tr>
 			</c:forEach>

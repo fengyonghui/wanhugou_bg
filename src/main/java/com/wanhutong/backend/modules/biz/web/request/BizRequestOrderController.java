@@ -143,60 +143,12 @@ public class BizRequestOrderController extends BaseController {
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"form", ""})
     public String form(String source, Model model) {
-        Map<String, String> map = new HashMap<String, String>();
-        if ("gh".equals(source)) {
-            BizRequestHeader bizRequestHeader = new BizRequestHeader();
-            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
-            bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
-            bizRequestHeader.setBizStatusNot(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState().byteValue());
-            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findReqTotalByVendor(bizRequestHeader);
-
-            BizOrderHeader bizOrderHeader = new BizOrderHeader();
-            bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
-            bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
-            bizOrderHeader.setBizStatusNot(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState().byteValue());
-            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findOrderTotalByVendor(bizOrderHeader);
-
-            String key = "0";
-
-            for (BizRequestDetail bizRequestDetail : requestDetailList) {
-                key = bizRequestDetail.getVendorId() + "," + bizRequestDetail.getVendorName();
-                Integer reqQty = bizRequestDetail.getTotalReqQty() - bizRequestDetail.getTotalRecvQty();
-                map.put(key, reqQty + "-" + bizRequestDetail.getReqDetailIds() + "-r");
-
-            }
-
-            for (BizOrderDetail bizOrderDetail : orderDetailList) {
-                StringBuffer sb = new StringBuffer();
-                if (StringUtils.isNotBlank(bizOrderDetail.getSuplyIds())) {
-                    String[] supplyIdArr = StringUtils.split(bizOrderDetail.getSuplyIds(), ",");
-                    String[] detailIdArr = StringUtils.split(bizOrderDetail.getDetailIds(), ",");
-                    for (int i = 0; i < supplyIdArr.length; i++) {
-                        if (Integer.parseInt(supplyIdArr[i].trim()) == 0 || Integer.parseInt(supplyIdArr[i].trim()) == 721) {
-                            sb.append(detailIdArr[i].trim());
-                            if (i != supplyIdArr.length - 1) {
-                                sb.append(",");
-                            }
-
-                        }
-                    }
-                }
-                key = bizOrderDetail.getVendorId() + "," + bizOrderDetail.getVendorName();
-                Integer ordQty = bizOrderDetail.getTotalReqQty() - bizOrderDetail.getTotalSendQty();
-                if (map.containsKey(key)) {
-                    String str = map.get(key) + "|" + ordQty + "-" + sb.toString() + "-s";
-                    map.remove(key);
-                    map.put(key, str);
-                    System.out.println(map.get(key));
-                } else {
-                    map.put(key, ordQty + "-" + sb.toString() + "-s");
-                    System.out.println(map.get(key));
-                }
-            }
-
+        List<Map> requestMap = new ArrayList<>();
+       if ("gh".equals(source)) {
+            requestMap = bizOrderDetailService.findRequestTotalByVendor();
         }
         model.addAttribute("source", source);
-        model.addAttribute("map", map);
+        model.addAttribute("map", requestMap);
         return "modules/biz/request/bizRequestPoList";
     }
 
@@ -214,8 +166,7 @@ public class BizRequestOrderController extends BaseController {
 
                 BizSkuInfo sku = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
                 BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizRequestDetail.getRequestHeader().getId());
-//                bizRequestHeader.setBizStatusStart((byte)(ReqHeaderStatusEnum.APPROVE.getState().intValue()));
-//                bizRequestHeader.setBizStatusEnd((byte)(ReqHeaderStatusEnum.));
+
                 bizRequestDetail.setRequestHeader(bizRequestHeader);
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
                 bizRequestDetail.setSkuInfo(skuInfo);
@@ -243,8 +194,7 @@ public class BizRequestOrderController extends BaseController {
                 BizSkuInfo sku = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
                 bizOrderDetail.setSkuInfo(skuInfo);
-                if (bizOrderDetail.getSuplyis().getId()==0) {
-                    if (orderDetailMap.containsKey(key.toString())) {
+                     if (orderDetailMap.containsKey(key.toString())) {
                         List<BizOrderDetail> orderDetails = orderDetailMap.get(key.toString());
                         orderDetails.add(bizOrderDetail);
                         orderDetailMap.put(key.toString(), orderDetails);
@@ -253,7 +203,6 @@ public class BizRequestOrderController extends BaseController {
                         orderDetails.add(bizOrderDetail);
                         orderDetailMap.put(key.toString(), orderDetails);
                     }
-                }
             }
             model.addAttribute("orderDetailMap",orderDetailMap);
         }
