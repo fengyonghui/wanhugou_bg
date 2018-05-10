@@ -35,6 +35,9 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>订单编号：</label>
+				<form:input path="orderNum" htmlEscape="false" maxlength="50" class="input-medium"/>
+			</li>
+			<li><label>支付编号：</label>
 				<form:input path="payNum" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>业务流水号：</label>
@@ -105,6 +108,7 @@
 			<tr>
 				<td>序号</td>
 				<th>订单编号</th>
+				<th>支付编号</th>
 				<th>业务流水号</th>
 				<th>支付金额</th>
 				<th>支付人</th>
@@ -124,6 +128,9 @@
 		<c:forEach items="${page.list}" var="bizPayRecord" varStatus="state">
 			<tr>
 				<td>${state.index+1}</td>
+				<td>
+					${bizPayRecord.orderNum}
+				</td>
 				<td>
 					${bizPayRecord.payNum}
 				</td>

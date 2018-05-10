@@ -107,11 +107,12 @@ public class BizVarietyFactorController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:shelf:bizVarietyFactor:view")
 	@RequestMapping(value = "checkRepeat")
-	public String checkRepeat(BizVarietyFactor bizVarietyFactor) {
+	public String checkRepeat(Integer variety,BizVarietyFactor bizVarietyFactor) {
 	    String flag = "true";
 		if (bizVarietyFactor != null) {
-		    bizVarietyFactor.getVarietyInfo();
-            Integer serviceFactor = bizVarietyFactor.getServiceFactor();
+//		    bizVarietyFactor.getVarietyInfo();
+//            Integer serviceFactor = bizVarietyFactor.getServiceFactor();
+			bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(variety));
             List<BizVarietyFactor> list = bizVarietyFactorService.findList(bizVarietyFactor);
             if (list != null && !list.isEmpty()) {
                 if (bizVarietyFactor.getId() != null) {

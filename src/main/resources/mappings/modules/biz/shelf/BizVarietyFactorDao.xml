@@ -65,6 +65,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
+		order by updateDate desc
 	</select>
 	
 	<insert id="insert">
