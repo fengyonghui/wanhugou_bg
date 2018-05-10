@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.config.dao.CommonDynamicConfigDao">
+    
+	<sql id="commonDynamicConfigColumns">
+		a.id AS "id",
+		a.confname AS "confname",
+		a.content AS "content",
+		a.create_time AS "createTime",
+		a.status AS "status",
+		a.version AS "version",
+		a.updated AS "updated"
+	</sql>
+	
+	<sql id="commonDynamicConfigJoins">
+	</sql>
+    
+	<select id="get" resultType="CommonDynamicConfig">
+		SELECT 
+			<include refid="commonDynamicConfigColumns"/>
+		FROM common_dynamic_config a
+		<include refid="commonDynamicConfigJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CommonDynamicConfig">
+		SELECT 
+			<include refid="commonDynamicConfigColumns"/>
+		FROM common_dynamic_config a
+		<include refid="commonDynamicConfigJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="confname != null and confname != ''">
+				AND a.confname = #{confname}
+			</if>
+			<if test="content != null and content != ''">
+				AND a.content = #{content}
+			</if>
+			<if test="create_time != null and create_time != ''">
+				AND a.create_time = #{createTime}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="version != null and version != ''">
+				AND a.version = #{version}
+			</if>
+			<if test="updated != null and updated != ''">
+				AND a.updated = #{updated}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="CommonDynamicConfig">
+		SELECT 
+			<include refid="commonDynamicConfigColumns"/>
+		FROM common_dynamic_config a
+		<include refid="commonDynamicConfigJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO common_dynamic_config(
+			id,
+			confname,
+			content,
+			create_time,
+			status,
+			version,
+			updated
+		) VALUES (
+			#{id},
+			#{confname},
+			#{content},
+			#{createTime},
+			#{status},
+			#{version},
+			#{updated}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE common_dynamic_config SET 	
+			confname = #{confname},
+			content = #{content},
+			create_time = #{createTime},
+			version = #{version},
+			updated = #{updated}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE common_dynamic_config SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

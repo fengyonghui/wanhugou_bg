@@ -126,7 +126,7 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	public enum  AuditStatus {
 		UNAUDITED(0, "未审核"),
 		AUDIT_PASS(1, "审核通过"),
-		AUDIT_FAILED (2, "审核失败"),
+		AUDIT_FAILED (2, "驳回"),
 		;
 		private int status;
 		private String desc;
