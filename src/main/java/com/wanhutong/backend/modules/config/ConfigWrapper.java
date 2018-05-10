@@ -131,6 +131,7 @@ public class ConfigWrapper<T extends ConfigGeneral> {
 			set((T)config);
 			return true;
 		} catch (Exception ex) {
+			log.info(ex.getMessage());
 			log.log(Level.SEVERE, "重新载入配置文件\"" + getConfName() + "\"失败", ex);
 			return false;
 		}

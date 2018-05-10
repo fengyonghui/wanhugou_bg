@@ -34,6 +34,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Date recvEta;		// 期望收货时间
 	private String remark;		// 备注
 	private Integer bizStatus;		// 业务状态：0未审核 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
+	private Double totalDetail;
+	private Double recvTotal;
+
+
 	private String skuIds;
 	private String reqDetailIds;
 	private String skuInfoIds;
@@ -366,5 +370,22 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setRemarkReject(String remarkReject) {
 		this.remarkReject = remarkReject;
+	}
+
+
+	public Double getTotalDetail() {
+		return totalDetail;
+	}
+
+	public void setTotalDetail(Double totalDetail) {
+		this.totalDetail = totalDetail;
+	}
+
+	public Double getRecvTotal() {
+		return recvTotal;
+	}
+
+	public void setRecvTotal(Double recvTotal) {
+		this.recvTotal = recvTotal;
 	}
 }

@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.Xpp3Driver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ public class XmlUtils {
 	static {
 
 		X_STREAM.processAnnotations(PurchaseOrderProcessConfig.class);
+		X_STREAM.processAnnotations(RequestOrderProcessConfig.class);
 
 	}
 

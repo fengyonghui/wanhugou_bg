@@ -232,9 +232,9 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getBizPoPaymentOrder() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess =
-                    ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getBizPoPaymentOrder().getCommonProcess().getType()));
-            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+           PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess =
+            ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getBizPoPaymentOrder().getCommonProcess().getType()));
+           model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
         List<Role> roleList = UserUtils.getUser().getRoleList();

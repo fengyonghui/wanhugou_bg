@@ -341,7 +341,7 @@
 										<input type="hidden"  id="detailId" value="${reqDetail.id}"/>
 									</c:when>
 									<c:otherwise>
-										${reqDetail.skuInfo.buyPrice}
+										${reqDetail.unitPrice}
 									</c:otherwise>
 								</c:choose>
 

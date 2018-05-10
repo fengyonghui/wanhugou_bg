@@ -40,7 +40,6 @@ public class DynamicConfig implements Runnable {
 	}
 
 	private void reloadOneConfig(ConfigWrapper<ConfigGeneral> config, Long version) {
-
 		DynamicConfigBean configRemote = dynamicConfigDaoImpl.getDynamicConfigBean(config.getConfName());
 
 		//此时版本号和是否已初始化状态还未发生变化，故不需要从本地恢复

@@ -354,18 +354,18 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             return "操作失败,当前审核状态异常!";
         }
 
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+    	PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         // 当前流程
-        PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+      PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
         // 下一流程
         PurchaseOrderProcessConfig.PurchaseOrderProcess nextProcess = purchaseOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
-        if (nextProcess == null) {
-            return "操作失败,当前流程已经结束!";
+     if (nextProcess == null) {
+           return "操作失败,当前流程已经结束!";
         }
 
 
         User user = UserUtils.getUser();
-        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+      RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
         Role role = new Role();
         role.setEnname(roleEnNameEnum.getState());
         if (!user.isAdmin() && !user.getRoleList().contains(role)) {
@@ -384,7 +384,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
         nextProcessEntity.setObjectId(bizPoPaymentOrder.getId().toString());
         nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+       nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
         commonProcessService.save(nextProcessEntity);
         bizPoPaymentOrderService.updateProcessId(bizPoPaymentOrder.getId(), nextProcessEntity.getId());
@@ -401,7 +401,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(paymentOrderId);
         CommonProcessEntity commonProcessEntity = commonProcessService.get(bizPoPaymentOrder.getProcessId());
 
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+     PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         if (!Integer.valueOf(commonProcessEntity.getType()).equals(purchaseOrderProcessConfig.getPayProcessId())) {
             LOGGER.warn("[exception]BizPoHeaderController payOrder currentType mismatching [{}][{}]", poHeaderId, paymentOrderId);
             return "操作失败,当前流程状态有误!";

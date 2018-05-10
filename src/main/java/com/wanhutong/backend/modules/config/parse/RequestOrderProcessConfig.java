@@ -23,32 +23,32 @@ import java.util.Map;
  *
  * @author ma.qiang
  */
-@XStreamAlias("PurchaseOrderProcessConfig")
-public class PurchaseOrderProcessConfig extends ConfigGeneral {
+@XStreamAlias("RequestOrderProcessConfig")
+public class RequestOrderProcessConfig extends ConfigGeneral {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseOrderProcessConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestOrderProcessConfig.class);
 
 
     @XStreamAlias("defaultProcessId")
     private int defaultProcessId;
 
-    @XStreamAlias("payProcessId")
-    private int payProcessId;
+    @XStreamAlias("autProcessId")
+    private int autProcessId;
 
     @XStreamImplicit(itemFieldName = "process")
-    private List<PurchaseOrderProcess> processList;
+    private List<RequestOrderProcess> processList;
 
     /**
      * 数据MAP
      */
-    public Map<Integer, PurchaseOrderProcess> processMap;
+    public Map<Integer, RequestOrderProcess> processMap;
 
     @Override
-    public PurchaseOrderProcessConfig parse(String content) throws Exception {
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = XmlUtils.fromXml(content);
+    public RequestOrderProcessConfig parse(String content) throws Exception {
+        RequestOrderProcessConfig purchaseOrderProcessConfig = XmlUtils.fromXml(content);
         purchaseOrderProcessConfig.processMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(purchaseOrderProcessConfig.processList)) {
-            for (PurchaseOrderProcess e : purchaseOrderProcessConfig.processList) {
+            for (RequestOrderProcess e : purchaseOrderProcessConfig.processList) {
                 purchaseOrderProcessConfig.processMap.put(e.getCode(), e);
             }
         }
@@ -61,7 +61,7 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
      * @param currentProcess 当前状态
      * @return 通过后的状态
      */
-    public PurchaseOrderProcess getPassProcess(PurchaseOrderProcess currentProcess) {
+    public RequestOrderProcess getPassProcess(RequestOrderProcess currentProcess) {
         return processMap.get(currentProcess.getPassCode());
     }
 
@@ -71,7 +71,7 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
      * @param currentEnum 当前状态
      * @return 通过后的状态
      */
-    public PurchaseOrderProcess getRejectProcess(PurchaseOrderProcess currentEnum) {
+    public RequestOrderProcess getRejectProcess(RequestOrderProcess currentEnum) {
         return processMap.get(currentEnum.getRejectCode());
     }
 
@@ -79,12 +79,12 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
         return defaultProcessId;
     }
 
-    public int getPayProcessId() {
-        return payProcessId;
+    public int getAutProcessId() {
+        return autProcessId;
     }
 
     @XStreamAlias("process")
-    public static class PurchaseOrderProcess {
+    public static class RequestOrderProcess {
         /**
          * 状态码
          */
@@ -135,6 +135,8 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
             return rejectCode;
         }
 
+
     }
+
 
 }

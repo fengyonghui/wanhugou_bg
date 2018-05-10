@@ -11,6 +11,8 @@
 		so.name AS "fromOffice.name",
 		sot.name AS "toOffice.name",
 		a.recv_eta AS "recvEta",
+		a.total_detail AS "totalDetail",
+		a.recv_total AS "recvTotal",
 		a.remark AS "remark",
 		a.biz_status AS "bizStatus",
 		a.status AS "delFlag",
@@ -134,6 +136,13 @@
 			from_id,
 			to_id,
 			recv_eta,
+		<if test="totalDetail!=null">
+			total_detail,
+		</if>
+		<if test="recvTotal!=null">
+			recv_total,
+		</if>
+
 			remark,
 		<if test="bizStatus!=null">
 			biz_status,
@@ -153,6 +162,12 @@
 			#{fromOffice.id},
 			#{toOffice.id},
 			#{recvEta},
+			<if test="totalDetail!=null">
+				#{totalDetail},
+			</if>
+			<if test="recvTotal!=null">
+			#{recvTotal},
+			</if>
 			#{remark},
 		<if test="bizStatus!=null">
 			#{bizStatus},
@@ -176,6 +191,12 @@
 			from_id = #{fromOffice.id},
 			to_id = #{toOffice.id},
 			recv_eta = #{recvEta},
+			<if test="totalDetail!=null">
+				total_detail = #{totalDetail},
+			</if>
+			<if test="recvTotal!=null">
+				recv_total	=  #{recvTotal},
+			</if>
 			remark = #{remark},
 		<if test="bizStatus!=null">
 			biz_status = #{bizStatus},
