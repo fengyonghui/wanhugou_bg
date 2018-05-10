@@ -149,12 +149,13 @@
 	</select>
 	
 	<select id="findRequestTotalByVendor" resultType="java.util.Map">
-		SELECT reqDetailIds, detailIds,
+		SELECT GROUP_CONCAT(reqDetailIds) as reqDetailIds,
+	  	GROUP_CONCAT(detailIds) as detailIds,
 		sum(totalReqQty) as "totalReqQty",
 		sum( totalOrdQty ) AS "totalOrdQty",
 		vendorId AS "vendorId",
 		vendorName AS "vendorName"
-FROM (
+	FROM (
 	(SELECT
 		GROUP_CONCAT( rd.id ) AS "reqDetailIds",
 		'' as "detailIds",

@@ -156,11 +156,13 @@ public class BizRequestOrderController extends BaseController {
     public String goList(String reqIds, Integer vendorId, String ordIds, Model model) {
         Map<String,List<BizRequestDetail>> reqDetailMap = new LinkedHashMap<>();
         Map<String,List<BizOrderDetail>> orderDetailMap = new LinkedHashMap<>();
-        List<BizRequestDetail> requestDetailList = new ArrayList<>();
 
         if (StringUtils.isNotBlank(reqIds)) {
             String[] reqDetailArr = reqIds.split(",");
             for (int i = 0; i < reqDetailArr.length; i++) {
+                if (StringUtils.isBlank(reqDetailArr[i])){
+                    continue;
+                }
                 BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailArr[i].trim()));
                 Integer key =bizRequestDetail.getRequestHeader().getId();
 
@@ -170,7 +172,6 @@ public class BizRequestOrderController extends BaseController {
                 bizRequestDetail.setRequestHeader(bizRequestHeader);
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
                 bizRequestDetail.setSkuInfo(skuInfo);
-//                reqDetailMap.put(bizRequestDetail.getId()+","+bizRequestDetail.getRequestHeader().getReqNo(),bizRequestDetail);
                 if(reqDetailMap.containsKey(key.toString())){
                     List<BizRequestDetail> requestDetails = reqDetailMap.get(key.toString());
                     requestDetails.add(bizRequestDetail);
@@ -187,6 +188,9 @@ public class BizRequestOrderController extends BaseController {
             // orderDetailList=Lists.newArrayList();
             String[] ordDetailArr = ordIds.split(",");
             for (int i = 0; i < ordDetailArr.length; i++) {
+                if (StringUtils.isBlank(ordDetailArr[i])){
+                    continue;
+                }
                 BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(ordDetailArr[i].trim()));
                 Integer key = bizOrderDetail.getOrderHeader().getId();
                 BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
