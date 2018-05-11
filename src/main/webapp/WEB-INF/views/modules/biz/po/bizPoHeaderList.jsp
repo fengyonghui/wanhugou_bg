@@ -70,6 +70,7 @@
 				<th>订单来源</th>
 				<th>创建时间</th>
 				<th>审核状态</th>
+				<th>上级审核备注</th>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -112,6 +113,9 @@
 				<td>
 						${bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name == null ?
 						 '当前无支付申请' : bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name}
+				</td>
+				<td>
+						${bizPoHeader.bizPoPaymentOrder.prevCommonProcess.description}
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>

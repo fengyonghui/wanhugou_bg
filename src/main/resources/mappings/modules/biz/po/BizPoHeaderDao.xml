@@ -37,13 +37,23 @@
 		process.processor AS "bizPoPaymentOrder.commonProcess.processor",
 		process.description AS "bizPoPaymentOrder.commonProcess.description",
 		process.type AS "bizPoPaymentOrder.commonProcess.type",
-		process.create_time AS "bizPoPaymentOrder.commonProcess.createTime"
+		process.create_time AS "bizPoPaymentOrder.commonProcess.createTime",
+		prevProcess.id AS "bizPoPaymentOrder.prevCommonProcess.id",
+		prevProcess.object_id AS "bizPoPaymentOrder.prevCommonProcess.objectId",
+		prevProcess.object_name AS "bizPoPaymentOrder.prevCommonProcess.objectName",
+		prevProcess.prev_id AS "bizPoPaymentOrder.prevCommonProcess.prevId",
+		prevProcess.biz_status AS "bizPoPaymentOrder.prevCommonProcess.bizStatus",
+		prevProcess.processor AS "bizPoPaymentOrder.prevCommonProcess.processor",
+		prevProcess.description AS "bizPoPaymentOrder.prevCommonProcess.description",
+		prevProcess.type AS "bizPoPaymentOrder.prevCommonProcess.type",
+		prevProcess.create_time AS "bizPoPaymentOrder.prevCommonProcess.createTime"
 	</sql>
 	
 	<sql id="bizPoHeaderJoins">
 		LEFT JOIN  sys_office so on so.id=a.vend_id
 		LEFT JOIN  biz_po_payment_order payment on payment.id = a.current_payment_id
 		LEFT JOIN  common_process process on process.id = payment.process_id
+		LEFT JOIN  common_process prevProcess on prevProcess.id = process.prev_id
 	</sql>
     
 	<select id="get" resultType="BizPoHeader">

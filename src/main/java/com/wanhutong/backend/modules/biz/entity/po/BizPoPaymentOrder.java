@@ -25,6 +25,7 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 	private String img;		// 图片
 
 	private CommonProcessEntity commonProcess;
+	private CommonProcessEntity prevCommonProcess;
 
 	public BizPoPaymentOrder() {
 		super();
@@ -82,5 +83,13 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
 	public void setImg(String img) {
 		this.img = img;
+	}
+
+	public CommonProcessEntity getPrevCommonProcess() {
+		return prevCommonProcess;
+	}
+
+	public void setPrevCommonProcess(CommonProcessEntity prevCommonProcess) {
+		this.prevCommonProcess = prevCommonProcess;
 	}
 }
