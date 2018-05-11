@@ -11,7 +11,6 @@
 		a.sku_shelf_id as "shelfInfo.id",
 		si.name as "shelfInfo.opShelfInfo.name",
 		a.sku_id AS "skuInfo.id",
-		a.suply_id AS "suplyis.id",
 		bsi.name as "skuInfo.name",
 		a.buy_price as "buyPrice",
 		<!--bsi.buy_price AS "buyPrice",
@@ -21,7 +20,6 @@
 		a.part_no AS "partNo",
 		a.sku_name AS "skuName",
 		bsi.item_no AS "skuInfo.itemNo",
-		a.sku_img_url as "skuImgUrl",
 		a.unit_price AS "unitPrice",
 		a.sent_qty as "sentQty",
 		a.ord_qty AS "ordQty",
@@ -105,7 +103,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		order by createDate ASC
+		order by a.line_no ASC
 	</select>
 
 	<select id="findOrderTotalByVendor" resultType="BizOrderDetail">
@@ -150,6 +148,112 @@
 		pi.vendor_id
 	</select>
 	
+	<select id="findRequestTotalByVendor" resultType="java.util.Map">
+		SELECT GROUP_CONCAT(reqDetailIds) as reqDetailIds,
+	  	GROUP_CONCAT(detailIds) as detailIds,
+		sum(totalReqQty) as "totalReqQty",
+		sum( totalOrdQty ) AS "totalOrdQty",
+		vendorId AS "vendorId",
+		vendorName AS "vendorName"
+	FROM (
+	(SELECT
+		GROUP_CONCAT( rd.id ) AS "reqDetailIds",
+		'' as "detailIds",
+		sum( rd.req_qty ) AS "totalReqQty",
+		0 AS "totalOrdQty",
+		rd.vendor_id AS "vendorId",
+		rd.vendor_name AS "vendorName"
+	FROM
+		(
+			SELECT
+				rd.id,
+				rd.sku_id,
+				rd.req_qty,
+				rd.send_qty,
+				rd.recv_qty,
+				rd.header_id,
+				rd.line_no ,
+				pi.vendor_id,
+				pi.vendor_name
+			FROM
+				biz_request_header rh, biz_request_detail rd,
+				biz_sku_info si, biz_product_info pi
+			WHERE rh.biz_status BETWEEN 5 AND 20
+				AND rh.biz_status != 15
+				AND rh.status = 1
+				AND rd.STATUS = 1
+				AND rd.header_id = rh.id
+				AND si.id = rd.sku_id
+				AND pi.id = si.prod_id
+				AND NOT EXISTS (
+					SELECT
+						por.so_line_no,
+						por.so_id
+					FROM
+						biz_po_order_req por
+					WHERE
+						por.so_line_no = rd.line_no
+						AND por.so_id = rd.header_id
+						AND por.so_type = 2
+						)
+					AND NOT EXISTS(SELECT 1
+					FROM sys_test_account ta
+					WHERE rh.from_id = ta.object_id AND ta.object_name = 'sys_office')
+		) rd
+	GROUP BY rd.vendor_id)
+UNION ALL
+	(SELECT
+		'' AS "reqDetailIds",
+		GROUP_CONCAT( od.id ) AS "detailIds",
+		0 as "totalReqQty",
+		sum( od.ord_qty ) AS "totalOrdQty",
+		od.vendor_id AS "vendorId",
+		od.vendor_name AS "vendorName"
+	FROM (
+		SELECT
+			od.id,
+			od.sku_id,
+			od.ord_qty,
+			od.sent_qty,
+			od.order_id,
+			od.suply_id,
+			od.line_no,
+			pi.vendor_id,
+			pi.vendor_name
+		FROM
+			biz_order_header oh, biz_order_detail od ,
+			biz_sku_info si, biz_product_info pi
+		WHERE (od.suply_id = 0 OR od.suply_id = 721)
+			AND od.order_id = oh.id
+			AND oh.status = 1
+			and od.status = 1
+			AND oh.biz_status BETWEEN 15 AND 19
+			AND oh.biz_status != 18
+			AND od.ord_qty > od.sent_qty
+			AND si.id = od.sku_id
+			AND pi.id = si.prod_id
+			AND NOT EXISTS (
+				SELECT
+					por.so_line_no,
+					por.so_id
+				FROM
+					biz_po_order_req por
+				WHERE
+					por.so_line_no = od.line_no
+					AND por.so_id = od.order_id
+					AND por.so_type = 1
+					)
+				AND NOT EXISTS(SELECT 1
+					FROM sys_test_account ta
+					WHERE oh.cust_id = ta.object_id AND ta.object_name = 'sys_office')
+			) od
+		GROUP BY
+			od.vendor_id)
+		) t1
+ GROUP BY
+		vendorId
+	</select>
+	
 	<select id="findAllList" resultType="BizOrderDetail">
 		SELECT 
 			<include refid="bizOrderDetailColumns"/>
@@ -186,9 +290,6 @@
 		</if>
 			part_no,
 			sku_name,
-		<if test="skuImgUrl !=null and skuImgUrl !=''">
-			sku_img_url,
-		</if>
 			unit_price,
 			buy_price,
 			sent_qty,
@@ -219,9 +320,6 @@
 		</if>
 			#{partNo},
 			#{skuName},
-		<if test="skuImgUrl !=null and skuImgUrl !=''">
-			#{skuImgUrl},
-		</if>
 			#{unitPrice},
 			#{buyPrice},
 			#{sentQty},
@@ -255,9 +353,6 @@
 		</if>
 			part_no = #{partNo},
 			sku_name = #{skuName},
-		<if test="skuImgUrl !=null and skuImgUrl !=''">
-			sku_img_url=#{skuImgUrl},
-		</if>
 			unit_price = #{unitPrice},
 			buy_price = #{buyPrice},
 			sent_qty = #{sentQty},

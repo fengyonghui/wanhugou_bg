@@ -14,6 +14,16 @@
                     choose.attr('checked',false);
                 }
             });
+            $("#requestShExport").click(function(){
+				top.$.jBox.confirm("确认要导出备货单收货数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/listExport");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
 		});
 		function saveOrderIds() {
             if($("input[title='orderIds']:checked").length <= 0){
@@ -33,7 +43,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${source eq 'sh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}">收货清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&ship=${ship}">收货清单列表</a></li>
 		</c:if>
 		<c:if test="${source eq 'kc'}">
 			<li class="active"><a href="${ctx}/biz/request/bizRequestAll?source=${source}&bizStatu=${bizStatu}&ship=${ship}">供货清单列表</a></li>
@@ -52,7 +62,7 @@
 				</li>
 				<li><label>采购中心：</label>
 					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>
@@ -63,6 +73,7 @@
 					</form:select>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+				<li class="btns"><input id="requestShExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<li class="clearfix"></li>
 			</ul>
 		</form:form>
@@ -92,7 +103,7 @@
 										labelValue="" notAllowSelectParent="true"
 										title="采购商"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
-										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+										allowClear="true" dataMsgRequired="必填信息"/>
 						<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
 						<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
 					</c:if>
@@ -101,10 +112,11 @@
 										labelValue="" notAllowSelectParent="true"
 										title="采购商"  url="/sys/office/queryTreeList?type=6&source=cgs"
 										cssClass="input-medium required"
-										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+				<li class="btns"><input id="requestShExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
 
@@ -135,6 +147,9 @@
 					<th>采购客户</th>
 				</c:if>
 				<th>期望收货时间</th>
+				<c:if test="${ship eq 'xs'}">
+					<th>收货地址</th>
+				</c:if>
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>更新人</th>
@@ -146,9 +161,9 @@
 		<tbody>
 		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">
 		<c:if test="${source == 'sh' || source=='gh' || bizStatu==1 && ship=='bh'}">
-			<c:forEach items="${page.list}" var="requestHeader">
+			<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
 				<tr>
-					<td>${requestHeader.numberRownum}</td>
+					<td>${state.index+1}</td>
 					<c:if test="${source=='gh'}">
 					<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
 					</c:if>
@@ -216,9 +231,16 @@
 					<td>
 							${orderHeader.customer.name}
 					</td>
+
 					<td>
 						<fmt:formatDate value="${orderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
+					<c:if test="${ship eq 'xs'}">
+						<td>
+							${orderHeader.bizLocation.province.name}${orderHeader.bizLocation.city.name}
+							${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
+						</td>
+					</c:if>
 					<td>
 							<%--${orderHeader.remark}--%>
 					</td>

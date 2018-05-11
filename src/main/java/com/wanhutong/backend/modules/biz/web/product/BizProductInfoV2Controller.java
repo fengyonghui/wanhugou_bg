@@ -470,7 +470,6 @@ public class BizProductInfoV2Controller extends BaseController {
         addMessage(redirectAttributes, "删除产品信息表成功");
         return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
     }
-
     @RequiresPermissions("biz:product:bizProductInfo:edit")
     @RequestMapping(value = "recovery")
     public String recovery(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes) {
@@ -479,6 +478,8 @@ public class BizProductInfoV2Controller extends BaseController {
         addMessage(redirectAttributes, "恢复产品信息表成功");
         return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
     }
+
+
 
     @ResponseBody
     @RequestMapping(value = "querySkuTreeList")

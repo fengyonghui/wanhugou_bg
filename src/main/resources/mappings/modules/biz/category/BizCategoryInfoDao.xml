@@ -123,7 +123,14 @@
 			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 		</if>
-		order by a.update_time desc
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				order by a.update_time desc
+			</otherwise>
+		</choose>
 	</select>
 
 	<select id="findAllList" resultType="BizCategoryInfo">

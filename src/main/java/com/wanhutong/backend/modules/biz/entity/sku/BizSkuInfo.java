@@ -8,6 +8,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.apache.commons.collections.CollectionUtils;
@@ -37,6 +38,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private List<BizSkuPropValue> skuPropValueList;
 	private List<AttributeValueV2> attrValueList;
 	private Map<String, List<AttributeValueV2>> attrValueMap;
+	private List<BizVarietyFactor> bvFactorList;
 	private String itemNo;
 
 	private String sort; //生成part_no排序
@@ -281,5 +283,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setVariety(BizVarietyInfo variety) {
 		this.variety = variety;
+	}
+
+	public List<BizVarietyFactor> getBvFactorList() {
+		return bvFactorList;
+	}
+
+	public void setBvFactorList(List<BizVarietyFactor> bvFactorList) {
+		this.bvFactorList = bvFactorList;
 	}
 }

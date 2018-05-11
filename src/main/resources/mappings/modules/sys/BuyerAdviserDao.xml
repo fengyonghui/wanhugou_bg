@@ -13,9 +13,14 @@
 			b.cust_id as cust_id,
 			b.center_id as center_id,
 			b.consultant_id as consultant_id,
-			b.status
+			b.status AS "status",
+			b.create_time AS "createDate",
+			b.create_id AS "createBy.id",
+			b.update_id AS "updateBy.id",
+			b.update_time AS "updateDate"
 		FROM biz_custom_center_consultant b
-		WHERE b.cust_id = #{id} limit 1;
+		WHERE b.cust_id = #{id}
+
 	</select>
 	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
@@ -48,8 +53,10 @@
 
 	<update id="delete">
 		UPDATE biz_custom_center_consultant SET
-			status = #{DEL_FLAG_DELETE}
+		status = #{DEL_FLAG_DELETE}
 		WHERE cust_id = #{custId}
 	</update>
+
+
 
 </mapper>

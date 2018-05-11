@@ -8,7 +8,7 @@ package com.wanhutong.backend.modules.enums;
 public enum BizOpShelfInfoEnum {
 //    /*用于商品上下架选择货架 显示采购中心添加*/
 //    本地备货            货架
-    LOCAL_STOCK(3), SPECIAL_OFFER(2);
+    LOCAL_STOCK(3), SPECIAL_OFFER(2),HOME_BANNER(1);
 
     private Integer local;
 

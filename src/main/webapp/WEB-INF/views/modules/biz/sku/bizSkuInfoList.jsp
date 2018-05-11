@@ -49,6 +49,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>商品图片</th>
 				<th>商品名称</th>
 				<th>商品类型</th>
@@ -66,8 +67,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizSkuInfo">
+		<c:forEach items="${page.list}" var="bizSkuInfo" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 						<img src="${bizSkuInfo.productInfo.imgUrl}" width="80px" height="80px"/>
 				</td>
@@ -101,11 +103,7 @@
 					<td>
 						${bizSkuInfo.updateBy.name}
 					</td>
-					<%--<td>--%>
-						<%--<fmt:formatDate value="${bizSkuInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
-					<%--</td>--%>
-				<shiro:hasPermission name="biz:sku:bizSkuInfo:view"><td>
-					<%--<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">修改</a>--%>
+				<td>
 					<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==1}">
 						<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">详情</a>
 						<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
@@ -113,13 +111,13 @@
 						</shiro:hasPermission>
 					</c:if>
 
-						<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==0}">
-							<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-								<a href="${ctx}/biz/sku/bizSkuInfo/recovery?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要恢复该商品sku吗？', this.href)">恢复</a>
-							</shiro:hasPermission>
-						</c:if>
+					<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==0}">
+						<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+							<a href="${ctx}/biz/sku/bizSkuInfo/recovery?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要恢复该商品sku吗？', this.href)">恢复</a>
+						</shiro:hasPermission>
+					</c:if>
 
-				</td></shiro:hasPermission>
+				</td>
 
 			</tr>
 		</c:forEach>

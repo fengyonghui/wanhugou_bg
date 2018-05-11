@@ -38,9 +38,9 @@
 			<li><label>供应商：</label>
 				<form:input path="productInfo.vendorName" htmlEscape="false"  class="input-medium"/>
 			</li>
-			<li><label>商品编号：</label>
-				<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>
-			</li>
+			<%--<li><label>商品编号：</label>--%>
+				<%--<form:input path="skuInfo.partNo" htmlEscape="false"  class="input-medium"/>--%>
+			<%--</li>--%>
 			<li><label>上架时间：</label>
 				<input name="shelfStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					   value="<fmt:formatDate value="${bizOpShelfSku.shelfStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
@@ -58,7 +58,7 @@
 			<c:if test="${fns:getUser().isAdmin()}">
 				<li><label>采购中心：</label>
 					<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
-									labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
+									labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true" allowClear="true"
 									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>
@@ -85,16 +85,18 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>商品图片</th>
 				<th>商品名称</th>
 				<th>产品名称</th>
+				<%--<th>商品编号</th>--%>
 				<th>商品货号</th>
 				<th>货架名称</th>
 				<th>采购中心</th>
 				<th>供应商</th>
 				<%--<th>上架数量(个)</th>--%>
-				<th>原价(元)</th>
-				<th>现价(元)</th>
+				<%--<th>工厂价(元)</th>--%>
+				<th>销售价(元)</th>
 				<th>最低销售数量(个)</th>
 				<th>最高销售数量(个，9999：不限制)</th>
                 <th>显示次序</th>
@@ -107,8 +109,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizOpShelfSku">
+		<c:forEach items="${page.list}" var="bizOpShelfSku" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					<img src="${bizOpShelfSku.productInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				</td>
@@ -118,6 +121,9 @@
 				<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizOpShelfSku.productInfo.id}">
 					${bizOpShelfSku.productInfo.name}
 				</a></td>
+				<%--<td>--%>
+					<%--${bizOpShelfSku.skuInfo.partNo}--%>
+				<%--</td>--%>
 				<td>
 					${bizOpShelfSku.skuInfo.itemNo}
 				</td>
@@ -140,9 +146,9 @@
 				<%--<td>--%>
 					<%--${bizOpShelfSku.shelfQty}--%>
 				<%--</td>--%>
-				<td>
-					${bizOpShelfSku.orgPrice}
-				</td>
+				<%--<td>--%>
+					<%--${bizOpShelfSku.orgPrice}--%>
+				<%--</td>--%>
 				<td>
 					${bizOpShelfSku.salePrice}
 				</td>
@@ -172,21 +178,16 @@
 				<%--</td>--%>
 
                 <shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><td>
-					<c:if test="${bizOpShelfSku.delFlag!=null && bizOpShelfSku.delFlag!=0}">
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
-						<c:choose>
-							<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
-								<a href="${ctx}/biz/shelf/bizOpShelfSku/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
-							</c:when>
-							<c:otherwise>
-								<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
-							</c:otherwise>
-						</c:choose>
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
-					</c:if>
-					<c:if test="${bizOpShelfSku.delFlag!=null && bizOpShelfSku.delFlag==0}">
-						<a href="${ctx}/biz/shelf/bizOpShelfSku/recovery?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要恢复该上架商品吗？', this.href)">恢复</a>
-					</c:if>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
+					<c:choose>
+						<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
+						    <a href="${ctx}/biz/shelf/bizOpShelfSku/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
+						</c:when>
+						<c:otherwise>
+							<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
+						</c:otherwise>
+					</c:choose>
+					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

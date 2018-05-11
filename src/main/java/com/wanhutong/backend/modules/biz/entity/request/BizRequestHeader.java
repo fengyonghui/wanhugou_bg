@@ -55,6 +55,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 列表序号
 	 * */
 	private Integer numberRownum;
+	/**
+	 * 驳回原因,审核通过标识
+	 * */
+	private String remarkReject;
 
 	private List<BizRequestDetail> requestDetailList;
 
@@ -71,7 +75,17 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String str;
 
 	private String recvQtys;
-	
+
+	private boolean includeTestData;
+
+	public boolean isIncludeTestData() {
+		return includeTestData;
+	}
+
+	public void setIncludeTestData(boolean includeTestData) {
+		this.includeTestData = includeTestData;
+	}
+
 	public BizRequestHeader() {
 		super();
 	}
@@ -344,5 +358,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setBizStatusNot(Byte bizStatusNot) {
 		this.bizStatusNot = bizStatusNot;
+	}
+
+	public String getRemarkReject() {
+		return remarkReject;
+	}
+
+	public void setRemarkReject(String remarkReject) {
+		this.remarkReject = remarkReject;
 	}
 }

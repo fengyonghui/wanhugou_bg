@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,8 @@ public class BizPayRecordController extends BaseController {
 
 	@Autowired
 	private BizPayRecordService bizPayRecordService;
+	@Autowired
+	private OfficeService officeService;
 	
 	@ModelAttribute
 	public BizPayRecord get(@RequestParam(required=false) Integer id) {
@@ -87,6 +92,10 @@ public class BizPayRecordController extends BaseController {
 		bizPayRecord.setDelFlag(BizPayRecord.DEL_FLAG_DELETE);
 		bizPayRecordService.delete(bizPayRecord);
 		addMessage(redirectAttributes, "删除交易记录成功");
+		String a="end_dele";
+		if(bizPayRecord.getCendDele()!=null && bizPayRecord.getCendDele().equals(a)){
+			return "redirect:"+Global.getAdminPath()+"/biz/pay/bizPayRecord/CendList?repage";
+		}
 		return "redirect:"+Global.getAdminPath()+"/biz/pay/bizPayRecord/?repage";
 	}
 
@@ -96,6 +105,10 @@ public class BizPayRecordController extends BaseController {
 		bizPayRecord.setDelFlag(BizPayRecord.DEL_FLAG_NORMAL);
 		bizPayRecordService.delete(bizPayRecord);
 		addMessage(redirectAttributes, "恢复交易记录成功");
+		String a="end_dele";
+		if(bizPayRecord.getCendDele()!=null && bizPayRecord.getCendDele().equals(a)){
+			return "redirect:"+Global.getAdminPath()+"/biz/pay/bizPayRecord/CendList?repage";
+		}
 		return "redirect:"+Global.getAdminPath()+"/biz/pay/bizPayRecord/?repage";
 	}
 
@@ -104,11 +117,19 @@ public class BizPayRecordController extends BaseController {
 	 * */
 	@RequiresPermissions("biz:pay:bizPayRecord:view")
 	@RequestMapping(value = "payBtnExport", method = RequestMethod.POST)
-	public String torySkuExport(BizPayRecord bizPayRecord, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String torySkuExport(BizPayRecord bizPayRecord,String payExportCend, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		String a="cend_pay";
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			String fileName = "交易记录数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			List<BizPayRecord> PayList = bizPayRecordService.findList(bizPayRecord);
+			List<BizPayRecord> PayList =null;
+			if(payExportCend!=null && payExportCend.equals(a)){
+				//C端
+				bizPayRecord.setListPayQuery("CqueryPay");
+				PayList = bizPayRecordService.findList(bizPayRecord);
+			}else {
+				PayList = bizPayRecordService.findList(bizPayRecord);
+			}
 			List<List<String>> data = new ArrayList<List<String>>();
 			PayList.forEach(pay->{
 				List<String> rowData = new ArrayList();
@@ -190,7 +211,24 @@ public class BizPayRecordController extends BaseController {
 		}catch (Exception e){
 			addMessage(redirectAttributes, "导出交易记录数据失败！失败信息：" + e.getMessage());
 		}
+		if(payExportCend!=null && payExportCend.equals(a)){
+			//C端
+			return "redirect:" + adminPath + "/biz/pay/bizPayRecord/CendList";
+		}
 		return "redirect:" + adminPath + "/biz/pay/bizPayRecord/";
+	}
+
+	/**
+	 * C端交易记录
+	 * */
+	@RequiresPermissions("biz:pay:bizPayRecord:view")
+	@RequestMapping(value ="CendList")
+	public String CendList(BizPayRecord bizPayRecord, HttpServletRequest request, HttpServletResponse response, Model model) {
+		//查询C端交易记录标识
+		bizPayRecord.setListPayQuery("CqueryPay");
+		Page<BizPayRecord> page = bizPayRecordService.findPage(new Page<BizPayRecord>(request, response), bizPayRecord);
+		model.addAttribute("page", page);
+		return "modules/biz/pay/bizPayRecordCendList";
 	}
 
 }

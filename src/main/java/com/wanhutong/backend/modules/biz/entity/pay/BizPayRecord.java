@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.pay;
 
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Length;//(min=1, max=4, message="支付类型：wx(微信) alipay");
@@ -23,7 +24,8 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 public class BizPayRecord extends DataEntity<BizPayRecord> {
 	
 	private static final long serialVersionUID = 1L;
-	private String payNum;		// 订单编号
+	private String payNum;		// 支付编号
+	private String orderNum;	//订单编号
 	private String outTradeNo;		// 支付宝或微信的业务流水号
 	private Double payMoney;		// 支付金额
 	private BigDecimal originalAmount = new BigDecimal(0);	//原金额
@@ -45,6 +47,14 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 	 * 采购中心
 	 * */
 	private BizCustomCenterConsultant custConsultant;
+	/**
+	 * C端删除标记
+	 * */
+	private String cendDele;
+	/**
+	 * C端列表查询标识
+	 * */
+	private String listPayQuery;
 
 	public BizPayRecord() {
 		super();
@@ -201,5 +211,29 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 
 	public void setCustConsultant(BizCustomCenterConsultant custConsultant) {
 		this.custConsultant = custConsultant;
+	}
+
+	public String getCendDele() {
+		return cendDele;
+	}
+
+	public void setCendDele(String cendDele) {
+		this.cendDele = cendDele;
+	}
+
+	public String getListPayQuery() {
+		return listPayQuery;
+	}
+
+	public void setListPayQuery(String listPayQuery) {
+		this.listPayQuery = listPayQuery;
+	}
+
+	public String getOrderNum() {
+		return orderNum;
+	}
+
+	public void setOrderNum(String orderNum) {
+		this.orderNum = orderNum;
 	}
 }

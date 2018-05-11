@@ -5,6 +5,7 @@
 	<sql id="bizPayRecordColumns">
 		a.id AS "id",
 		a.pay_num AS "payNum",
+		a.order_num AS "orderNum",
 		a.out_trade_no AS "outTradeNo",
 		a.pay_money AS "payMoney",
 		a.original_amount as"originalAmount",
@@ -30,6 +31,7 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
+		us.name as "updateBy.name",
 		a.update_time AS "updateDate",
 		sua.mobile as "customer.moblieMoeny.mobile",
 		sof.name as "custConsultant.centers.name"
@@ -37,6 +39,7 @@
 	
 	<sql id="bizPayRecordJoins">
 		left join sys_user su on a.create_id=su.id
+		left join sys_user us on a.update_id=us.id
 		LEFT JOIN sys_office so on so.id=a.cust_id
 		LEFT JOIN sys_user s on s.id = a.payer
 		LEFT JOIN sys_office o on o.id = a.account
@@ -65,11 +68,21 @@
 			<if test="dataStatus==null">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
+			<if test="listPayQuery!=null and listPayQuery!=''">
+				<!-- 查询C端列表标识 -->
+				and a.cust_id=a.account
+			</if>
 			<if test="custConsultant != null and custConsultant.centers.name != null and custConsultant.centers.name != ''">
 				AND sof.NAME LIKE
 				<if test="dbName == 'oracle'">'%'||#{custConsultant.centers.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{custConsultant.centers.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{custConsultant.centers.name},'%')</if>
+			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
 			<if test="payNum != null and payNum != ''">
 				AND a.pay_num LIKE
@@ -113,8 +126,11 @@
 			<if test="bizStatus != null and bizStatus != -1">
 				AND a.biz_status = #{bizStatus}
 			</if>
-			<if test="account != null and account != ''">
-				AND a.account = #{account}
+			<if test="account != null and account.name != null and account.name != ''">
+				AND o.name like
+				<if test="dbName == 'oracle'">'%'||#{account.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{account.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{account.name},'%')</if>
 			</if>
 			<if test="toAccount != null and toAccount != ''">
 				AND a.to_account = #{toAccount}
@@ -174,6 +190,9 @@
 		<if test="payNum != null and payNum != ''">
 			pay_num,
 		</if>
+		<if test="orderNum != null and orderNum != ''">
+			order_num,
+		</if>
 		<if test="outTradeNo != null and outTradeNo != ''">
 			out_trade_no,
 		</if>
@@ -210,6 +229,9 @@
 			#{id},
 		<if test="payNum != null and payNum != ''">
 			#{payNum},
+		</if>
+		<if test="orderNum != null and orderNum != ''">
+			#{orderNum},
 		</if>
 		<if test="outTradeNo != null and outTradeNo != ''">
 			#{outTradeNo},

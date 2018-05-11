@@ -58,7 +58,7 @@
 		<include refid="bizInventorySkuJoins"/>
 		<where>
 			1=1
-			<if test="dataStatus==null">
+			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
 			<if test="invInfo != null and invInfo.id != null and invInfo.id != ''">
@@ -155,8 +155,8 @@
 		SELECT
 			SUM(stock_qty)
 		FROM biz_inventory_sku bis
-		LEFT JOIN biz_inventory_info bii ON bii.id = bis.inv_id
-		WHERE bii.cust_id = #{centId}
+		INNER JOIN biz_inventory_info bii ON bii.id = bis.inv_id
+		WHERE bii.cust_id = #{centId} and bis.status = 1
 
 	</select>
 	<insert id="insert">

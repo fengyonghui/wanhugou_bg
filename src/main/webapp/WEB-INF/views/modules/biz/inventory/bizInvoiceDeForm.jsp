@@ -98,8 +98,7 @@
 						<th>采购商名称</th>
 						<th>业务状态</th>
 						<th>商品名称</th>
-						<th>商品编码</th>
-						<th>商品属性</th>
+						<th>商品货号</th>
 						<th>采购数量</th>
 						<th>已发货数量</th>
 					</tr>
@@ -116,8 +115,7 @@
                                             <td rowspan="${fn:length(orderHeader.orderDetailList)}">${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>
                                         </c:if>
                                         <td>${orderDetail.skuName}</td>
-                                        <td>${orderDetail.partNo}</td>
-                                        <td>${orderDetail.skuInfo.skuPropertyInfos}</td>
+                                        <td>${orderDetail.skuInfo.itemNo}</td>
                                         <td>${orderDetail.ordQty}</td>
                                         <td>${orderDetail.sentQty}</td>
                                     </tr>

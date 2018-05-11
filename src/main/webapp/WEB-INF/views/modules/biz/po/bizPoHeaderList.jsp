@@ -29,7 +29,7 @@
 			</li>
 			<li><label>供应商</label>
 				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${entity.vendOffice.id}" labelName="vendOffice.name"
-								labelValue="${entity.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+								labelValue="${entity.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 								title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-medium" dataMsgRequired="必填信息">
 				</sys:treeselect>
 			</li>
@@ -60,6 +60,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>订单编号</th>
 				<th>供应商</th>
 				<th>订单总价</th>
@@ -69,12 +70,13 @@
 				<th>订单状态</th>
 				<th>订单来源</th>
 				<th>创建时间</th>
-				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
+				<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizPoHeader">
+		<c:forEach items="${page.list}" var="bizPoHeader" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">
 					${bizPoHeader.orderNum}
 				</a></td>
@@ -107,12 +109,14 @@
 				<td>
 					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				</td>
-				<shiro:hasPermission name="biz:po:bizPoHeader:view"><td>
+				<td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit">
     				<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
 				</shiro:hasPermission>
+				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
-				</td></shiro:hasPermission>
+				</shiro:hasPermission>
+				</td>
 			</tr>
 		</c:forEach>
 		</tbody>

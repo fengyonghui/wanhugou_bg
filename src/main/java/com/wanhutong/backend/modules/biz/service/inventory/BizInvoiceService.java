@@ -104,7 +104,6 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	public Page<BizInvoice> findPage(Page<BizInvoice> page, BizInvoice bizInvoice) {
 		User user=UserUtils.getUser();
 		if(user.isAdmin()){
-            bizInvoice.setDataStatus("filter");
             return super.findPage(page, bizInvoice);
         }
 //        else {

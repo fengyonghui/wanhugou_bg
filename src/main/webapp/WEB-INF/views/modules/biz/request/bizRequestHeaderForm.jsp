@@ -81,7 +81,7 @@
 
                                     "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
 								}
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
@@ -148,18 +148,48 @@
 
         }
         function checkInfo(obj,val) {
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/request/bizRequestHeader/saveInfo",
-                data:{checkStatus:obj,id:$("#id").val()},
-                success:function (data) {
-                    if(data){
-                        alert(val+"成功！");
-                        window.location.href="${ctx}/biz/request/bizRequestHeader";
-
-                    }
+        	var valNmu = $(obj).attr("findg");
+            var html = "<div style='padding:10px;'>输入驳回原因：<input type='text' id='remark2' name='remarkReject' value=''/>"+
+            		"<span class='help-inline'><font color='red'>*</font></span></div>";
+            var submit = function (v, h, f) {
+                if (f.yourname == '') {
+                    $.jBox.tip("请输入您的驳回原因", 'error', { focusId: "partNo" }); // 关闭设置 partNo 为焦点
+                    return false;
                 }
-            })
+                if($("#remark2").val()!=null && $("#remark2").val()!=""){
+					if (v === 'ok') {
+						$.ajax({
+							type:"post",
+							url:"${ctx}/biz/request/bizRequestHeader/saveInfo",
+							data:{checkStatus:obj,id:$("#id").val(),remark:$("#remark").val(),remarkReject:$("#remark2").val()},
+							success:function (data) {
+								if(data){
+									alert(val+"成功！");
+									window.location.href="${ctx}/biz/request/bizRequestHeader";
+								}
+							}
+						})
+					}
+					return true;
+                }else{
+                	alert(val+"内容不能为空!");
+                	checkInfo(obj,val);
+                }
+            };
+            $.jBox(html, { title: "驳回原因", submit: submit });
+        }
+        function checkInfo2(obj,val) {
+			$.ajax({
+				type:"post",
+				url:"${ctx}/biz/request/bizRequestHeader/saveInfo",
+				data:{checkStatus:obj,id:$("#id").val(),remarkReject:"adopt"},
+				success:function (data) {
+					if(data){
+						alert(val+"成功！");
+						window.location.href="${ctx}/biz/request/bizRequestHeader";
+					}
+				}
+			})
         }
         function updateMoney() {
             if(confirm("确定修改价钱吗？")){
@@ -202,6 +232,15 @@
 		</c:forEach>
 
 		<sys:message content="${message}"/>
+		<c:if test="${entity.id!=null}">
+			<div class="control-group">
+				<label class="control-label">备货清单编号：</label>
+				<div class="controls">
+					<form:input path="reqNo" cssClass="input-xlarge" disabled="true"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">采购中心：</label>
 			<div class="controls">
@@ -218,7 +257,7 @@
 				<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-xlarge Wdate required"
 					value="<fmt:formatDate value="${entity.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<c:if test="${entity.str!='detail'}">
@@ -235,6 +274,9 @@
 					</li>
 					<li><label>商品编码：</label>
 						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
+					</li>
+					<li><label>商品货号：</label>
+						<input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
 					</li>
 					<%--<li><label>商品类型：</label>--%>
 						<%--<select id="skuType" class="input-medium">--%>
@@ -263,7 +305,7 @@
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<th>商品属性</th>
+					<%--<th>商品属性</th>--%>
 					<th>价格</th>
 					<th>申报数量</th>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
@@ -288,7 +330,7 @@
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<td>${reqDetail.skuInfo.skuPropertyInfos}</td>
+							<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 							<td style="white-space: nowrap">
 								<c:choose>
 									<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
@@ -344,7 +386,7 @@
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
-						<th>商品属性</th>
+						<%--<th>商品属性</th>--%>
 						<th>工厂价</th>
 							<%--<th>商品类型</th>--%>
 						<th>申报数量</th>
@@ -391,7 +433,7 @@
 				<c:if test="${flag && entity.str=='detail' && entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
 
 					<input id="btnCheckF" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.UNREVIEWED.state},this.value)" type="button" value="审核驳回"/>&nbsp;
-					<input id="btnCheck" class="btn btn-primary" onclick="checkInfo(${ReqHeaderStatusEnum.APPROVE.state},this.value)" type="button" value="审核通过"/>&nbsp;
+					<input id="btnCheck" class="btn btn-primary" onclick="checkInfo2(${ReqHeaderStatusEnum.APPROVE.state},this.value)" type="button" value="审核通过"/>&nbsp;
 				</c:if>
 				<c:if test="${entity.str!='detail'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;

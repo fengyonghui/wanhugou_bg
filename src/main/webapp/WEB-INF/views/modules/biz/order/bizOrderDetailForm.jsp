@@ -137,7 +137,7 @@
     <form:hidden path="orderHeader.id"/>
     <form:hidden path="orderHeader.clientModify"/>
     <form:hidden path="orderHeader.consultantId"/>
-    <form:hidden path="orderHeader.oneOrder"/>
+    <form:hidden path="detailFlag"/>
     <sys:message content="${message}"/>
     <div class="control-group">
         <label class="control-label">选择商品：</label>

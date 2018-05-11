@@ -46,6 +46,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>客户名称</th>
 				<th>会员类型</th>
 				<th>联系方式</th>
@@ -64,8 +65,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="custCredit">
+		<c:forEach items="${page.list}" var="custCredit" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td>
 					${custCredit.customer.name}
 				</td>

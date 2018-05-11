@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.shop.BizWeShopMarkDao">
+    
+	<sql id="bizWeShopMarkColumns">
+		a.id AS "id",
+		a.user_id AS "user.id",
+		a.shop_id AS "shopCust.id",
+		a.shop_name AS "shopName",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		u2.name AS "user.name",
+		so.name as "shopCust.name",
+		su.name as "createBy.name",
+		su.name as "updateBy.name"
+	</sql>
+	
+	<sql id="bizWeShopMarkJoins">
+		LEFT JOIN sys_user u2 ON u2.id = a.user_id
+		left join sys_user su on a.create_id=su.id
+		LEFT join sys_office so on so.id=a.shop_id
+	</sql>
+    
+	<select id="get" resultType="BizWeShopMark">
+		SELECT 
+			<include refid="bizWeShopMarkColumns"/>
+		FROM biz_we_shop_mark a
+		<include refid="bizWeShopMarkJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizWeShopMark">
+		SELECT 
+			<include refid="bizWeShopMarkColumns"/>
+		FROM biz_we_shop_mark a
+		<include refid="bizWeShopMarkJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="user != null and user.name != null and user.name != ''">
+				AND u2.name like
+				<if test="dbName == 'oracle'">'%'||#{user.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{user.name},'%')</if>
+			</if>
+			<if test="shopCust != null and shopCust.name != null and shopCust.name != ''">
+				AND so.name like
+				<if test="dbName == 'oracle'">'%'||#{shopCust.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{shopCust.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{shopCust.name},'%')</if>
+			</if>
+			<if test="shopName != null and shopName != ''">
+				AND a.shop_name like
+				<if test="dbName == 'oracle'">'%'||#{shopName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{shopName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{shopName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		order by a.update_time desc
+	</select>
+	
+	<select id="findAllList" resultType="BizWeShopMark">
+		SELECT 
+			<include refid="bizWeShopMarkColumns"/>
+		FROM biz_we_shop_mark a
+		<include refid="bizWeShopMarkJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_we_shop_mark(
+			id,
+			user_id,
+			shop_id,
+			shop_name,
+			status,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{user.id},
+			#{shopCust.id},
+			#{shopName},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_we_shop_mark SET 	
+			user_id = #{user.id},
+			shop_id = #{shopCust.id},
+			shop_name = #{shopName},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_we_shop_mark SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

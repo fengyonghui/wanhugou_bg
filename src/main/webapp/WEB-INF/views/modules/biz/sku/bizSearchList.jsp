@@ -113,6 +113,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<td>序号</td>
 				<th>商品编码</th>
 				<th>分类名称</th>
 				<th>找货名称</th>
@@ -129,8 +130,9 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizSearch">
+		<c:forEach items="${page.list}" var="bizSearch" varStatus="state">
 			<tr>
+				<td>${state.index+1}</td>
 				<td><a href="${ctx}/biz/sku/bizSearch/form?id=${bizSearch.id}">
 					${bizSearch.partNo}
 				</a></td>

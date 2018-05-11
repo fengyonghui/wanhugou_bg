@@ -330,4 +330,76 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
     }
 
+    /**
+     * C端订单列表
+     * */
+    public Page<BizOrderHeader> cendfindPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
+        bizOrderHeader.setPage(page);
+        page.setList(dao.cendfindList(bizOrderHeader));
+        return page;
+    }
+
+
+    /**
+     * C端订单 保存
+     * */
+    @Transactional(readOnly = false)
+    public void CendorderSave(BizOrderHeader bizOrderHeader) {
+        if(bizOrderHeader.getBizType()==null){
+            bizOrderHeader.setBizType(1);//订单商品类型默认 2非专营      ----1专营
+        }
+        if(bizOrderHeader.getOrderType()==null){
+            bizOrderHeader.setOrderType(4);//订单类型，默认选中  1普通订单
+        }
+        BizOrderAddress bizLocation = bizOrderHeader.getBizLocation();
+        if (bizLocation.getRegion() == null) {
+            bizLocation.setRegion(new SysRegion());
+        }
+        bizOrderAddressService.save(bizLocation);
+        if(bizOrderHeader.getId()==null || bizOrderHeader.getId()==0){
+            BizOrderHeader orderHeader=new BizOrderHeader();
+            orderHeader.setCustomer(bizOrderHeader.getCustomer());
+            orderHeader.setOrderType(Integer.parseInt(OrderTypeEnum.CO.getOrderType()));
+            List<BizOrderHeader> bizOrderHeaderList= bizOrderHeaderDao.findList(orderHeader);
+            int s=0;
+            if(bizOrderHeaderList!=null && bizOrderHeaderList.size()>0){
+                s=bizOrderHeaderList.size();
+            }
+            BizCustomCenterConsultant centerConsultant=bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+            int c=0;
+            if(centerConsultant!=null){
+                c=centerConsultant.getCenters().getId();
+            }
+            String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), c, bizOrderHeader.getCustomer().getId(),s+1);
+            bizOrderHeader.setOrderNum(orderNum);
+        }else{
+            bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());
+        }
+        bizOrderHeader.setBizLocation(bizLocation);
+        if(bizOrderHeader.getTotalDetail()==null){
+            bizOrderHeader.setTotalDetail(0.0);
+        }else{
+            bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
+        }
+        bizOrderHeader.setBizStatus(bizOrderHeader.getBizStatus());
+        super.save(bizOrderHeader);
+
+        BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
+        List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
+        if(orderDetailList != null && !orderDetailList.isEmpty()) {
+            for (BizOrderDetail bizOrderDetail : orderDetailList) {
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+                bizOrderDetail.setSkuInfo(bizSkuInfo);
+            }
+            bizOrderHeader.setOrderDetailList(orderDetailList);
+            super.save(bizOrderHeader);
+        }
+        bizLocation.setId(bizOrderHeader.getBizLocation().getId());
+        bizLocation.setOrderHeaderID(bizOrderHeader);
+        bizOrderAddressService.save(bizLocation);
+    }
+
+
+
+
 }

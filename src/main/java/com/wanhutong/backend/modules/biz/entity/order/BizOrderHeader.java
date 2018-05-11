@@ -25,7 +25,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     private static final long serialVersionUID = 1L;
     private String orderNum;        // 订单编号-由系统生成；唯一
-    private Integer orderType;        // 1: 普通订单 ; 2:帐期采购 3:配资采购
+    private Integer orderType;        // 1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单
     private Office customer;        // 客户ID sys_office.id &amp;  type=customer
     private Double totalDetail;        // 订单详情总价
     private Double receiveTotal;    //订单已收货款
@@ -36,6 +36,16 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer bizType;        //订单运营类型: 1专营订单 2非专营订单
     private BizPlatformInfo platformInfo;        // 订单来源； biz_platform_info.id
     private BizOrderAddress bizLocation;        // 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
+    /**
+     * 卖方ID
+     *  if(order_type == 4)｛
+     *     seller_id = sys_office.id
+     *  ｝else｛
+     *     seller_id = 公司office.id
+     *  ｝
+     * */
+    private Office sellers;
+
 
     private CommonLocation location;          //订单交货地址
     private List<BizOrderDetail> orderDetailList;    //查询有多少订单
@@ -80,6 +90,25 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Date orderUpdaEndTime;
 
     private List<BizPayRecord> BizPayRecordList;
+    private String locationAddress;
+
+    public String getLocationAddress() {
+        return locationAddress;
+    }
+
+    public void setLocationAddress(String locationAddress) {
+        this.locationAddress = locationAddress;
+    }
+
+    private boolean includeTestData;
+
+    public boolean isIncludeTestData() {
+        return includeTestData;
+    }
+
+    public void setIncludeTestData(boolean includeTestData) {
+        this.includeTestData = includeTestData;
+    }
 
     private BizOrderHeaderUnline orderHeaderUnline;     //线下支付订单独有内容
     private String statu;       //线下支付订单表示
@@ -466,5 +495,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setStatu(String statu) {
         this.statu = statu;
+    }
+
+    public Office getSellers() {
+        return sellers;
+    }
+
+    public void setSellers(Office sellers) {
+        this.sellers = sellers;
     }
 }

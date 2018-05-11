@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.wx.SysWxPersonalUser;
 
 import java.util.List;
 
@@ -37,14 +38,17 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public List<User> findUserByOfficeId(User user);
-	
+
 	/**
 	 * 通过OfficeId获取用户列表，查询采购中心关联采购顾问使用
+	 *
 	 * @param user
 	 * @return
 	 */
-	public List<User> selectUserByOfficeId(User user);
-	
+	public default List<User> selectUserByOfficeId(User user) {
+		return null;
+	}
+
 	/**
 	 * 查询全部用户数目
 	 * @return
@@ -113,5 +117,11 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	List<User> findUserByRoleEnName(String roleEnName);
+
+
+	/**
+	 * 查询C端注册用户
+	 * */
+	public List<User> findPersonalUser();
 
 }

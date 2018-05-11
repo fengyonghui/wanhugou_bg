@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.shelf.BizOpShelfSkuV2Dao">
+    
+	<sql id="bizOpShelfSkuColumns">
+		a.id AS "id",
+		a.shelf_id AS "opShelfInfo.id",
+		shelf.name AS "opShelfInfo.name",
+		shelf.type as "opShelfInfo.type",
+		a.sku_id AS "skuInfo.id",
+		bsi.item_no AS "skuInfo.itemNo",
+		a.prod_id as "productInfo.id",
+		a.sku_id AS "skuProd.id",
+		a.center_id AS "centerOffice.id",
+		so.name AS "centerOffice.name",
+		a.shelf_user AS "shelfUser.id",
+		shu.name AS "shelfUser.name",
+		a.shelf_qty AS "shelfQty",
+		a.org_price AS "orgPrice",
+		a.sale_price AS "salePrice",
+		a.min_qty AS "minQty",
+		a.max_qty AS "maxQty",
+		a.shelf_time AS "shelfTime",
+		a.unshelf_user AS "unshelfUser.id",
+		ushu.name AS "unshelfUser.name",
+		a.unshelf_time AS "unshelfTime",
+		a.priority AS "priority",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		suc.name AS "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		su.name AS "updateBy.name",
+		bsi.name AS "skuInfo.name",
+		bsi.part_no AS "skuInfo.partNo",
+		bsi.prod_id AS "skuInfo.productInfo.id",
+		bpi.name AS "productInfo.name",
+		bpi.img_url AS "productInfo.imgUrl",
+		bpi.vendor_name AS "productInfo.vendorName",
+        CASE  WHEN a.unshelf_time > NOW() THEN '下架'
+        WHEN a.unshelf_time is NULL THEN '下架'
+        WHEN a.unshelf_time &lt;= NOW()THEN '上架'
+        ELSE '其他' END
+        as udshelf
+	</sql>
+	
+	<sql id="bizOpShelfSkuJoins">
+		LEFT JOIN sys_user suc on suc.id = a.create_id
+		LEFT JOIN sys_user su on su.id = a.update_id
+		LEFT JOIN sys_user shu ON shu.id=a.shelf_user
+		LEFT JOIN sys_user ushu ON ushu.id=a.unshelf_user
+		LEFT JOIN biz_sku_info bsi on bsi.id = a.sku_id
+		LEFT JOIN sys_office so ON so.id=a.center_id
+		LEFT JOIN biz_op_shelf_info shelf ON a.shelf_id = shelf.id
+		LEFT JOIN biz_product_info bpi ON a.prod_id =bpi.id
+
+
+	</sql>
+    
+	<select id="get" resultType="BizOpShelfSku">
+		SELECT 
+			<include refid="bizOpShelfSkuColumns"/>
+		FROM biz_op_shelf_sku a
+		<include refid="bizOpShelfSkuJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizOpShelfSku">
+		SELECT 
+			<include refid="bizOpShelfSkuColumns"/>
+		FROM biz_op_shelf_sku a
+		<include refid="bizOpShelfSkuJoins"/>
+		<where>
+			1=1
+			<if test="dataStatus==null">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != '' ">
+					AND a.sku_id = #{skuInfo.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != '' ">
+				AND bsi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
+			</if>
+			<if test="skuInfo != null and skuInfo.itemNo != null and skuInfo.itemNo != '' ">
+				AND bsi.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.itemNo},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.vendorName != null and productInfo.vendorName != '' ">
+				AND bpi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.vendorName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.id != null and productInfo.id != 0 ">
+				AND a.prod_id = #{productInfo.id}
+			</if>
+            <if test="productInfo != null and productInfo.name != null and productInfo.name != '' ">
+                AND bpi.name LIKE
+                <if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+            </if>
+			<if test="skuInfo != null and skuInfo.partNo != null and skuInfo.partNo != '' ">
+			<!--AND bsi.part_no = #{skuInfo.partNo}-->
+            AND bsi.part_no LIKE
+            <if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
+            <if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
+            <if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+        	</if>
+			<if test="centerOffice != null and centerOffice.id != null and centerOffice.id != ''">
+				AND a.center_id = #{centerOffice.id}
+			</if>
+			<if test="centerOffice != null and centerOffice.name != null and centerOffice.name != ''">
+				AND so.name = #{centerOffice.name}
+			</if>
+        <!--<if test="shelfUser != null and shelfUser.id != null and shelfUser.id != ''">
+            AND a.shelf_user = #{shelfUser.id}
+        </if>-->
+			<if test="shelfStartTime != null and shelfStartTime != '' and shelfEndTime != null and shelfEndTime != ''">
+				AND a.shelf_time BETWEEN #{shelfStartTime} and #{shelfEndTime}
+            </if>
+
+            <if test="shelfStartTime != null and shelfStartTime != ''and shelfEndTime == null ">
+                AND a.shelf_time &gt;= #{shelfStartTime}
+            </if>
+
+            <if test="shelfStartTime == null and shelfEndTime != null and shelfEndTime != ''" >
+                AND a.shelf_time &lt;= #{shelfEndTime}
+            </if>
+
+			<if test="unShelfStartTime != null and unShelfStartTime != '' and unShelfEndTime != null and unShelfEndTime != ''">
+				AND a.unShelf_time BETWEEN #{unShelfStartTime} and #{unShelfEndTime}
+			</if>
+
+			<if test="unShelfStartTime != null and unShelfStartTime != ''and unShelfEndTime == null ">
+				AND a.unShelf_time &gt;= #{unShelfStartTime}
+			</if>
+
+			<if test="unShelfStartTime == null and unShelfEndTime != null and unShelfEndTime != ''" >
+				AND a.unShelf_time &lt;= #{unShelfEndTime}
+			</if>
+
+			<if test="opShelfInfo != null and opShelfInfo.id !=null and opShelfInfo.id != ''">
+				AND a.shelf_id = #{opShelfInfo.id}
+			</if>
+			<if test="opShelfInfo != null and opShelfInfo.name !=null and opShelfInfo.name != ''">
+				AND shelf.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{opShelfInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{opShelfInfo.name},'%')</if>
+			</if>
+
+			<if test="sqlMap != null and sqlMap.shelfSku != null and sqlMap.shelfSku != ''">
+				${sqlMap.shelfSku}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.priority,a.id DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizOpShelfSku">
+		SELECT 
+			<include refid="bizOpShelfSkuColumns"/>
+		FROM biz_op_shelf_sku a
+		<include refid="bizOpShelfSkuJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_op_shelf_sku(
+			id,
+			shelf_id,
+			sku_id,
+			prod_id,
+			<if test="centerOffice != null and centerOffice.id != null ">
+                center_id,
+            </if>
+			shelf_user,
+			shelf_qty,
+			org_price,
+			sale_price,
+			min_qty,
+			max_qty,
+			shelf_time,
+			unshelf_user,
+			unshelf_time,
+			priority,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{opShelfInfo.id},
+			#{skuInfo.id},
+			#{productInfo.id},
+        <if test="centerOffice != null and centerOffice.id != null ">
+			#{centerOffice.id},
+        </if>
+			#{createBy.id},
+			#{shelfQty},
+			#{orgPrice},
+			#{salePrice},
+			#{minQty},
+			#{maxQty},
+			#{shelfTime},
+			#{createBy.id},
+			#{unshelfTime},
+			#{priority},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_op_shelf_sku SET 	
+			shelf_id = #{opShelfInfo.id},
+			sku_id = #{skuInfo.id},
+			prod_id = #{productInfo.id},
+        <if test="centerOffice != null and centerOffice.id != null ">
+			center_id = #{centerOffice.id},
+        </if>
+		<if test="shelfUser != null and shelfUser.id != null ">
+			shelf_user = #{shelfUser.id},
+		</if>
+			shelf_qty = #{shelfQty},
+			org_price = #{orgPrice},
+			sale_price = #{salePrice},
+			min_qty = #{minQty},
+			max_qty = #{maxQty},
+			shelf_time = #{shelfTime},
+		<if test="unshelfUser != null and unshelfUser.id != null ">
+			unshelf_user = #{unshelfUser.id},
+		</if>
+			unshelf_time = #{unshelfTime},
+			priority = #{priority},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_op_shelf_sku SET 
+			status = #{delFlag}
+		WHERE id = #{id}
+	</update>
+	<!-- 下架 -->
+	<update id="dateTimeUpdate">
+		UPDATE biz_op_shelf_sku SET
+		unshelf_time = #{unshelfTime}
+		WHERE id = #{id}
+	</update>
+	<!-- 重新上架 -->
+	<update id="shelvesUpdate">
+		UPDATE biz_op_shelf_sku SET
+		shelf_user = #{shelfUser.id},
+		shelf_time = #{shelfTime},
+		unshelf_time = #{unshelfTime}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 一键排序 -->
+	<select id="selectSort" resultType="BizOpShelfSku">
+		SELECT oss.id,
+				oss.shelf_id AS "opshelfInfo.id",
+				oss.prod_id AS "productInfo.id",
+				oss.sku_id AS "skuInfo.id",
+				oss.center_id AS "centerOffice.id",
+				oss.shelf_user AS "shelfUser.id",
+				oss.shelf_qty AS "shelfQty",
+				oss.org_price AS "orgPrice",
+				oss.sale_price AS "salePrice",
+				oss.min_qty AS "minQty",
+				oss.max_qty AS "maxQty",
+				oss.shelf_time AS "shelfTime",
+				oss.unshelf_user AS "unshelfUser.id",
+				oss.unshelf_time AS "unshelfTime",
+				oss.priority AS "priority",
+				oss.status AS "delFlag",
+				oss.create_id AS "createBy.id",
+				oss.create_time AS "createDate",
+				oss.u_version AS "uVersion",
+				oss.update_id AS "updateBy.id",
+				oss.update_time AS "updateDate"
+		FROM biz_op_shelf_sku oss ,
+			(SELECT boss.center_id,boss.shelf_id,boss.sku_id
+				FROM biz_op_shelf_sku boss
+				GROUP BY boss.center_id,boss.shelf_id,boss.sku_id
+				order by boss.priority,boss.id DESC) t
+		WHERE oss.center_id = t.center_id AND oss.shelf_id = t.shelf_id and oss.sku_id = t.sku_id
+	</select>
+
+	<update id="sort">
+		update biz_op_shelf_sku oss,
+			(SELECT boss.center_id,boss.shelf_id,boss.sku_id
+				FROM biz_op_shelf_sku boss
+				GROUP BY boss.center_id,boss.shelf_id,boss.sku_id
+				order by boss.priority,boss.id DESC) t
+		set oss.priority=#{priority}
+		WHERE oss.center_id = t.center_id AND oss.shelf_id = t.shelf_id and oss.sku_id = t.sku_id
+		<if test="centerOffice != null and centerOffice.id != null ">
+			and oss.center_id = #{centerOffice.id}
+		</if>
+		and oss.sku_id = #{skuInfo.id}
+		and oss.shelf_id  = #{opShelfInfo.id}
+	</update>
+</mapper>

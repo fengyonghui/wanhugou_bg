@@ -114,7 +114,6 @@
 			<if test="dataStatus==null ">
 				AND a.status = #{DEL_FLAG_NORMAL}
 			</if>
-
 			<if test="id != null and id != ''">
 				AND a.id =#{id}
 			</if>
@@ -414,9 +413,10 @@
 	
 	<update id="delete">
 		UPDATE biz_sku_info SET 
-			status = #{DEL_FLAG_DELETE}
+			status = #{delFlag}
 		WHERE id = #{id}
 	</update>
+
 
 	<select id="getSkuInfoByItemNoProdId" resultType="BizSkuInfo">
 		SELECT

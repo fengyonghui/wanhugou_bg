@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单详情(销售订单)Service
@@ -101,7 +102,6 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                 detailnew.setSkuInfo(sku);//sku产品
                 detailnew.setPartNo(sku.getItemNo());//货号
                 detailnew.setSkuName(sku.getName());//商品名称
-                detailnew.setSkuImgUrl(opShelfSku.getProductInfo().getImgUrl());
                 detailnew.setUnitPrice(opShelfSku.getSalePrice());//单价
                 detailnew.setBuyPrice(sku.getBuyPrice());
                 detailnew.setOrdQty(ordQty);//采购数量
@@ -190,5 +190,9 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
 
     public List<BizOrderDetail> findOrderTotalByVendor(BizOrderHeader bizOrderHeader) {
         return bizOrderDetailDao.findOrderTotalByVendor(bizOrderHeader);
+    }
+
+    public List<Map> findRequestTotalByVendor() {
+        return bizOrderDetailDao.findRequestTotalByVendor(false);
     }
 }

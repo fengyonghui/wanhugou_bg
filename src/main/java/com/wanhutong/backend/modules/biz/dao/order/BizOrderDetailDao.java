@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单详情(销售订单)DAO接口
@@ -20,4 +21,6 @@ public interface BizOrderDetailDao extends CrudDao<BizOrderDetail> {
 	public Integer findMaxLine(BizOrderDetail bizOrderDetail);
 
 	List<BizOrderDetail>findOrderTotalByVendor(BizOrderHeader bizOrderHeader);
+
+	List<Map> findRequestTotalByVendor(boolean includeTestData);
 }

@@ -14,6 +14,16 @@
                     choose.attr('checked',false);
                 }
             });
+            $("#requesthExport").click(function(){
+				top.$.jBox.confirm("确认要导出备货清单数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/ExportList");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/list");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
 		});
 		function saveOrderIds() {
             if($("input[title='orderIds']:checked").length <= 0){
@@ -51,7 +61,7 @@
 				</li>
 				<li><label>采购中心：</label>
 					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true"
+									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>
@@ -69,7 +79,13 @@
 						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 				</li>
+
+				<li><label>测试数据</label>
+					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<li class="clearfix"></li>
 			</ul>
 		</form:form>
@@ -96,7 +112,7 @@
 										labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 										title="采购商"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
-										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+										allowClear="true"  dataMsgRequired="必填信息"/>
 						<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
 						<input type="hidden" name="flag" value="${bizOrderHeader.flag}">
 					</c:if>
@@ -105,10 +121,15 @@
 										labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
 										title="采购商"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
-										allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
+										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
+				<li><label>测试数据</label>
+					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
 
@@ -123,6 +144,7 @@
 		<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+				<th>序号</th>
 				<%--<c:if test="${source=='gh'}">--%>
 				<%--<th><input id="select_all" type="checkbox" /></th>--%>
 				<%--</c:if>--%>
@@ -134,6 +156,7 @@
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>申请人</th>
+				<th>创建时间</th>
 				<th>更新时间</th>
 				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
 			</tr>
@@ -141,8 +164,11 @@
 		<tbody>
 		<%--<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">--%>
 
-			<c:forEach items="${page.list}" var="requestHeader">
+			<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
 				<tr>
+					<td>
+						${state.index+1}
+					</td>
 					<%--<c:if test="${source=='gh'}">--%>
 					<%--<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>--%>
 					<%--</c:if>--%>
@@ -165,17 +191,21 @@
 						${requestHeader.createBy.name}
 					</td>
 					<td>
+						<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					</td>
+					<td>
 						<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-						<shiro:hasPermission name="biz:request:bizRequestHeader:view">
 						<td>
-							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
-							<c:if test="${requestHeader.ownGenPoOrder}">
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">采购</a>
-							</c:if>
-
+							<shiro:hasPermission name="biz:request:bizRequestHeader:view">
+								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+								<c:if test="${requestHeader.ownGenPoOrder}">
+									<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">采购</a>
+								</c:if>
+							</shiro:hasPermission>
 						</td>
-						</shiro:hasPermission>
 				</tr>
 			</c:forEach>
 
@@ -187,6 +217,7 @@
 		<table id="contentTable" class="table table-striped table-bordered table-condensed">
 			<thead>
 			<tr>
+				<th>序号</th>
 				<th>订单编号</th>
 				<th>订单类型</th>
 				<th>采购商名称</th>
@@ -196,15 +227,19 @@
 				<th>发票状态</th>
 				<th>业务状态</th>
 				<th>订单来源</th>
-					<%--<th>订单收货地址</th>--%>
+				<th>订单收货地址</th>
 				<th>创建人</th>
+				<th>创建时间</th>
 				<th>更新时间</th>
 				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
 			</tr>
 			</thead>
 			<tbody>
-			<c:forEach items="${page.list}" var="orderHeader">
+			<c:forEach items="${page.list}" var="orderHeader" varStatus="state">
 				<tr>
+					<td>
+						${state.index+1}
+					</td>
 					<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">
 									${orderHeader.orderNum}</a>
 					</td>
@@ -231,18 +266,28 @@
 									${orderHeader.platformInfo.name}
 							</td>
 					<td>
+						${orderHeader.locationAddress}
+					</td>
+					<td>
 							${orderHeader.createBy.name}
+					</td>
+					<td>
+						<fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
 					<td>
 						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-							<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
-							<c:if test="${orderHeader.ownGenPoOrder}">
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
-							</c:if>
+							<td>
+								<shiro:hasPermission name="biz:order:bizOrderHeader:view">
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+									<c:if test="${orderHeader.ownGenPoOrder}">
+										<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
+									</c:if>
+								</shiro:hasPermission>
 							</td>
-							</shiro:hasPermission>
+
 
 				</tr>
 			</c:forEach>
