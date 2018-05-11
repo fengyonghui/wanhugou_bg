@@ -32,7 +32,7 @@
 		LEFT JOIN sys_office sot ON sot.id=a.to_id
 		LEFT JOIN sys_user su ON su.id=a.create_id
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
-		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = #{DEL_FLAG_NORMAL}
+		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">
