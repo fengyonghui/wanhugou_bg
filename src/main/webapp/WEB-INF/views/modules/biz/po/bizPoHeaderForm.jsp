@@ -346,17 +346,17 @@
         <tr>
             <c:if test="${bizPoHeader.id==null}">
                 <td><input id="select_all" type="checkbox"/>订单号/备货单号</td>
-                <th>单选</th>
+                <th>选择</th>
             </c:if>
             <th>产品图片</th>
             <th>品牌名称</th>
             <th>商品名称</th>
-            <th>商品编码</th>
+            <%--<th>商品编码</th>--%>
             <th>商品货号</th>
             <c:if test="${bizPoHeader.id!=null}">
                 <th>所属单号</th>
             </c:if>
-            <th>商品属性</th>
+            <%--<th>商品属性</th>--%>
             <c:if test="${bizPoHeader.id==null}">
                 <th>申报数量</th>
             </c:if>
@@ -376,7 +376,7 @@
                     <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
                     <td>${poDetail.skuInfo.productInfo.brandName}</td>
                     <td>${poDetail.skuInfo.name}</td>
-                    <td>${poDetail.skuInfo.partNo}</td>
+                    <%--<td>${poDetail.skuInfo.partNo}</td>--%>
                     <td>${poDetail.skuInfo.itemNo}</td>
                     <c:if test="${bizPoHeader.id!=null}">
                         <td>
@@ -394,7 +394,7 @@
 
                         </td>
                     </c:if>
-                    <td>${poDetail.skuInfo.skuPropertyInfos}</td>
+                    <%--<td>${poDetail.skuInfo.skuPropertyInfos}</td>--%>
                     <td>${poDetail.ordQty}</td>
                     <td>${poDetail.sendQty}</td>
                     <td>${poDetail.unitPrice}</td>
@@ -416,9 +416,9 @@
                             <td><img style="max-width: 120px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
                             <td>${reqDetail.skuInfo.productInfo.brandName}</td>
                             <td>${reqDetail.skuInfo.name}</td>
-                            <td>${reqDetail.skuInfo.partNo}</td>
+                            <%--<td>${reqDetail.skuInfo.partNo}</td>--%>
                             <td>${reqDetail.skuInfo.itemNo}</td>
-                            <td>${reqDetail.skuInfo.skuPropertyInfos}</td>
+                            <%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
                             <td>${reqDetail.reqQty-reqDetail.recvQty}
                                     <%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
                                     <%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
@@ -448,9 +448,9 @@
                             <td><img style="max-width: 120px" src="${orderDetail.skuInfo.productInfo.imgUrl}"/></td>
                             <td>${orderDetail.skuInfo.productInfo.brandName}</td>
                             <td>${orderDetail.skuInfo.name}</td>
-                            <td>${orderDetail.skuInfo.partNo}</td>
+                            <%--<td>${orderDetail.skuInfo.partNo}</td>--%>
                             <td>${orderDetail.skuInfo.itemNo}</td>
-                            <td>${orderDetail.skuInfo.skuPropertyInfos}</td>
+                            <%--<td>${orderDetail.skuInfo.skuPropertyInfos}</td>--%>
                             <td>${orderDetail.ordQty-orderDetail.sentQty}
                                     <%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
                                     <%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
