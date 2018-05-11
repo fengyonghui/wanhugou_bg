@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,56 +78,19 @@ public class BizRequestOrderController extends BaseController {
         Page<BizRequestHeader> requestHeaderPage = null;
         List<BizOrderHeader> orderHeaderList = null;
         Page<BizOrderHeader> orderHeaderPage = null;
+        //备货清单供货
         if ("bhgh".equals(source)) {
-//            List<BizRequestHeader> list = findBizRequest(bizRequestHeader, requestHeaderList);
             Page<BizRequestHeader> page = findBizRequest(bizRequestHeader, requestHeaderPage,request,response);
-//            model.addAttribute("requestHeaderList", list); //原来的不分页
             //分页 20180427 改
             model.addAttribute("page", page);
             //判断
             model.addAttribute("requestHeaderPage", page.getList());
-        } else if ("xsgh".equals(source)) {
+
+        } else if ("xsgh".equals(source)) { //订单供货
             bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
             bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
-//            orderHeaderList = bizOrderHeaderService.findList(bizOrderHeader);
             orderHeaderPage=bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), bizOrderHeader);
-            Set<Integer> set = new HashSet();
-            List<BizOrderHeader> list = Lists.newArrayList();
-            for (BizOrderHeader bizOrderHeader1 : orderHeaderPage.getList()) {
-                if(bizOrderHeader1.getBizLocation()!=null && bizOrderHeader1.getBizLocation().getId()!=null){
-                    bizOrderHeader1.setBizLocation(bizOrderAddressService.get(bizOrderHeader1.getBizLocation().getId()));
-                }
-                set.clear();
-                boolean flag = false;
-                BizOrderDetail bizOrderDetail = new BizOrderDetail();
-                bizOrderDetail.setOrderHeader(bizOrderHeader1);
-                //	bizOrderDetail.setSuplyis(officeService.get(0));
-                StringBuffer sb = new StringBuffer();
-                List<BizOrderDetail> orderDetails = bizOrderDetailService.findList(bizOrderDetail);
-                for (BizOrderDetail bizOrderDetail1 : orderDetails) {
-                    if (bizOrderDetail1.getSuplyis().getId() == 0 || bizOrderDetail1.getSuplyis().getId()== 721) {
-                        flag = true;
-                    }
-                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail1.getSkuInfo().getId());
-                    set.add(bizSkuInfo.getProductInfo().getOffice().getId());
-                    sb.append(bizOrderDetail1.getId());
-                    sb.append(",");
-                }
 
-                if (set.size() == 1) {
-                    for (Iterator it = set.iterator(); it.hasNext(); ) {
-                        bizOrderHeader1.setOnlyVendor((Integer) it.next());
-                    }
-                    bizOrderHeader1.setOrderDetails(sb.substring(0, sb.lastIndexOf(",")));
-                    bizOrderHeader1.setOwnGenPoOrder(true);
-                }
-                if (flag) {
-                    list.add(bizOrderHeader1);
-                }
-
-            }
-            orderHeaderPage.setList(list);
-//            model.addAttribute("orderHeaderList", list);
             //20180427 分页
             model.addAttribute("page", orderHeaderPage);
             //判断
@@ -179,85 +143,35 @@ public class BizRequestOrderController extends BaseController {
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"form", ""})
     public String form(String source, Model model) {
-        Map<String, String> map = new HashMap<String, String>();
-        if ("gh".equals(source)) {
-            BizRequestHeader bizRequestHeader = new BizRequestHeader();
-            bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
-            bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
-            bizRequestHeader.setBizStatusNot(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState().byteValue());
-            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findReqTotalByVendor(bizRequestHeader);
-
-            BizOrderHeader bizOrderHeader = new BizOrderHeader();
-            bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
-            bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
-            bizOrderHeader.setBizStatusNot(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState().byteValue());
-            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findOrderTotalByVendor(bizOrderHeader);
-
-            String key = "0";
-
-            for (BizRequestDetail bizRequestDetail : requestDetailList) {
-                key = bizRequestDetail.getVendorId() + "," + bizRequestDetail.getVendorName();
-                Integer reqQty = bizRequestDetail.getTotalReqQty() - bizRequestDetail.getTotalRecvQty();
-                map.put(key, reqQty + "-" + bizRequestDetail.getReqDetailIds() + "-r");
-
-            }
-
-            for (BizOrderDetail bizOrderDetail : orderDetailList) {
-                StringBuffer sb = new StringBuffer();
-                if (StringUtils.isNotBlank(bizOrderDetail.getSuplyIds())) {
-                    String[] supplyIdArr = StringUtils.split(bizOrderDetail.getSuplyIds(), ",");
-                    String[] detailIdArr = StringUtils.split(bizOrderDetail.getDetailIds(), ",");
-                    for (int i = 0; i < supplyIdArr.length; i++) {
-                        if (Integer.parseInt(supplyIdArr[i].trim()) == 0 || Integer.parseInt(supplyIdArr[i].trim()) == 721) {
-                            sb.append(detailIdArr[i].trim());
-                            if (i != supplyIdArr.length - 1) {
-                                sb.append(",");
-                            }
-
-                        }
-                    }
-                }
-                key = bizOrderDetail.getVendorId() + "," + bizOrderDetail.getVendorName();
-                Integer ordQty = bizOrderDetail.getTotalReqQty() - bizOrderDetail.getTotalSendQty();
-                if (map.containsKey(key)) {
-                    String str = map.get(key) + "|" + ordQty + "-" + sb.toString() + "-s";
-                    map.remove(key);
-                    map.put(key, str);
-                    System.out.println(map.get(key));
-                } else {
-                    map.put(key, ordQty + "-" + sb.toString() + "-s");
-                    System.out.println(map.get(key));
-                }
-            }
-
+        List<Map> requestMap = new ArrayList<>();
+       if ("gh".equals(source)) {
+            requestMap = bizOrderDetailService.findRequestTotalByVendor();
         }
         model.addAttribute("source", source);
-        model.addAttribute("map", map);
+        model.addAttribute("map", requestMap);
         return "modules/biz/request/bizRequestPoList";
     }
 
     @RequestMapping(value = "goList")
     public String goList(String reqIds, Integer vendorId, String ordIds, Model model) {
-//        Map<Integer, List<BizSkuInfo>> skuInfoMap = null;
         Map<String,List<BizRequestDetail>> reqDetailMap = new LinkedHashMap<>();
         Map<String,List<BizOrderDetail>> orderDetailMap = new LinkedHashMap<>();
-        List<BizRequestDetail> requestDetailList = new ArrayList<>();
-//        Map<Integer, List<BizSkuInfo>> map = new HashMap<>();
-//        Map<BizSkuInfo, BizSkuInfo> skuMap = new HashMap<>();
+
         if (StringUtils.isNotBlank(reqIds)) {
             String[] reqDetailArr = reqIds.split(",");
             for (int i = 0; i < reqDetailArr.length; i++) {
+                if (StringUtils.isBlank(reqDetailArr[i])){
+                    continue;
+                }
                 BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailArr[i].trim()));
                 Integer key =bizRequestDetail.getRequestHeader().getId();
 
                 BizSkuInfo sku = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
                 BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizRequestDetail.getRequestHeader().getId());
-//                bizRequestHeader.setBizStatusStart((byte)(ReqHeaderStatusEnum.APPROVE.getState().intValue()));
-//                bizRequestHeader.setBizStatusEnd((byte)(ReqHeaderStatusEnum.));
+
                 bizRequestDetail.setRequestHeader(bizRequestHeader);
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
                 bizRequestDetail.setSkuInfo(skuInfo);
-//                reqDetailMap.put(bizRequestDetail.getId()+","+bizRequestDetail.getRequestHeader().getReqNo(),bizRequestDetail);
                 if(reqDetailMap.containsKey(key.toString())){
                     List<BizRequestDetail> requestDetails = reqDetailMap.get(key.toString());
                     requestDetails.add(bizRequestDetail);
@@ -267,12 +181,6 @@ public class BizRequestOrderController extends BaseController {
                     requestDetails.add(bizRequestDetail);
                     reqDetailMap.put(key.toString(),requestDetails);
                 }
-//                bizSkuInfo.setReqQty(bizRequestDetail.getReqQty());
-//                bizSkuInfo.setSentQty(bizRequestDetail.getRecvQty());
-//                bizSkuInfo.setReqDetailIds(reqDetailArr[i].trim());
-//                skuInfoMap = getSkuInfoData(map, bizSkuInfo.getId(), bizSkuInfo);
-//				bizRequestDetail.setSkuInfo(skuInfo);
-//				requestDetailList.add(bizRequestDetail);
             }
             model.addAttribute("reqDetailMap",reqDetailMap);
         }
@@ -280,6 +188,9 @@ public class BizRequestOrderController extends BaseController {
             // orderDetailList=Lists.newArrayList();
             String[] ordDetailArr = ordIds.split(",");
             for (int i = 0; i < ordDetailArr.length; i++) {
+                if (StringUtils.isBlank(ordDetailArr[i])){
+                    continue;
+                }
                 BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(ordDetailArr[i].trim()));
                 Integer key = bizOrderDetail.getOrderHeader().getId();
                 BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
@@ -287,8 +198,7 @@ public class BizRequestOrderController extends BaseController {
                 BizSkuInfo sku = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
                 bizOrderDetail.setSkuInfo(skuInfo);
-                if (bizOrderDetail.getSuplyis().getId()==0) {
-                    if (orderDetailMap.containsKey(key.toString())) {
+                     if (orderDetailMap.containsKey(key.toString())) {
                         List<BizOrderDetail> orderDetails = orderDetailMap.get(key.toString());
                         orderDetails.add(bizOrderDetail);
                         orderDetailMap.put(key.toString(), orderDetails);
@@ -297,51 +207,10 @@ public class BizRequestOrderController extends BaseController {
                         orderDetails.add(bizOrderDetail);
                         orderDetailMap.put(key.toString(), orderDetails);
                     }
-                }
-//                if (bizOrderDetail.getSuplyis().getId()==0) {
-//                    orderDetailMap.put(bizOrderDetail.getId() + "," + bizOrderDetail.getOrderHeader().getOrderNum(), bizOrderDetail);
-//                }
-//                BizSkuInfo bizSkuInfo = bizOrderDetail.getSkuInfo();
-//                bizSkuInfo.setReqQty(bizOrderDetail.getOrdQty());
-//                bizSkuInfo.setSentQty(bizOrderDetail.getSentQty());
-//                bizSkuInfo.setOrderDetailIds(ordDetailArr[i].trim());
-//                skuInfoMap = getSkuInfoData(map, bizSkuInfo.getId(), bizSkuInfo);
-
-//				bizOrderDetail.setSkuInfo(skuInfo);
-//				orderDetailList.add(bizOrderDetail);
             }
             model.addAttribute("orderDetailMap",orderDetailMap);
         }
 
-//        for (Map.Entry<Integer, List<BizSkuInfo>> entry : skuInfoMap.entrySet()) {
-//            List<BizSkuInfo> bizSkuInfoList = entry.getValue();
-//            Integer reqQty = bizSkuInfoList.stream().mapToInt(item -> item.getReqQty() == null ? 0 : item.getReqQty()).sum();
-//            Integer sendQty = bizSkuInfoList.stream().mapToInt(item -> item.getSentQty() == null ? 0 : item.getSentQty()).sum();
-//            StringBuilder strOrderDetailIds = new StringBuilder();
-//            StringBuilder strReqDetailIds = new StringBuilder();
-//            for (BizSkuInfo sku : bizSkuInfoList) {
-//                strOrderDetailIds.append(sku.getOrderDetailIds() == null ? 0 : sku.getOrderDetailIds());
-//                strOrderDetailIds.append("_");
-//                strReqDetailIds.append(sku.getReqDetailIds() == null ? 0 : sku.getReqDetailIds());
-//                strReqDetailIds.append("_");
-//            }
-//            String strO = strOrderDetailIds.toString();
-//            String strR = strReqDetailIds.toString();
-//            BizSkuInfo sku = bizSkuInfoService.get(entry.getKey());
-//            BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
-//            if (skuInfo == null) {
-//                continue;
-//            }
-//            sku.setReqQty(reqQty);
-//            sku.setSentQty(sendQty);
-//            sku.setOrderDetailIds(strO.substring(0, strO.length() - 1));
-//            sku.setReqDetailIds(strR.substring(0, strR.length() - 1));
-//            skuMap.put(skuInfo, sku);
-//        }
-
-//		model.addAttribute("requestDetailList",requestDetailList);
-//		model.addAttribute("orderDetailList",orderDetailList);
-//        model.addAttribute("skuInfoMap", skuMap);
         model.addAttribute("vendorId", vendorId);
         model.addAttribute("bizPoHeader", new BizPoHeader());
 
@@ -370,39 +239,7 @@ public class BizRequestOrderController extends BaseController {
         bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
         bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
         requestHeaderList = bizRequestHeaderService.pageFindList(new Page<BizRequestHeader>(request, response), bizRequestHeader);
-        List<BizRequestHeader> list = Lists.newArrayList();
-        for (BizRequestHeader bizRequestHeader1 : requestHeaderList.getList()) {
-            BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
-            bizRequestDetail1.setRequestHeader(bizRequestHeader1);
-            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
-            Integer reqQtys = 0;
-            Integer recvQtys = 0;
-            Set set = new HashSet();
-            StringBuffer sb = new StringBuffer();
-            for (BizRequestDetail bizRequestDetail : requestDetailList) {
-                reqQtys += bizRequestDetail.getReqQty();
-                recvQtys += bizRequestDetail.getRecvQty();
-                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
-                set.add(bizSkuInfo.getProductInfo().getOffice().getId());
-                sb.append(bizRequestDetail.getId());
-                sb.append(",");
-            }
 
-            if (set.size() == 1) {
-                for (Iterator it = set.iterator(); it.hasNext(); ) {
-                    bizRequestHeader1.setOnlyVendor((Integer) it.next());
-                    //System.out.println("value="+it.next().toString());
-                }
-
-                bizRequestHeader1.setReqDetailIds(sb.substring(0, sb.lastIndexOf(",")));
-                bizRequestHeader1.setOwnGenPoOrder(true);
-            }
-
-            bizRequestHeader1.setReqQtys(reqQtys.toString());
-            bizRequestHeader1.setRecvQtys(recvQtys.toString());
-            list.add(bizRequestHeader1);
-        }
-        requestHeaderList.setList(list);
         return requestHeaderList;
     }
 

@@ -90,6 +90,25 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Date orderUpdaEndTime;
 
     private List<BizPayRecord> BizPayRecordList;
+    private String locationAddress;
+
+    public String getLocationAddress() {
+        return locationAddress;
+    }
+
+    public void setLocationAddress(String locationAddress) {
+        this.locationAddress = locationAddress;
+    }
+
+    private boolean includeTestData;
+
+    public boolean isIncludeTestData() {
+        return includeTestData;
+    }
+
+    public void setIncludeTestData(boolean includeTestData) {
+        this.includeTestData = includeTestData;
+    }
 
     public List<BizPayRecord> getBizPayRecordList() {
         return BizPayRecordList;

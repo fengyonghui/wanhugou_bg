@@ -46,6 +46,7 @@
 				</form:select>
 			</li>
 			<li><label>订单来源：</label>
+
 				<form:select path="plateformInfo.id" class="input-medium">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getPlatformInfoList()}" itemLabel="name" itemValue="id" htmlEscape="false"/>
@@ -134,7 +135,9 @@
 						<shiro:hasPermission name="biz:po:bizPoHeader:edit">
 							<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
 						</shiro:hasPermission>
-						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
+						<shiro:hasPermission name="biz:po:bizPoHeader:view">
+						    <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
+						</shiro:hasPermission>
 					</td>
 				</shiro:hasPermission>
 			</tr>

@@ -37,14 +37,49 @@
 		<sys:message content="${message}"/>
 		<input name="bizRequestHeader.id" value="${bizRequestHeader==null?0:bizRequestHeader.id}" type="hidden"/>
 		<input name="bizOrderHeader.id" value="${bizOrderHeader==null?0:bizOrderHeader.id}" type="hidden"/>
+
 		<div class="control-group">
-			<label class="control-label">采购中心：</label>
+			<label class="control-label">${bizRequestHeader==null?'销售订单编号':'备货清单编号'}：</label>
 			<div class="controls">
-				<input readonly="readonly" value="${bizRequestHeader==null?bizOrderHeader.customer.name:bizRequestHeader.fromOffice.name}"/>
+				<input type="text" class="input-xlarge" readonly="readonly" value="${bizRequestHeader==null?bizOrderHeader.orderNum:bizRequestHeader.reqNo}"/>
+
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">${bizRequestHeader==null?'采购商':'采购中心'}：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" readonly="readonly" value="${bizRequestHeader==null?bizOrderHeader.customer.name:bizRequestHeader.fromOffice.name}"/>
 				<input type="hidden" name="customer.id" value="${bizRequestHeader==null?bizOrderHeader.customer.id:bizRequestHeader.fromOffice.id}">
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+
+		<div class="control-group">
+			<label class="control-label">收货地址：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" readonly="readonly" value="${bizOrderHeader.bizLocation.fullAddress}"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">联系人：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" readonly="readonly" value="${bizOrderHeader.bizLocation.receiver}"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">联系电话：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" readonly="readonly" value="${bizOrderHeader.bizLocation.phone}"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+
 		<div class="control-group">
 			<label class="control-label">期望收货时间：</label>
 			<div class="controls">
@@ -60,20 +95,21 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+
+
+
 		<div class="control-group">
-			<label class="control-label">备货商品：</label>
+			<label class="control-label">订单商品：</label>
 			<div class="controls">
 				<table id="contentTable" class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
-						<th>商品图片</th>
+						<th>产品图片</th>
+						<th>产品分类</th>
 						<th>商品名称</th>
-						<th>商品分类</th>
-						<th>商品代码</th>
-						<th>品牌名称</th>
+						<th>商品货号</th>
 						<th>供应商</th>
-						<th>SKU</th>
-						<th>SKU编号</th>
+						<th>品牌</th>
 						<th>申报数量</th>
 						<th>已供数量</th>
 						<c:if test="${bizStatu==0}">
@@ -89,24 +125,15 @@
 						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
 							<tr id="${ordDetail.id}" class="ordDetailList">
 							<td><img style="max-width: 120px" src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
-							<td>${ordDetail.skuInfo.productInfo.name}</td>
-							<td>
-								<c:forEach items="${ordDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >
-									${cate.name}
-									<c:if test="${!cateIndex.last}">
-										/
-									</c:if>
-
-								</c:forEach>
-							</td>
-							<td>${ordDetail.skuInfo.productInfo.prodCode}</td>
-							<td>${ordDetail.skuInfo.productInfo.brandName}</td>
+							<td>${ordDetail.skuInfo.productInfo.bizVarietyInfo.name}</td>
+							<td>${ordDetail.skuInfo.name}</td>
+							<td>${ordDetail.skuInfo.itemNo}</td>
 							<td>
 									${ordDetail.skuInfo.productInfo.office.name}
-									<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
+										<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
 							</td>
-							<td>${ordDetail.skuInfo.name}</td>
-							<td>${ordDetail.skuInfo.partNo}</td>
+							<td>${ordDetail.skuInfo.productInfo.brandName}</td>
+
 							<td>
 								<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.id' value='${ordDetail.skuInfo.id}'/>
 								<input type='hidden' name='bizSendGoodsRecordList[${ordStatus.index}].skuInfo.name' value='${ordDetail.skuInfo.name}'/>

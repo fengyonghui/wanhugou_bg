@@ -79,6 +79,11 @@
 						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 				</li>
+
+				<li><label>测试数据</label>
+					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<li class="clearfix"></li>
@@ -119,6 +124,10 @@
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
+				<li><label>测试数据</label>
+					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+				</li>
+
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
@@ -187,15 +196,16 @@
 					<td>
 						<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-						<shiro:hasPermission name="biz:request:bizRequestHeader:view">
 						<td>
-							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
-							<c:if test="${requestHeader.ownGenPoOrder}">
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">采购</a>
-							</c:if>
-
+							<shiro:hasPermission name="biz:request:bizRequestHeader:view">
+								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+								<%--<c:if test="${requestHeader.ownGenPoOrder}">--%>
+									<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">采购</a>
+								<%--</c:if>--%>
+							</shiro:hasPermission>
 						</td>
-						</shiro:hasPermission>
 				</tr>
 			</c:forEach>
 
@@ -256,8 +266,7 @@
 									${orderHeader.platformInfo.name}
 							</td>
 					<td>
-						${orderHeader.bizLocation.province.name}${orderHeader.bizLocation.city.name}
-						${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
+						${orderHeader.locationAddress}
 					</td>
 					<td>
 							${orderHeader.createBy.name}
@@ -268,13 +277,17 @@
 					<td>
 						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-							<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
-							<c:if test="${orderHeader.ownGenPoOrder}">
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
-							</c:if>
+							<td>
+								<shiro:hasPermission name="biz:order:bizOrderHeader:view">
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+									<%--<c:if test="${orderHeader.ownGenPoOrder}">--%>
+										<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
+									<%--</c:if>--%>
+								</shiro:hasPermission>
 							</td>
-							</shiro:hasPermission>
+
 
 				</tr>
 			</c:forEach>

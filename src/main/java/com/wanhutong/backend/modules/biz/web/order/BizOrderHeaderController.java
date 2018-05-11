@@ -126,7 +126,6 @@ public class BizOrderHeaderController extends BaseController {
         return "modules/biz/order/bizOrderHeaderList";
     }
 
-
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
@@ -181,7 +180,7 @@ public class BizOrderHeaderController extends BaseController {
             boh.setBizStatus(BizOrderDiscount.ONE_ORDER.getOneOr());//条件为0
             List<BizOrderHeader> list = bizOrderHeaderDao.findListFirstOrder(boh);
             if (list.size() == 0) {
-                System.out.println("--是首单--");
+                logger.info("--是首单--");
                 bizOrderHeader.setOneOrder("firstOrder");
             }
         }
@@ -473,7 +472,7 @@ public class BizOrderHeaderController extends BaseController {
             //3交易记录
             List<List<String>> payData = new ArrayList<List<String>>();
             for (BizOrderHeader o : pageList) {
-                bizPayRecord.setPayNum(o.getOrderNum());
+                bizPayRecord.setOrderNum(o.getOrderNum());
                 List<BizPayRecord> payList = bizPayRecordService.findList(bizPayRecord);
                 if (payList == null || payList.size()==0){
                     orderDetail.setOrderHeader(o);
@@ -703,7 +702,7 @@ public class BizOrderHeaderController extends BaseController {
                         //支付类型名称
                         rowData.add(String.valueOf(p.getPayTypeName()));
                         //业务流水号
-                        rowData.add(String.valueOf(p.getOutTradeNo()));
+                        rowData.add(String.valueOf(p.getOutTradeNo()==null?"":p.getOutTradeNo()));
                         //支付金额
                         rowData.add(String.valueOf(p.getPayMoney()));
                         //交易时间

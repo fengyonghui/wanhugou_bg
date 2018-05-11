@@ -38,6 +38,7 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 	private String unshelfTimes;		// 下架时间
 	private String prioritys;		// 显示次序
 	private String skuInfoIds;
+	private String shelfs;		//货架ID
 
 
 	private int shelfSign; //货架删除返回标志
@@ -55,7 +56,7 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 	public BizOpShelfSkus(Integer id){
 		super(id);
 	}
-	@NotNull(message="货架不能为空")
+//	@NotNull(message="货架不能为空")
 	public BizOpShelfInfo getOpShelfInfo() {
 		return opShelfInfo;
 	}
@@ -182,5 +183,13 @@ public class BizOpShelfSkus extends DataEntity<BizOpShelfSkus> {
 
 	public void setCendShelf(String cendShelf) {
 		this.cendShelf = cendShelf;
+	}
+
+	public String getShelfs() {
+		return shelfs;
+	}
+
+	public void setShelfs(String shelfs) {
+		this.shelfs = shelfs;
 	}
 }

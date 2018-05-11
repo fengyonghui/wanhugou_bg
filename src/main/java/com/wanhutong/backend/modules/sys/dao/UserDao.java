@@ -38,14 +38,17 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public List<User> findUserByOfficeId(User user);
-	
+
 	/**
 	 * 通过OfficeId获取用户列表，查询采购中心关联采购顾问使用
+	 *
 	 * @param user
 	 * @return
 	 */
-	public List<User> selectUserByOfficeId(User user);
-	
+	public default List<User> selectUserByOfficeId(User user) {
+		return null;
+	}
+
 	/**
 	 * 查询全部用户数目
 	 * @return

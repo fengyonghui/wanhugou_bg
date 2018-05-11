@@ -86,36 +86,27 @@ public class BizRequestHeaderController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
-        List<BizRequestHeader> list = page.getList();
-        List<BizRequestHeader> orderList=Lists.newArrayList();
-        for (BizRequestHeader bizRequestHeader1:list) {
-            BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
-            bizRequestDetail1.setRequestHeader(bizRequestHeader1);
-            BizSkuInfo bizSkuInfo=new BizSkuInfo();
-            bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
-            bizSkuInfo.setVendorName(bizRequestHeader.getName());
-			bizRequestDetail1.setSkuInfo(bizSkuInfo);
-            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
-            Integer reqQtys = 0;
-            Integer recvQtys = 0;
-            Double money=0.0;
-            for (BizRequestDetail bizRequestDetail:requestDetailList) {
-				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*(bizRequestDetail.getUnitPrice()==null?0:bizRequestDetail.getUnitPrice());
-                reqQtys += bizRequestDetail.getReqQty();
-                recvQtys += bizRequestDetail.getRecvQty();
-            }
-            bizRequestHeader1.setReqQtys(reqQtys.toString());
-            bizRequestHeader1.setRecvQtys(recvQtys.toString());
-			bizRequestHeader1.setTotalMoney(money);
-			if(requestDetailList!=null&&requestDetailList.size()>0){
-				orderList.add(bizRequestHeader1);
-			}
-
-        }
-
-			page.setList(orderList);
-
-
+//        List<BizRequestHeader> list = page.getList();
+//        for (BizRequestHeader bizRequestHeader1:list) {
+//            BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
+//            bizRequestDetail1.setRequestHeader(bizRequestHeader1);
+//            BizSkuInfo bizSkuInfo=new BizSkuInfo();
+//            bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
+//            bizSkuInfo.setVendorName(bizRequestHeader.getName());
+//			bizRequestDetail1.setSkuInfo(bizSkuInfo);
+//            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
+//            Integer reqQtys = 0;
+//            Integer recvQtys = 0;
+//            Double money=0.0;
+//            for (BizRequestDetail bizRequestDetail:requestDetailList) {
+//				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*(bizRequestDetail.getUnitPrice()==null?0:bizRequestDetail.getUnitPrice());
+//                reqQtys += bizRequestDetail.getReqQty();
+//                recvQtys += bizRequestDetail.getRecvQty();
+//            }
+//            bizRequestHeader1.setReqQtys(reqQtys.toString());
+//            bizRequestHeader1.setRecvQtys(recvQtys.toString());
+//			bizRequestHeader1.setTotalMoney(money);
+//        }
         model.addAttribute("page", page);
 		return "modules/biz/request/bizRequestHeaderList";
 	}

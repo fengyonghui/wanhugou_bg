@@ -35,6 +35,4 @@
 		FROM biz_sku_info sku
 		where sku.`status` = 1
 	</select>
-
-
 </mapper>
