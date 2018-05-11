@@ -18,6 +18,7 @@
 				},{buttonsFocus:1});
 				top.$('.jbox-body .jbox-icon').css('top','55px');
 			});
+
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -38,6 +39,27 @@
                     }
                 }
             })
+        }
+        function pay(reqId){
+			$("#myModal").find("#reqId").val(reqId);
+
+		}
+        function genPayQRCode(obj) {
+			var payMoney =$("#payMoneyId").val();
+			var reqId = $("#reqId").val();
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/request/bizRequestPay/genPayQRCode",
+               data:{payMoney:payMoney,reqId:reqId},
+                success:function (data) {
+                    <%--if(data){--%>
+                        <%--alert(val+"成功！");--%>
+                        <%--window.location.href="${ctx}/biz/request/bizRequestHeader";--%>
+
+                    <%--}--%>
+                }
+            })
+
         }
 	</script>
 </head>
@@ -180,6 +202,7 @@
 							<%--<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>--%>
 						<%--</c:when>--%>
 					</c:choose>
+					<a data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
 				</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
@@ -195,6 +218,27 @@
 		</c:forEach>
 		</tbody>
 	</table>
+
+	<!-- 模态框（Modal） -->
+	<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
+				</div>
+				<div class="modal-body">
+					<input id="reqId" type="hidden" value="" />
+					<input type="text" id="payMoneyId" />
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" onclick="genPayQRCode();" class="btn btn-primary">提交</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+
 	<div class="pagination">${page}</div>
 </body>
 </html>
