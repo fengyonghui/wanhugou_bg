@@ -33,6 +33,7 @@ import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -207,13 +208,17 @@ public class BizPoHeaderController extends BaseController {
         Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
         List<Role> roleList = UserUtils.getUser().getRoleList();
         Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
         for (Role r : roleList) {
             RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
             if (parse != null) {
                 roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
             }
         }
+
         model.addAttribute("roleSet", roleSet);
+        model.addAttribute("roleEnNameSet", roleEnNameSet);
         model.addAttribute("page", page);
         model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
         return "modules/biz/po/bizPoHeaderList";

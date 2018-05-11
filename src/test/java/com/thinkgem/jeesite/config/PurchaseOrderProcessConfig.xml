@@ -40,7 +40,7 @@
     <process>
         <name>待总经理审批</name>
         <code>5</code>
-        <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
         <passCode>6</passCode>
         <rejectCode>-1</rejectCode>
     </process>

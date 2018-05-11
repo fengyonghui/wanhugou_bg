@@ -127,6 +127,7 @@
 							<c:if test="${bizPoHeader.bizPoPaymentOrder != null
 							&& bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.code != payStatus
+							&& (fn:contains(roleSet, bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 							}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
 							</c:if>

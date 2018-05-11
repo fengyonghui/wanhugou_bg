@@ -49,6 +49,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 /**
  * 采购订单表Service
+ *
  * @author liuying
  * @version 2017-12-30
  */
@@ -59,113 +60,134 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
 
     @Resource
-	private BizSkuInfoService bizSkuInfoService;
-	@Autowired
-	private BizPoDetailService bizPoDetailService;
+    private BizSkuInfoService bizSkuInfoService;
+    @Autowired
+    private BizPoDetailService bizPoDetailService;
 
-	@Autowired
-	private BizPoOrderReqService bizPoOrderReqService;
-	@Autowired
-	private BizOrderDetailService bizOrderDetailService;
-	@Autowired
-	private BizOrderHeaderService bizOrderHeaderService;
-	@Autowired
-	private BizRequestDetailService bizRequestDetailService;
-	@Autowired
-	private BizRequestHeaderService bizRequestHeaderService;
-	@Autowired
-	private BizPoPaymentOrderService bizPoPaymentOrderService;
-	@Autowired
-	private CommonProcessService commonProcessService;
+    @Autowired
+    private BizPoOrderReqService bizPoOrderReqService;
+    @Autowired
+    private BizOrderDetailService bizOrderDetailService;
+    @Autowired
+    private BizOrderHeaderService bizOrderHeaderService;
+    @Autowired
+    private BizRequestDetailService bizRequestDetailService;
+    @Autowired
+    private BizRequestHeaderService bizRequestHeaderService;
+    @Autowired
+    private BizPoPaymentOrderService bizPoPaymentOrderService;
+    @Autowired
+    private CommonProcessService commonProcessService;
 
 
+    /**
+     * 默认表名
+     */
+    public static final String DATABASE_TABLE_NAME = "biz_po_payment_order";
 
-	/**
-	 * 默认表名
-	 */
-	public static final String DATABASE_TABLE_NAME = "biz_po_payment_order";
+    @Override
+    public BizPoHeader get(Integer id) {
+        return super.get(id);
+    }
 
-	@Override
-	public BizPoHeader get(Integer id) {
-		return super.get(id);
-	}
+    @Override
+    public List<BizPoHeader> findList(BizPoHeader bizPoHeader) {
+        return super.findList(bizPoHeader);
+    }
 
-	@Override
-	public List<BizPoHeader> findList(BizPoHeader bizPoHeader) {
-		return super.findList(bizPoHeader);
-	}
-
-	@Override
-	public Page<BizPoHeader> findPage(Page<BizPoHeader> page, BizPoHeader bizPoHeader) {
-		return super.findPage(page, bizPoHeader);
-	}
-	
-	@Transactional(readOnly = false)
-	@Override
-	public void save(BizPoHeader bizPoHeader) {
-
-		super.save(bizPoHeader);
-
-		savePoHeaderDetail(bizPoHeader);
-	}
+    @Override
+    public Page<BizPoHeader> findPage(Page<BizPoHeader> page, BizPoHeader bizPoHeader) {
+        return super.findPage(page, bizPoHeader);
+    }
 
     @Transactional(readOnly = false)
+    @Override
+    public void save(BizPoHeader bizPoHeader) {
+
+        super.save(bizPoHeader);
+        updateProcessToInit(bizPoHeader);
+        savePoHeaderDetail(bizPoHeader);
+    }
+
+    private void updateProcessToInit(BizPoHeader bizPoHeader) {
+        if (bizPoHeader.getCurrentPaymentId() != null && bizPoHeader.getCurrentPaymentId() != 0) {
+            BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(bizPoHeader.getCurrentPaymentId());
+            if (bizPoPaymentOrder != null) {
+                PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+                PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
+
+                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+                commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
+                commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+                commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+                commonProcessService.save(commonProcessEntity);
+
+                bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
+                bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
+                bizPoPaymentOrder.setTotal(bizPoHeader.getPayTotal());
+                bizPoPaymentOrderService.save(bizPoPaymentOrder);
+            }
+        }
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void savePoHeader(BizPoHeader bizPoHeader) {
 
-		if(bizPoHeader.getDeliveryStatus()!=null && bizPoHeader.getDeliveryStatus()==1){
-			BizPoHeader poHeader=get(bizPoHeader.getId());
-			bizPoHeader.setDeliveryOffice(poHeader.getVendOffice());
-		}
-		if(bizPoHeader.getId()!=null && bizPoHeader.getIsPrew() == 0){
-			saveOrdReqBizStatus(bizPoHeader);
-		}
+        if (bizPoHeader.getDeliveryStatus() != null && bizPoHeader.getDeliveryStatus() == 1) {
+            BizPoHeader poHeader = get(bizPoHeader.getId());
+            bizPoHeader.setDeliveryOffice(poHeader.getVendOffice());
+        }
+        if (bizPoHeader.getId() != null && bizPoHeader.getIsPrew() == 0) {
+            saveOrdReqBizStatus(bizPoHeader);
+        }
+        updateProcessToInit(bizPoHeader);
         super.save(bizPoHeader);
 
     }
 
-	@Transactional(readOnly = false)
-	public void savePoHeaderDetail(BizPoHeader bizPoHeader) {
-		String orderDetailIds=bizPoHeader.getOrderDetailIds();
-		String reqDetailIds=bizPoHeader.getReqDetailIds();
-		Map<Integer,BizSkuInfo> skuMap = new HashMap<>();
-		if(StringUtils.isNotBlank(orderDetailIds)) {
-			String[] orderDetailArr = orderDetailIds.split(",");
-			for (String orderDetailId:orderDetailArr) {
+    @Transactional(readOnly = false)
+    public void savePoHeaderDetail(BizPoHeader bizPoHeader) {
+        String orderDetailIds = bizPoHeader.getOrderDetailIds();
+        String reqDetailIds = bizPoHeader.getReqDetailIds();
+        Map<Integer, BizSkuInfo> skuMap = new HashMap<>();
+        if (StringUtils.isNotBlank(orderDetailIds)) {
+            String[] orderDetailArr = orderDetailIds.split(",");
+            for (String orderDetailId : orderDetailArr) {
                 BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailId));
                 BizSkuInfo skuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
-                if (skuMap.containsKey(skuInfo.getId())){
+                if (skuMap.containsKey(skuInfo.getId())) {
                     BizSkuInfo sku = skuMap.get(skuInfo.getId());
-                    Integer ordQty = sku.getReqQty()+bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty();
+                    Integer ordQty = sku.getReqQty() + bizOrderDetail.getOrdQty() - bizOrderDetail.getSentQty();
                     sku.setReqQty(ordQty);
-                    skuMap.put(skuInfo.getId(),sku);
-                }else {
+                    skuMap.put(skuInfo.getId(), sku);
+                } else {
 //                    BizSkuInfo sku = skuMap.get(skuInfo.getId());
-                    skuInfo.setReqQty(bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty());
-                    skuMap.put(skuInfo.getId(),skuInfo);
+                    skuInfo.setReqQty(bizOrderDetail.getOrdQty() - bizOrderDetail.getSentQty());
+                    skuMap.put(skuInfo.getId(), skuInfo);
                 }
 
             }
-		}
-		if (StringUtils.isNotBlank(reqDetailIds)) {
-		    String[] reqDetailArr = reqDetailIds.split(",");
-            for (String reqDetailId:reqDetailArr) {
+        }
+        if (StringUtils.isNotBlank(reqDetailIds)) {
+            String[] reqDetailArr = reqDetailIds.split(",");
+            for (String reqDetailId : reqDetailArr) {
                 BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailId));
                 BizSkuInfo skuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
                 if (skuMap.containsKey(skuInfo.getId())) {
                     BizSkuInfo sku = skuMap.get(skuInfo.getId());
-                    Integer reqQty = sku.getReqQty()+bizRequestDetail.getReqQty()-bizRequestDetail.getRecvQty();
+                    Integer reqQty = sku.getReqQty() + bizRequestDetail.getReqQty() - bizRequestDetail.getRecvQty();
                     sku.setReqQty(reqQty);
-                    skuMap.put(skuInfo.getId(),sku);
-                }else {
-                    skuInfo.setReqQty(bizRequestDetail.getReqQty()-bizRequestDetail.getRecvQty());
-                    skuMap.put(skuInfo.getId(),skuInfo);
+                    skuMap.put(skuInfo.getId(), sku);
+                } else {
+                    skuInfo.setReqQty(bizRequestDetail.getReqQty() - bizRequestDetail.getRecvQty());
+                    skuMap.put(skuInfo.getId(), skuInfo);
                 }
             }
         }
-        int t =0;
+        int t = 0;
         BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-        BizPoDetail poDetail=new BizPoDetail();
-        for (Map.Entry<Integer,BizSkuInfo> entry:skuMap.entrySet()) {
+        BizPoDetail poDetail = new BizPoDetail();
+        for (Map.Entry<Integer, BizSkuInfo> entry : skuMap.entrySet()) {
             BizSkuInfo skuInfo = entry.getValue();
             bizPoOrderReq.setId(null);
             poDetail.setId(null);
@@ -180,9 +202,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizPoDetailService.calculateTotalOrderPrice(poDetail);
             bizPoOrderReq.setPoHeader(poDetail.getPoHeader());
             bizPoOrderReq.setPoLineNo(poDetail.getLineNo());
-            if(StringUtils.isNotBlank(orderDetailIds)){
-                String[] orderDetailArr=orderDetailIds.split(",");
-                for (String orderDetailId:orderDetailArr) {
+            if (StringUtils.isNotBlank(orderDetailIds)) {
+                String[] orderDetailArr = orderDetailIds.split(",");
+                for (String orderDetailId : orderDetailArr) {
                     BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailId));
                     if (bizOrderDetail.getSkuInfo().getId().equals(skuInfo.getId())) {
                         bizPoOrderReq.setOrderHeader(bizOrderDetail.getOrderHeader());
@@ -196,7 +218,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             }
             if (StringUtils.isNotBlank(reqDetailIds)) {
                 String[] reqDetailArr = reqDetailIds.split(",");
-                for (String reqDetailId:reqDetailArr) {
+                for (String reqDetailId : reqDetailArr) {
                     BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailId));
                     if (bizRequestDetail.getSkuInfo().getId().equals(skuInfo.getId())) {
                         bizPoOrderReq.setRequestHeader(bizRequestDetail.getRequestHeader());
@@ -209,131 +231,134 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 }
             }
         }
-	}
-
-	@Transactional(readOnly = false)
-	public void saveOrdReqBizStatus(BizPoHeader bizPoHeader){
-		BizPoOrderReq bizPoOrderReq=new BizPoOrderReq();
-		BizOrderDetail bizOrderDetail=new BizOrderDetail();
-		BizRequestDetail bizRequestDetail=new BizRequestDetail();
-		bizPoOrderReq.setPoHeader(bizPoHeader);
-		List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
-		Map<Integer, List<BizPoOrderReq>> collectOrder = poOrderReqList.stream().filter(item -> item.getSoType()==Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())).collect(groupingBy(BizPoOrderReq::getSoId));
-		Map<Integer, List<BizPoOrderReq>> collectReq = poOrderReqList.stream().filter(item -> item.getSoType()== Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())).collect(groupingBy(BizPoOrderReq::getSoId));
-		 for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectOrder.entrySet()) {
-		 	BizOrderHeader bizOrderHeader=	bizOrderHeaderService.get(entry.getKey());
-		 	bizOrderDetail.setOrderHeader(bizOrderHeader);
-		 	List<BizOrderDetail> orderDetailList=bizOrderDetailService.findList(bizOrderDetail);
-			        if(orderDetailList.size()==entry.getValue().size()){
-						bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
-						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-			        }else if(orderDetailList.size()>entry.getValue().size()){
-						bizPoOrderReq.setOrderHeader(bizOrderHeader);
-						bizPoOrderReq.setRequestHeader(null);
-						bizPoOrderReq.setPoHeader(null);
-						bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
-						List<BizPoOrderReq> poOrderReqs=bizPoOrderReqService.findList(bizPoOrderReq);
-						if(poOrderReqs.size()==orderDetailList.size()){
-							bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
-							bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-						}else {
-							bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
-							bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-						}
-			        }
-
-
-			 }
-		for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectReq.entrySet()) {
-			BizRequestHeader bizRequestHeader=	bizRequestHeaderService.get(entry.getKey());
-			bizRequestDetail.setRequestHeader(bizRequestHeader);
-			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
-			if(requestDetailList.size()==entry.getValue().size()){
-				bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-				bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-			}else if(requestDetailList.size()>entry.getValue().size()){
-				bizPoOrderReq.setRequestHeader(bizRequestHeader);
-				bizPoOrderReq.setOrderHeader(null);
-				bizPoOrderReq.setPoHeader(null);
-				bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType()));
-				List<BizPoOrderReq> poOrderReqs=bizPoOrderReqService.findList(bizPoOrderReq);
-				if(poOrderReqs.size()==requestDetailList.size()){
-					bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-					bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-				}else {
-					bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.PURCHASING.getState());
-					bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-				}
-			}
-
-		}
-
-	}
-
-	/**
-	 * 采购单供货完成时，更改采购单状态
-	 * @param bizPoHeader
-	 */
-	@Transactional(readOnly = false)
-	public  void saveStatus(BizPoHeader bizPoHeader){
-		super.save(bizPoHeader);
-	}
-	@Transactional(readOnly = false)
-	@Override
-	public void delete(BizPoHeader bizPoHeader) {
-		super.delete(bizPoHeader);
-	}
-
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public int updatePaymentOrderId(Integer id, Integer paymentId) {
-		return dao.updatePaymentOrderId(id, paymentId);
-	}
-
-	/**
-	 * 更新状态
-	 * @param id
-	 * @param status
-	 * @return
-	 */
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
-    public int updateBizStatus(Integer id, BizPoHeader.BizStatus status) {
-		return dao.updateBizStatus(id, status.getStatus());
     }
 
-	/**
-	 * 生成支付申请单
-	 * @param bizPoHeader
-	 * @return
-	 */
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public String genPaymentOrder(BizPoHeader bizPoHeader) {
-		if(bizPoHeader.getBizPoPaymentOrder() != null && bizPoHeader.getBizPoPaymentOrder().getId() != null && bizPoHeader.getBizPoPaymentOrder().getId() != 0) {
-			return "操作失败,该订单已经有正在申请的支付单!";
-		}
+    @Transactional(readOnly = false)
+    public void saveOrdReqBizStatus(BizPoHeader bizPoHeader) {
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+        BizRequestDetail bizRequestDetail = new BizRequestDetail();
+        bizPoOrderReq.setPoHeader(bizPoHeader);
+        List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+        Map<Integer, List<BizPoOrderReq>> collectOrder = poOrderReqList.stream().filter(item -> item.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())).collect(groupingBy(BizPoOrderReq::getSoId));
+        Map<Integer, List<BizPoOrderReq>> collectReq = poOrderReqList.stream().filter(item -> item.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())).collect(groupingBy(BizPoOrderReq::getSoId));
+        for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectOrder.entrySet()) {
+            BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(entry.getKey());
+            bizOrderDetail.setOrderHeader(bizOrderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            if (orderDetailList.size() == entry.getValue().size()) {
+                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
+                bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+            } else if (orderDetailList.size() > entry.getValue().size()) {
+                bizPoOrderReq.setOrderHeader(bizOrderHeader);
+                bizPoOrderReq.setRequestHeader(null);
+                bizPoOrderReq.setPoHeader(null);
+                bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
+                List<BizPoOrderReq> poOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (poOrderReqs.size() == orderDetailList.size()) {
+                    bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
+                    bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+                } else {
+                    bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                    bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+                }
+            }
 
-		PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
-		PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
-		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-		commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
-		commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-		commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-		commonProcessService.save(commonProcessEntity);
 
-		BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
-		bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
-		bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
-		bizPoPaymentOrder.setTotal(bizPoHeader.getPayTotal());
-		bizPoPaymentOrderService.save(bizPoPaymentOrder);
+        }
+        for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectReq.entrySet()) {
+            BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(entry.getKey());
+            bizRequestDetail.setRequestHeader(bizRequestHeader);
+            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+            if (requestDetailList.size() == entry.getValue().size()) {
+                bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+                bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+            } else if (requestDetailList.size() > entry.getValue().size()) {
+                bizPoOrderReq.setRequestHeader(bizRequestHeader);
+                bizPoOrderReq.setOrderHeader(null);
+                bizPoOrderReq.setPoHeader(null);
+                bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType()));
+                List<BizPoOrderReq> poOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (poOrderReqs.size() == requestDetailList.size()) {
+                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                } else {
+                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.PURCHASING.getState());
+                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                }
+            }
 
-		bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
-		this.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());
+        }
 
-		this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS);
-		return "操作成功!";
-	}
+    }
 
     /**
+     * 采购单供货完成时，更改采购单状态
      *
+     * @param bizPoHeader
+     */
+    @Transactional(readOnly = false)
+    public void saveStatus(BizPoHeader bizPoHeader) {
+        super.save(bizPoHeader);
+    }
+
+    @Transactional(readOnly = false)
+    @Override
+    public void delete(BizPoHeader bizPoHeader) {
+        super.delete(bizPoHeader);
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public int updatePaymentOrderId(Integer id, Integer paymentId) {
+        return dao.updatePaymentOrderId(id, paymentId);
+    }
+
+    /**
+     * 更新状态
+     *
+     * @param id
+     * @param status
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public int updateBizStatus(Integer id, BizPoHeader.BizStatus status) {
+        return dao.updateBizStatus(id, status.getStatus());
+    }
+
+    /**
+     * 生成支付申请单
+     *
+     * @param bizPoHeader
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public String genPaymentOrder(BizPoHeader bizPoHeader) {
+        if (bizPoHeader.getBizPoPaymentOrder() != null && bizPoHeader.getBizPoPaymentOrder().getId() != null && bizPoHeader.getBizPoPaymentOrder().getId() != 0) {
+            return "操作失败,该订单已经有正在申请的支付单!";
+        }
+
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
+        commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+        commonProcessService.save(commonProcessEntity);
+
+        BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
+        bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
+        bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
+        bizPoPaymentOrder.setTotal(bizPoHeader.getPayTotal());
+        bizPoPaymentOrderService.save(bizPoPaymentOrder);
+
+        bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
+        this.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());
+
+        this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS);
+        return "操作成功!";
+    }
+
+    /**
      * @param poHeaderId
      * @param currentType
      * @param auditType
@@ -341,7 +366,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-	public String audit(int poHeaderId, String currentType, int auditType, String description) {
+    public String audit(int poHeaderId, String currentType, int auditType, String description) {
         BizPoHeader bizPoHeader = this.get(poHeaderId);
         BizPoPaymentOrder bizPoPaymentOrder = bizPoHeader.getBizPoPaymentOrder();
         CommonProcessEntity cureentProcessEntity = bizPoPaymentOrder.getCommonProcess();
@@ -354,18 +379,18 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             return "操作失败,当前审核状态异常!";
         }
 
-    	PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         // 当前流程
-      PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+        PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
         // 下一流程
         PurchaseOrderProcessConfig.PurchaseOrderProcess nextProcess = purchaseOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
-     if (nextProcess == null) {
-           return "操作失败,当前流程已经结束!";
+        if (nextProcess == null) {
+            return "操作失败,当前流程已经结束!";
         }
 
 
         User user = UserUtils.getUser();
-      RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
         Role role = new Role();
         role.setEnname(roleEnNameEnum.getState());
         if (!user.isAdmin() && !user.getRoleList().contains(role)) {
@@ -384,24 +409,25 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
         nextProcessEntity.setObjectId(bizPoPaymentOrder.getId().toString());
         nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-       nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
         commonProcessService.save(nextProcessEntity);
         bizPoPaymentOrderService.updateProcessId(bizPoPaymentOrder.getId(), nextProcessEntity.getId());
         return "操作成功!";
     }
 
-	/**
-	 * 支付订单
-	 * @return
-	 */
+    /**
+     * 支付订单
+     *
+     * @return
+     */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-	public String payOrder(Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+    public String payOrder(Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         BizPoHeader bizPoHeader = this.get(poHeaderId);
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(paymentOrderId);
         CommonProcessEntity commonProcessEntity = commonProcessService.get(bizPoPaymentOrder.getProcessId());
 
-     PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         if (!Integer.valueOf(commonProcessEntity.getType()).equals(purchaseOrderProcessConfig.getPayProcessId())) {
             LOGGER.warn("[exception]BizPoHeaderController payOrder currentType mismatching [{}][{}]", poHeaderId, paymentOrderId);
             return "操作失败,当前流程状态有误!";
@@ -413,17 +439,24 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         // 当前流程
         PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.processMap.get(Integer.valueOf(commonProcessEntity.getType()));
+        User user = UserUtils.getUser();
+        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+        Role role = new Role();
+        role.setEnname(roleEnNameEnum.getState());
+        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+            return "操作失败,该用户没有权限!";
+        }
 
         // 状态改为全款或首款支付
 //      DOWN_PAYMENT(1, "付款支付"),
 //      ALL_PAY(2, "全部支付"),
-        BigDecimal orderTotal =  BigDecimal.valueOf(bizPoHeader.getTotalDetail()).add(BigDecimal.valueOf(bizPoHeader.getTotalExp())).add(BigDecimal.valueOf(bizPoHeader.getFreight()));
+        BigDecimal orderTotal = BigDecimal.valueOf(bizPoHeader.getTotalDetail()).add(BigDecimal.valueOf(bizPoHeader.getTotalExp())).add(BigDecimal.valueOf(bizPoHeader.getFreight()));
 
         this.updateBizStatus(bizPoHeader.getId(), payTotal.compareTo(orderTotal) >= 0 ? BizPoHeader.BizStatus.ALL_PAY : BizPoHeader.BizStatus.DOWN_PAYMENT);
 
         this.audit(poHeaderId, commonProcessEntity.getType(), CommonProcessEntity.AuditType.PASS.getCode(), StringUtils.EMPTY);
-		// 清除关联的支付申请单
-		this.updatePaymentOrderId(bizPoHeader.getId(), null);
+        // 清除关联的支付申请单
+        this.updatePaymentOrderId(bizPoHeader.getId(), null);
         return "操作成功!";
-	}
+    }
 }
