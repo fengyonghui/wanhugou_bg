@@ -272,7 +272,7 @@
                        maxlength="30" class="input-xlarge "/>
             </div>
         </div>
-        <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null}">
+        <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
         <div class="control-group">
             <label class="control-label">申请金额：</label>
             <div class="controls">
@@ -323,7 +323,7 @@
     <c:if test="${bizPoHeader.poDetailList!=null}">
         <div class="form-actions">
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
-                <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder != null}">
+                <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder.id != null}">
                     <input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
                     <input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>
                 </c:if>
