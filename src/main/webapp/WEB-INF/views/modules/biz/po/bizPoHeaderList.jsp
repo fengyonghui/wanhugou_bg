@@ -112,7 +112,7 @@
 				</td>
 				<td>
 						${bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name == null ?
-						 '未申请' : bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name}
+						 '当前无支付申请' : bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name}
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>
