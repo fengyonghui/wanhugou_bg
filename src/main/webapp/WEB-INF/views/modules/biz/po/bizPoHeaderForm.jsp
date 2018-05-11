@@ -272,6 +272,7 @@
                        maxlength="30" class="input-xlarge "/>
             </div>
         </div>
+        <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null}">
         <div class="control-group">
             <label class="control-label">申请金额：</label>
             <div class="controls">
@@ -281,6 +282,7 @@
                        htmlEscape="false" maxlength="30" class="input-xlarge"/>
             </div>
         </div>
+        </c:if>
         <c:if test="${type == 'pay'}">
             <div class="control-group">
                 <label class="control-label">实际付款金额：</label>
@@ -304,7 +306,7 @@
             </div>
         </c:if>
 
-        <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder != null}">
+        <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder.id != null}">
             <div class="control-group">
                 <label class="control-label">审核状态：</label>
                 <div class="controls">
