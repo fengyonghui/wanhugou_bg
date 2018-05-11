@@ -285,6 +285,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     /**
+     * 查询线下支付订单
+     * @return
+     */
+    public List<BizOrderHeader> findUnlineOrder() {
+        return bizOrderHeaderDao.findUnlineOrder();
+    }
+
+    /**
      * 订单发货分页
      * */
     public Page<BizOrderHeader> pageFindList(Page<BizOrderHeader> page,BizOrderHeader bizOrderHeader) {

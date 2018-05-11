@@ -33,6 +33,8 @@ public enum ImgEnum{
     VEND_COMPACT((byte)50,"供应商合同", "biz_vend_info"),
     /**供应商身份证*/
     VEND_IDENTITY_CARD((byte)51,"供应商身份证", "biz_vend_info"),
+    /**线下支付凭证*/
+    UNlINE_PAYMENT_VOUCHER((byte)27,"线下支付凭证","biz_order_header_unline"),
 
     ;
 
