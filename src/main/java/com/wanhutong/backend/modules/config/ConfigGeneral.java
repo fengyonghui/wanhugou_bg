@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.config;
 
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -42,7 +43,8 @@ public abstract class ConfigGeneral {
 	public static final ConfigWrapper<PurchaseOrderProcessConfig> PURCHASE_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PurchaseOrderProcessConfig.xml",new PurchaseOrderProcessConfig());
 
-
+	public static final ConfigWrapper<RequestOrderProcessConfig> REQUEST_ORDER_PROCESS_CONFIG = new ConfigWrapper<RequestOrderProcessConfig>(
+			"RequestOrderProcessConfig.xml",new RequestOrderProcessConfig());
 
 	/**
 	 * 获取所有的配置对象实例所属的父容器，使用反射实现，由于仅在更新配置的内存版本时调用，属于可容忍的性能损耗

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RequestOrderProcessConfig>
+    <defaultProcessId>1</defaultProcessId>
+    <autProcessId>3</autProcessId>
+    <process>
+        <name>待采购中心经理审批</name>
+        <code>1</code>
+        <roleEnNameEnum>P_CENTER_MANAGER</roleEnNameEnum>
+        <passCode>2</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>待渠道部经理审批</name>
+        <code>2</code>
+        <roleEnNameEnum>CHANNEL_MANAGER</roleEnNameEnum>
+        <passCode>3</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+
+    <process>
+        <name>审核通过</name>
+        <code>3</code>
+        <roleEnNameEnum></roleEnNameEnum>
+        <passCode>0</passCode>
+        <rejectCode>0</rejectCode>
+    </process>
+    <process>
+        <name>驳回</name>
+        <code>-1</code>
+        <roleEnNameEnum></roleEnNameEnum>
+        <passCode>0</passCode>
+        <rejectCode>0</rejectCode>
+    </process>
+</RequestOrderProcessConfig>

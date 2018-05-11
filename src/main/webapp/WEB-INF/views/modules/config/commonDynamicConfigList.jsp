@@ -37,7 +37,7 @@
         </li>
         <li><label>创建时间：</label>
             <input name="created" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-                   value="<fmt:formatDate value="${commonDynamicConfig.created}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+                   value="<fmt:formatDate value="${commonDynamicConfig.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
         </li>
         <li><label>状态：1:可用 0:不可用：</label>
@@ -77,7 +77,7 @@
                     ${commonDynamicConfig.confname}
             </td>
             <td>
-                <fmt:formatDate value="${commonDynamicConfig.created}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                <fmt:formatDate value="${commonDynamicConfig.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </td>
             <td>
                     ${fns:getDictLabel(commonDynamicConfig.status, 'status', '')}

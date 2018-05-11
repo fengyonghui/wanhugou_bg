@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -135,7 +136,12 @@
 					${requestHeader.remark}
 				</td>
 				<td>
-					${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
+					<c:if test="${requestHeader.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
+						${requestHeader.commonProcess.requestOrderProcess.name}
+					</c:if>
+					<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.UNREVIEWED.state}">
+						${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
+					</c:if>
 				</td>
 				<td>
 					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -165,16 +171,23 @@
 							<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
 
 							<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+
+							<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'关闭',${requestHeader.id})">关闭</a>
+
 						</c:when>
-						<c:when test="${requestHeader.bizStatus>=ReqHeaderStatusEnum.APPROVE.state && requestHeader.bizStatus<=ReqHeaderStatusEnum.STOCK_COMPLETE.state}">
-							<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>
-						</c:when>
+
 						<%--<c:when test="${requestHeader.bizStatus==ReqHeaderStatusEnum.COMPLETE.state}">--%>
 							<%--<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>--%>
 						<%--</c:when>--%>
 					</c:choose>
+				</shiro:hasPermission>
 
-
+					<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
+					<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum) && requestHeader.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
+							}">
+						<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=audit">审核</a>
+					</c:if>
 				</shiro:hasPermission>
 
 				</td></shiro:hasPermission>

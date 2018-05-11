@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.process.entity;
 
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -30,6 +31,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	private Date createTime;		// 创建时间
 
 	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
+	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
 
 	/**
 	 * 前一个流程
@@ -127,6 +129,10 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 
 	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderProcess() {
 		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
+	}
+
+	public RequestOrderProcessConfig.RequestOrderProcess getRequestOrderProcess() {
+		return ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
 	}
 
 	public enum AuditType {

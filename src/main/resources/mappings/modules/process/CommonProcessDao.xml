@@ -106,7 +106,8 @@
 			processor,
 			description,
 			type,
-			create_time
+			create_time,
+			update_time
 		) VALUES (
 			#{id},
 			#{objectId},
@@ -116,7 +117,8 @@
 			#{processor},
 			#{description},
 			#{type},
-			#{createTime}
+			#{createTime},
+			#{updateDate}
 		)
 	</insert>
 	

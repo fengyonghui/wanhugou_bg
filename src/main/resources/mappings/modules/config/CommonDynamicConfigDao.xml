@@ -6,7 +6,7 @@
 		a.id AS "id",
 		a.confname AS "confname",
 		a.content AS "content",
-		a.create_time AS "createTime",
+		a.create_time AS "createDate",
 		a.status AS "status",
 		a.version AS "version",
 		a.updated AS "updated"
@@ -39,9 +39,7 @@
 			<if test="content != null and content != ''">
 				AND a.content = #{content}
 			</if>
-			<if test="create_time != null and create_time != ''">
-				AND a.create_time = #{createTime}
-			</if>
+
 			<if test="status != null and status != ''">
 				AND a.status = #{status}
 			</if>
@@ -102,7 +100,6 @@
 		UPDATE common_dynamic_config SET 	
 			confname = #{confname},
 			content = #{content},
-			create_time = #{createTime},
 			version = #{version},
 			updated = #{updated}
 		WHERE id = #{id}
