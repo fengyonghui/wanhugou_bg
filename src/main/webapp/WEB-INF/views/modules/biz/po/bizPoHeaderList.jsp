@@ -143,11 +143,4 @@
 	</table>
 	<div class="pagination">${page}</div>
 </body>
-<script type="text/javascript">
-	function paymentOrder () {
-	    alert("1");
-
-
-	}
-</script>
 </html>
