@@ -47,10 +47,11 @@
         function genPayQRCode(obj) {
 			var payMoney =$("#payMoneyId").val();
 			var reqId = $("#reqId").val();
+			var payMethod=$("input[name='payMethod']:checked").val();
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/request/bizRequestPay/genPayQRCode",
-               data:{payMoney:payMoney,reqId:reqId},
+               data:{payMoney:payMoney,reqId:reqId,payMethod:payMethod},
                 success:function (data) {
                     <%--if(data){--%>
                         <%--alert(val+"成功！");--%>
@@ -225,11 +226,13 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
+					<h4 class="modal-title" id="myModalLabel">付款</h4>
 				</div>
 				<div class="modal-body">
 					<input id="reqId" type="hidden" value="" />
-					<input type="text" id="payMoneyId" />
+					支付金额：<input type="text" id="payMoneyId" />
+					支付方式：<input type="radio" name="payMethod"  value="0"> 支付宝
+							<input type="radio" name="payMethod"  value="1"> 微信
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

@@ -4,6 +4,7 @@ package com.wanhutong.backend.common.utils;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
@@ -23,6 +24,14 @@ public class GenerateOrderUtils {
     private final static Integer CENTER_LEN = 3;
     private final static Integer SERIAL_NUMBER_LEN = 2;
     private final static Integer SEND_NUMBER_LEN = 6;
+
+    /**
+     * 小于四位数补零操作
+     */
+    private final static String STR_FORMAT = "0000";
+    private final static String SIXTH_FORMAT = "000000";
+    private final static DecimalFormat df = new DecimalFormat(STR_FORMAT);
+    private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat(SIXTH_FORMAT);
 
     private static String convertDate(Date date) {
         return new SimpleDateFormat("yyMMdd").format(date);
@@ -88,6 +97,62 @@ public class GenerateOrderUtils {
         return orderBuilder.toString();
     }
 
+
+    /**
+     * 生成交易流水号
+     *
+     * @param tradeNoTypeEnum 交易流水号类型
+     * @param officeId        客户ID
+     * @return 交易流水号
+     */
+    public static String getTradeNum(OutTradeNoTypeEnum tradeNoTypeEnum, Integer officeId) {
+        String repairOfficeId;
+        if (officeId != null && officeId > 0) {
+            repairOfficeId = officeId.toString();
+            if (sizeOfInt(officeId) < DIGIT) {
+                repairOfficeId = df.format(officeId);
+            } else if (sizeOfInt(officeId) > DIGIT) {
+                repairOfficeId = repairOfficeId.substring(repairOfficeId.length() - 4, repairOfficeId.length());
+            }
+            return tradeNoTypeEnum.getTradeNoType() + System.currentTimeMillis() / 1000L + repairOfficeId + getRandomNum();
+        }
+        return null;
+    }
+
+    public static synchronized String getOrderTradeNum(OrderTypeEnum tradeNoTypeEnum, Integer officeId) {
+        String repairOfficeId;
+        if (officeId != null && officeId > 0) {
+            repairOfficeId = officeId.toString();
+            if (sizeOfInt(officeId) < DIGIT) {
+                repairOfficeId = DECIMAL_FORMAT.format(officeId);
+            } else if (sizeOfInt(officeId) > DIGIT) {
+                repairOfficeId = repairOfficeId.substring(repairOfficeId.length() - 4, repairOfficeId.length());
+            }
+            // 取系统当前时间作为订单号变量前半部分，精确到毫秒
+            String newDate =new SimpleDateFormat("yyMMdd").format(new Date());
+            return tradeNoTypeEnum.name() + newDate + repairOfficeId + getRandomNum3();
+        }
+        return null;
+    }
+
+    /**
+     * 判断数字位数的容器
+     */
+    private final static int[] SIZE_TABLE = {9, 99, 999, 9999, 99999, 999999, 9999999,
+            99999999, 999999999, Integer.MAX_VALUE};
+
+
+    /**
+     * 返回输入数字的位数
+     */
+    private static int sizeOfInt(int x) {
+        for (int i = 0; ; i++) {
+            if (x <= SIZE_TABLE[i]) {
+                return i + 1;
+            }
+
+        }
+    }
 
     public static void main(String[] args) {
         String orderNum = getOrderNum(OrderTypeEnum.SO, 44, 26, 3);

@@ -6,7 +6,7 @@ public class RequestQRCodePayDto {
 
     private String out_trade_no;
 
-    private Integer amount;
+    private Double amount;
 
     private String notifyUrl;
 
@@ -14,8 +14,9 @@ public class RequestQRCodePayDto {
 
     private String appid="whtFWQ0NXyXHdnKmIS";
 
-    private String ciphertext="MIIBVgIBADANBgkqhkiG9w0BAQEFAASCAUAwggE8AgEAAkEAxa4Myt3XjZkjlpEMnX2cy/qMq4QLpQ6e6/XRNwb7Pmc1bNaeM7mtl/6Y9eZh24RQOE8VArhKWzmghLB+HIuWFQIDAQABAkB5JaWpXjOQD94DlHlKu4SwbahwJMiOK1ux+EBznM+0+a4HomW9gaNpkzH7O+bLLUJ0Bt6D0VCBgMapncWwRa2xAiEA+60zEUFakEoVnbdAfMwR19vZ5v9gRIYhNbuuylvGdlMCIQDJE2OFzwNmwwUHfhgghYq0uepqzXkWna+AkY0dpe1k9wIhAItQxvIIUU+KEwkpBaOPe1kYNDjwqKOF9CBAcnNF9khNAiEAgBNpgQGrGPl/apZWp+BnyVXiisT2LAGkmDAdwpS98WECIQD4aJctBaLyMgd22YNaZYx2y8cTmpacG/4BuGI3GOG/EA==";
+    private String secureKey="MIIBVgIBADANBgkqhkiG9w0BAQEFAASCAUAwggE8AgEAAkEAxa4Myt3XjZkjlpEMnX2cy/qMq4QLpQ6e6/XRNwb7Pmc1bNaeM7mtl/6Y9eZh24RQOE8VArhKWzmghLB+HIuWFQIDAQABAkB5JaWpXjOQD94DlHlKu4SwbahwJMiOK1ux+EBznM+0+a4HomW9gaNpkzH7O+bLLUJ0Bt6D0VCBgMapncWwRa2xAiEA+60zEUFakEoVnbdAfMwR19vZ5v9gRIYhNbuuylvGdlMCIQDJE2OFzwNmwwUHfhgghYq0uepqzXkWna+AkY0dpe1k9wIhAItQxvIIUU+KEwkpBaOPe1kYNDjwqKOF9CBAcnNF9khNAiEAgBNpgQGrGPl/apZWp+BnyVXiisT2LAGkmDAdwpS98WECIQD4aJctBaLyMgd22YNaZYx2y8cTmpacG/4BuGI3GOG/EA==";
 
+    private String ciphertext;
 
     public String getOut_trade_no() {
         return out_trade_no;
@@ -25,11 +26,11 @@ public class RequestQRCodePayDto {
         this.out_trade_no = out_trade_no;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
@@ -55,6 +56,14 @@ public class RequestQRCodePayDto {
 
     public void setAppid(String appid) {
         this.appid = appid;
+    }
+
+    public String getSecureKey() {
+        return secureKey;
+    }
+
+    public void setSecureKey(String secureKey) {
+        this.secureKey = secureKey;
     }
 
     public String getCiphertext() {
