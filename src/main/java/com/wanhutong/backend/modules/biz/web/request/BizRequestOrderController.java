@@ -91,6 +91,39 @@ public class BizRequestOrderController extends BaseController {
             bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
             orderHeaderPage=bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), bizOrderHeader);
 
+            Set<Integer> set = new HashSet();
+            List<BizOrderHeader> list = Lists.newArrayList();
+            for (BizOrderHeader bizOrderHeader1 : orderHeaderPage.getList()) {
+                set.clear();
+                boolean flag = false;
+                BizOrderDetail bizOrderDetail = new BizOrderDetail();
+                bizOrderDetail.setOrderHeader(bizOrderHeader1);
+                //	bizOrderDetail.setSuplyis(officeService.get(0));
+                StringBuffer sb = new StringBuffer();
+                List<BizOrderDetail> orderDetails = bizOrderDetailService.findList(bizOrderDetail);
+                for (BizOrderDetail bizOrderDetail1 : orderDetails) {
+                    if (bizOrderDetail1.getSuplyis().getId() == 0 || bizOrderDetail1.getSuplyis().getId()== 721) {
+                        flag = true;
+                    }
+                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail1.getSkuInfo().getId());
+                    set.add(bizSkuInfo.getProductInfo().getOffice().getId());
+                    sb.append(bizOrderDetail1.getId());
+                    sb.append(",");
+                }
+
+                if (set.size() == 1) {
+                    for (Iterator it = set.iterator(); it.hasNext(); ) {
+                        bizOrderHeader1.setOnlyVendor((Integer) it.next());
+                    }
+                    bizOrderHeader1.setOrderDetails(sb.substring(0, sb.lastIndexOf(",")));
+                    bizOrderHeader1.setOwnGenPoOrder(true);
+                }
+                if (flag) {
+                    list.add(bizOrderHeader1);
+                }
+
+            }
+            orderHeaderPage.setList(list);
             //20180427 分页
             model.addAttribute("page", orderHeaderPage);
             //判断
@@ -239,6 +272,40 @@ public class BizRequestOrderController extends BaseController {
         bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
         bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
         requestHeaderList = bizRequestHeaderService.pageFindList(new Page<BizRequestHeader>(request, response), bizRequestHeader);
+
+        List<BizRequestHeader> list = Lists.newArrayList();
+        for (BizRequestHeader bizRequestHeader1 : requestHeaderList.getList()) {
+            BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
+            bizRequestDetail1.setRequestHeader(bizRequestHeader1);
+            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
+            Integer reqQtys = 0;
+            Integer recvQtys = 0;
+            Set set = new HashSet();
+            StringBuffer sb = new StringBuffer();
+            for (BizRequestDetail bizRequestDetail : requestDetailList) {
+                reqQtys += bizRequestDetail.getReqQty();
+                recvQtys += bizRequestDetail.getRecvQty();
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+                set.add(bizSkuInfo.getProductInfo().getOffice().getId());
+                sb.append(bizRequestDetail.getId());
+                sb.append(",");
+            }
+
+            if (set.size() == 1) {
+                for (Iterator it = set.iterator(); it.hasNext(); ) {
+                    bizRequestHeader1.setOnlyVendor((Integer) it.next());
+                    //System.out.println("value="+it.next().toString());
+                }
+
+                bizRequestHeader1.setReqDetailIds(sb.substring(0, sb.lastIndexOf(",")));
+                bizRequestHeader1.setOwnGenPoOrder(true);
+            }
+
+            bizRequestHeader1.setReqQtys(reqQtys.toString());
+            bizRequestHeader1.setRecvQtys(recvQtys.toString());
+            list.add(bizRequestHeader1);
+        }
+        requestHeaderList.setList(list);
 
         return requestHeaderList;
     }
