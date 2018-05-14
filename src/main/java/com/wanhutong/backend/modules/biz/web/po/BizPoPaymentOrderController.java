@@ -48,7 +48,8 @@ public class BizPoPaymentOrderController extends BaseController {
 	
 	@RequiresPermissions("biz:po:bizPoPaymentOrder:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String list(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model, Integer poId) {
+		bizPoPaymentOrder.setPoHeaderId(poId);
 		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder); 
 		model.addAttribute("page", page);
 		return "modules/biz/po/bizPoPaymentOrderList";

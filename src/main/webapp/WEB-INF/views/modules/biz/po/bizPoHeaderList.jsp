@@ -140,6 +140,7 @@
 							}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
 							</c:if>
+							<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请</a>
 						</shiro:hasPermission>
 						<shiro:hasPermission name="biz:po:bizPoHeader:edit">
 							<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
