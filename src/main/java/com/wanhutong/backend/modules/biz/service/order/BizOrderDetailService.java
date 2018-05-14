@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单详情(销售订单)Service
@@ -189,5 +190,9 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
 
     public List<BizOrderDetail> findOrderTotalByVendor(BizOrderHeader bizOrderHeader) {
         return bizOrderDetailDao.findOrderTotalByVendor(bizOrderHeader);
+    }
+
+    public List<Map> findRequestTotalByVendor() {
+        return bizOrderDetailDao.findRequestTotalByVendor(false);
     }
 }

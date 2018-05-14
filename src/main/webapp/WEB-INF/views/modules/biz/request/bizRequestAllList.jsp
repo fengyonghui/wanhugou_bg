@@ -153,7 +153,7 @@
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>更新人</th>
-				<th>发货时间</th>
+				<th>创建时间</th>
 				<th>更新时间</th>
 				<th>操作</th>
 			</tr>
@@ -161,9 +161,9 @@
 		<tbody>
 		<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">
 		<c:if test="${source == 'sh' || source=='gh' || bizStatu==1 && ship=='bh'}">
-			<c:forEach items="${page.list}" var="requestHeader">
+			<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
 				<tr>
-					<td>${requestHeader.numberRownum}</td>
+					<td>${state.index+1}</td>
 					<c:if test="${source=='gh'}">
 					<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>
 					</c:if>

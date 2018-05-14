@@ -34,11 +34,11 @@ public class OrderHeaderExportExcelUtils {
         workbook.setSheetName(sheetNum, sheetTitle
 //                ,HSSFWorkbook.ENCODING_UTF_16
         );
-        // 设置表格默认列宽度为20个字节  
+        // 设置表格默认列宽度为20个字节
         sheet.setDefaultColumnWidth(20);
-        // 生成一个样式  
+        // 生成一个样式
         CellStyle style = workbook.createCellStyle();
-        // 设置这些样式  
+        // 设置这些样式
         style.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
         style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setBorderBottom(CellStyle.BORDER_THIN);
@@ -46,19 +46,19 @@ public class OrderHeaderExportExcelUtils {
         style.setBorderRight(CellStyle.BORDER_THIN);
         style.setBorderTop(CellStyle.BORDER_THIN);
         style.setAlignment(CellStyle.ALIGN_CENTER);
-        // 生成一个字体  
+        // 生成一个字体
         Font font = workbook.createFont();
         font.setFontName("Arial");
         font.setColor(IndexedColors.WHITE.getIndex());
         font.setFontHeightInPoints((short) 12);
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        // 把字体应用到当前的样式  
+        // 把字体应用到当前的样式
         style.setFont(font);
 
-        // 指定当单元格内容显示不下时自动换行  
+        // 指定当单元格内容显示不下时自动换行
         style.setWrapText(true);
 
-        // 产生表格标题行  
+        // 产生表格标题行
         Row row = sheet.createRow(0);
         row.setHeightInPoints(16);
         for (int i = 0; i < headers.length; i++) {
@@ -67,7 +67,7 @@ public class OrderHeaderExportExcelUtils {
             XSSFRichTextString text = new XSSFRichTextString(headers[i]);
             cell.setCellValue(text.toString());
         }
-        // 遍历集合数据，产生数据行  
+        // 遍历集合数据，产生数据行
         if (result != null) {
             int index = 1;
             for (List<String> m : result) {
