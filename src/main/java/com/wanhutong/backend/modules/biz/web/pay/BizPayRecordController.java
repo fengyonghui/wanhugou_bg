@@ -166,17 +166,17 @@ public class BizPayRecordController extends BaseController {
 					rowData.add(String.valueOf(""));
 				}
 				//支付账号
-				if(pay.getAccount()!=null){
-					rowData.add(String.valueOf(pay.getAccount().getName()));
-				}else {
-					rowData.add(String.valueOf(""));
-				}
+				//if(pay.getAccount()!=null){
+				//	rowData.add(String.valueOf(pay.getAccount().getName()));
+//				}else {
+					rowData.add(pay.getAccount());
+//				}
 				//支付到账户
-				if(pay.getToAccount()!=null){
-					rowData.add(String.valueOf(pay.getToAccount().getName()));
-				}else {
-					rowData.add(String.valueOf(""));
-				}
+//				if(pay.getToAccount()!=null){
+//					rowData.add(String.valueOf(pay.getToAccount().getName()));
+//				}else {
+					rowData.add(pay.getToAccount());
+//				}
 				//交易类型名称
 				rowData.add(String.valueOf(pay.getRecordTypeName()));
 				//支付类型名称

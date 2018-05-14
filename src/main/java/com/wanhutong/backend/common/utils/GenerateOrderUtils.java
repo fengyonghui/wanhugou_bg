@@ -2,6 +2,7 @@ package com.wanhutong.backend.common.utils;
 
 
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.text.DecimalFormat;
@@ -19,6 +20,11 @@ import java.util.Objects;
  * @date 2017-12-06 22:40
  **/
 public class GenerateOrderUtils {
+    /**
+     * 对比数字位数标记
+     */
+    private final static Integer DIGIT = 4;
+    private final static Integer DIGIT_6 = 6;
 
     private final static Integer OFFICE_LEN = 6;
     private final static Integer CENTER_LEN = 3;
@@ -119,7 +125,7 @@ public class GenerateOrderUtils {
         return null;
     }
 
-    public static synchronized String getOrderTradeNum(OrderTypeEnum tradeNoTypeEnum, Integer officeId) {
+    public static String getOrderTradeNum(OutTradeNoTypeEnum tradeNoTypeEnum, Integer officeId) {
         String repairOfficeId;
         if (officeId != null && officeId > 0) {
             repairOfficeId = officeId.toString();
@@ -134,6 +140,23 @@ public class GenerateOrderUtils {
         }
         return null;
     }
+
+
+//    public static synchronized String getOrderTradeNum(OrderTypeEnum tradeNoTypeEnum, Integer officeId) {
+//        String repairOfficeId;
+//        if (officeId != null && officeId > 0) {
+//            repairOfficeId = officeId.toString();
+//            if (sizeOfInt(officeId) < DIGIT) {
+//                repairOfficeId = DECIMAL_FORMAT.format(officeId);
+//            } else if (sizeOfInt(officeId) > DIGIT) {
+//                repairOfficeId = repairOfficeId.substring(repairOfficeId.length() - 4, repairOfficeId.length());
+//            }
+//            // 取系统当前时间作为订单号变量前半部分，精确到毫秒
+//            String newDate =new SimpleDateFormat("yyMMdd").format(new Date());
+//            return tradeNoTypeEnum.name() + newDate + repairOfficeId + getRandomNum3();
+//        }
+//        return null;
+//    }
 
     /**
      * 判断数字位数的容器
@@ -152,6 +175,27 @@ public class GenerateOrderUtils {
             }
 
         }
+    }
+    /**
+     * 随机生成四位随机数
+     */
+    private static String getRandomNum3() {
+        Integer mark = (int) (Math.random() * 10000);
+        if (sizeOfInt(mark) < DIGIT_6) {
+            return new DecimalFormat("00000").format(mark);
+        }
+        return mark.toString();
+    }
+
+    /**
+     * 随机生成四位随机数
+     */
+    private static String getRandomNum() {
+        Integer mark = (int) (Math.random() * 10000);
+        if (sizeOfInt(mark) < DIGIT) {
+            return df.format(mark);
+        }
+        return mark.toString();
     }
 
     public static void main(String[] args) {

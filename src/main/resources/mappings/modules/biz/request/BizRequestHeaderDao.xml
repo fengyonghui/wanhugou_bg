@@ -42,7 +42,7 @@
 		LEFT JOIN sys_office sot ON sot.id=a.to_id
 		LEFT JOIN sys_user su ON su.id=a.create_id
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
-		INNER JOIN biz_request_detail brd ON brd.header_id = a.id
+		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 		LEFT JOIN  common_process process on process.id = a.process_id
 	</sql>
     
@@ -145,13 +145,6 @@
 			from_id,
 			to_id,
 			recv_eta,
-		<if test="totalDetail!=null">
-			total_detail,
-		</if>
-		<if test="recvTotal!=null">
-			recv_total,
-		</if>
-
 			remark,
 		<if test="bizStatus!=null">
 			biz_status,
@@ -227,5 +220,5 @@
 		process_id  = #{processId}
 		WHERE id = #{headerId}
 	</update>
-	
+
 </mapper>
