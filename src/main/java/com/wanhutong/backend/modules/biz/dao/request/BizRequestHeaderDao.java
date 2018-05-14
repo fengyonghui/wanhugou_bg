@@ -18,5 +18,6 @@ public interface BizRequestHeaderDao extends CrudDao<BizRequestHeader> {
 
     int updateProcessId(@Param("headerId")Integer headerId, @Param("processId") Integer processId);
 
+    int findContByFromOffice(Integer fromOfficeId);
 
 }

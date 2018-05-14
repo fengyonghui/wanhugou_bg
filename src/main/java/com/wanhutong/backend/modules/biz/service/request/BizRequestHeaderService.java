@@ -65,6 +65,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private BizSkuInfoService bizSkuInfoService;
 	@Resource
 	private CommonProcessService commonProcessService;
+	@Resource
+	private BizRequestHeaderDao bizRequestHeaderDao;
 
 
 	public BizRequestHeader get(Integer id) {
@@ -169,13 +171,14 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			bizRequestHeader.setToOffice(office);
 		}
 		if(bizRequestHeader.getId()==null){
-			BizRequestHeader requestHeader=new BizRequestHeader();
-			requestHeader.setFromOffice(bizRequestHeader.getFromOffice());
-			List<BizRequestHeader> requestHeaderList=findList(requestHeader);
-			int s=0;
-			if (requestHeaderList!=null && requestHeaderList.size()>0){
-				s=requestHeaderList.size();
-			}
+//			BizRequestHeader requestHeader=new BizRequestHeader();
+//			requestHeader.setFromOffice(bizRequestHeader.getFromOffice());
+//			List<BizRequestHeader> requestHeaderList=findList(requestHeader);
+//			int s=0;
+//			if (requestHeaderList!=null && requestHeaderList.size()>0){
+//				s=requestHeaderList.size();
+//			}
+			int s=findContByFromOffice(bizRequestHeader.getFromOffice().getId());
 			String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId(),bizRequestHeader.getToOffice().getId(),s+1);
 			bizRequestHeader.setReqNo(reqNo);
 		}
@@ -394,4 +397,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		return dao.updateProcessId(headerId, processId);
 	}
 
+	public  int findContByFromOffice(Integer fromOfficeId ){
+		return  bizRequestHeaderDao.findContByFromOffice(fromOfficeId);
+	}
 }

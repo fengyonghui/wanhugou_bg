@@ -221,4 +221,12 @@
 		WHERE id = #{headerId}
 	</update>
 
+	<select id="findContByFromOffice" resultType="Integer">
+		SELECT
+		count(1)
+		FROM biz_request_header a
+		WHERE a.from_id = #{fromOfficeId}
+
+	</select>
+
 </mapper>
