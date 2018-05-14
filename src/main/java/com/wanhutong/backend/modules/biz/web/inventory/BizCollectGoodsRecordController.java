@@ -195,9 +195,7 @@ public class BizCollectGoodsRecordController extends BaseController {
                                         commoDityList.add(String.valueOf(requestHeader.getFromOffice().getName()));
                                     } else {commoDityList.add("");}
                                     commoDityList.add("");
-                                    if (requestHeader != null && requestHeader.getRecvEta() != null) {
-                                        commoDityList.add(String.valueOf(sdf.format(requestHeader.getRecvEta())));
-                                    } else {commoDityList.add("");}
+                                    commoDityList.add("");
                                 } else {commoDityList.add("");}
                                 if (requestDetail.getSkuInfo().getProductInfo() != null && requestDetail.getSkuInfo().getProductInfo().getBizVarietyInfo() != null &&
                                         requestDetail.getSkuInfo().getProductInfo().getBizVarietyInfo().getName() != null) {
@@ -338,12 +336,12 @@ public class BizCollectGoodsRecordController extends BaseController {
             }
             if(sources!=null && sources.equals("changeStock")) {
                 String[] orderArr = {"备货单号/销售单号", "仓库名称", "商品名称", "商品货号", "商品编号", "变更记录", "原库存数", "变更数量", "客户名称", "创建人", "创建时间"};
-                String[] commoDityArr = {"备货单号/销售单号", "采购中心/采购商", "收货地址", "联系人/电话", "产品分类", "商品名称", "商品货号", "供应商", "品牌",
+                String[] commoDityArr = {"备货单号销售单号", "采购商/采购中心", "收货地址", "联系人/电话", "产品分类", "商品名称", "商品货号", "供应商", "品牌",
                         "申报数量","已供数量"};
                 ExportExcelUtils eeu = new ExportExcelUtils();
                 SXSSFWorkbook workbook = new SXSSFWorkbook();
                 eeu.exportExcel(workbook, 0, "库存变更记录", orderArr, order, fileName);
-                eeu.exportExcel(workbook, 1, "备货单/销售单数据", commoDityArr, commoDity, fileName);
+                eeu.exportExcel(workbook, 1, "备货单数据", commoDityArr, commoDity, fileName);
                 response.reset();
                 response.setContentType("application/octet-stream; charset=utf-8");
                 response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
