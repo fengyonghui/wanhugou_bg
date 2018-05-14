@@ -19,4 +19,7 @@ public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
     int updatePaymentOrderId(@Param("id") Integer id, @Param("paymentId")Integer paymentId);
 
     int updateBizStatus(@Param("id")Integer id, @Param("status")int status);
+
+    int updateProcessId(@Param("headerId")Integer headerId, @Param("processId") Integer processId);
+
 }

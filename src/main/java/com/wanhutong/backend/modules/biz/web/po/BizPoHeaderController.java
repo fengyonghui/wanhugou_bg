@@ -33,7 +33,6 @@ import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
-import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -236,9 +235,8 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getBizPoPaymentOrder() != null) {
-           PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess =
-            ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getBizPoPaymentOrder().getCommonProcess().getType()));
+        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
+           PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
@@ -329,6 +327,13 @@ public class BizPoHeaderController extends BaseController {
     @ResponseBody
     public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
         return bizPoHeaderService.payOrder(poHeaderId, paymentOrderId, payTotal, img);
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:audit")
+    @RequestMapping(value = "startAudit")
+    @ResponseBody
+    public String startAudit(int id) {
+        return bizPoHeaderService.startAudit(id);
     }
 
 }

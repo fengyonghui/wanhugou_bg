@@ -111,27 +111,32 @@
 					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-						${bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name == null ?
-						 '当前无支付申请' : bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name}
+						${bizPoHeader.commonProcess.purchaseOrderProcess.name == null ?
+						 '当前无支付申请' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
 				</td>
 				<td>
-						${bizPoHeader.bizPoPaymentOrder.prevCommonProcess.description}
+						${bizPoHeader.prevCommonProcess.description}
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>
 						<shiro:hasPermission name="biz:po:bizPoHeader:createPayOrder">
-							<c:if test="${bizPoHeader.bizPoPaymentOrder == null}">
+							<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 							</c:if>
 						</shiro:hasPermission>
 						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
-							<c:if test="${bizPoHeader.bizPoPaymentOrder != null && bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.code == payStatus}">
+							<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
+							</c:if>
+
+							<c:if test="${bizPoHeader.bizPoPaymentOrder.id != null && bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
 							</c:if>
-							<c:if test="${bizPoHeader.bizPoPaymentOrder != null
-							&& bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.name != '驳回'
-							&& bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.code != payStatus
-							&& (fn:contains(roleSet, bizPoHeader.bizPoPaymentOrder.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+							<c:if test="${bizPoHeader.commonProcess.id != null
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
+							&& (fn:contains(roleSet, bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 							}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
 							</c:if>

@@ -45,14 +45,5 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 		super.delete(bizPoPaymentOrder);
 	}
 
-	/**
-	 * 更新流程ID
-	 * @param headerId
-	 * @param processId
-	 * @return
-	 */
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public int updateProcessId(int headerId, int processId) {
-		return dao.updateProcessId(headerId, processId);
-	}
+
 }

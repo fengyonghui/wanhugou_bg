@@ -59,7 +59,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	private Integer currentPaymentId;
 
+	private Integer processId;
+    private CommonProcessEntity commonProcess;
+    private CommonProcessEntity prevCommonProcess;
+
 	private BigDecimal payTotal;
+
+	private Date payDeadline;
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -284,6 +290,38 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setPayTotal(BigDecimal payTotal) {
 		this.payTotal = payTotal;
+	}
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
+
+    public CommonProcessEntity getPrevCommonProcess() {
+        return prevCommonProcess;
+    }
+
+    public void setPrevCommonProcess(CommonProcessEntity prevCommonProcess) {
+        this.prevCommonProcess = prevCommonProcess;
+    }
+
+    public Integer getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(Integer processId) {
+        this.processId = processId;
+    }
+
+	public Date getPayDeadline() {
+		return payDeadline;
+	}
+
+	public void setPayDeadline(Date payDeadline) {
+		this.payDeadline = payDeadline;
 	}
 
 	public enum BizStatus {

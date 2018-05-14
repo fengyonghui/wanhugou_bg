@@ -41,7 +41,7 @@
         <name>待总经理审批</name>
         <code>5</code>
         <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
-        <passCode>6</passCode>
+        <passCode>7</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <!--财会待付款-->
@@ -54,7 +54,7 @@
     </process>
     <!--支付完成-->
     <process>
-        <name>完成</name>
+        <name>审批完成</name>
         <code>7</code>
         <roleEnNameEnum></roleEnNameEnum>
         <passCode>0</passCode>

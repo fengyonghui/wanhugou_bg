@@ -105,29 +105,23 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     public void save(BizPoHeader bizPoHeader) {
 
         super.save(bizPoHeader);
-        updateProcessToInit(bizPoHeader);
+        if (bizPoHeader.getCommonProcess() != null) {
+            updateProcessToInit(bizPoHeader);
+        }
         savePoHeaderDetail(bizPoHeader);
     }
 
     private void updateProcessToInit(BizPoHeader bizPoHeader) {
-        if (bizPoHeader.getCurrentPaymentId() != null && bizPoHeader.getCurrentPaymentId() != 0) {
-            BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(bizPoHeader.getCurrentPaymentId());
-            if (bizPoPaymentOrder != null) {
-                PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
-                PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
+            PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
 
-                CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-                commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
-                commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-                commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-                commonProcessService.save(commonProcessEntity);
+            CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+            commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
+            commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+            commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+            commonProcessService.save(commonProcessEntity);
 
-                bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
-                bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
-                bizPoPaymentOrder.setTotal(bizPoHeader.getPayTotal());
-                bizPoPaymentOrderService.save(bizPoPaymentOrder);
-            }
-        }
+            this.updateProcessId(bizPoHeader.getId(), commonProcessEntity.getId());
     }
 
     @Transactional(readOnly = false, rollbackFor = Exception.class)
@@ -140,7 +134,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         if (bizPoHeader.getId() != null && bizPoHeader.getIsPrew() == 0) {
             saveOrdReqBizStatus(bizPoHeader);
         }
-        updateProcessToInit(bizPoHeader);
+        if (bizPoHeader.getCommonProcess() != null) {
+            updateProcessToInit(bizPoHeader);
+        }
         super.save(bizPoHeader);
 
     }
@@ -337,24 +333,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             return "操作失败,该订单已经有正在申请的支付单!";
         }
 
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
-        PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
-        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-        commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
-        commonProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-        commonProcessService.save(commonProcessEntity);
-
         BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
         bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
-        bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
+        bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
         bizPoPaymentOrder.setTotal(bizPoHeader.getPayTotal());
+        bizPoPaymentOrder.setDeadline(bizPoHeader.getPayDeadline());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
         bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
         this.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());
-
-        this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS);
         return "操作成功!";
     }
 
@@ -368,12 +355,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public String audit(int poHeaderId, String currentType, int auditType, String description) {
         BizPoHeader bizPoHeader = this.get(poHeaderId);
-        BizPoPaymentOrder bizPoPaymentOrder = bizPoHeader.getBizPoPaymentOrder();
-        CommonProcessEntity cureentProcessEntity = bizPoPaymentOrder.getCommonProcess();
+        CommonProcessEntity cureentProcessEntity = bizPoHeader.getCommonProcess();
         if (cureentProcessEntity == null) {
             return "操作失败,当前订单无审核状态!";
         }
-        cureentProcessEntity = commonProcessService.get(bizPoPaymentOrder.getCommonProcess().getId());
+        cureentProcessEntity = commonProcessService.get(bizPoHeader.getCommonProcess().getId());
         if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
             LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", poHeaderId, currentType);
             return "操作失败,当前审核状态异常!";
@@ -407,12 +393,29 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         commonProcessService.save(cureentProcessEntity);
 
         CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-        nextProcessEntity.setObjectId(bizPoPaymentOrder.getId().toString());
+        nextProcessEntity.setObjectId(bizPoHeader.getId().toString());
         nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
         nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
         commonProcessService.save(nextProcessEntity);
-        bizPoPaymentOrderService.updateProcessId(bizPoPaymentOrder.getId(), nextProcessEntity.getId());
+        this.updateProcessId(bizPoHeader.getId(), nextProcessEntity.getId());
+        return "操作成功!";
+    }
+
+    /**
+     * 开始审核流程
+     *
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public String startAudit(int id) {
+        BizPoHeader bizPoHeader = this.get(id);
+        if (bizPoHeader == null) {
+            LOGGER.error("start audit error [{}]", id);
+            return "操作失败!参数错误[id]";
+        }
+
+        this.updateProcessToInit(bizPoHeader);
         return "操作成功!";
     }
 
@@ -423,26 +426,23 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public String payOrder(Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         BizPoHeader bizPoHeader = this.get(poHeaderId);
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(paymentOrderId);
-        CommonProcessEntity commonProcessEntity = commonProcessService.get(bizPoPaymentOrder.getProcessId());
 
-        if (!Integer.valueOf(commonProcessEntity.getType()).equals(purchaseOrderProcessConfig.getPayProcessId())) {
+        if (bizPoPaymentOrder.getBizStatus() != BizPoPaymentOrder.BizStatus.NO_PAY.getStatus()) {
             LOGGER.warn("[exception]BizPoHeaderController payOrder currentType mismatching [{}][{}]", poHeaderId, paymentOrderId);
-            return "操作失败,当前流程状态有误!";
+            return "操作失败,当前状态有误!";
         }
 
         bizPoPaymentOrder.setPayTotal(payTotal);
         bizPoPaymentOrder.setImg(img);
+        bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.ALL_PAY.getStatus());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
         // 当前流程
-        PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.processMap.get(Integer.valueOf(commonProcessEntity.getType()));
         User user = UserUtils.getUser();
-        RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
         Role role = new Role();
-        role.setEnname(roleEnNameEnum.getState());
+        role.setEnname(RoleEnNameEnum.FINANCE.getState());
         if (!user.isAdmin() && !user.getRoleList().contains(role)) {
             return "操作失败,该用户没有权限!";
         }
@@ -454,9 +454,19 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         this.updateBizStatus(bizPoHeader.getId(), payTotal.compareTo(orderTotal) >= 0 ? BizPoHeader.BizStatus.ALL_PAY : BizPoHeader.BizStatus.DOWN_PAYMENT);
 
-        this.audit(poHeaderId, commonProcessEntity.getType(), CommonProcessEntity.AuditType.PASS.getCode(), StringUtils.EMPTY);
         // 清除关联的支付申请单
         this.updatePaymentOrderId(bizPoHeader.getId(), null);
         return "操作成功!";
+    }
+
+    /**
+     * 更新流程ID
+     * @param headerId
+     * @param processId
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public int updateProcessId(int headerId, int processId) {
+        return dao.updateProcessId(headerId, processId);
     }
 }

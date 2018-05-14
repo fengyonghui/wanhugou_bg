@@ -56,8 +56,13 @@
         function saveMon(type) {
             if (type == 'createPay') {
                 var payTotal = $("#payTotal").val();
+                var payDeadline = $("#payDeadline").val();
                 if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
                     alert("请输入申请金额!");
+                    return false;
+                }
+                if ($String.isNullOrBlank(payDeadline)) {
+                    alert("请选择本次申请最后付款时间!");
                     return false;
                 }
             }
@@ -273,15 +278,25 @@
             </div>
         </div>
         <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
-        <div class="control-group">
-            <label class="control-label">申请金额：</label>
-            <div class="controls">
-                <input id="payTotal" name="payTotal" type="text"   <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
-                       value="${bizPoHeader.bizPoPaymentOrder.id != null ?
+            <div class="control-group">
+                <label class="control-label">申请金额：</label>
+                <div class="controls">
+                    <input id="payTotal" name="payTotal" type="text"
+                           <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
+                           value="${bizPoHeader.bizPoPaymentOrder.id != null ?
                            bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight)}"
-                       htmlEscape="false" maxlength="30" class="input-xlarge"/>
+                           htmlEscape="false" maxlength="30" class="input-xlarge"/>
+                </div>
             </div>
-        </div>
+            <div class="control-group">
+                <label class="control-label">本次申请最后付款时间：</label>
+                <div class="controls">
+                    <input name="payDeadline" id="payDeadline" type="text" readonly="readonly" maxlength="20"
+                           class="input-medium Wdate required"
+                           value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd"/>"
+                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+                </div>
+            </div>
         </c:if>
         <c:if test="${type == 'pay'}">
             <div class="control-group">
@@ -306,7 +321,7 @@
             </div>
         </c:if>
 
-        <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder.id != null}">
+        <c:if test="${type == 'audit' && bizPoHeader.commonProcess.id != null}">
             <div class="control-group">
                 <label class="control-label">审核状态：</label>
                 <div class="controls">
@@ -323,7 +338,10 @@
     <c:if test="${bizPoHeader.poDetailList!=null}">
         <div class="form-actions">
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
-                <c:if test="${type == 'audit' && bizPoHeader.bizPoPaymentOrder.id != null}">
+                <c:if test="${type == 'startAudit'}">
+                    <input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
+                </c:if>
+                <c:if test="${type == 'audit'}">
                     <input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
                     <input id="btnSubmit" type="button" onclick="checkReject()" class="btn btn-primary" value="审核驳回"/>
                 </c:if>
@@ -493,6 +511,29 @@
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
 <script type="text/javascript">
+    function startAudit() {
+        top.$.jBox.confirm("确认开始审核流程吗？","系统提示",function(v,h,f){
+            if(v=="ok"){
+                var id = $("#id").val();
+                $.ajax({
+                    url: '${ctx}/biz/po/bizPoHeader/startAudit',
+                    contentType: 'application/json',
+                    data: {"id": id},
+                    type: 'get',
+                    success: function (result) {
+                        alert(result);
+                        if(result == '操作成功!') {
+                            window.location.href = "${ctx}/biz/po/bizPoHeader";
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        },{buttonsFocus:1});
+    }
+
     function checkPass() {
         top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
             if(v=="ok"){
