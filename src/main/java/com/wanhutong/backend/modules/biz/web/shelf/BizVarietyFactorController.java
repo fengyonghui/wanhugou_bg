@@ -124,11 +124,11 @@ public class BizVarietyFactorController extends BaseController {
 			BizVarietyFactor bizCentVarietyFactor = new BizVarietyFactor();
 			bizCentVarietyFactor.setVarietyInfo(new BizVarietyInfo(variety));
 			List<BizVarietyFactor> list = bizVarietyFactorService.findList(bizCentVarietyFactor);
-			if (list != null && !list.isEmpty()) {
-				if (id != null) {
-					list.remove(bizVarietyFactorService.get(id));
+				if (list != null && !list.isEmpty()) {
+					if (id != null) {
+						list.remove(bizVarietyFactorService.get(id));
+					}
 				}
-			}
 			if (list != null && !list.isEmpty()) {
 				for (int j = 0; j < list.size(); j++) {
 					int minQty = list.get(j).getMinQty();
@@ -144,8 +144,33 @@ public class BizVarietyFactorController extends BaseController {
 					}
 				}
 			}
-        }
+			if(flag!="" && flag.equals("true") && Integer.parseInt(maxQtyArr[i])!=9999){
+				flag = "error";
+			}else if(flag!="" && flag.equals("true") && Integer.parseInt(maxQtyArr[i])==9999){
+				flag="true";
+			}else if(flag!="" && flag.equals("error") && Integer.parseInt(maxQtyArr[i])==9999){
+				flag="true";
+			}
+		}
         return flag;
 	}
+
+	/**
+	 * 删除不刷新
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizVarietyFactor:edit")
+	@RequestMapping(value = "deleteAjas")
+	public String deleteAjas(BizVarietyFactor bizVarietyFactor, RedirectAttributes redirectAttributes) {
+		String source="error";
+		try {
+			bizVarietyFactorService.delete(bizVarietyFactor);
+			source="ok";
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return source;
+	}
+
 
 }

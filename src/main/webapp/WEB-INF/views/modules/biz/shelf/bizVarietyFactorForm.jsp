@@ -15,11 +15,11 @@
 				    var factorId = $("#id").val();
 				    var varietyIDs=$("#varietyIds").val();
 				    var variety = $("#variety").val();
-                    var minQty = $("#minQtys").val();
-                    var maxQty = $("#maxQtys").val();
-                    var serviceFactor = $("#serviceFactors").val();
-				    if (parseInt(minQty) < 0 || parseInt(maxQty) < 0 || parseInt(serviceFactor) < 0) {
-				        alert("系数和最大最小数量不能为负");
+                    var minQty = $("#minQty").val();
+                    var maxQty = $("#maxQty").val();
+                    var serviceFactor = $("#serviceFactor").val();
+				    if (parseInt(minQty) < 1 || parseInt(maxQty) < 1 || parseInt(serviceFactor) < 0) {
+				        alert("最小、最大数量不能为 0 或者 负数");
 				        return false;
 					}else if (parseInt(minQty) > parseInt(maxQty)) {
 				        alert("最小数必须小于最大数");
@@ -46,6 +46,9 @@
 								if (data=="false") {
 								    alert("已经存在该区间数量");
 								    return false;
+                                }else if(data=="error"){
+                                	alert("最大数量需填写到 9999");
+								    return false;
                                 }else {
                                     loading('正在提交，请稍等...');
                                     form.submit();
@@ -68,10 +71,9 @@
 				var html = "";
 				html += "<tr>" +
 						"	<td><input id='varietyIds' name='varietyIds' type='hidden' class='input-mini' value='add' />"+
-						"<input id='minQtys' name='minQtys' type='number' style='width: 120px;' class='input-mini required' value=''>"+
-						"</td>" +
-						"	<td><input id='maxQtys' name='maxQtys' type='number' style='width: 120px;' class='input-mini required' value=''></td>" +
-                		"	<td><input id='serviceFactors' name='serviceFactors' type='number' placeholder='服务费百分比' style='width: 120px;' class='input-mini required' value=''></td>" +
+						"<input id='minQty' name='minQtys' type='number' style='width: 120px;' class='input-mini required' value=''></td>"+
+						"	<td><input id='maxQty' name='maxQtys' type='number' style='width: 120px;' class='input-mini required' value=''></td>" +
+                		"	<td><input id='serviceFactor' name='serviceFactors' type='number' placeholder='服务费百分比' style='width: 120px;' class='input-mini required' value=''></td>" +
 						"	<td><input type='button' class='btn btn-primary' value='移除' onclick='removeBtn(this)'/><td>" +
 						"</tr>";
                 $("#varietyBody").append(html);
@@ -87,18 +89,23 @@
 					url:"${ctx}/biz/shelf/bizVarietyFactor/selectVari",
 					data:{variId:variId},
 					success:function (data) {
-					    var html = "";
-						$.each(data,function (i,variety) {
-							// alert(","+variety.minQty+","+variety.maxQty+","+variety.serviceFactor);
-                            html += "<tr id='trItems_"+variety.id+"'>" +
-									"	<td><input id='varietyIds' name='varietyIds' type='hidden' class='input-mini' value='"+variety.id+"' />"+
-									"<input id='minQtys' name='minQtys' type='number' class='input-mini required' style='width: 120px;' value='"+variety.minQty+"' /></td>" +
-									"	<td><input id='maxQtys' name='maxQtys' type='number' class='input-mini required' style='width: 120px;' value='"+variety.maxQty+"' /></td>" +
-									"	<td><input id='serviceFactors' name='serviceFactors' type='number' class='input-mini required' placeholder='服务费百分比' style='width: 120px;' value='"+variety.serviceFactor+"' /></td>" +
-									"	<td><input type='button' class='btn btn-primary required' value='移除' onclick='removeBtn(this)'/><td>" +
-                            		"	</tr>";
-                        });
-						$("#varietyBody").append(html);
+						var html = "";
+						$("#add").css("display","none");
+						if(data!=null && data!=""){
+							$.each(data,function (i,variety) {
+								// alert(","+variety.minQty+","+variety.maxQty+","+variety.serviceFactor);
+								html += "<tr id='trItems_"+variety.id+"'>" +
+										"	<td><input id='varietyIds' name='varietyIds' type='hidden' class='input-mini' value='"+variety.id+"' />"+
+										"<input id='minQtys' name='minQtys' type='number' class='input-mini required' style='width: 120px;' value='"+variety.minQty+"' /></td>" +
+										"	<td><input id='maxQtys' name='maxQtys' type='number' class='input-mini required' style='width: 120px;' value='"+variety.maxQty+"' /></td>" +
+										"	<td><input id='serviceFactors' name='serviceFactors' type='number' class='input-mini required' placeholder='服务费百分比' style='width: 120px;' value='"+variety.serviceFactor+"' /></td>" +
+										<%--"	<td><input type='button' class='btn btn-primary required' value='移除' onclick='removeBtn(this)'/><td>" +--%>
+										"	</tr>";
+							});
+							$("#varietyBody").append(html);
+						}else{
+							$("#add").css("display","block");
+						}
 					}
 				});
             }
@@ -106,6 +113,25 @@
         function removeBtn(obj) {
 			$(obj).parent().parent().remove();
         }
+	</script>
+	<script type="text/javascript">
+	function deleteBtn(a){
+		top.$.jBox.confirm("确认要移除该区间数量吗吗？","系统提示",function(v,h,f){
+		if(v=="ok"){
+			$.ajax({
+				type:"post",
+				url:"${ctx}/biz/shelf/bizVarietyFactor/deleteAjas",
+				data:"id="+a,
+				success:function(data){
+					if(data=="ok"){
+						$("#trRevom_"+a).remove();//主要是删除这tr
+						<%--$("#id").val("");//点击删除后把原id为空--%>
+					}
+				}
+			});
+		}
+		},{buttonsFocus:1});
+	}
 	</script>
 </head>
 <body>
@@ -132,7 +158,7 @@
 				<th>最小数量</th>
 				<th>最大数量</th>
 				<th>服务费系数</th>
-				<c:if test="${bizVarietyFactor.id == null}">
+				<c:if test="${bizVarietyFactor.id != null}">
 					<th>操作</th>
 				</c:if>
 				</thead>
@@ -140,13 +166,16 @@
 				<c:if test="${bizVarietyFactor.id != null}">
 					<c:if test="${variList!=null}">
 						<c:forEach items="${variList}" var="varietyFactor">
-							<tr>
+							<tr id="trRevom_${varietyFactor.id}">
 								<td>
 									<input id="varietyIds"  name="varietyIds" type='hidden' class='input-mini' htmlEscape="false"  value='${varietyFactor.id}' />
 									<input id='minQtys'  name='minQtys' type='number' class='input-mini required' style="width: 120px;" htmlEscape="false"  value='${varietyFactor.minQty}' />
 								</td>
 								<td><input id='maxQtys'  name='maxQtys' type='number' class='input-mini required' style="width: 120px;" htmlEscape="false"  value='${varietyFactor.maxQty}' /></td>
 								<td><input id='serviceFactors' name='serviceFactors' type='number' class='input-mini required' style="width: 120px;" placeholder="服务费百分比" htmlEscape="false"  value='${varietyFactor.serviceFactor}' /></td>
+								<c:if test="${bizVarietyFactor.id != null}">
+									<td><input type='button' class='btn btn-primary required' value='移除' onclick='deleteBtn(${varietyFactor.id})'/><td>
+								</c:if>
 							</tr>
 						</c:forEach>
 					</c:if>
@@ -155,6 +184,11 @@
 			</table>
 		</div>
 		<c:if test="${bizVarietyFactor.id == null}">
+		<div class="control-group">
+			<input id="add" style="display:none;" type="button" class="btn btn-primary" value="增加"/>
+		</div>
+		</c:if>
+		<c:if test="${bizVarietyFactor.id != null}">
 			<div class="control-group">
 				<input id="add" type="button" class="btn btn-primary" value="增加"/>
 			</div>
