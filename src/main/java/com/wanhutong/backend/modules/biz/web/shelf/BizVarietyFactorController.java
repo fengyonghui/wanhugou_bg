@@ -113,7 +113,7 @@ public class BizVarietyFactorController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:shelf:bizVarietyFactor:view")
 	@RequestMapping(value = "checkRepeat")
-	public String checkRepeat(Integer variety,BizVarietyFactor bizVarietyFactor) {
+	public String checkRepeat(Integer variety,BizVarietyFactor bizVarietyFactor,Integer id) {
 	    String flag = "true";
 		String[] serviceFactorArr = bizVarietyFactor.getServiceFactors().split(",".trim());
 		String[] minQtyArr = bizVarietyFactor.getMinQtys().split(",".trim());
@@ -123,27 +123,25 @@ public class BizVarietyFactorController extends BaseController {
 //            Integer serviceFactor = bizVarietyFactor.getServiceFactor();
 			BizVarietyFactor bizCentVarietyFactor = new BizVarietyFactor();
 			bizCentVarietyFactor.setVarietyInfo(new BizVarietyInfo(variety));
-			bizCentVarietyFactor.setServiceFactor(Integer.parseInt(serviceFactorArr[i]));
-			bizCentVarietyFactor.setMinQty(Integer.parseInt(minQtyArr[i]));
-			bizCentVarietyFactor.setMaxQty(Integer.parseInt(maxQtyArr[i]));
 			List<BizVarietyFactor> list = bizVarietyFactorService.findList(bizCentVarietyFactor);
 			if (list != null && !list.isEmpty()) {
-				if (bizVarietyFactor.getId() != null) {
-					list.remove(bizVarietyFactor);
+				if (id != null) {
+					list.remove(bizVarietyFactorService.get(id));
 				}
 			}
 			if (list != null && !list.isEmpty()) {
-				for (BizVarietyFactor varietyFactor : list) {
-					int minQty = varietyFactor.getMinQty();
-					int maxQty = varietyFactor.getMaxQty();
-						if (minQty == Integer.parseInt(minQtyArr[i]) && maxQty ==  Integer.parseInt(maxQtyArr[i])) {
-
-						} else {
-							if (minQty >= Integer.parseInt(minQtyArr[i]) && maxQty <= Integer.parseInt(maxQtyArr[i]) ||
-									minQty <= Integer.parseInt(maxQtyArr[i]) && maxQty >= Integer.parseInt(minQtyArr[i])) {
-								flag = "false";
-							}
+				for (int j = 0; j < list.size(); j++) {
+					int minQty = list.get(j).getMinQty();
+					int maxQty = list.get(j).getMaxQty();
+					if(minQty == Integer.parseInt(minQtyArr[i]) && maxQty == Integer.parseInt(maxQtyArr[i]) ||
+							minQty == Integer.parseInt(maxQtyArr[i]) && maxQty == Integer.parseInt(minQtyArr[i])){
+//						System.out.println("不修改的数量不用判断");
+					}else{
+						if (minQty > Integer.parseInt(minQtyArr[i]) && maxQty < Integer.parseInt(maxQtyArr[i]) ||
+								minQty < Integer.parseInt(maxQtyArr[i]) && maxQty > Integer.parseInt(minQtyArr[i])) {
+							flag = "false";
 						}
+					}
 				}
 			}
         }

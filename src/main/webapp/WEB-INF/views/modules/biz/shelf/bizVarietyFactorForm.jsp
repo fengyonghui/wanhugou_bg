@@ -6,6 +6,9 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			if($("#id").val()!=null && $("#id").val()!=""){
+				$("#variety").attr("disabled","disabled");
+			}
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
@@ -22,23 +25,23 @@
 				        alert("最小数必须小于最大数");
 				        return false;
 					}else {
-					var serviceFactors = "";
-                    var minQtys = "";
-                    var maxQtys = "";
-					$("input[name='minQtys']").each(function () {
-						minQtys += $(this).val() + ",";
-                    });
-                    $("input[name='maxQtys']").each(function () {
-                        maxQtys += $(this).val() + ",";
-                    });
-                    $("input[name='serviceFactors']").each(function () {
-                        serviceFactors += $(this).val() + ",";
-                    });
+						var serviceFactors = "";
+						var minQtys = "";
+						var maxQtys = "";
+						$("input[name='minQtys']").each(function () {
+							minQtys += $(this).val() + ",";
+						});
+						$("input[name='maxQtys']").each(function () {
+							maxQtys += $(this).val() + ",";
+						});
+						$("input[name='serviceFactors']").each(function () {
+							serviceFactors += $(this).val() + ",";
+						});
                     <%--alert("--"+serviceFactors+"---"+minQtys+"---"+maxQtys);--%>
 				        $.ajax({
 							type:"post",
 							url:"${ctx}/biz/shelf/bizVarietyFactor/checkRepeat",
-							data:{variety:variety,id:factorId,minQtys:minQtys,maxQtys:maxQtys,serviceFactors:serviceFactors,varietyIds:varietyIDs},
+							data:{variety:variety,id:factorId,serviceFactors:serviceFactors,minQtys:minQtys,maxQtys:maxQtys,varietyIds:varietyIDs},
 							success:function (data) {
 								if (data=="false") {
 								    alert("已经存在该区间数量");
@@ -135,18 +138,18 @@
 				</thead>
 				<tbody id="varietyBody">
 				<c:if test="${bizVarietyFactor.id != null}">
-					<%--<c:if test="${variList!=null}">--%>
-						<%--<c:forEach items="${variList}" var="varietyFactor" varStatus="status">--%>
+					<c:if test="${variList!=null}">
+						<c:forEach items="${variList}" var="varietyFactor">
 							<tr>
 								<td>
-									<input id="varietyIds"  name="varietyIds" type='hidden' class='input-mini' htmlEscape="false"  value='${bizVarietyFactor.id}' />
-									<input id='minQtys'  name='minQtys' type='number' class='input-mini required' style="width: 120px;" htmlEscape="false"  value='${bizVarietyFactor.minQty}' />
+									<input id="varietyIds"  name="varietyIds" type='hidden' class='input-mini' htmlEscape="false"  value='${varietyFactor.id}' />
+									<input id='minQtys'  name='minQtys' type='number' class='input-mini required' style="width: 120px;" htmlEscape="false"  value='${varietyFactor.minQty}' />
 								</td>
-								<td><input id='maxQtys'  name='maxQtys' type='number' class='input-mini required' style="width: 120px;" htmlEscape="false"  value='${bizVarietyFactor.maxQty}' /></td>
-								<td><input id='serviceFactors' name='serviceFactors' type='number' class='input-mini required' style="width: 120px;" placeholder="服务费百分比" htmlEscape="false"  value='${bizVarietyFactor.serviceFactor}' /></td>
+								<td><input id='maxQtys'  name='maxQtys' type='number' class='input-mini required' style="width: 120px;" htmlEscape="false"  value='${varietyFactor.maxQty}' /></td>
+								<td><input id='serviceFactors' name='serviceFactors' type='number' class='input-mini required' style="width: 120px;" placeholder="服务费百分比" htmlEscape="false"  value='${varietyFactor.serviceFactor}' /></td>
 							</tr>
-						<%--</c:forEach>--%>
-					<%--</c:if>--%>
+						</c:forEach>
+					</c:if>
 				</c:if>
 				</tbody>
 			</table>
