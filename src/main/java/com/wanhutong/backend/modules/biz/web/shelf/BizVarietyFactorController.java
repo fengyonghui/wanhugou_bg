@@ -67,6 +67,12 @@ public class BizVarietyFactorController extends BaseController {
 	public String form(BizVarietyFactor bizVarietyFactor, Model model) {
 		model.addAttribute("bizVarietyFactor", bizVarietyFactor);
 		model.addAttribute("varietyList",bizVarietyInfoService.findList(new BizVarietyInfo()));
+		if(bizVarietyFactor!=null && bizVarietyFactor.getId()!=null){
+			BizVarietyFactor varietyFactor = new BizVarietyFactor();
+			varietyFactor.setVarietyInfo(new BizVarietyInfo(bizVarietyFactor.getVarietyInfo().getId()));
+			List<BizVarietyFactor> list = bizVarietyFactorService.findList(varietyFactor);
+			model.addAttribute("variList",list);
+		}
 		return "modules/biz/shelf/bizVarietyFactorForm";
 	}
 
@@ -109,26 +115,37 @@ public class BizVarietyFactorController extends BaseController {
 	@RequestMapping(value = "checkRepeat")
 	public String checkRepeat(Integer variety,BizVarietyFactor bizVarietyFactor) {
 	    String flag = "true";
-		if (bizVarietyFactor != null) {
+		String[] serviceFactorArr = bizVarietyFactor.getServiceFactors().split(",".trim());
+		String[] minQtyArr = bizVarietyFactor.getMinQtys().split(",".trim());
+		String[] maxQtyArr = bizVarietyFactor.getMaxQtys().split(",".trim());
+		for(int i = 0; i < serviceFactorArr.length; i++) {
 //		    bizVarietyFactor.getVarietyInfo();
 //            Integer serviceFactor = bizVarietyFactor.getServiceFactor();
-			bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(variety));
-            List<BizVarietyFactor> list = bizVarietyFactorService.findList(bizVarietyFactor);
-            if (list != null && !list.isEmpty()) {
-                if (bizVarietyFactor.getId() != null) {
-                    list.remove(bizVarietyFactor);
-                }
-            }
-            if (list != null && !list.isEmpty()) {
-                for (BizVarietyFactor varietyFactor : list) {
-                    int minQty = varietyFactor.getMinQty();
-                    int maxQty = varietyFactor.getMaxQty();
-                    if (minQty >= bizVarietyFactor.getMinQty() && maxQty <= bizVarietyFactor.getMaxQty() ||
-                            minQty <= bizVarietyFactor.getMaxQty() && maxQty >= bizVarietyFactor.getMinQty()) {
-                        flag = "false";
-                    }
-                }
-            }
+			BizVarietyFactor bizCentVarietyFactor = new BizVarietyFactor();
+			bizCentVarietyFactor.setVarietyInfo(new BizVarietyInfo(variety));
+			bizCentVarietyFactor.setServiceFactor(Integer.parseInt(serviceFactorArr[i]));
+			bizCentVarietyFactor.setMinQty(Integer.parseInt(minQtyArr[i]));
+			bizCentVarietyFactor.setMaxQty(Integer.parseInt(maxQtyArr[i]));
+			List<BizVarietyFactor> list = bizVarietyFactorService.findList(bizCentVarietyFactor);
+			if (list != null && !list.isEmpty()) {
+				if (bizVarietyFactor.getId() != null) {
+					list.remove(bizVarietyFactor);
+				}
+			}
+			if (list != null && !list.isEmpty()) {
+				for (BizVarietyFactor varietyFactor : list) {
+					int minQty = varietyFactor.getMinQty();
+					int maxQty = varietyFactor.getMaxQty();
+						if (minQty == Integer.parseInt(minQtyArr[i]) && maxQty ==  Integer.parseInt(maxQtyArr[i])) {
+
+						} else {
+							if (minQty >= Integer.parseInt(minQtyArr[i]) && maxQty <= Integer.parseInt(maxQtyArr[i]) ||
+									minQty <= Integer.parseInt(maxQtyArr[i]) && maxQty >= Integer.parseInt(minQtyArr[i])) {
+								flag = "false";
+							}
+						}
+				}
+			}
         }
         return flag;
 	}

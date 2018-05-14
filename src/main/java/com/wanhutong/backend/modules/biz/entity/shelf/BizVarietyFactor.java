@@ -8,6 +8,8 @@ import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -24,6 +26,15 @@ public class BizVarietyFactor extends DataEntity<BizVarietyFactor> {
 	private Integer serviceFactor;		// 服务费系数
 	private Integer minQty;		// 最小数量
 	private Integer maxQty;		// 最大数量
+
+	/**
+	 * 批量添加，最小数量，最大数量，服务费系数
+	 * */
+	private String serviceFactors;
+	private String minQtys;
+	private String maxQtys;
+	private String varietyIds;
+	private String varietList;
 
 	private Double salePrice;		//销售单价
 	
@@ -73,5 +84,45 @@ public class BizVarietyFactor extends DataEntity<BizVarietyFactor> {
 
 	public void setSalePrice(Double salePrice) {
 		this.salePrice = salePrice;
+	}
+
+	public String getServiceFactors() {
+		return serviceFactors;
+	}
+
+	public void setServiceFactors(String serviceFactors) {
+		this.serviceFactors = serviceFactors;
+	}
+
+	public String getMinQtys() {
+		return minQtys;
+	}
+
+	public void setMinQtys(String minQtys) {
+		this.minQtys = minQtys;
+	}
+
+	public String getMaxQtys() {
+		return maxQtys;
+	}
+
+	public void setMaxQtys(String maxQtys) {
+		this.maxQtys = maxQtys;
+	}
+
+	public String getVarietyIds() {
+		return varietyIds;
+	}
+
+	public void setVarietyIds(String varietyIds) {
+		this.varietyIds = varietyIds;
+	}
+
+	public String getVarietList() {
+		return varietList;
+	}
+
+	public void setVarietList(String varietList) {
+		this.varietList = varietList;
 	}
 }

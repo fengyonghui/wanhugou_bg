@@ -10,21 +10,35 @@
 			$("#inputForm").validate({
 				submitHandler: function(form){
 				    var factorId = $("#id").val();
+				    var varietyIDs=$("#varietyIds").val();
 				    var variety = $("#variety").val();
-				    var serviceFactor = $("#serviceFactor").val();
-                    var minQty = $("#minQty").val();
-                    var maxQty = $("#maxQty").val();
-				    if (parseInt(serviceFactor) < 0 || parseInt(minQty) < 0 || parseInt(maxQty) < 0) {
+                    var minQty = $("#minQtys").val();
+                    var maxQty = $("#maxQtys").val();
+                    var serviceFactor = $("#serviceFactors").val();
+				    if (parseInt(minQty) < 0 || parseInt(maxQty) < 0 || parseInt(serviceFactor) < 0) {
 				        alert("系数和最大最小数量不能为负");
 				        return false;
 					}else if (parseInt(minQty) > parseInt(maxQty)) {
 				        alert("最小数必须小于最大数");
 				        return false;
 					}else {
+					var serviceFactors = "";
+                    var minQtys = "";
+                    var maxQtys = "";
+					$("input[name='minQtys']").each(function () {
+						minQtys += $(this).val() + ",";
+                    });
+                    $("input[name='maxQtys']").each(function () {
+                        maxQtys += $(this).val() + ",";
+                    });
+                    $("input[name='serviceFactors']").each(function () {
+                        serviceFactors += $(this).val() + ",";
+                    });
+                    <%--alert("--"+serviceFactors+"---"+minQtys+"---"+maxQtys);--%>
 				        $.ajax({
 							type:"post",
 							url:"${ctx}/biz/shelf/bizVarietyFactor/checkRepeat",
-							data:{variety:variety,id:factorId,serviceFactor:serviceFactor,minQty:minQty,maxQty:maxQty},
+							data:{variety:variety,id:factorId,minQtys:minQtys,maxQtys:maxQtys,serviceFactors:serviceFactors,varietyIds:varietyIDs},
 							success:function (data) {
 								if (data=="false") {
 								    alert("已经存在该区间数量");
@@ -47,7 +61,48 @@
 					}
 				}
 			});
+			$("#add").click(function () {
+				var html = "";
+				html += "<tr>" +
+						"	<td><input id='varietyIds' name='varietyIds' type='hidden' class='input-mini' value='add' />"+
+						"<input id='minQtys' name='minQtys' type='number' style='width: 120px;' class='input-mini required' value=''>"+
+						"</td>" +
+						"	<td><input id='maxQtys' name='maxQtys' type='number' style='width: 120px;' class='input-mini required' value=''></td>" +
+                		"	<td><input id='serviceFactors' name='serviceFactors' type='number' placeholder='服务费百分比' style='width: 120px;' class='input-mini required' value=''></td>" +
+						"	<td><input type='button' class='btn btn-primary' value='移除' onclick='removeBtn(this)'/><td>" +
+						"</tr>";
+                $("#varietyBody").append(html);
+            });
 		});
+		function selectVari(obj) {
+			// alert(obj.value);
+            $("#varietyBody").text("");
+			var variId = obj.value;
+			if (variId!=""){
+				$.ajax({
+					type:"post",
+					url:"${ctx}/biz/shelf/bizVarietyFactor/selectVari",
+					data:{variId:variId},
+					success:function (data) {
+					    var html = "";
+						$.each(data,function (i,variety) {
+							// alert(","+variety.minQty+","+variety.maxQty+","+variety.serviceFactor);
+                            html += "<tr id='trItems_"+variety.id+"'>" +
+									"	<td><input id='varietyIds' name='varietyIds' type='hidden' class='input-mini' value='"+variety.id+"' />"+
+									"<input id='minQtys' name='minQtys' type='number' class='input-mini required' style='width: 120px;' value='"+variety.minQty+"' /></td>" +
+									"	<td><input id='maxQtys' name='maxQtys' type='number' class='input-mini required' style='width: 120px;' value='"+variety.maxQty+"' /></td>" +
+									"	<td><input id='serviceFactors' name='serviceFactors' type='number' class='input-mini required' placeholder='服务费百分比' style='width: 120px;' value='"+variety.serviceFactor+"' /></td>" +
+									"	<td><input type='button' class='btn btn-primary required' value='移除' onclick='removeBtn(this)'/><td>" +
+                            		"	</tr>";
+                        });
+						$("#varietyBody").append(html);
+					}
+				});
+            }
+        }
+        function removeBtn(obj) {
+			$(obj).parent().parent().remove();
+        }
 	</script>
 </head>
 <body>
@@ -61,35 +116,46 @@
 		<div class="control-group">
 			<label class="control-label">品类：</label>
 			<div class="controls">
-				<form:select id="variety" path="varietyInfo.id" class="input-xlarge required">
-					<form:option label="全部" value=""/>
+				<form:select id="variety" path="varietyInfo.id" class="input-xlarge required" onclick="selectVari(this)">
+					<form:option label="请选择" value=""/>
 					<form:options items="${varietyList}" itemLabel="name" itemValue="id"/>
 				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">最小数量：</label>
-			<div class="controls">
-				<input id="minQty" name="minQty" type="number" value="${bizVarietyFactor.minQty}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
+			<table id="varietyTable" class="table table-striped table-bordered table-condensed">
+				<thead>
+				<th>最小数量</th>
+				<th>最大数量</th>
+				<th>服务费系数</th>
+				<c:if test="${bizVarietyFactor.id == null}">
+					<th>操作</th>
+				</c:if>
+				</thead>
+				<tbody id="varietyBody">
+				<c:if test="${bizVarietyFactor.id != null}">
+					<%--<c:if test="${variList!=null}">--%>
+						<%--<c:forEach items="${variList}" var="varietyFactor" varStatus="status">--%>
+							<tr>
+								<td>
+									<input id="varietyIds"  name="varietyIds" type='hidden' class='input-mini' htmlEscape="false"  value='${bizVarietyFactor.id}' />
+									<input id='minQtys'  name='minQtys' type='number' class='input-mini required' style="width: 120px;" htmlEscape="false"  value='${bizVarietyFactor.minQty}' />
+								</td>
+								<td><input id='maxQtys'  name='maxQtys' type='number' class='input-mini required' style="width: 120px;" htmlEscape="false"  value='${bizVarietyFactor.maxQty}' /></td>
+								<td><input id='serviceFactors' name='serviceFactors' type='number' class='input-mini required' style="width: 120px;" placeholder="服务费百分比" htmlEscape="false"  value='${bizVarietyFactor.serviceFactor}' /></td>
+							</tr>
+						<%--</c:forEach>--%>
+					<%--</c:if>--%>
+				</c:if>
+				</tbody>
+			</table>
 		</div>
-		<div class="control-group">
-			<label class="control-label">最大数量：</label>
-			<div class="controls">
-				<input id="maxQty" name="maxQty" type="number" value="${bizVarietyFactor.maxQty}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+		<c:if test="${bizVarietyFactor.id == null}">
+			<div class="control-group">
+				<input id="add" type="button" class="btn btn-primary" value="增加"/>
 			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">服务费系数：</label>
-			<div class="controls">
-				<input id="serviceFactor" name="serviceFactor" type="number" value="${bizVarietyFactor.serviceFactor}" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
-
+		</c:if>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:shelf:bizVarietyFactor:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
