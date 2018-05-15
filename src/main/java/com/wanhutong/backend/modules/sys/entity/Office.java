@@ -45,7 +45,7 @@ public class Office extends TreeEntity<Office> {
 	private User primaryPerson;//主负责人
 	private User deputyPerson;//副负责人
 	private List<String> childDeptList;//快速添加子部门
-//	private String level; //钱包等级
+	private String level; //钱包等级
 	private String gysMobile;	//供应商联系方式
 	private String queryMemberGys;	//列表查询列表 供应商、会员
 
@@ -86,13 +86,13 @@ public class Office extends TreeEntity<Office> {
 	 */
 	private String province;
 
-//	public String getLevel() {
-//		return level;
-//	}
-//
-//	public void setLevel(String level) {
-//		this.level = level;
-//	}
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
 
 	public Office(){
 		super();
