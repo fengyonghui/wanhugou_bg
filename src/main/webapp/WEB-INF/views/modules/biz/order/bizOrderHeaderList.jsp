@@ -158,6 +158,7 @@
 		<th>采购商名称</th>
 		<th>所属采购中心</th>
 		<th>采购商电话</th>
+		<th>已收货款</th>
 		<th>商品总价</th>
 		<th>调整金额</th>
 		<th>运费</th>
@@ -197,6 +198,9 @@
 			</td>
 			<td>
 					${orderHeader.customer.phone}
+			</td>
+			<td>
+				<fmt:formatNumber type="number" value="${orderHeader.receiveTotal==null?0.00:orderHeader.receiveTotal}" pattern="0.00"/>
 			</td>
 			<td><font color="#848484">
 				<fmt:formatNumber type="number" value="${orderHeader.totalDetail}" pattern="0.00"/>
