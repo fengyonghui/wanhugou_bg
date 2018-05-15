@@ -66,8 +66,11 @@
 				<td><a href="${ctx}/sys/user/form?id=${user.user.id}&conn=contact_ck">
 						${user.user.name}</a>
 				</td>
-				<td><a href="${ctx}/sys/office/form?id=${user.cent.id}&source=contact_ck">
-						${user.cent.name}</a>
+				<td>
+					<c:if test="${user.user.name!=null}">
+						<a href="${ctx}/sys/office/form?id=${user.cent.id}&source=contact_ck">
+								${user.cent.name}</a>
+					</c:if>
 				</td>
 			</tr>
 		</c:forEach>
