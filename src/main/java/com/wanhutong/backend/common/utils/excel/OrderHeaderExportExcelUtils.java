@@ -90,6 +90,7 @@ public class OrderHeaderExportExcelUtils {
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 11, 11));
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 12, 12));
                         sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 13, 13));
+                        sheet.addMergedRegion(new CellRangeAddress(index - 1, index, 14, 14));
                     }
                 }
                 if (index > 1 && sheetTitle.equals("商品数据")) {

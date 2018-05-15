@@ -136,6 +136,8 @@ public class BizPayRecordController extends BaseController {
 				//ID
 				rowData.add(String.valueOf(pay.getId()));
 				//订单编号
+				rowData.add(String.valueOf(pay.getOrderNum()));
+				//支付编号
 				rowData.add(String.valueOf(pay.getPayNum()));
 				//业务流水号
 				if(pay.getOutTradeNo()!=null){
@@ -197,7 +199,7 @@ public class BizPayRecordController extends BaseController {
 				rowData.add(String.valueOf(sdf.format(pay.getUpdateDate())));
 				data.add(rowData);
 			});
-			String[] payHeads = {"ID", "订单编号", "业务流水号", "支付金额", "支付人", "客户名称", "采购中心", "联系电话", "支付账号",
+			String[] payHeads = {"ID", "订单编号","支付编号", "业务流水号", "支付金额", "支付人", "客户名称", "采购中心", "联系电话", "支付账号",
 					"支付到账户", "交易类型名称", "支付类型名称", "交易作用/原因", "创建人", "创建时间", "更新人", "更新时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
