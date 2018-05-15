@@ -12,20 +12,25 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -63,6 +68,7 @@ import java.util.Map;
 @RequestMapping(value = "${adminPath}/biz/order/bizOrderHeader")
 public class BizOrderHeaderController extends BaseController {
 
+    private static final Integer IMGTYPE = 37;
     @Autowired
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired
@@ -89,6 +95,10 @@ public class BizOrderHeaderController extends BaseController {
     private DictService dictService;
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private BizOrderHeaderUnlineService bizOrderHeaderUnlineService;
+    @Autowired
+    private CommonImgService commonImgService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -123,6 +133,8 @@ public class BizOrderHeaderController extends BaseController {
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
+        model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
+
         return "modules/biz/order/bizOrderHeaderList";
     }
 
@@ -134,12 +146,14 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderHeader.setCustomer(office);
             model.addAttribute("entity2", bizOrderHeader);
 //			用于销售订单页面展示属于哪个采购中心哪个客户专员
-            BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
-            if (bizCustomCenterConsultant != null) {
-                bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
-                model.addAttribute("orderCenter", bizCustomCenterConsultant);
-            } else {
-                model.addAttribute("orderCenter", new BizCustomCenterConsultant());
+            if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
+                BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+                if (bizCustomCenterConsultant != null) {
+                    bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
+                    model.addAttribute("orderCenter", bizCustomCenterConsultant);
+                } else {
+                    model.addAttribute("orderCenter", new BizCustomCenterConsultant());
+                }
             }
         }
         BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
@@ -183,6 +197,44 @@ public class BizOrderHeaderController extends BaseController {
                 logger.info("--是首单--");
                 bizOrderHeader.setOneOrder("firstOrder");
             }
+        }
+
+        boolean flag = false;
+        User user = UserUtils.getUser();
+        if (user.getRoleList() != null) {
+            for (Role role : user.getRoleList()) {
+                if (RoleEnNameEnum.FINANCE.getState().equals(role.getEnname())) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if (bizOrderHeader.getStatu() != null && bizOrderHeader.getStatu().equals("unline")){
+            BizOrderHeaderUnline orderHeaderUnline = new BizOrderHeaderUnline();
+            orderHeaderUnline.setOrderHeader(bizOrderHeader);
+            List<BizOrderHeaderUnline> list = bizOrderHeaderUnlineService.findList(orderHeaderUnline);
+            if (list != null && !list.isEmpty()) {
+                BizOrderHeaderUnline bizOrderHeaderUnline = list.get(0);
+                bizOrderHeader.setOrderHeaderUnline(bizOrderHeaderUnline);
+                if (bizOrderHeaderUnline != null && bizOrderHeaderUnline.getId() != null) {
+                    CommonImg commonImg = new CommonImg();
+                    commonImg.setImgType(ImgEnum.UNlINE_PAYMENT_VOUCHER.getCode());
+                    commonImg.setObjectName(ImgEnum.UNlINE_PAYMENT_VOUCHER.getTableName());
+                    commonImg.setObjectId(bizOrderHeaderUnline.getId());
+                    List<CommonImg> commonImgList = commonImgService.findList(commonImg);
+                    if (commonImgList != null && !commonImgList.isEmpty()) {
+                        List<String> imgUrlList = new ArrayList<>();
+                        for (CommonImg comImg:commonImgList) {
+                            StringBuffer sb = new StringBuffer();
+                            sb.append(comImg.getImgServer()).append(comImg.getImgPath());
+                            imgUrlList.add(sb.toString());
+                        }
+                        model.addAttribute("imgUrlList",imgUrlList);
+                    }
+                }
+            }
+            model.addAttribute("entity", bizOrderHeader);
+            return "modules/biz/order/bizOrderHeaderUnlineForm";
         }
         model.addAttribute("entity", bizOrderHeader);
         return "modules/biz/order/bizOrderHeaderForm";

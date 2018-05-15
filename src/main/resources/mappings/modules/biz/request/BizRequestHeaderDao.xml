@@ -44,6 +44,7 @@
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
 		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = #{DEL_FLAG_NORMAL}
 		LEFT JOIN  common_process process on process.id = a.process_id
+		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">

@@ -264,6 +264,12 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
             @Param("officeId")Integer officeId);
 
     /**
+     * 查询线下支付订单
+     * @return
+     */
+    List<BizOrderHeader> findUnlineOrder();
+
+    /**
      * 根据office id 取库存
      * @param id
      * @return

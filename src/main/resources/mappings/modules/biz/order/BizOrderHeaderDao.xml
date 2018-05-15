@@ -263,6 +263,9 @@
 		pi.vendor_name AS "orderDetailList.vendor.name"
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
+		<if test="statu != null and statu =='unline'">
+			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		</if>
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
 		<include refid="bizOrderHeaderJoins"/>
@@ -366,6 +369,9 @@
 				<if test="dbName == 'oracle'">'%'||#{con.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
+			</if>
+			<if test="statu != null and statu =='unline'">
+				AND ohu.id is not NULL
 			</if>
 
 			<if test="includeTestData != null and includeTestData != true">
@@ -1921,4 +1927,38 @@ FROM
 		ORDER BY a.update_time DESC
 	</select>
 
+
+	<select id="findUnlineOrder" resultType="BizOrderHeader">
+		SELECT
+		a.id AS "id",
+		a.order_num AS "orderNum",
+		a.order_type AS "orderType",
+		a.cust_id AS "customer.id",
+		a.total_detail AS "totalDetail",
+		a.receive_total as "receiveTotal",
+		a.total_exp AS "totalExp",
+		a.freight AS "freight",
+		a.update_id AS "updateBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.update_time AS "updateDate",
+		a.biz_type as "bizType",
+		a.inv_status AS "invStatus",
+		a.plateform_id AS "platformInfo.id",
+		a.biz_status AS "bizStatus",
+		so.name as "custName",
+		s.name as "centersName"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		LEFT JOIN sys_office so on so.id = a.cust_id
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office s on s.id=ccs.center_id
+		WHERE a.status = 1
+		AND ohu.id is not NULL
+		<if test="page !=null and page.orderBy != null and page.orderBy != ''">
+			ORDER BY ${page.orderBy}
+		</if>
+	</select>
 </mapper>
