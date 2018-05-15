@@ -16,10 +16,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
+import com.wanhutong.backend.modules.biz.entity.order.*;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -27,10 +24,7 @@ import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
+import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -99,6 +93,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderHeaderUnlineService bizOrderHeaderUnlineService;
     @Autowired
     private CommonImgService commonImgService;
+    @Autowired
+    private BizOrderStatusService bizOrderStatusService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -379,6 +375,15 @@ public class BizOrderHeaderController extends BaseController {
                     if (objJsp == OrderHeaderBizStatusEnum.SUPPLYING.getState()) {
                         bh.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());//15供货中
                         bizOrderHeaderService.saveOrderHeader(bh);//保存状态
+
+                        /*用于 订单状态表 insert状态*/
+                        if(bh!=null && bh.getId()!=null || bh.getBizStatus()!=null){
+                            BizOrderStatus orderStatus = new BizOrderStatus();
+                            orderStatus.setOrderHeader(bh);
+                            orderStatus.setBizStatus(bh.getBizStatus());
+                            bizOrderStatusService.save(orderStatus);
+                        }
+
                         BizOrderAddress OrderAddressTwo = new BizOrderAddress();
                         OrderAddressTwo.setOrderHeaderID(bh);
                         List<BizOrderAddress> list = bizOrderAddressService.findList(OrderAddressTwo);
@@ -431,6 +436,15 @@ public class BizOrderHeaderController extends BaseController {
                     } else if (objJsp == OrderHeaderBizStatusEnum.UNAPPROVE.getState()) {
                         bh.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());//45审核失败
                         bizOrderHeaderService.saveOrderHeader(bh);//保存状态
+
+                        /*用于 订单状态表 insert状态*/
+                        if(bh!=null && bh.getId()!=null || bh.getBizStatus()!=null){
+                            BizOrderStatus orderStatus = new BizOrderStatus();
+                            orderStatus.setOrderHeader(bh);
+                            orderStatus.setBizStatus(bh.getBizStatus());
+                            bizOrderStatusService.save(orderStatus);
+                        }
+
                         BizOrderAddress OrderAddressTwo = new BizOrderAddress();
                         OrderAddressTwo.setOrderHeaderID(bh);
                         List<BizOrderAddress> list = bizOrderAddressService.findList(OrderAddressTwo);
