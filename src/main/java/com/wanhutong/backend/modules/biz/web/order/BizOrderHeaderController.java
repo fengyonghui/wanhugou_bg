@@ -578,7 +578,7 @@ public class BizOrderHeaderController extends BaseController {
                             break;
                         }
                     }
-                    //采购商名称/电话
+                    //经销店名称/电话
                     rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
                     //所属采购中心
                     rowData.add(String.valueOf(o.getCentersName()));
@@ -695,7 +695,7 @@ public class BizOrderHeaderController extends BaseController {
                                 break;
                             }
                         }
-                        //采购商名称/电话
+                        //经销店名称/电话
                         rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
                         //所属采购中心
                         rowData.add(String.valueOf(o.getCentersName()));
@@ -768,7 +768,7 @@ public class BizOrderHeaderController extends BaseController {
                     });
                 }
             }
-            String[] headers = {"订单编号", "订单类型", "采购商名称/电话", "所属采购中心", "商品总价","商品工厂总价", "调整金额", "运费",
+            String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "商品总价","商品工厂总价", "调整金额", "运费",
                     "应付金额", "已收货款", "尾款信息", "服务费", "发票状态", "业务状态","创建时间","支付类型名称","业务流水号","支付金额","交易时间"};
             String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价","商品工厂价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
