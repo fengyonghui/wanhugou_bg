@@ -69,6 +69,7 @@
 				<th>订单状态</th>
 				<th>订单来源</th>
 				<th>创建时间</th>
+				<th>累积支付金额</th>
 				<th>审核状态</th>
 				<th>上级审核备注</th>
 				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
@@ -111,8 +112,11 @@
 					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
+						${bizPoHeader.payTotal}
+				</td>
+				<td>
 						${bizPoHeader.commonProcess.purchaseOrderProcess.name == null ?
-						 '当前无支付申请' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
+						 '当前无审批流程' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
 				</td>
 				<td>
 						${bizPoHeader.prevCommonProcess.description}
@@ -120,17 +124,16 @@
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>
 						<shiro:hasPermission name="biz:po:bizPoHeader:createPayOrder">
-							<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
+							<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
+							&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
+							}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 							</c:if>
 						</shiro:hasPermission>
 						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
 							<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
-							</c:if>
-
-							<c:if test="${bizPoHeader.bizPoPaymentOrder.id != null && bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
-								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
 							</c:if>
 							<c:if test="${bizPoHeader.commonProcess.id != null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
@@ -140,7 +143,7 @@
 							}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
 							</c:if>
-							<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请</a>
+							<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
 						</shiro:hasPermission>
 						<shiro:hasPermission name="biz:po:bizPoHeader:edit">
 							<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>

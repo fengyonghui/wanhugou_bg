@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -399,6 +400,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
         commonProcessService.save(nextProcessEntity);
         this.updateProcessId(bizPoHeader.getId(), nextProcessEntity.getId());
+
+        if (nextProcess.getCode() == purchaseOrderProcessConfig.getPayProcessId()) {
+            this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS_COMPLETE);
+        }
+
         return "操作成功!";
     }
 
@@ -408,13 +414,19 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public String startAudit(int id) {
+    public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline) {
         BizPoHeader bizPoHeader = this.get(id);
         if (bizPoHeader == null) {
             LOGGER.error("start audit error [{}]", id);
             return "操作失败!参数错误[id]";
         }
 
+        if (prew) {
+            bizPoHeader.setPayDeadline(prewPayDeadline);
+            bizPoHeader.setPayTotal(prewPayTotal);
+            this.genPaymentOrder(bizPoHeader);
+        }
+        this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS);
         this.updateProcessToInit(bizPoHeader);
         return "操作成功!";
     }
@@ -452,11 +464,18 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 //      ALL_PAY(2, "全部支付"),
         BigDecimal orderTotal = BigDecimal.valueOf(bizPoHeader.getTotalDetail()).add(BigDecimal.valueOf(bizPoHeader.getTotalExp())).add(BigDecimal.valueOf(bizPoHeader.getFreight()));
 
-        this.updateBizStatus(bizPoHeader.getId(), payTotal.compareTo(orderTotal) >= 0 ? BizPoHeader.BizStatus.ALL_PAY : BizPoHeader.BizStatus.DOWN_PAYMENT);
+        this.updateBizStatus(bizPoHeader.getId(), bizPoHeader.getPayTotal().add(payTotal).compareTo(orderTotal) >= 0 ? BizPoHeader.BizStatus.ALL_PAY : BizPoHeader.BizStatus.DOWN_PAYMENT);
+
+        incrPayTotal(bizPoHeader.getId(), payTotal);
 
         // 清除关联的支付申请单
         this.updatePaymentOrderId(bizPoHeader.getId(), null);
         return "操作成功!";
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public int incrPayTotal(int id, BigDecimal payTotal) {
+        return dao.incrPayTotal(id, payTotal);
     }
 
     /**

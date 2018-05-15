@@ -50,6 +50,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -332,8 +333,8 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "startAudit")
     @ResponseBody
-    public String startAudit(int id) {
-        return bizPoHeaderService.startAudit(id);
+    public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline) {
+        return bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline);
     }
 
 }

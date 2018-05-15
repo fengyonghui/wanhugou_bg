@@ -332,6 +332,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		DELIVERY(4, "已收货"),
 		COMPLETE(5, "已完成"),
 		PROCESS(6, "审批中"),
+		PROCESS_COMPLETE(7, "审批完成"),
 		;
 		private int status;
 		private String desc;

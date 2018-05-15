@@ -8,6 +8,8 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
+
 /**
  * 采购订单表DAO接口
  * @author liuying
@@ -22,4 +24,5 @@ public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
 
     int updateProcessId(@Param("headerId")Integer headerId, @Param("processId") Integer processId);
 
+    int incrPayTotal(@Param("id")int id, @Param("payTotal")BigDecimal payTotal);
 }

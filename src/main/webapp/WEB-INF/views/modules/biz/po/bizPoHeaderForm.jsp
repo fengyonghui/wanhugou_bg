@@ -293,8 +293,34 @@
                 <div class="controls">
                     <input name="payDeadline" id="payDeadline" type="text" readonly="readonly" maxlength="20"
                            class="input-medium Wdate required"
-                           value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd"/>"
-                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+                           value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+                            <c:if test="${type == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
+                placeholder="必填！"/>
+                </div>
+            </div>
+        </c:if>
+        <c:if test="${type == 'startAudit'}">
+            <div class="control-group">
+                <label class="control-label">是否同时提交支付申请：</label>
+                <div class="controls">
+                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" checked/>是
+                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);"/>否
+                </div>
+            </div>
+            <div class="control-group prewTimeTotal">
+                <label class="control-label">本次申请最后付款时间：</label>
+                <div class="controls">
+                    <input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
+                           class="input-medium Wdate required"
+                           value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"
+                           placeholder="必填！"/>
+                </div>
+            </div>
+            <div class="control-group prewTimeTotal">
+                <label class="control-label">申请金额：</label>
+                <div class="controls">
+                    <input name="prewPayTotal" id="prewPayTotal" type="text"  maxlength="20" placeholder="必填！"/>
                 </div>
             </div>
         </c:if>
@@ -511,14 +537,37 @@
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
 <script type="text/javascript">
+    function showTimeTotal(show) {
+        if (show) {
+            $(".prewTimeTotal").show();
+            return;
+        }
+        $(".prewTimeTotal").hide();
+    }
+
     function startAudit() {
+        var prew = false;
+        var prewPayTotal = $("#prewPayTotal").val();
+        var prewPayDeadline = $("#prewPayDeadline").val();
+        if ($("#meanwhilePayOrderRadioTrue").attr("checked") == "checked") {
+            if ($String.isNullOrBlank(prewPayTotal)) {
+                alert("请输入申请金额");
+                return false;
+            }
+            if ($String.isNullOrBlank(prewPayDeadline)) {
+                alert("请选择日期");
+                return false;
+            }
+            prew = true;
+        }
+
         top.$.jBox.confirm("确认开始审核流程吗？","系统提示",function(v,h,f){
             if(v=="ok"){
                 var id = $("#id").val();
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/startAudit',
                     contentType: 'application/json',
-                    data: {"id": id},
+                    data: {"id": id, "prew":prew, "prewPayTotal": prewPayTotal, "prewPayDeadline":prewPayDeadline},
                     type: 'get',
                     success: function (result) {
                         alert(result);

@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.po;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,8 @@ public class BizPoPaymentOrderController extends BaseController {
 
 	@Autowired
 	private BizPoPaymentOrderService bizPoPaymentOrderService;
+	@Autowired
+	private BizPoHeaderService bizPoHeaderService;
 	
 	@ModelAttribute
 	public BizPoPaymentOrder get(@RequestParam(required=false) Integer id) {
@@ -50,7 +54,9 @@ public class BizPoPaymentOrderController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(BizPoPaymentOrder bizPoPaymentOrder, HttpServletRequest request, HttpServletResponse response, Model model, Integer poId) {
 		bizPoPaymentOrder.setPoHeaderId(poId);
+		BizPoHeader bizPoHeader = bizPoHeaderService.get(poId);
 		Page<BizPoPaymentOrder> page = bizPoPaymentOrderService.findPage(new Page<BizPoPaymentOrder>(request, response), bizPoPaymentOrder); 
+		model.addAttribute("bizPoHeader", bizPoHeader);
 		model.addAttribute("page", page);
 		return "modules/biz/po/bizPoPaymentOrderList";
 	}

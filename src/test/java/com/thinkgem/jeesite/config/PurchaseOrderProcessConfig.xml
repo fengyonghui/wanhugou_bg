@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PurchaseOrderProcessConfig>
     <defaultProcessId>2</defaultProcessId>
-    <payProcessId>6</payProcessId>
+    <payProcessId>7</payProcessId>
 
     <!--流程节点-->
     <!--采购中心负责人审批-->

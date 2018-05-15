@@ -83,7 +83,9 @@
 		UPDATE biz_po_payment_order SET 	
 			po_header_id = #{poHeaderId},
 			total = #{total},
-			deadline = #{deadline}
+			deadline = #{deadline},
+			pay_total = #{payTotal},
+			biz_status = #{bizStatus}
 		WHERE id = #{id}
 	</update>
 	
