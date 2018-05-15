@@ -409,7 +409,7 @@ public class BizInvoiceController extends BaseController {
                 }
             }
             String[] headers = {"发货号", "物流商", "运费", "操作费", "货值","运费/货值", "发货人", "物流结算方式", "发货时间"};
-            String[] details = {"发货号","物流商", "订单编号", "采购商名称", "业务状态", "商品名称","商品编码", "商品属性", "采购数量","已发货数量"};
+            String[] details = {"发货号","物流商", "订单编号", "经销店名称", "业务状态", "商品名称","商品编码", "商品属性", "采购数量","已发货数量"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "发货数据", headers, data, fileName);
