@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -18,6 +19,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -77,6 +79,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 	private BizPoPaymentOrderService bizPoPaymentOrderService;
 	@Autowired
 	private CommonProcessService commonProcessService;
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
 
 
 
@@ -227,6 +231,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 			        if(orderDetailList.size()==entry.getValue().size()){
 						bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
 						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+
+						/*用于 订单状态表 insert状态*/
+						if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+							BizOrderStatus orderStatus = new BizOrderStatus();
+							orderStatus.setOrderHeader(bizOrderHeader);
+							orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+							bizOrderStatusService.save(orderStatus);
+						}
+
 			        }else if(orderDetailList.size()>entry.getValue().size()){
 						bizPoOrderReq.setOrderHeader(bizOrderHeader);
 						bizPoOrderReq.setRequestHeader(null);
@@ -236,9 +249,27 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 						if(poOrderReqs.size()==orderDetailList.size()){
 							bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
 							bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+
+							/*用于 订单状态表 insert状态*/
+							if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+								BizOrderStatus orderStatus = new BizOrderStatus();
+								orderStatus.setOrderHeader(bizOrderHeader);
+								orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+								bizOrderStatusService.save(orderStatus);
+							}
+
 						}else {
 							bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
 							bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+
+							/*用于 订单状态表 insert状态*/
+							if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+								BizOrderStatus orderStatus = new BizOrderStatus();
+								orderStatus.setOrderHeader(bizOrderHeader);
+								orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+								bizOrderStatusService.save(orderStatus);
+							}
+
 						}
 			        }
 

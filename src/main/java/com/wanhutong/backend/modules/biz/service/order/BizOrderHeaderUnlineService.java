@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
 
 	public BizOrderHeaderUnline get(Integer id) {
 		return super.get(id);
@@ -62,6 +65,15 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
         }
 		bizOrderHeader.setReceiveTotal(bizOrderHeaderUnline.getRealMoney().doubleValue());
 		bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+
+		/*用于 订单状态表 insert状态*/
+		if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+			BizOrderStatus orderStatus = new BizOrderStatus();
+			orderStatus.setOrderHeader(bizOrderHeader);
+			orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+			bizOrderStatusService.save(orderStatus);
+		}
+
 	}
 	
 	@Transactional(readOnly = false)
