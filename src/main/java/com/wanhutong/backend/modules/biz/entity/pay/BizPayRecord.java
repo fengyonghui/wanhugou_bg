@@ -33,8 +33,8 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 	private Integer payer;		// 支付人
 	private Office customer;		// 客户ID
 	private Integer bizStatus;		// 支付状态
-	private Office account;		// 支付账号
-	private Office toAccount;		// 支付到账户
+	private String account;		// 支付账号
+	private String toAccount;		// 支付到账户
 	private Integer recordType;		// 交易类型：充值、体现、支付
 	private String recordTypeName;		// 交易类型名称
 	private Integer payType;		// 支付类型：wx(微信) alipay(支付宝)
@@ -42,6 +42,8 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 	private String tradeReason;		// 交易作用/原因
 	private Date trandStartTime;   //交易开始时间
 	private Date trandEndTime;     //交易结束时间
+
+	private Integer reqId;      //备货清单Id
 
 	/**
 	 * 采购中心
@@ -98,19 +100,19 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 		this.customer = customer;
 	}
 
-	public Office getAccount() {
+	public String getAccount() {
 		return account;
 	}
 
-	public void setAccount(Office account) {
+	public void setAccount(String account) {
 		this.account = account;
 	}
 
-	public Office getToAccount() {
+	public String getToAccount() {
 		return toAccount;
 	}
 
-	public void setToAccount(Office toAccount) {
+	public void setToAccount(String toAccount) {
 		this.toAccount = toAccount;
 	}
 
@@ -235,5 +237,13 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 
 	public void setOrderNum(String orderNum) {
 		this.orderNum = orderNum;
+	}
+
+	public Integer getReqId() {
+		return reqId;
+	}
+
+	public void setReqId(Integer reqId) {
+		this.reqId = reqId;
 	}
 }

@@ -20,6 +20,19 @@ public class DsConfig {
     }
     public static String getImgServer(){return getConfig().getString("imgServer");}
     public static String getOldImgServer(){return getConfig().getString("oldImgServer");}
+
+    public static String getAppid(){return getConfig().getString("appId");}
+    public static String getNotifyUrl(){return getConfig().getString("notifyUrl");}
+    public static String getSsecureKey(){return getConfig().getString("secureKey");}
+
+    public static String getWxPostUrl(){return getConfig().getString("wxPostUrl");}
+
+    public static String getAlipayPostUrl(){return getConfig().getString("alipayPostUrl");}
+
+
+
+
+
     public static void main(String[] args) {
         System.out.println(getImgServer());
     }

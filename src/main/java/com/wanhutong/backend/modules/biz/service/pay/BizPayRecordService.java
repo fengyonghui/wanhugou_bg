@@ -15,6 +15,8 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.dao.pay.BizPayRecordDao;
 
+import javax.annotation.Resource;
+
 /**
  * 交易记录Service
  * @author OuyangXiutian
@@ -23,6 +25,8 @@ import com.wanhutong.backend.modules.biz.dao.pay.BizPayRecordDao;
 @Service
 @Transactional(readOnly = true)
 public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayRecord> {
+	@Resource
+	private BizPayRecordDao bizPayRecordDao;
 
 	public BizPayRecord get(Integer id) {
 		return super.get(id);
@@ -31,7 +35,11 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 	public List<BizPayRecord> findList(BizPayRecord bizPayRecord) {
 		return super.findList(bizPayRecord);
 	}
-	
+
+	public BizPayRecord findBizPayRecord(String payNum){
+		return bizPayRecordDao.findBizPayRecord(payNum);
+	}
+
 	public Page<BizPayRecord> findPage(Page<BizPayRecord> page, BizPayRecord bizPayRecord) {
 		User user=UserUtils.getUser();
 		if(user.isAdmin()){
@@ -49,5 +57,6 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 	public void delete(BizPayRecord bizPayRecord) {
 		super.delete(bizPayRecord);
 	}
+
 	
 }

@@ -18,6 +18,10 @@
 				},{buttonsFocus:1});
 				top.$('.jbox-body .jbox-icon').css('top','55px');
 			});
+            $('#myModal').on('hide.bs.modal', function () {
+                window.location.href="${ctx}/biz/request/bizRequestHeader";
+
+            })
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -38,6 +42,47 @@
                     }
                 }
             })
+        }
+        function pay(reqId){
+			$("#myModal").find("#reqId").val(reqId);
+            var totalMoney= $("#total_"+reqId).text();
+            var revMoney=$("#rev_"+reqId).val();
+            $("#toPay").text(parseFloat(totalMoney)-parseFloat(revMoney))
+
+
+		}
+        function genPayQRCode(obj) {
+			var payMoney =$("#payMoneyId").val();
+			var reqId = $("#reqId").val();
+			var payMethod=$("input:radio[name='payMethod']:checked").val();
+            var totalMoney= $("#total_"+reqId).text();
+            var revMoney=$("#rev_"+reqId).val();
+
+            if(parseFloat(totalMoney)-parseFloat(revMoney)-parseFloat(payMoney)<0){
+                alert("应付金额超出范围!");
+                return;
+			}
+
+			if(payMoney==''||parseFloat(payMoney)==0.0){
+			    alert("请输入金额！");
+			    return;
+			}
+
+			if(payMethod=="" || payMethod==undefined || payMethod==null){
+			    alert("请选择支付方式！");
+			    return;
+			}
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/request/bizRequestPay/genPayQRCode",
+               data:{payMoney:payMoney,reqId:reqId,payMethod:payMethod},
+                success:function (data) {
+                    var img="<img src='"+data+"'/>"
+                    $("#img").html(img);
+
+                }
+            })
+
         }
 	</script>
 </head>
@@ -95,6 +140,7 @@
 				<th>期望收货时间</th>
 				<th>备货商品数量</th>
 				<th>备货商品总价</th>
+				<th>已收金额</th>
 				<th>已到货数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
@@ -130,7 +176,9 @@
 					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>${requestHeader.reqQtys}</td>
-				<td>${requestHeader.totalMoney}</td>
+				<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
+					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
+				<td>${requestHeader.recvTotal}</td>
 				<td>${requestHeader.recvQtys}</td>
 				<td>
 					${requestHeader.remark}
@@ -180,6 +228,11 @@
 							<%--<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},this.value,${requestHeader.id})">关闭</a>--%>
 						<%--</c:when>--%>
 					</c:choose>
+
+					<c:if test="${requestHeader.totalDetail != requestHeader.recvTotal}">
+						<a data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
+					</c:if>
+
 				</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
@@ -195,6 +248,33 @@
 		</c:forEach>
 		</tbody>
 	</table>
+
+	<!-- 模态框（Modal） -->
+	<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">付款</h4>
+				</div>
+				<div class="modal-body">
+					<input id="reqId" type="hidden" value="" />
+					<div style="color: red; font-size: 16px">应付金额:<span id="toPay"></span></div>
+					<div style="margin-top: 14px">
+					支付金额：<input type="text" id="payMoneyId" />
+					支付方式：<input type="radio" name="payMethod"  value="0"> 支付宝
+							<input type="radio" name="payMethod"  value="1"> 微信
+					</div>
+					二维码：<div style="margin-top: 14px" id="img"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" onclick="genPayQRCode();" class="btn btn-primary">提交</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+
 	<div class="pagination">${page}</div>
 </body>
 </html>

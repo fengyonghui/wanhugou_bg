@@ -87,8 +87,8 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
                 bizPayRecord.setPayer(user.getId());
                 bizPayRecord.setCustomer(custCredit.getCustomer());
                 bizPayRecord.setBizStatus(BIZSTATUS);
-                bizPayRecord.setAccount(user.getCompany());
-                bizPayRecord.setToAccount(custCredit.getCustomer());
+                bizPayRecord.setAccount(user.getCompany().getId().toString());
+                bizPayRecord.setToAccount(custCredit.getCustomer().getId().toString());
                 bizPayRecord.setRecordType(RECORDTYPE);
                 bizPayRecord.setRecordTypeName("充值");
                 bizPayRecord.setPayType(PAYTYPE);

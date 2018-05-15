@@ -44,7 +44,6 @@
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
 		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = #{DEL_FLAG_NORMAL}
 		LEFT JOIN  common_process process on process.id = a.process_id
-		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">
@@ -146,13 +145,6 @@
 			from_id,
 			to_id,
 			recv_eta,
-		<if test="totalDetail!=null">
-			total_detail,
-		</if>
-		<if test="recvTotal!=null">
-			recv_total,
-		</if>
-
 			remark,
 		<if test="bizStatus!=null">
 			biz_status,
@@ -228,5 +220,13 @@
 		process_id  = #{processId}
 		WHERE id = #{headerId}
 	</update>
+
+	<select id="findContByFromOffice" resultType="Integer">
+		SELECT
+		count(1)
+		FROM biz_request_header a
+		WHERE a.from_id = #{fromOfficeId}
+
+	</select>
 
 </mapper>
