@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>采购商店铺管理</title>
+	<title>经销店店铺管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -18,14 +18,14 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/sys/sysCustDetails/">采购商店铺列表</a></li>
-		<shiro:hasPermission name="sys:sysCustDetails:edit"><li><a href="${ctx}/sys/sysCustDetails/form">采购商店铺添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/sys/sysCustDetails/">经销店店铺列表</a></li>
+		<shiro:hasPermission name="sys:sysCustDetails:edit"><li><a href="${ctx}/sys/sysCustDetails/form">经销店店铺添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="sysCustDetails" action="${ctx}/sys/sysCustDetails/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>采购商：</label>
+			<li><label>经销店：</label>
 				<form:input path="cust.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>商铺类型：</label>
@@ -43,7 +43,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>采购商</th>
+				<th>经销店</th>
 				<th>商铺面积</th>
 				<th>商铺类型</th>
 				<th>商铺类别</th>
@@ -67,7 +67,7 @@
 				</td>
 				<shiro:hasPermission name="sys:sysCustDetails:edit"><td>
     				<a href="${ctx}/sys/sysCustDetails/form?id=${sysCustDetails.id}">修改</a>
-					<a href="${ctx}/sys/sysCustDetails/delete?id=${sysCustDetails.id}" onclick="return confirmx('确认要删除该采购商店铺吗？', this.href)">删除</a>
+					<a href="${ctx}/sys/sysCustDetails/delete?id=${sysCustDetails.id}" onclick="return confirmx('确认要删除该经销店店铺吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

@@ -33,7 +33,7 @@
 <table id="contentTable" class="table table-bordered table-condensed table_text_center">
     <thead>
     <tr>
-        <th>采购商</th>
+        <th>经销店</th>
         <th>平均每月订单量</th>
     </tr>
     </thead>

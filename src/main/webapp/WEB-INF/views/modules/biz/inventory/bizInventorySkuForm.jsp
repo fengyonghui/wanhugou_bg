@@ -175,7 +175,7 @@
             var html = "";
 
             html+="<select id='cust"+skuId+"' about='custId' class='input-mini required'>" +
-                "<option value=''>请选择采购商</option>";
+                "<option value=''>请选择经销店</option>";
                 <c:forEach items="${custList}" var="item" varStatus="vs">
                 	html+="<option value='${item.id}'> ${item.name}</option>";
                 </c:forEach>

@@ -310,7 +310,7 @@
 					<tr>
 						<th><input id="select_all" type="checkbox" /></th>
 						<th>订单编号</th>
-						<th>采购商名称</th>
+						<th>经销店名称</th>
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>供应商</th>
@@ -339,7 +339,7 @@
 					<tr>
 						<th></th>
 						<th>订单编号</th>
-						<th>采购商名称</th>
+						<th>经销店名称</th>
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>供应商</th>
