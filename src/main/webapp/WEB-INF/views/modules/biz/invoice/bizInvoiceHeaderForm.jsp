@@ -38,7 +38,7 @@
 				orderoffice();
 			}
 	 });
-/* 选择采购商 */
+/* 选择经销店 */
 function orderoffice(){
     var officeId=$("#officeId").val();
     $.ajax({
@@ -108,10 +108,10 @@ function dial(){
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">采购商名称：</label>
+			<label class="control-label">经销店名称：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizInvoiceHeader.office.id}" labelName="office.name" labelValue="${bizInvoiceHeader.office.name}"
-                    title="采购商" url="/sys/office/queryTreeList?type=6" onchange="orderoffice();"
+                    title="经销店" url="/sys/office/queryTreeList?type=6" onchange="orderoffice();"
 								cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
                 <span class="help-inline"><font color="red">*</font> </span>
 			</div>
@@ -160,7 +160,7 @@ function dial(){
 			<table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 				<tr>
-					<th>采购商</th>
+					<th>经销店</th>
 					<th>订单编号</th>
 					<th>商品详情总价</th>
 					<th>订单总费用</th>
@@ -215,7 +215,7 @@ function dial(){
         <tr>
             <%--<th><input type="checkbox" class="chAll"/></th>--%>
 			<th>选择</th>
-            <th>采购商</th>
+            <th>经销店</th>
             <th>订单编号</th>
 			<th>商品详情总价</th>
             <th>订单总费用</th>

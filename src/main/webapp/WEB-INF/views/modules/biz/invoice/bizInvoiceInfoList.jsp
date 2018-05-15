@@ -25,9 +25,9 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>采购商名称：</label>
+			<li><label>经销店名称：</label>
 				<sys:treeselect id="office" name="office.id" value="" labelName="office.name" labelValue=""
-					title="采购商" url="/sys/office/treeData?type=2" cssClass="input-xlarge" allowClear="true" notAllowSelectParent="true"/>
+					title="经销店" url="/sys/office/treeData?type=2" cssClass="input-xlarge" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label>电话：</label>
                 <form:input path="tel" htmlEscape="false" maxlength="11" class="input-xlarge"/>
@@ -40,7 +40,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>采购商名称</th>
+				<th>经销店名称</th>
 				<th>发票抬头</th>
 				<th>税号</th>
 				<th>开户行</th>
