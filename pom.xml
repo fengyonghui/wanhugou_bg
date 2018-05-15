@@ -626,6 +626,13 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>com.wanhutong.utils</groupId>
+            <artifactId>signature</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+
         <!-- 自定义jar依赖包-->
         <!--<dependency>-->
             <!--<groupId>com.wanhutong.backend</groupId>-->

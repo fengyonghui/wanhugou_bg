@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.process.dao.CommonProcessDao">
+    
+	<sql id="commonProcessEntityColumns">
+		a.id AS "id",
+		a.object_id AS "objectId",
+		a.object_name AS "objectName",
+		a.prev_id AS "prevId",
+		a.biz_status AS "bizStatus",
+		a.processor AS "processor",
+		a.description AS "description",
+		a.type AS "type",
+		a.create_time AS "createTime",
+		b.id AS "prevProcess.id",
+		b.object_id AS "prevProcess.objectId",
+		b.object_name AS "prevProcess.objectName",
+		b.prev_id AS "prevProcess.prevId",
+		b.biz_status AS "prevProcess.bizStatus",
+		b.processor AS "prevProcess.processor",
+		b.description AS "prevProcess.description",
+		b.type AS "prevProcess.type",
+		b.create_time AS "prevProcess.createTime"
+	</sql>
+	
+	<sql id="commonProcessEntityJoins">
+		LEFT JOIN common_process AS b on a.prev_id = b.id
+	</sql>
+    
+	<select id="get" resultType="CommonProcessEntity">
+		SELECT 
+			<include refid="commonProcessEntityColumns"/>
+		FROM common_process a
+		<include refid="commonProcessEntityJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CommonProcessEntity">
+		SELECT 
+			<include refid="commonProcessEntityColumns"/>
+		FROM common_process a
+		<include refid="commonProcessEntityJoins"/>
+		<where>
+			
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="objectId != null and objectId != ''">
+				AND a.object_id = #{objectId}
+			</if>
+			<if test="objectName != null and objectName != ''">
+				AND a.object_name = #{objectName}
+			</if>
+			<if test="prevId != null and prevId != ''">
+				AND a.prev_id = #{prevId}
+			</if>
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="processor != null and processor != ''">
+				AND a.processor = #{processor}
+			</if>
+			<if test="description != null and description != ''">
+				AND a.description = #{description}
+			</if>
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null and beginCreateTime != '' and endCreateTime != ''">
+				AND a.create_time BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="CommonProcessEntity">
+		SELECT 
+			<include refid="commonProcessEntityColumns"/>
+		FROM common_process a
+		<include refid="commonProcessEntityJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO common_process(
+			id,
+			object_id,
+			object_name,
+			prev_id,
+			biz_status,
+			processor,
+			description,
+			type,
+			create_time,
+			update_time
+		) VALUES (
+			#{id},
+			#{objectId},
+			#{objectName},
+			#{prevId},
+			#{bizStatus},
+			#{processor},
+			#{description},
+			#{type},
+			#{createTime},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE common_process SET 	
+			object_id = #{objectId},
+			object_name = #{objectName},
+			prev_id = #{prevId},
+			biz_status = #{bizStatus},
+			processor = #{processor},
+			description = #{description},
+			type = #{type},
+			create_time = #{createTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM common_process
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
