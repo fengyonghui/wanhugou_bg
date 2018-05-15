@@ -5,10 +5,12 @@ package com.wanhutong.backend.modules.biz.entity.po;
 
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,6 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Integer deliveryStatus;
 	private String str;//详情标志
 
-
 	private BizPlatformInfo plateformInfo;		// 订单来源； biz_platform_info.id
 	private List<BizPoDetail> poDetailList;
 	private String orderDetailIds;
@@ -53,6 +54,20 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Map<String,Integer> orderSourceMap;
 
 	private int isPrew = 1;
+
+	private BizPoPaymentOrder bizPoPaymentOrder;
+
+	private Integer currentPaymentId;
+
+	private BigDecimal payTotal;
+
+	public Integer getCurrentPaymentId() {
+		return currentPaymentId;
+	}
+
+	public void setCurrentPaymentId(Integer currentPaymentId) {
+		this.currentPaymentId = currentPaymentId;
+	}
 
 	public BizPoHeader() {
 		super();
@@ -253,5 +268,47 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setOrderSourceMap(Map<String, Integer> orderSourceMap) {
 		this.orderSourceMap = orderSourceMap;
+	}
+
+	public BizPoPaymentOrder getBizPoPaymentOrder() {
+		return bizPoPaymentOrder;
+	}
+
+	public void setBizPoPaymentOrder(BizPoPaymentOrder bizPoPaymentOrder) {
+		this.bizPoPaymentOrder = bizPoPaymentOrder;
+	}
+
+	public BigDecimal getPayTotal() {
+		return payTotal;
+	}
+
+	public void setPayTotal(BigDecimal payTotal) {
+		this.payTotal = payTotal;
+	}
+
+	public enum BizStatus {
+		NO_PAY(0, "未支付"),
+		DOWN_PAYMENT(1, "首付款支付"),
+		ALL_PAY(2, "全部支付"),
+		SHIPMENTS(3, "已发货"),
+		DELIVERY(4, "已收货"),
+		COMPLETE(5, "已完成"),
+		PROCESS(6, "审批中"),
+		;
+		private int status;
+		private String desc;
+
+		BizStatus(int status, String desc) {
+			this.status = status;
+			this.desc = desc;
+		}
+
+		public int getStatus() {
+			return status;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
 	}
 }

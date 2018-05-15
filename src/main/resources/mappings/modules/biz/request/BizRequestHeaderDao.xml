@@ -11,6 +11,8 @@
 		so.name AS "fromOffice.name",
 		sot.name AS "toOffice.name",
 		a.recv_eta AS "recvEta",
+		a.total_detail AS "totalDetail",
+		a.recv_total AS "recvTotal",
 		a.remark AS "remark",
 		a.biz_status AS "bizStatus",
 		a.status AS "delFlag",
@@ -24,7 +26,15 @@
 		sum(req_qty) as "reqQtys",
 		sum(recv_qty) as "recvQtys",
 		sum(req_qty * unit_price) AS totalMoney,
-		(@rownum:=@rownum+1) as "numberRownum"
+		(@rownum:=@rownum+1) as "numberRownum",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type"
 	</sql>
 	
 	<sql id="bizRequestHeaderJoins">
@@ -33,6 +43,7 @@
 		LEFT JOIN sys_user su ON su.id=a.create_id
 		LEFT JOIN sys_user suu ON suu.id=a.update_id
 		INNER JOIN biz_request_detail brd ON brd.header_id = a.id AND brd.status = 1
+		LEFT JOIN  common_process process on process.id = a.process_id
 	</sql>
     
 	<select id="get" resultType="BizRequestHeader">
@@ -153,6 +164,12 @@
 			#{fromOffice.id},
 			#{toOffice.id},
 			#{recvEta},
+			<if test="totalDetail!=null">
+				#{totalDetail},
+			</if>
+			<if test="recvTotal!=null">
+			#{recvTotal},
+			</if>
 			#{remark},
 		<if test="bizStatus!=null">
 			#{bizStatus},
@@ -176,6 +193,12 @@
 			from_id = #{fromOffice.id},
 			to_id = #{toOffice.id},
 			recv_eta = #{recvEta},
+			<if test="totalDetail!=null">
+				total_detail = #{totalDetail},
+			</if>
+			<if test="recvTotal!=null">
+				recv_total	=  #{recvTotal},
+			</if>
 			remark = #{remark},
 		<if test="bizStatus!=null">
 			biz_status = #{bizStatus},
@@ -191,5 +214,19 @@
 			status = #{delFlag}
 		WHERE id = #{id}
 	</update>
-	
+
+	<update id="updateProcessId">
+		UPDATE biz_request_header SET
+		process_id  = #{processId}
+		WHERE id = #{headerId}
+	</update>
+
+	<select id="findContByFromOffice" resultType="Integer">
+		SELECT
+		count(1)
+		FROM biz_request_header a
+		WHERE a.from_id = #{fromOfficeId}
+
+	</select>
+
 </mapper>

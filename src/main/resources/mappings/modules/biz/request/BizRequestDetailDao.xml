@@ -143,7 +143,7 @@
 		pi.vendor_id
 	</select>
 	
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO biz_request_detail(
 			id,
 			header_id,
