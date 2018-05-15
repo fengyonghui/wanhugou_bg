@@ -110,6 +110,11 @@
 		<property name="password" value="${jdbc.password}"/>
 	</bean>-->
 
+	<bean id="whtJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
+
+	<!--线程池-->
 	<context:property-placeholder ignore-unresolvable="true" location="classpath:threadPool.properties" />
 	<bean id="defaultThreadPoolParams" class="com.wanhutong.backend.common.thread.ThreadPoolParams">
 		<property name="threadPoolName" value="defaultThreadPool" />

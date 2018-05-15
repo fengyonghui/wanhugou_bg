@@ -25,6 +25,8 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -45,6 +47,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,28 +89,9 @@ public class BizRequestHeaderController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
-//        List<BizRequestHeader> list = page.getList();
-//        for (BizRequestHeader bizRequestHeader1:list) {
-//            BizRequestDetail bizRequestDetail1 = new BizRequestDetail();
-//            bizRequestDetail1.setRequestHeader(bizRequestHeader1);
-//            BizSkuInfo bizSkuInfo=new BizSkuInfo();
-//            bizSkuInfo.setItemNo(bizRequestHeader.getItemNo());
-//            bizSkuInfo.setVendorName(bizRequestHeader.getName());
-//			bizRequestDetail1.setSkuInfo(bizSkuInfo);
-//            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail1);
-//            Integer reqQtys = 0;
-//            Integer recvQtys = 0;
-//            Double money=0.0;
-//            for (BizRequestDetail bizRequestDetail:requestDetailList) {
-//				money+=(bizRequestDetail.getReqQty()==null?0:bizRequestDetail.getReqQty())*(bizRequestDetail.getUnitPrice()==null?0:bizRequestDetail.getUnitPrice());
-//                reqQtys += bizRequestDetail.getReqQty();
-//                recvQtys += bizRequestDetail.getRecvQty();
-//            }
-//            bizRequestHeader1.setReqQtys(reqQtys.toString());
-//            bizRequestHeader1.setRecvQtys(recvQtys.toString());
-//			bizRequestHeader1.setTotalMoney(money);
-//        }
         model.addAttribute("page", page);
+		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
+
 		return "modules/biz/request/bizRequestHeaderList";
 	}
 
@@ -126,9 +110,15 @@ public class BizRequestHeaderController extends BaseController {
 				reqDetailList.add(requestDetail);
 			}
 		}
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) ) {
+			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			model.addAttribute("requestOrderProcess", requestOrderProcess);
+		}
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
+
 
 		return "modules/biz/request/bizRequestHeaderForm";
 	}
@@ -188,9 +178,6 @@ public class BizRequestHeaderController extends BaseController {
 		}
 		return bizRequestHeaderList;
 	}
-
-
-
 
 
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
@@ -373,5 +360,12 @@ public class BizRequestHeaderController extends BaseController {
 			addMessage(redirectAttributes, "导出备货清单数据失败！失败信息：" + e.getMessage());
 		}
 		return "redirect:" + adminPath + "/biz/request/bizRequestHeader/list";
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:audit")
+	@RequestMapping(value = "audit")
+	@ResponseBody
+	public String audit(int id, String currentType, int auditType, String description) {
+		return bizRequestHeaderService.audit(id, currentType, auditType, description);
 	}
 }

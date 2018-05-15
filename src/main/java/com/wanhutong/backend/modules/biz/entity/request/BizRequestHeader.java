@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
@@ -34,6 +35,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Date recvEta;		// 期望收货时间
 	private String remark;		// 备注
 	private Integer bizStatus;		// 业务状态：0未审核 5审核通过 10 采购中 15采购完成 20备货中  25 供货完成 30收货完成 35关闭
+	private Double totalDetail;
+	private Double recvTotal;
+
+
 	private String skuIds;
 	private String reqDetailIds;
 	private String skuInfoIds;
@@ -77,6 +82,9 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String recvQtys;
 
 	private boolean includeTestData;
+
+	private CommonProcessEntity commonProcess;
+
 
 	public boolean isIncludeTestData() {
 		return includeTestData;
@@ -367,4 +375,30 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	public void setRemarkReject(String remarkReject) {
 		this.remarkReject = remarkReject;
 	}
+
+
+	public Double getTotalDetail() {
+		return totalDetail;
+	}
+
+	public void setTotalDetail(Double totalDetail) {
+		this.totalDetail = totalDetail;
+	}
+
+	public Double getRecvTotal() {
+		return recvTotal;
+	}
+
+	public void setRecvTotal(Double recvTotal) {
+		this.recvTotal = recvTotal;
+	}
+
+	public CommonProcessEntity getCommonProcess() {
+		return commonProcess;
+	}
+
+	public void setCommonProcess(CommonProcessEntity commonProcess) {
+		this.commonProcess = commonProcess;
+	}
+
 }

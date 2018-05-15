@@ -67,6 +67,12 @@ public class BizVarietyFactorController extends BaseController {
 	public String form(BizVarietyFactor bizVarietyFactor, Model model) {
 		model.addAttribute("bizVarietyFactor", bizVarietyFactor);
 		model.addAttribute("varietyList",bizVarietyInfoService.findList(new BizVarietyInfo()));
+		if(bizVarietyFactor!=null && bizVarietyFactor.getId()!=null){
+			BizVarietyFactor varietyFactor = new BizVarietyFactor();
+			varietyFactor.setVarietyInfo(new BizVarietyInfo(bizVarietyFactor.getVarietyInfo().getId()));
+			List<BizVarietyFactor> list = bizVarietyFactorService.findList(varietyFactor);
+			model.addAttribute("variList",list);
+		}
 		return "modules/biz/shelf/bizVarietyFactorForm";
 	}
 
@@ -107,30 +113,64 @@ public class BizVarietyFactorController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:shelf:bizVarietyFactor:view")
 	@RequestMapping(value = "checkRepeat")
-	public String checkRepeat(Integer variety,BizVarietyFactor bizVarietyFactor) {
+	public String checkRepeat(Integer variety,BizVarietyFactor bizVarietyFactor,Integer id) {
 	    String flag = "true";
-		if (bizVarietyFactor != null) {
+		String[] serviceFactorArr = bizVarietyFactor.getServiceFactors().split(",".trim());
+		String[] minQtyArr = bizVarietyFactor.getMinQtys().split(",".trim());
+		String[] maxQtyArr = bizVarietyFactor.getMaxQtys().split(",".trim());
+		for(int i = 0; i < serviceFactorArr.length; i++) {
 //		    bizVarietyFactor.getVarietyInfo();
 //            Integer serviceFactor = bizVarietyFactor.getServiceFactor();
-			bizVarietyFactor.setVarietyInfo(new BizVarietyInfo(variety));
-            List<BizVarietyFactor> list = bizVarietyFactorService.findList(bizVarietyFactor);
-            if (list != null && !list.isEmpty()) {
-                if (bizVarietyFactor.getId() != null) {
-                    list.remove(bizVarietyFactor);
-                }
-            }
-            if (list != null && !list.isEmpty()) {
-                for (BizVarietyFactor varietyFactor : list) {
-                    int minQty = varietyFactor.getMinQty();
-                    int maxQty = varietyFactor.getMaxQty();
-                    if (minQty >= bizVarietyFactor.getMinQty() && maxQty <= bizVarietyFactor.getMaxQty() ||
-                            minQty <= bizVarietyFactor.getMaxQty() && maxQty >= bizVarietyFactor.getMinQty()) {
-                        flag = "false";
-                    }
-                }
-            }
-        }
+			BizVarietyFactor bizCentVarietyFactor = new BizVarietyFactor();
+			bizCentVarietyFactor.setVarietyInfo(new BizVarietyInfo(variety));
+			List<BizVarietyFactor> list = bizVarietyFactorService.findList(bizCentVarietyFactor);
+				if (list != null && !list.isEmpty()) {
+					if (id != null) {
+						list.remove(bizVarietyFactorService.get(id));
+					}
+				}
+			if (list != null && !list.isEmpty()) {
+				for (int j = 0; j < list.size(); j++) {
+					int minQty = list.get(j).getMinQty();
+					int maxQty = list.get(j).getMaxQty();
+					if(minQty == Integer.parseInt(minQtyArr[i]) && maxQty == Integer.parseInt(maxQtyArr[i]) ||
+							minQty == Integer.parseInt(maxQtyArr[i]) && maxQty == Integer.parseInt(minQtyArr[i])){
+//						System.out.println("不修改的数量不用判断");
+					}else{
+						if (minQty > Integer.parseInt(minQtyArr[i]) && maxQty < Integer.parseInt(maxQtyArr[i]) ||
+								minQty < Integer.parseInt(maxQtyArr[i]) && maxQty > Integer.parseInt(minQtyArr[i])) {
+							flag = "false";
+						}
+					}
+				}
+			}
+			if(flag!="" && flag.equals("true") && Integer.parseInt(maxQtyArr[i])!=9999){
+				flag = "error";
+			}else if(flag!="" && flag.equals("true") && Integer.parseInt(maxQtyArr[i])==9999){
+				flag="true";
+			}else if(flag!="" && flag.equals("error") && Integer.parseInt(maxQtyArr[i])==9999){
+				flag="true";
+			}
+		}
         return flag;
 	}
+
+	/**
+	 * 删除不刷新
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizVarietyFactor:edit")
+	@RequestMapping(value = "deleteAjas")
+	public String deleteAjas(BizVarietyFactor bizVarietyFactor, RedirectAttributes redirectAttributes) {
+		String source="error";
+		try {
+			bizVarietyFactorService.delete(bizVarietyFactor);
+			source="ok";
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return source;
+	}
+
 
 }

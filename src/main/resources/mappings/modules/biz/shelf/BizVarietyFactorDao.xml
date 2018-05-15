@@ -39,6 +39,15 @@
 			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo.id != ''">
 				AND a.vari_id = #{varietyInfo.id}
 			</if>
+			<if test="serviceFactor != null and serviceFactor != ''">
+				AND a.service_factor = #{serviceFactor}
+			</if>
+			<if test="minQty != null and minQty != ''">
+				AND a.min_qty = #{minQty}
+			</if>
+			<if test="maxQty != null and maxQty != ''">
+				AND a.max_qty = #{maxQty}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
