@@ -145,6 +145,13 @@
 			from_id,
 			to_id,
 			recv_eta,
+		<if test="totalDetail!=null">
+			total_detail,
+		</if>
+		<if test="recvTotal!=null">
+			recv_total,
+		</if>
+
 			remark,
 		<if test="bizStatus!=null">
 			biz_status,
