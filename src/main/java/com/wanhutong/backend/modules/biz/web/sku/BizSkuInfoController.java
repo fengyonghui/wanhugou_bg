@@ -104,6 +104,7 @@ public class BizSkuInfoController extends BaseController {
 	public String list(BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizSkuInfo> page = bizSkuInfoService.findPage(new Page<BizSkuInfo>(request, response), bizSkuInfo); 
 		model.addAttribute("page", page);
+		model.addAttribute("prodType", bizSkuInfo.getProductInfo().getProdType());
 		return "modules/biz/sku/bizSkuInfoList";
 	}
 	
@@ -111,6 +112,7 @@ public class BizSkuInfoController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizSkuInfo bizSkuInfo, Model model) {
 		model.addAttribute("bizSkuInfo", bizSkuInfo);
+		model.addAttribute("prodType",bizSkuInfo.getProductInfo().getProdType());
 //		BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
 //		bizProdPropertyInfo.setProductInfo(bizSkuInfo.getProductInfo());
 		//Map<String,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
@@ -132,7 +134,7 @@ public class BizSkuInfoController extends BaseController {
 		}
 		bizSkuInfoService.save(bizSkuInfo);
 		addMessage(redirectAttributes, "保存商品sku成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId()+"&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
 	}
 
 	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
@@ -142,9 +144,9 @@ public class BizSkuInfoController extends BaseController {
 		bizSkuInfoService.delete(bizSkuInfo);
 		addMessage(redirectAttributes, "删除商品sku成功");
 		if(bizSkuInfo.getSign()==0){
-			return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage";
+			return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
         }
-		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId()+"&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
 	}
 
 
@@ -156,9 +158,9 @@ public class BizSkuInfoController extends BaseController {
 		bizSkuInfoService.recovery(bizSkuInfo);
 		addMessage(redirectAttributes, "恢复商品sku成功");
 		if(bizSkuInfo.getSign()==0){
-			return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage";
+			return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
 		}
-		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId()+"&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
 	}
 
 

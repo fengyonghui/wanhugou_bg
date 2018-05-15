@@ -48,8 +48,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/product/bizProductInfoV2/">产品信息表列表</a></li>
-		<shiro:hasPermission name="biz:product:bizProductInfo:edit"><li><a href="${ctx}/biz/product/bizProductInfoV2/form">产品信息表添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/biz/product/bizProductInfoV2?prodType=${prodType}">产品信息表列表</a></li>
+		<shiro:hasPermission name="biz:product:bizProductInfo:edit"><li><a href="${ctx}/biz/product/bizProductInfoV2/form?prodType=${prodType}">产品信息表添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoV2/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -156,15 +156,15 @@
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit">
 					<td>
 						<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==1}">
-							<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}">修改</a>
+							<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}&prodType=${prodType}">修改</a>
 
-							<a href="${ctx}/biz/product/bizProductInfoV2/copy?id=${bizProductInfo.id}">复制</a>
+							<a href="${ctx}/biz/product/bizProductInfoV2/copy?id=${bizProductInfo.id}&prodType=${prodType}">复制</a>
 							<%--<a href="${ctx}/biz/product/bizProductInfoV2/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>--%>
 							<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
 							<%--<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}">sku商品管理</a>--%>
 						</c:if>
 						<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==0}">
-							<a href="${ctx}/biz/product/bizProductInfoV2/recovery?id=${bizProductInfo.id}" onclick="return confirmx('确认要恢复该产品信息表吗？', this.href)">恢复</a>
+							<a href="${ctx}/biz/product/bizProductInfoV2/recovery?id=${bizProductInfo.id}&prodType=${prodType}" onclick="return confirmx('确认要恢复该产品信息表吗？', this.href)">恢复</a>
 						</c:if>
 					</td></shiro:hasPermission>
 			</tr>

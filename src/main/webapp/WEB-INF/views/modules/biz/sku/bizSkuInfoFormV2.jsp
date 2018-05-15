@@ -73,8 +73,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/sku/bizSkuInfo/">商品列表</a></li>
-		<li class="active"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}">商品<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">${not empty bizSkuInfo.id?'详情':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:sku:bizSkuInfo:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=${prodType}">商品列表</a></li>
+		<li class="active"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&productInfo.prodType=${prodType}">商品<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">${not empty bizSkuInfo.id?'详情':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:sku:bizSkuInfo:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
