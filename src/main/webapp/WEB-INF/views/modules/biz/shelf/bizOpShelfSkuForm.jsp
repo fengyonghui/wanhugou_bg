@@ -168,9 +168,7 @@
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
-                        if(id==''){
-                            $("#prodInfo2").empty();
-                        }
+                         $("#prodInfo2").empty();
 
                         $.each(data,function (keys,skuInfoList) {
                             var prodKeys= keys.split(",");
