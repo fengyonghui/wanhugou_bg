@@ -133,7 +133,7 @@ public class BizRequestHeaderController extends BaseController {
 				for (BizPoOrderReq poOrderReq : poOrderReqList) {
 					if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())){
 						BizPoHeader bizPoHeader = bizPoHeaderService.get(poOrderReq.getPoHeader());
-						if(bizPoHeader!=null && poOrderReq.getSoId()!=null){
+						if(bizPoHeader!=null && poOrderReq.getSoId()!=null && bizPoHeader.getDelFlag().equals("1") && bizPoHeader.getIsPrew()==0){
 							if(bizRequestHeader.getId().equals(poOrderReq.getSoId())){
 								model.addAttribute("requestPoHeader", bizPoHeader);
 								break;
