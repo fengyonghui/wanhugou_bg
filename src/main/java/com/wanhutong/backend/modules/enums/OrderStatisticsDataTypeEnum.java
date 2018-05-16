@@ -14,6 +14,7 @@ public enum  OrderStatisticsDataTypeEnum {
     ORDER_COUNT(3,"订单量"),
     PROFIT(4,"利润"),
     UNIVALENCE(5,"平均单价"),
+    RECEIVE(5,"回款额"),
     ;
     private int code;
     private String desc;

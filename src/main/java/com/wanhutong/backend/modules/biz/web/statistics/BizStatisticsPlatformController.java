@@ -606,7 +606,7 @@ public class BizStatisticsPlatformController extends BaseController {
             bizOrderStatisticsDtoList.forEach(o -> {
                 seriesDataList.add(o.getTotalMoney());
                 seriesCountDataList.add(o.getOrderCount());
-                seriesReceiveDataList.add(o.getOrderCount());
+                seriesReceiveDataList.add(o.getReceiveTotal());
                 seriesUnivalenceList.add(o.getOrderCount() <= 0 ? 0 : o.getTotalMoney().divide(BigDecimal.valueOf(o.getOrderCount()), RoundingMode.DOWN));
                 nameList.add(o.getCreateDate());
             });

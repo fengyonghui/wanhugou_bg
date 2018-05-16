@@ -62,7 +62,7 @@
                     return false;
                 }
                 if ($String.isNullOrBlank(payDeadline)) {
-                    alert("请选择本次申请最后付款时间!");
+                    alert("请选择本次申请付款时间!");
                     return false;
                 }
             }
@@ -289,7 +289,7 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">本次申请最后付款时间：</label>
+                <label class="control-label">本次申请付款时间：</label>
                 <div class="controls">
                     <input name="payDeadline" id="payDeadline" type="text" readonly="readonly" maxlength="20"
                            class="input-medium Wdate required"
@@ -308,7 +308,7 @@
                 </div>
             </div>
             <div class="control-group prewTimeTotal">
-                <label class="control-label">本次申请最后付款时间：</label>
+                <label class="control-label">本次申请付款时间：</label>
                 <div class="controls">
                     <input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
                            class="input-medium Wdate required"
@@ -367,7 +367,7 @@
                 <c:if test="${type == 'startAudit'}">
                     <input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
                     <%--TODO--%>
-                    <input id="btnSubmit" type="button" onclick="alert('驳回')" class="btn btn-primary" value="驳回"/>
+                    <input id="btnSubmit" type="button" onclick="startRejectAudit()" class="btn btn-primary" value="驳回"/>
                 </c:if>
                 <c:if test="${type == 'audit'}">
                     <input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
@@ -539,6 +539,29 @@
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
 <script type="text/javascript">
+
+    function startRejectAudit() {
+        top.$.jBox.confirm("确认驳回流程吗？","系统提示",function(v,h,f){
+            if(v=="ok"){
+                var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+                var submit = function (v, h, f) {
+                    if ($String.isNullOrBlank(f.description)) {
+                        jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                        return false;
+                    }
+
+                    return true;
+                };
+
+                jBox(html, {
+                    title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+                    }
+                });
+            }
+        },{buttonsFocus:1});
+    }
+
+
     function showTimeTotal(show) {
         if (show) {
             $(".prewTimeTotal").show();
