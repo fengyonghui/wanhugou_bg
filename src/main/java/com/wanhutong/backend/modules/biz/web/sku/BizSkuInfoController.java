@@ -24,6 +24,7 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.ProdTypeEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -341,5 +342,29 @@ public class BizSkuInfoController extends BaseController {
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForCendProd(bizSkuInfo);
 		return listMap;
 	}
+
+    /**
+     * 代采订单添加详情时。搜索商品
+     * @param bizSkuInfo
+     * @return
+     */
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findPurseSkuList")
+	public List<BizSkuInfo> findPurseSkuList(BizSkuInfo bizSkuInfo) {
+//        BizProductInfo bizProductInfo = new BizProductInfo();
+//        bizProductInfo.setProdType(Byte.parseByte(ProdTypeEnum.CUSTPROD.getType()));
+//        bizSkuInfo.setProductInfo(bizProductInfo);
+//        List<BizSkuInfo> skuList = bizSkuInfoService.findList(bizSkuInfo);
+        List<BizSkuInfo> purseSkuList = bizSkuInfoService.findPurseSkuList(bizSkuInfo);
+        for (BizSkuInfo skuInfo:purseSkuList) {
+            AttributeValueV2 valueV2 = new AttributeValueV2();
+            valueV2.setObjectId(skuInfo.getId());
+            valueV2.setObjectName("biz_sku_info");
+            List<AttributeValueV2> attributeValueV2List = attributeValueV2Service.findList(valueV2);
+            skuInfo.setAttrValueList(attributeValueV2List);
+        }
+        return purseSkuList;
+    }
 
 }

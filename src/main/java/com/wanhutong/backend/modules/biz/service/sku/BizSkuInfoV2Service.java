@@ -371,4 +371,8 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		}
 		return listMap;
 	}
+
+	public List<BizSkuInfo> findPurseSkuList(BizSkuInfo bizSkuInfo) {
+		return bizSkuInfoDao.findPurseSkuList(bizSkuInfo);
+	}
 }

@@ -227,6 +227,7 @@ UNION ALL
 			AND od.order_id = oh.id
 			AND oh.status = 1
 			and od.status = 1
+			AND oh.order_type != 5
 			AND oh.biz_status BETWEEN 15 AND 19
 			AND oh.biz_status != 18
 			AND od.ord_qty > od.sent_qty
@@ -277,7 +278,9 @@ UNION ALL
 			order_id,
 			line_no,
 			p_line_no,
+		<if test="shelfInfo != null and shelfInfo.id != null and shelfInfo.id != ''">
 			sku_shelf_id,
+		</if>
 			sku_id,
 		<if test="quality!=null and quality!=''">
 			quality,
@@ -307,7 +310,9 @@ UNION ALL
 			#{orderHeader.id},
 			#{lineNo},
 			#{pLineNo},
+		<if test="shelfInfo != null and shelfInfo.id != null and shelfInfo.id != ''">
 			#{shelfInfo.id},
+		</if>
 			#{skuInfo.id},
 		<if test="quality!=null and quality!=''">
 			#{quality},
@@ -340,7 +345,9 @@ UNION ALL
 			order_id = #{orderHeader.id},
 			line_no = #{lineNo},
 			p_line_no = #{pLineNo},
+		<if test="shelfInfo != null and shelfInfo.id != null and shelfInfo.id != ''">
 			sku_shelf_id=#{shelfInfo.id},
+		</if>
 			sku_id = #{skuInfo.id},
 		<if test="quality!=null and quality!=''">
 			quality=#{quality},

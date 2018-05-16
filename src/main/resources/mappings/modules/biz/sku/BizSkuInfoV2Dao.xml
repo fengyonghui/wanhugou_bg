@@ -442,5 +442,22 @@
 		WHERE
 		biz_sku_prop_value.sku_id = #{id}
 	</delete>
+
+	<select id="findPurseSkuList" resultType="BizSkuInfo">
+		SELECT
+			a.id AS "id",
+			a.name AS "name",
+			a.part_no AS "partNo",
+			a.item_no AS "itemNo",
+			a.buy_price AS "buyPrice",
+			a.prod_id AS "productInfo.id",
+			bpi.prod_type AS "productInfo.prodType"
+		FROM biz_sku_info a
+		LEFT JOIN biz_product_info bpi ON bpi.id = a.prod_id
+		LEFT JOIN sys_office vend ON vend.id = bpi.vendor_id
+		LEFT JOIN	biz_purchaser_vendor bpv ON bpv.vendor_id = vend.id
+		LEFT JOIN sys_office purchaser ON purchaser.id = bpv.purchaser_id
+		WHERE purchaser.id = #{purchaser.id}
+	</select>
 	
 </mapper>
