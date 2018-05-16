@@ -282,7 +282,7 @@
                 <label class="control-label">申请金额：</label>
                 <div class="controls">
                     <input id="payTotal" name="payTotal" type="text"
-                           <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
+                           <c:if test="${type == 'audit' || type == 'pay' || type == ''|| type == null}">readonly</c:if>
                            value="${bizPoHeader.bizPoPaymentOrder.id != null ?
                            bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight)}"
                            htmlEscape="false" maxlength="30" class="input-xlarge"/>
@@ -366,6 +366,8 @@
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                 <c:if test="${type == 'startAudit'}">
                     <input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
+                    <%--TODO--%>
+                    <input id="btnSubmit" type="button" onclick="alert('驳回')" class="btn btn-primary" value="驳回"/>
                 </c:if>
                 <c:if test="${type == 'audit'}">
                     <input id="btnSubmit" type="button" onclick="checkPass()" class="btn btn-primary" value="审核通过"/>
@@ -382,7 +384,7 @@
                 <c:if test="${type != 'pay' && type != 'audit' && prewStatus == 'prew'}">
                     <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="确认生成"/>
                 </c:if>
-                <c:if test="${type != 'pay' && type != 'createPay' && type != 'audit' && prewStatus != 'prew'}">
+                <c:if test="${type != 'pay' && type != 'createPay' && type != 'audit' && type != 'startAudit' && prewStatus != 'prew'}">
                     <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="保存"/>
                 </c:if>
 
