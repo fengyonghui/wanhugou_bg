@@ -333,8 +333,8 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "startAudit")
     @ResponseBody
-    public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline) {
-        return bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline);
+    public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
+        return bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
     }
 
 }

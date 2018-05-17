@@ -549,7 +549,23 @@
                         jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
                         return false;
                     }
-
+                    var id = $("#id").val();
+                    var prew = false;
+                    $.ajax({
+                        url: '${ctx}/biz/po/bizPoHeader/startAudit',
+                        contentType: 'application/json',
+                        data: {"id": id, "prew":prew,  "auditType":2, "desc": f.description},
+                        type: 'get',
+                        success: function (result) {
+                            alert(result);
+                            if(result == '操作成功!') {
+                                window.location.href = "${ctx}/biz/po/bizPoHeader";
+                            }
+                        },
+                        error: function (error) {
+                            console.info(error);
+                        }
+                    });
                     return true;
                 };
 
