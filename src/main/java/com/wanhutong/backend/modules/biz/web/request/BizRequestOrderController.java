@@ -136,7 +136,7 @@ public class BizRequestOrderController extends BaseController {
         Page<BizOrderHeader> orderHeaderPage = null;
         //备货清单供货
         if ("bhgh".equals(source)) {
-            Page<BizRequestHeader> page = findBizRequest(bizRequestHeader, requestHeaderPage,request,response);
+            Page<BizRequestHeader> page = findBizRequestV2(bizRequestHeader,request,response);
             //分页 20180427 改
             model.addAttribute("page", page);
             //判断
@@ -229,6 +229,19 @@ public class BizRequestOrderController extends BaseController {
         }
         return list;
     }
+
+
+    /**
+     * 分页
+     * */
+    private Page<BizRequestHeader> findBizRequestV2(BizRequestHeader bizRequestHeader,HttpServletRequest request, HttpServletResponse response) {
+        bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());
+        bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+        Page<BizRequestHeader> requestHeaderList = bizRequestHeaderService.pageFindList(new Page<BizRequestHeader>(request, response), bizRequestHeader);
+
+        return requestHeaderList;
+    }
+
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"form", ""})
