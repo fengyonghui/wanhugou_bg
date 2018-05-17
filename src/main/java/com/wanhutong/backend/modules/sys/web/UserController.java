@@ -103,6 +103,10 @@ public class UserController extends BaseController {
 		}
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
+		if(user.getConn()!=null && user.getConn().equals("selectIndex")){
+			//选品专员
+			return "modules/sys/userSeleIndexList";
+		}
 		return "modules/sys/userList";
 	}
 
@@ -251,9 +255,13 @@ public class UserController extends BaseController {
 			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
 		}
 		if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
-		    //跳会仓储专员界面
+		    //跳回仓储专员界面
             return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
         }
+		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
+			//跳回选品专员界面
+			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
+		}
 		if(user.getConn()!=null && user.getConn().equals(officeUser)){
 //			添加 跳回用户管理列表
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
@@ -288,10 +296,15 @@ public class UserController extends BaseController {
 					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
 		}
         if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
-            //跳会仓储专员界面
+            //跳回仓储专员界面
             return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
                     +"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
         }
+		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
+			//跳回选品专员界面
+			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
+					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
+		}
 		if(user.getConn() !=null && user.getConn().equals(officeUser)){
 //			跳回用户管理
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
@@ -541,6 +554,15 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"stoIndex"})
 	public String stoIndex(User user, Model model) {
 		return "modules/sys/stoIndex";
+	}
+
+	/**
+	 * 选品专员管理
+	 */
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"seleIndex"})
+	public String seleIndex(User user, Model model) {
+		return "modules/sys/seleIndex";
 	}
 
 	/**
