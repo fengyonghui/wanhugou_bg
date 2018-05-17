@@ -424,6 +424,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline) {
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         BizPoHeader bizPoHeader = this.get(id);
         if (bizPoHeader == null) {
             LOGGER.error("start audit error [{}]", id);
@@ -437,6 +438,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         }
         this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS);
         this.updateProcessToInit(bizPoHeader);
+        audit(id, String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId()), CommonProcessEntity.AuditType.PASS.getCode(), StringUtils.EMPTY);
         return "操作成功!";
     }
 
