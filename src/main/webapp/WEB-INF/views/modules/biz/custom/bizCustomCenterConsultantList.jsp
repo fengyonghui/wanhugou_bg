@@ -69,14 +69,16 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
-        <th>采购商名称</th>
-        <th>电话</th>
         <th>采购中心</th>
         <th>客户专员</th>
-        <%--<th>创建时间</th>--%>
-        <%--<th>创建人</th>--%>
-        <%--<th>更新时间</th>--%>
-        <%--<th>修改人</th>--%>
+        <th>经销店名称</th>
+        <th>负责人</th>
+        <th>详细地址</th>
+        <th>累计频次</th>
+        <th>金额</th>
+        <td>联系人</td>
+        <th>电话</th>
+        <th>首次开单时间</th>
         <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">
             <th>操作</th>
         </shiro:hasPermission>
@@ -86,32 +88,25 @@
     <c:forEach items="${page.bccList}" var="bizCustomCenterConsultant">
         <tr>
             <td>
-                    ${bizCustomCenterConsultant.customs.name}
+                ${bizCustomCenterConsultant.centers.name}
             </td>
             <td>
-                    ${bizCustomCenterConsultant.consultants.mobile}
+                ${bizCustomCenterConsultant.consultants.name}
             </td>
             <td>
-                    ${bizCustomCenterConsultant.centers.name}
+                ${bizCustomCenterConsultant.customs.name}
             </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
             <td>
-                    ${bizCustomCenterConsultant.consultants.name}
+                ${bizCustomCenterConsultant.consultants.mobile}
             </td>
-                <%--<td>--%>
-                <%--<fmt:formatDate value="${bizCustomCenterConsultant.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
-                <%--</td>--%>
-                <%--<td>--%>
-                <%--${bizCustomCenterConsultant.createBy.name}--%>
-                <%--</td>--%>
-                <%--<td>--%>
-                <%--<fmt:formatDate value="${bizCustomCenterConsultant.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
-                <%--</td>--%>
-                <%--<td>--%>
-                <%--${bizCustomCenterConsultant.updateBy.name}--%>
-                <%--</td>--%>
+            <td></td>
             <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">
                 <td>
-                        <%--<a href="${ctx}/biz/custom/bizCustomCenterConsultant/delete?customs.id=${bizCustomCenterConsultant.id}" onclick="return confirmx('确认要删除该客户专员吗？', this.href)">移除</a>--%>
                     <a href="${ctx}/biz/custom/bizCustomCenterConsultant/delete?customs.id=${bizCustomCenterConsultant.customs.id}&consultants.id=${bizCustomCenterConsultant.consultants.id}"
                        onclick="return confirmx('确认要移除该关联信息吗？', this.href)">移除</a>
                 </td>
