@@ -12,12 +12,18 @@ import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -25,6 +31,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +50,11 @@ import javax.annotation.Resource;
 @Service
 @Transactional(readOnly = true)
 public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, BizRequestHeader> {
+
+	/**
+	 * 默认表名
+	 */
+	public static final String DATABASE_TABLE_NAME = "biz_request_header";
 	@Resource
 	private BizRequestDetailService bizRequestDetailService;
 	@Resource
@@ -51,6 +63,10 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private OfficeService officeService;
 	@Resource
 	private BizSkuInfoService bizSkuInfoService;
+	@Resource
+	private CommonProcessService commonProcessService;
+	@Resource
+	private BizRequestHeaderDao bizRequestHeaderDao;
 
 
 	public BizRequestHeader get(Integer id) {
@@ -145,7 +161,6 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void save(BizRequestHeader bizRequestHeader) {
-
 		DefaultProp defaultProp=new DefaultProp();
 		defaultProp.setPropKey("vend_center");
 		List<DefaultProp> defaultPropList=defaultPropService.findList(defaultProp);
@@ -155,28 +170,24 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			Office office=officeService.get(vendId);
 			bizRequestHeader.setToOffice(office);
 		}
-		User user=UserUtils.getUser();
-		boolean flag=false;
-		if(user.getRoleList()!=null){
-			for(Role role:user.getRoleList()){
-				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
-					flag=true;
-					break;
-				}
-			}
-		}
 		if(bizRequestHeader.getId()==null){
-			BizRequestHeader requestHeader=new BizRequestHeader();
-			requestHeader.setFromOffice(bizRequestHeader.getFromOffice());
-			List<BizRequestHeader> requestHeaderList=findList(requestHeader);
-			int s=0;
-			if (requestHeaderList!=null && requestHeaderList.size()>0){
-				s=requestHeaderList.size();
-			}
+//			BizRequestHeader requestHeader=new BizRequestHeader();
+//			requestHeader.setFromOffice(bizRequestHeader.getFromOffice());
+//			List<BizRequestHeader> requestHeaderList=findList(requestHeader);
+//			int s=0;
+//			if (requestHeaderList!=null && requestHeaderList.size()>0){
+//				s=requestHeaderList.size();
+//			}
+			int s=findContByFromOffice(bizRequestHeader.getFromOffice().getId());
 			String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId(),bizRequestHeader.getToOffice().getId(),s+1);
 			bizRequestHeader.setReqNo(reqNo);
 		}
 		super.save(bizRequestHeader);
+
+		Integer processId=saveCommonProcess(bizRequestHeader);
+
+		this.updateProcessId(bizRequestHeader.getId(),processId);
+
 		BizRequestDetail bizRequestDetail=new BizRequestDetail();
 		if(bizRequestHeader.getSkuInfoIds()!=null && bizRequestHeader.getReqQtys()!=null){
 			String [] skuInfoIdArr=StringUtils.split(bizRequestHeader.getSkuInfoIds(),",");
@@ -184,11 +195,13 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			String [] lineNoArr=StringUtils.split(bizRequestHeader.getLineNos(),",");
 			int t=0;
 			int p=0;
+			Double totalDetail=0.0;
 			for(int i=0;i<skuInfoIdArr.length;i++){
 				if(reqArr[i].equals("0")){
 					continue;
 				}
-				bizRequestDetail.setSkuInfo(bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim())));
+				BizSkuInfo bizSkuInfo=bizSkuInfoService.get(Integer.parseInt(skuInfoIdArr[i].trim()));
+				bizRequestDetail.setSkuInfo(bizSkuInfo);
 				bizRequestDetail.setReqQty(Integer.parseInt(reqArr[i]
 						.trim()));
 
@@ -212,10 +225,27 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 				}
 				bizRequestDetail.setRequestHeader(bizRequestHeader);
 				bizRequestDetailService.save(bizRequestDetail);
+				BizRequestDetail requestDetail=bizRequestDetailService.get(bizRequestDetail);
+				totalDetail+=(requestDetail.getUnitPrice()==null?bizSkuInfo.getBuyPrice():requestDetail.getUnitPrice())*requestDetail.getReqQty();
+
 			}
+			bizRequestHeader.setTotalDetail(totalDetail);
+			super.save(bizRequestHeader);
 		}
 	}
 
+
+	public Integer  saveCommonProcess(BizRequestHeader bizRequestHeader){
+
+		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
+		RequestOrderProcessConfig.RequestOrderProcess purchaseOrderProcess = requestOrderProcessConfig.processMap.get(requestOrderProcessConfig.getDefaultProcessId());
+		CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+		commonProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+		commonProcessEntity.setObjectName(BizRequestHeaderService.DATABASE_TABLE_NAME);
+		commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+		commonProcessService.save(commonProcessEntity);
+		return commonProcessEntity.getId();
+	}
 	@Transactional(readOnly = false)
 	public void saveInfo(BizRequestHeader bizRequestHeader) {
 		super.save(bizRequestHeader);
@@ -291,4 +321,83 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		}
 	}
 
+
+
+	/**
+	 *
+	 * @param reqHeaderId
+	 * @param currentType
+	 * @param auditType
+	 * @param description
+	 * @return
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public String audit(Integer reqHeaderId, String currentType, int auditType, String description) {
+		BizRequestHeader bizRequestHeader = this.get(reqHeaderId);
+		CommonProcessEntity cureentProcessEntity  = bizRequestHeader.getCommonProcess();
+
+		if (cureentProcessEntity == null) {
+			return "操作失败,当前订单无审核状态!";
+		}
+		cureentProcessEntity = commonProcessService.get(bizRequestHeader.getCommonProcess().getId());
+		if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+			logger.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", reqHeaderId, currentType);
+			return "操作失败,当前审核状态异常!";
+		}
+
+		RequestOrderProcessConfig requestOrderProcessConfig = ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get();
+		// 当前流程
+		RequestOrderProcessConfig.RequestOrderProcess currentProcess = requestOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+		// 下一流程
+		RequestOrderProcessConfig.RequestOrderProcess nextProcess = requestOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+		if (nextProcess == null) {
+			return "操作失败,当前流程已经结束!";
+		}
+
+		User user = UserUtils.getUser();
+		RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
+		Role role = new Role();
+		role.setEnname(roleEnNameEnum.getState());
+		if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+			return "操作失败,该用户没有权限!";
+		}
+
+		if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+			return "请输入驳回理由!";
+		}
+
+		cureentProcessEntity.setBizStatus(auditType);
+		cureentProcessEntity.setProcessor(user.getId().toString());
+		cureentProcessEntity.setDescription(description);
+		commonProcessService.save(cureentProcessEntity);
+
+		CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+		nextProcessEntity.setObjectId(bizRequestHeader.getId().toString());
+		nextProcessEntity.setObjectName(BizRequestHeaderService.DATABASE_TABLE_NAME);
+		nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+		nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+
+		if(nextProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())){
+			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
+			saveRequestHeader(bizRequestHeader);
+		}
+		commonProcessService.save(nextProcessEntity);
+		this.updateProcessId(reqHeaderId, nextProcessEntity.getId());
+		return "ok";
+	}
+
+	/**
+	 * 更新流程ID
+	 * @param headerId
+	 * @param processId
+	 * @return
+	 */
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public int updateProcessId(Integer headerId, Integer processId) {
+		return dao.updateProcessId(headerId, processId);
+	}
+
+	public  int findContByFromOffice(Integer fromOfficeId ){
+		return  bizRequestHeaderDao.findContByFromOffice(fromOfficeId);
+	}
 }

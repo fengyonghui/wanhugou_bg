@@ -92,7 +92,7 @@
 				<form:input path="custConsultant.centers.name" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>支付账号：</label>
-				<form:input path="account.name" htmlEscape="false" maxlength="50" class="input-medium"/>
+				<form:input path="account" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="payBtnExport" class="btn btn-primary" type="button" value="导出"/></li>
@@ -144,14 +144,14 @@
 					${bizPayRecord.customer.moblieMoeny.mobile}
 				</td>
 				<td>
-					${bizPayRecord.account.name}
+					${bizPayRecord.account}
 				</td>
 				<td>
 					<%--<c:choose>--%>
 					<%--<c:when test="${bizPayRecord.toAccount == null } ">${bizPayRecord.toAccount}</c:when>--%>
 					<%--<c:otherwise>${bizPayRecord.toAccount.name}</c:otherwise>--%>
 					<%--</c:choose>--%>
-					${bizPayRecord.toAccount.name}
+					${bizPayRecord.toAccount}
 				</td>
 				<td>
 					${bizPayRecord.recordTypeName}

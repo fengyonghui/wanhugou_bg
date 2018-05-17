@@ -17,9 +17,7 @@
 		so.phone as "customer.phone",
 		a.biz_status AS "bizStatus",
 		a.account AS "account",
-		o.name AS  "account.name",
 		a.to_account AS "toAccount",
-		f.name AS "toAccount.name",
 		a.record_type AS "recordType",
 		a.record_type_name AS "recordTypeName",
 		a.pay_type AS "payType",
@@ -42,8 +40,6 @@
 		left join sys_user us on a.update_id=us.id
 		LEFT JOIN sys_office so on so.id=a.cust_id
 		LEFT JOIN sys_user s on s.id = a.payer
-		LEFT JOIN sys_office o on o.id = a.account
-	    LEFT JOIN  sys_office f on f.id = a.to_account
 	    LEFT join sys_user sua on sua.company_id=so.id and so.primary_person = sua.id
 		<!-- 采购中心 -->
 		LEFT JOIN biz_custom_center_consultant bcc on bcc.cust_id=so.id
@@ -56,6 +52,15 @@
 		FROM biz_pay_record a
 		<include refid="bizPayRecordJoins"/>
 		WHERE a.id = #{id}
+	</select>
+
+
+	<select id="findBizPayRecord" resultType="BizPayRecord">
+		SELECT
+	    a.*,a.cust_id AS "customer.id",h.id as reqId
+		FROM biz_pay_record a,biz_request_header h
+
+		WHERE a.order_num= h.req_no and a.pay_num = #{payNum}
 	</select>
 	
 	<select id="findList" resultType="BizPayRecord">
@@ -126,11 +131,8 @@
 			<if test="bizStatus != null and bizStatus != -1">
 				AND a.biz_status = #{bizStatus}
 			</if>
-			<if test="account != null and account.name != null and account.name != ''">
-				AND o.name like
-				<if test="dbName == 'oracle'">'%'||#{account.name}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{account.name}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{account.name},'%')</if>
+			<if test="account != null and account != ''">
+				AND account = #{account}
 			</if>
 			<if test="toAccount != null and toAccount != ''">
 				AND a.to_account = #{toAccount}
@@ -205,7 +207,10 @@
 		</if>
 			payer,
 			cust_id,
+		<if test="bizStatus !=null">
 			biz_status,
+		</if>
+
 		<if test="account !=null and account!=''">
 			account,
 		</if>
@@ -245,12 +250,14 @@
 		</if>
 			#{payer},
 			#{customer.id},
+		<if test="bizStatus !=null">
 			#{bizStatus},
-		<if test="account !=null and account.id != null and account.id != ''">
-			#{account.id},
 		</if>
-		<if test="toAccount !=null and toAccount.id and toAccount.id !=''">
-			#{toAccount.id},
+		<if test="account !=null and  account != ''">
+			#{account},
+		</if>
+		<if test="toAccount !=null and  toAccount !=''">
+			#{toAccount},
 		</if>
 			#{recordType},
 			#{recordTypeName},
@@ -260,11 +267,11 @@
 			#{tradeReason},
 		</if>
 			#{delFlag},
-			#{createBy.id},
-			#{createDate},
-			#{uVersion},
-			#{updateBy.id},
-			#{updateDate}
+		#{createBy.id},
+		#{createDate},
+		#{uVersion},
+		#{updateBy.id},
+		#{updateDate}
 		)
 	</insert>
 	

@@ -1,5 +1,7 @@
 package com.wanhutong.backend.modules.enums;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum RoleEnNameEnum {
     /**
      * 采购中心经理
@@ -41,10 +43,15 @@ public enum RoleEnNameEnum {
      * 供应商
      */
     SUPPLY_CHAIN("supply-chain", "供应商"),
+
+    CHANNEL_MANAGER("channel_manager","渠道经理"),
+
     /**
      * 系统管理员
      */
     DEPT("dept", "系统管理员");
+
+
 
 
 
@@ -62,5 +69,17 @@ public enum RoleEnNameEnum {
 
     public String getDesc() {
         return desc;
+    }
+
+    public static RoleEnNameEnum parse (String state) {
+        if (StringUtils.isBlank(state)) {
+            return null;
+        }
+        for (RoleEnNameEnum enNameEnum : values()) {
+            if (enNameEnum.getState().equals(state)) {
+                return enNameEnum;
+            }
+        }
+        return null;
     }
 }

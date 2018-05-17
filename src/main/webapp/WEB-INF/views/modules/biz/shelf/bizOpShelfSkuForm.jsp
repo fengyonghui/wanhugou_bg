@@ -45,10 +45,27 @@
                     $("#tbody").find("tr").each(function () {
                         var minQty = $(this).find("td").find("input[name='minQtys']").val();
                         var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
+                        var nextMinQty = $(this).next().find("td").find("input[name='minQtys']").val();
+                        var thisClass = $(this).attr("class");
+                        var nextClass = $(this).next().attr("class");
                         if (parseInt(minQty) >= parseInt(maxQty)){
                             alert("最高销售数量必须大于最低销售数量");
                             numFlag = false;
                             return;
+                        }
+                        if (parseInt(thisClass) == parseInt(nextClass)) {
+                            if (parseInt(nextMinQty) <= parseInt(maxQty)) {
+                                alert("销售数量重复");
+                                numFlag = false;
+                                return false;
+                            }
+                        }
+                        var orgPrice = $(this).find("td").find("input[name='orgPrices']").val();
+                        var salePrice = $(this).find("td").find("input[name='salePrices']").val();
+                        if(parseInt(orgPrice)>parseInt(salePrice)){
+                            alert("售价不能低于工厂价");
+                            numFlag = false;
+                            return false;
                         }
                     });
                     $("#tbody").find("td").each(function () {
@@ -151,9 +168,7 @@
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
                     data:$('#searchForm').serialize(),
                     success:function (data) {
-                        if(id==''){
-                            $("#prodInfo2").empty();
-                        }
+                         $("#prodInfo2").empty();
 
                         $.each(data,function (keys,skuInfoList) {
                             var prodKeys= keys.split(",");

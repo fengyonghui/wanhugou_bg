@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.shelf;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +37,26 @@ public class BizVarietyFactorService extends CrudService<BizVarietyFactorDao, Bi
 	
 	@Transactional(readOnly = false)
 	public void save(BizVarietyFactor bizVarietyFactor) {
-		super.save(bizVarietyFactor);
+		String[] varietIds =null;
+		if(bizVarietyFactor.getVarietyIds()!=null){
+			varietIds = bizVarietyFactor.getVarietyIds().split(",".trim());
+		}
+		String[] minQtyArr = bizVarietyFactor.getMinQtys().split(",".trim());
+		String[] maxQtyArr = bizVarietyFactor.getMaxQtys().split(",".trim());
+		String[] serviceFactorArr = bizVarietyFactor.getServiceFactors().split(",".trim());
+		if(bizVarietyFactor!=null) {
+			for (int i = 0; i < minQtyArr.length; i++) {
+				BizVarietyFactor varietyFactor = new BizVarietyFactor();
+				varietyFactor.setVarietyInfo(new BizVarietyInfo(bizVarietyFactor.getVarietyInfo().getId()));
+				if(varietIds[i]!=null && !varietIds[i].equals("add")){
+					varietyFactor.setId(Integer.parseInt(varietIds[i]));
+				}
+				varietyFactor.setMinQty(Integer.parseInt(minQtyArr[i]));
+				varietyFactor.setMaxQty(Integer.parseInt(maxQtyArr[i]));
+				varietyFactor.setServiceFactor(Integer.parseInt(serviceFactorArr[i]));
+				super.save(varietyFactor);
+			}
+		}
 	}
 	
 	@Transactional(readOnly = false)

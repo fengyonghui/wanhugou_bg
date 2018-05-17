@@ -81,7 +81,7 @@
 					<td>
 						<c:if test="${off.bizVendInfo.auditStatus == 0}">未审核</c:if>
 						<c:if test="${off.bizVendInfo.auditStatus == 1}">审核通过</c:if>
-						<c:if test="${off.bizVendInfo.auditStatus == 2}">未通过审核</c:if>
+						<c:if test="${off.bizVendInfo.auditStatus == 2}">驳回</c:if>
 					</td>
 					<td>
 						<shiro:hasPermission name="sys:supplier:audit">

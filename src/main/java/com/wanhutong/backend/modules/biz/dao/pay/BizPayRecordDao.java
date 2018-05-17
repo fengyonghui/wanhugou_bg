@@ -14,5 +14,7 @@ import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
  */
 @MyBatisDao
 public interface BizPayRecordDao extends CrudDao<BizPayRecord> {
+
+    BizPayRecord findBizPayRecord(String payNum);
 	
 }
