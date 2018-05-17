@@ -210,6 +210,7 @@
 							<c:if test="${requestHeader.delFlag!=null && requestHeader.delFlag!=0}">
 								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
 								<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
+								<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'关闭',${requestHeader.id})">关闭</a>
 							</c:if>
 							<c:if test="${requestHeader.delFlag!=null && requestHeader.delFlag==0}">
 								<a href="${ctx}/biz/request/bizRequestHeader/recovery?id=${requestHeader.id}" onclick="return confirmx('确认要恢复该备货清单吗？', this.href)">恢复</a>
@@ -229,7 +230,7 @@
 						<%--</c:when>--%>
 					</c:choose>
 
-					<c:if test="${requestHeader.totalDetail != requestHeader.recvTotal}">
+					<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
 						<a data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
 					</c:if>
 
