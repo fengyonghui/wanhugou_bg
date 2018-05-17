@@ -13,7 +13,6 @@ import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
@@ -24,7 +23,6 @@ import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
@@ -36,6 +34,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
+import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -77,8 +76,7 @@ public class BizOrderHeaderController extends BaseController {
     private OfficeService officeService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
-    @Autowired
-    private BizCustCreditService bizCustCreditService;
+
     @Autowired
     private BizPayRecordService bizPayRecordService;
     @Autowired
@@ -99,6 +97,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderHeaderUnlineService bizOrderHeaderUnlineService;
     @Autowired
     private CommonImgService commonImgService;
+    @Autowired
+    private DefaultPropService defaultPropService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -301,6 +301,14 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "findByOrder")
     public Map<String, Object> findByOrder(BizOrderHeader bizOrderHeader, String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
         User user= UserUtils.getUser();
+        DefaultProp defaultProp =new DefaultProp();
+         defaultProp.setPropKey("vend_center");
+        List<DefaultProp> defaultProps= defaultPropService.findList(defaultProp);
+        Integer vendCenterId=0;
+
+        if(defaultProps!=null){
+            vendCenterId= Integer.parseInt(defaultProps.get(0).getPropValue());
+        }
         if (StringUtils.isNotBlank(flag) && "0".equals(flag)) {
             bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
             List<Role>roleList= user.getRoleList();
@@ -336,7 +344,7 @@ public class BizOrderHeaderController extends BaseController {
                 bizPoOrderReq.setOrderHeader(orderHeader);
             }
             for (BizOrderDetail orderDetail : orderDetailList) {
-                if (StringUtils.isNotBlank(flag) && !"0".equals(flag)) {
+                if (StringUtils.isNotBlank(flag)  && !"0".equals(flag)) {
                     bizPoOrderReq.setSoLineNo(orderDetail.getLineNo());
                     bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
                     List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
@@ -345,7 +353,7 @@ public class BizOrderHeaderController extends BaseController {
                         orderDetail.setSkuInfo(skuInfo);
                         bizOrderDetailList.add(orderDetail);
                     }
-                } else {
+                } else if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=0 && !orderDetail.getSuplyis().getId().equals(vendCenterId)) {
                     BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
                     orderDetail.setSkuInfo(skuInfo);
                     bizOrderDetailList.add(orderDetail);

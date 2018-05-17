@@ -380,20 +380,20 @@
 							<td>${reqDetail.skuInfo.itemNo}</td>
 							<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 							<td style="white-space: nowrap">
-								<c:choose>
-									<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
-									<span style="float: left">
-										<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.unitPrice}"/>
-										<a href="#"  id="updateMoney" class="icon-ok-circle"></a>
-									</span>
-										<input type="hidden"  id="detailId" value="${reqDetail.id}"/>
-									</c:when>
-									<c:otherwise>
-										${reqDetail.unitPrice}
-									</c:otherwise>
-								</c:choose>
+								<%--<c:choose>--%>
+									<%--<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">--%>
+									<%--<span style="float: left">--%>
+										<%--<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.unitPrice}"/>--%>
+										<%--<a href="#"  id="updateMoney" class="icon-ok-circle"></a>--%>
+									<%--</span>--%>
+										<%--<input type="hidden"  id="detailId" value="${reqDetail.id}"/>--%>
+									<%--</c:when>--%>
+									<%--<c:otherwise>--%>
+										<%--${reqDetail.unitPrice}--%>
+									<%--</c:otherwise>--%>
+								<%--</c:choose>--%>
 
-
+									${reqDetail.unitPrice}
 							</td>
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
