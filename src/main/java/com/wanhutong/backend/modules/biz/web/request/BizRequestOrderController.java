@@ -331,7 +331,7 @@ public class BizRequestOrderController extends BaseController {
             //2商品
             List<List<String>> detailData = new ArrayList<List<String>>();
             if ("bhgh".equals(source)) {
-                fileName = "备货清单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+                fileName = "备货清单采购数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
                 page = findBizRequest(bizRequestHeader, requestHeaderPage,request,response);
                 for (BizRequestHeader requestHeader : page.getList()) {
                     List<String> headerListData = new ArrayList();
@@ -557,7 +557,7 @@ public class BizRequestOrderController extends BaseController {
                 String[] details = {"备货单号", "采购中心", "商品名称", "商品分类", "商品代码","品牌名称", "供应商", "SKU","SKU编号","申报数量","已供货数量"};
                 ExportExcelUtils eeu = new ExportExcelUtils();
                 SXSSFWorkbook workbook = new SXSSFWorkbook();
-                eeu.exportExcel(workbook, 0, "备货清单数据", headers, data, fileName);
+                eeu.exportExcel(workbook, 0, "备货清单采购", headers, data, fileName);
                 eeu.exportExcel(workbook, 1, "备货商品数据", details, detailData, fileName);
                 response.reset();
                 response.setContentType("application/octet-stream; charset=utf-8");
@@ -583,7 +583,7 @@ public class BizRequestOrderController extends BaseController {
         }catch (Exception e){
             e.printStackTrace();
             if ("bhgh".equals(source)) {
-                addMessage(redirectAttributes, "导出备货清单数据失败！失败信息：" + e.getMessage());
+                addMessage(redirectAttributes, "导出备货清单采购数据失败！失败信息：" + e.getMessage());
             } else if ("xsgh".equals(source)) {
                 addMessage(redirectAttributes, "导出订单采购数据失败！失败信息：" + e.getMessage());
             }

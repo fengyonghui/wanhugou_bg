@@ -15,7 +15,17 @@
                 }
             });
             $("#requesthExport").click(function(){
-				top.$.jBox.confirm("确认要导出备货清单数据吗？","系统提示",function(v,h,f){
+				top.$.jBox.confirm("确认要导出备货清单采购数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/ExportList");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/list");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
+			$("#orderHerExport").click(function(){
+				top.$.jBox.confirm("确认要导出订单采购数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
 						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/ExportList");
 						$("#searchForm").submit();
@@ -129,7 +139,7 @@
 				</li>
 
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
+				<li class="btns"><input id="orderHerExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
 
