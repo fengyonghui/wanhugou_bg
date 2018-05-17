@@ -26,7 +26,7 @@
 		sum(req_qty) as "reqQtys",
 		sum(recv_qty) as "recvQtys",
 		sum(req_qty * unit_price) AS totalMoney,
-		concat (",",GROUP_CONCAT(brd.id),",") as
+		concat (",",GROUP_CONCAT(brd.id),",") as reqDetailIds,
 		(@rownum:=@rownum+1) as "numberRownum",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
