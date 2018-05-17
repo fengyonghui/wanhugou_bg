@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.custom;
 
+import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import java.util.Date;
@@ -30,6 +31,11 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	private String queryCustomes;	//关联采购商列表查询状态
 
 	private List<BizCustomCenterConsultant> bccList;	//用于存放采购中心和采购顾问下的采购商
+
+	/**
+	 * 客户专员关联采购商显示详细地址
+	 * */
+	private CommonLocation bizLocation;
 
 	public BizCustomCenterConsultant() {
 		super();
@@ -85,5 +91,13 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 
 	public void setQueryCustomes(String queryCustomes) {
 		this.queryCustomes = queryCustomes;
+	}
+
+	public CommonLocation getBizLocation() {
+		return bizLocation;
+	}
+
+	public void setBizLocation(CommonLocation bizLocation) {
+		this.bizLocation = bizLocation;
 	}
 }
