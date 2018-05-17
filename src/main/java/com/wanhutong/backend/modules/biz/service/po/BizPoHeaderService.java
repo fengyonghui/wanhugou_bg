@@ -498,7 +498,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public int updateProcessId(int headerId, int processId) {
         return dao.updateProcessId(headerId, processId);
-    }
 	}
 
 	public void findPoHeaderDetail(String orderDetailIds,String reqDetailIds) {
