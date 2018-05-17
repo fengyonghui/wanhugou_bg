@@ -4,13 +4,11 @@
 package com.wanhutong.backend.modules.biz.web.request;
 
 import com.google.common.collect.Lists;
-import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
-import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
@@ -19,10 +17,8 @@ import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -30,14 +26,13 @@ import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
-import com.wanhutong.backend.modules.sys.service.OfficeService;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,13 +60,12 @@ public class BizRequestOrderController extends BaseController {
     private BizRequestDetailService bizRequestDetailService;
     @Autowired
     private BizSkuInfoService bizSkuInfoService;
-    @Autowired
-    private BizOrderAddressService bizOrderAddressService;
+
     @Autowired
     private DictService dictService;
 
 
-    @RequiresPermissions("biz:request:selecting:supplier:view")
+       @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
     public String list(String source, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader,HttpServletRequest request,HttpServletResponse response) {
         List<BizRequestHeader> requestHeaderList = null;
@@ -133,6 +127,69 @@ public class BizRequestOrderController extends BaseController {
         model.addAttribute("source", source);
         return "modules/biz/request/bizRequestOrderList";
     }
+
+
+    @RequiresPermissions("biz:request:selecting:supplier:view")
+    @RequestMapping(value = {"listV2", ""})
+    public String listV2(String source, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader,HttpServletRequest request,HttpServletResponse response) {
+        Page<BizRequestHeader> requestHeaderPage = null;
+        Page<BizOrderHeader> orderHeaderPage = null;
+        //备货清单供货
+        if ("bhgh".equals(source)) {
+            Page<BizRequestHeader> page = findBizRequest(bizRequestHeader, requestHeaderPage,request,response);
+            //分页 20180427 改
+            model.addAttribute("page", page);
+            //判断
+            model.addAttribute("requestHeaderPage", page.getList());
+
+        } else if ("xsgh".equals(source)) { //订单供货
+            bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+            bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
+            orderHeaderPage=bizOrderHeaderService.pageFindList(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+
+            Set<Integer> set = new HashSet();
+            List<BizOrderHeader> list = Lists.newArrayList();
+            for (BizOrderHeader bizOrderHeader1 : orderHeaderPage.getList()) {
+                set.clear();
+                boolean flag = false;
+                BizOrderDetail bizOrderDetail = new BizOrderDetail();
+                bizOrderDetail.setOrderHeader(bizOrderHeader1);
+                //	bizOrderDetail.setSuplyis(officeService.get(0));
+                StringBuffer sb = new StringBuffer();
+                List<BizOrderDetail> orderDetails = bizOrderDetailService.findList(bizOrderDetail);
+                for (BizOrderDetail bizOrderDetail1 : orderDetails) {
+                    if (bizOrderDetail1.getSuplyis().getId() == 0 || bizOrderDetail1.getSuplyis().getId()== 721) {
+                        flag = true;
+                    }
+                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail1.getSkuInfo().getId());
+                    set.add(bizSkuInfo.getProductInfo().getOffice().getId());
+                    sb.append(bizOrderDetail1.getId());
+                    sb.append(",");
+                }
+
+                if (set.size() == 1) {
+                    for (Iterator it = set.iterator(); it.hasNext(); ) {
+                        bizOrderHeader1.setOnlyVendor((Integer) it.next());
+                    }
+                    bizOrderHeader1.setOrderDetails(sb.substring(0, sb.lastIndexOf(",")));
+                    bizOrderHeader1.setOwnGenPoOrder(true);
+                }
+                if (flag) {
+                    list.add(bizOrderHeader1);
+                }
+
+            }
+            orderHeaderPage.setList(list);
+            //20180427 分页
+            model.addAttribute("page", orderHeaderPage);
+            //判断
+            model.addAttribute("orderHeaderPage", orderHeaderPage.getList());
+        }
+
+        model.addAttribute("source", source);
+        return "modules/biz/request/bizRequestOrderListV2";
+    }
+
 
     private List<BizRequestHeader> findBizRequest(BizRequestHeader bizRequestHeader, List<BizRequestHeader> requestHeaderList) {
         bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.APPROVE.getState().byteValue());

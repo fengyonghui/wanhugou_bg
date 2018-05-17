@@ -365,10 +365,19 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
 
         User user = UserUtils.getUser();
-      RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(currentProcess.getRoleEnNameEnum());
-        Role role = new Role();
-        role.setEnname(roleEnNameEnum.getState());
-        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+        List<String> roleEnNameEnumList = currentProcess.getRoleEnNameEnum();
+        boolean hasRole = false;
+        for (String s : roleEnNameEnumList) {
+            RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
+            Role role = new Role();
+            role.setEnname(roleEnNameEnum.getState());
+            if (user.getRoleList().contains(role)) {
+                hasRole = true;
+                break;
+            }
+        }
+
+        if (!user.isAdmin() && !hasRole) {
             return "操作失败,该用户没有权限!";
         }
 
@@ -425,5 +434,45 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		// 清除关联的支付申请单
 		this.updatePaymentOrderId(bizPoHeader.getId(), null);
         return "操作成功!";
+	}
+
+	public void findPoHeaderDetail(String orderDetailIds,String reqDetailIds) {
+//		String orderDetailIds=bizPoHeader.getOrderDetailIds();
+//		String reqDetailIds=bizPoHeader.getReqDetailIds();
+		Map<Integer,BizSkuInfo> skuMap = new HashMap<>();
+		if(StringUtils.isNotBlank(orderDetailIds)) {
+			String[] orderDetailArr = orderDetailIds.split(",");
+			for (String orderDetailId:orderDetailArr) {
+				BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailId));
+				BizSkuInfo skuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+				if (skuMap.containsKey(skuInfo.getId())){
+					BizSkuInfo sku = skuMap.get(skuInfo.getId());
+					Integer ordQty = sku.getReqQty()+bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty();
+					sku.setReqQty(ordQty);
+					skuMap.put(skuInfo.getId(),sku);
+				}else {
+					skuInfo.setReqQty(bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty());
+					skuMap.put(skuInfo.getId(),skuInfo);
+				}
+
+			}
+		}
+		if (StringUtils.isNotBlank(reqDetailIds)) {
+			String[] reqDetailArr = reqDetailIds.split(",");
+			for (String reqDetailId:reqDetailArr) {
+				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailId));
+				BizSkuInfo skuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+				if (skuMap.containsKey(skuInfo.getId())) {
+					BizSkuInfo sku = skuMap.get(skuInfo.getId());
+					Integer reqQty = sku.getReqQty()+bizRequestDetail.getReqQty()-bizRequestDetail.getRecvQty();
+					sku.setReqQty(reqQty);
+					skuMap.put(skuInfo.getId(),sku);
+				}else {
+					skuInfo.setReqQty(bizRequestDetail.getReqQty()-bizRequestDetail.getRecvQty());
+					skuMap.put(skuInfo.getId(),skuInfo);
+				}
+			}
+		}
+
 	}
 }

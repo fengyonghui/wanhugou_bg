@@ -160,14 +160,14 @@
 		<input id="deliveryStatus" type="hidden"  value="${bizPoHeader.deliveryStatus}"/>
 		<c:if test="${bizPoHeader.id!=null}">
 			<div class="control-group">
-			<label class="control-label">订单编号：</label>
+			<label class="control-label">采购单编号：</label>
 			<div class="controls">
 				<form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">订单来源：</label>
+			<label class="control-label">采购单来源：</label>
 			<div class="controls">
 				<c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
 					<%--<c:if test="${so.orderHeader!=null}">--%>
