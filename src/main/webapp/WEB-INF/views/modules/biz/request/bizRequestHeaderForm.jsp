@@ -359,7 +359,13 @@
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
 					</c:if>
-
+					<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+						<%--该备货单已生成采购单就显示--%>
+						<c:if test="${requestPoHeader!=null}">
+							<th>已生成的采购单</th>
+							<th>采购数量</th>
+						</c:if>
+					</c:if>
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 						<c:if test="${entity.str!='detail' && entity.str!='audit' }">
 							<th>操作</th>
@@ -404,6 +410,15 @@
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
+
+							<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+								<%--该备货单已生成采购单就显示--%>
+								<c:if test="${requestPoHeader!=null}">
+									<td>${requestPoHeader.orderNum}</td>
+									<td>${reqDetail.poDetail.ordQty}</td>
+								</c:if>
+							</c:if>
+
 							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 								<c:if test="${entity.str!='detail'&& entity.str!='audit'}">
 								<td>
@@ -482,33 +497,6 @@
 					<span class="help-inline"><font color="red">*</font> </span>
 				</div>
 			</div>
-		</c:if>
-
-		<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
-			<%--该备货单已生成采购单就显示--%>
-			<c:if test="${requestPoHeader!=null}">
-				<div class="control-group">
-					<label class="control-label">已生成的采购单：</label>
-					<div class="controls">
-						<table id="contentTablePoHeader" class="table table-striped table-bordered table-condensed">
-							<thead>
-							<tr>
-								<th>采购单编号</th>
-								<th>供应商</th>
-								<th>订单总价</th>
-							</tr>
-							</thead>
-							<tbody>
-							<tr>
-								<td>${requestPoHeader.orderNum}</td>
-								<td>${requestPoHeader.vendOffice.name}</td>
-								<td>${requestPoHeader.totalDetail}</td>
-							</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</c:if>
 		</c:if>
 
 		<div class="form-actions">

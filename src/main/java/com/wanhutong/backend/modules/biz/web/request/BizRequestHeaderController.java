@@ -15,12 +15,14 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
@@ -77,6 +79,8 @@ public class BizRequestHeaderController extends BaseController {
 	private DictService dictService;
 	@Autowired
 	private BizPoHeaderService bizPoHeaderService;
+	@Autowired
+	private BizPoDetailService bizPoDetailService;
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -120,9 +124,6 @@ public class BizRequestHeaderController extends BaseController {
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
 		}
-		model.addAttribute("entity", bizRequestHeader);
-		model.addAttribute("reqDetailList", reqDetailList);
-		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 
 		if(bizRequestHeader!=null && bizRequestHeader.getId()!=null && bizRequestHeader.getStr()!=null && bizRequestHeader.getStr().equals("detail")){
 			/*用于显示已经生成的采购单*/
@@ -136,6 +137,12 @@ public class BizRequestHeaderController extends BaseController {
 						if(poHeader!=null && poHeader.getDelFlag().equals("1") && poHeader.getIsPrewUseful()==0){
 							if(poOrderReq.getSoId()!=null){
 								if(bizRequestHeader.getId().equals(poOrderReq.getSoId())){
+									BizPoDetail bizPoDetail = new BizPoDetail();
+									bizPoDetail.setPoHeader(poOrderReq.getPoHeader());
+									List<BizPoDetail> poDetailList = bizPoDetailService.findList(bizPoDetail);
+										for(int i=0;i<reqDetailList.size();i++){
+											reqDetailList.get(i).setPoDetail(poDetailList.get(i));
+										}
 									model.addAttribute("requestPoHeader", poHeader);
 									break;
 								}
@@ -146,6 +153,9 @@ public class BizRequestHeaderController extends BaseController {
 			}
 		}
 
+		model.addAttribute("entity", bizRequestHeader);
+		model.addAttribute("reqDetailList", reqDetailList);
+		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		return "modules/biz/request/bizRequestHeaderForm";
 	}
 
