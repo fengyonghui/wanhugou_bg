@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -58,8 +59,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderService.class);
 
 
-    @Resource
-	private BizSkuInfoService bizSkuInfoService;
+    @Autowired
+	private BizSkuInfoV2Service bizSkuInfoService;
 	@Autowired
 	private BizPoDetailService bizPoDetailService;
 

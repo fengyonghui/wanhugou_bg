@@ -19,7 +19,6 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizCustSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuPropValueService;
 import com.wanhutong.backend.modules.enums.DefaultPropEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +55,6 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
     private BizOpShelfInfoService bizOpShelfInfoService;
     @Autowired
     private BizCustSkuService bizCustSkuService;
-    @Autowired
-    private BizSkuPropValueService bizSkuPropValueService;
-    @Autowired
-    private BizOrderSkuPropValueService bizOrderSkuPropValueService;
 
     public BizOrderDetail get(Integer id) {
         return super.get(id);

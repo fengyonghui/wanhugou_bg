@@ -34,6 +34,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineServi
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -86,7 +87,7 @@ public class BizOrderHeaderController extends BaseController {
     @Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
     @Autowired
-    private BizSkuInfoService bizSkuInfoService;
+    private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired

@@ -27,6 +27,7 @@ import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryVi
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -70,7 +71,7 @@ public class BizInventorySkuController extends BaseController {
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
-    private BizSkuInfoService bizSkuInfoService;
+    private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private SystemService systemService;
     @Autowired
