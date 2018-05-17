@@ -159,8 +159,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     skuMap.put(skuInfo.getId(), sku);
                 } else {
 //                    BizSkuInfo sku = skuMap.get(skuInfo.getId());
-                    skuInfo.setReqQty(bizOrderDetail.getOrdQty() - bizOrderDetail.getSentQty());
-                    skuMap.put(skuInfo.getId(), skuInfo);
+                    skuInfo.setReqQty(bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty());
+                    skuMap.put(skuInfo.getId(),skuInfo);
                 }
 
             }
@@ -499,4 +499,45 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     public int updateProcessId(int headerId, int processId) {
         return dao.updateProcessId(headerId, processId);
     }
+	}
+
+	public void findPoHeaderDetail(String orderDetailIds,String reqDetailIds) {
+//		String orderDetailIds=bizPoHeader.getOrderDetailIds();
+//		String reqDetailIds=bizPoHeader.getReqDetailIds();
+		Map<Integer,BizSkuInfo> skuMap = new HashMap<>();
+		if(StringUtils.isNotBlank(orderDetailIds)) {
+			String[] orderDetailArr = orderDetailIds.split(",");
+			for (String orderDetailId:orderDetailArr) {
+				BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailId));
+				BizSkuInfo skuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+				if (skuMap.containsKey(skuInfo.getId())){
+					BizSkuInfo sku = skuMap.get(skuInfo.getId());
+					Integer ordQty = sku.getReqQty()+bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty();
+					sku.setReqQty(ordQty);
+					skuMap.put(skuInfo.getId(),sku);
+				}else {
+					skuInfo.setReqQty(bizOrderDetail.getOrdQty()-bizOrderDetail.getSentQty());
+					skuMap.put(skuInfo.getId(),skuInfo);
+				}
+
+			}
+		}
+		if (StringUtils.isNotBlank(reqDetailIds)) {
+			String[] reqDetailArr = reqDetailIds.split(",");
+			for (String reqDetailId:reqDetailArr) {
+				BizRequestDetail bizRequestDetail = bizRequestDetailService.get(Integer.parseInt(reqDetailId));
+				BizSkuInfo skuInfo = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
+				if (skuMap.containsKey(skuInfo.getId())) {
+					BizSkuInfo sku = skuMap.get(skuInfo.getId());
+					Integer reqQty = sku.getReqQty()+bizRequestDetail.getReqQty()-bizRequestDetail.getRecvQty();
+					sku.setReqQty(reqQty);
+					skuMap.put(skuInfo.getId(),sku);
+				}else {
+					skuInfo.setReqQty(bizRequestDetail.getReqQty()-bizRequestDetail.getRecvQty());
+					skuMap.put(skuInfo.getId(),skuInfo);
+				}
+			}
+		}
+
+	}
 }

@@ -140,8 +140,8 @@
     <li><a href="${ctx}/biz/po/bizPoHeader/">采购订单列表</a></li>
     <li class="active">
         <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">采购订单
-        <shiro:hasPermission name="biz:po:bizPoHeader:edit">${not empty bizPoHeader.id?'修改':'添加'}</shiro:hasPermission>
-        <shiro:lacksPermission name="biz:po:bizPoHeader:edit">查看</shiro:lacksPermission></a>
+            <shiro:hasPermission name="biz:po:bizPoHeader:edit">${not empty bizPoHeader.id?'修改':'添加'}</shiro:hasPermission>
+            <shiro:lacksPermission name="biz:po:bizPoHeader:edit">查看</shiro:lacksPermission></a>
     </li>
 </ul>
 <br/>
@@ -155,14 +155,14 @@
     <input id="deliveryStatus" type="hidden" value="${bizPoHeader.deliveryStatus}"/>
     <c:if test="${bizPoHeader.id!=null}">
         <div class="control-group">
-            <label class="control-label">订单编号：</label>
+            <label class="control-label">采购单编号：</label>
             <div class="controls">
                 <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
             </div>
         </div>
 
         <div class="control-group">
-            <label class="control-label">订单来源：</label>
+            <label class="control-label">采购单来源：</label>
             <div class="controls">
                 <c:forEach items="${bizPoHeader.orderSourceMap}" var="so">
                     <%--<c:if test="${so.orderHeader!=null}">--%>
@@ -295,7 +295,7 @@
                            class="input-medium Wdate required"
                            value="<fmt:formatDate value="${bizPoHeader.bizPoPaymentOrder.deadline}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
                             <c:if test="${type == 'createPay'}"> onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"</c:if>
-                placeholder="必填！"/>
+                           placeholder="必填！"/>
                 </div>
             </div>
         </c:if>
@@ -401,12 +401,12 @@
             <th>产品图片</th>
             <th>品牌名称</th>
             <th>商品名称</th>
-            <%--<th>商品编码</th>--%>
+                <%--<th>商品编码</th>--%>
             <th>商品货号</th>
             <c:if test="${bizPoHeader.id!=null}">
                 <th>所属单号</th>
             </c:if>
-            <%--<th>商品属性</th>--%>
+                <%--<th>商品属性</th>--%>
             <c:if test="${bizPoHeader.id==null}">
                 <th>申报数量</th>
             </c:if>
@@ -426,7 +426,7 @@
                     <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
                     <td>${poDetail.skuInfo.productInfo.brandName}</td>
                     <td>${poDetail.skuInfo.name}</td>
-                    <%--<td>${poDetail.skuInfo.partNo}</td>--%>
+                        <%--<td>${poDetail.skuInfo.partNo}</td>--%>
                     <td>${poDetail.skuInfo.itemNo}</td>
                     <c:if test="${bizPoHeader.id!=null}">
                         <td>
@@ -444,7 +444,7 @@
 
                         </td>
                     </c:if>
-                    <%--<td>${poDetail.skuInfo.skuPropertyInfos}</td>--%>
+                        <%--<td>${poDetail.skuInfo.skuPropertyInfos}</td>--%>
                     <td>${poDetail.ordQty}</td>
                     <td>${poDetail.sendQty}</td>
                     <td>${poDetail.unitPrice}</td>
@@ -466,9 +466,9 @@
                             <td><img style="max-width: 120px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
                             <td>${reqDetail.skuInfo.productInfo.brandName}</td>
                             <td>${reqDetail.skuInfo.name}</td>
-                            <%--<td>${reqDetail.skuInfo.partNo}</td>--%>
+                                <%--<td>${reqDetail.skuInfo.partNo}</td>--%>
                             <td>${reqDetail.skuInfo.itemNo}</td>
-                            <%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
+                                <%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
                             <td>${reqDetail.reqQty-reqDetail.recvQty}
                                     <%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
                                     <%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
@@ -498,9 +498,9 @@
                             <td><img style="max-width: 120px" src="${orderDetail.skuInfo.productInfo.imgUrl}"/></td>
                             <td>${orderDetail.skuInfo.productInfo.brandName}</td>
                             <td>${orderDetail.skuInfo.name}</td>
-                            <%--<td>${orderDetail.skuInfo.partNo}</td>--%>
+                                <%--<td>${orderDetail.skuInfo.partNo}</td>--%>
                             <td>${orderDetail.skuInfo.itemNo}</td>
-                            <%--<td>${orderDetail.skuInfo.skuPropertyInfos}</td>--%>
+                                <%--<td>${orderDetail.skuInfo.skuPropertyInfos}</td>--%>
                             <td>${orderDetail.ordQty-orderDetail.sentQty}
                                     <%--<input type='hidden' name='reqDetailIds' value='${map.value.reqDetailIds}'/>--%>
                                     <%--<input type='hidden' name='skuInfoIds' value='${map.key.id}'/>--%>
