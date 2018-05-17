@@ -8,6 +8,7 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.plan.BizOpPlanDao;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.entity.plan.BizOpPlan;
+import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.dao.OfficeDao;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +51,9 @@ public class BizStatisticsPlatformService {
 
     @Resource
     private UserDao userDao;
+
+    @Resource
+    private BizPayRecordService bizPayRecordService;
 
     /**
      * 请求参数日期格式
@@ -231,5 +236,44 @@ public class BizStatisticsPlatformService {
      */
     public List<Integer> findOrderCountFrequency(Integer custId) {
         return bizOrderHeaderDao.findOrderCountFrequency(custId, OrderHeaderBizStatusEnum.INVALID_STATUS);
+    }
+
+    public Map<String, Object> getReceiveData(String startDate, String endDate, String centerType) {
+        List<BizOrderStatisticsDto> dataList = bizPayRecordService.getReceiveData(startDate, endDate + " 23:59:59", centerType);
+
+        Set<String> officeNameSet = Sets.newHashSet();
+        Map<String, Object> dataMap = Maps.newHashMap();
+        Map<String, Object> resultMap = Maps.newHashMap();
+        dataList.forEach(o -> {
+            officeNameSet.add(o.getOfficeName());
+            dataMap.put(o.getOfficeName(), o.getReceiveTotal());
+        });
+        officeNameSet.removeAll(Collections.singleton(null));
+
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        if (dataMap.size() > 0) {
+            List<Object> resultDataList = Lists.newArrayList();
+            officeNameSet.forEach(o -> {
+                resultDataList.add(dataMap.get(o));
+            });
+            echartsSeriesDto.setData(resultDataList);
+
+            EchartsSeriesDto.ItemStyle itemStyle = new EchartsSeriesDto.ItemStyle();
+            EchartsSeriesDto.Normal normal = new EchartsSeriesDto.Normal();
+            EchartsSeriesDto.Label label = new EchartsSeriesDto.Label();
+            label.setShow(true);
+            label.setTextStyle(
+                    "fontWeight:'bolder'," +
+                            "fontSize : '12'," +
+                            "position : 'top'," +
+                            "fontFamily : '微软雅黑'");
+            normal.setLabel(label);
+            itemStyle.setNormal(normal);
+            echartsSeriesDto.setItemStyle(itemStyle);
+        }
+        resultMap.put("echartsSeriesDto", echartsSeriesDto);
+        resultMap.put("officeNameSet", officeNameSet);
+        resultMap.put("ret", CollectionUtils.isNotEmpty(dataList));
+        return resultMap;
     }
 }

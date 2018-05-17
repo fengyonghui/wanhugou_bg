@@ -862,4 +862,17 @@ public class BizStatisticsPlatformController extends BaseController {
         return "modules/biz/statistics/bizPlatformOrderCountFrequency";
     }
 
+    @RequiresPermissions("biz:statistics:receive:view")
+    @RequestMapping(value = {"receive", ""})
+    public String receive() {
+        return "modules/biz/statistics/bizStatisticsReceive";
+    }
+
+    @RequiresPermissions("biz:statistics:receive:view")
+    @RequestMapping(value = {"receiveData", ""})
+    @ResponseBody
+    public String receiveData(String startDate, String endDate, String centerType) {
+        return JSONObject.fromObject(bizStatisticsPlatformService.getReceiveData(startDate, endDate, centerType)).toString();
+    }
+
 }
