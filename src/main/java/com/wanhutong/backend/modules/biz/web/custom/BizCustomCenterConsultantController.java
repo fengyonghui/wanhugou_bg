@@ -80,7 +80,7 @@ public class BizCustomCenterConsultantController extends BaseController {
             userBcc.setId(user.getId());
             BCC.setConsultants(userBcc);//客户专员
             model.addAttribute("bcUser", BCC);
-            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(BCC);
+            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(BCC);
             if(list.size()!=0){
                 bizCustomCenterConsultant.setBccList(list);
             }

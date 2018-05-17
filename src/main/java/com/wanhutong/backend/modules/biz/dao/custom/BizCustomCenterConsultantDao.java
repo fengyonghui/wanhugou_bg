@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 
+import java.util.List;
+
 /**
  * 客户专员管理DAO接口
  * @author Ouyang Xiutian
@@ -14,5 +16,7 @@ import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant
  */
 @MyBatisDao
 public interface BizCustomCenterConsultantDao extends CrudDao<BizCustomCenterConsultant> {
-	
+
+    List<BizCustomCenterConsultant> userFindList(BizCustomCenterConsultant bizCustomCenterConsultant);
+
 }
