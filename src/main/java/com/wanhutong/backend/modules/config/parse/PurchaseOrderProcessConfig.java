@@ -100,8 +100,8 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
         /**
          * 处理角色
          */
-        @XStreamAlias("roleEnNameEnum")
-        private String roleEnNameEnum;
+        @XStreamImplicit(itemFieldName = "roleEnNameEnum")
+        private List<String> roleEnNameEnum;
 
         /**
          * 通过之后的状态
@@ -123,7 +123,7 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
             return code;
         }
 
-        public String getRoleEnNameEnum() {
+        public List<String> getRoleEnNameEnum() {
             return roleEnNameEnum;
         }
 
