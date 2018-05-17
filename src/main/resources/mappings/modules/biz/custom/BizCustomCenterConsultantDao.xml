@@ -109,10 +109,12 @@
             a.cust_id AS "customs.id",
             soc. NAME AS "customs.name",
             soa.addr_id,
-            cl.province_id,
-            cl.city_id,
-            cl.region_id,
-            cl.pcr_name as "bizLocation.pcrName",
+			cl.province_id as "bizLocation.province.id",
+			province.name as "bizLocation.province.name",
+			cl.city_id as "bizLocation.city.id",
+			city.name as "bizLocation.city.name",
+			cl.region_id as "bizLocation.region.id",
+			reg.name as "bizLocation.region.name",
             cl.address as "bizLocation.address",
             soc.primary_person as "customs.primaryPerson",
             pp.name AS "customs.primaryPerson.name",
@@ -134,9 +136,14 @@
         LEFT JOIN sys_user suc ON suc.id = a.create_id
         LEFT JOIN sys_user sug ON sug.id = a.consultant_id
         LEFT JOIN sys_user suu ON suu.company_id = soc.id AND suu. STATUS = 1
+		<!--负责人、详细地址-->
         LEFT JOIN sys_user pp ON pp.id = soc.primary_person and pp.status=1
         LEFT JOIN sys_office_address soa on soa.office_id=soc.id and soa.status=1 and soa.default_status=1
         left join common_location cl on cl.id=soa.addr_id
+		LEFT JOIN sys_region province ON cl.province_id = province.id
+		LEFT JOIN sys_region city ON cl.city_id = city.id
+		LEFT JOIN sys_region reg ON cl.region_id = reg.id
+		<!--end-->
         <where>
             a.status = #{DEL_FLAG_NORMAL}
             <if test="customs != null and customs.id != null and customs.id != ''">

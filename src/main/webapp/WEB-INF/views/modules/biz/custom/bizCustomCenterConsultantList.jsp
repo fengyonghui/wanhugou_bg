@@ -75,7 +75,7 @@
         <th>经销店名称</th>
         <th>负责人</th>
         <th>详细地址</th>
-        <th>累计频次</th>
+        <th>累计采购频次</th>
         <th>金额</th>
         <th>首次开单时间</th>
         <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">
