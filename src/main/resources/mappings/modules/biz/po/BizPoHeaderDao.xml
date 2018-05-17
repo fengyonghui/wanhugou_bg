@@ -37,7 +37,8 @@
 		process.processor AS "bizPoPaymentOrder.commonProcess.processor",
 		process.description AS "bizPoPaymentOrder.commonProcess.description",
 		process.type AS "bizPoPaymentOrder.commonProcess.type",
-		process.create_time AS "bizPoPaymentOrder.commonProcess.createTime"
+		process.create_time AS "bizPoPaymentOrder.commonProcess.createTime",
+		a.is_prew as "isPrewUseful"
 	</sql>
 	
 	<sql id="bizPoHeaderJoins">
