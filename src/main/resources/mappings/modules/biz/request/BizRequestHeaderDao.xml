@@ -26,7 +26,6 @@
 		sum(req_qty) as "reqQtys",
 		sum(recv_qty) as "recvQtys",
 		sum(req_qty * unit_price) AS totalMoney,
-		(@rownum:=@rownum+1) as "numberRownum",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
@@ -58,7 +57,7 @@
 	<select id="findList" resultType="BizRequestHeader">
 		SELECT 
 			<include refid="bizRequestHeaderColumns"/>
-		FROM (select @rownum:=0) as rownum,biz_request_header a
+		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
 
 		<where>

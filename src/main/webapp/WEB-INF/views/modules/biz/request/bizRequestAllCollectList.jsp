@@ -15,19 +15,19 @@
                 }
             });
             $("#requestAllExport").click(function(){
-				top.$.jBox.confirm("确认要导出备货单收货数据吗？","系统提示",function(v,h,f){
+				top.$.jBox.confirm("确认要导出备货单发货数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/listExport");
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/requestOrderHeaderExport");
 						$("#searchForm").submit();
 						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/");
 					}
 				},{buttonsFocus:1});
 				top.$('.jbox-body .jbox-icon').css('top','55px');
 			});
-			$("#orderExport").click(function(){
-				top.$.jBox.confirm("确认要导出订单出库数据吗？","系统提示",function(v,h,f){
+			$("#orderShExport").click(function(){
+				top.$.jBox.confirm("确认要导出订单发货数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/listExport");
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/requestOrderHeaderExport");
 						$("#searchForm").submit();
 						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/");
 					}
@@ -83,10 +83,7 @@
 					</form:select>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-				<li class="btns">
-					<%--备货单收货--%>
-					<input id="requestAllExport" class="btn btn-primary" type="button" value="导出"/>
-				</li>
+				<li class="btns"><input id="requestAllExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<li class="clearfix"></li>
 			</ul>
 		</form:form>
@@ -129,10 +126,7 @@
 					</c:if>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-				<li class="btns">
-					<%--订单出库--%>
-					<input id="orderExport" class="btn btn-primary" type="button" value="导出"/>
-				</li>
+				<li class="btns"><input id="orderShExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
 
