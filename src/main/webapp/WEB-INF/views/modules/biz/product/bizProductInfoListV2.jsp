@@ -29,13 +29,19 @@
                         url:"${ctx}/biz/product/bizProductInfoV2/prodDelete?id="+item,
                         data:"bizVarietyInfo.name="+cp+"&name="+cpName+"&prodCode="+cpPc+"&itemNo="+cpIn+"&brandName="+cpBr,
                         success:function(data){
-                            if(data=="ok"){
+                            if(data=="opSheSku"){
+								alert("商品上下架还有该产品，不能删除 ");
+							}else if(data=="skuS"){
+								alert("商品sku还有该产品，不能删除 ");
+							}else if(data=="invSku"){
+								alert("库存盘点里还有该产品里的商品sku，不能删除 ");
+							}else{
                                 <%--alert("删除产品信息成功");--%>
                                 $("#messDele").css("display","block");
-                                <%--使用setTimeout（）方法设定定时580毫秒--%>
+                                <%--使用setTimeout（）方法设定定时600毫秒--%>
                                 setTimeout(function(){
                                     window.location.reload();
-                                },580);
+                                },600);
                             }
                         }
                     });
