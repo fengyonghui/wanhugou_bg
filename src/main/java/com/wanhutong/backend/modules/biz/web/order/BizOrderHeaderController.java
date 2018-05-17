@@ -209,33 +209,15 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
         }
-        if (bizOrderHeader.getStatu() != null && bizOrderHeader.getStatu().equals("unline")){
-            BizOrderHeaderUnline orderHeaderUnline = new BizOrderHeaderUnline();
-            orderHeaderUnline.setOrderHeader(bizOrderHeader);
-            List<BizOrderHeaderUnline> list = bizOrderHeaderUnlineService.findList(orderHeaderUnline);
-            if (list != null && !list.isEmpty()) {
-                BizOrderHeaderUnline bizOrderHeaderUnline = list.get(0);
-                bizOrderHeader.setOrderHeaderUnline(bizOrderHeaderUnline);
-                if (bizOrderHeaderUnline != null && bizOrderHeaderUnline.getId() != null) {
-                    CommonImg commonImg = new CommonImg();
-                    commonImg.setImgType(ImgEnum.UNlINE_PAYMENT_VOUCHER.getCode());
-                    commonImg.setObjectName(ImgEnum.UNlINE_PAYMENT_VOUCHER.getTableName());
-                    commonImg.setObjectId(bizOrderHeaderUnline.getId());
-                    List<CommonImg> commonImgList = commonImgService.findList(commonImg);
-                    if (commonImgList != null && !commonImgList.isEmpty()) {
-                        List<String> imgUrlList = new ArrayList<>();
-                        for (CommonImg comImg:commonImgList) {
-                            StringBuffer sb = new StringBuffer();
-                            sb.append(comImg.getImgServer()).append(comImg.getImgPath());
-                            imgUrlList.add(sb.toString());
-                        }
-                        model.addAttribute("imgUrlList",imgUrlList);
-                    }
-                }
+        if (bizOrderHeader.getId() != null) {
+            BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
+            bizOrderHeaderUnline.setOrderHeader(bizOrderHeader);
+            List<BizOrderHeaderUnline> unlineList = bizOrderHeaderUnlineService.findList(bizOrderHeaderUnline);
+            if (unlineList != null && !unlineList.isEmpty()) {
+                model.addAttribute("unlineList", unlineList);
             }
-            model.addAttribute("entity", bizOrderHeader);
-            return "modules/biz/order/bizOrderHeaderUnlineForm";
         }
+        model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
         model.addAttribute("entity", bizOrderHeader);
         return "modules/biz/order/bizOrderHeaderForm";
     }

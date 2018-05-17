@@ -26,6 +26,7 @@ public class BizOrderHeaderUnline extends DataEntity<BizOrderHeaderUnline> {
 	private String imgUrl;		// 单据凭证图
 	private BigDecimal unlinePayMoney;		// 线下付款金额
 	private BigDecimal realMoney;		// 实收金额
+	private Byte bizStatus;		//流水的状态 0：未审核 1：通过 2：驳回
 	
 	public BizOrderHeaderUnline() {
 		super();
@@ -74,4 +75,13 @@ public class BizOrderHeaderUnline extends DataEntity<BizOrderHeaderUnline> {
 	public void setSerialNum(String serialNum) {
 		this.serialNum = serialNum;
 	}
+
+	public Byte getBizStatus() {
+		return bizStatus;
+	}
+
+	public void setBizStatus(Byte bizStatus) {
+		this.bizStatus = bizStatus;
+	}
+
 }
