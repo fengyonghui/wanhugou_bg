@@ -359,7 +359,13 @@
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
 					</c:if>
-
+					<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+						<%--该备货单已生成采购单就显示--%>
+						<c:if test="${requestPoHeader!=null}">
+							<th>已生成的采购单</th>
+							<th>采购数量</th>
+						</c:if>
+					</c:if>
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 						<c:if test="${entity.str!='detail' && entity.str!='audit' }">
 							<th>操作</th>
@@ -404,6 +410,15 @@
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
+
+							<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+								<%--该备货单已生成采购单就显示--%>
+								<c:if test="${requestPoHeader!=null}">
+									<td>${requestPoHeader.orderNum}</td>
+									<td>${reqDetail.poDetail.ordQty}</td>
+								</c:if>
+							</c:if>
+
 							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 								<c:if test="${entity.str!='detail'&& entity.str!='audit'}">
 								<td>
@@ -483,7 +498,6 @@
 				</div>
 			</div>
 		</c:if>
-
 
 		<div class="form-actions">
 

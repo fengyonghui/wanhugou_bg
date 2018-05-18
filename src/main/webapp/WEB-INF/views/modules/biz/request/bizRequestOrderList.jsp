@@ -60,8 +60,8 @@
 					<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
 				</li>
 				<li><label>采购中心：</label>
-					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
+					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${bizRequestHeader.fromOffice.id}" labelName="fromOffice.name"
+									labelValue="${bizRequestHeader.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>

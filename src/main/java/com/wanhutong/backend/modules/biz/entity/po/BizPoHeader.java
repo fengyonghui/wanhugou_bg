@@ -40,6 +40,10 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Office deliveryOffice;//交割地点（供应商或采购商）
 	private Integer deliveryStatus;
 	private String str;//详情标志
+	/**
+	 *	是否是预览数据 ,1是，2否
+	 * */
+	private int isPrewUseful;
 
 	private BizPlatformInfo plateformInfo;		// 订单来源； biz_platform_info.id
 	private List<BizPoDetail> poDetailList;
@@ -310,5 +314,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		public String getDesc() {
 			return desc;
 		}
+	}
+
+	public int getIsPrewUseful() {
+		return isPrewUseful;
+	}
+
+	public void setIsPrewUseful(int isPrewUseful) {
+		this.isPrewUseful = isPrewUseful;
 	}
 }
