@@ -6,16 +6,26 @@ package com.wanhutong.backend.modules.sys.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.lang3.tuple.Pair;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.web.statistics.BizStatisticsPlatformController;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,6 +67,12 @@ public class UserController extends BaseController {
     //用来判断仓储专员
     private static final String WAREHOUSESPECIALIST = "stoIndex";
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(BizStatisticsPlatformController.class);
+	/**
+	 * 默认超时时间
+	 */
+	private static final Long DEFAULT_TIME_OUT = TimeUnit.SECONDS.toMillis(60);
+
 	@Autowired
 	private SystemService systemService;
 
@@ -64,6 +80,8 @@ public class UserController extends BaseController {
 	private OfficeService officeService;
 	@Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+	@Autowired
+	private BizOrderHeaderDao bizOrderHeaderDao;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -579,9 +597,14 @@ public class UserController extends BaseController {
 		company.setType(OfficeTypeEnum.CUSTOMER.getType());
 		user.setCompany(company);
 		Page<User> page = systemService.contact(new Page<User>(request, response),user);
+		for (User user1 : page.getList()) {
+			List<BizOrderHeader> userOrderCountSecond = bizOrderHeaderDao.findUserOrderCountSecond(user1.getCompany().getId());
+			for (BizOrderHeader bizOrderHeader : userOrderCountSecond) {
+				user1.setUserOrder(bizOrderHeader);
+			}
+		}
 		model.addAttribute("page", page);
 		model.addAttribute("flag","ck");
-//		model.addAttribute("userList",userList);
 		return "modules/sys/office/sysOfficeContact";
 	}
 

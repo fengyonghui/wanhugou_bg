@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
@@ -64,6 +65,11 @@ public class User extends DataEntity<User> {
 	private Integer consultantId;
 	private Integer centerId;
 	private Integer ccStatus;
+
+	/**
+	 * 会员搜索查看 采购商的下单相关信息
+	 * */
+	private BizOrderHeader userOrder;
 
 	public String getConn() {
 		return conn;
@@ -384,5 +390,13 @@ public class User extends DataEntity<User> {
 
 	public void setUserFlag(String userFlag) {
 		this.userFlag = userFlag;
+	}
+
+	public BizOrderHeader getUserOrder() {
+		return userOrder;
+	}
+
+	public void setUserOrder(BizOrderHeader userOrder) {
+		this.userOrder = userOrder;
 	}
 }
