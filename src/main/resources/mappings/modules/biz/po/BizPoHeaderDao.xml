@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao">
-    
+
 	<sql id="bizPoHeaderColumns">
 		a.id AS "id",
 		a.order_num AS "orderNum",
@@ -50,12 +50,53 @@
 		prevProcess.type AS "prevCommonProcess.type",
 		prevProcess.create_time AS "prevCommonProcess.createTime"
 	</sql>
+
+    <sql id="bizRePoHeaderColumns">
+        b.id AS "id",
+        b.order_num AS "orderNum",
+        b.vend_id AS "vendOffice.id",
+        b.total_detail AS "totalDetail",
+        b.total_exp AS "totalExp",
+        b.freight AS "freight",
+        b.inv_status AS "invStatus",
+        b.biz_status AS "bizStatus",
+        b.plateform_id AS "plateformInfo.id",
+        b. STATUS AS "delFlag",
+        b.initial_pay AS "initialPay",
+        b.last_pay_date AS "lastPayDate",
+        b.remark AS "remark",
+        b.delivery_office_id AS "deliveryOffice.id",
+        b.create_id AS "createBy.id",
+        b.create_time AS "createDate",
+        b.u_version AS "uVersion",
+        b.update_id AS "updateBy.id",
+        b.update_time AS "updateDate",
+        b.current_payment_id AS "currentPaymentId",
+        vend. NAME AS "vendOffice.name",
+        ppo.id AS "bizPoPaymentOrder.id",
+        ppo.po_header_id AS "bizPoPaymentOrder.poHeaderId",
+        ppo.total AS "bizPoPaymentOrder.total",
+        ppo.pay_total AS "bizPoPaymentOrder.payTotal",
+        ppo.process_id AS "bizPoPaymentOrder.processId",
+        cp.id AS "bizPoPaymentOrder.commonProcess.id",
+        cp.object_id AS "bizPoPaymentOrder.commonProcess.objectId",
+        cp.object_name AS "bizPoPaymentOrder.commonProcess.objectName",
+        cp.prev_id AS "bizPoPaymentOrder.commonProcess.prevId",
+        cp.biz_status AS "bizPoPaymentOrder.commonProcess.bizStatus",
+        cp.processor AS "bizPoPaymentOrder.commonProcess.processor",
+        cp.description AS "bizPoPaymentOrder.commonProcess.description",
+        cp.type AS "bizPoPaymentOrder.commonProcess.type",
+        cp.create_time AS "bizPoPaymentOrder.commonProcess.createTime",
+        b.is_prew as "isPrewUseful"
+    </sql>
 	
 	<sql id="bizPoHeaderJoins">
 		LEFT JOIN  sys_office so on so.id=a.vend_id
 		LEFT JOIN  biz_po_payment_order payment on payment.id = a.current_payment_id
 		LEFT JOIN  common_process process on process.id = a.process_id
 		LEFT JOIN  common_process prevProcess on prevProcess.id = process.prev_id
+		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = b.id AND bpor.so_type = 2
+		LEFT JOIN biz_request_header rh ON rh.id = bpor.so_id
 	</sql>
     
 	<select id="get" resultType="BizPoHeader">
@@ -67,13 +108,22 @@
 	</select>
 	
 	<select id="findList" resultType="BizPoHeader">
-		SELECT 
+		SELECT * FROM (
+		SELECT
 			<include refid="bizPoHeaderColumns"/>
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
+		LEFT JOIN biz_po_order_req por ON por.po_id = a.id AND por.so_type = 1
+		LEFT JOIN biz_order_header oh ON oh.id = por.so_id
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			and is_prew = 0
+			and a.is_prew = 0
+			<if test="num != null and num != ''">
+				AND oh.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
+			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
@@ -93,6 +143,45 @@
 				AND a.plateform_id = #{plateformInfo.id}
 			</if>
 		</where>
+		GROUP BY a.id
+		) n
+		UNION
+		SELECT * FROM
+		(
+		SELECT
+			<include refid="bizRePoHeaderColumns"/>
+		FROM biz_po_header b
+			<include refid="bizRePoHeaderJoins"/>
+		<where>
+			b.status = #{DEL_FLAG_NORMAL}
+			and b.is_prew = 0
+			<if test="num != null and num != ''">
+				AND rh.req_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
+			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND b.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="vendOffice != null and vendOffice.id !=null and vendOffice.id != ''">
+				AND b.vend_id = #{vendOffice.id}
+			</if>
+			<if test="invStatus != null and invStatus != ''">
+				AND b.inv_status = #{invStatus}
+			</if>
+			<if test="bizStatus != null">
+				AND b.biz_status = #{bizStatus}
+			</if>
+			<if test="plateformInfo != null and plateformInfo.id !=null and  plateformInfo.id != ''">
+				AND b.plateform_id = #{plateformInfo.id}
+			</if>
+		</where>
+		GROUP BY b.id
+		) m
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -100,7 +189,7 @@
 			<otherwise>
 			</otherwise>
 		</choose>
-		order by a.update_time desc
+		ORDER BY updateDate DESC
 	</select>
 	
 	<select id="findAllList" resultType="BizPoHeader">

@@ -24,12 +24,15 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>订单编号</label>
+			<li><label>采购单号</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
+			<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>
+				<form:input path="num"  htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
 			<li><label>供应商</label>
-				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${entity.vendOffice.id}" labelName="vendOffice.name"
-								labelValue="${entity.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
+				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${bizPoHeader.vendOffice.id}" labelName="vendOffice.name"
+								labelValue="${bizPoHeader.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 								title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-medium" dataMsgRequired="必填信息">
 				</sys:treeselect>
 			</li>
@@ -60,7 +63,7 @@
 		<thead>
 			<tr>
 				<td>序号</td>
-				<th>订单编号</th>
+				<th>采购单号</th>
 				<th>供应商</th>
 				<th>订单总价</th>
 				<th>交易费用</th>

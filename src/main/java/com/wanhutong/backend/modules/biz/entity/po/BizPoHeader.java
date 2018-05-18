@@ -40,6 +40,10 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Office deliveryOffice;//交割地点（供应商或采购商）
 	private Integer deliveryStatus;
 	private String str;//详情标志
+	/**
+	 *	是否是预览数据 ,1是，2否
+	 * */
+	private int isPrewUseful;
 
 	private BizPlatformInfo plateformInfo;		// 订单来源； biz_platform_info.id
 	private List<BizPoDetail> poDetailList;
@@ -65,6 +69,8 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	private BigDecimal planPay;
 	private BigDecimal payTotal;
+
+	private String num;	//查询的订单号和备货单号
 
 	private Date payDeadline;
 
@@ -332,6 +338,23 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	public void setPlanPay(BigDecimal planPay) {
 		this.planPay = planPay;
 	}
+
+
+    public int getIsPrewUseful() {
+        return isPrewUseful;
+    }
+
+    public void setIsPrewUseful(int isPrewUseful) {
+        this.isPrewUseful = isPrewUseful;
+    }
+
+    public String getNum() {
+        return num;
+    }
+
+    public void setNum(String num) {
+        this.num = num;
+    }
 
 	public enum BizStatus {
 		NO_PAY(0, "未支付"),

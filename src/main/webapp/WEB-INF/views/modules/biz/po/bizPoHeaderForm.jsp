@@ -217,12 +217,7 @@
                        maxlength="30" class="input-xlarge "/>
             </div>
         </div>
-        <div class="control-group">
-            <label class="control-label">首付款：</label>
-            <div class="controls">
-                <form:input path="initialPay" htmlEscape="false" maxlength="30" class="input-xlarge "/>
-            </div>
-        </div>
+
 
         <div class="control-group">
             <label class="control-label">最后付款时间：</label>
