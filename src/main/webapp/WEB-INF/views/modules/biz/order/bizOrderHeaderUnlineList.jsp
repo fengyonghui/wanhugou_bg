@@ -69,10 +69,10 @@
 				<td><fmt:formatDate value="${bizOrderHeaderUnline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<td><fmt:formatDate value="${bizOrderHeaderUnline.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:view"><td>
-					<a href="${ctx}/biz/order/bizOrderHeaderUnline/form?id=${bizOrderHeaderUnline.id}">详情</a>
+					<a href="${ctx}/biz/order/bizOrderHeaderUnline/form?id=${bizOrderHeaderUnline.id}&source=detail">详情</a>
 					<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:edit">
 						<c:if test="${bizOrderHeaderUnline.bizStatus != 1}">
-							<a href="${ctx}/biz/order/bizOrderHeaderUnline/form?id=${bizOrderHeaderUnline.id}">审核</a>
+							<a href="${ctx}/biz/order/bizOrderHeaderUnline/form?id=${bizOrderHeaderUnline.id}&source=examine">审核</a>
 						</c:if>
 					</shiro:hasPermission>
 					<%--<a href="${ctx}/biz/order/bizOrderHeaderUnline/delete?id=${bizOrderHeaderUnline.id}" onclick="return confirmx('确认要删除该线下支付订单吗？', this.href)">删除</a>--%>

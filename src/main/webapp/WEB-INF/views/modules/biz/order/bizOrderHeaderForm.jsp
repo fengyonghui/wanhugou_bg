@@ -854,17 +854,21 @@
                 <div class="controls">
                     <table class="table table-striped table-bordered table-condensed">
                         <thead>
-                            <th>流水号</th>
-                            <th>支付金额</th>
-                            <th>状态</th>
-                            <th>创建时间</th>
+                            <tr>
+                                <th>流水号</th>
+                                <th>支付金额</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${unlineList}" var="unline">
-                                <td>${unline.serialNum}</td>
-                                <td>${unline.unlinePayMoney}</td>
-                                <td>${fns:getDictLabel(unline.bizStatus,"biz_order_unline_bizStatus" ,"未知状态" )}</td>
-                                <td><fmt:formatDate value="${unline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                <tr>
+                                    <td>${unline.serialNum}</td>
+                                    <td>${unline.unlinePayMoney}</td>
+                                    <td>${fns:getDictLabel(unline.bizStatus,"biz_order_unline_bizStatus" ,"未知状态" )}</td>
+                                    <td><fmt:formatDate value="${unline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                </tr>
                             </c:forEach>
                         </tbody>
                     </table>

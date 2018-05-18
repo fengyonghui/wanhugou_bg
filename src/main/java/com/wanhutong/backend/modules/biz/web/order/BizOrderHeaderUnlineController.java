@@ -108,14 +108,14 @@ public class BizOrderHeaderUnlineController extends BaseController {
         bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal()+bizOrderHeaderUnline.getRealMoney().doubleValue());
         bizOrderHeaderService.save(bizOrderHeader);
         if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.UNPAY.getState()) {
-            if (bizOrderHeader.getTotalDetail() == bizOrderHeader.getReceiveTotal()) {
+            if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal())==0) {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
             }else {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
             }
         }
         if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.INITIAL_PAY.getState()) {
-            if (bizOrderHeader.getTotalDetail() == bizOrderHeader.getReceiveTotal()) {
+            if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal())==0) {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
             }
         }
@@ -134,18 +134,18 @@ public class BizOrderHeaderUnlineController extends BaseController {
 
     /**
      * 财务对线下支付订单的驳回
-     * @param orderHeaderUnline
+     * @param id
      * @return
      */
-	@ResponseBody
+    @ResponseBody
 	@RequiresPermissions("biz:order:bizOrderHeaderUnline:edit")
 	@RequestMapping(value = "changeOrderReceive")
-	public String changeOrderReceive(BizOrderHeaderUnline orderHeaderUnline) {
+	public String changeOrderReceive(Integer id) {
 
-			orderHeaderUnline = bizOrderHeaderUnlineService.get(orderHeaderUnline.getId());
+			BizOrderHeaderUnline orderHeaderUnline = bizOrderHeaderUnlineService.get(id);
 			orderHeaderUnline.setBizStatus(BIZSTATUSTWO);
             bizOrderHeaderUnlineService.save(orderHeaderUnline);
-        return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeaderUnline/?repage";
+        return "ok";
     }
 
 }

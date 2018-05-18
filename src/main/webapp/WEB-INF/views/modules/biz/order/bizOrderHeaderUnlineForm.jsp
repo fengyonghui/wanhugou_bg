@@ -26,14 +26,16 @@
                 }
             });
             $("#back").click(function () {
-                var unlineId = $("#id");
+                var unlineId = $("#id").val();
                 if (confirm("请再次确认是否驳回？")==true) {
                     $.ajax({
                         type:"post",
                         url:"${ctx}/biz/order/bizOrderHeaderUnline/changeOrderReceive",
 						data:{id:unlineId},
                         success:function (data) {
-
+                            if (data == 'ok') {
+                                window.location.href="${ctx}/biz/order/bizOrderHeaderUnline?id="+unlineId;
+                            }
                         }
                     });
                 }else {
@@ -95,8 +97,10 @@
 		</div>
 		<div class="form-actions">
 				<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:edit">
-					<input id="confirm" class="btn btn-primary" type="submit" value="确认"/>&nbsp;
-					<input id="back" class="btn btn-primary" type="button" value="驳回"/>
+                    <c:if test="${bizOrderHeaderUnline.source == 'examine'}">
+                        <input id="confirm" class="btn btn-primary" type="submit" value="确认"/>&nbsp;
+                        <input id="back" class="btn btn-primary" type="button" value="驳回"/>
+                    </c:if>
 				</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
 		</div>
