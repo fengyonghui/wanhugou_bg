@@ -333,7 +333,7 @@
 		where pr.create_time between #{startDate} and #{endDate} and pr.biz_status = 1 and pr.status = 1
 		and pr.order_num = oh.order_num
 		and us.status = 1
-  		and consultant.cust_id = oh.cust_id and consultant.center_id = office.id and us.company_id = office.id AND NOT EXISTS(select 1
+  		and consultant.cust_id = oh.cust_id and consultant.consultant_id = us.id and us.company_id = office.id AND NOT EXISTS(select 1
                                            from sys_test_account ta
                                            where oh.cust_id = ta.object_id and ta.object_name = 'sys_office') and
       	((oh.biz_status != 45 AND oh.biz_status != 35 AND oh.biz_status != 0) OR (oh.biz_status = 40 AND receive_total > 0)) AND office.id = #{officeId}
