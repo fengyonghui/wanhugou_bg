@@ -27,8 +27,8 @@
 			<li><label>采购单号</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
-			<li><label>订/备货单</label>
-				<form:input path="num" htmlEscape="false" maxlength="20" class="input-medium"/>
+			<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>
+				<form:input path="num"  htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
 			<li><label>供应商</label>
 				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${bizPoHeader.vendOffice.id}" labelName="vendOffice.name"

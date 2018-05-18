@@ -71,6 +71,8 @@
 		        return;
 			}
             if(confirm("确认生成预览采购订单吗？")){
+
+			1111111111111
                 $("#inputForm").submit();
             }
 		}
@@ -217,12 +219,12 @@
 				<input type="text" disabled="disabled" value="${bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight}" htmlEscape="false" maxlength="30" class="input-xlarge "/>
 			</div>
 		</div>
-		<%--<div class="control-group">--%>
-			<%--<label class="control-label">首付款：</label>--%>
-			<%--<div class="controls">--%>
-				<%--<form:input path="initialPay"  htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-			<%--</div>--%>
-		<%--</div>--%>
+		<div class="control-group">
+			<label class="control-label">首付款：</label>
+			<div class="controls">
+				<form:input path="initialPay"  htmlEscape="false" maxlength="30" class="input-xlarge "/>
+			</div>
+		</div>
 
 			<div class="control-group">
 				<label class="control-label">最后付款时间：</label>
