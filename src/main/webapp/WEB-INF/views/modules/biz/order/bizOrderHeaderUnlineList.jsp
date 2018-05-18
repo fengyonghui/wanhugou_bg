@@ -26,13 +26,13 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>订单号：</label>
-				<form:input path="orderHeader.orderNum" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="orderHeader.orderNum" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>流水号：</label>
-				<form:input path="serialNum" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="serialNum" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/></li>
+			<li class="btns"><a href="${ctx}/biz/order/bizOrderHeader?statu=unline"><input id="btnCancel" class="btn" type="button" value="返 回"/></a></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
