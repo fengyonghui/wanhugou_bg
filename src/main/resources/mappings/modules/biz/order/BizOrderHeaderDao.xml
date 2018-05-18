@@ -1961,4 +1961,26 @@ FROM
 			ORDER BY ${page.orderBy}
 		</if>
 	</select>
+
+	<!-- 客户专员查看该采购商的采购累计频次 -->
+	<select id="findUserOrderCountSecond" resultType="BizOrderHeader">
+		SELECT
+		count(1) AS "orderCount",
+		sum(receive_total) AS "userOfficeReceiveTotal",
+		str_to_date(DATE_FORMAT(oh.create_time,'%Y-%m-%d %H:%i:%s'),'%Y-%m-%d %H:%i:%s') as "userOfficeDeta"
+		FROM biz_order_header AS oh
+		WHERE oh.cust_id = #{custId}
+		AND (
+		(
+		biz_status != 45
+		AND biz_status != 35
+		AND biz_status != 0
+		)
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		and oh.status=1
+		<!--GROUP BY
+		date_format(oh.create_time, '%Y-%m')-->
+	</select>
+
+
 </mapper>

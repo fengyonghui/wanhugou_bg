@@ -25,10 +25,8 @@
     <li>
         <a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${bcUser.consultants.id}&office.id=${bcUser.centers.id}">采购商添加</a>
     </li>
-    <%--?centers.id=${page.centers.id}&consultants.id=${page.consultants.id} <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit"><li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/form">客户专员添加</a></li></shiro:hasPermission>--%>
 </ul>
-<form:form id="searchForm" modelAttribute="bizCustomCenterConsultant"
-           action="${ctx}/biz/custom/bizCustomCenterConsultant/" method="post" class="breadcrumb form-search">
+<form:form id="searchForm" modelAttribute="bizCustomCenterConsultant" action="${ctx}/biz/custom/bizCustomCenterConsultant/" method="post" class="breadcrumb form-search">
     <ul class="ul-form">
         <li><label>采购商名称：</label>
             <sys:treeselect id="customs" name="customs.id" value="${entity.customs.id}" labelName="customs.name"
@@ -47,21 +45,8 @@
         <li><label>联系电话：</label>
             <form:input path="consultants.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
         </li>
-            <%--<li><label>采购中心：</label>--%>
-            <%--<sys:treeselect id="centers" name="centers.id" value="${entity.centers.id}" labelName="centers.name"--%>
-            <%--labelValue="${entity.centers.name}" notAllowSelectRoot="true" notAllowSelectParent="true"--%>
-            <%--title="采购中心" url="/sys/office/queryTreeList?type=8" cssClass="input-medium required"--%>
-            <%--allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>--%>
-            <%--</li>--%>
-            <%--&lt;%&ndash;<li><label>客户专员：</label>&ndash;%&gt;--%>
-            <%--&lt;%&ndash;<sys:treeselect id="consultants" name="consultants.id" value="${entity.consultants.id}" labelName="consultants.name"&ndash;%&gt;--%>
-            <%--&lt;%&ndash;labelValue="${entity.consultants.name}" notAllowSelectRoot="true" notAllowSelectParent="true"&ndash;%&gt;--%>
-            <%--&lt;%&ndash;title="客户专员" url="/sys/office/queryTreeList?type=1" cssClass="input-medium required"&ndash;%&gt;--%>
-            <%--&lt;%&ndash;allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>&ndash;%&gt;--%>
-            <%--&lt;%&ndash;</li>&ndash;%&gt;--%>
         <li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-        <li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回"
-                                onclick="javascript:history.go(-1);"/></li>
+        <li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
         <li class="clearfix"></li>
     </ul>
 </form:form>
@@ -75,7 +60,7 @@
         <th>经销店名称</th>
         <th>负责人</th>
         <th>详细地址</th>
-        <th>累计采购频次</th>
+        <th>累计订单采购频次</th>
         <th>金额</th>
         <th>首次开单时间</th>
         <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">
@@ -84,37 +69,41 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach items="${page.bccList}" var="bizCustomCenterConsultant">
+    <c:if test="${resultMap !=null}">
+    <c:forEach items="${resultMap}" var="bizCustomCenterConsultant">
         <tr>
             <td>
-                ${bizCustomCenterConsultant.centers.name}
+                ${bizCustomCenterConsultant.key.centers.name}
             </td>
             <td>
-                ${bizCustomCenterConsultant.consultants.name}
+                ${bizCustomCenterConsultant.key.consultants.name}
             </td>
             <td>
-                ${bizCustomCenterConsultant.consultants.mobile}
+                ${bizCustomCenterConsultant.key.consultants.mobile}
             </td>
             <td>
-                ${bizCustomCenterConsultant.customs.name}
+                ${bizCustomCenterConsultant.key.customs.name}
             </td>
             <td>
-                ${bizCustomCenterConsultant.customs.primaryPerson.name}
+                ${bizCustomCenterConsultant.key.customs.primaryPerson.name}
             </td>
             <td>
-                ${bizCustomCenterConsultant.bizLocation.pcrName}${bizCustomCenterConsultant.bizLocation.address}
+                ${bizCustomCenterConsultant.key.bizLocation.pcrName}${bizCustomCenterConsultant.key.bizLocation.address}
             </td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>${bizCustomCenterConsultant.value.orderCount}</td>
+            <td>${bizCustomCenterConsultant.value.userOfficeReceiveTotal}</td>
+            <td>
+                <fmt:formatDate value="${bizCustomCenterConsultant.value.userOfficeDeta}" pattern="yyyy-MM-dd HH:mm:ss"/>
+            </td>
             <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">
                 <td>
-                    <a href="${ctx}/biz/custom/bizCustomCenterConsultant/delete?customs.id=${bizCustomCenterConsultant.customs.id}&consultants.id=${bizCustomCenterConsultant.consultants.id}"
+                    <a href="${ctx}/biz/custom/bizCustomCenterConsultant/delete?customs.id=${bizCustomCenterConsultant.key.customs.id}&consultants.id=${bizCustomCenterConsultant.key.consultants.id}"
                        onclick="return confirmx('确认要移除该关联信息吗？', this.href)">移除</a>
                 </td>
             </shiro:hasPermission>
         </tr>
     </c:forEach>
+    </c:if>
     </tbody>
 </table>
 <%--<div class="pagination">${page}</div>--%>
