@@ -63,9 +63,16 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	private Integer currentPaymentId;
 
+	private Integer processId;
+    private CommonProcessEntity commonProcess;
+    private CommonProcessEntity prevCommonProcess;
+
+	private BigDecimal planPay;
 	private BigDecimal payTotal;
 
 	private String num;	//查询的订单号和备货单号
+
+	private Date payDeadline;
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -292,6 +299,63 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		this.payTotal = payTotal;
 	}
 
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
+
+    public CommonProcessEntity getPrevCommonProcess() {
+        return prevCommonProcess;
+    }
+
+    public void setPrevCommonProcess(CommonProcessEntity prevCommonProcess) {
+        this.prevCommonProcess = prevCommonProcess;
+    }
+
+    public Integer getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(Integer processId) {
+        this.processId = processId;
+    }
+
+	public Date getPayDeadline() {
+		return payDeadline;
+	}
+
+	public void setPayDeadline(Date payDeadline) {
+		this.payDeadline = payDeadline;
+	}
+
+	public BigDecimal getPlanPay() {
+		return planPay;
+	}
+
+	public void setPlanPay(BigDecimal planPay) {
+		this.planPay = planPay;
+	}
+
+
+    public int getIsPrewUseful() {
+        return isPrewUseful;
+    }
+
+    public void setIsPrewUseful(int isPrewUseful) {
+        this.isPrewUseful = isPrewUseful;
+    }
+
+    public String getNum() {
+        return num;
+    }
+
+    public void setNum(String num) {
+        this.num = num;
+    }
+
 	public enum BizStatus {
 		NO_PAY(0, "未支付"),
 		DOWN_PAYMENT(1, "首付款支付"),
@@ -300,6 +364,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		DELIVERY(4, "已收货"),
 		COMPLETE(5, "已完成"),
 		PROCESS(6, "审批中"),
+		PROCESS_COMPLETE(7, "审批完成"),
 		;
 		private int status;
 		private String desc;
@@ -316,21 +381,5 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		public String getDesc() {
 			return desc;
 		}
-	}
-
-	public int getIsPrewUseful() {
-		return isPrewUseful;
-	}
-
-	public void setIsPrewUseful(int isPrewUseful) {
-		this.isPrewUseful = isPrewUseful;
-	}
-
-	public String getNum() {
-		return num;
-	}
-
-	public void setNum(String num) {
-		this.num = num;
 	}
 }
