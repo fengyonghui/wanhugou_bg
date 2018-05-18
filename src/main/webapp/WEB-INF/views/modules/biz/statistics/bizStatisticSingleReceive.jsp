@@ -1,123 +1,137 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<html>
+<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>万户通平台业务数据</title>
-    <meta name="decorator" content="default"/>
-    <style>
-        .table_text_center tr th {
-            text-align: center;
-            vertical-align:middle;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title></title>
 </head>
 <body>
-<span>
-    <label>
-        <input type="text" id="startDate" value="${date}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
-        <label>
-        <select class="input-medium" id="purchasingId">
-            <option value="0" label="全部"></option>
-            <c:forEach items="${purchasingList}" var="v">
-                <c:if test="${v.id == officeId}">
+<div>
+    <input id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <select class="input-medium" id="purchasingId">
+        <c:forEach items="${purchasingList}" var="v">
+            <c:if test="${v.id == officeId}">
                 <option selected value="${v.id}" label="${v.name}">${v.name}</option>
-                </c:if>
-                <c:if test="${v.id != officeId}">
+            </c:if>
+            <c:if test="${v.id != officeId}">
                 <option value="${v.id}" label="${v.name}">${v.name}</option>
-                </c:if>
-            </c:forEach>
-        </select>
-        </label>
-        <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="init();"/>
-        <%--<input id="exportTable"  onclick="exportTable()" class="btn btn-primary" type="submit" value="导出表格"/>--%>
-    </label>
-</span>
-<table id="contentTable" class="table table-bordered table-condensed table_text_center">
-    <thead>
-    <tr>
-        <th colspan="10">万户通平台业务数据 ${date}</th>
-    </tr>
-    <tr>
-        <th rowspan="2">姓名</th>
-        <th colspan="9">目标分析</th>
-    </tr>
-    <tr>
-        <th>月计划采购额(元)</th>
-        <th>月累计销量</th>
-        <th>月累计回款</th>
-        <th>日销售额(元)</th>
-        <th>达成率</th>
-        <th>月累计差异</th>
-        <th>剩余天数</th>
-        <th>每日最低回款额</th>
-    </tr>
-    </thead>
-    <tbody>
-    <c:forEach items="${dataList}" var="dataItme">
-    <tr>
-        <c:forEach items="${dataItme.value}" var="item">
-            <tr>
-            <td>
-                    ${item.name}
-            </td>
-            <td>
-                    ${item.procurement}
-            </td>
-            <td>
-                    ${item.accumulatedSalesMonth}
-            </td>
-            <td>
-                    ${item.receiveTotal}
-            </td>
-            <td>
-                    ${item.procurementDay}
-            </td>
-            <td>
-                    ${item.yieldRate}
-            </td>
-            <td>
-                    ${item.differenceTotalMonth}
-            </td>
-            <td>
-                    ${item.remainingDays}
-            </td>
-            <td>
-                    ${item.dayMinReturned}
-            </td>
-            </tr>
+            </c:if>
         </c:forEach>
-    </tr>
-    </c:forEach>
-    </tbody>
-</table>
-<script type="application/javascript">
-    function init() {
-        $Mask.AddLogo("正在加载");
-        var startDate = $("#startDate").val();
-        var officeId = $("#purchasingId").val();
-        window.location.href = "overviewSingle?date=" + startDate + "&officeId=" + officeId;
-    }
-    function exportTable() {
-        var startDate = $("#startDate").val();
-        var officeId = $("#purchasingId").val();
-        //定义一个form表单
-        var myform = $("<form></form>");
-        myform.attr('method','post');
-        myform.attr('action',"${adminPath}/biz/statistics/platform/overviewDownload");
+    </select>
+    <input onclick="initChart()" class="btn btn-primary" type="button" value="查询"/>
+    <%--<input id="exportTable" onclick="exportTable()" class="btn btn-primary" type="button" value="导出表格"/>--%>
+    <input type="hidden" name="img" id="img" />
+    <input type="hidden" name="img1" id="img1" />
+    <div id="orderTotalDataChart" style="height: 300px;"></div>
 
-        var myProductId = $("<input type='hidden' name='date' />");
-        var myOfficeId = $("<input type='hidden' name='officeId' />");
-        myProductId.attr('value', startDate);
-        myOfficeId.attr('value', officeId);
+</div>
 
-        myform.append(myProductId);
-        myform.append(myOfficeId);
-
-        myform.appendTo('body').submit();
-
-    }
-
-</script>
 </body>
+<script type="application/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+<script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
+<script type="application/javascript" src="/static/echarts/echarts.min.js"></script>
+<script type="application/javascript" src="${ctxStatic}/common/base.js"></script>
+<script type="application/javascript">
+    function initChart() {
+        var salesVolumeChart = echarts.init(document.getElementById('orderTotalDataChart'), 'light');
+        salesVolumeChart.clear();
+        salesVolumeChart.showLoading($Echarts.showLoadingStyle);
+
+        var officeId = $("#purchasingId").val();
+
+        var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
+
+        if($DateUtil.CompareDate('2017-09-01',startDate)) {
+            alert("日期选择错误!请选择2017年9月以后的日期");
+            return;
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: "${ctx}/biz/statistics/platform/singleReceiveData",
+            data: {"startDate": startDate,"endDate" : endDate, "officeId": officeId},
+            dataType: "json",
+            success: function (msg) {
+                if (!Boolean(msg.ret)) {
+                    alert("未查询到数据!");
+                    salesVolumeChart.hideLoading();
+                    return;
+                }
+
+                salesVolumeChart.setOption({
+                    title: {
+                        text: '回款额\n',
+                        textStyle:{
+                            fontSize: 16,
+                            fontWeight: 'bolder',
+                            color: '#6a6a6a'
+                        },
+                        x:'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#999'
+                            }
+                        }
+                    },
+                    toolbox: {
+                        show: true,
+                        right: 30,
+                        feature: {
+                            saveAsImage: {
+                                show: true,
+                                excludeComponents: ['toolbox'],
+                                pixelRatio: 2
+                            },
+                            myShowTable: {
+                                show: false,
+                                title: '显示表格',
+                                icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
+                                onclick: function (){
+                                    window.location.href="${adminPath}/biz/statistics/receiveTable"
+                                }
+                            }
+                        }
+                    },
+                    legend: {
+                        data: msg.officeNameSet,
+                        y : 'bottom'
+                    },
+                    xAxis: {
+                        data: msg.officeNameSet,
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    yAxis: [
+                        {
+                            type: 'value',
+                            scale: true,
+                            name: '回款额'
+                        }
+                    ],
+                    series: msg.echartsSeriesDto
+                });
+                salesVolumeChart.hideLoading();
+                setInterval( function (args) {
+                    var imgUrl = salesVolumeChart.getDataURL({
+                        pixelRatio: 1,
+                        backgroundColor : '#fff'
+                    });
+                    $('#img').val(imgUrl);
+                },1000);
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("未查询到数据!");
+            }
+        });
+    }
+</script>
 </html>

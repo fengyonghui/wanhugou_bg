@@ -276,4 +276,43 @@ public class BizStatisticsPlatformService {
         resultMap.put("ret", CollectionUtils.isNotEmpty(dataList));
         return resultMap;
     }
+
+    public Map<String, Object> singleReceiveData(String startDate, String endDate, String officeId) {
+        List<BizOrderStatisticsDto> dataList = bizPayRecordService.getSingleReceiveData(startDate, endDate + " 23:59:59", officeId);
+
+        Set<String> officeNameSet = Sets.newHashSet();
+        Map<String, Object> dataMap = Maps.newHashMap();
+        Map<String, Object> resultMap = Maps.newHashMap();
+        dataList.forEach(o -> {
+            officeNameSet.add(o.getOfficeName());
+            dataMap.put(o.getOfficeName(), o.getReceiveTotal());
+        });
+        officeNameSet.removeAll(Collections.singleton(null));
+
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        if (dataMap.size() > 0) {
+            List<Object> resultDataList = Lists.newArrayList();
+            officeNameSet.forEach(o -> {
+                resultDataList.add(dataMap.get(o));
+            });
+            echartsSeriesDto.setData(resultDataList);
+
+            EchartsSeriesDto.ItemStyle itemStyle = new EchartsSeriesDto.ItemStyle();
+            EchartsSeriesDto.Normal normal = new EchartsSeriesDto.Normal();
+            EchartsSeriesDto.Label label = new EchartsSeriesDto.Label();
+            label.setShow(true);
+            label.setTextStyle(
+                    "fontWeight:'bolder'," +
+                            "fontSize : '12'," +
+                            "position : 'top'," +
+                            "fontFamily : '微软雅黑'");
+            normal.setLabel(label);
+            itemStyle.setNormal(normal);
+            echartsSeriesDto.setItemStyle(itemStyle);
+        }
+        resultMap.put("echartsSeriesDto", echartsSeriesDto);
+        resultMap.put("officeNameSet", officeNameSet);
+        resultMap.put("ret", CollectionUtils.isNotEmpty(dataList));
+        return resultMap;
+    }
 }

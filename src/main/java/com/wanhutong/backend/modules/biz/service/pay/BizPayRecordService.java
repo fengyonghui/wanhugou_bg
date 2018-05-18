@@ -29,10 +29,11 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 	@Resource
 	private BizPayRecordDao bizPayRecordDao;
 
+	@Override
 	public BizPayRecord get(Integer id) {
 		return super.get(id);
 	}
-	
+	@Override
 	public List<BizPayRecord> findList(BizPayRecord bizPayRecord) {
 		return super.findList(bizPayRecord);
 	}
@@ -40,7 +41,7 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 	public BizPayRecord findBizPayRecord(String payNum){
 		return bizPayRecordDao.findBizPayRecord(payNum);
 	}
-
+	@Override
 	public Page<BizPayRecord> findPage(Page<BizPayRecord> page, BizPayRecord bizPayRecord) {
 		User user=UserUtils.getUser();
 		if(user.isAdmin()){
@@ -48,12 +49,12 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 		}
 		return super.findPage(page, bizPayRecord);
 	}
-	
+	@Override
 	@Transactional(readOnly = false)
 	public void save(BizPayRecord bizPayRecord) {
 		super.save(bizPayRecord);
 	}
-	
+	@Override
 	@Transactional(readOnly = false)
 	public void delete(BizPayRecord bizPayRecord) {
 		super.delete(bizPayRecord);
@@ -62,5 +63,9 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 
 	public List<BizOrderStatisticsDto> getReceiveData(String startDate, String endDate, String centerType) {
 		return dao.getReceiveData(startDate, endDate, centerType);
+	}
+
+	public List<BizOrderStatisticsDto> getSingleReceiveData(String startDate, String endDate, String officeId) {
+		return dao.getSingleReceiveData(startDate, endDate, officeId);
 	}
 }

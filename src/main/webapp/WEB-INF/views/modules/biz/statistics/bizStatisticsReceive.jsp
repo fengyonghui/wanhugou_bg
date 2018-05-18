@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>订单统计</title>
+    <title></title>
 </head>
 <body>
 <div>

@@ -23,4 +23,5 @@ public interface BizPayRecordDao extends CrudDao<BizPayRecord> {
 
     List<BizOrderStatisticsDto> getReceiveData(@Param("startDate") String startDate, @Param("endDate")String endDate, @Param("centerType")String centerType);
 
+    List<BizOrderStatisticsDto> getSingleReceiveData(@Param("startDate") String startDate, @Param("endDate")String endDate, @Param("officeId")String officeId);
 }
