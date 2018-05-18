@@ -1,7 +1,7 @@
 /**
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
-package com.wanhutong.backend.modules.biz.web.inventoryviewinvId;
+package com.wanhutong.backend.modules.biz.web.inventoryviewlog;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
