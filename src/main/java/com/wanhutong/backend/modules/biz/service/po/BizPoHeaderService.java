@@ -138,6 +138,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         if (bizPoHeader.getCommonProcess() != null) {
             updateProcessToInit(bizPoHeader);
         }
+        if (bizPoHeader.getPlanPay() != null
+                && bizPoHeader.getPlanPay().compareTo(BigDecimal.ZERO) > 0
+                && bizPoHeader.getCurrentPaymentId() != null
+                && bizPoHeader.getCurrentPaymentId() > 0 ) {
+            BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(bizPoHeader.getCurrentPaymentId());
+            bizPoPaymentOrder.setTotal(bizPoHeader.getPlanPay());
+            bizPoPaymentOrderService.save(bizPoPaymentOrder);
+        }
+
         super.save(bizPoHeader);
 
     }
@@ -337,7 +346,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
         bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
-        bizPoPaymentOrder.setTotal(bizPoHeader.getPayTotal());
+        bizPoPaymentOrder.setTotal(bizPoHeader.getPlanPay());
         bizPoPaymentOrder.setDeadline(bizPoHeader.getPayDeadline());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 

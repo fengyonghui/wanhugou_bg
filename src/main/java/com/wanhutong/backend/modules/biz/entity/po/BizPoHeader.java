@@ -63,6 +63,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
     private CommonProcessEntity commonProcess;
     private CommonProcessEntity prevCommonProcess;
 
+	private BigDecimal planPay;
 	private BigDecimal payTotal;
 
 	private Date payDeadline;
@@ -322,6 +323,14 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setPayDeadline(Date payDeadline) {
 		this.payDeadline = payDeadline;
+	}
+
+	public BigDecimal getPlanPay() {
+		return planPay;
+	}
+
+	public void setPlanPay(BigDecimal planPay) {
+		this.planPay = planPay;
 	}
 
 	public enum BizStatus {

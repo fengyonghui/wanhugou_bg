@@ -281,8 +281,8 @@
             <div class="control-group">
                 <label class="control-label">申请金额：</label>
                 <div class="controls">
-                    <input id="payTotal" name="payTotal" type="text"
-                           <c:if test="${type == 'audit' || type == 'pay' || type == ''|| type == null}">readonly</c:if>
+                    <input id="payTotal" name="planPay" type="text"
+                           <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
                            value="${bizPoHeader.bizPoPaymentOrder.id != null ?
                            bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight)}"
                            htmlEscape="false" maxlength="30" class="input-xlarge"/>

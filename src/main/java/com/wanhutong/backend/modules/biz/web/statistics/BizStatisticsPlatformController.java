@@ -875,4 +875,49 @@ public class BizStatisticsPlatformController extends BaseController {
         return JSONObject.fromObject(bizStatisticsPlatformService.getReceiveData(startDate, endDate, centerType)).toString();
     }
 
+    @RequiresPermissions("biz:statistics:receive:view")
+    @RequestMapping(value = {"singleReceive", ""})
+    public String singleReceive(HttpServletRequest request, String date, Integer officeId) {
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        request.setAttribute("officeId", officeId);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+
+        Calendar calendar = Calendar.getInstance();
+        Date parseDate = null;
+        Date startDate = null;
+        try {
+            parseDate = StringUtils.isBlank(date) ? new Date() : simpleDateFormat.parse(date);
+            calendar.setTime(parseDate);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            startDate = calendar.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (officeId == null || officeId == 0) {
+            request.setAttribute("date", simpleDateFormat.format(startDate));
+            request.setAttribute("dataList", CollectionUtils.EMPTY_COLLECTION);
+            return "modules/biz/statistics/bizSinglePlatformDataOverview";
+        }
+
+        Map<String, List<BizPlatformDataOverviewDto>> list = bizStatisticsPlatformService.getSinglePlatformData(
+                simpleDateFormat.format(startDate),
+                simpleDateFormat.format(parseDate),
+                officeId
+        );
+
+        if (StringUtils.isBlank(date)) {
+            date = simpleDateFormat.format(new Date());
+        }
+        request.setAttribute("date", date);
+        request.setAttribute("dataList", list);
+
+
+
+
+
+        return "modules/biz/statistics/bizStatisticsReceive";
+    }
+
 }
