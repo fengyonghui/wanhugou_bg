@@ -640,7 +640,7 @@ public class BizStatisticsController extends BaseController {
         return "modules/biz/statistics/bizStatisticsProductTables";
     }
     /**
-     * 采购顾问表格统计
+     * 客户专员表格统计
      */
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "userTable")
@@ -652,7 +652,7 @@ public class BizStatisticsController extends BaseController {
     }
 
     /**
-     * 采购顾问统计表格数据
+     * 客户专员统计表格数据
      *
      * @param request
      * @return
