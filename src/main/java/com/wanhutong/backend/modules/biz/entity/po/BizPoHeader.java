@@ -65,6 +65,8 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	private BigDecimal payTotal;
 
+	private String num;	//查询的订单号和备货单号
+
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
 	}
@@ -322,5 +324,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setIsPrewUseful(int isPrewUseful) {
 		this.isPrewUseful = isPrewUseful;
+	}
+
+	public String getNum() {
+		return num;
+	}
+
+	public void setNum(String num) {
+		this.num = num;
 	}
 }
