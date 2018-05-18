@@ -524,6 +524,21 @@ public class BizStatisticsController extends BaseController {
                     lineSeriesList.add(echartsSeriesDto);
                 });
                 break;
+            case RECEIVE:
+                officeNameSet.forEach(o -> {
+                    EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+                    echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+                    List<Object> dataList = Lists.newArrayList();
+                    for (int i = dataMap.size() - 1; i >= 0; i--) {
+                        dataList.add(dataMap.get(monthDateList.get(i).toString(BizStatisticsService.PARAM_DATE_FORMAT)).get(o) != null ? dataMap.get(monthDateList.get(i).toString(BizStatisticsService.PARAM_DATE_FORMAT)).get(o).getReceiveTotal() : 0);
+                    }
+
+                    echartsSeriesDto.setData(dataList);
+                    echartsSeriesDto.setName(o);
+                    lineSeriesList.add(echartsSeriesDto);
+                });
+                break;
             default:
                 break;
         }
@@ -625,7 +640,7 @@ public class BizStatisticsController extends BaseController {
         return "modules/biz/statistics/bizStatisticsProductTables";
     }
     /**
-     * 采购顾问表格统计
+     * 客户专员表格统计
      */
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "userTable")
@@ -637,7 +652,7 @@ public class BizStatisticsController extends BaseController {
     }
 
     /**
-     * 采购顾问统计表格数据
+     * 客户专员统计表格数据
      *
      * @param request
      * @return

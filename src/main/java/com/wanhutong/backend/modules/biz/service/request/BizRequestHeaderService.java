@@ -65,10 +65,12 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private BizRequestHeaderDao bizRequestHeaderDao;
 
 
+	@Override
 	public BizRequestHeader get(Integer id) {
 		return super.get(id);
 	}
-	
+
+	@Override
 	public List<BizRequestHeader> findList(BizRequestHeader bizRequestHeader) {
 		User user = UserUtils.getUser();
 		boolean oflag = false;
@@ -128,7 +130,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			return super.findPage(page,bizRequestHeader);
 		}
 	}
-	
+
+	@Override
 	public Page<BizRequestHeader> findPage(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
 		Date today = bizRequestHeader.getRecvEta();
 		if(today!=null){
@@ -154,7 +157,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			return super.findPage(page, bizRequestHeader);
 		}
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void save(BizRequestHeader bizRequestHeader) {
 		DefaultProp defaultProp=new DefaultProp();
@@ -252,6 +256,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		super.save(bizRequestHeader);
 	}
 
+	@Override
 	@Transactional(readOnly = false)
 	public void delete(BizRequestHeader bizRequestHeader) {
 		super.delete(bizRequestHeader);
@@ -318,6 +323,43 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		}
 	}
 
+
+	/**
+	 * 备货清单分页查询
+	 * */
+	public Page<BizRequestHeader> pageFindListV2(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
+		User user = UserUtils.getUser();
+		boolean oflag = false;
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+				}
+			}
+		}
+		if (UserUtils.getOfficeList() != null){
+			for (Office office:UserUtils.getOfficeList()){
+				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+					oflag = true;
+				}
+			}
+		}
+		if (user.isAdmin()) {
+			bizRequestHeader.setPage(page);
+			page.setList(bizRequestHeaderDao.findListForPoHeader(bizRequestHeader));
+			return page;
+		} else {
+			if(oflag){
+
+			}else {
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+			}
+			bizRequestHeader.setPage(page);
+			page.setList(bizRequestHeaderDao.findListForPoHeader(bizRequestHeader));
+			return page;
+		}
+	}
 
 
 	/**

@@ -6,7 +6,7 @@ import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
 /**
  * * 
 * <p>Title: BuyerAdviserDao</p>
-* <p>Description: 采购商采购顾问关联dao</p>
+* <p>Description: 采购商客户专员关联dao</p>
 * <p>Company: WHT</p> 
 * @date 2018年1月11日
  */

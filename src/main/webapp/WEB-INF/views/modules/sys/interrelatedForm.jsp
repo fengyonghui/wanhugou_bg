@@ -15,10 +15,10 @@
 			var brccID = $("#prcIdcc").val();
 			 $("#adviserId").html("");
 				 if(brccID!=id){
-				 	$("#adviserId").append("<option value='' selected = 'selected'>请选择采购顾问</option>");
-					$("#s2id_adviserId span:eq(0)").html("==请选择采购顾问==");
+				 	$("#adviserId").append("<option value='' selected = 'selected'>请选择客户专员</option>");
+					$("#s2id_adviserId span:eq(0)").html("==请选择客户专员==");
 				 }else{
-				 	$("#adviserId").append("<option value='${buyerAdviser.consultantId}' selected = 'selected'>==请选择采购顾问==</option>");
+				 	$("#adviserId").append("<option value='${buyerAdviser.consultantId}' selected = 'selected'>==请选择客户专员==</option>");
 				 }
 			if(id != null && id !=undefined && id.trim() != ""){
 				 $.ajax({
@@ -46,7 +46,7 @@
 				return false;
 			}
 			if(adviserid == null || adviserid ==undefined || adviserid.trim() == ""){
-				alert("请选择采购顾问")
+				alert("请选择客户专员")
 				return false;
 			}
 			$.ajax({
@@ -111,14 +111,14 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">归属采购顾问:</label>
+			<label class="control-label">归属客户专员:</label>
 			<div class="controls">
 				<select name="consultantId" id="adviserId" style="width: 18%">
                      <c:if test="${buyerAdviser!=null && buyerAdviser.consultantName != null }">
                      	<option value="${buyerAdviser.consultantId}" selected = 'selected'>${buyerAdviser.consultantName}</option>
                      </c:if>
                      <c:if test="${buyerAdviser == null || buyerAdviser.consultantName==null}">
-                     	<option value="">==请选择采购顾问==</option>
+                     	<option value="">==请选择客户专员==</option>
                      </c:if>
                  </select>
 			</div>

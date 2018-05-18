@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.pay;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
@@ -132,31 +133,25 @@ public class BizPayRecordController extends BaseController {
 			}
 			List<List<String>> data = new ArrayList<List<String>>();
 			PayList.forEach(pay->{
-				List<String> rowData = new ArrayList();
-				//ID
-				rowData.add(String.valueOf(pay.getId()));
+				ArrayList<String> rowData = Lists.newArrayList();
 				//订单编号
-				rowData.add(String.valueOf(pay.getOrderNum()));
+				rowData.add(String.valueOf(pay.getOrderNum()==null?"":pay.getOrderNum()));
 				//支付编号
-				rowData.add(String.valueOf(pay.getPayNum()));
+				rowData.add(String.valueOf(pay.getPayNum()==null?"":pay.getPayNum()));
 				//业务流水号
-				if(pay.getOutTradeNo()!=null){
-					rowData.add(String.valueOf(pay.getOutTradeNo()));
-				}else {
-					rowData.add(String.valueOf(""));
-				}
+				rowData.add(String.valueOf(pay.getOutTradeNo()==null?"":pay.getOutTradeNo()));
 				//支付金额
-				rowData.add(String.valueOf(pay.getPayMoney()));
+				rowData.add(String.valueOf(pay.getPayMoney()==null?"":pay.getPayMoney()));
 				//支付人
 				rowData.add(String.valueOf(pay.getCreateBy().getName()));
 				//客户名称
-				if(pay.getCustomer()!=null){
+				if(pay.getCustomer()!=null && pay.getCustomer().getName()!=null){
 					rowData.add(String.valueOf(pay.getCustomer().getName()));
 				}else{
 					rowData.add(String.valueOf(""));
 				}
 				//采购中心
-				if(pay.getCustConsultant()!=null){
+				if(pay.getCustConsultant()!=null && pay.getCustConsultant().getCenters()!=null && pay.getCustConsultant().getCenters().getName()!=null){
 					rowData.add(String.valueOf(pay.getCustConsultant().getCenters().getName()));
 				}else {
 					rowData.add(String.valueOf(""));
@@ -167,28 +162,16 @@ public class BizPayRecordController extends BaseController {
 				}else{
 					rowData.add(String.valueOf(""));
 				}
-				//支付账号
-				//if(pay.getAccount()!=null){
-				//	rowData.add(String.valueOf(pay.getAccount().getName()));
-//				}else {
-					rowData.add(pay.getAccount());
-//				}
+//				支付账号
+				rowData.add(String.valueOf(pay.getAccount()==null?"":pay.getAccount()));
 				//支付到账户
-//				if(pay.getToAccount()!=null){
-//					rowData.add(String.valueOf(pay.getToAccount().getName()));
-//				}else {
-					rowData.add(pay.getToAccount());
-//				}
+				rowData.add(String.valueOf(pay.getToAccount()==null?"":pay.getToAccount()));
 				//交易类型名称
-				rowData.add(String.valueOf(pay.getRecordTypeName()));
+				rowData.add(String.valueOf(pay.getRecordTypeName()==null?"":pay.getRecordTypeName()));
 				//支付类型名称
-				rowData.add(String.valueOf(pay.getPayTypeName()));
+				rowData.add(String.valueOf(pay.getPayTypeName()==null?"":pay.getPayTypeName()));
 				//交易作用/原因
-				if(pay.getTradeReason()!=null){
-					rowData.add(String.valueOf(pay.getTradeReason()));
-				}else{
-					rowData.add(String.valueOf(""));
-				}
+				rowData.add(String.valueOf(pay.getTradeReason()==null?"":pay.getTradeReason()));
 				//创建人
 				rowData.add(String.valueOf(pay.getCreateBy().getName()));
 				//创建时间
@@ -199,7 +182,7 @@ public class BizPayRecordController extends BaseController {
 				rowData.add(String.valueOf(sdf.format(pay.getUpdateDate())));
 				data.add(rowData);
 			});
-			String[] payHeads = {"ID", "订单编号","支付编号", "业务流水号", "支付金额", "支付人", "客户名称", "采购中心", "联系电话", "支付账号",
+			String[] payHeads = {"订单编号","支付编号", "业务流水号", "支付金额", "支付人", "客户名称", "采购中心", "联系电话", "支付账号",
 					"支付到账户", "交易类型名称", "支付类型名称", "交易作用/原因", "创建人", "创建时间", "更新人", "更新时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
