@@ -442,7 +442,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         if (prew) {
             bizPoHeader.setPayDeadline(prewPayDeadline);
-            bizPoHeader.setPayTotal(prewPayTotal);
+            bizPoHeader.setPlanPay(prewPayTotal);
             this.genPaymentOrder(bizPoHeader);
         }
         this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS);
