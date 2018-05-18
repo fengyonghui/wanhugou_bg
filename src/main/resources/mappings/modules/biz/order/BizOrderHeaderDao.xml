@@ -1976,18 +1976,19 @@ FROM
 		str_to_date(DATE_FORMAT(oh.create_time,'%Y-%m-%d %H:%i:%s'),'%Y-%m-%d %H:%i:%s') as "userOfficeDeta",
 		oh.id as "id",
 		oh.ship_to_addr,
-			c.province_id as "bizLocation.province.id",
+			cl.province_id as "bizLocation.province.id",
 			province.name as "bizLocation.province.name",
-			c.city_id as "bizLocation.city.id",
+			cl.city_id as "bizLocation.city.id",
 			city.name as "bizLocation.city.name",
-			c.region_id as "bizLocation.region.id",
+			cl.region_id as "bizLocation.region.id",
 			reg.name as "bizLocation.region.name",
-			c.address as "bizLocation.address"
+			cl.address as "bizLocation.address"
 		FROM biz_order_header AS oh
-		LEFT JOIN biz_order_address c ON c.id = oh.ship_to_addr
-		LEFT JOIN sys_region province ON c.province_id = province.id
-		LEFT JOIN sys_region city ON c.city_id = city.id
-		LEFT JOIN sys_region reg ON c.region_id = reg.id
+		LEFT JOIN sys_office_address soa on soa.office_id=oh.cust_id and soa.status=1 and soa.default_status=1
+		left join common_location cl on cl.id=soa.addr_id
+		LEFT JOIN sys_region province ON cl.province_id = province.id
+		LEFT JOIN sys_region city ON cl.city_id = city.id
+		LEFT JOIN sys_region reg ON cl.region_id = reg.id
 		WHERE oh.cust_id = #{custId}
 		AND (
 		(
