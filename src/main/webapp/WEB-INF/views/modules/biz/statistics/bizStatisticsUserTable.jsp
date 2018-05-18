@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <head>
     <meta name="decorator" content="default"/>
-    <title>采购顾问订单统计</title>
+    <title>客户专员订单统计</title>
 </head>
 <body>
 <div style="height: 30px">
@@ -34,7 +34,7 @@
     </table>
 </div>
 <div>
-    <input onclick="window.print();" type="button" class="btn btn-primary" value="打印采购顾问订单统计" style="background:#F78181;"/>
+    <input onclick="window.print();" type="button" class="btn btn-primary" value="打印客户专员订单统计" style="background:#F78181;"/>
 </div>
 <script type="application/javascript" src="/static/My97DatePicker/WdatePicker.js"></script>
 <script type="application/javascript">

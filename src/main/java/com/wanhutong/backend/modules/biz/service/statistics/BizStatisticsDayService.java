@@ -103,6 +103,9 @@ public class BizStatisticsDayService {
                     case UNIVALENCE:
                         dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getUnivalence() : 0);
                         break;
+                    case RECEIVE:
+                        dataList.add(bizOrderStatisticsDto != null ? bizOrderStatisticsDto.getReceiveTotal() : 0);
+                        break;
                     default:
                         break;
                 }

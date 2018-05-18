@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PurchaseOrderProcessConfig>
     <defaultProcessId>2</defaultProcessId>
-    <payProcessId>6</payProcessId>
+    <payProcessId>7</payProcessId>
 
     <!--流程节点-->
     <!--采购中心负责人审批-->
@@ -38,10 +38,11 @@
     </process>
     <!--总经理-->
     <process>
-        <name>待总经理审批</name>
+        <name>待运营总监或总经理审批</name>
         <code>5</code>
         <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-        <passCode>6</passCode>
+        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
+        <passCode>7</passCode>
         <rejectCode>-1</rejectCode>
     </process>
     <!--财会待付款-->
@@ -54,7 +55,7 @@
     </process>
     <!--支付完成-->
     <process>
-        <name>完成</name>
+        <name>审批完成</name>
         <code>7</code>
         <roleEnNameEnum></roleEnNameEnum>
         <passCode>0</passCode>
