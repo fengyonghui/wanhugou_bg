@@ -28,8 +28,8 @@
 				<form:input path="orderNum" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
 			<li><label>供应商</label>
-				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${entity.vendOffice.id}" labelName="vendOffice.name"
-								labelValue="${entity.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
+				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${bizPoHeader.vendOffice.id}" labelName="vendOffice.name"
+								labelValue="${bizPoHeader.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 								title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-medium" dataMsgRequired="必填信息">
 				</sys:treeselect>
 			</li>
