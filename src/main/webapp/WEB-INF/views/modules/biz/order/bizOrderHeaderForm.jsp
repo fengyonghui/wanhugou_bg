@@ -52,8 +52,24 @@
                         $("#addError").css("display","inline-block")
                         return false;
                     }
-                    loading('正在提交，请稍等...');
-                    form.submit();
+                    var orderId = $("#id").val();
+                    var totalExp = $("#totalExp").val();
+                    var totalDetail = $("#totalDetail").val();
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
+                        data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+                        success:function (data) {
+                            if (data == "error") {
+                                alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
+                            } else if (data == "first"){
+                                alert("首单优惠不能低于出厂价，请修改调整金额");
+                            }else {
+                                loading('正在提交，请稍等...');
+                                form.submit();
+                            }
+                        }
+                    });
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function(error, element) {
@@ -428,16 +444,18 @@
             <span class="help-inline">自动计算</span>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">调整金额：</label>
-        <div class="controls">
-                <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font></span>
-            <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
-                <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
-            </c:if>
+    <c:if test="${entity.totalDetail != entity.receiveTotal}">
+        <div class="control-group">
+            <label class="control-label">调整金额：</label>
+            <div class="controls">
+                    <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
+                    <span class="help-inline"><font color="red">*</font></span>
+                <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
+                    <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
+                </c:if>
+            </div>
         </div>
-    </div>
+    </c:if>
     <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">
