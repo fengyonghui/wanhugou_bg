@@ -75,7 +75,7 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 		}
 
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void delete(BizOrderHeaderUnline bizOrderHeaderUnline) {
 		super.delete(bizOrderHeaderUnline);

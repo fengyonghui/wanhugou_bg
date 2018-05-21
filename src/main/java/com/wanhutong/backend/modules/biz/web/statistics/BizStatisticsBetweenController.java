@@ -529,6 +529,21 @@ public class BizStatisticsBetweenController extends BaseController {
                     lineSeriesList.add(echartsSeriesDto);
                 });
                 break;
+            case RECEIVE:
+                officeNameSet.forEach(o -> {
+                    EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+                    echartsSeriesDto.setType(EchartsSeriesDto.SeriesTypeEnum.LINE.getCode());
+
+                    List<Object> dataList = Lists.newArrayList();
+                    for (int i = dataMap.size() - 1; i >= 0; i--) {
+                        dataList.add(dataMap.get(monthDateList.get(i).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)).get(o) != null ? dataMap.get(monthDateList.get(i).toString(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT)).get(o).getReceiveTotal() : 0);
+                    }
+
+                    echartsSeriesDto.setData(dataList);
+                    echartsSeriesDto.setName(o);
+                    lineSeriesList.add(echartsSeriesDto);
+                });
+                break;
             default:
                 break;
         }

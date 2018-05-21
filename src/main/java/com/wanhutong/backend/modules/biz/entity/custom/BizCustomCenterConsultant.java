@@ -24,12 +24,12 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	private static final long serialVersionUID = 1L;
 	private Office customs;		// 采购商.id ; sys_office.id = sys_user.company_id
 	private Office centers;		// 采购中心ID
-	private User consultants;		// 采购顾问ID sys_user.id
+	private User consultants;		// 客户专员ID sys_user.id
 	private String parentIds;
 
 	private String queryCustomes;	//关联采购商列表查询状态
 
-	private List<BizCustomCenterConsultant> bccList;	//用于存放采购中心和采购顾问下的采购商
+	private List<BizCustomCenterConsultant> bccList;	//用于存放采购中心和客户专员下的采购商
 
 	public BizCustomCenterConsultant() {
 		super();

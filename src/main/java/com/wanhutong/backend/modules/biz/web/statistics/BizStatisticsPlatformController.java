@@ -606,7 +606,7 @@ public class BizStatisticsPlatformController extends BaseController {
             bizOrderStatisticsDtoList.forEach(o -> {
                 seriesDataList.add(o.getTotalMoney());
                 seriesCountDataList.add(o.getOrderCount());
-                seriesReceiveDataList.add(o.getOrderCount());
+                seriesReceiveDataList.add(o.getReceiveTotal());
                 seriesUnivalenceList.add(o.getOrderCount() <= 0 ? 0 : o.getTotalMoney().divide(BigDecimal.valueOf(o.getOrderCount()), RoundingMode.DOWN));
                 nameList.add(o.getCreateDate());
             });
@@ -862,4 +862,30 @@ public class BizStatisticsPlatformController extends BaseController {
         return "modules/biz/statistics/bizPlatformOrderCountFrequency";
     }
 
+    @RequiresPermissions("biz:statistics:receive:view")
+    @RequestMapping(value = {"receive", ""})
+    public String receive() {
+        return "modules/biz/statistics/bizStatisticsReceive";
+    }
+
+    @RequiresPermissions("biz:statistics:receive:view")
+    @RequestMapping(value = {"receiveData", ""})
+    @ResponseBody
+    public String receiveData(String startDate, String endDate, String centerType) {
+        return JSONObject.fromObject(bizStatisticsPlatformService.getReceiveData(startDate, endDate, centerType)).toString();
+    }
+
+    @RequiresPermissions("biz:statistics:receive:view")
+    @RequestMapping(value = {"singleReceive", ""})
+    public String singleReceive(HttpServletRequest request) {
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        return "modules/biz/statistics/bizStatisticSingleReceive";
+    }
+
+    @RequiresPermissions("biz:statistics:receive:view")
+    @RequestMapping(value = {"singleReceiveData", ""})
+    @ResponseBody
+    public String singleReceiveData(String startDate, String endDate, String officeId) {
+        return JSONObject.fromObject(bizStatisticsPlatformService.singleReceiveData(startDate, endDate, officeId)).toString();
+    }
 }
