@@ -29,6 +29,7 @@
 				<th>实际付款金额</th>
 				<th>最后付款时间</th>
 				<th>当前状态</th>
+				<th>支付凭证</th>
 				<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
@@ -49,6 +50,9 @@
 				</td>
 				<td>
 					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}
+				</td>
+				<td>
+					<a target="_blank" href="${bizPoPaymentOrder.img}"><img style="width: 100px" src="${bizPoPaymentOrder.img}"/></a>
 				</td>
 				<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit"><td>
 					<c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id && bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">

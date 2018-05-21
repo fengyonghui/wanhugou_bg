@@ -70,11 +70,13 @@
 			id,
 			po_header_id,
 			total,
+			img,
 			deadline
 		) VALUES (
 			#{id},
 			#{poHeaderId},
 			#{total},
+			#{img},
 			#{deadline}
 		)
 	</insert>
@@ -85,7 +87,8 @@
 			total = #{total},
 			deadline = #{deadline},
 			pay_total = #{payTotal},
-			biz_status = #{bizStatus}
+			biz_status = #{bizStatus},
+			img = #{img}
 		WHERE id = #{id}
 	</update>
 	
