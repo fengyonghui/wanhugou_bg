@@ -102,9 +102,9 @@ public class BizInventoryViewLogController extends BaseController {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			String fileName = "库存盘点记录" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			Page<BizInventoryViewLog> page = bizInventoryViewLogService.findPage(new Page<BizInventoryViewLog>(request, response), bizInventoryViewLog);
+			List<BizInventoryViewLog> list = bizInventoryViewLogService.findList(bizInventoryViewLog);
 			ArrayList<List<String>> header = Lists.newArrayList();
-			page.getList().forEach(order->{
+			list.forEach(order->{
 				ArrayList<String> headerList = Lists.newArrayList();
 				if(order.getInvInfo()!=null && order.getInvInfo().getName()!=null){
 					headerList.add(String.valueOf(order.getInvInfo().getName()));
