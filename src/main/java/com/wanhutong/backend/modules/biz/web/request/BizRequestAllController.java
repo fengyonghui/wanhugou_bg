@@ -854,8 +854,8 @@ public class BizRequestAllController {
                     }
                 }
             }else if ("kc".equals(source) && bizStatu!=null && bizStatu==1 && "bh".equals(ship)) {
-                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.STOCKING.getState().byteValue());
-                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.COMPLETE.getState().byteValue());
+                bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
+                bizRequestHeader.setBizStatusEnd(ReqHeaderStatusEnum.STOCK_COMPLETE.getState().byteValue());
                 List<BizRequestHeader> HeaderPageList = bizRequestHeaderService.findListAllExport(bizRequestHeader);
                 for (BizRequestHeader requestHeader : HeaderPageList) {
                     List<String> headerList = new ArrayList();
