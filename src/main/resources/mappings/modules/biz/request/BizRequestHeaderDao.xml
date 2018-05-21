@@ -59,7 +59,7 @@
 	<select id="findList" resultType="BizRequestHeader">
 		SELECT 
 			<include refid="bizRequestHeaderColumns"/>
-		FROM (select @rownum:=0) as rownum,biz_request_header a
+		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
 
 		<where>
@@ -196,7 +196,7 @@
 		</choose>
 		order by updateDate desc
 	</select>
-	
+
 	<select id="findAllList" resultType="BizRequestHeader">
 		SELECT 
 			<include refid="bizRequestHeaderColumns"/>
