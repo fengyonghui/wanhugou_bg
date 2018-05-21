@@ -29,7 +29,7 @@
 						data:{userId:userId,companyId:companyId,userRoleIds:userRoleIds},
 						success:function (data) {
 							if (data=="false"){
-							    alert("该采购专员下关联有采购商，请交接后再修改");
+							    alert("该采购专员下关联有经销店，请交接后再修改");
 							    return false;
 							}
                             loading('正在提交，请稍等...');

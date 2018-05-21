@@ -20,20 +20,20 @@
 <body>
 <ul class="nav nav-tabs">
     <li class="active"><a
-            href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bcUser.consultants.id}">采购商列表</a>
+            href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bcUser.consultants.id}">经销店列表</a>
     </li>
     <li>
-        <a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${bcUser.consultants.id}&office.id=${bcUser.centers.id}">采购商添加</a>
+        <a href="${ctx}/biz/custom/bizCustomCenterConsultant/connOfficeForm?id=${bcUser.consultants.id}&office.id=${bcUser.centers.id}">经销店添加</a>
     </li>
     <%--?centers.id=${page.centers.id}&consultants.id=${page.consultants.id} <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit"><li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/form">客户专员添加</a></li></shiro:hasPermission>--%>
 </ul>
 <form:form id="searchForm" modelAttribute="bizCustomCenterConsultant"
            action="${ctx}/biz/custom/bizCustomCenterConsultant/" method="post" class="breadcrumb form-search">
     <ul class="ul-form">
-        <li><label>采购商名称：</label>
+        <li><label>经销店名称：</label>
             <sys:treeselect id="customs" name="customs.id" value="${entity.customs.id}" labelName="customs.name"
                             labelValue="${entity.customs.name}" notAllowSelectParent="true"
-                            title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-medium required"
+                            title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-medium required"
                             allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
             <c:if test="${bizCustomCenterConsultant.queryCustomes!=null && bizCustomCenterConsultant.queryCustomes eq 'query_Custome'}">
                 <input type="hidden" name="consultants.id" value="${bcUser.consultants.id}">
@@ -69,7 +69,7 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
-        <th>采购商名称</th>
+        <th>经销店名称</th>
         <th>电话</th>
         <th>采购中心</th>
         <th>客户专员</th>

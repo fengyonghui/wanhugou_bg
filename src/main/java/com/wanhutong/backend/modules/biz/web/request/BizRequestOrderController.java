@@ -582,7 +582,7 @@ public class BizRequestOrderController extends BaseController {
                 workbook.write(response.getOutputStream());
                 workbook.dispose();
             } else if ("xsgh".equals(source)) {
-                String[] headers = {"订单编号", "订单类型", "采购商名称", "订单详情总价", "订单总费用","运费", "发票状态", "业务状态",
+                String[] headers = {"订单编号", "订单类型", "经销店名称", "订单详情总价", "订单总费用","运费", "发票状态", "业务状态",
                         "订单来源","创建人","更新时间"};
                 String[] details = {"订单编号", "货架名称", "商品名称", "商品编号", "商品货号","商品出厂价", "供应商", "供应商电话","商品单价",
                         "采购数量","总额","已发货数量","创建时间"};

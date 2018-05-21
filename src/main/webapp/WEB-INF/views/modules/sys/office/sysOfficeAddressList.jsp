@@ -26,10 +26,10 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<form:hidden path="office.type"/>
 		<ul class="ul-form">
-			<li><label>采购商名称：</label>
+			<li><label>经销店名称：</label>
 				<sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}"  labelName="office.name"
 								labelValue="${sysOfficeAddress.office.name}" notAllowSelectParent="true"
-								title="采购商"  url="/sys/office/queryTreeList?type=6&source=cgs"
+								title="经销店"  url="/sys/office/queryTreeList?type=6&source=cgs"
 								cssClass="input-xlarge required"
 								allowClear="true" dataMsgRequired="必填信息"/>
 			</li>

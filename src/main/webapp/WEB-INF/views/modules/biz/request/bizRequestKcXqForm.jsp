@@ -48,7 +48,7 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">${bizRequestHeader==null?'采购商':'采购中心'}：</label>
+			<label class="control-label">${bizRequestHeader==null?'经销店':'采购中心'}：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" readonly="readonly" value="${bizRequestHeader==null?bizOrderHeader.customer.name:bizRequestHeader.fromOffice.name}"/>
 				<input type="hidden" name="customer.id" value="${bizRequestHeader==null?bizOrderHeader.customer.id:bizRequestHeader.fromOffice.id}">

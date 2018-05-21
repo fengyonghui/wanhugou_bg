@@ -59,10 +59,10 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">采购商名称：</label>
+			<label class="control-label">经销店名称：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"
-					title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+					title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
 			    <span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

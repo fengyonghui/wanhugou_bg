@@ -48,10 +48,10 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>采购商名称：</label>
+			<li><label>经销店名称：</label>
 				<sys:treeselect id="office" name="id" value="" labelName="name"
 								labelValue="" notAllowSelectParent="true"
-								title="采购商" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-medium"
+								title="经销店" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-medium"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 				<input type="hidden" name="queryMemberGys" value="query">
 			</li>
