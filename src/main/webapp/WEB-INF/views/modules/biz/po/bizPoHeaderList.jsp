@@ -102,7 +102,6 @@
 				</td>
 				<td>
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
-
 				</td>
 				<div style="display:none;">
 					<td style="display:none;">
