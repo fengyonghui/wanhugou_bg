@@ -7,7 +7,7 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#buttonExport").click(function(){
-				top.$.jBox.confirm("确认要导出库存盘点记录数据吗？","系统提示",function(v,h,f){
+				top.$.jBox.confirm("确认要导出产品查看日志数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
 						$("#searchForm").attr("action","${ctx}/biz/product/bizProdViewLog/prodExprot");
 						$("#searchForm").submit();
@@ -37,13 +37,13 @@
 			<li><label>货架名称：</label>
 				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>采购中心：</label>
-				<c:if test="${fns:getUser().isAdmin()}">
+			<c:if test="${fns:getUser().isAdmin()}">
+				<li><label>采购中心：</label>
 				<sys:treeselect id="center" name="center.id" value="${bizProdViewLog.center.id}" labelName="center.name"
 								labelValue="${bizProdViewLog.center.name}"  notAllowSelectParent="true" allowClear="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 				</sys:treeselect>
-			</li>
+				</li>
 			</c:if>
 			</li>
 			<li><label>产品名称：</label>

@@ -98,9 +98,9 @@ public class BizProdViewLogController extends BaseController {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			String fileName = "产品查看日志" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			Page<BizProdViewLog> page = bizProdViewLogService.findPage(new Page<BizProdViewLog>(request, response), bizProdViewLog);
+			List<BizProdViewLog> list = bizProdViewLogService.findList(bizProdViewLog);
 			ArrayList<List<String>> header = Lists.newArrayList();
-			page.getList().forEach(order->{
+			list.forEach(order->{
 				ArrayList<String> headerList = Lists.newArrayList();
 				if(order.getOpShelfInfo()!=null && order.getOpShelfInfo().getName()!=null){
 					headerList.add(String.valueOf(order.getOpShelfInfo().getName()));
