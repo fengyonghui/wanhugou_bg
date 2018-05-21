@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
@@ -50,6 +51,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+    @Autowired
+    private BizOrderStatusService bizOrderStatusService;
 
 
     public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader) {
@@ -217,6 +220,13 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
         bizOrderHeader.setBizStatus(bizOrderHeader.getBizStatus());
         super.save(bizOrderHeader);
+
+        if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+            BizOrderStatus orderStatus = new BizOrderStatus();
+            orderStatus.setOrderHeader(bizOrderHeader);
+            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+            bizOrderStatusService.save(orderStatus);
+        }
 
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();

@@ -374,7 +374,7 @@
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
 
-    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+    <%--<c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">--%>
         <div class="control-group">
             <label class="control-label">订单编号：</label>
             <div class="controls">
@@ -382,30 +382,30 @@
                             class="input-xlarge"/>
             </div>
         </div>
-    </c:if>
-    <c:if test="${not empty entity.orderDetails}">
-        <div class="control-group">
-            <label class="control-label">订单类型：</label>
-            <div class="controls">
-                <form:select path="orderType" class="input-xlarge" disabled="true">
-                    <form:option value="" label="请选择"/>
-                    <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
-                                  htmlEscape="false"/></form:select>
-            </div>
-        </div>
-    </c:if>
+    <%--</c:if>--%>
+    <%--<c:if test="${not empty entity.orderDetails}">--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">订单类型：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<form:select path="orderType" class="input-xlarge" disabled="true">--%>
+                    <%--<form:option value="" label="请选择"/>--%>
+                    <%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
+                                  <%--htmlEscape="false"/></form:select>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</c:if>--%>
     <div class="control-group">
-        <label class="control-label">采购商名称：</label>
+        <label class="control-label">经销店名称：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}" disabled="disabled"
                                 notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
+                                title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
                 <c:if test="${entity.orderDetails eq 'details'}">
                     <c:if test="${orderCenter.centers !=null }">
-                        该采购商的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
+                        该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
                         客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
                     </c:if>
                 </c:if>
@@ -414,7 +414,7 @@
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+                                title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
                 <span class="help-inline"><font color="red">*</font></span>
             </c:if>
@@ -450,26 +450,26 @@
             </c:if>
         </div>
     </div>
-    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-        <div class="control-group">
-            <label class="control-label">应付金额：</label>
-            <div class="controls">
-                <input type="text" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"
-                       disabled="true" class="input-xlarge">
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">已付金额：</label>
-            <div class="controls">
-                <%--<input type="text" value="<fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />"--%>
-                       <%--style="color:#088A29" class="input-xlarge" disabled="true" />--%>
-                        <%-----${bizOrderHeader.receiveTotal}----%>
-                <font color="#088A29">
-                    <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />
-                </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
-            </div>
-        </div>
-    </c:if>
+    <%--<c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">应付金额：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<input type="text" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"--%>
+                       <%--disabled="true" class="input-xlarge">--%>
+            <%--</div>--%>
+        <%--</div>--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">已付金额：</label>--%>
+            <%--<div class="controls">--%>
+                <%--&lt;%&ndash;<input type="text" value="<fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />"&ndash;%&gt;--%>
+                       <%--&lt;%&ndash;style="color:#088A29" class="input-xlarge" disabled="true" />&ndash;%&gt;--%>
+                        <%--&lt;%&ndash;---${bizOrderHeader.receiveTotal}--&ndash;%&gt;--%>
+                <%--<font color="#088A29">--%>
+                    <%--<fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />--%>
+                <%--</font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</c:if>--%>
     <c:if test="${not empty entity.orderDetails}">
         <c:if test="${fns:getUser().isAdmin()==false}">
             <div class="control-group">
@@ -643,243 +643,216 @@
             <%--<span class="help-inline"></span>--%>
         <%--</div>--%>
     <%--</c:if>--%>
-    <c:if test="${not empty entity.orderDetails}">
-        <c:if test="${bizOrderHeader.bizStatus!=45 }">
-        <div class="control-group">
-            <label class="control-label">进展信息：</label>
-            <div class="controls">
-                <div id="payment" style="display:none;width: 29%;float: left;">
-                    <div style="float: left;padding-top: 16px;">
-                        <button id="payment0" type="button" class="btn btn-arrow-left">未支付</button>
-                        &nbsp;&rarr;&nbsp;
-                    </div>
-                    <div style="float: left;">
-                        <div style="padding-bottom: 1px;">
-                            <button id="payment5" type="button" class="btn btn-arrow-right">首付款支付</button>
-                        </div>
-                        <div style="padding-top: 1px;">
-                        <button id="payment10" type="button" class="btn btn-arrow-right">全部支付</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="payment5_1" style="display:none;width: 29%;">
-                    <div style="float:left;padding-top: 16px;">
-                        <button id="payment5_2" type="button" class="btn btn-arrow-left">未支付</button>&nbsp;&rarr;
-                        <button id="payment5_3" type="button" class="btn btn-arrow-right">首付款支付</button>&nbsp;&rarr;
-                    </div>
-                    <div style="float:left;">
-                        <div style="padding-top: 1px;">
-                            <button id="payment5_4" type="button" class="btn btn-arrow-right">全部支付</button>
-                        </div>
-                        <div style="padding-top: 1px;">
-                            <button id="payment5_5" type="button" class="btn btn-arrow-left">供货中</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="payment10_1" style="display:none;width: 29%;">
-                    <div style="float:left;width: 110px;">
-                        <div style="padding-top: 1px;float: right;">
-                            <button id="payment10_2" type="button" class="btn btn-arrow-left">未支付</button>
-                        </div>
-                        <div style="padding-top: 1px;float: right;">
-                            <button id="payment10_3" type="button" class="btn btn-arrow-right">首付款支付</button>
-                        </div>
-                    </div>
-                    <div style="float:left;padding-top: 16px;">
-                        &rarr;&nbsp;<button id="payment10_4" type="button" class="btn btn-arrow-right">全部支付</button>
-                        &nbsp;&rarr;
-                        <button id="payment10_5" type="button" class="btn btn-arrow-left">供货中</button>
-                    </div>
-                </div>
-                <div id="commodity" style="display:none;width: 29%;">
-                    <div style="float:left;width: 110px;">
-                        <div style="padding-top: 1px;float: right;">
-                            <button id="commodity5" type="button" class="btn btn-arrow-right">首付款支付</button>
-                        </div>
-                        <div style="padding-top: 1px;float: right;">
-                            <button id="commodity10" type="button" class="btn btn-arrow-right">全部支付</button>
-                        </div>
-                    </div>
-                    <div style="float:left;padding-top: 16px;">
-                    &rarr;&nbsp;<button id="commodity15" type="button" class="btn btn-arrow-left">供货中</button>&nbsp;&rarr;&nbsp;
-                    </div>
-                    <div style="float: left">
-                        <div style="padding-bottom: 1px;">
-                            <button id="commodity17" type="button" class="btn btn-arrow-right">采购中</button>
-                        </div>
-                        <div style="padding-top: 1px;">
-                            <button id="commodity20" type="button" class="btn btn-arrow-right">已发货</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="purchase" style="display:none;float: left;width: 29%;">
-                    <div style="float:left;width: 120px;">
-                        <div style="padding-bottom: 1px;float: right;">
-                            <button id="purchase5" type="button" class="btn btn-arrow-left">首付款支付</button>&nbsp;&rarr;
-                        </div>
-                        <div style="padding-bottom: 1px;float: right;">
-                            <button id="purchase10" type="button" class="btn btn-arrow-right">全部支付</button>&nbsp;&rarr;
-                        </div>
-                        <div style="padding-bottom: 1px;float: right;">
-                            <button id="purchase15" type="button" class="btn btn-arrow-right">供货中</button>&nbsp;&rarr;
-                        </div>
-                    </div>
-                    <div style="float: left">
-                        <div style="padding-top: 31px;padding-left: 10px;">
-                            <button id="purchase17" type="button" class="btn btn-arrow-right">采购中</button>&nbsp;&rarr;&nbsp;
-                            <button id="purchase18" type="button" class="btn btn-arrow-right">采购完成</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="supply_core" style="display:none;width: 30%;">
-                    <button id="supply_core17" type="button" class="btn btn-arrow-left">采购中</button>&nbsp;&rarr;&nbsp;
-                    <button id="supply_core18" type="button" class="btn btn-arrow-right">采购完成</button>&nbsp;&rarr;&nbsp;
-                    <button id="supply_core19" type="button" class="btn btn-arrow-right">供应中心供货</button>
-                </div>
-                <div id="deliver_goods" style="display:none;width: 30%;">
-                    <button id="deliver_goods18" type="button" class="btn btn-arrow-left">采购完成</button>&nbsp;&rarr;&nbsp;
-                    <button id="deliver_goods19" type="button" class="btn btn-arrow-right">供应中心供货</button>&nbsp;&rarr;&nbsp;
-                    <button id="deliver_goods20" type="button" class="btn btn-arrow-right">已发货</button>
-                </div>
-                <div id="goods" style="display:none;width: 30%;">
-                    <div style="float:left;width: 120px;">
-                        <div style="padding-top: 1px;float: right;">
-                            <button id="goods15" type="button" class="btn btn-arrow-right">供货中</button>
-                        </div>
-                        <div style="padding-top: 1px;float: right;">
-                            <button id="goods19" type="button" class="btn btn-arrow-right">供应中心供货</button>
-                        </div>
-                    </div>
-                    <div style="float: left">
-                        <div style="padding-bottom: 1px;padding-top: 16px;">
-                            &nbsp;&rarr;&nbsp;<button id="goods20" type="button" class="btn btn-arrow-left">已发货</button>&nbsp;&rarr;&nbsp;
-                            <button id="goods25" type="button" class="btn btn-arrow-right">客户已收货</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="have_received_goods" style="display:none;width: 29%;">
-                    <div style="float: left;padding-top: 16px;">
-                        <button id="have_received_goods20" type="button" class="btn btn-arrow-left">已发货</button>&nbsp;&rarr;&nbsp;
-                        <button id="have_received_goods25" type="button" class="btn btn-arrow-left">客户已收货</button>&nbsp;&rarr;&nbsp;
-                    </div>
-                    <div style="float: left;">
-                        <div style="padding-bottom: 1px;">
-                            <button id="have_received_goods10" type="button" class="btn btn-arrow-right">全部支付</button>
-                        </div>
-                        <div style="padding-top: 1px;">
-                            <button id="have_received_goods30" type="button" class="btn btn-arrow-right">已完成</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="completed" style="display:none;width: 29%;">
-                    <div style="float:left;width: 110px;">
-                        <div style="padding-bottom: 1px;float: right;">
-                            <button id="completed10" type="button" class="btn btn-arrow-left">全部支付</button>
-                        </div>
-                        <div style="padding-bottom: 1px;float: right;">
-                            <button id="completed25" type="button" class="btn btn-arrow-left">客户已收货</button>
-                        </div>
-                    </div>
-                    <div style="float: left">
-                        <div style="padding-bottom: 1px;padding-top: 16px;">
-                            &nbsp;&rarr;&nbsp;<button id="completed30" type="button" class="btn btn-arrow-right">已完成</button>&nbsp;&rarr;&nbsp;
-                            <button id="completed40" type="button" class="btn btn-arrow-right">已删除</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="cancel" style="display:none;float: left;width: 29%;">
-                    <div style="float:left;width: 120px;">
-                        <div style="padding-bottom: 1px;float: right;">
-                            <button id="cancel0" type="button" class="btn btn-arrow-left">未支付</button>&nbsp;&rarr;&nbsp;
-                        </div>
-                        <div style="padding-bottom: 1px;float: right;">
-                            <button id="cancel5" type="button" class="btn btn-arrow-right">首付款支付</button>&nbsp;&rarr;&nbsp;
-                        </div>
-                        <div style="padding-bottom: 1px;float: right;">
-                            <button id="cancel10" type="button" class="btn btn-arrow-right">全部支付</button>&nbsp;&rarr;&nbsp;
-                        </div>
-                    </div>
-                    <div style="float: left">
-                        <div style="padding-top: 31px;">
-                            <button id="cancel35" type="button" class="btn btn-arrow-right">已取消</button>&nbsp;&rarr;&nbsp;
-                            <button id="cancel40" type="button" class="btn btn-arrow-right">已删除</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="already_delete" style="display:none;width: 29%;">
-                    <div style="float:left;width: 90px;">
-                        <div style="padding-bottom: 1px;float: right">
-                            <button id="already_delete30" type="button" class="btn btn-arrow-left">已完成</button>
-                        </div>
-                        <div style="padding-bottom: 1px;float: right">
-                            <button id="already_delete35" type="button" class="btn btn-arrow-left">已取消</button>
-                        </div>
-                    </div>
-                    <div style="float: left;">
-                        <div style="padding-top: 16px;">
-                            &rarr;<button id="already_delete40" type="button" class="btn btn-arrow-right">已删除</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </c:if>
-        <div class="control-group">
-            <label class="control-label">创建人：</label>
-            <div class="controls">
-                <form:input path="totalDetail" value="${bizOrderHeader.createBy.name}" readOnly="true" class="input-xlarge"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">创建时间：</label>
-            <div class="controls">
-                <fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">更新人：</label>
-            <div class="controls">
-                <form:input path="totalDetail" value="${bizOrderHeader.updateBy.name}" readOnly="true" class="input-xlarge"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">更新时间：</label>
-            <div class="controls">
-                <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </div>
-        </div>
-        <c:if test="${statu != '' && statu =='unline'}">
-            <div class="control-group">
-                <label class="control-label">支付信息:</label>
-                <div class="controls">
-                    <table class="table table-striped table-bordered table-condensed">
-                        <thead>
-                            <tr>
-                                <th>流水号</th>
-                                <th>支付金额</th>
-                                <th>状态</th>
-                                <th>创建时间</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${unlineList}" var="unline">
-                                <tr>
-                                    <td>${unline.serialNum}</td>
-                                    <td>${unline.unlinePayMoney}</td>
-                                    <td>${fns:getDictLabel(unline.bizStatus,"biz_order_unline_bizStatus" ,"未知状态" )}</td>
-                                    <td><fmt:formatDate value="${unline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </c:if>
-    </c:if>
+    <%--<c:if test="${not empty entity.orderDetails}">--%>
+        <%--<c:if test="${bizOrderHeader.bizStatus!=45 }">--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">进展信息：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<div id="payment" style="display:none;width: 29%;float: left;">--%>
+                    <%--<div style="float: left;padding-top: 16px;">--%>
+                        <%--<button id="payment0" type="button" class="btn btn-arrow-left">未支付</button>--%>
+                        <%--&nbsp;&rarr;&nbsp;--%>
+                    <%--</div>--%>
+                    <%--<div style="float: left;">--%>
+                        <%--<div style="padding-bottom: 1px;">--%>
+                            <%--<button id="payment5" type="button" class="btn btn-arrow-right">首付款支付</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-top: 1px;">--%>
+                        <%--<button id="payment10" type="button" class="btn btn-arrow-right">全部支付</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="payment5_1" style="display:none;width: 29%;">--%>
+                    <%--<div style="float:left;padding-top: 16px;">--%>
+                        <%--<button id="payment5_2" type="button" class="btn btn-arrow-left">未支付</button>&nbsp;&rarr;--%>
+                        <%--<button id="payment5_3" type="button" class="btn btn-arrow-right">首付款支付</button>&nbsp;&rarr;--%>
+                    <%--</div>--%>
+                    <%--<div style="float:left;">--%>
+                        <%--<div style="padding-top: 1px;">--%>
+                            <%--<button id="payment5_4" type="button" class="btn btn-arrow-right">全部支付</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-top: 1px;">--%>
+                            <%--<button id="payment5_5" type="button" class="btn btn-arrow-left">供货中</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="payment10_1" style="display:none;width: 29%;">--%>
+                    <%--<div style="float:left;width: 110px;">--%>
+                        <%--<div style="padding-top: 1px;float: right;">--%>
+                            <%--<button id="payment10_2" type="button" class="btn btn-arrow-left">未支付</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-top: 1px;float: right;">--%>
+                            <%--<button id="payment10_3" type="button" class="btn btn-arrow-right">首付款支付</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <%--<div style="float:left;padding-top: 16px;">--%>
+                        <%--&rarr;&nbsp;<button id="payment10_4" type="button" class="btn btn-arrow-right">全部支付</button>--%>
+                        <%--&nbsp;&rarr;--%>
+                        <%--<button id="payment10_5" type="button" class="btn btn-arrow-left">供货中</button>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="commodity" style="display:none;width: 29%;">--%>
+                    <%--<div style="float:left;width: 110px;">--%>
+                        <%--<div style="padding-top: 1px;float: right;">--%>
+                            <%--<button id="commodity5" type="button" class="btn btn-arrow-right">首付款支付</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-top: 1px;float: right;">--%>
+                            <%--<button id="commodity10" type="button" class="btn btn-arrow-right">全部支付</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <%--<div style="float:left;padding-top: 16px;">--%>
+                    <%--&rarr;&nbsp;<button id="commodity15" type="button" class="btn btn-arrow-left">供货中</button>&nbsp;&rarr;&nbsp;--%>
+                    <%--</div>--%>
+                    <%--<div style="float: left">--%>
+                        <%--<div style="padding-bottom: 1px;">--%>
+                            <%--<button id="commodity17" type="button" class="btn btn-arrow-right">采购中</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-top: 1px;">--%>
+                            <%--<button id="commodity20" type="button" class="btn btn-arrow-right">已发货</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="purchase" style="display:none;float: left;width: 29%;">--%>
+                    <%--<div style="float:left;width: 120px;">--%>
+                        <%--<div style="padding-bottom: 1px;float: right;">--%>
+                            <%--<button id="purchase5" type="button" class="btn btn-arrow-left">首付款支付</button>&nbsp;&rarr;--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-bottom: 1px;float: right;">--%>
+                            <%--<button id="purchase10" type="button" class="btn btn-arrow-right">全部支付</button>&nbsp;&rarr;--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-bottom: 1px;float: right;">--%>
+                            <%--<button id="purchase15" type="button" class="btn btn-arrow-right">供货中</button>&nbsp;&rarr;--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <%--<div style="float: left">--%>
+                        <%--<div style="padding-top: 31px;padding-left: 10px;">--%>
+                            <%--<button id="purchase17" type="button" class="btn btn-arrow-right">采购中</button>&nbsp;&rarr;&nbsp;--%>
+                            <%--<button id="purchase18" type="button" class="btn btn-arrow-right">采购完成</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="supply_core" style="display:none;width: 30%;">--%>
+                    <%--<button id="supply_core17" type="button" class="btn btn-arrow-left">采购中</button>&nbsp;&rarr;&nbsp;--%>
+                    <%--<button id="supply_core18" type="button" class="btn btn-arrow-right">采购完成</button>&nbsp;&rarr;&nbsp;--%>
+                    <%--<button id="supply_core19" type="button" class="btn btn-arrow-right">供应中心供货</button>--%>
+                <%--</div>--%>
+                <%--<div id="deliver_goods" style="display:none;width: 30%;">--%>
+                    <%--<button id="deliver_goods18" type="button" class="btn btn-arrow-left">采购完成</button>&nbsp;&rarr;&nbsp;--%>
+                    <%--<button id="deliver_goods19" type="button" class="btn btn-arrow-right">供应中心供货</button>&nbsp;&rarr;&nbsp;--%>
+                    <%--<button id="deliver_goods20" type="button" class="btn btn-arrow-right">已发货</button>--%>
+                <%--</div>--%>
+                <%--<div id="goods" style="display:none;width: 30%;">--%>
+                    <%--<div style="float:left;width: 120px;">--%>
+                        <%--<div style="padding-top: 1px;float: right;">--%>
+                            <%--<button id="goods15" type="button" class="btn btn-arrow-right">供货中</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-top: 1px;float: right;">--%>
+                            <%--<button id="goods19" type="button" class="btn btn-arrow-right">供应中心供货</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <%--<div style="float: left">--%>
+                        <%--<div style="padding-bottom: 1px;padding-top: 16px;">--%>
+                            <%--&nbsp;&rarr;&nbsp;<button id="goods20" type="button" class="btn btn-arrow-left">已发货</button>&nbsp;&rarr;&nbsp;--%>
+                            <%--<button id="goods25" type="button" class="btn btn-arrow-right">客户已收货</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="have_received_goods" style="display:none;width: 29%;">--%>
+                    <%--<div style="float: left;padding-top: 16px;">--%>
+                        <%--<button id="have_received_goods20" type="button" class="btn btn-arrow-left">已发货</button>&nbsp;&rarr;&nbsp;--%>
+                        <%--<button id="have_received_goods25" type="button" class="btn btn-arrow-left">客户已收货</button>&nbsp;&rarr;&nbsp;--%>
+                    <%--</div>--%>
+                    <%--<div style="float: left;">--%>
+                        <%--<div style="padding-bottom: 1px;">--%>
+                            <%--<button id="have_received_goods10" type="button" class="btn btn-arrow-right">全部支付</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-top: 1px;">--%>
+                            <%--<button id="have_received_goods30" type="button" class="btn btn-arrow-right">已完成</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="completed" style="display:none;width: 29%;">--%>
+                    <%--<div style="float:left;width: 110px;">--%>
+                        <%--<div style="padding-bottom: 1px;float: right;">--%>
+                            <%--<button id="completed10" type="button" class="btn btn-arrow-left">全部支付</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-bottom: 1px;float: right;">--%>
+                            <%--<button id="completed25" type="button" class="btn btn-arrow-left">客户已收货</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <%--<div style="float: left">--%>
+                        <%--<div style="padding-bottom: 1px;padding-top: 16px;">--%>
+                            <%--&nbsp;&rarr;&nbsp;<button id="completed30" type="button" class="btn btn-arrow-right">已完成</button>&nbsp;&rarr;&nbsp;--%>
+                            <%--<button id="completed40" type="button" class="btn btn-arrow-right">已删除</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="cancel" style="display:none;float: left;width: 29%;">--%>
+                    <%--<div style="float:left;width: 120px;">--%>
+                        <%--<div style="padding-bottom: 1px;float: right;">--%>
+                            <%--<button id="cancel0" type="button" class="btn btn-arrow-left">未支付</button>&nbsp;&rarr;&nbsp;--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-bottom: 1px;float: right;">--%>
+                            <%--<button id="cancel5" type="button" class="btn btn-arrow-right">首付款支付</button>&nbsp;&rarr;&nbsp;--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-bottom: 1px;float: right;">--%>
+                            <%--<button id="cancel10" type="button" class="btn btn-arrow-right">全部支付</button>&nbsp;&rarr;&nbsp;--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <%--<div style="float: left">--%>
+                        <%--<div style="padding-top: 31px;">--%>
+                            <%--<button id="cancel35" type="button" class="btn btn-arrow-right">已取消</button>&nbsp;&rarr;&nbsp;--%>
+                            <%--<button id="cancel40" type="button" class="btn btn-arrow-right">已删除</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div id="already_delete" style="display:none;width: 29%;">--%>
+                    <%--<div style="float:left;width: 90px;">--%>
+                        <%--<div style="padding-bottom: 1px;float: right">--%>
+                            <%--<button id="already_delete30" type="button" class="btn btn-arrow-left">已完成</button>--%>
+                        <%--</div>--%>
+                        <%--<div style="padding-bottom: 1px;float: right">--%>
+                            <%--<button id="already_delete35" type="button" class="btn btn-arrow-left">已取消</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                    <%--<div style="float: left;">--%>
+                        <%--<div style="padding-top: 16px;">--%>
+                            <%--&rarr;<button id="already_delete40" type="button" class="btn btn-arrow-right">已删除</button>--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+        <%--</c:if>--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">创建人：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<form:input path="totalDetail" value="${bizOrderHeader.createBy.name}" readOnly="true" class="input-xlarge"/>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">创建时间：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">更新人：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<form:input path="totalDetail" value="${bizOrderHeader.updateBy.name}" readOnly="true" class="input-xlarge"/>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+        <%--<div class="control-group">--%>
+            <%--<label class="control-label">更新时间：</label>--%>
+            <%--<div class="controls">--%>
+                <%--<fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</c:if>--%>
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
-                <label class="control-label">交货地址:</label>
+                <label class="control-label">交货地址；</label>
                 <div class="controls">
                     <select id="jhprovince" class="input-medium" name="bizLocation.province.id" disabled="disabled"
                             style="width:150px;text-align: center;">
@@ -903,7 +876,7 @@
                 </div>
             </div>
             <div class="control-group" id="jhadd2" style="display:none">
-                <label class="control-label">交货地址:</label>
+                <label class="control-label">交货地址；</label>
                 <div class="controls">
                     <input id="addJhAddressHref" type="button" value="新增地址" htmlEscape="false"
                            class="input-xlarge required"/>
@@ -912,7 +885,7 @@
                 </div>
             </div>
             <div class="control-group" id="jhadd3">
-                <label class="control-label">详细地址:</label>
+                <label class="control-label">详细地址；</label>
                 <div class="controls">
                     <input type="text" id="jhaddress" name="bizLocation.address" htmlEscape="false"
                            class="input-xlarge required"/>
@@ -920,7 +893,7 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">交货时间:</label>
+                <label class="control-label">交货时间；</label>
                 <div class="controls">
                     <input id="appointedDate" name="bizLocation.appointedTime" type="text" readonly="readonly"
                            maxlength="20" class="input-xlarge Wdate required"
@@ -937,9 +910,9 @@
                                                                                      type="submit"
                                                                                      value="保存"/>&nbsp;</shiro:hasPermission>
                 </c:if>
-                <c:if test="${not empty entity.orderDetails}">
-                    待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>
-                </c:if>
+                <%--<c:if test="${not empty entity.orderDetails}">--%>
+                    <%--待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>--%>
+                <%--</c:if>--%>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
 
