@@ -207,10 +207,6 @@
                     $("#already_delete40").addClass("btn-primary");
                 }
             }
-            $("#totalExp").change(function () {
-
-
-            });
         });
 
         function clickBut(){
