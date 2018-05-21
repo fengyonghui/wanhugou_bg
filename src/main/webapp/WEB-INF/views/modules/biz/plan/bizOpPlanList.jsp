@@ -6,7 +6,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+			$("#buttonExport").click(function(){
+				top.$.jBox.confirm("确认要运营计划数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/plan/bizOpPlan/planExprot");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/plan/bizOpPlan/");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -41,6 +50,7 @@
 			<form:input path="day" htmlEscape="false" placeholder="请输入日 如（20）" maxlength="5" class="input-medium"/>
 		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 		<li class="clearfix"></li>
 	</ul>
 </form:form>

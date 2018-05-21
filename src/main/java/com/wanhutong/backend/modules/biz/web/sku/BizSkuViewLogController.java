@@ -6,6 +6,11 @@ package com.wanhutong.backend.modules.biz.web.sku;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +26,10 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 商品出厂价日志表Controller
@@ -77,6 +86,51 @@ public class BizSkuViewLogController extends BaseController {
 	public String delete(BizSkuViewLog bizSkuViewLog, RedirectAttributes redirectAttributes) {
 		bizSkuViewLogService.delete(bizSkuViewLog);
 		addMessage(redirectAttributes, "删除出厂价日志成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuViewLog/?repage";
+	}
+
+
+	/**
+	 * 导出
+	 * */
+	@RequiresPermissions("biz:sku:bizSkuViewLog:view")
+	@RequestMapping(value = "skuExprot")
+	public String skuExprot(BizSkuViewLog bizSkuViewLog, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		try {
+			String fileName = "出厂价日志" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			Page<BizSkuViewLog> page = bizSkuViewLogService.findPage(new Page<BizSkuViewLog>(request, response), bizSkuViewLog);
+			ArrayList<List<String>> header = Lists.newArrayList();
+			page.getList().forEach(order->{
+				ArrayList<String> headerList = Lists.newArrayList();
+				if(order.getSkuInfo()!=null && order.getSkuInfo().getName()!=null){
+					headerList.add(String.valueOf(order.getSkuInfo().getName()));
+				}else {
+					headerList.add("");
+				}
+				headerList.add(String.valueOf(order.getItemNo()==null?"":order.getItemNo()));
+				headerList.add(String.valueOf(sdf.format(order.getUpdateDate())));
+				headerList.add(String.valueOf(order.getUpdateBy().getName()==null?"":order.getUpdateBy().getName()));
+				headerList.add(String.valueOf(order.getFrontBuyPrice()==null?"":order.getFrontBuyPrice()));
+				headerList.add(String.valueOf(order.getAfterBuyPrice()==null?"":order.getAfterBuyPrice()));
+				headerList.add(String.valueOf(order.getChangePrice()==null?"":order.getChangePrice()));
+				headerList.add(String.valueOf(sdf.format(order.getCreateDate())));
+				header.add(headerList);
+			});
+			String[] headerArr = {"商品名称", "商品货号", "商品修改时间", "商品修改人", "修改前工厂价", "修改后工厂价", "改变的价格", "创建时间"};
+			ExportExcelUtils eeu = new ExportExcelUtils();
+			SXSSFWorkbook workbook = new SXSSFWorkbook();
+			eeu.exportExcel(workbook, 0, "出厂价日志", headerArr, header, fileName);
+			response.reset();
+			response.setContentType("application/octet-stream; charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+			workbook.write(response.getOutputStream());
+			workbook.dispose();
+			return null;
+		}catch (Exception e){
+			e.printStackTrace();
+			addMessage(redirectAttributes, "导出出厂价日志数据失败！失败信息：" + e.getMessage());
+		}
 		return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuViewLog/?repage";
 	}
 
