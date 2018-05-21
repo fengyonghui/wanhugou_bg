@@ -5,7 +5,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 /**
  * * 
 * <p>Title: BuyerAdviser</p>
-* <p>Description: 采购商采购顾问关联</p>
+* <p>Description: 采购商客户专员关联</p>
 * <p>Company: WHT</p> 
 * @date 2018年1月11日
  */
@@ -17,7 +17,7 @@ public class BuyerAdviser extends DataEntity<BuyerAdviser>{
 	
 	private Integer centerId;//采购中心
 	
-	private Integer consultantId;//采购顾问
+	private Integer consultantId;//客户专员
 	
 	private String consultantName;
 

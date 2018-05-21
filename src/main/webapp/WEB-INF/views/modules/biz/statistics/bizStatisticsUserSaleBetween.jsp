@@ -90,7 +90,7 @@
 
                 salesVolumeChart.setOption({
                     title: {
-                        text: '采购顾问业绩统计(区间)',
+                        text: '客户专员业绩统计(区间)',
                         textStyle:{
                             fontSize: 16,
                             fontWeight: 'bolder',
@@ -161,7 +161,7 @@
                 },1000);
                 singleSalesVolumeChart.setOption({
                     title: {
-                        text: '采购顾问业绩统计(个人/区间)',
+                        text: '客户专员业绩统计(个人/区间)',
                         textStyle:{
                             fontSize: 16,
                             fontWeight: 'bolder',

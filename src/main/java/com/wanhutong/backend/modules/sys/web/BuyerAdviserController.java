@@ -25,7 +25,7 @@ import com.wanhutong.backend.modules.sys.utils.DictUtils;
 /**
  * * 
 * <p>Title: BuyerAdviserController</p>
-* <p>Description: 采购商采购顾问关联</p>
+* <p>Description: 采购商客户专员关联</p>
 * <p>Company: WHT</p> 
  */
 @Controller

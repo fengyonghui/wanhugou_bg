@@ -266,7 +266,7 @@
 		ORDER BY a.name
 	</select>
 
-	<!-- 根据OfficeId获取用户,关联采购顾问与采购商使用 -->
+	<!-- 根据OfficeId获取用户,关联客户专员与采购商使用 -->
 	<!--<select id="selectUserByOfficeId" resultType="User" >-->
 	<!--SELECT-->
 	<!--a.id, a.name, a.login_name-->

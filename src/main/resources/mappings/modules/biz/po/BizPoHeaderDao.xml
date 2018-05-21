@@ -23,75 +23,99 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		a.current_payment_id AS "currentPaymentId",
+		a.pay_total AS "payTotal",
 		so.name AS "vendOffice.name",
 		payment.id AS "bizPoPaymentOrder.id",
 		payment.po_header_id AS "bizPoPaymentOrder.poHeaderId",
 		payment.total AS "bizPoPaymentOrder.total",
 		payment.pay_total AS "bizPoPaymentOrder.payTotal",
-		payment.process_id AS "bizPoPaymentOrder.processId",
-		process.id AS "bizPoPaymentOrder.commonProcess.id",
-		process.object_id AS "bizPoPaymentOrder.commonProcess.objectId",
-		process.object_name AS "bizPoPaymentOrder.commonProcess.objectName",
-		process.prev_id AS "bizPoPaymentOrder.commonProcess.prevId",
-		process.biz_status AS "bizPoPaymentOrder.commonProcess.bizStatus",
-		process.processor AS "bizPoPaymentOrder.commonProcess.processor",
-		process.description AS "bizPoPaymentOrder.commonProcess.description",
-		process.type AS "bizPoPaymentOrder.commonProcess.type",
-		process.create_time AS "bizPoPaymentOrder.commonProcess.createTime",
+		payment.biz_status AS "bizPoPaymentOrder.bizStatus",
+		payment.deadline AS "bizPoPaymentOrder.deadline",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		process.create_time AS "commonProcess.createTime",
+		prevProcess.id AS "prevCommonProcess.id",
+		prevProcess.object_id AS "prevCommonProcess.objectId",
+		prevProcess.object_name AS "prevCommonProcess.objectName",
+		prevProcess.prev_id AS "prevCommonProcess.prevId",
+		prevProcess.biz_status AS "prevCommonProcess.bizStatus",
+		prevProcess.processor AS "prevCommonProcess.processor",
+		prevProcess.description AS "prevCommonProcess.description",
+		prevProcess.type AS "prevCommonProcess.type",
+		prevProcess.create_time AS "prevCommonProcess.createTime",
 		a.is_prew as "isPrewUseful"
 	</sql>
 
-	<sql id="bizRePoHeaderColumns">
-		b.id AS "id",
-		b.order_num AS "orderNum",
-		b.vend_id AS "vendOffice.id",
-		b.total_detail AS "totalDetail",
-		b.total_exp AS "totalExp",
-		b.freight AS "freight",
-		b.inv_status AS "invStatus",
-		b.biz_status AS "bizStatus",
-		b.plateform_id AS "plateformInfo.id",
-		b. STATUS AS "delFlag",
-		b.initial_pay AS "initialPay",
-		b.last_pay_date AS "lastPayDate",
-		b.remark AS "remark",
-		b.delivery_office_id AS "deliveryOffice.id",
-		b.create_id AS "createBy.id",
-		b.create_time AS "createDate",
-		b.u_version AS "uVersion",
-		b.update_id AS "updateBy.id",
-		b.update_time AS "updateDate",
-		b.current_payment_id AS "currentPaymentId",
-		vend. NAME AS "vendOffice.name",
-		ppo.id AS "bizPoPaymentOrder.id",
-		ppo.po_header_id AS "bizPoPaymentOrder.poHeaderId",
-		ppo.total AS "bizPoPaymentOrder.total",
-		ppo.pay_total AS "bizPoPaymentOrder.payTotal",
-		ppo.process_id AS "bizPoPaymentOrder.processId",
-		cp.id AS "bizPoPaymentOrder.commonProcess.id",
-		cp.object_id AS "bizPoPaymentOrder.commonProcess.objectId",
-		cp.object_name AS "bizPoPaymentOrder.commonProcess.objectName",
-		cp.prev_id AS "bizPoPaymentOrder.commonProcess.prevId",
-		cp.biz_status AS "bizPoPaymentOrder.commonProcess.bizStatus",
-		cp.processor AS "bizPoPaymentOrder.commonProcess.processor",
-		cp.description AS "bizPoPaymentOrder.commonProcess.description",
-		cp.type AS "bizPoPaymentOrder.commonProcess.type",
-		cp.create_time AS "bizPoPaymentOrder.commonProcess.createTime",
-		b.is_prew as "isPrewUseful"
+    <sql id="bizRePoHeaderColumns">
+        b.id AS "id",
+        b.order_num AS "orderNum",
+        b.vend_id AS "vendOffice.id",
+        b.total_detail AS "totalDetail",
+        b.total_exp AS "totalExp",
+        b.freight AS "freight",
+        b.inv_status AS "invStatus",
+        b.biz_status AS "bizStatus",
+        b.plateform_id AS "plateformInfo.id",
+        b.status AS "delFlag",
+        b.initial_pay AS "initialPay",
+        b.last_pay_date AS "lastPayDate",
+        b.remark AS "remark",
+        b.delivery_office_id AS "deliveryOffice.id",
+        b.create_id AS "createBy.id",
+        b.create_time AS "createDate",
+        b.u_version AS "uVersion",
+        b.update_id AS "updateBy.id",
+        b.update_time AS "updateDate",
+        b.current_payment_id AS "currentPaymentId",
+        b.pay_total AS "payTotal",
+        vend.name AS "vendOffice.name",
+        ppo.id AS "bizPoPaymentOrder.id",
+        ppo.po_header_id AS "bizPoPaymentOrder.poHeaderId",
+        ppo.total AS "bizPoPaymentOrder.total",
+        ppo.pay_total AS "bizPoPaymentOrder.payTotal",
+        ppo.biz_status AS "bizPoPaymentOrder.bizStatus",
+		ppo.deadline AS "bizPoPaymentOrder.deadline",
+        cp.id AS "commonProcess.id",
+        cp.object_id AS "commonProcess.objectId",
+        cp.object_name AS "commonProcess.objectName",
+        cp.prev_id AS "commonProcess.prevId",
+        cp.biz_status AS "commonProcess.bizStatus",
+        cp.processor AS "commonProcess.processor",
+        cp.description AS "commonProcess.description",
+        cp.type AS "commonProcess.type",
+        cp.create_time AS "commonProcess.createTime",
+        prevCp.id AS "prevCommonProcess.id",
+		prevCp.object_id AS "prevCommonProcess.objectId",
+		prevCp.object_name AS "prevCommonProcess.objectName",
+		prevCp.prev_id AS "prevCommonProcess.prevId",
+		prevCp.biz_status AS "prevCommonProcess.bizStatus",
+		prevCp.processor AS "prevCommonProcess.processor",
+		prevCp.description AS "prevCommonProcess.description",
+		prevCp.type AS "prevCommonProcess.type",
+		prevCp.create_time AS "prevCommonProcess.createTime",
+        b.is_prew as "isPrewUseful"
+    </sql>
+	
+	<sql id="bizPoHeaderJoins">
+		LEFT JOIN  sys_office so on so.id=a.vend_id
+		LEFT JOIN  biz_po_payment_order payment on payment.id = a.current_payment_id
+		LEFT JOIN  common_process process on process.id = a.process_id
+		LEFT JOIN  common_process prevProcess on prevProcess.id = process.prev_id
 	</sql>
 
 	<sql id="bizRePoHeaderJoins">
 		LEFT JOIN sys_office vend ON vend.id = b.vend_id
 		LEFT JOIN biz_po_payment_order ppo ON ppo.id = b.current_payment_id
-		LEFT JOIN common_process cp ON cp.id = ppo.process_id
+		LEFT JOIN common_process cp ON cp.id = b.process_id
+		LEFT JOIN common_process prevCp on prevCp.id = cp.prev_id
 		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = b.id AND bpor.so_type = 2
 		LEFT JOIN biz_request_header rh ON rh.id = bpor.so_id
-	</sql>
-	
-	<sql id="bizPoHeaderJoins">
-		LEFT JOIN  sys_office so on so.id=a.vend_id
-		LEFT JOIN  biz_po_payment_order payment on payment.id = a.current_payment_id
-		LEFT JOIN  common_process process on process.id = payment.process_id
 	</sql>
     
 	<select id="get" resultType="BizPoHeader">
@@ -104,7 +128,7 @@
 	
 	<select id="findList" resultType="BizPoHeader">
 		SELECT * FROM (
-		SELECT 
+		SELECT
 			<include refid="bizPoHeaderColumns"/>
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
@@ -356,6 +380,19 @@
 	<update id="updateBizStatus">
 		UPDATE biz_po_header SET
 			biz_status = #{status}
+		WHERE id = #{id}
+	</update>
+
+
+	<update id="updateProcessId">
+		UPDATE biz_po_header SET
+		process_id  = #{processId}
+		WHERE id = #{headerId}
+	</update>
+
+	<update id="incrPayTotal">
+		UPDATE biz_po_header SET
+		pay_total  = (pay_total + #{payTotal})
 		WHERE id = #{id}
 	</update>
 

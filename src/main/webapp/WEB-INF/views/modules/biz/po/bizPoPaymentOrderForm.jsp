@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>BizPoPaymentOrder管理</title>
+	<title>支付申请管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,8 +27,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/">BizPoPaymentOrder列表</a></li>
-		<li class="active"><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}">BizPoPaymentOrder<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit">${not empty bizPoPaymentOrder.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/">支付申请列表</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizPoPaymentOrder" action="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>

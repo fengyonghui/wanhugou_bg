@@ -49,7 +49,6 @@
 				</form:select>
 			</li>
 			<li><label>订单来源：</label>
-
 				<form:select path="plateformInfo.id" class="input-medium">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getPlatformInfoList()}" itemLabel="name" itemValue="id" htmlEscape="false"/>
@@ -73,7 +72,10 @@
 				<th>订单状态</th>
 				<th>订单来源</th>
 				<th>创建时间</th>
-				<th>操作</th>
+				<th>累积支付金额</th>
+				<th>审核状态</th>
+				<th>上级审核备注</th>
+				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
@@ -110,16 +112,48 @@
 					${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-				<shiro:hasPermission name="biz:po:bizPoHeader:edit">
-    				<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
-				</shiro:hasPermission>
-				<shiro:hasPermission name="biz:po:bizPoHeader:view">
-					<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
-				</shiro:hasPermission>
+						${bizPoHeader.payTotal}
 				</td>
+				<td>
+						${bizPoHeader.commonProcess.purchaseOrderProcess.name == null ?
+						 '当前无审批流程' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
+				</td>
+				<td>
+						${bizPoHeader.prevCommonProcess.description}
+				</td>
+				<shiro:hasPermission name="biz:po:bizPoHeader:view">
+					<td>
+						<shiro:hasPermission name="biz:po:bizPoHeader:createPayOrder">
+							<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
+							&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
+							}">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
+							</c:if>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+							<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
+							</c:if>
+							<c:if test="${bizPoHeader.commonProcess.id != null
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus}">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
+							</c:if>
+							<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:po:bizPoHeader:edit">
+							<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:po:bizPoHeader:view">
+						    <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
+						</shiro:hasPermission>
+					</td>
+				</shiro:hasPermission>
 			</tr>
 		</c:forEach>
 		</tbody>
