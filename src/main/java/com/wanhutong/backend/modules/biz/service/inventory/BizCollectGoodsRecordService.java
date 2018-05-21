@@ -61,8 +61,13 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	}
 	
 	public List<BizCollectGoodsRecord> findList(BizCollectGoodsRecord bizCollectGoodsRecord) {
-
-		return super.findList(bizCollectGoodsRecord);
+		User user = UserUtils.getUser();
+		if (user.isAdmin()) {
+			return super.findList(bizCollectGoodsRecord);
+		} else {
+			bizCollectGoodsRecord.getSqlMap().put("collectGoodsRecord", BaseService.dataScopeFilter(user, "cent", "su"));
+			return super.findList(bizCollectGoodsRecord);
+		}
 	}
 	
 	public Page<BizCollectGoodsRecord> findPage(Page<BizCollectGoodsRecord> page, BizCollectGoodsRecord bizCollectGoodsRecord) {

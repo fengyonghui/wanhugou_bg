@@ -144,7 +144,6 @@ public class BizCollectGoodsRecordController extends BaseController {
             //1订单、2商品
             ArrayList<List<String>> order = Lists.newArrayList();
             ArrayList<List<String>> commoDity = Lists.newArrayList();
-            Page<BizCollectGoodsRecord> page =null;
             List<BizCollectGoodsRecord> list =null;
             if(sources!=null && sources.equals("changeStock")){
                 fileName = "库存变更记录" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
@@ -272,8 +271,8 @@ public class BizCollectGoodsRecordController extends BaseController {
                 });
             }else {
                 fileName = "收货记录" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-                page = bizCollectGoodsRecordService.findPage(new Page<BizCollectGoodsRecord>(request, response), bizCollectGoodsRecord);
-                page.getList().forEach(goods->{
+                list = bizCollectGoodsRecordService.findList(bizCollectGoodsRecord);
+                list.forEach(goods->{
                     ArrayList<String> orderList = Lists.newArrayList();
                     orderList.add(String.valueOf(goods.getOrderNum()));
                     if(goods.getInvInfo()!=null && goods.getInvInfo().getName()!=null){
