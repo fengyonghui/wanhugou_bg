@@ -283,7 +283,7 @@
 								</shiro:hasPermission>
 								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
 
-								<a href="${ctx}/biz/request/bizRequestOrder/goListV2?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
 
 								</shiro:hasPermission>
 							</td>
