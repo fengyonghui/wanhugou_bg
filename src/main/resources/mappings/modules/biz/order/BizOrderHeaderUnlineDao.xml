@@ -5,10 +5,12 @@
 	<sql id="bizOrderHeaderUnlineColumns">
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
+		oh.order_num AS "orderHeader.orderNum",
 		a.serial_num AS "serialNum",
 		a.img_url AS "imgUrl",
 		a.unline_pay_money AS "unlinePayMoney",
 		a.real_money AS "realMoney",
+		a.biz_status AS "bizStatus",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -18,6 +20,7 @@
 	</sql>
 	
 	<sql id="bizOrderHeaderUnlineJoins">
+		LEFT JOIN biz_order_header oh ON oh.id = a.order_id
 	</sql>
     
 	<select id="get" resultType="BizOrderHeaderUnline">
@@ -37,6 +40,21 @@
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
 				AND a.order_id = #{orderHeader.id}
+			</if>
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="orderHeader != null and orderHeader.orderNum != null and orderHeader.orderNum != ''">
+				AND oh.order_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderHeader.orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderHeader.orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderHeader.orderNum},'%')</if>
+			</if>
+			<if test="serialNum != null and serialNum != ''">
+				AND a.serial_num LIKE
+				<if test="dbName == 'oracle'">'%'||#{serialNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{serialNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{serialNum},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -74,6 +92,7 @@
 			unline_pay_money,
 			real_money,
 			status,
+			biz_status,
 			create_id,
 			create_time,
 			u_version,
@@ -87,6 +106,7 @@
 			#{unlinePayMoney},
 			#{realMoney},
 			#{status},
+			#{bizStatus},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -102,6 +122,7 @@
 			img_url = #{imgUrl},
 			unline_pay_money = #{unlinePayMoney},
 			real_money = #{realMoney},
+			biz_status = #{bizStatus},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}

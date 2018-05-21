@@ -6,7 +6,12 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +29,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,8 +41,14 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/biz/order/bizOrderHeaderUnline")
 public class BizOrderHeaderUnlineController extends BaseController {
 
+	private static final Byte BIZSTATUSONE = 1;
+	private static final Byte BIZSTATUSTWO = 2;
 	@Autowired
 	private BizOrderHeaderUnlineService bizOrderHeaderUnlineService;
+	@Autowired
+	private CommonImgService commonImgService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
 	
 	@ModelAttribute
 	public BizOrderHeaderUnline get(@RequestParam(required=false) Integer id) {
@@ -61,6 +73,23 @@ public class BizOrderHeaderUnlineController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderHeaderUnline:view")
 	@RequestMapping(value = "form")
 	public String form(BizOrderHeaderUnline bizOrderHeaderUnline, Model model) {
+
+		if (bizOrderHeaderUnline != null && bizOrderHeaderUnline.getId() != null) {
+			CommonImg commonImg = new CommonImg();
+			commonImg.setImgType(ImgEnum.UNlINE_PAYMENT_VOUCHER.getCode());
+			commonImg.setObjectName(ImgEnum.UNlINE_PAYMENT_VOUCHER.getTableName());
+			commonImg.setObjectId(bizOrderHeaderUnline.getId());
+			List<CommonImg> commonImgList = commonImgService.findList(commonImg);
+			if (commonImgList != null && !commonImgList.isEmpty()) {
+				List<String> imgUrlList = new ArrayList<>();
+				for (CommonImg comImg:commonImgList) {
+					StringBuffer sb = new StringBuffer();
+					sb.append(comImg.getImgServer()).append(comImg.getImgPath());
+					imgUrlList.add(sb.toString());
+				}
+				model.addAttribute("imgUrlList",imgUrlList);
+			}
+		}
 		model.addAttribute("bizOrderHeaderUnline", bizOrderHeaderUnline);
 		return "modules/biz/order/bizOrderHeaderUnlineForm";
 	}
@@ -71,9 +100,28 @@ public class BizOrderHeaderUnlineController extends BaseController {
 		if (!beanValidator(model, bizOrderHeaderUnline)){
 			return form(bizOrderHeaderUnline, model);
 		}
-		bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
-		addMessage(redirectAttributes, "保存线下支付订单成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeaderUnline/?repage";
+        bizOrderHeaderUnline = bizOrderHeaderUnlineService.get(bizOrderHeaderUnline.getId());
+        bizOrderHeaderUnline.setRealMoney(bizOrderHeaderUnline.getUnlinePayMoney());
+        bizOrderHeaderUnline.setBizStatus(BIZSTATUSONE);
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
+            bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
+        bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal()+bizOrderHeaderUnline.getRealMoney().doubleValue());
+        bizOrderHeaderService.save(bizOrderHeader);
+        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.UNPAY.getState()) {
+            if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal())==0) {
+                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
+            }else {
+                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
+            }
+        }
+        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.INITIAL_PAY.getState()) {
+            if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal())==0) {
+                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
+            }
+        }
+        bizOrderHeaderService.save(bizOrderHeader);
+        addMessage(redirectAttributes, "保存线下支付订单成功");
+		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeaderUnline/?repage&orderHeader.id="+bizOrderHeader.getId();
 	}
 	
 	@RequiresPermissions("biz:order:bizOrderHeaderUnline:edit")
@@ -85,24 +133,19 @@ public class BizOrderHeaderUnlineController extends BaseController {
 	}
 
     /**
-     * 财务对线下支付订单的审核
-     * @param orderHeader
-     * @param realMoney
+     * 财务对线下支付订单的驳回
+     * @param id
      * @return
      */
-	@ResponseBody
+    @ResponseBody
 	@RequiresPermissions("biz:order:bizOrderHeaderUnline:edit")
 	@RequestMapping(value = "changeOrderReceive")
-	public BizOrderHeaderUnline changeOrderReceive(BizOrderHeader orderHeader, String realMoney) {
-        BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
-        bizOrderHeaderUnline.setOrderHeader(orderHeader);
-        List<BizOrderHeaderUnline> unlineList = bizOrderHeaderUnlineService.findList(bizOrderHeaderUnline);
-        if (unlineList != null && !unlineList.isEmpty()) {
-            bizOrderHeaderUnline = unlineList.get(0);
-            bizOrderHeaderUnline.setRealMoney(new BigDecimal(realMoney));
-            bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
-        }
-        return bizOrderHeaderUnline;
+	public String changeOrderReceive(Integer id) {
+
+			BizOrderHeaderUnline orderHeaderUnline = bizOrderHeaderUnlineService.get(id);
+			orderHeaderUnline.setBizStatus(BIZSTATUSTWO);
+            bizOrderHeaderUnlineService.save(orderHeaderUnline);
+        return "ok";
     }
 
 }

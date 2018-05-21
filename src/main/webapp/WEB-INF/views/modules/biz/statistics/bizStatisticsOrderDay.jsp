@@ -13,6 +13,7 @@
         <option value="1" label="销售额">销售额</option>
         <option value="3" label="订单量">订单量</option>
         <option value="5" label="平均单价">平均单价</option>
+        <option value="6" label="回款额">回款额</option>
     </select>
     <select class="input-medium" id="centerType">
         <option value="8" label="采购中心">采购中心</option>
