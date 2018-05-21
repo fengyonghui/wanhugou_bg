@@ -137,9 +137,9 @@ public class BizOpPlanController extends BaseController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		try {
 			String fileName = "运营计划" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			Page<BizOpPlan> page = bizOpPlanService.findPage(new Page<BizOpPlan>(request, response), bizOpPlan);
+			List<BizOpPlan> list = bizOpPlanService.findList(bizOpPlan);
 			ArrayList<List<String>> header = Lists.newArrayList();
-			page.getList().forEach(order->{
+			list.forEach(order->{
 				ArrayList<String> headerList = Lists.newArrayList();
 				if(order.getObjectName().indexOf("sys_office")!=-1){
 					Office office = officeService.get(Integer.parseInt(order.getObjectId()));

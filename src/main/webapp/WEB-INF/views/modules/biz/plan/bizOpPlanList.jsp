@@ -7,7 +7,7 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#buttonExport").click(function(){
-				top.$.jBox.confirm("确认要运营计划数据吗？","系统提示",function(v,h,f){
+				top.$.jBox.confirm("确认要导出运营计划数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
 						$("#searchForm").attr("action","${ctx}/biz/plan/bizOpPlan/planExprot");
 						$("#searchForm").submit();
