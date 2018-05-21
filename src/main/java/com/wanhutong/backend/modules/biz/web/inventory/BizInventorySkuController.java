@@ -462,4 +462,14 @@ public class BizInventorySkuController extends BaseController {
         return count;
     }
 
+
+     @RequiresPermissions("biz:inventory:inventoryAge:view")
+    @RequestMapping("showInventoryAge")
+    public Integer showInventoryAge(Integer centId){
+        Integer count = bizInventorySkuService.invSkuCount(centId);
+        return count;
+    }
+
+
+
 }

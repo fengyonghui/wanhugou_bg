@@ -206,7 +206,7 @@
 							<a href="${ctx}/biz/inventory/bizInventorySku/recovery?id=${bizInventorySku.id}&zt=${zt}" onclick="return confirmx('确认要恢复该商品库存详情吗？', this.href)">恢复</a>
 						</c:if>
 					</td></shiro:hasPermission>
-					<a href="${ctx}/biz/inventory/bizInventorySku/recovery?id=${bizInventorySku.id}&zt=${zt}">查看库龄</a>
+					<a href="${ctx}/biz/inventory/bizInventorySku/showInventoryAge?id=${bizInventorySku.id}&zt=${zt}">查看库龄</a>
 				</c:if>
 			</tr>
 		</c:forEach>
