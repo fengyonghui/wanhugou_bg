@@ -653,6 +653,7 @@
 	<select id="getValidOrderTotalAndCountByCreateTimeMonth" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
+		sum(receive_total)                                   AS receiveTotal,
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
@@ -906,6 +907,7 @@
 	<select id="getValidOrderTotalAndCountByCreateTimeDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
+		sum(receive_total)  AS receiveTotal,
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
@@ -1087,6 +1089,7 @@
 	<select id="getValidOrderTotalAndCountByCreateTimeBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
+		sum(receive_total)  AS receiveTotal,
 		count(1) AS orderCount,
 		office.id AS officeId,
 		office.name AS officeName,
@@ -1523,6 +1526,7 @@
 	<select id="getUserTableStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
 		SELECT
 		sum(total_detail + total_exp + freight) AS totalMoney,
+		sum(receive_total) AS receiveTotal,
 		count(1) AS orderCount,
 		(SELECT count(1) FROM biz_custom_center_consultant cc
 		WHERE cc.consultant_id = us.id
@@ -1831,7 +1835,9 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	a.update_id AS "updateBy.id",
 	us.NAME AS "updateBy.name",
 	a.update_time AS "updateDate" ,
-	concat(cl.pcr_name, ifnull( cl.address,'')) as locationAddress
+	concat(cl.pcr_name, ifnull( cl.address,'')) as locationAddress,
+		GROUP_CONCAT(bod.id) AS "orderDetails",
+		pi.vendor_id AS "onlyVendor"
 FROM
 	biz_order_header a
 	LEFT JOIN sys_office so ON a.cust_id = so.id
@@ -1839,7 +1845,10 @@ FROM
 	LEFT JOIN sys_user us ON a.update_id = us.id
 	LEFT JOIN biz_cms_platform_info bpi ON a.plateform_id = bpi.id
 	LEFT JOIN common_location cl on a.ship_to_addr = cl.id
-	WHERE 1=1
+	INNER JOIN biz_order_detail bod on bod.order_id = a.id
+	INNER JOIN biz_sku_info bsi on bod.sku_id = bsi.id
+	INNER JOIN biz_product_info pi ON bsi.prod_id = pi.id
+	WHERE 1=1 and a.order_type = 1
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">
 			AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
 		</if>
@@ -1875,6 +1884,7 @@ FROM
         <if test="includeTestData != null and includeTestData != true">
 	        AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.cust_id = ta.object_id AND ta.object_name = 'sys_office' )
         </if>
+	GROUP by a.id
     ORDER BY
 	    a.update_time DESC
 	</select>

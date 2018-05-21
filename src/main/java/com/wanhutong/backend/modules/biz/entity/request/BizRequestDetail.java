@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.request;
 
+import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -38,7 +39,12 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	private String vendorName;
 	private Integer sendNum;		//记录页面传的供货数量
 
-	
+	/**
+	 * 备货清单查看 已生成的采购单
+	 * */
+	private BizPoDetail poDetail;
+
+
 	public BizRequestDetail() {
 		super();
 	}
@@ -167,5 +173,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setUnitPrice(Double unitPrice) {
 		this.unitPrice = unitPrice;
+	}
+
+	public BizPoDetail getPoDetail() {
+		return poDetail;
+	}
+
+	public void setPoDetail(BizPoDetail poDetail) {
+		this.poDetail = poDetail;
 	}
 }
