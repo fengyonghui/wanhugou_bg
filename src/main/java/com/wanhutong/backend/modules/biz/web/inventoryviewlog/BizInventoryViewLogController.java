@@ -120,7 +120,7 @@ public class BizInventoryViewLogController extends BaseController {
 							//类型
 							headerList.add(String.valueOf(dinv.getLabel()));
 							break;
-						}else{headerList.add("");}
+						}
 					}
 				}else{headerList.add("");}
 				if(order.getSkuInfo()!=null && order.getSkuInfo().getName()!=null){
