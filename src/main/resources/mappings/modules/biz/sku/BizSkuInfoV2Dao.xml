@@ -432,5 +432,12 @@
 		WHERE
 		biz_sku_prop_value.sku_id = #{id}
 	</delete>
-	
+
+	<!-- 商品恢复 -->
+	<update id="recovery">
+		UPDATE biz_sku_info SET
+		status = #{delFlag}
+		WHERE id = #{id}
+	</update>
+
 </mapper>

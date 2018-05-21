@@ -11,15 +11,19 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
@@ -74,6 +78,10 @@ public class BizSkuInfoController extends BaseController {
 	private BizProductInfoV2Service bizProductInfoV2Service;
 	@Autowired
     private BizVarietyFactorService bizVarietyFactorService;
+	@Autowired
+	private BizInventorySkuService bizInventorySkuService;
+	@Autowired
+	private BizOpShelfSkuService bizOpShelfSkuService;
 
 
 
@@ -338,6 +346,54 @@ public class BizSkuInfoController extends BaseController {
 		//	bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForCendProd(bizSkuInfo);
 		return listMap;
+	}
+
+	/**
+	 * 删除产品或者删除商品时，判断这个产品/商品在某些状态下不能被删除：
+	 * 	1.库存盘点已经有的
+	 *	2.上架的
+	 *	3.商品没有删除的	 删除产品才判断
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
+	@RequestMapping(value = "deleteSku")
+	public String deleteSku(BizSkuInfo bizSkuInfo, RedirectAttributes redirectAttributes) {
+		String sources="";
+		try {
+			if(bizSkuInfo!=null && bizSkuInfo.getId()!=null){
+				/*2.商品上下架数据*/
+				BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+				bizOpShelfSku.setSkuInfo(bizSkuInfo);
+				List<BizOpShelfSku> opList = bizOpShelfSkuService.findList(bizOpShelfSku);
+				if(opList.size()!=0){
+					for (BizOpShelfSku opShelfSku : opList) {
+						if(!opShelfSku.getDelFlag().equals("0")){
+							sources="opSheSku";
+						}
+					}
+				}
+				if(sources.equals("")){
+					BizInventorySku inventorySku = new BizInventorySku();
+					inventorySku.setSkuInfo(bizSkuInfo);
+					List<BizInventorySku> invenList = bizInventorySkuService.findList(inventorySku);
+					if(invenList.size()!=0){
+						for (BizInventorySku bizInventorySku : invenList) {
+							if(!bizInventorySku.getDelFlag().equals("0")){
+								sources="invSku";
+							}
+						}
+					}
+				}
+				if(sources.equals("")){
+					bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_DELETE);
+					bizSkuInfoService.delete(bizSkuInfo);
+					sources="okk";
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return sources;
 	}
 
 }

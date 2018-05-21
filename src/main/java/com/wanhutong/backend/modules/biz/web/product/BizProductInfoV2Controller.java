@@ -15,14 +15,18 @@ import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
@@ -84,6 +88,10 @@ public class BizProductInfoV2Controller extends BaseController {
     private DictService dictService;
     @Autowired
     private BizCategoryInfoService bizCategoryInfoService;
+    @Autowired
+    private BizOpShelfSkuService bizOpShelfSkuService;
+    @Autowired
+    private BizInventorySkuService bizInventorySkuService;
 
     @ModelAttribute
     public BizProductInfo get(@RequestParam(required = false) Integer id) {
@@ -567,19 +575,79 @@ public class BizProductInfoV2Controller extends BaseController {
 
     /**
      * 用于列表搜索出结果，删除其中一个商品信息时，停留在搜索商品页面
+     *
+     * 20180516 update
+     * * 删除产品或者删除商品时，判断这个产品/商品在某些状态下不能被删除：
+     * 	1.库存盘点已经有的
+     *	2.上架的
+     *	3.商品没有删除的	 删除产品才判断
      * */
     @ResponseBody
     @RequiresPermissions("biz:product:bizProductInfo:edit")
     @RequestMapping(value = "prodDelete")
-    public String prodDelete(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response, Model model) {
-        String delStatusStr="error";
+    public String prodDelete(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+        String delStatusStr="";
         try {
-            bizProductInfo.setDelFlag(BizProductInfo.DEL_FLAG_DELETE);
-            bizProductInfoService.delete(bizProductInfo);
-            //删除后传值给list，以展示上一次搜索的结果
-            list(bizProductInfo,request,response,model);
-            addMessage(redirectAttributes, "删除产品信息表成功");
-            delStatusStr="ok";
+            if(bizProductInfo!=null && bizProductInfo.getId()!=null){
+                /*1.商品上下架数据*/
+                BizOpShelfSku bizOpShelfSku = new BizOpShelfSku();
+                bizOpShelfSku.setProductInfo(bizProductInfo);
+                List<BizOpShelfSku> opList = bizOpShelfSkuService.findList(bizOpShelfSku);
+                if(opList.size()!=0){
+                    for (BizOpShelfSku opShelfSku : opList) {
+                        if(!opShelfSku.getDelFlag().equals("0")){
+                            delStatusStr="opSheSku";
+                            break;
+                        }
+                    }
+                }
+                /*2.商品sku数据*/
+                if(delStatusStr.equals("")) {
+                    BizSkuInfo bizSkuInfo = new BizSkuInfo();
+                    bizSkuInfo.setProductInfo(bizProductInfo);
+                    List<BizSkuInfo> skuList = bizSkuInfoService.findList(bizSkuInfo);
+                    if(skuList.size()!=0){
+                        for (BizSkuInfo sku : skuList) {
+                            if(!sku.getDelFlag().equals("0")){
+                                delStatusStr="skuS";
+                                break;
+                            }
+                        }
+                    }
+                }
+                /*3.库存盘点数据*/
+                if(delStatusStr.equals("")){
+                    BizInventorySku inventorySku = new BizInventorySku();
+                    BizSkuInfo bizSkuInfo = new BizSkuInfo();
+                    bizSkuInfo.setProductInfo(bizProductInfo);
+                    bizSkuInfo.setDataStatus("sku");
+                    List<BizSkuInfo> skuList = bizSkuInfoService.findList(bizSkuInfo);
+                    if(skuList.size()!=0){
+                        for (BizSkuInfo skuInfo : skuList) {
+                            inventorySku.setSkuInfo(skuInfo);
+                            List<BizInventorySku> inlist = bizInventorySkuService.findList(inventorySku);
+                            if(inlist.size()!=0){
+                                for (BizInventorySku bizInventorySku : inlist) {
+                                    if(!bizInventorySku.getDelFlag().equals("0")){
+                                        delStatusStr="invSku";
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                /*4.删除*/
+                if(delStatusStr.equals("")) {
+                    bizProductInfo.setDelFlag(BizProductInfo.DEL_FLAG_DELETE);
+                    bizProductInfoService.delete(bizProductInfo);
+                    delStatusStr="okk";
+                }
+            }
+//            //删除后传值给list，以展示上一次搜索的结果
+//            list(bizProductInfo,request,response,model);
+//            addMessage(redirectAttributes, "删除产品信息表成功");
+//            delStatusStr="ok";
         }catch (Exception e){
             e.printStackTrace();
         }
