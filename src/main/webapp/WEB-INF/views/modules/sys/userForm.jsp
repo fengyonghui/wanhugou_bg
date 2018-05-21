@@ -56,7 +56,7 @@
 			<li class="active"><a>用户详情</a></li>
 		</c:if>
 		<c:if test="${flag ne 'ck'}">
-			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex'}">
+			<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex' || user.conn eq 'selectIndex'}">
 				<li><a href="${ctx}/sys/user/list?company.type=8&conn=${user.conn}">用户列表</a></li>
 				<li class="active"><a href="${ctx}/sys/user/form?id=${user.id}&conn=${user.conn}">用户<shiro:hasPermission name="sys:user:edit">${not empty user.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:user:edit">查看</shiro:lacksPermission></a></li>
 			</c:if>
@@ -80,7 +80,7 @@
 		<div class="control-group">
 			<label class="control-label">归属公司:</label>
 			<div class="controls">
-				<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex' || user.conn eq 'contact_ck'}">
+				<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex' || user.conn eq 'contact_ck' || user.conn eq 'selectIndex'}">
 					<sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
 									title="公司" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" cssClass="required"/>
 				</c:if>
@@ -93,7 +93,7 @@
 		<div class="control-group">
 			<label class="control-label">归属部门:</label>
 			<div class="controls">
-				<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex' || user.conn eq 'contact_ck'}">
+				<c:if test="${not empty user.conn && user.conn eq 'connIndex' || user.conn eq 'stoIndex' || user.conn eq 'contact_ck' || user.conn eq 'selectIndex'}">
 					<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
 									title="部门" url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" cssClass="required" notAllowSelectParent="true"/>
 				</c:if>

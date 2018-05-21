@@ -92,6 +92,12 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private List<BizPayRecord> BizPayRecordList;
     private String locationAddress;
 
+    /**
+     * 客户专员、会员搜索 查看订单开始下单时间与该采购商订单总金额
+     * */
+    private Double userOfficeReceiveTotal;
+    private Date userOfficeDeta;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -503,5 +509,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSellers(Office sellers) {
         this.sellers = sellers;
+    }
+
+    public Double getUserOfficeReceiveTotal() {
+        return userOfficeReceiveTotal;
+    }
+
+    public void setUserOfficeReceiveTotal(Double userOfficeReceiveTotal) {
+        this.userOfficeReceiveTotal = userOfficeReceiveTotal;
+    }
+
+    public Date getUserOfficeDeta() {
+        return userOfficeDeta;
+    }
+
+    public void setUserOfficeDeta(Date userOfficeDeta) {
+        this.userOfficeDeta = userOfficeDeta;
     }
 }

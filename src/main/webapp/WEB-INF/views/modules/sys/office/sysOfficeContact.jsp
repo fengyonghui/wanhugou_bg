@@ -48,6 +48,12 @@
 				<th>联系人电话</th>
 				<th>客户专员</th>
 				<th>采购中心</th>
+				<th>客户专员电话</th>
+				<th>负责人</th>
+				<th>详细地址</th>
+				<th>累计订单采购频次</th>
+				<th>金额</th>
+				<th>首次开单时间</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -70,6 +76,37 @@
 					<c:if test="${user.user.name!=null}">
 						<a href="${ctx}/sys/office/form?id=${user.cent.id}&source=contact_ck">
 								${user.cent.name}</a>
+					</c:if>
+				</td>
+				<td>
+					<c:if test="${user.user.name!=null}">
+						${user.user.mobile}
+					</c:if>
+				</td>
+				<td>
+					<c:if test="${user.user.name!=null}">
+						${user.company.primaryPerson.name}
+					</c:if>
+				</td>
+				<td>
+					<c:if test="${user.user.name!=null}">
+						${user.userOrder.bizLocation.province.name}${user.userOrder.bizLocation.city.name}
+						${user.userOrder.bizLocation.region.name}${user.userOrder.bizLocation.address}
+					</c:if>
+				</td>
+				<td>
+					<c:if test="${user.user.name!=null}">
+						${user.userOrder.orderCount}
+					</c:if>
+				</td>
+				<td>
+					<c:if test="${user.user.name!=null}">
+						${user.userOrder.userOfficeReceiveTotal}
+					</c:if>
+				</td>
+				<td>
+					<c:if test="${user.user.name!=null}">
+						<fmt:formatDate value="${user.userOrder.userOfficeDeta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</c:if>
 				</td>
 			</tr>
