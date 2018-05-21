@@ -41,7 +41,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -271,12 +273,12 @@ public class BizInvoiceController extends BaseController {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "订单发货信息数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-            Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
+            List<BizInvoice> list = bizInvoiceService.findList(bizInvoice);
             //1订单
             List<List<String>> data = new ArrayList<List<String>>();
             //2商品
             List<List<String>> detailData = new ArrayList<List<String>>();
-            for (BizInvoice invoice : page.getList()) {
+            for (BizInvoice invoice : list) {
                 List<String> headData = new ArrayList();
                 headData.add(String.valueOf(invoice.getSendNumber()));
                 if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
@@ -284,35 +286,18 @@ public class BizInvoiceController extends BaseController {
                 }else{
                     headData.add("");
                 }
-                if(invoice.getFreight()!=null){
-                    headData.add(String.valueOf(invoice.getFreight()));
-                }else{
-                    headData.add("");
-                }
-                if(invoice.getOperation()!=null){
-                    headData.add(String.valueOf(invoice.getOperation()));
-                }else{
-                    headData.add("");
-                }
-                if(invoice.getValuePrice()!=null){
-                    headData.add(String.valueOf(invoice.getValuePrice()));
-                }else{
-                    headData.add("");
-                }
-                NumberFormat nf = NumberFormat.getPercentInstance();
-                //设置2位小数、四舍五入
-                nf.setMaximumFractionDigits(2);
-                nf.setRoundingMode(RoundingMode.HALF_UP);
-                Double price=0.0;
+                headData.add(String.valueOf(invoice.getFreight()==null?"":invoice.getFreight()));
+                headData.add(String.valueOf(invoice.getOperation()==null?"":invoice.getOperation()));
+                headData.add(String.valueOf(invoice.getValuePrice()==null?"":invoice.getValuePrice()));
+
+                double price=0.0;
                 if(invoice.getFreight()!=null && invoice.getValuePrice()!=null){
                     price=invoice.getFreight()*100/invoice.getValuePrice();
                 }//运费/货值
-                headData.add(String.valueOf(nf.format(price)));
-                if(invoice.getCarrier()!=null){
-                    headData.add(String.valueOf(invoice.getCarrier()));
-                }else{
-                    headData.add("");
-                }
+                BigDecimal   b   =   new   BigDecimal(price);
+                double   f1   =   b.setScale(0,   BigDecimal.ROUND_HALF_UP).doubleValue();
+                headData.add(String.valueOf(f1+"%"));
+                headData.add(String.valueOf(invoice.getCarrier()==null?"":invoice.getCarrier()));
                 Dict dict = new Dict();
                 dict.setDescription("物流结算方式");
                 dict.setType("biz_settlement_status");
@@ -324,7 +309,7 @@ public class BizInvoiceController extends BaseController {
                         break;
                     }
                 }
-                headData.add(String.valueOf(invoice.getSendDate()));
+                headData.add(String.valueOf(sdf.format(invoice.getSendDate())));
                 data.add(headData);
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(invoice);
@@ -344,7 +329,7 @@ public class BizInvoiceController extends BaseController {
                                 BizSkuInfo sku = bizSkuInfoService.get(orderDetail.getSkuInfo());
                                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
                                 orderDetail.setSkuInfo(skuInfo);
-                                detaData.add(String.valueOf(invoice.getSendNumber()));
+                                detaData.add(String.valueOf(invoice.getSendNumber()==null?"":invoice.getSendNumber()));
                                 if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
                                     detaData.add(String.valueOf(invoice.getLogistics().getName()));
                                 }else{
@@ -365,30 +350,26 @@ public class BizInvoiceController extends BaseController {
                                 detadict.setDescription("业务状态");
                                 detadict.setType("biz_order_status");
                                 List<Dict> detadictList = dictService.findList(detadict);
-                                for (Dict di : detadictList) {
-                                    if (di.getValue().equals(String.valueOf(orderHeader.getBizStatus()))) {
-                                        //业务状态
-                                        detaData.add(String.valueOf(di.getLabel()));
-                                        break;
+                                if(detadictList.size()!=0){
+                                    for (Dict di : detadictList) {
+                                        if (di.getValue().equals(String.valueOf(orderHeader.getBizStatus()))) {
+                                            //业务状态
+                                            detaData.add(String.valueOf(di.getLabel()));
+                                            break;
+                                        }
                                     }
-                                }
-                                if(orderDetail.getSkuName()!=null){
-                                    detaData.add(String.valueOf(orderDetail.getSkuName()));
                                 }else{
                                     detaData.add("");
                                 }
-                                if(orderDetail.getPartNo()!=null){
-                                    detaData.add(String.valueOf(orderDetail.getPartNo()));
-                                }else{
-                                    detaData.add("");
-                                }
+                                detaData.add(String.valueOf(orderDetail.getSkuName()==null?"":orderDetail.getSkuName()));
+                                detaData.add(String.valueOf(orderDetail.getPartNo()==null?"":orderDetail.getPartNo()));
                                 if(orderDetail!=null && orderDetail.getSkuInfo()!=null && orderDetail.getSkuInfo().getSkuPropertyInfos()!=null){
                                     detaData.add(String.valueOf(orderDetail.getSkuInfo().getSkuPropertyInfos()));
                                 }else{
                                     detaData.add("");
                                 }
-                                detaData.add(String.valueOf(orderDetail.getOrdQty()));
-                                detaData.add(String.valueOf(orderDetail.getSentQty()));
+                                detaData.add(String.valueOf(orderDetail.getOrdQty()==null?"":orderDetail.getOrdQty()));
+                                detaData.add(String.valueOf(orderDetail.getSentQty()==null?"":orderDetail.getSentQty()));
                                 detailData.add(detaData);
                                 }
                             }
