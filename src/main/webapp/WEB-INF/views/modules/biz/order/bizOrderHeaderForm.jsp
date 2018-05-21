@@ -848,11 +848,38 @@
                 <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </div>
         </div>
+        <c:if test="${statu != '' && statu =='unline'}">
+            <div class="control-group">
+                <label class="control-label">支付信息:</label>
+                <div class="controls">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>流水号</th>
+                                <th>支付金额</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${unlineList}" var="unline">
+                                <tr>
+                                    <td>${unline.serialNum}</td>
+                                    <td>${unline.unlinePayMoney}</td>
+                                    <td>${fns:getDictLabel(unline.bizStatus,"biz_order_unline_bizStatus" ,"未知状态" )}</td>
+                                    <td><fmt:formatDate value="${unline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </c:if>
     </c:if>
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
-                <label class="control-label">交货地址；</label>
+                <label class="control-label">交货地址:</label>
                 <div class="controls">
                     <select id="jhprovince" class="input-medium" name="bizLocation.province.id" disabled="disabled"
                             style="width:150px;text-align: center;">
@@ -876,7 +903,7 @@
                 </div>
             </div>
             <div class="control-group" id="jhadd2" style="display:none">
-                <label class="control-label">交货地址；</label>
+                <label class="control-label">交货地址:</label>
                 <div class="controls">
                     <input id="addJhAddressHref" type="button" value="新增地址" htmlEscape="false"
                            class="input-xlarge required"/>
@@ -885,7 +912,7 @@
                 </div>
             </div>
             <div class="control-group" id="jhadd3">
-                <label class="control-label">详细地址；</label>
+                <label class="control-label">详细地址:</label>
                 <div class="controls">
                     <input type="text" id="jhaddress" name="bizLocation.address" htmlEscape="false"
                            class="input-xlarge required"/>
@@ -893,7 +920,7 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">交货时间；</label>
+                <label class="control-label">交货时间:</label>
                 <div class="controls">
                     <input id="appointedDate" name="bizLocation.appointedTime" type="text" readonly="readonly"
                            maxlength="20" class="input-xlarge Wdate required"

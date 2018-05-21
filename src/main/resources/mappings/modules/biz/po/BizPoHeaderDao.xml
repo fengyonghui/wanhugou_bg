@@ -112,7 +112,7 @@
 	<sql id="bizRePoHeaderJoins">
 		LEFT JOIN sys_office vend ON vend.id = b.vend_id
 		LEFT JOIN biz_po_payment_order ppo ON ppo.id = b.current_payment_id
-		LEFT JOIN common_process cp ON cp.id = ppo.process_id
+		LEFT JOIN common_process cp ON cp.id = b.process_id
 		LEFT JOIN common_process prevCp on prevCp.id = cp.prev_id
 		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = b.id AND bpor.so_type = 2
 		LEFT JOIN biz_request_header rh ON rh.id = bpor.so_id
