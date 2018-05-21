@@ -96,6 +96,17 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                 BizOpShelfSku opShelfSku = bizOpShelfSkuService.get(shelfSkuId);//查询商品
                 BizOrderDetail detailnew = new BizOrderDetail();
                 detailnew.setOrderHeader(bizOrderDetail.getOrderHeader());//order_header.id
+                /*查询详情行号*/
+                if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getId()!=null){
+                    BizOrderDetail detail = new BizOrderDetail();
+                    detail.setOrderHeader(bizOrderDetail.getOrderHeader());
+                    List<BizOrderDetail> list = super.findList(detail);
+                    if(list.size()!=0){
+                        for (BizOrderDetail detailLinNo : list) {
+                            a=detailLinNo.getLineNo();
+                        }
+                    }
+                }
                 detailnew.setLineNo(++a);//行号
                 detailnew.setPartNo(null);//bom产品
                 detailnew.setShelfInfo(opShelfSku);//货架
