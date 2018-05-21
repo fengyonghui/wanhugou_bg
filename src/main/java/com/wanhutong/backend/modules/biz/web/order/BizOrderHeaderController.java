@@ -148,7 +148,8 @@ public class BizOrderHeaderController extends BaseController {
 //			用于销售订单页面展示属于哪个采购中心哪个客户专员
             if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
                 BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
-                if (bizCustomCenterConsultant != null) {
+                if (bizCustomCenterConsultant != null && bizCustomCenterConsultant.getConsultants()!=null &&
+                        bizCustomCenterConsultant.getConsultants().getName()!=null) {
                     bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
                     model.addAttribute("orderCenter", bizCustomCenterConsultant);
                 } else {
