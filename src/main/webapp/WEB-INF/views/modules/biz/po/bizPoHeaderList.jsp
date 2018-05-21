@@ -98,7 +98,7 @@
 					${bizPoHeader.totalDetail+bizPoHeader.totalExp}
 				</td>
 				<td>
-					<fmt:formatNumber value="${bizPoHeader.initialPay/(bizPoHeader.totalDetail+bizPoHeader.totalExp)}" pattern="0.00"/>%
+					<fmt:formatNumber value="${bizPoHeader.payTotal/(bizPoHeader.totalDetail+bizPoHeader.totalExp)}" pattern="0.00"/>%
 				</td>
 				<td>
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
