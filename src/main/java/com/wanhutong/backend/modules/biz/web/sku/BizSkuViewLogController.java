@@ -99,9 +99,9 @@ public class BizSkuViewLogController extends BaseController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		try {
 			String fileName = "出厂价日志" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			Page<BizSkuViewLog> page = bizSkuViewLogService.findPage(new Page<BizSkuViewLog>(request, response), bizSkuViewLog);
+			List<BizSkuViewLog> list = bizSkuViewLogService.findList(bizSkuViewLog);
 			ArrayList<List<String>> header = Lists.newArrayList();
-			page.getList().forEach(order->{
+			list.forEach(order->{
 				ArrayList<String> headerList = Lists.newArrayList();
 				if(order.getSkuInfo()!=null && order.getSkuInfo().getName()!=null){
 					headerList.add(String.valueOf(order.getSkuInfo().getName()));
