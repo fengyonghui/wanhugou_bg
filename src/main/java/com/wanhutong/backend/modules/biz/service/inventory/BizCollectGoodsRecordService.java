@@ -230,4 +230,11 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 		return page;
 	}
 
+	/**
+	 * 导出所有
+	 * */
+	public List<BizCollectGoodsRecord> collectSendFindList(BizCollectGoodsRecord bizCollectGoodsRecord) {
+		return dao.collectSendFindPage(bizCollectGoodsRecord);
+	}
+
 }

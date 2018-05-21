@@ -145,10 +145,11 @@ public class BizCollectGoodsRecordController extends BaseController {
             ArrayList<List<String>> order = Lists.newArrayList();
             ArrayList<List<String>> commoDity = Lists.newArrayList();
             Page<BizCollectGoodsRecord> page =null;
+            List<BizCollectGoodsRecord> list =null;
             if(sources!=null && sources.equals("changeStock")){
                 fileName = "库存变更记录" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-                page= bizCollectGoodsRecordService.collectSendFindPage(new Page<BizCollectGoodsRecord>(request, response), bizCollectGoodsRecord);
-                page.getList().forEach(stockChange->{
+                list= bizCollectGoodsRecordService.collectSendFindList(bizCollectGoodsRecord);
+                list.forEach(stockChange->{
                     ArrayList<String> orderList = Lists.newArrayList();
                     if(stockChange.getOrderNum().indexOf("RE")!=-1){
 //                        !=-1;代表包含有相应的字符
