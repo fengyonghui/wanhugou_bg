@@ -26,6 +26,7 @@
 		sum(req_qty) as "reqQtys",
 		sum(recv_qty) as "recvQtys",
 		sum(req_qty * unit_price) AS totalMoney,
+		GROUP_CONCAT(brd.id) AS reqDetailIds,
 		(@rownum:=@rownum+1) as "numberRownum",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
@@ -116,6 +117,85 @@
 		</choose>
 		order by updateDate desc
 	</select>
+
+	<select id="findListForPoHeader" resultType="BizRequestHeader">
+		SELECT
+		<include refid="bizRequestHeaderColumns"/>,
+		pi.vendor_id AS "onlyVendor"
+		FROM (select @rownum:=0) as rownum,biz_request_header a
+		<include refid="bizRequestHeaderJoins"/>
+		INNER JOIN biz_sku_info bsi on brd.sku_id = bsi.id
+		INNER JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		<where>
+			1=1
+			AND EXISTS(
+			SELECT 1 FROM
+			(SELECT
+			DISTINCT a.id, pi.vendor_id
+			FROM biz_request_header a,biz_request_detail bod
+			LEFT JOIN biz_sku_info bsi on bod.sku_id = bsi.id
+			LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+			WHERE bod.header_id = a.id
+			AND bod.status = 1
+			<if test="dataStatus!=null and dataStatus!=''">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="reqNo != null and reqNo != ''">
+				AND a.req_no
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
+			</if>
+			<if test="reqType != null and reqType != ''">
+				AND a.req_type = #{reqType}
+			</if>
+			<if test="fromOffice != null and fromOffice.id !=null and fromOffice.id != ''">
+				AND a.from_id = #{fromOffice.id}
+			</if>
+			<if test="recvEta != null and recvEta != ''">
+				AND  a.recv_eta BETWEEN ${startDate} AND ${endDate}
+			</if>
+			<if test="bizStatus != null and bizStatus != -1">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+
+			AND a.STATUS =1 ) t
+			WHERE a.id = t.id
+			GROUP BY id
+			HAVING  count(1) = 1
+			)
+
+			<if test="includeTestData != null and includeTestData != true">
+				AND NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.from_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
+			</if>
+
+			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
+				${sqlMap.request}
+			</if>
+			GROUP BY a.id
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				<!--GROUP  BY a.id-->
+			</otherwise>
+		</choose>
+		order by updateDate desc
+	</select>
 	
 	<select id="findAllList" resultType="BizRequestHeader">
 		SELECT 
@@ -145,6 +225,13 @@
 			from_id,
 			to_id,
 			recv_eta,
+		<if test="totalDetail!=null">
+			total_detail,
+		</if>
+		<if test="recvTotal!=null">
+			recv_total,
+		</if>
+
 			remark,
 		<if test="bizStatus!=null">
 			biz_status,
@@ -184,8 +271,10 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE biz_request_header SET 	
-			req_no = #{reqNo},
+		UPDATE biz_request_header SET
+			<if test="reqNo!=null">
+				req_no = #{reqNo},
+			</if>
 			<if test="reqType!=null">
 				req_type = #{reqType},
 			</if>

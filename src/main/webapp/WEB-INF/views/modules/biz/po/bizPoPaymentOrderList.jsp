@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>BizPoPaymentOrder管理</title>
+	<title>支付申请管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -18,63 +18,48 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/">BizPoPaymentOrder列表</a></li>
-		<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit"><li><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/form">BizPoPaymentOrder添加</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/">支付申请列表</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizPoPaymentOrder" action="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/" method="post" class="breadcrumb form-search">
-		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<ul class="ul-form">
-			<li><label>id：</label>
-				<form:input path="id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>采购单ID：</label>
-				<form:input path="poHeaderId" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>付款金额：</label>
-				<form:input path="total" htmlEscape="false" class="input-medium"/>
-			</li>
-			<li><label>当前审核状态ID：</label>
-				<form:input path="processId" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<li class="clearfix"></li>
-		</ul>
-	</form:form>
 	<sys:message content="${message}"/>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
 				<th>id</th>
-				<th>采购单ID</th>
 				<th>付款金额</th>
-				<th>当前审核状态ID</th>
+				<th>实际付款金额</th>
+				<th>最后付款时间</th>
+				<th>当前状态</th>
 				<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach items="${page.list}" var="bizPoPaymentOrder">
 			<tr>
-				<td><a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}">
-					${bizPoPaymentOrder.id}
-				</a></td>
 				<td>
-					${bizPoPaymentOrder.poHeaderId}
+					${bizPoPaymentOrder.id}
 				</td>
 				<td>
 					${bizPoPaymentOrder.total}
 				</td>
 				<td>
-					${bizPoPaymentOrder.processId}
+					${bizPoPaymentOrder.payTotal}
+				</td>
+				<td>
+					${bizPoPaymentOrder.deadline}
+				</td>
+				<td>
+					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}
 				</td>
 				<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit"><td>
-    				<a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/form?id=${bizPoPaymentOrder.id}">修改</a>
-					<a href="${ctx}/biz.po/bizpopaymentorder/bizPoPaymentOrder/delete?id=${bizPoPaymentOrder.id}" onclick="return confirmx('确认要删除该BizPoPaymentOrder吗？', this.href)">删除</a>
+					<c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id && bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
+						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
+					</c:if>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
 		</tbody>
 	</table>
+	<div ><input type="button" class="btn" onclick="window.history.go(-1);" value="返回"/></div>
 	<div class="pagination">${page}</div>
 </body>
 </html>

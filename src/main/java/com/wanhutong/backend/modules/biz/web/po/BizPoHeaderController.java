@@ -50,6 +50,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -207,13 +208,17 @@ public class BizPoHeaderController extends BaseController {
         Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
         List<Role> roleList = UserUtils.getUser().getRoleList();
         Set<String> roleSet = Sets.newHashSet();
+        Set<String> roleEnNameSet = Sets.newHashSet();
         for (Role r : roleList) {
             RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
             if (parse != null) {
                 roleSet.add(parse.name());
+                roleEnNameSet.add(parse.getState());
             }
         }
+
         model.addAttribute("roleSet", roleSet);
+        model.addAttribute("roleEnNameSet", roleEnNameSet);
         model.addAttribute("page", page);
         model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
         return "modules/biz/po/bizPoHeaderList";
@@ -231,9 +236,8 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getBizPoPaymentOrder() != null) {
-           PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess =
-            ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getBizPoPaymentOrder().getCommonProcess().getType()));
+        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
+           PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 
@@ -324,6 +328,13 @@ public class BizPoHeaderController extends BaseController {
     @ResponseBody
     public String payOrder(RedirectAttributes redirectAttributes, Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
         return bizPoHeaderService.payOrder(poHeaderId, paymentOrderId, payTotal, img);
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:audit")
+    @RequestMapping(value = "startAudit")
+    @ResponseBody
+    public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
+        return bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
     }
 
 }

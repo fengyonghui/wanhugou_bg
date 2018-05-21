@@ -8,20 +8,11 @@
 		a.total AS "total",
 		a.pay_total AS "payTotal",
 		a.img AS "img",
-		a.process_id AS "processId",
-		process.id AS "commonProcess.id",
-		process.object_id AS "commonProcess.objectId",
-		process.object_name AS "commonProcess.objectName",
-		process.prev_id AS "commonProcess.prevId",
-		process.biz_status AS "commonProcess.bizStatus",
-		process.processor AS "commonProcess.processor",
-		process.description AS "commonProcess.description",
-		process.type AS "commonProcess.type",
-		process.create_time AS "commonProcess.createTime"
+		a.biz_status AS bizStatus,
+		a.deadline AS deadline
 	</sql>
 	
 	<sql id="bizPoPaymentOrderJoins">
-		LEFT JOIN  common_process process on process.id = a.process_id
 	</sql>
     
 	<select id="get" resultType="BizPoPaymentOrder">
@@ -38,7 +29,6 @@
 		FROM biz_po_payment_order a
 		<include refid="bizPoPaymentOrderJoins"/>
 		<where>
-			
 			<if test="id != null and id != ''">
 				AND a.id = #{id}
 			</if>
@@ -47,9 +37,6 @@
 			</if>
 			<if test="total != null and total != ''">
 				AND a.total = #{total}
-			</if>
-			<if test="processId != null and processId != ''">
-				AND a.process_id = #{processId}
 			</if>
 		</where>
 		<choose>
@@ -83,12 +70,12 @@
 			id,
 			po_header_id,
 			total,
-			process_id
+			deadline
 		) VALUES (
 			#{id},
 			#{poHeaderId},
 			#{total},
-			#{processId}
+			#{deadline}
 		)
 	</insert>
 	
@@ -96,20 +83,15 @@
 		UPDATE biz_po_payment_order SET 	
 			po_header_id = #{poHeaderId},
 			total = #{total},
-			process_id = #{processId}
+			deadline = #{deadline},
+			pay_total = #{payTotal},
+			biz_status = #{bizStatus}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
 		DELETE FROM biz_po_payment_order
 		WHERE id = #{id}
-	</update>
-
-
-	<update id="updateProcessId">
-		UPDATE biz_po_payment_order SET
-		process_id  = #{processId}
-		WHERE id = #{headerId}
 	</update>
 
 </mapper>

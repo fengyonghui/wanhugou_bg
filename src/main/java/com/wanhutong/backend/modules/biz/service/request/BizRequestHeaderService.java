@@ -3,23 +3,20 @@
  */
 package com.wanhutong.backend.modules.biz.service.request;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
-import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
@@ -31,16 +28,15 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.service.CrudService;
-import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
-import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderDao;
-
 import javax.annotation.Resource;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 备货清单Service
@@ -69,10 +65,12 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private BizRequestHeaderDao bizRequestHeaderDao;
 
 
+	@Override
 	public BizRequestHeader get(Integer id) {
 		return super.get(id);
 	}
-	
+
+	@Override
 	public List<BizRequestHeader> findList(BizRequestHeader bizRequestHeader) {
 		User user = UserUtils.getUser();
 		boolean oflag = false;
@@ -132,7 +130,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			return super.findPage(page,bizRequestHeader);
 		}
 	}
-	
+
+	@Override
 	public Page<BizRequestHeader> findPage(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
 		Date today = bizRequestHeader.getRecvEta();
 		if(today!=null){
@@ -158,7 +157,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			return super.findPage(page, bizRequestHeader);
 		}
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void save(BizRequestHeader bizRequestHeader) {
 		DefaultProp defaultProp=new DefaultProp();
@@ -221,6 +221,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 
 				}
 				if(bizRequestHeader.getReqDetailIds()==null) {
+					bizRequestDetail.setId(null);
 					bizRequestDetail.setLineNo(++t);
 				}
 				bizRequestDetail.setRequestHeader(bizRequestHeader);
@@ -255,6 +256,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		super.save(bizRequestHeader);
 	}
 
+	@Override
 	@Transactional(readOnly = false)
 	public void delete(BizRequestHeader bizRequestHeader) {
 		super.delete(bizRequestHeader);
@@ -321,6 +323,43 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		}
 	}
 
+
+	/**
+	 * 备货清单分页查询
+	 * */
+	public Page<BizRequestHeader> pageFindListV2(Page<BizRequestHeader> page, BizRequestHeader bizRequestHeader) {
+		User user = UserUtils.getUser();
+		boolean oflag = false;
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+				}
+			}
+		}
+		if (UserUtils.getOfficeList() != null){
+			for (Office office:UserUtils.getOfficeList()){
+				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+					oflag = true;
+				}
+			}
+		}
+		if (user.isAdmin()) {
+			bizRequestHeader.setPage(page);
+			page.setList(bizRequestHeaderDao.findListForPoHeader(bizRequestHeader));
+			return page;
+		} else {
+			if(oflag){
+
+			}else {
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+			}
+			bizRequestHeader.setPage(page);
+			page.setList(bizRequestHeaderDao.findListForPoHeader(bizRequestHeader));
+			return page;
+		}
+	}
 
 
 	/**

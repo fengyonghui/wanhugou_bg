@@ -75,7 +75,7 @@
 			<%--<td>{{dict.type}}</td>--%>
 			<%--<td>{{row.remarks}}</td>--%>
 			<%--<shiro:hasPermission name="sys:office:edit"><td>--%>
-				<%--<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id={{row.id}}">变更采购顾问</a>--%>
+				<%--<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id={{row.id}}">变更客户专员</a>--%>
 				<%--<a href="${ctx}/sys/office/purchasersForm?id={{row.id}}">修改</a>--%>
 				<%--<a href="${ctx}/sys/office/delete?id={{row.id}}" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>--%>
 				<%--<a href="${ctx}/sys/office/purchasersForm?parent.id={{row.id}}">添加下级机构</a> --%>
@@ -99,7 +99,7 @@
                 </td>
 				<td>${off.remarks}</td>
                 <shiro:hasPermission name="sys:office:edit"><td>
-                    <a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更采购顾问</a>
+                    <a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
                     <a href="${ctx}/sys/office/purchasersForm?id=${off.id}">修改</a>
                     <a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
                     <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}">添加下级机构</a>
