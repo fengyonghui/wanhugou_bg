@@ -30,10 +30,19 @@
             }
             $("#inputForm").validate({
                 submitHandler: function (form) {
-
-                    loading('正在提交，请稍等...');
-                    form.submit();
-
+                    var aa = 0;
+                    $("input[name='orderDetailIds'][checked='checked']").each(function () {
+                        aa += 1;
+                    });
+                    $("input[name='reqDetailIds'][checked='checked']").each(function () {
+                        aa += 1;
+                    });
+                    if (parseInt(aa) != 0) {
+                        loading('正在提交，请稍等...');
+                        form.submit();
+                    } else {
+                        alert("请选择生成采购单的详情");
+                    }
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function (error, element) {
@@ -130,6 +139,14 @@
                         $(this).removeAttr("checked");
                     }
                 })
+            }
+        }
+
+        function selectThis(obj) {
+            if ($(obj).attr("checked")=="checked") {
+                $(obj).attr("checked","checked");
+            } else {
+                $(obj).removeAttr("checked");
             }
         }
 
@@ -457,7 +474,7 @@
                             </td>
                             <td name="reqs"><input title="num" name="reqDetailIds"
                                                    about="${reqDetail.requestHeader.reqNo}" type="checkbox"
-                                                   value="${reqDetail.id}"/></td>
+                                                   value="${reqDetail.id}" onclick="selectThis(this);"/></td>
                             <td><img style="max-width: 120px" src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
                             <td>${reqDetail.skuInfo.productInfo.brandName}</td>
                             <td>${reqDetail.skuInfo.name}</td>
@@ -489,7 +506,7 @@
                             </td>
                             <td name="ords"><input title="num" name="orderDetailIds"
                                                    about="${orderDetail.orderHeader.orderNum}" type="checkbox"
-                                                   value="${orderDetail.id}"/></td>
+                                                   value="${orderDetail.id}" onclick="selectThis(this);"/></td>
                             <td><img style="max-width: 120px" src="${orderDetail.skuInfo.productInfo.imgUrl}"/></td>
                             <td>${orderDetail.skuInfo.productInfo.brandName}</td>
                             <td>${orderDetail.skuInfo.name}</td>
