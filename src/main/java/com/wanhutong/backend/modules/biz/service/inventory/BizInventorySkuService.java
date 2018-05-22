@@ -4,7 +4,12 @@
 package com.wanhutong.backend.modules.biz.service.inventory;
 
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +29,25 @@ import com.wanhutong.backend.modules.biz.dao.inventory.BizInventorySkuDao;
 public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizInventorySku> {
 	@Autowired
 	private BizInventorySkuDao bizInventorySkuDao;
+	@Autowired
+	private BizCollectGoodsRecordDao bizCollectGoodsRecordDao;
 
+	@Override
 	public BizInventorySku get(Integer id) {
 		return super.get(id);
 	}
-	
+
+	@Override
 	public List<BizInventorySku> findList(BizInventorySku bizInventorySku) {
 		return super.findList(bizInventorySku);
 	}
-	
+
+	@Override
 	public Page<BizInventorySku> findPage(Page<BizInventorySku> page, BizInventorySku bizInventorySku) {
 		return super.findPage(page, bizInventorySku);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void save(BizInventorySku bizInventorySku) {
 		if (bizInventorySku.getStockQty()<0){
@@ -54,7 +65,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			this.delete(bizInventorySku);
 		}*/
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void delete(BizInventorySku bizInventorySku) {
 		super.delete(bizInventorySku);
@@ -81,5 +93,35 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	 */
 	public Integer invSkuCount(Integer centId){
 		return bizInventorySkuDao.invSkuCount(centId);
+	}
+
+	/**
+	 * 取SKU库龄数据
+	 * @param skuId skuId
+	 * @return
+	 */
+	public Map<String, Object> getInventoryAge(Integer skuId, Integer centId) {
+		Integer stockQtyBySkuIdCentId = bizInventorySkuDao.getStockQtyBySkuIdCentId(skuId, centId);
+		List<BizCollectGoodsRecord> recordList = bizCollectGoodsRecordDao.getListBySkuIdCentId(skuId, centId);
+		Map<BizCollectGoodsRecord, Integer> resultRecordList = Maps.newHashMap();
+
+		int counter = stockQtyBySkuIdCentId;
+		for (BizCollectGoodsRecord bizCollectGoodsRecord : recordList) {
+			if (counter <=0) {
+				break;
+			}
+			counter = stockQtyBySkuIdCentId - bizCollectGoodsRecord.getReceiveNum();
+			resultRecordList.put(bizCollectGoodsRecord, counter <=0 ? bizCollectGoodsRecord.getReceiveNum() - counter : bizCollectGoodsRecord.getReceiveNum());
+		}
+
+		System.out.println(stockQtyBySkuIdCentId);
+		System.out.println(recordList);
+		System.out.println(resultRecordList);
+
+		Map<String, Object> result = Maps.newHashMap();
+		result.put("stockQty", stockQtyBySkuIdCentId);
+		result.put("recordList", recordList);
+		result.put("resultRecordList", resultRecordList);
+		return result;
 	}
 }

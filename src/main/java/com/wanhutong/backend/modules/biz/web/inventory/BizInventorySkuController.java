@@ -54,6 +54,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品库存详情Controller
@@ -465,8 +466,9 @@ public class BizInventorySkuController extends BaseController {
 
     @RequiresPermissions("biz:inventory:inventoryAge:view")
     @RequestMapping("showInventoryAge")
-    public String showInventoryAge(Integer skuId) {
-        System.out.println("123123");
+    public String showInventoryAge(HttpServletRequest request, Integer skuId, Integer centId) {
+        Map<String, Object> resultMap = bizInventorySkuService.getInventoryAge(skuId, centId);
+        request.setAttribute("data", resultMap);
         return "modules/biz/inventory/bizInventoryAge";
     }
 
