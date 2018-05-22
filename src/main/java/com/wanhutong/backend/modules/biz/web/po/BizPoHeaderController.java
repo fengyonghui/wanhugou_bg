@@ -217,7 +217,10 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
+        List<PurchaseOrderProcessConfig.PurchaseOrderProcess> processList = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessList();
+
         model.addAttribute("roleSet", roleSet);
+        model.addAttribute("processList", processList);
         model.addAttribute("roleEnNameSet", roleEnNameSet);
         model.addAttribute("page", page);
         model.addAttribute("payStatus", ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getPayProcessId());
@@ -237,7 +240,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-           PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+           PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
         }
 

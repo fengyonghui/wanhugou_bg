@@ -54,6 +54,12 @@
 					<form:options items="${fns:getPlatformInfoList()}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 				</form:select>
 			</li>
+			<li><label>审核状态：</label>
+				<form:select path="commonProcess.type" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${processList}" itemLabel="name" itemValue="code" htmlEscape="false"/>
+				</form:select>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -98,7 +104,10 @@
 					${bizPoHeader.totalDetail+bizPoHeader.totalExp}
 				</td>
 				<td>
-					<fmt:formatNumber value="${bizPoHeader.payTotal == 0 ? 0 : bizPoHeader.payTotal/(bizPoHeader.totalDetail+bizPoHeader.totalExp)*100}" pattern="0.00"/>%
+					<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp == 0 || bizPoHeader.totalDetail+bizPoHeader.totalExp == ''}">0</c:if>
+					<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp > 0}">
+						<fmt:formatNumber value="${bizPoHeader.payTotal == 0 ? 0 : bizPoHeader.payTotal/(bizPoHeader.totalDetail+bizPoHeader.totalExp)*100}" pattern="0.00"/>%
+					</c:if>
 				</td>
 				<td>
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
