@@ -148,7 +148,8 @@ public class BizOrderHeaderController extends BaseController {
 //			用于销售订单页面展示属于哪个采购中心哪个客户专员
             if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
                 BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
-                if (bizCustomCenterConsultant != null) {
+                if (bizCustomCenterConsultant != null && bizCustomCenterConsultant.getConsultants()!=null &&
+                        bizCustomCenterConsultant.getConsultants().getName()!=null) {
                     bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
                     model.addAttribute("orderCenter", bizCustomCenterConsultant);
                 } else {
@@ -856,6 +857,40 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeaderService.CendorderSave(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "checkTotalExp")
+    public String checkTotalExp(BizOrderHeader bizOrderHeader) {
+        String flag = "ok";
+        Double totalDetail = bizOrderHeader.getTotalDetail();
+        Double totalExp = -bizOrderHeader.getTotalExp();
+        if (bizOrderHeader.getId() != null && !bizOrderHeader.getId().equals("")) {
+            BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+            BizOrderDetail orderDetail = new BizOrderDetail();
+            orderDetail.setOrderHeader(orderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
+            Double totalBuyPrice = 0.0;
+            if (orderDetailList != null && !orderDetailList.isEmpty()) {
+                for (BizOrderDetail bizOrderDetail:orderDetailList) {
+                    totalBuyPrice += bizOrderDetail.getBuyPrice() * bizOrderDetail.getOrdQty();
+                }
+            }
+            if (orderHeader != null && orderHeader.getCustomer() != null) {
+                BizOrderHeader header = new BizOrderHeader();
+                header.setCustomer(orderHeader.getCustomer());
+                List<BizOrderHeader> firstOrderList = bizOrderHeaderService.findListFirstOrder(header);
+                if (firstOrderList.size() == 1) {//首单
+                    if (totalExp.compareTo(totalDetail - totalBuyPrice) == 1 ) {
+                        flag = "first";
+                    }
+                }else if (totalExp.compareTo((totalDetail - totalBuyPrice)/2) == 1) {
+                    flag = "error";
+                }
+            }
+        }
+        return flag;
     }
 
 }
