@@ -364,7 +364,8 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
             log.error("详情图转换编码异常." + e.getMessage(), e);
         }
         String photoLists = null;
-
+        String imgPhotosSorts = bizProductInfo.getImgPhotosSorts();
+        String[] photosSort = StringUtils.split(imgPhotosSorts, ",");
         if (StringUtils.isNotBlank(photos)) {
             List<String> strings = Arrays.asList(photos.split("\\|"));
             for (String s : strings) {
@@ -389,7 +390,7 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
         List<CommonImg> commonImgs = getImgList(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo.getId());
         for (int i = 0; i < commonImgs.size(); i++) {
             CommonImg commonImg = commonImgs.get(i);
-            commonImg.setImgSort(i);
+            commonImg.setImgSort(Integer.parseInt(photosSort[i]));
             commonImgService.save(commonImg);
 
             if (i == 0 && StringUtils.isBlank(bizProductInfo.getImgUrl())) {

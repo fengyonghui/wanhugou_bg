@@ -142,8 +142,10 @@ public class BizProductInfoV2Controller extends BaseController {
             String photos = "";
             String photoDetails = "";
             String photoLists = "";
+            Map<Integer,String> photosMap = new LinkedHashMap<>();
             for (CommonImg img : imgList) {
                 photos += img.getImgServer().concat(img.getImgPath()).concat("|");
+                photosMap.put(img.getImgSort(),img.getImgServer()+img.getImgPath());
             }
             if (StringUtils.isNotBlank(photos)) {
                 bizProductInfo.setPhotos(photos);
@@ -160,6 +162,7 @@ public class BizProductInfoV2Controller extends BaseController {
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
             }
+            model.addAttribute("photosMap",photosMap);
         }
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();

@@ -96,18 +96,16 @@
         <div id="prodMainImgDiv">
             <table>
                 <tr id="prodMainImgImg">
-                    <c:if test="${entity.photos != null && entity.photos != ''}">
-                        <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
-                            <td><img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();"></td>
+                    <%--<c:if test="${entity.photos != null && entity.photos != ''}">--%>
+                        <%--<c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">--%>
+                        <c:forEach items="${photosMap}" var="photo">
+                            <td><img src="${photo.value}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,${photo.key});"></td>
                         </c:forEach>
-                    </c:if>
                 </tr>
                 <tr id="ImgPhotosSorts">
-                    <c:if test="${entity.imgPhotosSorts != null && entity.imgPhotosSorts != ''}">
-                        <c:forEach items="${fn:split(entity.imgPhotosSorts,'|' )}" var="sort">
-                            <td><input name="imgPhotosSorts" type="number" style="width: 100px" value="${sort}"/></td>
+                        <c:forEach items="${photosMap}" var="photo">
+                            <td><input id="${photo.key}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.key}"/></td>
                         </c:forEach>
-                    </c:if>
                 </tr>
             </table>
         </div>
@@ -619,13 +617,15 @@
                 if (imgList && imgList.length > 0 && multiple) {
                     for (var i = 0; i < imgList.length; i ++) {
                         // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                        $("#ImgPhotosSorts").append(imgPhotosSorts);
-                        $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
+                        $("#ImgPhotosSorts").append("<td><input id='"+i+"' name='imgPhotosSorts' style='width: 70px' type='number'/></td>");
+                        // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
+                        $("#prodMainImgImg").append("<td><img src=\""+imgList[i]+"\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"removeThis(this,"+i+");\"></td>");
                     }
                 }else if (imgList && imgList.length > 0 && !multiple) {
                     imgDiv.empty();
                     for (var i = 0; i < imgList.length; i ++) {
                         imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        // $("#prodMainImgImg").append("<td><img src=\""+imgList[i]+"\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"removeThis(this,"+i+");\"></td>");
                     }
                 }else {
                     var img = $("#" + id + "Img");
@@ -677,10 +677,10 @@
         }
     }
 
-    function removeThis(obj) {
-        alert($(this).html());
-        $(this).parent().remove();
-        $(this).parent().parent().next().children().remove();
+    function removeThis(obj,item) {
+        alert($(obj).html());
+        $(obj).remove();
+        $("#"+item).remove();
     }
 
     $(document).ready(function() {
