@@ -35,7 +35,7 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>货架名称：</label>
-				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="60" class="input-medium"/>
 			</li>
 			<c:if test="${fns:getUser().isAdmin()}">
 				<li><label>采购中心：</label>
@@ -47,7 +47,7 @@
 			</c:if>
 			</li>
 			<li><label>产品名称：</label>
-				<form:input path="productInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="productInfo.name" htmlEscape="false" maxlength="60" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
