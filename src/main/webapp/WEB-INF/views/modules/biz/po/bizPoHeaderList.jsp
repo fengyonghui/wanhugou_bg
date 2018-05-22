@@ -54,6 +54,12 @@
 					<form:options items="${fns:getPlatformInfoList()}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 				</form:select>
 			</li>
+			<li><label>审核状态：</label>
+				<form:select path="commonProcess.type" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${processList}" itemLabel="name" itemValue="code" htmlEscape="false"/>
+				</form:select>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -75,7 +81,7 @@
 				<th>累积支付金额</th>
 				<th>审核状态</th>
 				<th>上级审核备注</th>
-				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
+				<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -98,11 +104,13 @@
 					${bizPoHeader.totalDetail+bizPoHeader.totalExp}
 				</td>
 				<td>
-					<fmt:formatNumber value="${bizPoHeader.payTotal == 0 ? 0 : bizPoHeader.payTotal/(bizPoHeader.totalDetail+bizPoHeader.totalExp)*100}" pattern="0.00"/>%
+					<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp == 0 || bizPoHeader.totalDetail+bizPoHeader.totalExp == ''}">0</c:if>
+					<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp > 0}">
+						<fmt:formatNumber value="${bizPoHeader.payTotal == 0 ? 0 : bizPoHeader.payTotal/(bizPoHeader.totalDetail+bizPoHeader.totalExp)*100}" pattern="0.00"/>%
+					</c:if>
 				</td>
 				<td>
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
-
 				</td>
 				<div style="display:none;">
 					<td style="display:none;">
@@ -134,10 +142,12 @@
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 							</c:if>
 						</shiro:hasPermission>
-						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+						<shiro:hasPermission name="biz:po:bizPoHeader:startAudit">
 							<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
 							</c:if>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
 							<c:if test="${bizPoHeader.commonProcess.id != null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'

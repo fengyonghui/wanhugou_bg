@@ -40,7 +40,7 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
     /**
      * 数据MAP
      */
-    public Map<Integer, PurchaseOrderProcess> processMap;
+    private Map<Integer, PurchaseOrderProcess> processMap;
 
     @Override
     public PurchaseOrderProcessConfig parse(String content) throws Exception {
@@ -62,6 +62,14 @@ public class PurchaseOrderProcessConfig extends ConfigGeneral {
      */
     public PurchaseOrderProcess getPassProcess(PurchaseOrderProcess currentProcess) {
         return processMap.get(currentProcess.getPassCode());
+    }
+
+    public Map<Integer, PurchaseOrderProcess> getProcessMap() {
+        return processMap;
+    }
+
+    public List<PurchaseOrderProcess> getProcessList() {
+        return processList;
     }
 
     /**

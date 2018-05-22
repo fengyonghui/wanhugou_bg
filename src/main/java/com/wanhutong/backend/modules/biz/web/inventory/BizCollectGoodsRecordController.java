@@ -39,11 +39,7 @@ public class BizCollectGoodsRecordController extends BaseController {
 	@Autowired
 	private BizCollectGoodsRecordService bizCollectGoodsRecordService;
 
-	@Autowired
-    private BizSendGoodsRecordService bizSendGoodsRecordService;
 
-
-	
 	@ModelAttribute
 	public BizCollectGoodsRecord get(@RequestParam(required=false) Integer id) {
 		BizCollectGoodsRecord entity = null;

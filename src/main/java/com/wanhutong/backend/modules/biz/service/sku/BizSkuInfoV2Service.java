@@ -11,26 +11,17 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV2Dao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.product.BizProdPropValue;
-import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.product.BizProdPropValueService;
-import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.PropValue;
-import com.wanhutong.backend.modules.sys.entity.PropertyInfo;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
-import com.wanhutong.backend.modules.sys.service.PropValueService;
-import com.wanhutong.backend.modules.sys.service.PropertyInfoService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -43,7 +34,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 商品skuService
@@ -53,35 +50,28 @@ import java.util.*;
 @Service
 @Transactional(readOnly = true)
 public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo> {
-	@Resource
-	private BizProdPropertyInfoService bizProdPropertyInfoService;
-	@Resource
-	private BizProdPropValueService bizProdPropValueService;
-	@Resource
-	private BizSkuPropValueService bizSkuPropValueService;
+
 	@Resource
 	private CommonImgService commonImgService;
 	@Autowired
 	private BizSkuInfoV2Dao bizSkuInfoDao;
 	@Autowired
 	private BizProductInfoDao bizProductInfoDao;
-	@Resource
-	private PropValueService propValueService;
 	@Autowired
 	private OfficeService officeService;
-	@Autowired
-	private PropertyInfoService propertyInfoService;
 	@Autowired
 	private AttributeValueV2Service attributeValueService;
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
 
-	protected Logger log = LoggerFactory.getLogger(BizSkuInfoV2Service.class);//日志
+	protected Logger log = LoggerFactory.getLogger(BizSkuInfoV2Service.class);
 
+	@Override
 	public BizSkuInfo get(Integer id) {
 		return super.get(id);
 	}
-	
+
+	@Override
 	public List<BizSkuInfo> findList(BizSkuInfo bizSkuInfo) {
 		if(bizSkuInfo != null) {
 			return super.findList(bizSkuInfo);
@@ -303,6 +293,7 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
 	public void delete(BizSkuInfo bizSkuInfo) {
+		bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_DELETE);
 		super.delete(bizSkuInfo);
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(bizSkuInfo.getId());
