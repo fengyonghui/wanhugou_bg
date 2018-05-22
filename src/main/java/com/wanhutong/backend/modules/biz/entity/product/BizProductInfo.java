@@ -65,6 +65,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String itemNo;
 	private String itemNoComplete;
+	private String ImgPhotosSorts;		//主图顺序
 	/**
 	 * 业务状态
 	 */
@@ -180,7 +181,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 			categoryInfoList.add(categoryInfo);
 		}
 	}
-//	private Map<String,BizSkuInfo> skuInfoMap;
+	//	private Map<String,BizSkuInfo> skuInfoMap;
 	private List<BizSkuInfo> skuInfosList;
 
 	public String getCateIds() {
@@ -465,7 +466,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	 * 供应商上传产品的审核状态
 	 */
 	public enum BizStatus {
-//		产品状态：1、未审核；2、审核通过；3、审核失败
+		//		产品状态：1、未审核；2、审核通过；3、审核失败
 		UNAUDITED(1, "未审核"),
 		AUDIT_PASS(2, "审核通过"),
 		AUDIT_FAILED (3, "审核失败"),
@@ -501,5 +502,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setCreateDateEnd(Date createDateEnd) {
 		this.createDateEnd = createDateEnd;
+	}
+
+	public String getImgPhotosSorts() {
+		return ImgPhotosSorts;
+	}
+
+	public void setImgPhotosSorts(String imgPhotosSorts) {
+		ImgPhotosSorts = imgPhotosSorts;
 	}
 }

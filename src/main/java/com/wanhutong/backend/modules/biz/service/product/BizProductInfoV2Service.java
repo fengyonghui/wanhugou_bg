@@ -415,13 +415,13 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
 
         List<CommonImg> commonImgs = getImgList(imgType, bizProductInfo.getId());
 
-        Set<String> existSet = new HashSet<>();
+        Set<String> existSet = new LinkedHashSet<>();
         for (CommonImg commonImg1 : commonImgs) {
             existSet.add(commonImg1.getImgServer() + commonImg1.getImgPath());
         }
-        Set<String> newSet = new HashSet<>(Arrays.asList(photoArr));
+        Set<String> newSet = new LinkedHashSet<>(Arrays.asList(photoArr));
 
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new LinkedHashSet<>();
         //差集，结果做删除操作
         result.clear();
         result.addAll(existSet);
@@ -590,15 +590,15 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
                     Integer propValueId = Integer.parseInt(prodPropertyValueList.get(i).trim());
                     PropValue propValue = propValueService.get(propValueId);
                     prodPropValue.setId(null);
-                        prodPropValue.setPropertyInfo(propertyInfo);
-                        prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
-                        prodPropValue.setSource("sys");
-                        prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
-                        prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
-                        prodPropValue.setPropValue(propValue.getValue());
-                        prodPropValue.setCode(propValue.getCode());
-                        prodPropValue.setSysPropValue(propValue);
-                        bizProdPropValueService.save(prodPropValue);
+                    prodPropValue.setPropertyInfo(propertyInfo);
+                    prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
+                    prodPropValue.setSource("sys");
+                    prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
+                    prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+                    prodPropValue.setPropValue(propValue.getValue());
+                    prodPropValue.setCode(propValue.getCode());
+                    prodPropValue.setSysPropValue(propValue);
+                    bizProdPropValueService.save(prodPropValue);
                 }
 
             }

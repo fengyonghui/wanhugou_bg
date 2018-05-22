@@ -19,7 +19,7 @@
                         alert("请选择品牌");
                         return;
                     }
-                   var  varietyInfoId=$("#varietyInfoId").val();
+                    var  varietyInfoId=$("#varietyInfoId").val();
                     if(varietyInfoId==''){
                         alert("请选择分类");
                         return;
@@ -68,10 +68,10 @@
     <div class="control-group">
         <label class="control-label">请选择品牌:</label>
         <div style="margin-left: 180px">
-                <form:select  about="choose" path="brandId" class="input-xlarge required">
-                    <form:option value="" label="请选择"/>
-                    <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
-                                  htmlEscape="false"/></form:select>
+            <form:select  about="choose" path="brandId" class="input-xlarge required">
+                <form:option value="" label="请选择"/>
+                <form:options items="${fns:getDictList('brand')}" itemLabel="label" itemValue="id"
+                              htmlEscape="false"/></form:select>
 
             <span class="help-inline"><font color="red">*</font> </span>
         </div>
@@ -91,14 +91,25 @@
             <p style="opacity: 0.5;">点击图片删除</p>
         </label>
         <div class="controls">
-                <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
         </div>
         <div id="prodMainImgDiv">
-            <c:if test="${entity.photos != null && entity.photos != ''}">
-                <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
-                    <img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();">
-                </c:forEach>
-            </c:if>
+            <table>
+                <tr id="prodMainImgImg">
+                    <c:if test="${entity.photos != null && entity.photos != ''}">
+                        <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
+                            <td><img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();"></td>
+                        </c:forEach>
+                    </c:if>
+                </tr>
+                <tr id="ImgPhotosSorts">
+                    <c:if test="${entity.imgPhotosSorts != null && entity.imgPhotosSorts != ''}">
+                        <c:forEach items="${fn:split(entity.imgPhotosSorts,'|' )}" var="sort">
+                            <td><input name="imgPhotosSorts" type="number" style="width: 100px" value="${sort}"/></td>
+                        </c:forEach>
+                    </c:if>
+                </tr>
+            </table>
         </div>
     </div>
     <div class="control-group">
@@ -108,7 +119,7 @@
             <p style="opacity: 0.5;">点击图片删除</p>
         </label>
         <div class="controls">
-                <input class="btn" type="file" name="productImg" onchange="submitPic('prodBannerImg', false)" value="上传图片" id="prodBannerImg"/>
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodBannerImg', false)" value="上传图片" id="prodBannerImg"/>
         </div>
         <div id="prodBannerImgDiv">
             <c:if test="${entity.imgUrl != null && entity.imgUrl != ''}">
@@ -217,7 +228,7 @@
 
                                 <select  title="search"  id="search_${tagInfo.id}" class="input-xlarge" multiple="multiple" size="8">
                                     <c:forEach items="${tagInfo.dictList}" var="dict">
-                                            <option value="${dict.value}">${dict.label}</option>
+                                        <option value="${dict.value}">${dict.label}</option>
                                     </c:forEach>
                                 </select>
 
@@ -256,17 +267,17 @@
         </div>
         <br/>
         <div class="controls">
-           <table class="table  table-bordered table-condensed" id="uploadPicTable">
-               <thead>
-               <tr>
+            <table class="table  table-bordered table-condensed" id="uploadPicTable">
+                <thead>
+                <tr>
                     <th>颜色</th>
                     <th>图片</th>
                     <th>图片操作</th>
                     <th>操作</th>
-               </tr>
-               </thead>
-               <tbody id="uploadPicTableData"></tbody>
-           </table>
+                </tr>
+                </thead>
+                <tbody id="uploadPicTableData"></tbody>
+            </table>
 
         </div>
     </div>
@@ -280,9 +291,9 @@
         </div>
         <br/>
         <div class="controls">
-           <table class="table  table-bordered table-condensed" id="skuTable">
-               <thead>
-               <tr>
+            <table class="table  table-bordered table-condensed" id="skuTable">
+                <thead>
+                <tr>
                     <th style="display: none">id</th>
                     <th>货号</th>
                     <th>尺寸</th>
@@ -292,43 +303,43 @@
                     <th style="display: none">图片地址</th>
                     <th>类型</th>
                     <th>操作</th>
-               </tr>
-               </thead>
-               <tbody id="skuTableData">
-               <c:forEach items="${entity.skuInfosList}" var="v">
-                   <tr customType="skuTr">
-                       <td style="display: none"><input type="text" value="${v.id}" customInput="idInput" readonly/></td>
-                       <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
-                       <td><input type="text" value="${v.attrValueMap['2'][0].value}" customInput="sizeInput" readonly/></td>
-                       <td><input type="text" value="${v.attrValueMap['3'][0].value}" customInput="colorInput" readonly/></td>
-                       <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
-                       <td><img customInput="imgInputLab" style="width: 160px" src="${v.defaultImg}"></td>
-                       <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
-                       <th><select customInput="skuTypeSelect">
+                </tr>
+                </thead>
+                <tbody id="skuTableData">
+                <c:forEach items="${entity.skuInfosList}" var="v">
+                    <tr customType="skuTr">
+                        <td style="display: none"><input type="text" value="${v.id}" customInput="idInput" readonly/></td>
+                        <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
+                        <td><input type="text" value="${v.attrValueMap['2'][0].value}" customInput="sizeInput" readonly/></td>
+                        <td><input type="text" value="${v.attrValueMap['3'][0].value}" customInput="colorInput" readonly/></td>
+                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
+                        <td><img customInput="imgInputLab" style="width: 160px" src="${v.defaultImg}"></td>
+                        <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
+                        <th><select customInput="skuTypeSelect">
                             <c:if test="${v.skuType == 1}">
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='2' label='定制商品'>定制商品</option>
                                 <option value='3' label='非自选商品'>非自选商品</option>
                             </c:if>
-                           <c:if test="${v.skuType == 2}">
+                            <c:if test="${v.skuType == 2}">
                                 <option value='2' label='定制商品'>定制商品</option>
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='3' label='非自选商品'>非自选商品</option>
                             </c:if>
-                           <c:if test="${v.skuType == 3}">
+                            <c:if test="${v.skuType == 3}">
                                 <option value='3' label='非自选商品'>非自选商品</option>
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='2' label='定制商品'>定制商品</option>
                             </c:if>
-                       </select></th>
-                       <td>
-                           <input onclick='deleteImgEle(this)' class="btn" type="button" value="删除图片"/>
-                           <input onclick='deleteParentParentEle(this)' class="btn" type="button" value="删除"/>
-                       </td>
-                   </tr>
-               </c:forEach>
-               </tbody>
-           </table>
+                        </select></th>
+                        <td>
+                            <input onclick='deleteImgEle(this)' class="btn" type="button" value="删除图片"/>
+                            <input onclick='deleteParentParentEle(this)' class="btn" type="button" value="删除"/>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
 
         </div>
     </div>
@@ -603,10 +614,13 @@
                 var msgJSON = JSON.parse(msg);
                 var imgList = msgJSON.imgList;
                 var imgDiv = $("#" + id + "Div");
-                var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
+                var imgDivHtml = "<td><img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"removeThis(this);\"></td>";
+                var imgPhotosSorts = "<td id=''><input name='imgPhotosSorts' style='width: 70px' type='number'/></td>";
                 if (imgList && imgList.length > 0 && multiple) {
                     for (var i = 0; i < imgList.length; i ++) {
-                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        $("#ImgPhotosSorts").append(imgPhotosSorts);
+                        $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
                     }
                 }else if (imgList && imgList.length > 0 && !multiple) {
                     imgDiv.empty();
@@ -623,7 +637,7 @@
                 console.info(data);
                 console.info(status);
                 console.info(e);
-               alert("上传失败");
+                alert("上传失败");
             }
         });
         return false;
@@ -661,6 +675,12 @@
                     .replace("$id", j + "")
                     .replace("$id", j + ""));
         }
+    }
+
+    function removeThis(obj) {
+        alert($(this).html());
+        $(this).parent().remove();
+        $(this).parent().parent().next().children().remove();
     }
 
     $(document).ready(function() {
