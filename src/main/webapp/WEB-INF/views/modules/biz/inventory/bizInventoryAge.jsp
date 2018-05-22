@@ -23,9 +23,21 @@
             <td>${v.key.invInfo.name}</td>
             <td>${v.key.skuInfo.name}</td>
             <td>${v.value}</td>
-            <td><fmt:formatDate value="${v.key.receiveDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
             <td>
-                <fmt:formatNumber value="${(nowDate - v.key.receiveDate.getTime())/1000/60/60/24}" type="number" pattern="#"/>
+                <c:if test="${v.key.id != null}">
+                    <fmt:formatDate value="${v.key.receiveDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                </c:if>
+                <c:if test="${v.key.id == null}">
+                    未知日期
+                </c:if>
+            </td>
+            <td>
+                <c:if test="${v.key.id != null}">
+                    <fmt:formatNumber value="${(nowDate - v.key.receiveDate.getTime())/1000/60/60/24}" type="number" pattern="#"/>
+                </c:if>
+                <c:if test="${v.key.id == null}">
+                    未知时长
+                </c:if>
             </td>
         </tr>
     </c:forEach>

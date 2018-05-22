@@ -6,10 +6,13 @@ package com.wanhutong.backend.modules.biz.service.inventory;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,12 +111,29 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		Map<BizCollectGoodsRecord, Integer> resultRecordList = Maps.newLinkedHashMap();
 
 		int counter = stockQtyBySkuIdCentId;
+		String skuName = StringUtils.EMPTY;
+		String invName = StringUtils.EMPTY;
+		if (CollectionUtils.isNotEmpty(recordList)) {
+			skuName = recordList.get(0).getSkuInfo().getName();
+			invName = recordList.get(0).getInvInfo().getName();
+		}
+
 		for (BizCollectGoodsRecord bizCollectGoodsRecord : recordList) {
 			if (counter <=0) {
 				break;
 			}
 			counter -= bizCollectGoodsRecord.getReceiveNum();
 			resultRecordList.put(bizCollectGoodsRecord, counter <=0 ? bizCollectGoodsRecord.getReceiveNum() + counter : bizCollectGoodsRecord.getReceiveNum());
+		}
+		if (counter > 0) {
+			BizCollectGoodsRecord bizCollectGoodsRecord = new BizCollectGoodsRecord();
+			BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+			bizInventoryInfo.setName(invName);
+			bizCollectGoodsRecord.setInvInfo(bizInventoryInfo);
+			BizSkuInfo bizSkuInfo = new BizSkuInfo();
+			bizSkuInfo.setName(skuName);
+			bizCollectGoodsRecord.setSkuInfo(bizSkuInfo);
+			resultRecordList.put(bizCollectGoodsRecord, counter);
 		}
 
 		Map<String, Object> result = Maps.newHashMap();
