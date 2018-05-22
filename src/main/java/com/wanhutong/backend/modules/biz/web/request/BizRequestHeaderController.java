@@ -377,9 +377,9 @@ public class BizRequestHeaderController extends BaseController {
 								detailListData.add("");
 								detailListData.add("");
 							}
-							detailListData.add(String.valueOf(detail.getReqQty()));
+							detailListData.add(String.valueOf(detail.getReqQty()==null?"":detail.getReqQty()));
 							if(detail.getRequestHeader()!=null && detail.getRequestHeader().getRecvEta()!=null){
-								detailListData.add(String.valueOf(detail.getRequestHeader().getRecvEta()));
+								detailListData.add(String.valueOf(sdf.format(detail.getRequestHeader().getRecvEta())));
 							}else{
 								detailListData.add("");
 							}
