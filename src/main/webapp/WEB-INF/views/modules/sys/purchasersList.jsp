@@ -42,7 +42,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/sys/office/purchasersList">机构列表</a></li>
-		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/purchasersForm?parent.id=${office.id}&type=6">机构添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/purchasersForm?parent.id=${office.id}&type=6&source=add_prim">机构添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="office" action="${ctx}/sys/office/purchasersList" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -90,7 +90,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="off">
 			<tr>
-                <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}">${off.name}</a></td>
+                <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">${off.name}</a></td>
 				<td>${off.area.name}</td>
 				<td>${off.code}</td>
 				<td>${off.moblieMoeny.mobile}</td>
@@ -100,9 +100,9 @@
 				<td>${off.remarks}</td>
                 <shiro:hasPermission name="sys:office:edit"><td>
                     <a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
-                    <a href="${ctx}/sys/office/purchasersForm?id=${off.id}">修改</a>
+                    <a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>
                     <a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
-                    <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}">添加下级机构</a>
+                    <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}&source=add_prim">添加下级机构</a>
                 </td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
