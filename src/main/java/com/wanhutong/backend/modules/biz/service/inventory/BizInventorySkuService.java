@@ -103,20 +103,18 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	public Map<String, Object> getInventoryAge(Integer skuId, Integer centId) {
 		Integer stockQtyBySkuIdCentId = bizInventorySkuDao.getStockQtyBySkuIdCentId(skuId, centId);
 		List<BizCollectGoodsRecord> recordList = bizCollectGoodsRecordDao.getListBySkuIdCentId(skuId, centId);
-		Map<BizCollectGoodsRecord, Integer> resultRecordList = Maps.newHashMap();
+
+		recordList.sort((o1, o2) -> o2.getReceiveDate().compareTo(o1.getReceiveDate()));
+		Map<BizCollectGoodsRecord, Integer> resultRecordList = Maps.newLinkedHashMap();
 
 		int counter = stockQtyBySkuIdCentId;
 		for (BizCollectGoodsRecord bizCollectGoodsRecord : recordList) {
 			if (counter <=0) {
 				break;
 			}
-			counter = stockQtyBySkuIdCentId - bizCollectGoodsRecord.getReceiveNum();
-			resultRecordList.put(bizCollectGoodsRecord, counter <=0 ? bizCollectGoodsRecord.getReceiveNum() - counter : bizCollectGoodsRecord.getReceiveNum());
+			counter -= bizCollectGoodsRecord.getReceiveNum();
+			resultRecordList.put(bizCollectGoodsRecord, counter <=0 ? bizCollectGoodsRecord.getReceiveNum() + counter : bizCollectGoodsRecord.getReceiveNum());
 		}
-
-		System.out.println(stockQtyBySkuIdCentId);
-		System.out.println(recordList);
-		System.out.println(resultRecordList);
 
 		Map<String, Object> result = Maps.newHashMap();
 		result.put("stockQty", stockQtyBySkuIdCentId);

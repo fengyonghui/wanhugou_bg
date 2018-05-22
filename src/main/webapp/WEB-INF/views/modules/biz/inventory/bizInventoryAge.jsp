@@ -19,7 +19,7 @@
         <th>SKU名称</th>
         <th>数量</th>
         <th>入库时间</th>
-        <th>入库时长</th>
+        <th>入库时长(天)</th>
     </tr>
     </thead>
     <tbody>
