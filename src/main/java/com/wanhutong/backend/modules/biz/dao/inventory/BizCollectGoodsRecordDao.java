@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
+import org.apache.ibatis.annotations.Param;
 import org.apache.poi.ss.formula.functions.T;
 
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.List;
  */
 @MyBatisDao
 public interface BizCollectGoodsRecordDao extends CrudDao<BizCollectGoodsRecord> {
-    public List<BizCollectGoodsRecord> collectSendFindPage(BizCollectGoodsRecord bizCollectGoodsRecord);
+    List<BizCollectGoodsRecord> collectSendFindPage(BizCollectGoodsRecord bizCollectGoodsRecord);
 
+
+    List<BizCollectGoodsRecord> getListBySkuIdCentId(@Param("skuId") Integer skuId, @Param("centId")Integer centId);
 }

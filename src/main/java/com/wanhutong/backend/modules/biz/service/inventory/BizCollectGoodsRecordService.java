@@ -56,15 +56,18 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	@Resource
     private OfficeService officeService;
 
+	@Override
 	public BizCollectGoodsRecord get(Integer id) {
 		return super.get(id);
 	}
-	
+
+	@Override
 	public List<BizCollectGoodsRecord> findList(BizCollectGoodsRecord bizCollectGoodsRecord) {
 
 		return super.findList(bizCollectGoodsRecord);
 	}
-	
+
+	@Override
 	public Page<BizCollectGoodsRecord> findPage(Page<BizCollectGoodsRecord> page, BizCollectGoodsRecord bizCollectGoodsRecord) {
 		User user=UserUtils.getUser();
 		if(user.isAdmin()){
@@ -76,7 +79,8 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 
 
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void save(BizCollectGoodsRecord bizCollectGoodsRecord) {
         User user = UserUtils.getUser();
@@ -215,7 +219,8 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
             bizPoHeaderService.save(bizPoHeader);
         }*/
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void delete(BizCollectGoodsRecord bizCollectGoodsRecord) {
 		super.delete(bizCollectGoodsRecord);
@@ -230,4 +235,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 		return page;
 	}
 
+	public List<BizCollectGoodsRecord> getListBySkuIdCentId(Integer skuId, Integer centId) {
+		return dao.getListBySkuIdCentId(skuId, centId);
+	}
 }

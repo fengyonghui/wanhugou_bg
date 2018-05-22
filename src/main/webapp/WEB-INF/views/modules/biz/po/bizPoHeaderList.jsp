@@ -81,7 +81,7 @@
 				<th>累积支付金额</th>
 				<th>审核状态</th>
 				<th>上级审核备注</th>
-				<shiro:hasPermission name="biz:po:bizPoHeader:edit"><th>操作</th></shiro:hasPermission>
+				<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -111,7 +111,6 @@
 				</td>
 				<td>
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
-
 				</td>
 				<div style="display:none;">
 					<td style="display:none;">
@@ -143,10 +142,12 @@
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 							</c:if>
 						</shiro:hasPermission>
-						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+						<shiro:hasPermission name="biz:po:bizPoHeader:startAudit">
 							<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
 							</c:if>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
 							<c:if test="${bizPoHeader.commonProcess.id != null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
