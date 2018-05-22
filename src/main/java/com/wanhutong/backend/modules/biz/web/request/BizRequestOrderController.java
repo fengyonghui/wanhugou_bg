@@ -202,6 +202,7 @@ public class BizRequestOrderController extends BaseController {
                 BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
                 bizPoOrderReq.setSoLineNo(lineNo);
                 bizPoOrderReq.setRequestHeader(bizRequestDetail.getRequestHeader());
+                bizPoOrderReq.setIsPrew(0);
                 List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
                 if(poOrderReqList!=null && poOrderReqList.size()==0){
                     BizSkuInfo sku = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
@@ -236,6 +237,7 @@ public class BizRequestOrderController extends BaseController {
                 BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
                 bizPoOrderReq.setSoLineNo(lineNo);
                 bizPoOrderReq.setOrderHeader(bizOrderDetail.getOrderHeader());
+                bizPoOrderReq.setIsPrew(0);
                 List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
                 if(poOrderReqList!=null && poOrderReqList.size()==0){
                     BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());
