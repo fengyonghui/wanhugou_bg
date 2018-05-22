@@ -90,7 +90,7 @@
 			<form:input path="customer.phone" htmlEscape="false" maxlength="30" class="input-medium"/>
 		</li>
 		<li>
-			<label>货架编号：</label>
+			<label>商品货号：</label>
 			<form:input path="itemNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 		</li>
 		<li><label>采购商名称：</label>
