@@ -1,15 +1,9 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Administrator
-  Date: 2018/5/21/021
-  Time: 14:22
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-    <title>库龄</title>
+    <title>发货单管理</title>
+    <meta name="decorator" content="default"/>
 </head>
 <body>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
