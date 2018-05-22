@@ -24,6 +24,18 @@
                         alert("请选择分类");
                         return;
                     }
+                    $("input[name='imgDetailSorts']").each(function () {
+                       if ($(this).val()=='') {
+                           alert("详情图的顺序不能为空");
+                           return;
+                       }
+                    });
+                    $("input[name='imgPhotosSorts']").each(function () {
+                        if ($(this).val()=='') {
+                            alert("主图的顺序不能为空");
+                            return;
+                        }
+                    });
 
                     loading('正在提交，请稍等...');
                     form.submit();
@@ -89,6 +101,7 @@
             <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
             <p style="opacity: 0.5;">图片建议比例为1:1</p>
             <p style="opacity: 0.5;">点击图片删除</p>
+            <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
         </label>
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
@@ -102,7 +115,7 @@
                             <td><img src="${photo.value}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,${photo.key});"></td>
                         </c:forEach>
                 </tr>
-                <tr id="ImgPhotosSorts">
+                <tr id="imgPhotosSorts">
                         <c:forEach items="${photosMap}" var="photo">
                             <td><input id="${photo.key}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.key}"/></td>
                         </c:forEach>
@@ -143,16 +156,29 @@
             <p style="opacity: 0.5;">点击图片删除</p>
             <p style="opacity: 0;color: red;">*首图为列表页图</p>
             <p style="opacity: 0;">图片建议比例为1:1</p>
+            <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
         </label>
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodDetailImg', true)" value="上传图片" multiple="multiple" id="prodDetailImg"/>
         </div>
         <div id="prodDetailImgDiv">
-            <c:if test="${entity.photoDetails != null && entity.photoDetails != ''}">
-                <c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">
-                    <img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">
-                </c:forEach>
-            </c:if>
+            <table>
+                <tr id="prodDetailImgImg">
+                    <c:forEach items="${detailsMap}" var="detail">
+                        <td><img src="${detail.value}" customInput="prodDetailImgImg" style='width: 100px' onclick="removeThis(this,'detail'+${detail.key});"></td>
+                    </c:forEach>
+                </tr>
+                <tr id="imgDetailSorts">
+                    <c:forEach items="${detailsMap}" var="detail">
+                        <td><input id="detail${detail.key}" name="imgDetailSorts" type="number" style="width: 100px" value="${detail.key}"/></td>
+                    </c:forEach>
+                </tr>
+            </table>
+            <%--<c:if test="${entity.photoDetails != null && entity.photoDetails != ''}">--%>
+                <%--<c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">--%>
+                    <%--<img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">--%>
+                <%--</c:forEach>--%>
+            <%--</c:if>--%>
         </div>
     </div>
     <div class="control-group">
@@ -617,15 +643,20 @@
                 if (imgList && imgList.length > 0 && multiple) {
                     for (var i = 0; i < imgList.length; i ++) {
                         // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                        $("#ImgPhotosSorts").append("<td><input id='"+i+"' name='imgPhotosSorts' style='width: 70px' type='number'/></td>");
-                        // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
-                        $("#prodMainImgImg").append("<td><img src=\""+imgList[i]+"\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"removeThis(this,"+i+");\"></td>");
+                        if (id == "prodMainImg") {
+                            $("#imgPhotosSorts").append("<td><input id='"+"main" + i + "' name='imgPhotosSorts' style='width: 70px' type='number'/></td>");
+                            // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
+                            $("#prodMainImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this,"+"$('#main" + i + "'));\"></td>");
+                        }
+                        if (id == "prodDetailImg") {
+                            $("#imgDetailSorts").append("<td><input id='"+"detail" + i + "' name='imgDetailSorts' style='width: 70px' type='number'/></td>");
+                            $("#prodDetailImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this,"+"$('#detail" + i + "'));\"></td>");
+                        }
                     }
                 }else if (imgList && imgList.length > 0 && !multiple) {
                     imgDiv.empty();
                     for (var i = 0; i < imgList.length; i ++) {
                         imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                        // $("#prodMainImgImg").append("<td><img src=\""+imgList[i]+"\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"removeThis(this,"+i+");\"></td>");
                     }
                 }else {
                     var img = $("#" + id + "Img");
@@ -680,7 +711,7 @@
     function removeThis(obj,item) {
         alert($(obj).html());
         $(obj).remove();
-        $("#"+item).remove();
+        $(item).remove();
     }
 
     $(document).ready(function() {

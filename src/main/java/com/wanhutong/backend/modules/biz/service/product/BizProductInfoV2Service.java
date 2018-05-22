@@ -366,6 +366,8 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
         String photoLists = null;
         String imgPhotosSorts = bizProductInfo.getImgPhotosSorts();
         String[] photosSort = StringUtils.split(imgPhotosSorts, ",");
+        String imgDetailSorts = bizProductInfo.getImgDetailSorts();
+        String[] detailSort = StringUtils.split(imgDetailSorts, ",");
         if (StringUtils.isNotBlank(photos)) {
             List<String> strings = Arrays.asList(photos.split("\\|"));
             for (String s : strings) {
@@ -386,8 +388,14 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
             saveProdImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
         }
 
+        if (photoDetails != null) {
+            String[] photoArr = photoDetails.split("\\|");
+            saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
+        }
+
         //设置主图和图片次序
         List<CommonImg> commonImgs = getImgList(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo.getId());
+        List<CommonImg> detailCommonImg = getImgList(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo.getId());
         for (int i = 0; i < commonImgs.size(); i++) {
             CommonImg commonImg = commonImgs.get(i);
             commonImg.setImgSort(Integer.parseInt(photosSort[i]));
@@ -398,12 +406,10 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
                 bizProductInfoDao.update(bizProductInfo);
             }
         }
-
-
-
-        if (photoDetails != null) {
-            String[] photoArr = photoDetails.split("\\|");
-            saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
+        for (int i = 0; i < detailCommonImg.size(); i++) {
+            CommonImg commonImg = detailCommonImg.get(i);
+            commonImg.setImgSort(Integer.parseInt(detailSort[i]));
+            commonImgService.save(commonImg);
         }
 
     }

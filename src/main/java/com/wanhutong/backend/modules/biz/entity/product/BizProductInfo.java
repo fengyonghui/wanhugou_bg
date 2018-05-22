@@ -2,7 +2,6 @@
  * Copyright &copy; 2017 <a href="www.wanhutong.com">wanhutong</a> All rights reserved.
  */
 package com.wanhutong.backend.modules.biz.entity.product;
-
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
@@ -65,7 +64,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	private String itemNo;
 	private String itemNoComplete;
-	private String ImgPhotosSorts;		//主图顺序
+	private String imgPhotosSorts;		//主图顺序
+    private String imgDetailSorts;      //列表图顺序
 	/**
 	 * 业务状态
 	 */
@@ -259,7 +259,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	}
 
 
-	@Length(min=1, max=50, message="品牌名称，冗余字段，提升查询效率长度必须介于 1 和 50 之间")
+
 	public String getBrandName() {
 		return brandName;
 	}
@@ -505,10 +505,18 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	}
 
 	public String getImgPhotosSorts() {
-		return ImgPhotosSorts;
+		return imgPhotosSorts;
 	}
 
 	public void setImgPhotosSorts(String imgPhotosSorts) {
-		ImgPhotosSorts = imgPhotosSorts;
+		this.imgPhotosSorts = imgPhotosSorts;
 	}
+
+    public String getImgDetailSorts() {
+        return imgDetailSorts;
+    }
+
+    public void setImgDetailSorts(String imgDetailSorts) {
+        this.imgDetailSorts = imgDetailSorts;
+    }
 }
