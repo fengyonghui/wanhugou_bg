@@ -279,7 +279,11 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			Integer recvQtys = 0;
 			Double money=0.0;
 			for (BizRequestDetail requestDetail:detilDetailList) {
-				money+=(requestDetail.getReqQty()==null?0:requestDetail.getReqQty())*requestDetail.getSkuInfo().getBuyPrice();
+				Double buyPrice =0.0;
+				if(requestDetail.getSkuInfo()!=null && requestDetail.getSkuInfo().getBuyPrice()!=null){
+					buyPrice=requestDetail.getSkuInfo().getBuyPrice();
+				}
+				money+=(requestDetail.getReqQty()==null?0:requestDetail.getReqQty())*buyPrice;
 				reqQtys += requestDetail.getReqQty();
 				recvQtys += requestDetail.getRecvQty();
 			}

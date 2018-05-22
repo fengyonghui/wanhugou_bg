@@ -289,6 +289,7 @@ public class BizRequestHeaderController extends BaseController {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			String fileName = "备货清单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			bizRequestHeader.setDataStatus("detailed");
 			List<BizRequestHeader> list = bizRequestHeaderService.findListExport(bizRequestHeader);
 			//1备货清单
 			List<List<String>> data = new ArrayList<List<String>>();
@@ -303,8 +304,16 @@ public class BizRequestHeaderController extends BaseController {
 					List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
 					if(requestDetailList.size()!=0){
 						for(BizRequestDetail requestDetail:requestDetailList){
-							BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
-							requestDetail.setSkuInfo(skuInfo);
+							BizSkuInfo skuInfo=null;
+							if(requestDetail.getSkuInfo()!=null && requestDetail.getSkuInfo().getId()!=null){
+								BizSkuInfo bizSkuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo().getId());
+								if(bizSkuInfo!=null){
+									skuInfo=bizSkuInfoService.findListProd(bizSkuInfo);
+								}
+								if(skuInfo!=null){
+									requestDetail.setSkuInfo(skuInfo);
+								}
+							}
 							requestDetail.setRequestHeader(header);
 							reqDetailList.add(requestDetail);
 						}
