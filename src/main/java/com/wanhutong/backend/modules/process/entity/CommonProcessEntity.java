@@ -128,7 +128,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 	}
 
 	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderProcess() {
-		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(type));
+		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
 	public RequestOrderProcessConfig.RequestOrderProcess getRequestOrderProcess() {
