@@ -13,7 +13,6 @@ import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
-import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
@@ -24,7 +23,6 @@ import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
@@ -37,6 +35,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
+import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -78,8 +77,7 @@ public class BizOrderHeaderController extends BaseController {
     private OfficeService officeService;
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
-    @Autowired
-    private BizCustCreditService bizCustCreditService;
+
     @Autowired
     private BizPayRecordService bizPayRecordService;
     @Autowired
@@ -100,6 +98,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderHeaderUnlineService bizOrderHeaderUnlineService;
     @Autowired
     private CommonImgService commonImgService;
+    @Autowired
+    private DefaultPropService defaultPropService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -150,7 +150,8 @@ public class BizOrderHeaderController extends BaseController {
 //			用于销售订单页面展示属于哪个采购中心哪个客户专员
             if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
                 BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
-                if (bizCustomCenterConsultant != null) {
+                if (bizCustomCenterConsultant != null && bizCustomCenterConsultant.getConsultants()!=null &&
+                        bizCustomCenterConsultant.getConsultants().getName()!=null) {
                     bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
                     model.addAttribute("orderCenter", bizCustomCenterConsultant);
                 } else {
@@ -211,33 +212,15 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
         }
-        if (bizOrderHeader.getStatu() != null && bizOrderHeader.getStatu().equals("unline")){
-            BizOrderHeaderUnline orderHeaderUnline = new BizOrderHeaderUnline();
-            orderHeaderUnline.setOrderHeader(bizOrderHeader);
-            List<BizOrderHeaderUnline> list = bizOrderHeaderUnlineService.findList(orderHeaderUnline);
-            if (list != null && !list.isEmpty()) {
-                BizOrderHeaderUnline bizOrderHeaderUnline = list.get(0);
-                bizOrderHeader.setOrderHeaderUnline(bizOrderHeaderUnline);
-                if (bizOrderHeaderUnline != null && bizOrderHeaderUnline.getId() != null) {
-                    CommonImg commonImg = new CommonImg();
-                    commonImg.setImgType(ImgEnum.UNlINE_PAYMENT_VOUCHER.getCode());
-                    commonImg.setObjectName(ImgEnum.UNlINE_PAYMENT_VOUCHER.getTableName());
-                    commonImg.setObjectId(bizOrderHeaderUnline.getId());
-                    List<CommonImg> commonImgList = commonImgService.findList(commonImg);
-                    if (commonImgList != null && !commonImgList.isEmpty()) {
-                        List<String> imgUrlList = new ArrayList<>();
-                        for (CommonImg comImg:commonImgList) {
-                            StringBuffer sb = new StringBuffer();
-                            sb.append(comImg.getImgServer()).append(comImg.getImgPath());
-                            imgUrlList.add(sb.toString());
-                        }
-                        model.addAttribute("imgUrlList",imgUrlList);
-                    }
-                }
+        if (bizOrderHeader.getId() != null) {
+            BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
+            bizOrderHeaderUnline.setOrderHeader(bizOrderHeader);
+            List<BizOrderHeaderUnline> unlineList = bizOrderHeaderUnlineService.findList(bizOrderHeaderUnline);
+            if (unlineList != null && !unlineList.isEmpty()) {
+                model.addAttribute("unlineList", unlineList);
             }
-            model.addAttribute("entity", bizOrderHeader);
-            return "modules/biz/order/bizOrderHeaderUnlineForm";
         }
+        model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
         model.addAttribute("entity", bizOrderHeader);
         return "modules/biz/order/bizOrderHeaderForm";
     }
@@ -303,6 +286,14 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "findByOrder")
     public Map<String, Object> findByOrder(BizOrderHeader bizOrderHeader, String flag, HttpServletRequest request, HttpServletResponse response, Model model) {
         User user= UserUtils.getUser();
+        DefaultProp defaultProp =new DefaultProp();
+         defaultProp.setPropKey("vend_center");
+        List<DefaultProp> defaultProps= defaultPropService.findList(defaultProp);
+        Integer vendCenterId=0;
+
+        if(defaultProps!=null){
+            vendCenterId= Integer.parseInt(defaultProps.get(0).getPropValue());
+        }
         if (StringUtils.isNotBlank(flag) && "0".equals(flag)) {
             bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
             List<Role>roleList= user.getRoleList();
@@ -338,7 +329,7 @@ public class BizOrderHeaderController extends BaseController {
                 bizPoOrderReq.setOrderHeader(orderHeader);
             }
             for (BizOrderDetail orderDetail : orderDetailList) {
-                if (StringUtils.isNotBlank(flag) && !"0".equals(flag)) {
+                if (StringUtils.isNotBlank(flag)  && !"0".equals(flag)) {
                     bizPoOrderReq.setSoLineNo(orderDetail.getLineNo());
                     bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
                     List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
@@ -347,7 +338,7 @@ public class BizOrderHeaderController extends BaseController {
                         orderDetail.setSkuInfo(skuInfo);
                         bizOrderDetailList.add(orderDetail);
                     }
-                } else {
+                } else if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=0 && !orderDetail.getSuplyis().getId().equals(vendCenterId)) {
                     BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
                     orderDetail.setSkuInfo(skuInfo);
                     bizOrderDetailList.add(orderDetail);
@@ -868,6 +859,40 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeaderService.CendorderSave(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "checkTotalExp")
+    public String checkTotalExp(BizOrderHeader bizOrderHeader) {
+        String flag = "ok";
+        Double totalDetail = bizOrderHeader.getTotalDetail();
+        Double totalExp = -bizOrderHeader.getTotalExp();
+        if (bizOrderHeader.getId() != null && !bizOrderHeader.getId().equals("")) {
+            BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+            BizOrderDetail orderDetail = new BizOrderDetail();
+            orderDetail.setOrderHeader(orderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
+            Double totalBuyPrice = 0.0;
+            if (orderDetailList != null && !orderDetailList.isEmpty()) {
+                for (BizOrderDetail bizOrderDetail:orderDetailList) {
+                    totalBuyPrice += bizOrderDetail.getBuyPrice() * bizOrderDetail.getOrdQty();
+                }
+            }
+            if (orderHeader != null && orderHeader.getCustomer() != null) {
+                BizOrderHeader header = new BizOrderHeader();
+                header.setCustomer(orderHeader.getCustomer());
+                List<BizOrderHeader> firstOrderList = bizOrderHeaderService.findListFirstOrder(header);
+                if (firstOrderList.size() == 1) {//首单
+                    if (totalExp.compareTo(totalDetail - totalBuyPrice) == 1 ) {
+                        flag = "first";
+                    }
+                }else if (totalExp.compareTo((totalDetail - totalBuyPrice)/2) == 1) {
+                    flag = "error";
+                }
+            }
+        }
+        return flag;
     }
 
 }

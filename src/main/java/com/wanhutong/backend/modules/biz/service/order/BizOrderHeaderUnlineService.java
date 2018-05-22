@@ -45,25 +45,8 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 	@Transactional(readOnly = false)
 	public void save(BizOrderHeaderUnline bizOrderHeaderUnline) {
 		super.save(bizOrderHeaderUnline);
-		BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
-        BigDecimal money = new BigDecimal(bizOrderHeader.getTotalDetail()+bizOrderHeader.getTotalExp()+bizOrderHeader.getFreight());
-        if (bizOrderHeader.getBizStatus().equals(OrderHeaderBizStatusEnum.UNPAY.getState())) {
-            if (money.compareTo(bizOrderHeaderUnline.getRealMoney())>=0) {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
-            }
-            if (money.compareTo(bizOrderHeaderUnline.getRealMoney())==0) {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-            }
-		}
-		if (bizOrderHeader.getBizStatus().equals(OrderHeaderBizStatusEnum.INITIAL_PAY.getState())) {
-            if (money.compareTo(bizOrderHeaderUnline.getRealMoney())==0) {
-                bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
-            }
-        }
-		bizOrderHeader.setReceiveTotal(bizOrderHeaderUnline.getRealMoney().doubleValue());
-		bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void delete(BizOrderHeaderUnline bizOrderHeaderUnline) {
 		super.delete(bizOrderHeaderUnline);

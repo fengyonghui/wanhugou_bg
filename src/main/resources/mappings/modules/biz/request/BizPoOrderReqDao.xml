@@ -30,6 +30,7 @@
 		<if test="requestHeader != null and requestHeader.id != null and requestHeader.id != ''">
 			LEFT JOIN biz_request_detail rd ON rd.header_id = a.so_id AND rd.line_no = a.so_line_no
 		</if>
+		 	LEFT join biz_po_header ph on ph.id = a.po_id and ph.is_prew = 0
 	</sql>
     
 	<select id="get" resultType="BizPoOrderReq">
@@ -46,7 +47,7 @@
 		FROM biz_po_order_req a
 		<include refid="bizPoOrderReqJoins"/>
 		<where>
-			
+			a.status =1
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
 				AND a.so_id = #{orderHeader.id}
 				<if test="orderDetail != null and orderDetail.skuInfo != null and orderDetail.skuInfo.id != null and orderDetail.skuInfo.id != ''">

@@ -81,7 +81,7 @@
 
                 salesVolumeChart.setOption({
                     title: {
-                        text: '采购顾问业绩统计(日)',
+                        text: '客户专员业绩统计(日)',
                         textStyle:{
                             fontSize: 16,
                             fontWeight: 'bolder',
@@ -153,7 +153,7 @@
 
                 singleSalesVolumeChart.setOption({
                     title: {
-                        text: '采购顾问业绩统计(个人/日)',
+                        text: '客户专员业绩统计(个人/日)',
                         textStyle:{
                             fontSize: 16,
                             fontWeight: 'bolder',

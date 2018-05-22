@@ -23,7 +23,7 @@ public class BizShopCart extends DataEntity<BizShopCart> {
 	private Integer custType;
 	private BizOpShelfSku skuShelfinfo;		// 货架商品ID
 	private Office office;		// 采购商ID
-	private User user;		// 采购商或采购顾问ID
+	private User user;		// 采购商或客户专员ID
 	private Integer skuQty;		// sku数量
 	/**
 	 * C端删除标记

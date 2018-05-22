@@ -359,7 +359,13 @@
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
 					</c:if>
-
+					<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+						<%--该备货单已生成采购单就显示--%>
+						<c:if test="${requestPoHeader!=null}">
+							<th>已生成的采购单</th>
+							<th>采购数量</th>
+						</c:if>
+					</c:if>
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 						<c:if test="${entity.str!='detail' && entity.str!='audit' }">
 							<th>操作</th>
@@ -380,20 +386,20 @@
 							<td>${reqDetail.skuInfo.itemNo}</td>
 							<%--<td>${reqDetail.skuInfo.skuPropertyInfos}</td>--%>
 							<td style="white-space: nowrap">
-								<c:choose>
-									<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
-									<span style="float: left">
-										<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.unitPrice}"/>
-										<a href="#"  id="updateMoney" class="icon-ok-circle"></a>
-									</span>
-										<input type="hidden"  id="detailId" value="${reqDetail.id}"/>
-									</c:when>
-									<c:otherwise>
-										${reqDetail.unitPrice}
-									</c:otherwise>
-								</c:choose>
+								<%--<c:choose>--%>
+									<%--<c:when test="${flag &&entity.str!='detail'&& entity.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">--%>
+									<%--<span style="float: left">--%>
+										<%--<input type="text"  class="input-mini" id="skuPrice" value="${reqDetail.unitPrice}"/>--%>
+										<%--<a href="#"  id="updateMoney" class="icon-ok-circle"></a>--%>
+									<%--</span>--%>
+										<%--<input type="hidden"  id="detailId" value="${reqDetail.id}"/>--%>
+									<%--</c:when>--%>
+									<%--<c:otherwise>--%>
+										<%--${reqDetail.unitPrice}--%>
+									<%--</c:otherwise>--%>
+								<%--</c:choose>--%>
 
-
+									${reqDetail.unitPrice}
 							</td>
 							<td>
 								<input  type='hidden' name='reqDetailIds' value='${reqDetail.id}'/>
@@ -404,6 +410,15 @@
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
+
+							<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
+								<%--该备货单已生成采购单就显示--%>
+								<c:if test="${requestPoHeader!=null}">
+									<td>${requestPoHeader.orderNum}</td>
+									<td>${reqDetail.poDetail.ordQty}</td>
+								</c:if>
+							</c:if>
+
 							<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 								<c:if test="${entity.str!='detail'&& entity.str!='audit'}">
 								<td>
@@ -483,7 +498,6 @@
 				</div>
 			</div>
 		</c:if>
-
 
 		<div class="form-actions">
 

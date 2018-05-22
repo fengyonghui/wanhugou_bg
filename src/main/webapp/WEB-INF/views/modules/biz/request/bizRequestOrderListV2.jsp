@@ -19,7 +19,7 @@
 					if(v=="ok"){
 						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/ExportList");
 						$("#searchForm").submit();
-						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/list");
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/listV2");
 					}
 				},{buttonsFocus:1});
 				top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -43,14 +43,14 @@
 <body>
 	<ul class="nav nav-tabs">
 		<c:if test="${source eq 'bhgh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/list?source=${source}">备货清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/listV2?source=${source}">备货清单列表</a></li>
 		</c:if>
 		<c:if test="${source eq 'xsgh'}">
-			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/list?source=${source}">销售清单列表</a></li>
+			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/listV2?source=${source}">销售清单列表</a></li>
 		</c:if>
 	</ul>
 	<c:if test="${requestHeaderPage!=null}">
-		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
+		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestOrder/listV2" method="post" class="breadcrumb form-search">
 			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 
@@ -60,8 +60,8 @@
 					<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
 				</li>
 				<li><label>采购中心：</label>
-					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${bizRequestHeader.fromOffice.id}" labelName="fromOffice.name"
-									labelValue="${bizRequestHeader.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
+					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
+									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>
@@ -91,7 +91,7 @@
 		</form:form>
 	</c:if>
 	<c:if test="${orderHeaderPage!=null}">
-		<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/list" method="post" class="breadcrumb form-search">
+		<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/listV2" method="post" class="breadcrumb form-search">
 			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 
@@ -201,9 +201,9 @@
 								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:request:selecting:supplier:edit">
-								<c:if test="${requestHeader.ownGenPoOrder}">
+
 									<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">采购</a>
-								</c:if>
+
 							</shiro:hasPermission>
 						</td>
 				</tr>
@@ -282,9 +282,9 @@
 									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
-									<c:if test="${orderHeader.ownGenPoOrder}">
-										<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
-									</c:if>
+
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
+
 								</shiro:hasPermission>
 							</td>
 

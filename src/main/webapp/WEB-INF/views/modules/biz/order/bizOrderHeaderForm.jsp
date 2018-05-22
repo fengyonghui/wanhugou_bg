@@ -53,8 +53,24 @@
                         $("#addError").css("display","inline-block")
                         return false;
                     }
-                    loading('正在提交，请稍等...');
-                    form.submit();
+                    var orderId = $("#id").val();
+                    var totalExp = $("#totalExp").val();
+                    var totalDetail = $("#totalDetail").val();
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
+                        data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+                        success:function (data) {
+                            if (data == "error") {
+                                alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
+                            } else if (data == "first"){
+                                alert("首单优惠不能低于出厂价，请修改调整金额");
+                            }else {
+                                loading('正在提交，请稍等...');
+                                form.submit();
+                            }
+                        }
+                    });
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function(error, element) {
@@ -429,16 +445,18 @@
             <span class="help-inline">自动计算</span>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">调整金额：</label>
-        <div class="controls">
-                <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font></span>
-            <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
-                <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
-            </c:if>
+    <c:if test="${entity.totalDetail != entity.receiveTotal}">
+        <div class="control-group">
+            <label class="control-label">调整金额：</label>
+            <div class="controls">
+                    <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
+                    <span class="help-inline"><font color="red">*</font></span>
+                <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
+                    <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
+                </c:if>
+            </div>
         </div>
-    </div>
+    </c:if>
     <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">
@@ -849,11 +867,38 @@
                 <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
             </div>
         </div>
+        <c:if test="${statu != '' && statu =='unline'}">
+            <div class="control-group">
+                <label class="control-label">支付信息:</label>
+                <div class="controls">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>流水号</th>
+                                <th>支付金额</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${unlineList}" var="unline">
+                                <tr>
+                                    <td>${unline.serialNum}</td>
+                                    <td>${unline.unlinePayMoney}</td>
+                                    <td>${fns:getDictLabel(unline.bizStatus,"biz_order_unline_bizStatus" ,"未知状态" )}</td>
+                                    <td><fmt:formatDate value="${unline.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </c:if>
     </c:if>
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
-                <label class="control-label">交货地址；</label>
+                <label class="control-label">交货地址:</label>
                 <div class="controls">
                     <select id="jhprovince" class="input-medium" name="bizLocation.province.id" disabled="disabled"
                             style="width:150px;text-align: center;">
@@ -877,7 +922,7 @@
                 </div>
             </div>
             <div class="control-group" id="jhadd2" style="display:none">
-                <label class="control-label">交货地址；</label>
+                <label class="control-label">交货地址:</label>
                 <div class="controls">
                     <input id="addJhAddressHref" type="button" value="新增地址" htmlEscape="false"
                            class="input-xlarge required"/>
@@ -886,7 +931,7 @@
                 </div>
             </div>
             <div class="control-group" id="jhadd3">
-                <label class="control-label">详细地址；</label>
+                <label class="control-label">详细地址:</label>
                 <div class="controls">
                     <input type="text" id="jhaddress" name="bizLocation.address" htmlEscape="false"
                            class="input-xlarge required"/>
@@ -894,7 +939,7 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">交货时间；</label>
+                <label class="control-label">交货时间:</label>
                 <div class="controls">
                     <input id="appointedDate" name="bizLocation.appointedTime" type="text" readonly="readonly"
                            maxlength="20" class="input-xlarge Wdate required"
