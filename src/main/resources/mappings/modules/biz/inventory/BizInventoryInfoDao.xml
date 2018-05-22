@@ -146,7 +146,7 @@
 	<select id="getStockAmountByCustId" resultType="com.wanhutong.backend.modules.biz.entity.dto.StockAmountDto">
 		SELECT ii.name AS name,
   		SUM(s.stock_qty) AS stockQty,
-  		SUM(bsi.base_price * s.stock_qty) AS stockAmount
+  		SUM(bsi.buy_price * s.stock_qty) AS stockAmount
 		FROM biz_inventory_info ii ,biz_inventory_sku s, biz_sku_info bsi
 		WHERE ii.id = s.inv_id
 		and bsi.id = s.sku_id

@@ -161,6 +161,9 @@
 			<if test="plateformInfo != null and plateformInfo.id !=null and  plateformInfo.id != ''">
 				AND a.plateform_id = #{plateformInfo.id}
 			</if>
+			<if test="commonProcess != null and commonProcess.type !=null and commonProcess.type != ''">
+				AND process.type = #{commonProcess.type}
+			</if>
 		</where>
 		GROUP BY a.id
 		) n
@@ -197,6 +200,9 @@
 			</if>
 			<if test="plateformInfo != null and plateformInfo.id !=null and  plateformInfo.id != ''">
 				AND b.plateform_id = #{plateformInfo.id}
+			</if>
+			<if test="commonProcess != null and commonProcess.type !=null and commonProcess.type != ''">
+				AND cp.type = #{commonProcess.type}
 			</if>
 		</where>
 		GROUP BY b.id
