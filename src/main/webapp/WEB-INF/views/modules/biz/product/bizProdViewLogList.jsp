@@ -41,7 +41,8 @@
 				<li><label>采购中心：</label>
 				<sys:treeselect id="center" name="center.id" value="${bizProdViewLog.center.id}" labelName="center.name"
 								labelValue="${bizProdViewLog.center.name}"  notAllowSelectParent="true" allowClear="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
+								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex"
+								cssClass="input-medium required" dataMsgRequired="必填信息">
 				</sys:treeselect>
 				</li>
 			</c:if>
