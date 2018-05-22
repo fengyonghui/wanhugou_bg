@@ -114,8 +114,16 @@ public class BizRequestHeaderController extends BaseController {
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
 			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
 			for(BizRequestDetail requestDetail:requestDetailList){
-				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
-				requestDetail.setSkuInfo(skuInfo);
+				BizSkuInfo skuInfo=null;
+				if(requestDetail.getSkuInfo()!=null && requestDetail.getSkuInfo().getId()!=null){
+					BizSkuInfo bizSkuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo().getId());
+					if(bizSkuInfo!=null){
+						skuInfo=bizSkuInfoService.findListProd(bizSkuInfo);
+					}
+				}
+				if(skuInfo!=null){
+					requestDetail.setSkuInfo(skuInfo);
+				}
 				reqDetailList.add(requestDetail);
 			}
 		}
