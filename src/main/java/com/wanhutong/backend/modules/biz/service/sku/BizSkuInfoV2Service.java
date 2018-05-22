@@ -293,6 +293,7 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
 	public void delete(BizSkuInfo bizSkuInfo) {
+		bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_DELETE);
 		super.delete(bizSkuInfo);
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(bizSkuInfo.getId());

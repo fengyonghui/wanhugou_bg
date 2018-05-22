@@ -14,11 +14,9 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProdPropertyInfoService;
-import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
@@ -42,7 +40,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,7 +135,7 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizSkuInfo bizSkuInfo, RedirectAttributes redirectAttributes) {
-		bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_DELETE);
+		//bizSkuInfo.setDelFlag(BizSkuInfo.DEL_FLAG_DELETE);
 		bizSkuInfoService.delete(bizSkuInfo);
 		addMessage(redirectAttributes, "删除商品sku成功");
 		if(bizSkuInfo.getSign()==0){
