@@ -162,6 +162,13 @@ public class BizVarietyFactorController extends BaseController {
 						}
 					}
 				}
+			}else{
+				if(i>0){
+					if(Integer.parseInt(minQtyArr[i])<=Integer.parseInt(maxQtyArr[i-1])){
+						flag = "false";
+						break;
+					}
+				}
 			}
 			if(flag!="" && flag.equals("true") && Integer.parseInt(maxQtyArr[i])!=9999){
 				flag = "error";
