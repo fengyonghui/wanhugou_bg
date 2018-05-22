@@ -23,7 +23,7 @@
 		LEFT JOIN sys_office soc on soc.id=a.cust_id
 		LEFT JOIN sys_office sox on sox.id=a.center_id
 		LEFT JOIN sys_user suc on suc.id=a.create_id
-		LEFT JOIN sys_user sug on sug.id=a.consultant_id
+		LEFT JOIN sys_user sug on sug.id=a.consultant_id and sug.status=1
 		LEFT JOIN sys_user suu on suu.company_id=soc.id and suu.status=1
 	</sql>
 

@@ -1642,7 +1642,7 @@ SELECT
 		LEFT JOIN sys_office AS office  ON oAddress.office_id = office.id
 		WHERE office.id = so.id AND oAddress.type = 2 limit 1) AS province,
 		(SELECT
-		SUM(bsi.base_price * s.stock_qty)
+		SUM(bsi.buy_price * s.stock_qty)
 		FROM biz_inventory_info ii ,biz_inventory_sku s, biz_sku_info bsi
 		WHERE ii.id = s.inv_id
 		and bsi.id = s.sku_id
@@ -1721,7 +1721,7 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
     </select>
     <select id="getStockAmountByOfficeId" resultType="BigDecimal">
 		SELECT
-		SUM(bsi.base_price * s.stock_qty)
+		SUM(bsi.buy_price * s.stock_qty)
 		FROM biz_inventory_info ii ,biz_inventory_sku s, biz_sku_info bsi
 		WHERE ii.id = s.inv_id
 		and bsi.id = s.sku_id
