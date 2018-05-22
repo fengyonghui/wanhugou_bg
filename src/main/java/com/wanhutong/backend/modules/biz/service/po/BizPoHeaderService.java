@@ -114,7 +114,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
     private void updateProcessToInit(BizPoHeader bizPoHeader) {
             PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.processMap.get(purchaseOrderProcessConfig.getDefaultProcessId());
+            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.getProcessMap().get(purchaseOrderProcessConfig.getDefaultProcessId());
 
             CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
             commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
@@ -377,9 +377,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         // 当前流程
-        PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.processMap.get(Integer.valueOf(currentType));
+        PurchaseOrderProcessConfig.PurchaseOrderProcess currentProcess = purchaseOrderProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
         // 下一流程
-        PurchaseOrderProcessConfig.PurchaseOrderProcess nextProcess = purchaseOrderProcessConfig.processMap.get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
+        PurchaseOrderProcessConfig.PurchaseOrderProcess nextProcess = purchaseOrderProcessConfig.getProcessMap().get(CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
         if (nextProcess == null) {
             return "操作失败,当前流程已经结束!";
         }
