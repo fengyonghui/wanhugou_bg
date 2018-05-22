@@ -18,6 +18,7 @@
 		<result property="delFlag" column="status"/>
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
+		<result property="prodType" column="prodType"/>
 		<association property="office" javaType="Office" column="office.id">
 			<id property="id" column="office.id"/>
 			<result property="name" column="office.name"/>
@@ -68,7 +69,8 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_time AS "updateDate",
-		a.update_id AS "updateBy.id"
+		a.update_id AS "updateBy.id",
+		a.prod_type AS "prodType"
 	</sql>
 	
 	<sql id="bizProductInfoJoins">
@@ -138,6 +140,9 @@
 			<if test="office != null and office.id !=null and office.id != ''">
 				AND a.vendor_id = #{office.id}
 			</if>
+			<if test="prodType != null and prodType != ''">
+				AND a.prod_type = #{prodType}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -191,7 +196,8 @@
 			create_time,
 			u_version,
 			update_time,
-			update_id
+			update_id,
+			prod_type
 		) VALUES (
 			#{name},
 			#{prodCode},
@@ -214,7 +220,8 @@
 			#{createDate},
 			#{uVersion},
 			#{updateDate},
-			#{updateBy.id}
+			#{updateBy.id},
+			#{prodType}
 		)
 	</insert>
 	

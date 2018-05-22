@@ -41,7 +41,14 @@
                         loading('正在提交，请稍等...');
                         form.submit();
                     } else {
-                        alert("请选择生成采购单的详情");
+                        var prew = $("#prew").val();
+                        var type = $("#type").val();
+                        if( prew == 'prew' || type == 'createPay' || type == '') {
+                            loading('正在提交，请稍等...');
+                            form.submit();
+                        }else {
+                            alert("请选择生成采购单的详情");
+                        }
                     }
                 },
                 errorContainer: "#messageBox",
@@ -166,6 +173,8 @@
            method="post" class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <form:hidden path="bizPoPaymentOrder.id" id="paymentOrderId"/>
+    <input id="prew" type="hidden" value="${prewStatus}"/>
+    <input id="type" type="hidden" value="${type}"/>
     <sys:message content="${message}"/>
     <input type="hidden" name="vendOffice.id" value="${vendorId}">
     <input id="str" type="hidden" value="${bizPoHeader.str}"/>

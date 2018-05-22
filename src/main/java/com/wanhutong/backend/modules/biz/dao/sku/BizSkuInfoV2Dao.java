@@ -26,5 +26,7 @@ public interface BizSkuInfoV2Dao extends CrudDao<BizSkuInfo> {
 
     List<BizSkuInfo> findListIgnoreStatus(BizSkuInfo oldSkuEntity);
 
+    List<BizSkuInfo> findPurseSkuList(BizSkuInfo bizSkuInfo);
+
     void recovery(BizSkuInfo bizSkuInfo);
 }

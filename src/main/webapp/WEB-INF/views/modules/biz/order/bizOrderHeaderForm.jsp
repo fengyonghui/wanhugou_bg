@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 
@@ -972,7 +973,9 @@
     <thead>
     <tr>
         <th>详情行号</th>
-        <th>货架名称</th>
+        <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+            <th>货架名称</th>
+        </c:if>
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
@@ -987,7 +990,9 @@
         <th>已发货数量</th>
         <th>发货方</th>
         <c:if test="${bizOrderHeader.flag=='check_pending'}">
-            <th>本地备货</th>
+            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                <th>本地备货</th>
+            </c:if>
         </c:if>
         <th>创建时间</th>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
@@ -1003,20 +1008,22 @@
             <td>
                     ${bizOrderDetail.lineNo}
             </td>
-            <td>
-                    ${bizOrderDetail.shelfInfo.opShelfInfo.name}
-            </td>
+            <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                <td>
+                        ${bizOrderDetail.shelfInfo.opShelfInfo.name}
+                </td>
+            </c:if>
             <td>
                 <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                     ${bizOrderDetail.skuName}
                 </c:if>
                 <c:if test="${empty entity.orderNoEditable || empty entity.orderDetails || empty bizOrderHeader.flag}">
                     <c:if test="${empty entity.orderNoEditable && empty entity.orderDetails && empty bizOrderHeader.flag && empty bizOrderHeader.clientModify}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}">
+                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
                                 ${bizOrderDetail.skuName}</a>
                     </c:if>
                     <c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">
-                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}">
+                        <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">
                             ${bizOrderDetail.skuName}</a>
                     </c:if>
                 </c:if>
@@ -1056,18 +1063,18 @@
                 ${bizOrderDetail.suplyis.name}
             </td>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
-                <td>
-                    <c:choose>
-                        <c:when test="${bizOrderDetail.suplyis.id!=0}">
-                            <input type="checkbox" checked="checked" name="localSendIds" value="${bizOrderDetail.id}"/>
-                        </c:when>
-                        <c:otherwise>
-                            <input type="checkbox" name="localSendIds" value="${bizOrderDetail.id}"/>
-                        </c:otherwise>
-                    </c:choose>
-
-
-                </td>
+                <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                    <td>
+                        <c:choose>
+                            <c:when test="${bizOrderDetail.suplyis.id!=0}">
+                                <input type="checkbox" checked="checked" name="localSendIds" value="${bizOrderDetail.id}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <input type="checkbox" name="localSendIds" value="${bizOrderDetail.id}"/>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                </c:if>
             </c:if>
             <td>
                 <fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -1076,13 +1083,13 @@
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <td>
                         <c:if test="${empty bizOrderHeader.clientModify}">
-                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}">修改</a>
-                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}"
+                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}">修改</a>
+                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}"
                                onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
                         </c:if>
                         <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}">修改</a>
-                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}"
+                            <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}">修改</a>
+                            <a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}"
                                onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>
                         </c:if>
                     </td>
@@ -1099,12 +1106,12 @@
                 <shiro:hasPermission name="biz:order:bizOrderDetail:edit">
                     <c:if test="${empty bizOrderHeader.clientModify}">
                     <input type="button"
-                           onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}';"
+                           onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderType=${orderType}';"
                            class="btn btn-primary"
                            value="订单商品信息添加"/></c:if>
                     <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
                         <input type="button"
-                               onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}';"
+                               onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}&orderType=${orderType}';"
                                class="btn btn-primary"
                                value="订单商品信息添加"/>
                     </c:if>

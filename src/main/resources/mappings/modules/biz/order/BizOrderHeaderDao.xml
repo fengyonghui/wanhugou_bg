@@ -1848,7 +1848,7 @@ FROM
 	INNER JOIN biz_order_detail bod on bod.order_id = a.id
 	INNER JOIN biz_sku_info bsi on bod.sku_id = bsi.id
 	INNER JOIN biz_product_info pi ON bsi.prod_id = pi.id
-	WHERE 1=1 and a.order_type = 1
+	WHERE 1=1 and a.order_type != 4
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">
 			AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
 		</if>

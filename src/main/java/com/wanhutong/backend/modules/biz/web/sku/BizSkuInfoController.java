@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.ProdTypeEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -101,6 +102,7 @@ public class BizSkuInfoController extends BaseController {
 	public String list(BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizSkuInfo> page = bizSkuInfoService.findPage(new Page<BizSkuInfo>(request, response), bizSkuInfo); 
 		model.addAttribute("page", page);
+		model.addAttribute("prodType", bizSkuInfo.getProductInfo().getProdType());
 		return "modules/biz/sku/bizSkuInfoList";
 	}
 	
@@ -108,6 +110,7 @@ public class BizSkuInfoController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizSkuInfo bizSkuInfo, Model model) {
 		model.addAttribute("bizSkuInfo", bizSkuInfo);
+		model.addAttribute("prodType",bizSkuInfo.getProductInfo().getProdType());
 //		BizProdPropertyInfo bizProdPropertyInfo =new BizProdPropertyInfo();
 //		bizProdPropertyInfo.setProductInfo(bizSkuInfo.getProductInfo());
 		//Map<String,List<BizProdPropValue>> map=bizProdPropertyInfoService.findMapList(bizProdPropertyInfo);
@@ -129,7 +132,7 @@ public class BizSkuInfoController extends BaseController {
 		}
 		bizSkuInfoService.save(bizSkuInfo);
 		addMessage(redirectAttributes, "保存商品sku成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId()+"&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
 	}
 
 	@RequiresPermissions("biz:sku:bizSkuInfo:edit")
@@ -139,9 +142,9 @@ public class BizSkuInfoController extends BaseController {
 		bizSkuInfoService.delete(bizSkuInfo);
 		addMessage(redirectAttributes, "删除商品sku成功");
 		if(bizSkuInfo.getSign()==0){
-			return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage";
+			return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
         }
-		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId()+"&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
 	}
 
 
@@ -153,9 +156,9 @@ public class BizSkuInfoController extends BaseController {
 		bizSkuInfoService.recovery(bizSkuInfo);
 		addMessage(redirectAttributes, "恢复商品sku成功");
 		if(bizSkuInfo.getSign()==0){
-			return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage";
+			return "redirect:"+Global.getAdminPath()+"/biz/sku/bizSkuInfo/?repage&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
 		}
-		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId();
+		return "redirect:"+Global.getAdminPath()+"/biz/product/bizProductInfo/form?id="+bizSkuInfo.getProductInfo().getId()+"&productInfo.prodType="+bizSkuInfo.getProductInfo().getProdType();
 	}
 
 
@@ -336,5 +339,29 @@ public class BizSkuInfoController extends BaseController {
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForCendProd(bizSkuInfo);
 		return listMap;
 	}
+
+    /**
+     * 代采订单添加详情时。搜索商品
+     * @param bizSkuInfo
+     * @return
+     */
+	@ResponseBody
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findPurseSkuList")
+	public List<BizSkuInfo> findPurseSkuList(BizSkuInfo bizSkuInfo) {
+//        BizProductInfo bizProductInfo = new BizProductInfo();
+//        bizProductInfo.setProdType(Byte.parseByte(ProdTypeEnum.CUSTPROD.getType()));
+//        bizSkuInfo.setProductInfo(bizProductInfo);
+//        List<BizSkuInfo> skuList = bizSkuInfoService.findList(bizSkuInfo);
+        List<BizSkuInfo> purseSkuList = bizSkuInfoService.findPurseSkuList(bizSkuInfo);
+        for (BizSkuInfo skuInfo:purseSkuList) {
+            AttributeValueV2 valueV2 = new AttributeValueV2();
+            valueV2.setObjectId(skuInfo.getId());
+            valueV2.setObjectName("biz_sku_info");
+            List<AttributeValueV2> attributeValueV2List = attributeValueV2Service.findList(valueV2);
+            skuInfo.setAttrValueList(attributeValueV2List);
+        }
+        return purseSkuList;
+    }
 
 }
