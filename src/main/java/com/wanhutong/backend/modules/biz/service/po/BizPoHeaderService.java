@@ -459,6 +459,16 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public String payOrder(Integer poHeaderId, Integer paymentOrderId, BigDecimal payTotal, String img) {
+        // 当前流程
+        User user = UserUtils.getUser();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.FINANCE.getState());
+        Role role1 = new Role();
+        role1.setEnname(RoleEnNameEnum.TELLER.getState());
+        if (!user.isAdmin() && !user.getRoleList().contains(role) && !user.getRoleList().contains(role1)) {
+            return "操作失败,该用户没有权限!";
+        }
+
         BizPoHeader bizPoHeader = this.get(poHeaderId);
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(paymentOrderId);
 
@@ -472,15 +482,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.ALL_PAY.getStatus());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
-        // 当前流程
-        User user = UserUtils.getUser();
-        Role role = new Role();
-        role.setEnname(RoleEnNameEnum.FINANCE.getState());
-        Role role1 = new Role();
-        role1.setEnname(RoleEnNameEnum.TELLER.getState());
-        if (!user.isAdmin() && !user.getRoleList().contains(role) && !user.getRoleList().contains(role1)) {
-            return "操作失败,该用户没有权限!";
-        }
 
         // 状态改为全款或首款支付
 //      DOWN_PAYMENT(1, "付款支付"),
