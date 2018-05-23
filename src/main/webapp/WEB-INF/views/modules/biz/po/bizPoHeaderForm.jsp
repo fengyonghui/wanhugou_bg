@@ -305,7 +305,7 @@
                     <input id="payTotal" name="planPay" type="text"
                            <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
                            value="${bizPoHeader.bizPoPaymentOrder.id != null ?
-                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight)}"
+                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)}"
                            htmlEscape="false" maxlength="30" class="input-xlarge"/>
                 </div>
             </div>
