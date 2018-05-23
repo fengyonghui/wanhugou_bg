@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.DefaultPropEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -106,8 +107,10 @@ public class BizOrderDetailController extends BaseController {
                     BizSkuInfo skuInfo = bizSkuInfoV2Service.get(bizOrderDetail.getSkuInfo().getId());
                     model.addAttribute("skuInfo",skuInfo);
                 }
-
             }
+            BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderHeader.getId());
+            Office customer = bizOrderHeader.getCustomer();
+            model.addAttribute("customer",customer);
             BizOrderHeader ord = bizOrderHeaderService.get(orderHeader.getId());
 			model.addAttribute("orderH", ord);//用于页面订单供货中显示供货数量
 			model.addAttribute("entity", bizOrderDetail);
