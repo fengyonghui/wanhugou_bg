@@ -277,18 +277,16 @@
 					<td>
 						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-							<td>
-								<shiro:hasPermission name="biz:order:bizOrderHeader:view">
-									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
-								</shiro:hasPermission>
-								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+					<td>
+						<shiro:hasPermission name="biz:order:bizOrderHeader:view">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:request:selecting:supplier:edit">
 
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
+							<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
 
-								</shiro:hasPermission>
-							</td>
-
-
+						</shiro:hasPermission>
+					</td>
 				</tr>
 			</c:forEach>
 			</tbody>

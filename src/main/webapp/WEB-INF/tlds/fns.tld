@@ -257,5 +257,13 @@
     <function-signature>java.lang.String toJsonString(java.lang.Object)</function-signature>
     <example>${fns:toJson(object)}</example>  
   </function>
+
+  <function>
+    <description>查看是否有权限</description>
+    <name>hasRole</name>
+    <function-class>com.wanhutong.backend.common.utils.RoleUtils</function-class>
+    <function-signature>java.lang.Boolean hasRole(java.util.Set, java.lang.String)</function-signature>
+    <example>${fns:hasRole(set, str)}</example>
+  </function>
   
 </taglib>
