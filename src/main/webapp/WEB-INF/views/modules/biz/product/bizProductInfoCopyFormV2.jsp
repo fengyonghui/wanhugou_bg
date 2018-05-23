@@ -56,6 +56,7 @@
 <form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoV2/saveCopy" method="post"
            class="form-horizontal">
     <form:hidden path="id" id="id"/>
+    <form:hidden path="prodType"/>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
     <sys:message content="${message}"/>
     <div class="control-group">
