@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.sku.BizCustSkuDao">
+    
+	<sql id="bizCustSkuColumns">
+		a.id AS "id",
+		a.cust_id AS "customer.id",
+		cust.name AS "customer.name",
+		a.sku_id AS "skuInfo.id",
+		sku.name AS "skuInfo.name",
+		sku.item_no AS "skuInfo.itemNo",
+		sku.part_no AS "skuInfo.partNo",
+		a.unit_price AS "unitPrice"
+	</sql>
+	
+	<sql id="bizCustSkuJoins">
+		LEFT JOIN biz_sku_info sku ON sku.id = a.sku_id
+		LEFT JOIN sys_office cust ON cust.id = a.cust_id
+	</sql>
+    
+	<select id="get" resultType="BIzCustSku">
+		SELECT 
+			<include refid="bizCustSkuColumns"/>
+		FROM biz_cust_sku a
+		<include refid="bizCustSkuJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BIzCustSku">
+		SELECT 
+			<include refid="bizCustSkuColumns"/>
+		FROM biz_cust_sku a
+		<include refid="bizCustSkuJoins"/>
+		<where>
+			
+			<if test="customer != null and customer.id != null and customer.id != ''">
+				AND a.cust_id = #{customer.id}
+			</if>
+			<if test="customer != null and customer.name != null and customer.name != ''">
+				AND cust.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.name},'%')</if>
+			</if>
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.sku_id = #{skuInfo.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.name != null and skuInfo.name != ''">
+				AND sku.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
+			</if>
+			<if test="skuInfo != null and skuInfo.itemNo != null and skuInfo.itemNo != ''">
+				AND sku.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.itemNo},'%')</if>
+			</if>
+			<if test="skuInfo != null and skuInfo.partNo != null and skuInfo.partNo != ''">
+				AND sku.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BIzCustSku">
+		SELECT 
+			<include refid="bizCustSkuColumns"/>
+		FROM biz_cust_sku a
+		<include refid="bizCustSkuJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_cust_sku(
+			id,
+			cust_id,
+			sku_id,
+			unit_price
+		) VALUES (
+			#{id},
+			#{customer.id},
+			#{skuInfo.id},
+			#{unitPrice}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_cust_sku SET 	
+			cust_id = #{customer.id},
+			sku_id = #{skuInfo.id},
+			unit_price = #{unitPrice}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_cust_sku
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

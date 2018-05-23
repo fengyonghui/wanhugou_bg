@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizPurchaserVendorDao">
+    
+	<sql id="bizPurchaserVendorColumns">
+		a.id AS "id",
+		a.vendor_id AS "vendor.id",
+		vend.name AS "vendor.name",
+		a.purchaser_id AS "purchaser.id",
+		purchaser.name AS "purchaser.name",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+	</sql>
+	
+	<sql id="bizPurchaserVendorJoins">
+		LEFT JOIN sys_office vend ON vend.id = a.vendor_id
+		LEFT JOIN sys_office purchaser ON purchaser.id = a.purchaser_id
+	</sql>
+    
+	<select id="get" resultType="BizPurchaserVendor">
+		SELECT 
+			<include refid="bizPurchaserVendorColumns"/>
+		FROM biz_purchaser_vendor a
+		<include refid="bizPurchaserVendorJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizPurchaserVendor">
+		SELECT 
+			<include refid="bizPurchaserVendorColumns"/>
+		FROM biz_purchaser_vendor a
+		<include refid="bizPurchaserVendorJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			AND vend.status = 1
+			AND purchaser.status = 1
+			<if test="vendor != null and vendor.id != null and vendor.id != ''">
+				AND a.vendor_id = #{vendor.id}
+			</if>
+			<if test="vendor != null and vendor.name != null and vendor.name != ''">
+				AND vend.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{vendor.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{vendor.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{vendor.name},'%')</if>
+			</if>
+			<if test="purchaser != null and purchaser.id != null and purchaser.id != ''">
+				AND a.purchaser_id = #{purchaser.id}
+			</if>
+			<if test="purchaser != null and purchaser.name != null and purchaser.name != ''">
+				AND purchaser.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{purchaser.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{purchaser.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{purchaser.name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizPurchaserVendor">
+		SELECT 
+			<include refid="bizPurchaserVendorColumns"/>
+		FROM biz_purchaser_vendor a
+		<include refid="bizPurchaserVendorJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_purchaser_vendor(
+			id,
+			vendor_id,
+			purchaser_id,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{vendor.id},
+			#{purchaser.id},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_purchaser_vendor SET 	
+			vendor_id = #{vendor.id},
+			purchaser_id = #{purchaser.id},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_purchaser_vendor SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
