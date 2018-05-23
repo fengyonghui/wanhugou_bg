@@ -28,6 +28,10 @@ public enum RoleEnNameEnum {
      */
     FINANCE("finance", "财务"),
     /**
+     * 出纳
+     */
+    TELLER("teller", "出纳"),
+    /**
      * 备货专员
      */
     STOCKREADYCOMMISSIONER("stock_ready_commissioner", "备货专员"),

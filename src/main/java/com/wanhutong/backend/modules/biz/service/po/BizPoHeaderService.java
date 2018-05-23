@@ -476,7 +476,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         User user = UserUtils.getUser();
         Role role = new Role();
         role.setEnname(RoleEnNameEnum.FINANCE.getState());
-        if (!user.isAdmin() && !user.getRoleList().contains(role)) {
+        Role role1 = new Role();
+        role1.setEnname(RoleEnNameEnum.TELLER.getState());
+        if (!user.isAdmin() && !user.getRoleList().contains(role) && !user.getRoleList().contains(role1)) {
             return "操作失败,该用户没有权限!";
         }
 
