@@ -95,11 +95,25 @@
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
         </div>
         <div id="prodMainImgDiv">
-            <c:if test="${entity.photos != null && entity.photos != ''}">
-                <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
-                    <img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();">
-                </c:forEach>
-            </c:if>
+            <table>
+                <tr id="prodMainImgImg">
+                        <%--<c:if test="${entity.photos != null && entity.photos != ''}">--%>
+                        <%--<c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">--%>
+                    <c:forEach items="${photosMap}" var="photo">
+                        <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,${photo.value});"></td>
+                    </c:forEach>
+                </tr>
+                <tr id="imgPhotosSorts">
+                    <c:forEach items="${photosMap}" var="photo">
+                        <td><input id="${photo.value}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
+                    </c:forEach>
+                </tr>
+            </table>
+            <%--<c:if test="${entity.photos != null && entity.photos != ''}">--%>
+                <%--<c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">--%>
+                    <%--<img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();">--%>
+                <%--</c:forEach>--%>
+            <%--</c:if>--%>
         </div>
     </div>
     <div class="control-group">
@@ -140,11 +154,23 @@
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodDetailImg', true)" value="上传图片" multiple="multiple" id="prodDetailImg"/>
         </div>
         <div id="prodDetailImgDiv">
-            <c:if test="${entity.photoDetails != null && entity.photoDetails != ''}">
-                <c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">
-                    <img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">
-                </c:forEach>
-            </c:if>
+            <table>
+                <tr id="prodDetailImgImg">
+                    <c:forEach items="${detailsMap}" var="detail">
+                        <td><img src="${detail.key}" customInput="prodDetailImgImg" style='width: 100px' onclick="removeThis(this,'detail'+${detail.value});"></td>
+                    </c:forEach>
+                </tr>
+                <tr id="imgDetailSorts">
+                    <c:forEach items="${detailsMap}" var="detail">
+                        <td><input id="detail${detail.value}" name="imgDetailSorts" type="number" style="width: 100px" value="${detail.value}"/></td>
+                    </c:forEach>
+                </tr>
+            </table>
+            <%--<c:if test="${entity.photoDetails != null && entity.photoDetails != ''}">--%>
+                <%--<c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">--%>
+                    <%--<img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">--%>
+                <%--</c:forEach>--%>
+            <%--</c:if>--%>
         </div>
     </div>
     <div class="control-group">
@@ -607,7 +633,16 @@
                 var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
                 if (imgList && imgList.length > 0 && multiple) {
                     for (var i = 0; i < imgList.length; i ++) {
-                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        if (id == "prodMainImg") {
+                            $("#imgPhotosSorts").append("<td><input id='"+"main" + i + "' name='imgPhotosSorts' style='width: 70px' type='number'/></td>");
+                            // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
+                            $("#prodMainImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this,"+"$('#main" + i + "'));\"></td>");
+                        }
+                        if (id == "prodDetailImg") {
+                            $("#imgDetailSorts").append("<td><input id='"+"detail" + i + "' name='imgDetailSorts' style='width: 70px' type='number'/></td>");
+                            $("#prodDetailImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this,"+"$('#detail" + i + "'));\"></td>");
+                        }
                     }
                 }else if (imgList && imgList.length > 0 && !multiple) {
                     imgDiv.empty();
@@ -662,6 +697,12 @@
                     .replace("$id", j + "")
                     .replace("$id", j + ""));
         }
+    }
+
+    function removeThis(obj,item) {
+        alert($(obj).html());
+        $(obj).remove();
+        $(item).remove();
     }
 
     $(document).ready(function() {

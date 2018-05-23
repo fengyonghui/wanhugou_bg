@@ -112,13 +112,13 @@
                 <tr id="prodMainImgImg">
                     <%--<c:if test="${entity.photos != null && entity.photos != ''}">--%>
                         <%--<c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">--%>
-                        <c:forEach items="${photosMap}" var="photo">
-                            <td><img src="${photo.value}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,${photo.key});"></td>
+                        <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                            <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,'#main'+${status.index});"></td>
                         </c:forEach>
                 </tr>
                 <tr id="imgPhotosSorts">
-                        <c:forEach items="${photosMap}" var="photo">
-                            <td><input id="${photo.key}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.key}"/></td>
+                        <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                            <td><input id="main${status.index}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
                         </c:forEach>
                 </tr>
             </table>
@@ -165,13 +165,13 @@
         <div id="prodDetailImgDiv">
             <table>
                 <tr id="prodDetailImgImg">
-                    <c:forEach items="${detailsMap}" var="detail">
-                        <td><img src="${detail.value}" customInput="prodDetailImgImg" style='width: 100px' onclick="removeThis(this,'detail'+${detail.key});"></td>
+                    <c:forEach items="${detailsMap}" var="detail" varStatus="status">
+                        <td><img src="${detail.key}" customInput="prodDetailImgImg" style='width: 100px' onclick="removeThis(this,'#detail'+${status.index});"></td>
                     </c:forEach>
                 </tr>
                 <tr id="imgDetailSorts">
-                    <c:forEach items="${detailsMap}" var="detail">
-                        <td><input id="detail${detail.key}" name="imgDetailSorts" type="number" style="width: 100px" value="${detail.key}"/></td>
+                    <c:forEach items="${detailsMap}" var="detail" varStatus="status">
+                        <td><input id="detail${status.index}" name="imgDetailSorts" type="number" style="width: 100px" value="${detail.value}"/></td>
                     </c:forEach>
                 </tr>
             </table>
@@ -711,6 +711,7 @@
 
     function removeThis(obj,item) {
         alert($(obj).html());
+        alert($(item).html());
         $(obj).remove();
         $(item).remove();
     }

@@ -52,6 +52,7 @@
 				AND a.img_server = #{imgServer}
 			</if>
 		</where>
+		ORDER BY a.img_sort
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
