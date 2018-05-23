@@ -24,6 +24,7 @@
 			<result column="productInfo.brandName"  property="brandName"/>
 			<result column="productInfo.prodCode" property="prodCode"/>
 			<result column="productInfo.vendorName" property="vendorName"/>
+			<result column="productInfo.prodType" property="prodType"/>
 			<association property="office" javaType="Office" column="office.id">
 				<id column="office.id"  property="id"/>
 			</association>
@@ -68,7 +69,8 @@
 		bpi.img_url AS "productInfo.imgUrl",
 		bpi.brand_name AS "productInfo.brandName",
 		bpi.prod_code AS "productInfo.prodCode",
-		bpi.vendor_id AS "productInfo.office.id"
+		bpi.vendor_id AS "productInfo.office.id",
+		bpi.prod_type AS "productInfo.prodType"
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
@@ -140,6 +142,9 @@
 			</if>
 			<if test="productInfo != null and productInfo.id !=null and productInfo.id!=''">
 				AND a.prod_id =#{productInfo.id}
+			</if>
+			<if test="productInfo != null and productInfo.prodType !=null and productInfo.prodType != ''">
+				AND bpi.prod_type =#{productInfo.prodType}
 			</if>
 			<if test="productInfo != null and productInfo.name !=null and productInfo.name!=''">
 				AND bpi.name LIKE
@@ -417,6 +422,11 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="recovery">
+		UPDATE biz_sku_info SET
+		status = #{DEL_FLAG_NORMAL}
+		WHERE id = #{id}
+	</update>
 
 	<select id="getSkuInfoByItemNoProdId" resultType="BizSkuInfo">
 		SELECT
@@ -432,6 +442,24 @@
 		WHERE
 		biz_sku_prop_value.sku_id = #{id}
 	</delete>
+
+	<select id="findPurseSkuList" resultType="BizSkuInfo">
+		SELECT
+			a.id AS "id",
+			a.name AS "name",
+			a.part_no AS "partNo",
+			a.item_no AS "itemNo",
+			a.buy_price AS "buyPrice",
+			a.prod_id AS "productInfo.id",
+			bpi.prod_type AS "productInfo.prodType"
+		FROM biz_sku_info a
+		LEFT JOIN biz_product_info bpi ON bpi.id = a.prod_id
+		LEFT JOIN sys_office vend ON vend.id = bpi.vendor_id
+		LEFT JOIN	biz_purchaser_vendor bpv ON bpv.vendor_id = vend.id
+		LEFT JOIN sys_office purchaser ON purchaser.id = bpv.purchaser_id
+		WHERE purchaser.id = #{purchaser.id}
+	</select>
+
 
 	<!-- 商品恢复 -->
 	<update id="recovery">

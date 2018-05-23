@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
+<%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ProdTypeEnum" %>
 <html>
 <head>
     <title>订单详情管理</title>
@@ -11,6 +13,9 @@
     <script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
+            $("input[name='nowPrice']").each(function () {
+
+            });
 			$("#inputForm").validate({
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -71,7 +76,56 @@
                 }
             })
         });
+
+        $("#searchPurseData").click(function () {
+                var skuName=$("#skuName").val();
+                $("#bizSkuNameCopy").val(skuName);
+                var skuCode =$("#skuCode").val();
+                $("#bizSkuCodeCopy").val(skuCode);
+                var itemNo = $("#itemNo").val();
+                $("#bizItemNoCopy").val(itemNo);
+                var purchaser = $("#purchaserId").val();
+                // if (purchaser == null){
+                //     alert("请选择采购商");
+                // }
+                $("#purchaserCopy").val(purchaser);
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/biz/sku/bizSkuInfo/findPurseSkuList",
+                    data:$('#searchPurseForm').serialize(),
+                    success:function (data) {
+                        var trdatas='';
+                        $.each(data,function (index,skuInfo) {
+                            trdatas+= "<tr id='"+skuInfo.id+"'>";
+                            trdatas+="<td>"+skuInfo.name+"</td>";
+                            trdatas+="<td>"+skuInfo.partNo+"</td>";
+                            trdatas+="<td>"+skuInfo.itemNo+"</td>";
+                            var arr=skuInfo.attrValueList;
+                            if(arr!=null){
+                                var attribute="";<%--页面的属性值遍历--%>
+                                for(var jj=0;jj<arr.length;jj++){
+                                    if (jj==arr.length-1) {
+                                        attribute += arr[jj].attributeInfo.name+":"+arr[jj].value;
+                                    } else {
+                                        attribute += arr[jj].attributeInfo.name+":"+arr[jj].value+",";
+                                    }
+                                }
+                            }else{
+                                var attribute="";
+                            }
+                            trdatas+="<td>"+attribute+"</td>";
+                            trdatas+="<td><input type='number' class='input-mini' id='nowPrice_"+skuInfo.id+"' style='width:58px;' /></td>";
+                            trdatas+="<td><input type='number' class='input-mini' id='saleQty_"+skuInfo.id+"' style='width:58px;' min='1' max='99999' /></td>";
+                            trdatas+="<td id='td_"+skuInfo.id+"'> <a href='#' onclick=\"addItemTwo('"+skuInfo.id+"')\">增加</a></td>";
+                            trdatas+="<input type='hidden' id='orderDetaIds_"+skuInfo.id+"' value='"+skuInfo.id+"'>";
+                            trdatas+= "</tr>";
+                        });
+                        $("#prodInfo2").html(trdatas);
+                    }
+                });
+            });
 		});
+
 		function addItem(obj) {
         <%--var aa=$("#contentTable").append("<th>商品属性</th>").index()+4;//第4列位置--%>
           var saleQty= $("#saleQty_"+obj).val();
@@ -87,19 +141,41 @@
             $("#td_"+obj).html("<a href='#' onclick=\"removeItem('"+obj+"')\">移除</a>");
             var trHtml=$("#"+obj);
             $("#prodInfo").append(trHtml);
-            $("#prodInfo").find($("#saleQty_"+obj)).attr("name","saleQtys")
+            $("#prodInfo").find($("#saleQty_"+obj)).attr("name","saleQtys");
             $("#prodInfo").find($("#saleQty_"+obj)).attr("readonly","readonly");
             $("#prodInfo").find("#orderDetaIds_"+obj).attr("name","orderDetaIds");
             $("#prodInfo").find("#shelfSkuId_"+obj).attr("name","shelfSkus");
+        }
+
+        function addItemTwo(obj) {
+            <%--var aa=$("#contentTable").append("<th>商品属性</th>").index()+4;//第4列位置--%>
+            $("#td_"+obj).html("<a href='#' onclick=\"removeItemTwo('"+obj+"')\">移除</a>");
+            var trHtml=$("#"+obj);
+            $("#prodInfo").append(trHtml);
+            $("#prodInfo").find($("#saleQty_"+obj)).attr("name","saleQtys");
+            $("#prodInfo").find($("#saleQty_"+obj)).attr("readonly","readonly");
+            $("#prodInfo").find($("#nowPrice_"+obj)).attr("name","nowPrices");
+            $("#prodInfo").find($("#nowPrice_"+obj)).attr("readonly","readonly");
+            $("#prodInfo").find("#orderDetaIds_"+obj).attr("name","orderDetaIds");
         }
         function removeItem(obj) {
             $("#td_"+obj).html("<a href='#' onclick=\"addItem('"+obj+"')\">增加</a>");
             var trHtml=$("#"+obj);
             $("#prodInfo2").append(trHtml);
-            $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name")
+            $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
             $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("readonly");
             $("#prodInfo2").find("#orderDetaIds_"+obj).removeAttr("name");
             $("#prodInfo2").find("#shelfSkuId_"+obj).removeAttr("name");
+        }
+        function removeItemTwo(obj) {
+            $("#td_"+obj).html("<a href='#' onclick=\"addItemTwo('"+obj+"')\">增加</a>");
+            var trHtml=$("#"+obj);
+            $("#prodInfo2").append(trHtml);
+            $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("name");
+            $("#prodInfo2").find($("#saleQty_"+obj)).removeAttr("readonly");
+            $("#prodInfo2").find($("#nowPrice_"+obj)).removeAttr("name");
+            $("#prodInfo2").find($("#nowPrice_"+obj)).removeAttr("readonly");
+            $("#prodInfo2").find("#orderDetaIds_"+obj).removeAttr("name");
         }
     </script>
     <script type="text/javascript">
@@ -126,7 +202,7 @@
 <body>
 <ul class="nav nav-tabs">
     <li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
-    <li class="active"><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">订单详情<shiro:hasPermission
+    <li class="active"><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderHeader.id=${orderH.id}&&orderType=${orderH.orderType}">订单详情<shiro:hasPermission
             name="biz:order:bizOrderDetail:edit">${not empty bizOrderDetail.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
             name="biz:order:bizOrderDetail:edit">查看</shiro:lacksPermission></a></li>
 </ul>
@@ -153,13 +229,30 @@
                 <li><label>商品货号：</label>
                     <input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="50" class="input-medium"/>
                 </li>
+                <c:if test="${orderH.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                    <%--<li><label>采购商：</label>--%>
+                        <%--<sys:treeselect id="purchaser" name="" value=""  labelName=""--%>
+                                        <%--labelValue="" notAllowSelectParent="true"--%>
+                                        <%--title="采购商"  url="/sys/office/queryTreeList?type=6"--%>
+                                        <%--cssClass="input-medium required"--%>
+                                        <%--allowClear="true"  dataMsgRequired="必填信息"/>--%>
+                    <%--</li>--%>
+                    <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+                    <input id="purchaserId" type="hidden" value="${customer.id}" />
+                </c:if>
                 <%--<li><label>查询：</label>--%>
                     <%--<select class="input-medium">--%>
                         <%--<option value=""> 请选择 </option>--%>
                         <%--<option id="skuAll" value="ono"> 查询所有 </option>--%>
                     <%--</select>--%>
                 <%--</li>--%>
-                <li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
+
+                <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                    <li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
+                </c:if>
+                <c:if test="${orderH.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                    <li class="btns"><input id="searchPurseData" class="btn btn-primary" type="button"  value="查询"/></li>
+                </c:if>
                 <li class="clearfix"></li>
             </ul>
 
@@ -171,8 +264,10 @@
             <table id="contentTable" style="width:48%;float:left" class="table table-striped table-bordered table-condensed">
                 <thead>
                 <tr>
-                    <th>货架名称</th>
-                    <th>采购中心</th>
+                    <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                        <th>货架名称</th>
+                        <th>采购中心</th>
+                    </c:if>
                     <th>商品名称</th>
                     <th>商品编码</th>
                     <th>商品货号</th>
@@ -180,7 +275,9 @@
                     <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
                         <th>已发货数量</th>
                     </c:if>
-                    <th>销售数量区间</th>
+                    <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                        <th>销售数量区间</th>
+                    </c:if>
                     <th>现价</th>
                     <th>采购数量</th>
                     <th>操作</th>
@@ -189,21 +286,28 @@
                 <tbody id="prodInfo">
                     <c:if test="${bizOrderDetail.id!=null}">
                         <tr id="trRevom_${detail.id}">
-                            <td>${detail.shelfInfo.opShelfInfo.name}</td>
-                            <td>${detail.shelfInfo.centerOffice.name}</td>
+                            <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                                <td>${detail.shelfInfo.opShelfInfo.name}</td>
+                                <td>${detail.shelfInfo.centerOffice.name}</td>
+                            </c:if>
                             <td>${detail.skuName}</td>
                             <td>${detail.partNo}</td>
                             <td>${detail.skuInfo.itemNo}</td>
                             <td>
-                                <c:forEach items="${detail.orderSkuValueList}" var="orderDeail">
-                                    ${orderDeail.propName}:${orderDeail.propValue},
+                                <c:forEach items="${detail.attributeValueV2List}" var="attributeValueV2">
+                                    ${attributeValueV2.attributeInfo.name}:${attributeValueV2.value},
                                 </c:forEach>
                             </td>
                             <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
                                 <td>${detail.sentQty}</td>
                             </c:if>
-                            <td>${shelfSku.minQty}-${shelfSku.maxQty}</td>
-                            <td>${shelfSku.salePrice}</td>
+                            <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                                <td>${shelfSku.minQty}-${shelfSku.maxQty}</td>
+                                <td>${shelfSku.salePrice}</td>
+                            </c:if>
+                            <c:if test="${orderH.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+                                <td>${detail.unitPrice}</td>
+                            </c:if>
                             <td style="text-align: center;">${detail.ordQty}</td>
                             <td>
                                 <%--<a href="${ctx}/biz/order/bizOrderDetail/delete?id=${detail.id}&sign=1&orderDetailDetele=details" onclick="return confirmx('确认要删除该商品吗？', this.href)">--%>
@@ -218,13 +322,17 @@
                 <table id="contentTable2" style="width:48%;float: right;background-color:#CEECF5;" class="table table-bordered table-condensed">
                     <thead>
                     <tr>
-                        <th>货架名称</th>
-                        <th>采购中心</th>
+                        <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                            <th>货架名称</th>
+                            <th>采购中心</th>
+                        </c:if>
                         <th>商品名称</th>
                         <th>商品编码</th>
                         <th>商品货号</th>
                         <th>商品属性</th>
-                        <th>销售数量区间</th>
+                        <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
+                            <th>销售数量区间</th>
+                        </c:if>
                         <th>现价</th>
                         <th>采购数量</th>
                         <th>操作</th>
@@ -250,6 +358,12 @@
     <form:hidden id="skuNameCopy" path="skuInfo.name"/>
     <form:hidden id="skuCodeCopy" path="skuInfo.partNo"/>
     <form:hidden id="itemNoCopy" path="skuInfo.itemNo"/>
+</form:form>
+<form:form id="searchPurseForm" modelAttribute="bizSkuInfo" >
+    <input type="hidden" id="bizSkuNameCopy" name="name" value="${name}"/>
+    <input type="hidden" id="bizSkuCodeCopy" name="partNo" value="${partNo}"/>
+    <input type="hidden" id="bizItemNoCopy" name="itemNo" value="${itemNo}"/>
+    <input type="hidden" id="purchaserCopy" name="purchaser.id" value="${purchaser.id}"/>
 </form:form>
 </body>
 </html>

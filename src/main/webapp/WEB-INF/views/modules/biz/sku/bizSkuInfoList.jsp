@@ -45,10 +45,10 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/sku/bizSkuInfo/">商品列表</a></li>
+		<li class="active"><a href="${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=${prodType}">商品列表</a></li>
 		<%--<shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><li><a href="${ctx}/biz/sku/bizSkuInfo/form">商品sku添加</a></li></shiro:hasPermission>--%>
 	</ul>
-	<form:form id="searchForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo/" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="bizSkuInfo" action="${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=${prodType}" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
@@ -108,13 +108,13 @@
 				<td>
 						<img src="${bizSkuInfo.productInfo.imgUrl}" width="80px" height="80px"/>
 				</td>
-				<td style="font-size: larger"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">
+				<td style="font-size: larger"><a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail&productInfo.prodType=${prodType}">
 						${bizSkuInfo.name}</a>
 					</td>
 					<td>
                         ${fns:getDictLabel(bizSkuInfo.skuType, 'skuType', '未知类型')}
 					</td>
-					<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizSkuInfo.productInfo.id}">
+					<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizSkuInfo.productInfo.id}&prodType=${prodType}">
 						${bizSkuInfo.productInfo.name}
 					</a></td>
 				    <td>
@@ -140,8 +140,9 @@
 					</td>
 				<td>
 					<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==1}">
-						<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail">详情</a>
+						<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail&productInfo.prodType=${prodType}">详情</a>
 						<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
+							<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0&productInfo.prodType=${prodType}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
 							<%--<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>--%>
 							<a href="javascript:void(0);" onclick="skuInfoDelete(${bizSkuInfo.id},'0');">删除</a>
 						</shiro:hasPermission>
@@ -149,7 +150,7 @@
 
 					<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==0}">
 						<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-							<a href="${ctx}/biz/sku/bizSkuInfo/recovery?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要恢复该商品sku吗？', this.href)">恢复</a>
+							<a href="${ctx}/biz/sku/bizSkuInfo/recovery?id=${bizSkuInfo.id}&sign=0&productInfo.prodType=${prodType}" onclick="return confirmx('确认要恢复该商品sku吗？', this.href)">恢复</a>
 						</shiro:hasPermission>
 					</c:if>
 

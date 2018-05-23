@@ -54,8 +54,6 @@ public class BizCollectGoodsRecordController extends BaseController {
 	@Autowired
 	private BizCollectGoodsRecordService bizCollectGoodsRecordService;
 
-	@Autowired
-    private BizSendGoodsRecordService bizSendGoodsRecordService;
 
     @Autowired
     private BizRequestDetailService bizRequestDetailService;
@@ -67,7 +65,7 @@ public class BizCollectGoodsRecordController extends BaseController {
     private BizOrderDetailService bizOrderDetailService;
     @Autowired
     private BizOrderHeaderService bizOrderHeaderService;
-	
+
 	@ModelAttribute
 	public BizCollectGoodsRecord get(@RequestParam(required=false) Integer id) {
 		BizCollectGoodsRecord entity = null;

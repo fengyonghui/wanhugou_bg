@@ -131,6 +131,7 @@ public class BizProductInfoV2Controller extends BaseController {
     public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
         Page<BizProductInfo> page = bizProductInfoService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
         model.addAttribute("page", page);
+        model.addAttribute("prodType",bizProductInfo.getProdType());
         return "modules/biz/product/bizProductInfoListV2";
     }
 
@@ -456,7 +457,7 @@ public class BizProductInfoV2Controller extends BaseController {
         }
         bizProductInfoService.save(bizProductInfo);
         addMessage(redirectAttributes, "保存产品信息表成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage&prodType="+bizProductInfo.getProdType();
     }
 
     @RequiresPermissions("biz:product:bizProductInfo:edit")
@@ -467,7 +468,7 @@ public class BizProductInfoV2Controller extends BaseController {
         }
         bizProductInfoService.save(bizProductInfo, true);
         addMessage(redirectAttributes, "保存产品信息表成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage&prodType="+bizProductInfo.getProdType();
     }
 
     @RequiresPermissions("biz:product:bizProductInfo:edit")
@@ -476,7 +477,7 @@ public class BizProductInfoV2Controller extends BaseController {
         bizProductInfo.setDelFlag(BizProductInfo.DEL_FLAG_DELETE);
         bizProductInfoService.delete(bizProductInfo);
         addMessage(redirectAttributes, "删除产品信息表成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage&prodType="+bizProductInfo.getProdType();
     }
     @RequiresPermissions("biz:product:bizProductInfo:edit")
     @RequestMapping(value = "recovery")
@@ -484,7 +485,7 @@ public class BizProductInfoV2Controller extends BaseController {
         bizProductInfo.setDelFlag(BizProductInfo.DEL_FLAG_NORMAL);
         bizProductInfoService.delete(bizProductInfo);
         addMessage(redirectAttributes, "恢复产品信息表成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoV2/?repage&prodType="+bizProductInfo.getProdType();
     }
 
 

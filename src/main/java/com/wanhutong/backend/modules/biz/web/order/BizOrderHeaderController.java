@@ -26,6 +26,7 @@ import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
@@ -78,7 +79,7 @@ public class BizOrderHeaderController extends BaseController {
     @Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
     @Autowired
-    private BizSkuInfoService bizSkuInfoService;
+    private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
@@ -140,6 +141,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
+        model.addAttribute("orderType",bizOrderHeader.getOrderType());
         if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
             Office office = officeService.get(bizOrderHeader.getCustomer().getId());
             bizOrderHeader.setCustomer(office);

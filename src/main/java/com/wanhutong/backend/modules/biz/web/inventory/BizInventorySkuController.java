@@ -27,6 +27,7 @@ import com.wanhutong.backend.modules.biz.service.inventoryviewlog.BizInventoryVi
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -54,6 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品库存详情Controller
@@ -70,7 +72,7 @@ public class BizInventorySkuController extends BaseController {
     @Autowired
     private BizInventoryInfoService bizInventoryInfoService;
     @Autowired
-    private BizSkuInfoService bizSkuInfoService;
+    private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private SystemService systemService;
     @Autowired
@@ -102,7 +104,7 @@ public class BizInventorySkuController extends BaseController {
     @RequiresPermissions("biz:inventory:bizInventorySku:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizInventorySku bizInventorySku, HttpServletRequest request, HttpServletResponse response, Model model) {
-        int stamp= 0;
+        int stamp = 0;
         String zt = request.getParameter("zt");
         //取出用户所属采购中心
         User user = UserUtils.getUser();
@@ -143,13 +145,13 @@ public class BizInventorySkuController extends BaseController {
             page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         }
         List<BizInventorySku> list = page.getList();
-        for (BizInventorySku inventorySku:list){
-            if(inventorySku.getCust()!=null && inventorySku.getCust().getId()!=0){
+        for (BizInventorySku inventorySku : list) {
+            if (inventorySku.getCust() != null && inventorySku.getCust().getId() != 0) {
                 stamp = 1;
             }
         }
-        model.addAttribute("invStatus",stamp);
-        model.addAttribute("varietyList",bizVarietyInfoService.findList(new BizVarietyInfo()));
+        model.addAttribute("invStatus", stamp);
+        model.addAttribute("varietyList", bizVarietyInfoService.findList(new BizVarietyInfo()));
         model.addAttribute("zt", zt);
         model.addAttribute("page", page);
         return "modules/biz/inventory/bizInventorySkuList";
@@ -216,12 +218,12 @@ public class BizInventorySkuController extends BaseController {
         Office center = new Office();
         center.setType(OfficeTypeEnum.WITHCAPITAL.getType());
         List<Office> centList = officeService.queryList(center);
-        if (centList != null && centList.size() > 0){
+        if (centList != null && centList.size() > 0) {
             center = centList.get(0);
             office.setCenterId(center.getId());
         }
         List<Office> officeList = officeService.findCapitalList(office);
-        model.addAttribute("custList",officeList);
+        model.addAttribute("custList", officeList);
 
         BizInventoryInfo bizInventoryInfo2 = bizInventoryInfoService.get(bizInventorySku.getInvInfo().getId());
         bizInventorySku.setInvInfo(bizInventoryInfo2);
@@ -284,11 +286,11 @@ public class BizInventorySkuController extends BaseController {
         else if (bizInventorySkus != null && bizInventorySkus.getStockQtys() != null && !bizInventorySkus.getStockQtys().equals("")) {
             BizInventoryViewLog bizInventoryViewLog = new BizInventoryViewLog();
             BizInventorySku bizInventorySku = bizInventorySkuService.get(bizInventorySkus.getId());
-            if(bizInventorySku!=null){
+            if (bizInventorySku != null) {
                 Integer stockQtys = Integer.parseInt(bizInventorySkus.getStockQtys());
-                if(!stockQtys.equals(bizInventorySku.getStockQty())){
+                if (!stockQtys.equals(bizInventorySku.getStockQty())) {
                     bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());//原
-                    bizInventoryViewLog.setStockChangeQty(Integer.parseInt(bizInventorySkus.getStockQtys())-bizInventorySku.getStockQty());
+                    bizInventoryViewLog.setStockChangeQty(Integer.parseInt(bizInventorySkus.getStockQtys()) - bizInventorySku.getStockQty());
                     bizInventoryViewLog.setNowStockQty(Integer.parseInt(bizInventorySkus.getStockQtys()));//现
                     bizInventoryViewLog.setInvInfo(bizInventorySku.getInvInfo());
                     bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
@@ -317,7 +319,7 @@ public class BizInventorySkuController extends BaseController {
         bizInventoryViewLog.setInvType(bizInventorySku.getInvType());
         bizInventoryViewLog.setSkuInfo(bizInventorySku.getSkuInfo());
         bizInventoryViewLog.setStockQty(bizInventorySku.getStockQty());
-        bizInventoryViewLog.setStockChangeQty(0-bizInventorySku.getStockQty());
+        bizInventoryViewLog.setStockChangeQty(0 - bizInventorySku.getStockQty());
         bizInventoryViewLog.setNowStockQty(0);
         bizInventorySkuService.delete(bizInventorySku);
         bizInventoryViewLogService.save(bizInventoryViewLog);
@@ -383,37 +385,37 @@ public class BizInventorySkuController extends BaseController {
                     }
                 }
                 //仓库名称
-                if(tory.getInvInfo()!=null && tory.getInvInfo().getName()!=null){
+                if (tory.getInvInfo() != null && tory.getInvInfo().getName() != null) {
                     rowData.add(String.valueOf(tory.getInvInfo().getName()));
-                }else{
+                } else {
                     rowData.add("");
                 }
-                if(tory.getSkuInfo()!=null){
-                    if(tory.getSkuInfo().getName()!=null){
+                if (tory.getSkuInfo() != null) {
+                    if (tory.getSkuInfo().getName() != null) {
                         //商品名称
                         rowData.add(String.valueOf(tory.getSkuInfo().getName()));
-                    }else{
+                    } else {
                         rowData.add("");
                     }
-                    if(tory.getSkuInfo().getPartNo()!=null){
+                    if (tory.getSkuInfo().getPartNo() != null) {
                         //商品编号
                         rowData.add(String.valueOf(tory.getSkuInfo().getPartNo()));
-                    }else{
+                    } else {
                         rowData.add("");
                     }
-                    if(tory.getSkuInfo().getItemNo()!=null){
+                    if (tory.getSkuInfo().getItemNo() != null) {
                         //商品货号
                         rowData.add(String.valueOf(tory.getSkuInfo().getItemNo()));
-                    }else{
+                    } else {
                         rowData.add("");
                     }
-                    if(tory.getSkuInfo().getVendorName()!=null){
+                    if (tory.getSkuInfo().getVendorName() != null) {
                         //供应商
                         rowData.add(String.valueOf(tory.getSkuInfo().getVendorName()));
-                    }else{
+                    } else {
                         rowData.add("");
                     }
-                }else{
+                } else {
                     rowData.add("");
                     rowData.add("");
                     rowData.add("");
@@ -457,9 +459,19 @@ public class BizInventorySkuController extends BaseController {
     @ResponseBody
     @RequiresPermissions("biz:inventory:bizInventorySku:view")
     @RequestMapping("invSkuCount")
-    public Integer invSkuCount(Integer centId){
+    public Integer invSkuCount(Integer centId) {
         Integer count = bizInventorySkuService.invSkuCount(centId);
         return count;
     }
+
+
+    @RequiresPermissions("biz:inventory:inventoryAge:view")
+    @RequestMapping("showInventoryAge")
+    public String showInventoryAge(HttpServletRequest request, Integer skuId, Integer centId) {
+        Map<String, Object> resultMap = bizInventorySkuService.getInventoryAge(skuId, centId);
+        request.setAttribute("data", resultMap);
+        return "modules/biz/inventory/bizInventoryAge";
+    }
+
 
 }
