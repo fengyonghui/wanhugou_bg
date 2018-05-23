@@ -48,6 +48,7 @@
 				<th>联系人电话</th>
 				<th>客户专员</th>
 				<th>采购中心</th>
+				<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -71,6 +72,9 @@
 						<a href="${ctx}/sys/office/form?id=${user.cent.id}&source=contact_ck">
 								${user.cent.name}</a>
 					</c:if>
+				</td>
+				<td>
+					<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${user.company.id}">沟通记录</a>
 				</td>
 			</tr>
 		</c:forEach>

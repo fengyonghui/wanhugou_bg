@@ -654,4 +654,30 @@ public class UserController extends BaseController {
         }
 		return sflag;
 	}
+
+	/**
+	 * 沟通记录 查询 品类主管或者客户专员
+	 * */
+	@RequiresPermissions("sys:user:view")
+	@ResponseBody
+	@RequestMapping(value = "userSelectTreeData")
+	public List<Map<String, Object>> userSelectTreeData() {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		Role role = new Role();
+		role.setName(RoleEnNameEnum.BUYER.getState());
+		role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+		User user = new User();
+		user.setRole(role);
+		List<User> list = systemService.userSelectCompany(user);
+		for (int i=0; i<list.size(); i++){
+			User e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", "u_"+e.getId());
+			map.put("pId", null);
+			map.put("name", StringUtils.replace(e.getName(), " ", ""));
+			mapList.add(map);
+		}
+		return mapList;
+	}
+
 }

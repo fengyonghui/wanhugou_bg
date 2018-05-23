@@ -12,6 +12,10 @@ public enum RoleEnNameEnum {
      */
     BUYER("buyer", "采购专员"),
     /**
+     * 选品专员
+     */
+    SELECTIONOFSPECIALIST("selection_of_specialist", "选品专员"),
+    /**
      * 运营总监
      */
     OP_DIRECTOR("op_director", "运营总监"),
