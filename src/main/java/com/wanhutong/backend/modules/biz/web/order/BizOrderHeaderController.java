@@ -110,9 +110,9 @@ public class BizOrderHeaderController extends BaseController {
                 if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=null){
                     if(orderDetail.getSuplyis().getId().equals(0) || orderDetail.getSuplyis().getId().equals(721)){
                         Office office = new Office();
-                        if(orderDetail.getSentQty()>0){
-                            entity.setFlag("supply_commodity");
-                        }
+//                        if(orderDetail.getSentQty()>0){
+//                            entity.setFlag("supply_commodity");
+//                        }
                         office.setName("供货部");
                         office.setId(orderDetail.getSuplyis().getId());
                         orderDetail.setSuplyis(office);
