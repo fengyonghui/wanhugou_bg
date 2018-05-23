@@ -16,13 +16,13 @@
         }
 	</script>
 	<script type="text/javascript">
-        function skuInfoDelete(a,b){
+        function skuInfoDelete(a,b,c){
             top.$.jBox.confirm("确认要删除该商品sku吗？","系统提示",function(v,h,f){
                 if(v=="ok"){
                     $.ajax({
                         type:"post",
                         url:"${ctx}/biz/sku/bizSkuInfo/deleteSku",
-                        data:"id="+a+"&sign="+b,
+                        data:"id="+a+"&sign="+b+"&productInfo.prodType="+c,
                         success:function(data){
 							if(data=="opSheSku"){
 								alert("商品上下架还有该商品sku，不能删除 ");
@@ -142,9 +142,9 @@
 					<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==1}">
 						<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail&productInfo.prodType=${prodType}">详情</a>
 						<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-							<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0&productInfo.prodType=${prodType}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
+							<%--<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0&productInfo.prodType=${prodType}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>--%>
 							<%--<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>--%>
-							<a href="javascript:void(0);" onclick="skuInfoDelete(${bizSkuInfo.id},'0');">删除</a>
+							<a href="javascript:void(0);" onclick="skuInfoDelete(${bizSkuInfo.id},'0',${prodType});">删除</a>
 						</shiro:hasPermission>
 					</c:if>
 

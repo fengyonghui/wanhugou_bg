@@ -381,8 +381,7 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post"
-           class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
@@ -390,27 +389,13 @@
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
-
-    <%--<c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">--%>
-        <div class="control-group">
-            <label class="control-label">订单编号：</label>
-            <div class="controls">
-                <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"
-                            class="input-xlarge"/>
-            </div>
+    <div class="control-group">
+        <label class="control-label">订单编号：</label>
+        <div class="controls">
+            <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"
+                        class="input-xlarge"/>
         </div>
-    <%--</c:if>--%>
-    <%--<c:if test="${not empty entity.orderDetails}">--%>
-        <%--<div class="control-group">--%>
-            <%--<label class="control-label">订单类型：</label>--%>
-            <%--<div class="controls">--%>
-                <%--<form:select path="orderType" class="input-xlarge" disabled="true">--%>
-                    <%--<form:option value="" label="请选择"/>--%>
-                    <%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
-                                  <%--htmlEscape="false"/></form:select>--%>
-            <%--</div>--%>
-        <%--</div>--%>
-    <%--</c:if>--%>
+    </div>
     <div class="control-group">
         <label class="control-label">经销店名称：</label>
         <div class="controls">
