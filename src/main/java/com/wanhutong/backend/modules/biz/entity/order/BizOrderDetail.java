@@ -13,6 +13,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuPropValue;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
@@ -51,8 +52,11 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private List<BizOrderDetail> orderHeaderList;   //用于查询该订单下有多少商品
     private BizInventoryInfo inventoryInfo;     //仓库
     private List<BizOrderSkuPropValue> orderSkuValueList;   //sku属性值
+    private List<AttributeValueV2> attributeValueV2List;    //属性值
 
+    private Byte orderType;     //订单类型
 
+    private String nowPrices;   //采购商修改的价格
     private String detailIds;
     private Integer totalReqQty;
     private Integer totalSendQty;
@@ -360,5 +364,29 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setDetailFlag(String detailFlag) {
         this.detailFlag = detailFlag;
+    }
+
+    public Byte getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(Byte orderType) {
+        this.orderType = orderType;
+    }
+
+    public String getNowPrices() {
+        return nowPrices;
+    }
+
+    public void setNowPrices(String nowPrices) {
+        this.nowPrices = nowPrices;
+    }
+
+    public List<AttributeValueV2> getAttributeValueV2List() {
+        return attributeValueV2List;
+    }
+
+    public void setAttributeValueV2List(List<AttributeValueV2> attributeValueV2List) {
+        this.attributeValueV2List = attributeValueV2List;
     }
 }

@@ -25,6 +25,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
@@ -68,7 +69,7 @@ public class BizRequestAllController {
     @Autowired
     private BizRequestDetailService bizRequestDetailService;
     @Autowired
-    private BizSkuInfoService bizSkuInfoService;
+    private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired

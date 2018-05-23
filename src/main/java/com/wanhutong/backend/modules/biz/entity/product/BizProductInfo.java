@@ -47,6 +47,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String photoDetails;
 	private String vendorName;  //供应商名称
 	private Date marketingDate ; //上市时间
+	private Byte prodType;		//产品类型
 	private String skuPartNo;  //sku编码，用于查询
 
 	private String cateIds; //多种分类
@@ -501,5 +502,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setCreateDateEnd(Date createDateEnd) {
 		this.createDateEnd = createDateEnd;
+	}
+
+	public Byte getProdType() {
+		return prodType;
+	}
+
+	public void setProdType(Byte prodType) {
+		this.prodType = prodType;
 	}
 }
