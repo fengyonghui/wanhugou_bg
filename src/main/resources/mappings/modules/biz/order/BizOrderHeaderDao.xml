@@ -1869,6 +1869,9 @@ FROM
 		GROUP BY id
   		HAVING  count(1) = 1
 	)
+		<if test="orderType != null and orderType != ''">
+			AND a.order_type = #{orderType}
+		</if>
 		<if test="orderNum != null and orderNum != ''">
 			AND a.order_num LIKE
 			<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>

@@ -124,6 +124,13 @@
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
+				<li><label>订单类型:</label>
+					<form:select path="orderType" class="input-xlarge required">
+						<form:option value="" label="请选择"/>
+						<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
+									  htmlEscape="false"/>
+					</form:select>
+				</li>
 				<li><label>测试数据</label>
 					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
 				</li>
@@ -243,7 +250,7 @@
 					<td><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">
 									${orderHeader.orderNum}</a>
 					</td>
-					<td>${fns:getDictLabel(orderHeader.bizType, 'order_biz_type', '未知状态')}</td>
+					<td>${fns:getDictLabel(orderHeader.bizType, 'biz_order_type', '未知状态')}</td>
 							<td>
 									${orderHeader.customer.name}
 							</td>
