@@ -40,16 +40,19 @@
 			<label class="control-label">机构名称：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
-					title="部门" url="/sys/office/queryTreeList?type=6"
-					cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+					title="机构" url="/sys/office/queryTreeList?type=6"
+					cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
+				<button class="btn btn-primary btn-lg" data-toggle="modal"
+						onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=7&type=6&source=chatRecordSave';">添加新的机构</button>
+				<font color="red">没有需要的机构时，请点击按钮，不添加请点击左侧放大镜选择机构</font>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">用户名称：</label>
 			<div class="controls">
 				<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"
-					title="用户" url="/sys/user/userSelectTreeData" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+					title="用户" url="/sys/user/userSelectTreeData" cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -64,6 +67,7 @@
 			<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 		</div>
+
 	</form:form>
 </body>
 </html>

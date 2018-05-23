@@ -351,6 +351,9 @@ public class OfficeController extends BaseController {
         }
         addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
         Integer id = office.getParentId() == 0 ? null : office.getParentId();
+        if(office.getSource()!=null && office.getSource().equals("chatRecordSave")){
+            return "redirect:" + adminPath + "/biz/chat/bizChatRecord/form?office.id="+office.getId()+"&office.name="+office.getName();
+        }
         return "redirect:" + adminPath + "/sys/office/purchasersList";
     }
 

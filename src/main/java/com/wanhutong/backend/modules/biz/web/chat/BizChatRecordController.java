@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.chat;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -78,6 +79,16 @@ public class BizChatRecordController extends BaseController {
 		bizChatRecordService.delete(bizChatRecord);
 		addMessage(redirectAttributes, "删除沟通记录成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/?repage";
+	}
+
+	/**
+	 * 新增的机构
+	 * */
+	@RequiresPermissions("biz:chat:bizChatRecord:edit")
+	@RequestMapping(value = "chatPurchaerForm")
+	public String chatPurchaerForm(BizChatRecord bizChatRecord, Office office, Model model, RedirectAttributes redirectAttributes) {
+
+		return "modules/sys/chatRecordPurchasersForm";
 	}
 
 }
