@@ -334,7 +334,7 @@ public class BizCollectGoodsRecordController extends BaseController {
             }
             if(sources!=null && sources.equals("changeStock")) {
                 String[] orderArr = {"备货单号/销售单号", "仓库名称", "商品名称", "商品货号", "商品编号", "变更记录", "原库存数", "变更数量", "客户名称", "创建人", "创建时间"};
-                String[] commoDityArr = {"备货单号销售单号", "采购商/采购中心", "收货地址", "联系人/电话", "产品分类", "商品名称", "商品货号", "供应商", "品牌",
+                String[] commoDityArr = {"备货单号销售单号", "经销店/采购中心", "收货地址", "联系人/电话", "产品分类", "商品名称", "商品货号", "供应商", "品牌",
                         "申报数量","已供数量"};
                 ExportExcelUtils eeu = new ExportExcelUtils();
                 SXSSFWorkbook workbook = new SXSSFWorkbook();

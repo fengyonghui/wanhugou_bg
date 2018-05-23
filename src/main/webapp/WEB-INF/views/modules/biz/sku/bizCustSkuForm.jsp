@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>采购商商品价格管理</title>
+	<title>经销店商品价格管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,14 +27,14 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/sku/bizCustSku/">采购商商品价格列表</a></li>
+		<li><a href="${ctx}/biz/sku/bizCustSku/">经销店商品价格列表</a></li>
 		<li class="active"><a href="${ctx}/biz/sku/bizCustSku/form?id=${bizCustSku.id}">采购商商品价格<shiro:hasPermission name="biz:sku:bizCustSku:edit">${not empty bizCustSku.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:sku:bizCustSku:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizCustSku" action="${ctx}/biz/sku/bizCustSku/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">采购商：</label>
+			<label class="control-label">经销店：</label>
 			<div class="controls">
 				<form:input path="customer.name" htmlEscape="false" readonly="true" maxlength="11" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>

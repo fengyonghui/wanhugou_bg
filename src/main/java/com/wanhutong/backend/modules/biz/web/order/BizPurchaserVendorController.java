@@ -72,7 +72,7 @@ public class BizPurchaserVendorController extends BaseController {
 			return form(bizPurchaserVendor, model);
 		}
 		bizPurchaserVendorService.save(bizPurchaserVendor);
-		addMessage(redirectAttributes, "保存采购商供应商关联关系成功");
+		addMessage(redirectAttributes, "保存经销店供应商关联关系成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizPurchaserVendor/?repage";
 	}
 	
@@ -80,7 +80,7 @@ public class BizPurchaserVendorController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(BizPurchaserVendor bizPurchaserVendor, RedirectAttributes redirectAttributes) {
 		bizPurchaserVendorService.delete(bizPurchaserVendor);
-		addMessage(redirectAttributes, "删除采购商供应商关联关系成功");
+		addMessage(redirectAttributes, "删除经销店供应商关联关系成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizPurchaserVendor/?repage";
 	}
 

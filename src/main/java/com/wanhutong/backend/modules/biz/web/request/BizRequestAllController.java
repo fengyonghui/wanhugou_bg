@@ -999,7 +999,7 @@ public class BizRequestAllController {
             if ("kc".equals(source) && bizStatu!=null && bizStatu==1 && "xs".equals(ship)) {
                 //订单发货
                 String[] headers = {"销售单号", "类型", "采购客户", "期望收货时间", "收货地址","业务状态", "更新人", "创建时间", "更新时间"};
-                String[] details = {"销售单号", "采购商", "收货地址", "联系人/电话", "商品名称", "商品分类","商品代码", "品牌名称", "供应商", "SKU",
+                String[] details = {"销售单号", "经销店", "收货地址", "联系人/电话", "商品名称", "商品分类","商品代码", "品牌名称", "供应商", "SKU",
                         "SKU编号", "申报数量", "已供货数量"};
                 ExportExcelUtils eeu = new ExportExcelUtils();
                 SXSSFWorkbook workbook = new SXSSFWorkbook();
