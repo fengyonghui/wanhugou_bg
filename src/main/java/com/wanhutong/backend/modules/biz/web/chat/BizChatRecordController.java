@@ -81,14 +81,4 @@ public class BizChatRecordController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/?repage";
 	}
 
-	/**
-	 * 新增的机构
-	 * */
-	@RequiresPermissions("biz:chat:bizChatRecord:edit")
-	@RequestMapping(value = "chatPurchaerForm")
-	public String chatPurchaerForm(BizChatRecord bizChatRecord, Office office, Model model, RedirectAttributes redirectAttributes) {
-
-		return "modules/sys/chatRecordPurchasersForm";
-	}
-
 }

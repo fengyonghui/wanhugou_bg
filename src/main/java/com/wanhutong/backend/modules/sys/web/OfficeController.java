@@ -3,6 +3,8 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -352,7 +354,12 @@ public class OfficeController extends BaseController {
         addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
         Integer id = office.getParentId() == 0 ? null : office.getParentId();
         if(office.getSource()!=null && office.getSource().equals("chatRecordSave")){
-            return "redirect:" + adminPath + "/biz/chat/bizChatRecord/form?office.id="+office.getId()+"&office.name="+office.getName();
+            try {
+                return "redirect:" + adminPath + "/biz/chat/bizChatRecord/form?office.id="+office.getId()+"&office.name="+
+                        URLEncoder.encode(office.getName(),"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         return "redirect:" + adminPath + "/sys/office/purchasersList";
     }
