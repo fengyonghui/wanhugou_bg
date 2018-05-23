@@ -49,14 +49,14 @@
 			<label class="control-label">用户名称：</label>
 			<div class="controls">
 				<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"
-					title="用户" url="/sys/wx/sysWxPersonalUser/userTreeData" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
+					title="用户" url="/sys/user/userSelectTreeData" cssClass="input-xlarge required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">沟通记录：</label>
 			<div class="controls">
-				<form:input path="chatRecord" htmlEscape="false" maxlength="255" class="input-xlarge required"/>
+				<textarea name="chatRecord" placeholder="请输入沟通记录内容" class="required" style="width: 360px;height: 80px;"></textarea>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

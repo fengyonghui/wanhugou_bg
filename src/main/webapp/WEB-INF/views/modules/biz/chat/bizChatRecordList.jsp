@@ -48,9 +48,9 @@
 				<th>沟通记录</th>
 				<th>创建人</th>
 				<th>创建时间</th>
-				<th>更新人</th>
-				<th>更新时间</th>
-				<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><th>操作</th></shiro:hasPermission>
+				<c:if test="${fns:getUser().isAdmin()}">
+					<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><th>操作</th></shiro:hasPermission>
+				</c:if>
 			</tr>
 		</thead>
 		<tbody>
@@ -71,16 +71,12 @@
 				<td>
 					<fmt:formatDate value="${bizChatRecord.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<td>
-					${bizChatRecord.updateBy.name}
-				</td>
-				<td>
-					<fmt:formatDate value="${bizChatRecord.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><td>
-    				<a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}">修改</a>
-					<a href="${ctx}/biz/chat/bizChatRecord/delete?id=${bizChatRecord.id}" onclick="return confirmx('确认要删除该沟通记录吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
+				<c:if test="${fns:getUser().isAdmin()}">
+					<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><td>
+						<%--<a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}">修改</a>--%>
+						<a href="${ctx}/biz/chat/bizChatRecord/delete?id=${bizChatRecord.id}" onclick="return confirmx('确认要删除该沟通记录吗？', this.href)">删除</a>
+					</td></shiro:hasPermission>
+				</c:if>
 			</tr>
 		</c:forEach>
 		</tbody>
