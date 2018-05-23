@@ -24,6 +24,8 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -200,6 +202,7 @@ public class BizRequestOrderController extends BaseController {
                 BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
                 bizPoOrderReq.setSoLineNo(lineNo);
                 bizPoOrderReq.setRequestHeader(bizRequestDetail.getRequestHeader());
+                bizPoOrderReq.setIsPrew(0);
                 List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
                 if(poOrderReqList!=null && poOrderReqList.size()==0){
                     BizSkuInfo sku = bizSkuInfoService.get(bizRequestDetail.getSkuInfo().getId());
@@ -234,6 +237,7 @@ public class BizRequestOrderController extends BaseController {
                 BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
                 bizPoOrderReq.setSoLineNo(lineNo);
                 bizPoOrderReq.setOrderHeader(bizOrderDetail.getOrderHeader());
+                bizPoOrderReq.setIsPrew(0);
                 List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
                 if(poOrderReqList!=null && poOrderReqList.size()==0){
                     BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderDetail.getOrderHeader().getId());

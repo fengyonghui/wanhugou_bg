@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.inventory;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 商品库存详情DAO接口
@@ -29,4 +30,12 @@ public interface BizInventorySkuDao extends CrudDao<BizInventorySku> {
      * @return
      */
     Integer invSkuCount(Integer centId);
+
+    /**
+     * 根据SKU和采购中心取库存数量
+     * @param skuId skuId
+     * @param centId 采购中心ID
+     * @return
+     */
+    Integer getStockQtyBySkuIdCentId(@Param("skuId") Integer skuId, @Param("centId")Integer centId);
 }

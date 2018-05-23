@@ -32,6 +32,7 @@ public class BizPoOrderReq extends DataEntity<BizPoOrderReq> {
 	private BizOrderDetail orderDetail;
 	private BizRequestDetail requestDetail;
 	private String orderNumStr;
+	private Integer isPrew;	//1.是预览数据 0.正常数据
 
 
 
@@ -130,5 +131,13 @@ public class BizPoOrderReq extends DataEntity<BizPoOrderReq> {
 
 	public void setOrderNumStr(String orderNumStr) {
 		this.orderNumStr = orderNumStr;
+	}
+
+	public Integer getIsPrew() {
+		return isPrew;
+	}
+
+	public void setIsPrew(Integer isPrew) {
+		this.isPrew = isPrew;
 	}
 }

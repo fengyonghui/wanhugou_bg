@@ -11,11 +11,16 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderSkuPropValue;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderSkuPropValueService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfInfoService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.enums.DefaultPropEnum;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,6 +56,10 @@ public class BizOrderDetailController extends BaseController {
 	private BizOrderSkuPropValueService bizOrderSkuPropValueService;
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
+	@Autowired
+	private BizSkuInfoV2Service bizSkuInfoV2Service;
+	@Autowired
+	private AttributeValueV2Service attributeValueV2Service;
 
 	@ResponseBody
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
@@ -91,7 +100,15 @@ public class BizOrderDetailController extends BaseController {
 		bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
         BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
         if(orderHeader!=null){
-			BizOrderHeader ord = bizOrderHeaderService.get(orderHeader.getId());
+            if (bizOrderDetail.getSkuInfo() != null) {
+                if (bizOrderDetail.getOrderHeader().getOrderType() != null &&
+                    bizOrderDetail.getOrderHeader().getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+                    BizSkuInfo skuInfo = bizSkuInfoV2Service.get(bizOrderDetail.getSkuInfo().getId());
+                    model.addAttribute("skuInfo",skuInfo);
+                }
+
+            }
+            BizOrderHeader ord = bizOrderHeaderService.get(orderHeader.getId());
 			model.addAttribute("orderH", ord);//用于页面订单供货中显示供货数量
 			model.addAttribute("entity", bizOrderDetail);
 			model.addAttribute("bizOpShelfSku",new BizOpShelfSku());
@@ -99,13 +116,14 @@ public class BizOrderDetailController extends BaseController {
 //		订单详情修改按钮显示品规色
 		BizOrderDetail detailOrder = bizOrderDetailService.get(bizOrderDetail);
         if(detailOrder!=null){
-			BizOpShelfSku opShelfSku=bizOpShelfSkuService.get(bizOrderDetail.getShelfInfo().getId()) ;
+			BizOpShelfSku opShelfSku=bizOpShelfSkuService.get(bizOrderDetail.getShelfInfo().getId());
 			detailOrder.setShelfInfo(opShelfSku);
-			BizOrderSkuPropValue bizOrderSkuPropValue = new BizOrderSkuPropValue();
-			bizOrderSkuPropValue.setOrderDetails(detailOrder);
-			List<BizOrderSkuPropValue> list = bizOrderSkuPropValueService.findList(bizOrderSkuPropValue);
-			detailOrder.setOrderSkuValueList(list);
-		}
+			AttributeValueV2 valueV2 = new AttributeValueV2();
+			valueV2.setObjectId(detailOrder.getSkuInfo().getId());
+			valueV2.setObjectName("biz_sku_info");
+            List<AttributeValueV2> attributeValueV2List = attributeValueV2Service.findList(valueV2);
+            detailOrder.setAttributeValueV2List(attributeValueV2List);
+        }
 		model.addAttribute("detail", detailOrder);
 //		现价，销售区间
 		if(bizOrderDetail.getShelfInfo()!=null){

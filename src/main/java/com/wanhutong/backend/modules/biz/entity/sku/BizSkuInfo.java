@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.apache.commons.collections.CollectionUtils;
@@ -63,6 +64,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private BizVarietyInfo variety;		//品类
 
 	private int sign;//sku删除返回的标志
+
+	private Office purchaser;		//代采采购商
 
 
 	public BizSkuInfo() {
@@ -291,5 +294,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setBvFactorList(List<BizVarietyFactor> bvFactorList) {
 		this.bvFactorList = bvFactorList;
+	}
+
+	public Office getPurchaser() {
+		return purchaser;
+	}
+
+	public void setPurchaser(Office purchaser) {
+		this.purchaser = purchaser;
 	}
 }

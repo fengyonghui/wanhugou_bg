@@ -2,6 +2,9 @@ package com.wanhutong.backend.modules.enums;
 
 
 public enum DefaultPropEnum {
+
+    //代采订单状态
+    PURSEHANGER("5"),
     //brand 品牌属性
     PROPBRAND("42");
     private String propValue;
