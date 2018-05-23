@@ -447,6 +447,15 @@ public class OfficeController extends BaseController {
             //跳回会员搜索
             return "redirect:" + adminPath + "/sys/user/contact";
         }
+        if(office.getGysFlag()!=null && office.getGysFlag().equals("chatRecordSave")){
+            //跳回沟通记录
+            try {
+                return "redirect:" + adminPath + "/biz/chat/bizChatRecord/form?office.id="+office.getId()+"&office.name="+
+                        URLEncoder.encode(office.getName(),"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
         if (office.getGysFlag() != null && office.getGysFlag().equals("gys_save")) {
             //供应商保存、修改跳转
             return "redirect:" + adminPath + "/sys/office/supplierListGys";

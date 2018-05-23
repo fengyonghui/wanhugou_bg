@@ -28,7 +28,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/chat/bizChatRecord/">沟通记录列表</a></li>
-		<li class="active"><a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}">沟通记录
+		<li class="active"><a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}&office.type=${bizChatRecord.office.type}&office.parent.id=${bizChatRecord.office.parent.id}">沟通记录
 			<shiro:hasPermission name="biz:chat:bizChatRecord:edit">${not empty bizChatRecord.id?'修改':'添加'}</shiro:hasPermission>
 			<shiro:lacksPermission name="biz:chat:bizChatRecord:edit">查看</shiro:lacksPermission></a>
 		</li>
@@ -40,11 +40,17 @@
 			<label class="control-label">机构名称：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
-					title="机构" url="/sys/office/queryTreeList?type=6"
+					title="机构" url="/sys/office/queryTreeList?type=${bizChatRecord.office.type}"
 					cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-				<button class="btn btn-primary btn-lg" data-toggle="modal"
-						onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=7&type=6&source=chatRecordSave';">添加新的机构</button>
+				<c:if test="${bizChatRecord.office.type==6}">
+					<button class="btn btn-primary btn-lg" data-toggle="modal"
+							onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&source=chatRecordSave';">添加新的机构</button>
+				</c:if>
+				<c:if test="${bizChatRecord.office.type==7}">
+					<button class="btn btn-primary btn-lg" data-toggle="modal"
+							onclick="window.location.href='${ctx}/sys/office/supplierForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&gysFlag=chatRecordSave';">添加新的机构</button>
+				</c:if>
 				<font color="red">没有需要的机构时，请点击按钮，不添加请点击左侧放大镜选择机构</font>
 			</div>
 		</div>

@@ -95,6 +95,7 @@
 							</c:if>
 							<a href="${ctx}/sys/office/delete?id=${off.id}&gysFlag=gys_delete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
 							<a href="${ctx}/sys/office/supplierForm?parent.id=${off.id}&gysFlag=gys_save">添加下级机构</a>
+							<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.type=7&office.parent.id=${office.id}">沟通记录</a>
 						</shiro:hasPermission>
 					</td>
 				</tr>

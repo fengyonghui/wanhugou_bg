@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/chat/bizChatRecord/">沟通记录列表</a></li>
-		<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><li><a href="${ctx}/biz/chat/bizChatRecord/form">沟通记录添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><li><a href="${ctx}/biz/chat/bizChatRecord/form?office.type=${bizChatRecord.office.type}&office.parent.id=${bizChatRecord.office.parent.id}">沟通记录添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizChatRecord" action="${ctx}/biz/chat/bizChatRecord/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -27,7 +27,7 @@
 		<ul class="ul-form">
 			<li><label>机构名称</label>
 				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
-					title="机构" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+					title="机构" url="/sys/office/queryTreeList?type=${bizChatRecord.office.type}" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label>用户名称</label>
 				<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"
