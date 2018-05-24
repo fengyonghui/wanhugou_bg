@@ -94,7 +94,7 @@ public class BizProductInfoForVendorController extends BaseController {
             skuInfosList.forEach(o -> {
                 Map<String, List<AttributeValueV2>> attMap = Maps.newHashMap();
                 AttributeValueV2 attributeValueV2 = new AttributeValueV2();
-                attributeValueV2.setObjectName(BizProductInfoV2Service.SKU_TABLE);
+                attributeValueV2.setObjectName(AttributeInfoV2.Level.SKU_FOR_VENDOR.getTableName());
                 attributeValueV2.setObjectId(o.getId());
                 List<AttributeValueV2> list = attributeValueV2Service.findList(attributeValueV2);
                 for (AttributeValueV2 valueV2 : list) {
@@ -404,12 +404,9 @@ public class BizProductInfoForVendorController extends BaseController {
             String photoLists = "";
             String imgPhotosSorts = "";
             String imgDetailSorts = "";
-            Map<String,Integer> photosMap = new LinkedHashMap<>();
-            Map<String,Integer> detailsMap = new LinkedHashMap<>();
             for (CommonImg img : imgList) {
                 photos += "|" + img.getImgServer() + img.getImgPath();
                 imgPhotosSorts += img.getImgSort() + ",";
-                photosMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photos)) {
                 bizProductInfo.setPhotos(photos);
@@ -418,7 +415,6 @@ public class BizProductInfoForVendorController extends BaseController {
             for (CommonImg img : subImgList) {
                 photoDetails += "|" + img.getImgServer() + img.getImgPath();
                 imgDetailSorts += img.getImgSort() + ",";
-                detailsMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photoDetails)) {
                 bizProductInfo.setPhotoDetails(photoDetails);
@@ -430,12 +426,6 @@ public class BizProductInfoForVendorController extends BaseController {
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
             }
-//            if (subImgList != null && !subImgList.isEmpty()) {
-//                model.addAttribute("detailsMap", detailsMap);
-//            }
-//            if (imgList != null && !imgList.isEmpty()) {
-//                model.addAttribute("photosMap", photosMap);
-//            }
         }
 
         AttributeValueV2 attributeValue = new AttributeValueV2();
