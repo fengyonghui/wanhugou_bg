@@ -591,4 +591,17 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 		}
 
 	}
+
+    public void getCommonProcessListFromDB(Integer id, List<CommonProcessEntity> list) {
+        if(id == null || id == 0) {
+            return;
+        }
+        CommonProcessEntity commonProcessEntity = commonProcessService.get(id);
+        if (commonProcessEntity != null) {
+            list.add(commonProcessEntity);
+            if (commonProcessEntity.getPrevId() != 0) {
+                getCommonProcessListFromDB(commonProcessEntity.getPrevId(), list);
+            }
+        }
+    }
 }

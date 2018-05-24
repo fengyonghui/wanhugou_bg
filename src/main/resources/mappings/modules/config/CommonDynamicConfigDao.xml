@@ -34,7 +34,10 @@
 				AND a.id = #{id}
 			</if>
 			<if test="confname != null and confname != ''">
-				AND a.confname = #{confname}
+				AND a.confname like
+				<if test="dbName == 'oracle'">'%'||#{confname}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{confname}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{confname},'%')</if>
 			</if>
 			<if test="content != null and content != ''">
 				AND a.content = #{content}

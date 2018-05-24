@@ -5,6 +5,14 @@
     <title>采购订单管理</title>
     <script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
     <meta name="decorator" content="default"/>
+    <style type="text/css">
+        .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;height:200px;border-top:1px solid #FFF;width: 100%}
+        .help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
+        .help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
+        .help_step_set{background: #FFF;color: #3daae9;}
+        .help_step_set .help_step_left{width:8px;height:100px;position:absolute;left:0;top:0;}
+        .help_step_set .help_step_right{width:8px;height:100px; position:absolute;right:-8px;top:0;}
+    </style>
     <script type="text/javascript">
         $(document).ready(function () {
             $("#contentTable").tablesMergeCell({
@@ -207,14 +215,6 @@
         </div>
 
         <div class="control-group">
-            <label class="control-label">供应商：</label>
-            <div class="controls">
-                <form:input disabled="true" path="vendOffice.name" htmlEscape="false" maxlength="30"
-                            class="input-xlarge "/>
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">订单总价：</label>
             <div class="controls">
                 <input type="text" disabled="disabled" value="${bizPoHeader.totalDetail}" htmlEscape="false"
@@ -298,6 +298,44 @@
                        maxlength="30" class="input-xlarge "/>
             </div>
         </div>
+
+        <div class="control-group">
+            <label class="control-label">供应商：</label>
+            <div class="controls">
+                <a href="${ctx}/sys/office/supplierForm?id=${bizPoHeader.vendOffice.id}&gysFlag=gys_view">
+                    ${bizPoHeader.vendOffice.name}
+                </a>
+            </div>
+        </div>
+
+        <c:if test="${type == 'audit' || type == 'pay'}">
+            <div class="control-group">
+                <label class="control-label">供应商卡号：</label>
+                <div class="controls">
+                    <form:input disabled="true" path="vendOffice.bizVendInfo.cardNumber" htmlEscape="false" maxlength="30"
+                                class="input-xlarge "/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">供应商合同：</label>
+                <div class="controls">
+                    <c:forEach items="${compactImgList}" var="v">
+                        <a href="${v.imgServer}${v.imgPath}" target="_blank"><img width="100px" src="${v.imgServer}${v.imgPath}"></a>
+                    </c:forEach>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">供应商身份证：</label>
+                <div class="controls">
+                    <c:forEach items="${identityCardImgList}" var="v">
+                        <a href="${v.imgServer}${v.imgPath}" target="_blank"><img width="100px" src="${v.imgServer}${v.imgPath}"></a>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:if>
+
         <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
             <div class="control-group">
                 <label class="control-label">申请金额：</label>
@@ -380,6 +418,36 @@
                            maxlength="30" class="input-xlarge "/>
                 </div>
             </div>
+            <div class="control-group">
+            <div class="controls help_wrap">
+                <div class="help_step_box fa">
+                    <c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">
+                        <c:if test="${!stat.last}" >
+                            <div class="help_step_item">
+                                <div class="help_step_left"></div>
+                                <div class="help_step_num">${stat.index + 1}</div>
+                                    批注:${v.description}<br/><br/>
+                                    审批人:${v.user.name}<br/>
+                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                <div class="help_step_right"></div>
+                            </div>
+                        </c:if>
+                        <c:if test="${stat.last}">
+                            <div class="help_step_item help_step_set">
+                                <div class="help_step_left"></div>
+                                <div class="help_step_num">${stat.index + 1}</div>
+                                    当前状态:${v.purchaseOrderProcess.name}<br/><br/>
+                                    ${v.user.name}<br/>
+                                <div class="help_step_right"></div>
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                </div>
+            </div>
+            </div>
+
+
+
         </c:if>
     </c:if>
     <c:if test="${bizPoHeader.poDetailList!=null}">
@@ -387,7 +455,6 @@
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                 <c:if test="${type == 'startAudit'}">
                     <input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
-                    <%--TODO--%>
                     <input id="btnSubmit" type="button" onclick="startRejectAudit()" class="btn btn-primary" value="驳回"/>
                 </c:if>
                 <c:if test="${type == 'audit'}">
@@ -560,7 +627,6 @@
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
 <script type="text/javascript">
-
     function startRejectAudit() {
         top.$.jBox.confirm("确认驳回流程吗？","系统提示",function(v,h,f){
             if(v=="ok"){
