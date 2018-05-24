@@ -136,8 +136,7 @@
             name="sys:office:edit">查看</shiro:lacksPermission></a></li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/purchaserSave" method="post"
-           class="form-horizontal">
+<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/purchaserSave" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <form:hidden path="source"/>
     <sys:message content="${message}"/>

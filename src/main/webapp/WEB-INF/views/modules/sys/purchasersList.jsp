@@ -102,6 +102,8 @@
                     <a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
                     <a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>
                     <a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
+                    <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}">添加下级机构</a>
+					<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.type=6&office.parent.id=${office.id}">沟通记录</a>
                     <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}&source=add_prim">添加下级机构</a>
                 </td></shiro:hasPermission>
 			</tr>

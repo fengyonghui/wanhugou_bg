@@ -683,5 +683,13 @@ public class SystemService extends BaseService implements InitializingBean {
 //	}
 	
 	///////////////// Synchronized to the Activiti end //////////////////
+	/**
+	 * 沟通记录查询 品类主管和客户专员
+	 * */
+	@Transactional(readOnly = true)
+	public List<User> userSelectCompany(User user) {
+		List<User> users = userDao.userSelectCompany(user);
+		return users;
+	}
 
 }
