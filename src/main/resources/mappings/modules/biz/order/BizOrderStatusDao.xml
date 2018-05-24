@@ -13,13 +13,15 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		su.name as "createBy.name",
-		suu.name as "updateBy.name"
+		suu.name as "updateBy.name",
+		boh.order_num as "orderHeader.orderNum",
+		boh.order_type as "orderHeader.orderType"
 	</sql>
 	
 	<sql id="bizOrderStatusJoins">
 		left join sys_user su on a.create_id=su.id
 		left join sys_user suu on a.update_id=suu.id
-		left join biz_order_header oh on oh.id=a.order_id
+		left join biz_order_header boh on boh.id=a.order_id
 	</sql>
     
 	<select id="get" resultType="BizOrderStatus">
@@ -37,11 +39,17 @@
 		<include refid="bizOrderStatusJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
-				AND a.order_id = #{orderHeader.id}
+			<if test="orderHeader != null and orderHeader.orderNum != null and orderHeader.orderNum != ''">
+				AND boh.order_num like
+				<if test="dbName == 'oracle'">'%'||#{orderHeader.orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderHeader.orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderHeader.orderNum},'%')</if>
 			</if>
 			<if test="bizStatus != null and bizStatus != ''">
 				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="orderHeader != null and orderHeader.orderType != null and orderHeader.orderType != ''">
+				AND boh.order_type = #{orderHeader.orderType}
 			</if>
 		</where>
 		<choose>
