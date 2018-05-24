@@ -70,7 +70,7 @@ public class BizChatRecordController extends BaseController {
 		}
 		bizChatRecordService.save(bizChatRecord);
 		addMessage(redirectAttributes, "保存沟通记录成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/?repage";
+		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/list?office.id="+bizChatRecord.getOffice().getId();
 	}
 	
 	@RequiresPermissions("biz:chat:bizChatRecord:edit")
