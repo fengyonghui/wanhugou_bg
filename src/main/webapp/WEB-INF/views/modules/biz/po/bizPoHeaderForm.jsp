@@ -403,7 +403,7 @@
             </shiro:hasPermission>
             <shiro:hasPermission name="biz:po:bizPoHeader:edit">
                 <c:if test="${type != 'pay' && type != 'audit' && prewStatus == 'prew'}">
-                    <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="确认生成"/>
+                    <input id="btnSubmit" type="button" onclick="saveMon('createPo')" class="btn btn-primary" value="确认生成"/>
                 </c:if>
                 <c:if test="${type != 'pay' && type != 'createPay' && type != 'audit' && type != 'startAudit' && prewStatus != 'prew'}">
                     <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="保存"/>

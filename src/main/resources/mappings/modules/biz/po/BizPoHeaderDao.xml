@@ -47,9 +47,6 @@
 		LEFT JOIN sys_office so ON so.id = a.vend_id
 		LEFT JOIN biz_po_payment_order payment ON payment.id = a.current_payment_id
 		LEFT JOIN common_process process ON process.id = a.process_id
-		LEFT JOIN biz_po_order_req por ON por.po_id = a.id
-		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
-		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 	</sql>
 
     
@@ -59,7 +56,6 @@
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
 		WHERE a.id = #{id}
-		GROUP BY a.id
 	</select>
 	
 	<select id="findList" resultType="BizPoHeader">
@@ -67,6 +63,9 @@
 			<include refid="bizPoHeaderColumns"/>
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
+		LEFT JOIN biz_po_order_req por ON por.po_id = a.id
+		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
+		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			AND a.is_prew = 0

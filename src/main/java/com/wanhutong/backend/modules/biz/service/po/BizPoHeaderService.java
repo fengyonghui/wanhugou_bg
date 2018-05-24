@@ -244,63 +244,67 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         }
     }
 
-	@Transactional(readOnly = false)
-	public void saveOrdReqBizStatus(BizPoHeader bizPoHeader){
-		BizPoOrderReq bizPoOrderReq=new BizPoOrderReq();
-		BizOrderDetail bizOrderDetail=new BizOrderDetail();
-		BizRequestDetail bizRequestDetail=new BizRequestDetail();
-		bizPoOrderReq.setPoHeader(bizPoHeader);
-		List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
-		Map<Integer, List<BizPoOrderReq>> collectOrder = poOrderReqList.stream().filter(item -> item.getSoType()==Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())).collect(groupingBy(BizPoOrderReq::getSoId));
-		Map<Integer, List<BizPoOrderReq>> collectReq = poOrderReqList.stream().filter(item -> item.getSoType()== Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())).collect(groupingBy(BizPoOrderReq::getSoId));
-		 for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectOrder.entrySet()) {
-		 	BizOrderHeader bizOrderHeader=	bizOrderHeaderService.get(entry.getKey());
-		 	bizOrderDetail.setOrderHeader(bizOrderHeader);
-		 	List<BizOrderDetail> orderDetailList=bizOrderDetailService.findList(bizOrderDetail);
-			        if(orderDetailList.size()==entry.getValue().size()){
-						bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
-						bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+    @Transactional(readOnly = false)
+    public void saveOrdReqBizStatus(BizPoHeader bizPoHeader) {
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        BizOrderDetail bizOrderDetail = new BizOrderDetail();
+        BizRequestDetail bizRequestDetail = new BizRequestDetail();
+        bizPoOrderReq.setPoHeader(bizPoHeader);
+        List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+        Map<Integer, List<BizPoOrderReq>> collectOrder = poOrderReqList.stream().filter(item -> item.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())).collect(groupingBy(BizPoOrderReq::getSoId));
+        Map<Integer, List<BizPoOrderReq>> collectReq = poOrderReqList.stream().filter(item -> item.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())).collect(groupingBy(BizPoOrderReq::getSoId));
+        for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectOrder.entrySet()) {
+            BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(entry.getKey());
+            bizOrderDetail.setOrderHeader(bizOrderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            if (orderDetailList.size() == entry.getValue().size()) {
+                if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
+                    bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
+                    bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 
-						/*用于 订单状态表 insert状态*/
-						if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
-							BizOrderStatus orderStatus = new BizOrderStatus();
-							orderStatus.setOrderHeader(bizOrderHeader);
-							orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-							bizOrderStatusService.save(orderStatus);
-						}
+                    /*用于 订单状态表 insert状态*/
+                    if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+                        BizOrderStatus orderStatus = new BizOrderStatus();
+                        orderStatus.setOrderHeader(bizOrderHeader);
+                        orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+                        bizOrderStatusService.save(orderStatus);
+                    }
 
-			        }else if(orderDetailList.size()>entry.getValue().size()){
-						bizPoOrderReq.setOrderHeader(bizOrderHeader);
-						bizPoOrderReq.setRequestHeader(null);
-						bizPoOrderReq.setPoHeader(null);
-						bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
-						List<BizPoOrderReq> poOrderReqs=bizPoOrderReqService.findList(bizPoOrderReq);
-						if(poOrderReqs.size()==orderDetailList.size()){
-							bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
-							bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+                }
+            } else if (orderDetailList.size() > entry.getValue().size()) {
+                bizPoOrderReq.setOrderHeader(bizOrderHeader);
+                bizPoOrderReq.setRequestHeader(null);
+                bizPoOrderReq.setPoHeader(null);
+                bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
+                List<BizPoOrderReq> poOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+                if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
+                    if (poOrderReqs.size() == orderDetailList.size()) {
+                        bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
+                        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 
-							/*用于 订单状态表 insert状态*/
-							if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
-								BizOrderStatus orderStatus = new BizOrderStatus();
-								orderStatus.setOrderHeader(bizOrderHeader);
-								orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-								bizOrderStatusService.save(orderStatus);
-							}
+                        /*用于 订单状态表 insert状态*/
+                        if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+                            BizOrderStatus orderStatus = new BizOrderStatus();
+                            orderStatus.setOrderHeader(bizOrderHeader);
+                            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+                            bizOrderStatusService.save(orderStatus);
+                        }
 
-						}else {
-							bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
-							bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+                    } else {
+                        bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
+                        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 
-							/*用于 订单状态表 insert状态*/
-							if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
-								BizOrderStatus orderStatus = new BizOrderStatus();
-								orderStatus.setOrderHeader(bizOrderHeader);
-								orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-								bizOrderStatusService.save(orderStatus);
-							}
+                        /*用于 订单状态表 insert状态*/
+                        if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+                            BizOrderStatus orderStatus = new BizOrderStatus();
+                            orderStatus.setOrderHeader(bizOrderHeader);
+                            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+                            bizOrderStatusService.save(orderStatus);
+                        }
 
-						}
-			        }
+                    }
+                }
+            }
 
 
         }
@@ -309,20 +313,24 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizRequestDetail.setRequestHeader(bizRequestHeader);
             List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
             if (requestDetailList.size() == entry.getValue().size()) {
-                bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-                bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
+                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                }
             } else if (requestDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setRequestHeader(bizRequestHeader);
                 bizPoOrderReq.setOrderHeader(null);
                 bizPoOrderReq.setPoHeader(null);
                 bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType()));
                 List<BizPoOrderReq> poOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
-                if (poOrderReqs.size() == requestDetailList.size()) {
-                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
-                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-                } else {
-                    bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.PURCHASING.getState());
-                    bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
+                    if (poOrderReqs.size() == requestDetailList.size()) {
+                        bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
+                        bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                    } else {
+                        bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.PURCHASING.getState());
+                        bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                    }
                 }
             }
 
