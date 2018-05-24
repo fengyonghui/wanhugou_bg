@@ -318,6 +318,21 @@
             </div>
 
             <div class="control-group">
+                <label class="control-label">供应商收款人：</label>
+                <div class="controls">
+                    <form:input disabled="true" path="vendOffice.bizVendInfo.payee" htmlEscape="false" maxlength="30"
+                                class="input-xlarge "/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">供应商开户行：</label>
+                <div class="controls">
+                    <form:input disabled="true" path="vendOffice.bizVendInfo.bankName" htmlEscape="false" maxlength="30"
+                                class="input-xlarge "/>
+                </div>
+            </div>
+
+            <div class="control-group">
                 <label class="control-label">供应商合同：</label>
                 <div class="controls">
                     <c:forEach items="${compactImgList}" var="v">

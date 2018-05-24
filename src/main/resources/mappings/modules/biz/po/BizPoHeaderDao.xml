@@ -43,7 +43,9 @@
 		a.is_prew as "isPrewUseful",
 		bvi.audit_status AS "vendOffice.bizVendInfo.auditStatus",
 		bvi.card_number AS "vendOffice.bizVendInfo.cardNumber",
-		bvi.vend_name AS "vendOffice.bizVendInfo.vendName"
+		bvi.vend_name AS "vendOffice.bizVendInfo.vendName",
+		bvi.bank_name AS "vendOffice.bizVendInfo.bankName",
+		bvi.payee AS "vendOffice.bizVendInfo.payee"
 	</sql>
 
 	<sql id="bizPoHeaderJoins">

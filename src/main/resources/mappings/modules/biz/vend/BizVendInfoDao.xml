@@ -12,6 +12,8 @@
 		a.code AS "code",
 		a.status AS "delFlag",
 		a.card_number AS "cardNumber",
+		a.bank_name AS "bankName",
+		a.payee AS "payee",
 		a.u_version AS "uVersion",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -95,7 +97,9 @@
 			create_time,
 			update_id,
 			update_time,
-			card_number
+			card_number,
+			bank_name,
+			payee
 		) VALUES (
 			#{office.id},
 			#{vendName},
@@ -108,7 +112,9 @@
 			#{createDate},
 			#{updateBy.id},
 			#{updateDate},
-			#{cardNumber}
+			#{cardNumber},
+			#{bankName},
+			#{payee}
 		)
 	</insert>
 	
@@ -122,7 +128,9 @@
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},
 			audit_status = #{auditStatus},
-			card_number = #{cardNumber}
+			card_number = #{cardNumber},
+			bank_name = #{bankName},
+			payee = #{payee}
 		WHERE office_id = #{office.id}
 	</update>
 
