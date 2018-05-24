@@ -305,7 +305,7 @@
                     <input id="payTotal" name="planPay" type="text"
                            <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
                            value="${bizPoHeader.bizPoPaymentOrder.id != null ?
-                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight)}"
+                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)}"
                            htmlEscape="false" maxlength="30" class="input-xlarge"/>
                 </div>
             </div>
@@ -625,22 +625,36 @@
 
         top.$.jBox.confirm("确认开始审核流程吗？","系统提示",function(v,h,f){
             if(v=="ok"){
-                var id = $("#id").val();
-                $.ajax({
-                    url: '${ctx}/biz/po/bizPoHeader/startAudit',
-                    contentType: 'application/json',
-                    data: {"id": id, "prew":prew, "prewPayTotal": prewPayTotal, "prewPayDeadline":prewPayDeadline},
-                    type: 'get',
-                    success: function (result) {
-                        alert(result);
-                        if(result == '操作成功!') {
-                            window.location.href = "${ctx}/biz/po/bizPoHeader";
+                var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+                var submit = function (v, h, f) {
+                    if ($String.isNullOrBlank(f.description)) {
+                        jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                        return false;
+                    }
+                    var id = $("#id").val();
+                    $.ajax({
+                        url: '${ctx}/biz/po/bizPoHeader/startAudit',
+                        contentType: 'application/json',
+                        data: {"id": id, "prew":prew, "prewPayTotal": prewPayTotal, "prewPayDeadline":prewPayDeadline, "desc":f.description},
+                        type: 'get',
+                        success: function (result) {
+                            alert(result);
+                            if(result == '操作成功!') {
+                                window.location.href = "${ctx}/biz/po/bizPoHeader";
+                            }
+                        },
+                        error: function (error) {
+                            console.info(error);
                         }
-                    },
-                    error: function (error) {
-                        console.info(error);
+                    });
+                    return true;
+                };
+
+                jBox(html, {
+                    title: "请输入通过理由:", submit: submit, loaded: function (h) {
                     }
                 });
+
             }
         },{buttonsFocus:1});
     }
@@ -648,7 +662,20 @@
     function checkPass() {
         top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
             if(v=="ok"){
-                audit(1, '');
+                var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+                var submit = function (v, h, f) {
+                    if ($String.isNullOrBlank(f.description)) {
+                        jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                        return false;
+                    }
+                    audit(1, f.description);
+                    return true;
+                };
+
+                jBox(html, {
+                    title: "请输入通过理由:", submit: submit, loaded: function (h) {
+                    }
+                });
             }
         },{buttonsFocus:1});
     }

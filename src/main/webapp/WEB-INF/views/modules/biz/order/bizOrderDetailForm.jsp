@@ -85,9 +85,9 @@
                 var itemNo = $("#itemNo").val();
                 $("#bizItemNoCopy").val(itemNo);
                 var purchaser = $("#purchaserId").val();
-                if (purchaser == null){
-                    alert("请选择采购商");
-                }
+                // if (purchaser == null){
+                //     alert("请选择采购商");
+                // }
                 $("#purchaserCopy").val(purchaser);
                 $.ajax({
                     type:"post",
@@ -202,7 +202,7 @@
 <body>
 <ul class="nav nav-tabs">
     <li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
-    <li class="active"><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}">订单详情<shiro:hasPermission
+    <li class="active"><a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderHeader.id=${orderH.id}&&orderType=${orderH.orderType}">订单详情<shiro:hasPermission
             name="biz:order:bizOrderDetail:edit">${not empty bizOrderDetail.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
             name="biz:order:bizOrderDetail:edit">查看</shiro:lacksPermission></a></li>
 </ul>
@@ -230,14 +230,15 @@
                     <input id="itemNo"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false" maxlength="50" class="input-medium"/>
                 </li>
                 <c:if test="${orderH.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
-                    <li><label>采购商：</label>
-                        <sys:treeselect id="purchaser" name="" value=""  labelName=""
-                                        labelValue="" notAllowSelectParent="true"
-                                        title="采购商"  url="/sys/office/queryTreeList?type=6"
-                                        cssClass="input-medium required"
-                                        allowClear="true"  dataMsgRequired="必填信息"/>
-                    </li>
-                    <span class="help-inline"><font color="red">*</font> </span>
+                    <%--<li><label>采购商：</label>--%>
+                        <%--<sys:treeselect id="purchaser" name="" value=""  labelName=""--%>
+                                        <%--labelValue="" notAllowSelectParent="true"--%>
+                                        <%--title="采购商"  url="/sys/office/queryTreeList?type=6"--%>
+                                        <%--cssClass="input-medium required"--%>
+                                        <%--allowClear="true"  dataMsgRequired="必填信息"/>--%>
+                    <%--</li>--%>
+                    <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+                    <input id="purchaserId" type="hidden" value="${customer.id}" />
                 </c:if>
                 <%--<li><label>查询：</label>--%>
                     <%--<select class="input-medium">--%>
@@ -245,6 +246,7 @@
                         <%--<option id="skuAll" value="ono"> 查询所有 </option>--%>
                     <%--</select>--%>
                 <%--</li>--%>
+
                 <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
                     <li class="btns"><input id="searchData" class="btn btn-primary" type="button"  value="查询"/></li>
                 </c:if>
