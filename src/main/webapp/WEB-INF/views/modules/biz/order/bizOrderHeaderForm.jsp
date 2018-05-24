@@ -454,7 +454,6 @@
             </c:if>
         </div>
     </div>
-    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
         <div class="control-group">
             <label class="control-label">应付金额：</label>
             <div class="controls">
@@ -465,15 +464,11 @@
         <div class="control-group">
             <label class="control-label">已付金额：</label>
             <div class="controls">
-                <%--<input type="text" value="<fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />"--%>
-                       <%--style="color:#088A29" class="input-xlarge" disabled="true" />--%>
-                        <%-----${bizOrderHeader.receiveTotal}----%>
                 <font color="#088A29">
                     <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
-    </c:if>
     <c:if test="${not empty entity.orderDetails}">
         <c:if test="${fns:getUser().isAdmin()==false}">
             <div class="control-group">
@@ -828,30 +823,6 @@
             </div>
         </div>
         </c:if>
-        <div class="control-group">
-            <label class="control-label">创建人：</label>
-            <div class="controls">
-                <form:input path="totalDetail" value="${bizOrderHeader.createBy.name}" readOnly="true" class="input-xlarge"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">创建时间：</label>
-            <div class="controls">
-                <fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">更新人：</label>
-            <div class="controls">
-                <form:input path="totalDetail" value="${bizOrderHeader.updateBy.name}" readOnly="true" class="input-xlarge"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">更新时间：</label>
-            <div class="controls">
-                <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </div>
-        </div>
         <c:if test="${statu != '' && statu =='unline'}">
             <div class="control-group">
                 <label class="control-label">支付信息:</label>
