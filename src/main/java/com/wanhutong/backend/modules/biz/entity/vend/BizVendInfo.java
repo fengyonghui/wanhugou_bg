@@ -27,6 +27,14 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	 */
 	private String cardNumber;
 	/**
+	 * 开户行
+	 */
+	private String bankName;
+	/**
+	 * 收款人
+	 */
+	private String payee;
+	/**
 	 * 合同图片 多个以|分隔
 	 */
 	private String compactPhotos;
@@ -132,6 +140,22 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 
 	public void setCardNumber(String cardNumber) {
 		this.cardNumber = cardNumber;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getPayee() {
+		return payee;
+	}
+
+	public void setPayee(String payee) {
+		this.payee = payee;
 	}
 
 	public enum  AuditStatus {
