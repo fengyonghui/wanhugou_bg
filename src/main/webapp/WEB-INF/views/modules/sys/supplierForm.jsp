@@ -271,6 +271,13 @@
             <form:input path="email" htmlEscape="false" maxlength="50"/>
         </div>
     </div>
+
+    <div class="control-group">
+        <label class="control-label">卡号:</label>
+        <div class="controls">
+            <form:input path="bizVendInfo.cardNumber" htmlEscape="false" maxlength="50"/>
+        </div>
+    </div>
     <div class="control-group">
         <label class="control-label">合同图:
             <c:if test="${gysFlag != 'gys_audit'}">

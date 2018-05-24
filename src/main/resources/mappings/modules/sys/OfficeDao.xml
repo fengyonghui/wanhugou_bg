@@ -32,7 +32,9 @@
 		ar.parent_ids AS "area.parentIds",
 		pp.name AS "primaryPerson.name",
 		dp.name AS "deputyPerson.name",
-		bvi.audit_status AS "bizVendInfo.auditStatus"
+		bvi.audit_status AS "bizVendInfo.auditStatus",
+		bvi.card_number AS "bizVendInfo.cardNumber",
+		bvi.vend_name AS "bizVendInfo.vendName"
 	</sql>
 
 	<sql id="officeJoins">

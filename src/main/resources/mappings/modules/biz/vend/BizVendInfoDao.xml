@@ -11,6 +11,7 @@
 		a.audit_status AS "auditStatus",
 		a.code AS "code",
 		a.status AS "delFlag",
+		a.card_number AS "cardNumber",
 		a.u_version AS "uVersion",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
@@ -93,7 +94,8 @@
 			create_id,
 			create_time,
 			update_id,
-			update_time
+			update_time,
+			card_number
 		) VALUES (
 			#{office.id},
 			#{vendName},
@@ -105,7 +107,8 @@
 			#{createBy.id},
 			#{createDate},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{cardNumber}
 		)
 	</insert>
 	
@@ -118,7 +121,8 @@
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate},
-			audit_status = #{auditStatus}
+			audit_status = #{auditStatus},
+			card_number = #{cardNumber}
 		WHERE office_id = #{office.id}
 	</update>
 

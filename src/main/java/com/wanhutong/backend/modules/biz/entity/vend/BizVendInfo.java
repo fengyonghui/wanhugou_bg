@@ -23,6 +23,10 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 	private String cateName;		// cate_name
 	private String code;		// code
 	/**
+	 * 银行卡号
+	 */
+	private String cardNumber;
+	/**
 	 * 合同图片 多个以|分隔
 	 */
 	private String compactPhotos;
@@ -122,6 +126,13 @@ public class BizVendInfo extends DataEntity<BizVendInfo> {
 		this.idCardPhotos = idCardPhotos;
 	}
 
+	public String getCardNumber() {
+		return cardNumber;
+	}
+
+	public void setCardNumber(String cardNumber) {
+		this.cardNumber = cardNumber;
+	}
 
 	public enum  AuditStatus {
 		UNAUDITED(0, "未审核"),
