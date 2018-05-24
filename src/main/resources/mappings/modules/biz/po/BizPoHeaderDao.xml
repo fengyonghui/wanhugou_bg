@@ -56,7 +56,6 @@
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
 		WHERE a.id = #{id}
-		GROUP BY a.id
 	</select>
 	
 	<select id="findList" resultType="BizPoHeader">
