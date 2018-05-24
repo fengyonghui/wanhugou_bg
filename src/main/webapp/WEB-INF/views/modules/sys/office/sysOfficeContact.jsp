@@ -54,6 +54,7 @@
 				<th>累计订单采购频次</th>
 				<th>金额</th>
 				<th>首次开单时间</th>
+				<th>沟通次数</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -108,6 +109,11 @@
 					<c:if test="${user.user.name!=null}">
 						<fmt:formatDate value="${user.userOrder.userOfficeDeta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</c:if>
+				</td>
+				<td>
+					<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${user.company.id}&office.parent.id=7&office.type=6">
+						${user.userOrder.officeChatRecord}次
+					</a>
 				</td>
 			</tr>
 		</c:forEach>

@@ -97,6 +97,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * */
     private Double userOfficeReceiveTotal;
     private Date userOfficeDeta;
+    private Integer officeChatRecord;//经销店的沟通次数
 
     public String getLocationAddress() {
         return locationAddress;
@@ -515,5 +516,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setUserOfficeDeta(Date userOfficeDeta) {
         this.userOfficeDeta = userOfficeDeta;
+    }
+
+    public Integer getOfficeChatRecord() {
+        return officeChatRecord;
+    }
+
+    public void setOfficeChatRecord(Integer officeChatRecord) {
+        this.officeChatRecord = officeChatRecord;
     }
 }
