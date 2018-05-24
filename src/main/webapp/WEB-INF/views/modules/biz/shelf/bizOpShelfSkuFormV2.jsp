@@ -276,7 +276,7 @@
 
 									"<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
 									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-									"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
+									"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" onchange='changeNum(this.value,"+item.id+")' htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
 									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
                             });
                             pri += 10;
@@ -324,6 +324,12 @@
                     $(this).find("input[name='minQtys']").attr("readonly","readonly");
                 });
             }
+        }
+
+        function changeNum(num,obj) {
+			$("input[about='prioritys"+obj+"']").each(function () {
+				$(this).val(num);
+            });
         }
 	</script>
 	<script type="text/javascript">
