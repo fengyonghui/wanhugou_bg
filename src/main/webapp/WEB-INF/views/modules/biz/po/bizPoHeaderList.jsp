@@ -17,7 +17,6 @@
         }
         function testData(checkbox) {
             $("#includeTestData").val(checkbox.checked);
-            alert(checkbox.checked);
         }
 	</script>
 </head>
