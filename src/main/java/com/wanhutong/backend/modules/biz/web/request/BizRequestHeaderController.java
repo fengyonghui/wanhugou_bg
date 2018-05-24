@@ -287,7 +287,7 @@ public class BizRequestHeaderController extends BaseController {
 	@RequestMapping(value = "requestHeaderExport")
 	public String requestHeaderExport(BizRequestHeader bizRequestHeader,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String fileName = "备货清单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 			List<BizRequestHeader> list = bizRequestHeaderService.findListExport(bizRequestHeader);
 			//1备货清单
@@ -317,12 +317,16 @@ public class BizRequestHeaderController extends BaseController {
 					}else{
 						headerListData.add("");
 					}
+					//期望收货时间
+					headerListData.add(String.valueOf(sdf.format(header.getRecvEta())));
 					//	备货商品数量
-					headerListData.add(String.valueOf(header.getReqQtys()));
+					headerListData.add(String.valueOf(header.getReqQtys()==null?"":header.getReqQtys()));
 					//备货商品总价
-					headerListData.add(String.valueOf(header.getTotalMoney()));
-					headerListData.add(String.valueOf(header.getRecvQtys()));
-					headerListData.add(String.valueOf(header.getRemark()));
+					headerListData.add(String.valueOf(header.getTotalMoney()==null?"":header.getTotalMoney()));
+					//已收保证金
+					headerListData.add(String.valueOf(header.getRecvTotal()==null?"":header.getRecvTotal()));
+					headerListData.add(String.valueOf(header.getRecvQtys()==null?"":header.getRecvQtys()));
+					headerListData.add(String.valueOf(header.getRemark()==null?"":header.getRemark()));
 					Dict dict = new Dict();
 					dict.setDescription("备货单业务状态");
 					dict.setType("biz_req_status");
@@ -334,8 +338,12 @@ public class BizRequestHeaderController extends BaseController {
 							break;
 						}
 					}
-					//期望收货时间
-					headerListData.add(String.valueOf(sdf.format(header.getRecvEta())));
+					headerListData.add(String.valueOf(sdf.format(header.getCreateDate())));
+					if(header.getCreateBy()!=null && header.getCreateBy().getName()!=null){
+						headerListData.add(String.valueOf(header.getCreateBy().getName()));
+					}else{
+						headerListData.add("");
+					}
 					data.add(headerListData);
 					if(reqDetailList.size()!=0){
 						reqDetailList.forEach(detail->{
@@ -370,7 +378,7 @@ public class BizRequestHeaderController extends BaseController {
 							}
 							detailListData.add(String.valueOf(detail.getReqQty()));
 							if(detail.getRequestHeader()!=null && detail.getRequestHeader().getRecvEta()!=null){
-								detailListData.add(String.valueOf(detail.getRequestHeader().getRecvEta()));
+								detailListData.add(String.valueOf(sdf.format(detail.getRequestHeader().getRecvEta())));
 							}else{
 								detailListData.add("");
 							}
@@ -379,7 +387,7 @@ public class BizRequestHeaderController extends BaseController {
 					}
 				}
 			}
-			String[] headers = {"备货单号", "采购中心", "备货商品数量", "备货商品总价","已到货数量", "备注", "业务状态","期望收货时间"};
+			String[] headers = {"备货单号", "采购中心","期望收货时间", "备货商品数量", "备货商品总价","已收保证金","已到货数量", "备注", "业务状态","下单时间","申请人"};
 			String[] details = {"备货单号", "产品名称", "品牌名称", "商品名称","商品编码", "商品货号", "商品属性", "工厂价", "申报数量","期望收货时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
