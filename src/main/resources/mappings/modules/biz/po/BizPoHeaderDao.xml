@@ -52,12 +52,18 @@
 		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 	</sql>
 
-    
+	<!-- 用于查看生成的采购单  -->
+	<sql id="bizPoHeaderReqJoins">
+		LEFT JOIN sys_office so ON so.id = a.vend_id
+		LEFT JOIN biz_po_payment_order payment ON payment.id = a.current_payment_id
+		LEFT JOIN common_process process ON process.id = a.process_id
+	</sql>
+
 	<select id="get" resultType="BizPoHeader">
 		SELECT 
 			<include refid="bizPoHeaderColumns"/>
 		FROM biz_po_header a
-		<include refid="bizPoHeaderJoins"/>
+		<include refid="bizPoHeaderReqJoins"/>
 		WHERE a.id = #{id}
 	</select>
 	

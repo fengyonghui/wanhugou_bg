@@ -140,9 +140,18 @@ public class BizRequestHeaderController extends BaseController {
 									BizPoDetail bizPoDetail = new BizPoDetail();
 									bizPoDetail.setPoHeader(poOrderReq.getPoHeader());
 									List<BizPoDetail> poDetailList = bizPoDetailService.findList(bizPoDetail);
-										for(int i=0;i<reqDetailList.size();i++){
-											reqDetailList.get(i).setPoDetail(poDetailList.get(i));
+									if(poDetailList.size()!=0){
+										if(poDetailList.size()==reqDetailList.size()){
+											for(int i=0;i<reqDetailList.size();i++){
+												reqDetailList.get(i).setPoDetail(poDetailList.get(i));
+											}
 										}
+										if(poDetailList.size()<reqDetailList.size()){
+											for(int i=0;i<poDetailList.size();i++){
+												reqDetailList.get(i).setPoDetail(poDetailList.get(i));
+											}
+										}
+									}
 									model.addAttribute("requestPoHeader", poHeader);
 									break;
 								}
