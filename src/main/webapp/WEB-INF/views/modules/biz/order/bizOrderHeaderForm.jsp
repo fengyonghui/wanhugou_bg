@@ -201,7 +201,7 @@
                     $("#cancel10").addClass("btn-primary");
                     $("#cancel35").addClass("btn-primary");
                     $("#cancel40").addClass("btn-default");
-                }else if($("#bizStatus").val()==40){ <%--40已删除--%>
+                }else if($("#bizStatus").val()==40){ <%--40已删除 隐藏--%>
                     $("#already_delete").css("display","block");
                     $("#already_delete30").addClass("btn-primary");
                     $("#already_delete35").addClass("btn-primary");
@@ -802,7 +802,7 @@
                     <div style="float: left">
                         <div style="padding-bottom: 1px;padding-top: 16px;">
                             &nbsp;&rarr;&nbsp;<button id="completed30" type="button" class="btn btn-arrow-right">已完成</button>&nbsp;&rarr;&nbsp;
-                            <button id="completed40" type="button" class="btn btn-arrow-right">已删除</button>
+                            <button id="completed40" type="button" class="btn btn-arrow-right">隐藏</button>
                         </div>
                     </div>
                 </div>
@@ -821,7 +821,7 @@
                     <div style="float: left">
                         <div style="padding-top: 31px;">
                             <button id="cancel35" type="button" class="btn btn-arrow-right">已取消</button>&nbsp;&rarr;&nbsp;
-                            <button id="cancel40" type="button" class="btn btn-arrow-right">已删除</button>
+                            <button id="cancel40" type="button" class="btn btn-arrow-right">隐藏</button>
                         </div>
                     </div>
                 </div>
@@ -836,7 +836,7 @@
                     </div>
                     <div style="float: left;">
                         <div style="padding-top: 16px;">
-                            &rarr;<button id="already_delete40" type="button" class="btn btn-arrow-right">已删除</button>
+                            &rarr;<button id="already_delete40" type="button" class="btn btn-arrow-right">隐藏</button>
                         </div>
                     </div>
                 </div>
