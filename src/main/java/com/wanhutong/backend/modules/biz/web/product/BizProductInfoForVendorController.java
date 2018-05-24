@@ -24,10 +24,7 @@ import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendor
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
-import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import com.wanhutong.backend.modules.enums.SkuTypeEnum;
-import com.wanhutong.backend.modules.enums.TagInfoEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -51,11 +48,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 产品信息表Controller
@@ -155,14 +148,18 @@ public class BizProductInfoForVendorController extends BaseController {
             String photos = "";
             String photoDetails = "";
             String photoLists = "";
+            Map<String,Integer> photosMap = new LinkedHashMap<>();
+            Map<String,Integer> detailsMap = new LinkedHashMap<>();
             for (CommonImg img : imgList) {
                 photos += "|" + img.getImgServer() + img.getImgPath();
+                photosMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photos)) {
                 bizProductInfo.setPhotos(photos);
             }
             for (CommonImg img : subImgList) {
                 photoDetails += "|" + img.getImgServer() + img.getImgPath();
+                detailsMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photoDetails)) {
                 bizProductInfo.setPhotoDetails(photoDetails);
@@ -172,6 +169,12 @@ public class BizProductInfoForVendorController extends BaseController {
             }
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
+            }
+            if (subImgList != null && !subImgList.isEmpty()) {
+                model.addAttribute("detailsMap", detailsMap);
+            }
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
             }
         }
 
@@ -399,17 +402,27 @@ public class BizProductInfoForVendorController extends BaseController {
             String photos = "";
             String photoDetails = "";
             String photoLists = "";
+            String imgPhotosSorts = "";
+            String imgDetailSorts = "";
+            Map<String,Integer> photosMap = new LinkedHashMap<>();
+            Map<String,Integer> detailsMap = new LinkedHashMap<>();
             for (CommonImg img : imgList) {
                 photos += "|" + img.getImgServer() + img.getImgPath();
+                imgPhotosSorts += img.getImgSort() + ",";
+                photosMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photos)) {
                 bizProductInfo.setPhotos(photos);
+                bizProductInfo.setImgPhotosSorts(imgPhotosSorts);
             }
             for (CommonImg img : subImgList) {
                 photoDetails += "|" + img.getImgServer() + img.getImgPath();
+                imgDetailSorts += img.getImgSort() + ",";
+                detailsMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photoDetails)) {
                 bizProductInfo.setPhotoDetails(photoDetails);
+                bizProductInfo.setImgDetailSorts(imgDetailSorts);
             }
             for (CommonImg img : itemImgList) {
                 photoLists += "|" + img.getImgServer() + img.getImgPath();
@@ -417,6 +430,12 @@ public class BizProductInfoForVendorController extends BaseController {
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
             }
+//            if (subImgList != null && !subImgList.isEmpty()) {
+//                model.addAttribute("detailsMap", detailsMap);
+//            }
+//            if (imgList != null && !imgList.isEmpty()) {
+//                model.addAttribute("photosMap", photosMap);
+//            }
         }
 
         AttributeValueV2 attributeValue = new AttributeValueV2();
@@ -431,6 +450,7 @@ public class BizProductInfoForVendorController extends BaseController {
 
         bizProductInfo.setId(null);
         bizProductInfo.setSkuAttrStrList(null);
+        bizProductInfo.setProdType(Byte.parseByte(ProdTypeEnum.PROD.getType()));
         bizProductInfoV2Service.save(bizProductInfo);
         skuInfosList.forEach(o -> {
             CommonImg commonSkuImg = new CommonImg();
@@ -469,14 +489,18 @@ public class BizProductInfoForVendorController extends BaseController {
             String photos = "";
             String photoDetails = "";
             String photoLists = "";
+            Map<String,Integer> photosMap = new LinkedHashMap<>();
+            Map<String,Integer> detailsMap = new LinkedHashMap<>();
             for (CommonImg img : imgList) {
                 photos += "|" + img.getImgServer() + img.getImgPath();
+                photosMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photos)) {
                 bizProductInfo.setPhotos(photos);
             }
             for (CommonImg img : subImgList) {
                 photoDetails += "|" + img.getImgServer() + img.getImgPath();
+                detailsMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photoDetails)) {
                 bizProductInfo.setPhotoDetails(photoDetails);
@@ -486,6 +510,12 @@ public class BizProductInfoForVendorController extends BaseController {
             }
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
+            }
+            if (subImgList != null && !subImgList.isEmpty()) {
+                model.addAttribute("detailsMap", detailsMap);
+            }
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
             }
         }
 

@@ -24,9 +24,26 @@
                         alert("请选择分类");
                         return;
                     }
-
-                    loading('正在提交，请稍等...');
-                    form.submit();
+                    var aa = true;
+                    $("input[name='imgDetailSorts']").each(function () {
+                        if ($(this).val()=='') {
+                            aa = false;
+                            return;
+                        }
+                    });
+                    var bb = true;
+                    $("input[name='imgPhotosSorts']").each(function () {
+                        if ($(this).val()=='') {
+                            bb = false;
+                            return;
+                        }
+                    });
+                    if (aa && bb) {
+                        loading('正在提交，请稍等...');
+                        form.submit();
+                    } else {
+                        alert("主图和列表图的序号不能为空");
+                    }
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function (error, element) {
@@ -99,13 +116,13 @@
                 <tr id="prodMainImgImg">
                         <%--<c:if test="${entity.photos != null && entity.photos != ''}">--%>
                         <%--<c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">--%>
-                    <c:forEach items="${photosMap}" var="photo">
-                        <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,${photo.value});"></td>
+                    <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                        <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,'#mainImg'+${status.index});"></td>
                     </c:forEach>
                 </tr>
                 <tr id="imgPhotosSorts">
-                    <c:forEach items="${photosMap}" var="photo">
-                        <td><input id="${photo.value}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
+                    <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                        <td><input id="mainImg${status.index}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
                     </c:forEach>
                 </tr>
             </table>
@@ -156,13 +173,13 @@
         <div id="prodDetailImgDiv">
             <table>
                 <tr id="prodDetailImgImg">
-                    <c:forEach items="${detailsMap}" var="detail">
-                        <td><img src="${detail.key}" customInput="prodDetailImgImg" style='width: 100px' onclick="removeThis(this,'detail'+${detail.value});"></td>
+                    <c:forEach items="${detailsMap}" var="detail" varStatus="status">
+                        <td><img src="${detail.key}" customInput="prodDetailImgImg" style='width: 100px' onclick="removeThis(this,'#detailImg'+${status.index});"></td>
                     </c:forEach>
                 </tr>
                 <tr id="imgDetailSorts">
-                    <c:forEach items="${detailsMap}" var="detail">
-                        <td><input id="detail${detail.value}" name="imgDetailSorts" type="number" style="width: 100px" value="${detail.value}"/></td>
+                    <c:forEach items="${detailsMap}" var="detail" varStatus="status">
+                        <td><input id="detailImg${status.index}" name="imgDetailSorts" type="number" style="width: 100px" value="${detail.value}"/></td>
                     </c:forEach>
                 </tr>
             </table>
@@ -700,7 +717,6 @@
     }
 
     function removeThis(obj,item) {
-        alert($(obj).html());
         $(obj).remove();
         $(item).remove();
     }

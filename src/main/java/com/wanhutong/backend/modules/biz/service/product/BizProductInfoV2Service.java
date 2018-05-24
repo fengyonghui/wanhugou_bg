@@ -398,7 +398,9 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
         List<CommonImg> detailCommonImg = getImgList(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo.getId());
         for (int i = 0; i < commonImgs.size(); i++) {
             CommonImg commonImg = commonImgs.get(i);
-            commonImg.setImgSort(Integer.parseInt(photosSort[i]));
+            if (photosSort != null && photosSort.length > 0) {
+                commonImg.setImgSort(Integer.parseInt(photosSort[i]));
+            }
             commonImgService.save(commonImg);
 
             if (i == 0 && StringUtils.isBlank(bizProductInfo.getImgUrl())) {
@@ -408,7 +410,9 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
         }
         for (int i = 0; i < detailCommonImg.size(); i++) {
             CommonImg commonImg = detailCommonImg.get(i);
-            commonImg.setImgSort(Integer.parseInt(detailSort[i]));
+            if (detailSort != null && detailSort.length > 0) {
+                commonImg.setImgSort(Integer.parseInt(detailSort[i]));
+            }
             commonImgService.save(commonImg);
         }
 

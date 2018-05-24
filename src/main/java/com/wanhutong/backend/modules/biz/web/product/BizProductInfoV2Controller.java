@@ -165,8 +165,12 @@ public class BizProductInfoV2Controller extends BaseController {
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
             }
-            model.addAttribute("detailsMap",detailsMap);
-            model.addAttribute("photosMap",photosMap);
+            if (subImgList != null && !subImgList.isEmpty()) {
+                model.addAttribute("detailsMap", detailsMap);
+            }
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
+            }
         }
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();
@@ -326,8 +330,12 @@ public class BizProductInfoV2Controller extends BaseController {
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
             }
-            model.addAttribute("detailsMap",detailsMap);
-            model.addAttribute("photosMap",photosMap);
+            if (subImgList != null && !subImgList.isEmpty()) {
+                model.addAttribute("detailsMap", detailsMap);
+            }
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
+            }
         }
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();
