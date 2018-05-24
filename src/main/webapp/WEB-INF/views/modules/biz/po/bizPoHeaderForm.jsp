@@ -215,42 +215,6 @@
         </div>
 
         <div class="control-group">
-            <label class="control-label">供应商：</label>
-            <div class="controls">
-                <form:input disabled="true" path="vendOffice.name" htmlEscape="false" maxlength="30"
-                            class="input-xlarge "/>
-            </div>
-        </div>
-
-        <c:if test="${type == 'audit' || type == 'pay'}">
-        <div class="control-group">
-            <label class="control-label">供应商卡号：</label>
-            <div class="controls">
-                <form:input disabled="true" path="vendOffice.bizVendInfo.cardNumber" htmlEscape="false" maxlength="30"
-                            class="input-xlarge "/>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">供应商合同：</label>
-            <div class="controls">
-               <c:forEach items="${compactImgList}" var="v">
-                   <a href="${v.imgServer}${v.imgPath}" target="_blank"><img width="100px" src="${v.imgServer}${v.imgPath}"></a>
-               </c:forEach>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">供应商身份证：</label>
-            <div class="controls">
-               <c:forEach items="${identityCardImgList}" var="v">
-                   <a href="${v.imgServer}${v.imgPath}" target="_blank"><img width="100px" src="${v.imgServer}${v.imgPath}"></a>
-               </c:forEach>
-            </div>
-        </div>
-        </c:if>
-
-        <div class="control-group">
             <label class="control-label">订单总价：</label>
             <div class="controls">
                 <input type="text" disabled="disabled" value="${bizPoHeader.totalDetail}" htmlEscape="false"
@@ -334,6 +298,44 @@
                        maxlength="30" class="input-xlarge "/>
             </div>
         </div>
+
+        <div class="control-group">
+            <label class="control-label">供应商：</label>
+            <div class="controls">
+                <a href="${ctx}/sys/office/supplierForm?id=${bizPoHeader.vendOffice.id}&gysFlag=gys_view">
+                    ${bizPoHeader.vendOffice.name}
+                </a>
+            </div>
+        </div>
+
+        <c:if test="${type == 'audit' || type == 'pay'}">
+            <div class="control-group">
+                <label class="control-label">供应商卡号：</label>
+                <div class="controls">
+                    <form:input disabled="true" path="vendOffice.bizVendInfo.cardNumber" htmlEscape="false" maxlength="30"
+                                class="input-xlarge "/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">供应商合同：</label>
+                <div class="controls">
+                    <c:forEach items="${compactImgList}" var="v">
+                        <a href="${v.imgServer}${v.imgPath}" target="_blank"><img width="100px" src="${v.imgServer}${v.imgPath}"></a>
+                    </c:forEach>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">供应商身份证：</label>
+                <div class="controls">
+                    <c:forEach items="${identityCardImgList}" var="v">
+                        <a href="${v.imgServer}${v.imgPath}" target="_blank"><img width="100px" src="${v.imgServer}${v.imgPath}"></a>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:if>
+
         <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
             <div class="control-group">
                 <label class="control-label">申请金额：</label>
@@ -453,7 +455,6 @@
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
                 <c:if test="${type == 'startAudit'}">
                     <input id="btnSubmit" type="button" onclick="startAudit()" class="btn btn-primary" value="开启审核"/>
-                    <%--TODO--%>
                     <input id="btnSubmit" type="button" onclick="startRejectAudit()" class="btn btn-primary" value="驳回"/>
                 </c:if>
                 <c:if test="${type == 'audit'}">

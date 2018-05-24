@@ -273,30 +273,32 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label">卡号:</label>
+        <label class="control-label">银行卡号:</label>
         <div class="controls">
             <form:input path="bizVendInfo.cardNumber" htmlEscape="false" maxlength="50"/>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">合同图:
-            <c:if test="${gysFlag != 'gys_audit'}">
+            <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'gys_view'}">
                 <p style="opacity: 0.5; color: red;">点击图片删除</p>
             </c:if>
-            <c:if test="${gysFlag == 'gys_audit'}">
+            <c:if test="${gysFlag == 'gys_audit' || gysFlag == 'gys_view'}">
                 <p style="opacity: 0.5; color: red;">点击图片查看大图</p>
             </c:if>
         </label>
+        <c:if test="${gysFlag != 'gys_audit'  && gysFlag != 'gys_view'}">
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('compactImg', true)" value="上传图片" multiple="multiple" id="compactImg"/>
         </div>
+        </c:if>
         <div id="compactImgDiv">
             <c:if test="${office.bizVendInfo.compactPhotos != null && office.bizVendInfo.compactPhotos != ''}">
             <c:forEach items='${fn:split(office.bizVendInfo.compactPhotos,"|")}' var="v" varStatus="status">
-                <c:if test="${gysFlag != 'gys_audit'}">
+                <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'gys_view'}">
                     <img src="${v}" customInput="compactImgImg" style='width: 100px' onclick="$(this).remove();">
                 </c:if>
-                <c:if test="${gysFlag == 'gys_audit'}">
+                <c:if test="${gysFlag == 'gys_audit' || gysFlag == 'gys_view'}">
                     <a target="_blank" href="${v}"><img src="${v}" customInput="compactImgImg" style='width: 100px'></a>
                 </c:if>
             </c:forEach>
@@ -305,23 +307,25 @@
     </div>
     <div class="control-group">
         <label class="control-label">身份证图:
-            <c:if test="${gysFlag != 'gys_audit'}">
+            <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'gys_view'}">
                 <p style="opacity: 0.5; color: red;">点击图片删除</p>
             </c:if>
-            <c:if test="${gysFlag == 'gys_audit'}">
+            <c:if test="${gysFlag == 'gys_audit' || gysFlag == 'gys_view'}">
                 <p style="opacity: 0.5; color: red;">点击图片查看大图</p>
             </c:if>
         </label>
+        <c:if test="${gysFlag != 'gys_audit'  && gysFlag != 'gys_view'}">
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('idCardImg', true)" value="上传图片" multiple="multiple" id="idCardImg"/>
         </div>
+        </c:if>
         <div id="idCardImgDiv">
             <c:if test="${office.bizVendInfo.idCardPhotos != null && office.bizVendInfo.idCardPhotos != ''}">
                 <c:forEach items='${fn:split(office.bizVendInfo.idCardPhotos,"|")}' var="v" varStatus="status">
-                    <c:if test="${gysFlag != 'gys_audit'}">
+                    <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'gys_view'}">
                         <img src="${v}" customInput="idCardImgImg" style='width: 100px' onclick="$(this).remove();">
                     </c:if>
-                    <c:if test="${gysFlag == 'gys_audit'}">
+                    <c:if test="${gysFlag == 'gys_audit' || gysFlag == 'gys_view'}">
                         <a target="_blank" href="${v}"><img src="${v}" customInput="idCardImgImg" style='width: 100px'></a>
                     </c:if>
                 </c:forEach>
@@ -350,7 +354,7 @@
             </c:if>
         </shiro:hasPermission>
         <shiro:hasPermission name="sys:office:edit">
-            <c:if test="${gysFlag != 'gys_audit' && (office.bizVendInfo.auditStatus == 0 || office.bizVendInfo.auditStatus == 2)}">
+            <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'gys_view' && (office.bizVendInfo.auditStatus == 0 || office.bizVendInfo.auditStatus == 2)}">
                 <input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
             </c:if>
         </shiro:hasPermission>
