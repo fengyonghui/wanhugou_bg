@@ -316,9 +316,15 @@
 				<label class="control-label">保证金比例：</label>
 				<div class="controls">
 					<a style="display: none">
-						<fmt:formatNumber type="number" var="total" value="${entity.totalMoney-entity.recvTotal}" maxFractionDigits="0"/>
+						<fmt:formatNumber type="number" var="totalMoneysss" value="${entity.totalMoney}" pattern="0.00"/>
+						<fmt:formatNumber type="number" var="recvTotalsss" value="${entity.recvTotal}" pattern="0.00"/>
 					</a>
-					<input type="text" class="input-xlarge" value="${total}" disabled="true"/>
+					<c:if test="${totalMoneysss==recvTotalsss}">
+						100%
+					</c:if>
+					<c:if test="${totalMoneysss!=recvTotalsss}">
+						<fmt:formatNumber type="percent" value="${entity.recvTotal/(entity.totalMoney-entity.recvTotal)}" maxFractionDigits="2" />
+					</c:if>
 				</div>
 			</div>
 		</c:if>
