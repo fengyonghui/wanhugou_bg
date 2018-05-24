@@ -70,6 +70,8 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private BigDecimal planPay;
 	private BigDecimal payTotal;
 
+	private List<CommonProcessEntity> commonProcessList;
+
 	private String num;	//查询的订单号和备货单号
 
 	private Date payDeadline;
@@ -357,6 +359,14 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
     public void setNum(String num) {
         this.num = num;
     }
+
+	public List<CommonProcessEntity> getCommonProcessList() {
+		return commonProcessList;
+	}
+
+	public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
+		this.commonProcessList = commonProcessList;
+	}
 
 	public enum BizStatus {
 		NO_PAY(0, "未支付"),

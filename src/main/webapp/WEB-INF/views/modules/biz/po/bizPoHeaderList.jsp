@@ -156,7 +156,9 @@
 							<c:if test="${bizPoHeader.commonProcess.id != null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-							&& bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus}">
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
+							&& (fns:hasRole(roleSet, bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+							}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
 							</c:if>
 							<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
