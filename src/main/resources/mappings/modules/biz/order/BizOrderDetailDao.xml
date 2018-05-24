@@ -149,7 +149,6 @@
 	</select>
 	
 	<select id="findRequestTotalByVendor" resultType="java.util.Map">
-
 		SELECT
 	GROUP_CONCAT( reqDetailIds ) AS reqDetailIds,
 	GROUP_CONCAT( detailIds ) AS detailIds,

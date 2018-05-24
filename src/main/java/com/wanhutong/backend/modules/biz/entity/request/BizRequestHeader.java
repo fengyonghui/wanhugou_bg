@@ -81,18 +81,7 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	private String recvQtys;
 
-	private boolean includeTestData;
-
 	private CommonProcessEntity commonProcess;
-
-
-	public boolean isIncludeTestData() {
-		return includeTestData;
-	}
-
-	public void setIncludeTestData(boolean includeTestData) {
-		this.includeTestData = includeTestData;
-	}
 
 	public BizRequestHeader() {
 		super();
