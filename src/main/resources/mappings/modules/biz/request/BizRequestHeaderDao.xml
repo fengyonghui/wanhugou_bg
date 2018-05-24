@@ -93,7 +93,7 @@
 				AND a.create_id = #{createBy.id}
 			</if>
 
-			<if test="includeTestData != null and includeTestData != true">
+			<if test="page != null and page.includeTestData != true">
 				AND NOT EXISTS(
 				select 1
 				from sys_test_account ta
@@ -172,7 +172,7 @@
 			HAVING  count(1) = 1
 			)
 
-			<if test="includeTestData != null and includeTestData != true">
+			<if test="page != null and page.includeTestData != true">
 				AND NOT EXISTS(
 				select 1
 				from sys_test_account ta

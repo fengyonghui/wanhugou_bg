@@ -374,7 +374,7 @@
 				AND ohu.id is not NULL
 			</if>
 
-			<if test="includeTestData != null and includeTestData != true">
+			<if test="page != null and page.includeTestData != true">
 				AND NOT EXISTS(
 				select 1
 				from sys_test_account ta
@@ -1884,7 +1884,7 @@ FROM
 			<if test="dbName == 'mssql'">'%'+#{customer.id}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{customer.id},'%')</if>
 		</if>
-        <if test="includeTestData != null and includeTestData != true">
+        <if test="page != null and page.includeTestData != true">
 	        AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.cust_id = ta.object_id AND ta.object_name = 'sys_office' )
         </if>
 	GROUP by a.id

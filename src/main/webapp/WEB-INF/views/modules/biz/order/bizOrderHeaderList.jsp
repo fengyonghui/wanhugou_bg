@@ -53,11 +53,15 @@
 				top.$('.jbox-body .jbox-icon').css('top','55px');
 			});
 		});
-		function page(n,s){
-			$("#pageNo").val(n);
-			$("#pageSize").val(s);
-			$("#searchForm").submit();
-        	return false;
+        function page(n,s,t){
+            $("#pageNo").val(n);
+            $("#pageSize").val(s);
+            $("#includeTestData").val(t);
+            $("#searchForm").submit();
+            return false;
+        }
+        function testData(checkbox) {
+            $("#includeTestData").val(checkbox.checked);
         }
 	</script>
 </head>
@@ -75,6 +79,7 @@
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
+	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 	<form:hidden path="consultantId"/>
 	<ul class="ul-form">
 		<li><label>订单编号：</label>
@@ -136,9 +141,8 @@
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
 		<li><label>测试数据</label>
-			<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+			<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 		</li>
-
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 		<c:if test="${bizOrderHeader.flag=='check_pending'}">

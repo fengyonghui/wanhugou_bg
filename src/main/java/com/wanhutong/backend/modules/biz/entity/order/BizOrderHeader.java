@@ -106,16 +106,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.locationAddress = locationAddress;
     }
 
-    private boolean includeTestData;
-
-    public boolean isIncludeTestData() {
-        return includeTestData;
-    }
-
-    public void setIncludeTestData(boolean includeTestData) {
-        this.includeTestData = includeTestData;
-    }
-
     private BizOrderHeaderUnline orderHeaderUnline;     //线下支付订单独有内容
     private String statu;       //线下支付订单表示
 

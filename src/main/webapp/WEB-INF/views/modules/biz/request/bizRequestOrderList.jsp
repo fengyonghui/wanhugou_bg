@@ -42,11 +42,15 @@
                 $("#myForm").submit();
 			}
         }
-		function page(n,s){
-			$("#pageNo").val(n);
-			$("#pageSize").val(s);
-			$("#searchForm").submit();
-        	return false;
+        function page(n,s,t){
+            $("#pageNo").val(n);
+            $("#pageSize").val(s);
+            $("#includeTestData").val(t);
+            $("#searchForm").submit();
+            return false;
+        }
+        function testData(checkbox) {
+            $("#includeTestData").val(checkbox.checked);
         }
 	</script>
 </head>
@@ -65,6 +69,7 @@
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 
 			<input type="hidden" name="source" value="${source}"/>
+			<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 			<ul class="ul-form">
 				<li><label>备货单号：</label>
 					<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
@@ -91,7 +96,7 @@
 				</li>
 
 				<li><label>测试数据</label>
-					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+					<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 				</li>
 
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -142,7 +147,7 @@
 					</form:select>
 				</li>
 				<li><label>测试数据</label>
-					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+					<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 				</li>
 
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
