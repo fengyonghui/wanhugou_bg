@@ -8,11 +8,16 @@
 		$(document).ready(function() {
 			
 		});
-		function page(n,s){
+		function page(n,s,t){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
+            $("#includeTestData").val(t);
 			$("#searchForm").submit();
         	return false;
+        }
+        function testData(checkbox) {
+            $("#includeTestData").val(checkbox.checked);
+            alert(checkbox.checked);
         }
 	</script>
 </head>
@@ -23,7 +28,8 @@
 	<form:form id="searchForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<ul class="ul-form">
+        <input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+        <ul class="ul-form">
 			<li><label>采购单号</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
@@ -60,6 +66,10 @@
 					<form:options items="${processList}" itemLabel="name" itemValue="code" htmlEscape="false"/>
 				</form:select>
 			</li>
+            <li><label>测试数据</label>
+                <form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
+            </li>
+
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -71,16 +81,15 @@
 				<td>序号</td>
 				<th>采购单号</th>
 				<th>供应商</th>
-				<th>订单总价</th>
+				<th>采购总价</th>
 				<th>交易费用</th>
 				<th>应付金额</th>
 				<th>支付比例</th>
 				<th>订单状态</th>
-				<th>订单来源</th>
+				<th>采购单来源</th>
 				<th>创建时间</th>
 				<th>累积支付金额</th>
 				<th>审核状态</th>
-				<th>上级审核备注</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -128,9 +137,6 @@
 				<td>
 						${bizPoHeader.commonProcess.purchaseOrderProcess.name == null ?
 						 '当前无审批流程' : bizPoHeader.commonProcess.purchaseOrderProcess.name}
-				</td>
-				<td>
-						${bizPoHeader.prevCommonProcess.description}
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>
