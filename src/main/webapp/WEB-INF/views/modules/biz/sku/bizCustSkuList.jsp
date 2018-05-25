@@ -19,7 +19,7 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/sku/bizCustSku/">采购商商品价格列表</a></li>
-		<shiro:hasPermission name="biz:sku:bizCustSku:edit"><li><a href="${ctx}/biz/sku/bizCustSku/form">采购商商品价格添加</a></li></shiro:hasPermission>
+		<%--<shiro:hasPermission name="biz:sku:bizCustSku:edit"><li><a href="${ctx}/biz/sku/bizCustSku/form">采购商商品价格添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizCustSku" action="${ctx}/biz/sku/bizCustSku/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

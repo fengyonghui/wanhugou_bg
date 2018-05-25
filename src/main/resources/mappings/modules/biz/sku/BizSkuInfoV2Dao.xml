@@ -458,6 +458,24 @@
 		LEFT JOIN	biz_purchaser_vendor bpv ON bpv.vendor_id = vend.id
 		LEFT JOIN sys_office purchaser ON purchaser.id = bpv.purchaser_id
 		WHERE purchaser.id = #{purchaser.id}
+		<if test="name != null and name != ''">
+			AND a.name LEFT
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		</if>
+		<if test="partNo != null and partNo != ''">
+			AND a.part_no LIKE
+			<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+		</if>
+		<if test="itemNo != null and itemNo != ''">
+			AND a.item_no LIKE
+			<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+		</if>
 	</select>
 	
 </mapper>

@@ -106,6 +106,7 @@
             <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
             <p style="opacity: 0.5;">图片建议比例为1:1</p>
             <p style="opacity: 0.5;">点击图片删除</p>
+            <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
         </label>
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
@@ -165,6 +166,7 @@
             <p style="opacity: 0.5;">点击图片删除</p>
             <p style="opacity: 0;color: red;">*首图为列表页图</p>
             <p style="opacity: 0;">图片建议比例为1:1</p>
+            <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
         </label>
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodDetailImg', true)" value="上传图片" multiple="multiple" id="prodDetailImg"/>
