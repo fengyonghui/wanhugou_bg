@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
@@ -17,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
@@ -28,13 +30,16 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +55,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -85,9 +91,13 @@ public class BizPoHeaderController extends BaseController {
     @Autowired
     private BizRequestDetailService bizRequestDetailService;
     @Autowired
+    private CommonImgService commonImgService;
+    @Autowired
     private OfficeService officeService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
+
+    private static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
 
 
     @ModelAttribute
@@ -95,6 +105,13 @@ public class BizPoHeaderController extends BaseController {
         BizPoHeader entity = null;
         if (id != null) {
             entity = bizPoHeaderService.get(id);
+
+            if (entity.getCommonProcess() != null && entity.getCommonProcess().getId() != null) {
+                List<CommonProcessEntity> commonProcessList = Lists.newArrayList();
+                bizPoHeaderService.getCommonProcessListFromDB(entity.getCommonProcess().getId(), commonProcessList);
+                Collections.reverse(commonProcessList);
+                entity.setCommonProcessList(commonProcessList);
+            }
 
             BizPoDetail bizPoDetail = new BizPoDetail();
             bizPoDetail.setPoHeader(entity);
@@ -240,8 +257,25 @@ public class BizPoHeaderController extends BaseController {
         }
 
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-           PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
-           model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
+            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+        }
+
+        if (bizPoHeader.getVendOffice() != null && bizPoHeader.getVendOffice().getBizVendInfo() != null) {
+            CommonImg compactImg = new CommonImg();
+            compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
+            compactImg.setObjectId(bizPoHeader.getVendOffice().getId());
+            compactImg.setObjectName(VEND_IMG_TABLE_NAME);
+            List<CommonImg> compactImgList = commonImgService.findList(compactImg);
+            model.addAttribute("compactImgList", compactImgList);
+
+            CommonImg identityCardImg = new CommonImg();
+            identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
+            identityCardImg.setObjectId(bizPoHeader.getVendOffice().getId());
+            identityCardImg.setObjectName(VEND_IMG_TABLE_NAME);
+            List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
+            model.addAttribute("identityCardImgList", identityCardImgList);
+
         }
 
         List<Role> roleList = UserUtils.getUser().getRoleList();
@@ -252,6 +286,7 @@ public class BizPoHeaderController extends BaseController {
                 roleSet.add(parse.name());
             }
         }
+
         model.addAttribute("roleSet", roleSet);
 
         model.addAttribute("bizPoHeader", bizPoHeader);

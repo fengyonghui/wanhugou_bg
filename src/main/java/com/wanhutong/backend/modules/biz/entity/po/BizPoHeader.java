@@ -57,7 +57,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Map<Integer,List<BizPoOrderReq>> orderNumMap;
 	private Map<String,Integer> orderSourceMap;
 
-	private int isPrew = 1;
+	private int isPrew;
 
 	private BizPoPaymentOrder bizPoPaymentOrder;
 
@@ -70,9 +70,13 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private BigDecimal planPay;
 	private BigDecimal payTotal;
 
+	private List<CommonProcessEntity> commonProcessList;
+
 	private String num;	//查询的订单号和备货单号
 
 	private Date payDeadline;
+
+	private String type;    //createPo 为生成采购单的状态
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -356,6 +360,14 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
         this.num = num;
     }
 
+	public List<CommonProcessEntity> getCommonProcessList() {
+		return commonProcessList;
+	}
+
+	public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
+		this.commonProcessList = commonProcessList;
+	}
+
 	public enum BizStatus {
 		NO_PAY(0, "未支付"),
 		DOWN_PAYMENT(1, "首付款支付"),
@@ -381,5 +393,14 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		public String getDesc() {
 			return desc;
 		}
+
 	}
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

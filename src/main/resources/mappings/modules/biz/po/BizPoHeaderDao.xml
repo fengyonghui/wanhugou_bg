@@ -40,16 +40,19 @@
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
 		process.create_time AS "commonProcess.createTime",
-		a.is_prew as "isPrewUseful"
+		a.is_prew as "isPrewUseful",
+		bvi.audit_status AS "vendOffice.bizVendInfo.auditStatus",
+		bvi.card_number AS "vendOffice.bizVendInfo.cardNumber",
+		bvi.vend_name AS "vendOffice.bizVendInfo.vendName",
+		bvi.bank_name AS "vendOffice.bizVendInfo.bankName",
+		bvi.payee AS "vendOffice.bizVendInfo.payee"
 	</sql>
 
 	<sql id="bizPoHeaderJoins">
 		LEFT JOIN sys_office so ON so.id = a.vend_id
+		LEFT JOIN biz_vend_info bvi on so.id= bvi.office_id
 		LEFT JOIN biz_po_payment_order payment ON payment.id = a.current_payment_id
 		LEFT JOIN common_process process ON process.id = a.process_id
-		LEFT JOIN biz_po_order_req por ON por.po_id = a.id
-		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
-		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 	</sql>
 
 	<!-- 用于查看生成的采购单  -->
@@ -72,6 +75,9 @@
 			<include refid="bizPoHeaderColumns"/>
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
+		LEFT JOIN biz_po_order_req por ON por.po_id = a.id
+		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
+		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			AND a.is_prew = 0
