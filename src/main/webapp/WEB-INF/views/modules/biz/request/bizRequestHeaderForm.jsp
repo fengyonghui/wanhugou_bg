@@ -299,6 +299,35 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		<c:if test="${entity.str=='detail'}">
+			<div class="control-group">
+				<label class="control-label">应付金额：</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" value="${entity.totalMoney}" disabled="true"/>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">已收保证金：</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" value="${entity.recvTotal}" disabled="true"/>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">保证金比例：</label>
+				<div class="controls">
+					<a style="display: none">
+						<fmt:formatNumber type="number" var="totalMoneysss" value="${entity.totalMoney}" pattern="0.00"/>
+						<fmt:formatNumber type="number" var="recvTotalsss" value="${entity.recvTotal}" pattern="0.00"/>
+					</a>
+					<c:if test="${totalMoneysss==recvTotalsss}">
+						100%
+					</c:if>
+					<c:if test="${totalMoneysss!=recvTotalsss}">
+						<fmt:formatNumber type="percent" value="${entity.recvTotal/(entity.totalMoney-entity.recvTotal)}" maxFractionDigits="2" />
+					</c:if>
+				</div>
+			</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">期望收货时间：</label>
 			<div class="controls">
@@ -413,9 +442,13 @@
 
 							<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
 								<%--该备货单已生成采购单就显示--%>
-								<c:if test="${requestPoHeader!=null}">
+								<c:if test="${requestPoHeader!=null && reqDetail.poDetail.ordQty!=null}">
 									<td>${requestPoHeader.orderNum}</td>
 									<td>${reqDetail.poDetail.ordQty}</td>
+								</c:if>
+								<c:if test="${requestPoHeader!=null && reqDetail.poDetail.ordQty==null}">
+									<td></td>
+									<td></td>
 								</c:if>
 							</c:if>
 
