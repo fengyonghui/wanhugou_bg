@@ -86,7 +86,8 @@
 
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
-							<td>${reqDetail.skuInfo.productInfo.office.name}</td>
+							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
+								${reqDetail.skuInfo.productInfo.office.name}</a></td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td>
 								<input   value="${reqDetail.reqQty}" readonly="readonly" class="input-medium" type='text'/>
