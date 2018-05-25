@@ -128,8 +128,8 @@
 							<td>${ordDetail.skuInfo.productInfo.bizVarietyInfo.name}</td>
 							<td>${ordDetail.skuInfo.name}</td>
 							<td>${ordDetail.skuInfo.itemNo}</td>
-							<td>
-									${ordDetail.skuInfo.productInfo.office.name}
+							<td><a href="${ctx}/sys/office/supplierForm?id=${ordDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
+								${ordDetail.skuInfo.productInfo.office.name}</a>
 										<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
 							</td>
 							<td>${ordDetail.skuInfo.productInfo.brandName}</td>

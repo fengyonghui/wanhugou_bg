@@ -6,7 +6,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+            $("#buttonExport").click(function(){
+                top.$.jBox.confirm("确认要导出订单数据吗？","系统提示",function(v,h,f){
+                    if(v=="ok"){
+                        $("#searchForm").attr("action","${ctx}/biz/po/bizPoHeader/poHeaderExport");
+                        $("#searchForm").submit();
+                        $("#searchForm").attr("action","${ctx}/biz/po/bizPoHeader/");
+                    }
+                },{buttonsFocus:1});
+                top.$('.jbox-body .jbox-icon').css('top','55px');
+            });
 		});
 		function page(n,s,t){
 			$("#pageNo").val(n);
@@ -70,6 +79,7 @@
             </li>
 
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+            <li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -156,7 +166,9 @@
 							<c:if test="${bizPoHeader.commonProcess.id != null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
-							&& bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus}">
+							&& bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
+							&& (fns:hasRole(roleSet, bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
+							}">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
 							</c:if>
 							<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>

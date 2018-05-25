@@ -12,6 +12,7 @@
 		a.description AS "description",
 		a.type AS "type",
 		a.create_time AS "createTime",
+		a.update_time AS "updateTime",
 		b.id AS "prevProcess.id",
 		b.object_id AS "prevProcess.objectId",
 		b.object_name AS "prevProcess.objectName",
@@ -20,11 +21,13 @@
 		b.processor AS "prevProcess.processor",
 		b.description AS "prevProcess.description",
 		b.type AS "prevProcess.type",
-		b.create_time AS "prevProcess.createTime"
+		b.create_time AS "prevProcess.createTime",
+		sysUser.name AS "user.name"
 	</sql>
 	
 	<sql id="commonProcessEntityJoins">
 		LEFT JOIN common_process AS b on a.prev_id = b.id
+		LEFT JOIN sys_user AS sysUser on sysUser.id = a.processor
 	</sql>
     
 	<select id="get" resultType="CommonProcessEntity">
@@ -65,9 +68,6 @@
 			</if>
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
-			</if>
-			<if test="beginCreateTime != null and endCreateTime != null and beginCreateTime != '' and endCreateTime != ''">
-				AND a.create_time BETWEEN #{beginCreateTime} AND #{endCreateTime}
 			</if>
 		</where>
 		<choose>
