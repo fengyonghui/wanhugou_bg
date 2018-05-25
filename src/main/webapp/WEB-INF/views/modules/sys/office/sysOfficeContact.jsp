@@ -112,7 +112,7 @@
 				</td>
 				<td>
 					<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${user.company.id}&office.parent.id=7&office.type=6">
-						${user.userOrder.officeChatRecord}次
+						${user.userOrder.officeChatRecord}
 					</a>
 				</td>
 			</tr>
