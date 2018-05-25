@@ -157,6 +157,63 @@ public class BizInventorySkuController extends BaseController {
         return "modules/biz/inventory/bizInventorySkuList";
     }
 
+//    TODO
+    @RequiresPermissions("biz:inventory:bizInventorySku:view")
+    @RequestMapping(value = {"listByInventoryAge", ""})
+    public String listByInventoryAge(BizInventorySku bizInventorySku, HttpServletRequest request, HttpServletResponse response, Model model) {
+        int stamp = 0;
+        String zt = request.getParameter("zt");
+        //取出用户所属采购中心
+        User user = UserUtils.getUser();
+        boolean flag = false;
+        boolean oflag = false;
+        if (user.getRoleList() != null) {
+            for (Role role : user.getRoleList()) {
+                if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if (UserUtils.getOfficeList() != null) {
+            for (Office office : UserUtils.getOfficeList()) {
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
+                    oflag = true;
+                }
+            }
+        }
+        Page<BizInventorySku> page = null;
+        if (user.isAdmin()) {
+            page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+        } else {
+            if (flag) {
+                Office company = systemService.getUser(user.getId()).getCompany();
+                //根据采购中心取出仓库
+                BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
+                bizInventoryInfo.setCustomer(company);
+                bizInventorySku.setInvInfo(bizInventoryInfo);
+            } else {
+                if (oflag) {
+
+                } else {
+                    bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+                }
+            }
+            page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
+        }
+        List<BizInventorySku> list = page.getList();
+        for (BizInventorySku inventorySku : list) {
+            if (inventorySku.getCust() != null && inventorySku.getCust().getId() != 0) {
+                stamp = 1;
+            }
+        }
+        model.addAttribute("invStatus", stamp);
+        model.addAttribute("varietyList", bizVarietyInfoService.findList(new BizVarietyInfo()));
+        model.addAttribute("zt", zt);
+        model.addAttribute("page", page);
+        return "modules/biz/inventory/bizInventorySkuList";
+    }
+
     @ResponseBody
     @RequiresPermissions("biz:inventory:bizInventorySku:view")
     @RequestMapping(value = "findInvSku")
