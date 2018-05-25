@@ -308,7 +308,6 @@
             </div>
         </div>
 
-        <c:if test="${type == 'audit' || type == 'pay'}">
             <div class="control-group">
                 <label class="control-label">供应商卡号：</label>
                 <div class="controls">
@@ -349,7 +348,6 @@
                     </c:forEach>
                 </div>
             </div>
-        </c:if>
 
         <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
             <div class="control-group">
