@@ -61,7 +61,7 @@
         <th>负责人</th>
         <th>详细地址</th>
         <th>累计订单采购频次</th>
-        <th>金额</th>
+        <th>累计采购金额</th>
         <th>首次开单时间</th>
         <shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">
             <th>操作</th>
