@@ -48,6 +48,16 @@ public class Page<T> {
 	
 	private String message = ""; // 设置提示消息，显示在“共n条”之后
 
+	private boolean includeTestData;
+
+	public boolean isIncludeTestData() {
+		return includeTestData;
+	}
+
+	public void setIncludeTestData(boolean includeTestData) {
+		this.includeTestData = includeTestData;
+	}
+
 	public Page() {
 		this.pageSize = -1;
 	}
@@ -108,8 +118,14 @@ public class Page<T> {
 		if (StringUtils.isNotBlank(orderBy)){
 			this.setOrderBy(orderBy);
 		}
+
+		String testData = request.getParameter("includeTestData");
+		if (StringUtils.isNotBlank(testData)){
+			this.setIncludeTestData(Boolean.valueOf(testData));
+			CookieUtils.setCookie(response, "includeTestData", testData);
+		}
 	}
-	
+
 	/**
 	 * 构造方法
 	 * @param pageNo 当前页码

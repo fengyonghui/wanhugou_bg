@@ -40,83 +40,21 @@
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
 		process.create_time AS "commonProcess.createTime",
-		prevProcess.id AS "prevCommonProcess.id",
-		prevProcess.object_id AS "prevCommonProcess.objectId",
-		prevProcess.object_name AS "prevCommonProcess.objectName",
-		prevProcess.prev_id AS "prevCommonProcess.prevId",
-		prevProcess.biz_status AS "prevCommonProcess.bizStatus",
-		prevProcess.processor AS "prevCommonProcess.processor",
-		prevProcess.description AS "prevCommonProcess.description",
-		prevProcess.type AS "prevCommonProcess.type",
-		prevProcess.create_time AS "prevCommonProcess.createTime",
-		a.is_prew as "isPrewUseful"
+		a.is_prew as "isPrewUseful",
+		bvi.audit_status AS "vendOffice.bizVendInfo.auditStatus",
+		bvi.card_number AS "vendOffice.bizVendInfo.cardNumber",
+		bvi.vend_name AS "vendOffice.bizVendInfo.vendName",
+		bvi.bank_name AS "vendOffice.bizVendInfo.bankName",
+		bvi.payee AS "vendOffice.bizVendInfo.payee"
 	</sql>
 
-    <sql id="bizRePoHeaderColumns">
-        b.id AS "id",
-        b.order_num AS "orderNum",
-        b.vend_id AS "vendOffice.id",
-        b.total_detail AS "totalDetail",
-        b.total_exp AS "totalExp",
-        b.freight AS "freight",
-        b.inv_status AS "invStatus",
-        b.biz_status AS "bizStatus",
-        b.plateform_id AS "plateformInfo.id",
-        b.status AS "delFlag",
-        b.initial_pay AS "initialPay",
-        b.last_pay_date AS "lastPayDate",
-        b.remark AS "remark",
-        b.delivery_office_id AS "deliveryOffice.id",
-        b.create_id AS "createBy.id",
-        b.create_time AS "createDate",
-        b.u_version AS "uVersion",
-        b.update_id AS "updateBy.id",
-        b.update_time AS "updateDate",
-        b.current_payment_id AS "currentPaymentId",
-        b.pay_total AS "payTotal",
-        vend.name AS "vendOffice.name",
-        ppo.id AS "bizPoPaymentOrder.id",
-        ppo.po_header_id AS "bizPoPaymentOrder.poHeaderId",
-        ppo.total AS "bizPoPaymentOrder.total",
-        ppo.pay_total AS "bizPoPaymentOrder.payTotal",
-        ppo.biz_status AS "bizPoPaymentOrder.bizStatus",
-		ppo.deadline AS "bizPoPaymentOrder.deadline",
-        cp.id AS "commonProcess.id",
-        cp.object_id AS "commonProcess.objectId",
-        cp.object_name AS "commonProcess.objectName",
-        cp.prev_id AS "commonProcess.prevId",
-        cp.biz_status AS "commonProcess.bizStatus",
-        cp.processor AS "commonProcess.processor",
-        cp.description AS "commonProcess.description",
-        cp.type AS "commonProcess.type",
-        cp.create_time AS "commonProcess.createTime",
-        prevCp.id AS "prevCommonProcess.id",
-		prevCp.object_id AS "prevCommonProcess.objectId",
-		prevCp.object_name AS "prevCommonProcess.objectName",
-		prevCp.prev_id AS "prevCommonProcess.prevId",
-		prevCp.biz_status AS "prevCommonProcess.bizStatus",
-		prevCp.processor AS "prevCommonProcess.processor",
-		prevCp.description AS "prevCommonProcess.description",
-		prevCp.type AS "prevCommonProcess.type",
-		prevCp.create_time AS "prevCommonProcess.createTime",
-        b.is_prew as "isPrewUseful"
-    </sql>
-	
 	<sql id="bizPoHeaderJoins">
-		LEFT JOIN  sys_office so on so.id=a.vend_id
-		LEFT JOIN  biz_po_payment_order payment on payment.id = a.current_payment_id
-		LEFT JOIN  common_process process on process.id = a.process_id
-		LEFT JOIN  common_process prevProcess on prevProcess.id = process.prev_id
+		LEFT JOIN sys_office so ON so.id = a.vend_id
+		LEFT JOIN biz_vend_info bvi on so.id= bvi.office_id
+		LEFT JOIN biz_po_payment_order payment ON payment.id = a.current_payment_id
+		LEFT JOIN common_process process ON process.id = a.process_id
 	</sql>
 
-	<sql id="bizRePoHeaderJoins">
-		LEFT JOIN sys_office vend ON vend.id = b.vend_id
-		LEFT JOIN biz_po_payment_order ppo ON ppo.id = b.current_payment_id
-		LEFT JOIN common_process cp ON cp.id = b.process_id
-		LEFT JOIN common_process prevCp on prevCp.id = cp.prev_id
-		LEFT JOIN biz_po_order_req bpor ON bpor.po_id = b.id AND bpor.so_type = 2
-		LEFT JOIN biz_request_header rh ON rh.id = bpor.so_id
-	</sql>
     
 	<select id="get" resultType="BizPoHeader">
 		SELECT 
@@ -127,21 +65,27 @@
 	</select>
 	
 	<select id="findList" resultType="BizPoHeader">
-		SELECT * FROM (
 		SELECT
 			<include refid="bizPoHeaderColumns"/>
 		FROM biz_po_header a
 		<include refid="bizPoHeaderJoins"/>
-		LEFT JOIN biz_po_order_req por ON por.po_id = a.id AND por.so_type = 1
-		LEFT JOIN biz_order_header oh ON oh.id = por.so_id
+		LEFT JOIN biz_po_order_req por ON por.po_id = a.id
+		LEFT JOIN biz_order_header oh ON oh.id = por.so_id AND por.so_type = 1
+		LEFT JOIN biz_request_header rh ON rh.id = por.so_id AND por.so_type = 2
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			and a.is_prew = 0
+			AND a.is_prew = 0
 			<if test="num != null and num != ''">
-				AND oh.order_num LIKE
+				AND (oh.order_num LIKE
 				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
+				OR
+				rh.req_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
+				)
 			</if>
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num LIKE
@@ -164,57 +108,20 @@
 			<if test="commonProcess != null and commonProcess.type !=null and commonProcess.type != ''">
 				AND process.type = #{commonProcess.type}
 			</if>
+			<if test="page !=null and page.includeTestData != true">
+				AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.create_id = ta.object_id AND ta.object_name = 'sys_user' )
+			</if>
 		</where>
 		GROUP BY a.id
-		) n
-		UNION
-		SELECT * FROM
-		(
-		SELECT
-			<include refid="bizRePoHeaderColumns"/>
-		FROM biz_po_header b
-			<include refid="bizRePoHeaderJoins"/>
-		<where>
-			b.status = #{DEL_FLAG_NORMAL}
-			and b.is_prew = 0
-			<if test="num != null and num != ''">
-				AND rh.req_no LIKE
-				<if test="dbName == 'oracle'">'%'||#{num}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{num}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{num},'%')</if>
-			</if>
-			<if test="orderNum != null and orderNum != ''">
-				AND b.order_num LIKE
-				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
-				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
-				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
-			</if>
-			<if test="vendOffice != null and vendOffice.id !=null and vendOffice.id != ''">
-				AND b.vend_id = #{vendOffice.id}
-			</if>
-			<if test="invStatus != null and invStatus != ''">
-				AND b.inv_status = #{invStatus}
-			</if>
-			<if test="bizStatus != null">
-				AND b.biz_status = #{bizStatus}
-			</if>
-			<if test="plateformInfo != null and plateformInfo.id !=null and  plateformInfo.id != ''">
-				AND b.plateform_id = #{plateformInfo.id}
-			</if>
-			<if test="commonProcess != null and commonProcess.type !=null and commonProcess.type != ''">
-				AND cp.type = #{commonProcess.type}
-			</if>
-		</where>
-		GROUP BY b.id
-		) m
+
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY updateDate DESC, id DESC
 			</otherwise>
 		</choose>
-		ORDER BY updateDate DESC
 	</select>
 	
 	<select id="findAllList" resultType="BizPoHeader">

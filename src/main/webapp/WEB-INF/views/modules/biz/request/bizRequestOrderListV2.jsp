@@ -32,11 +32,15 @@
                 $("#myForm").submit();
 			}
         }
-		function page(n,s){
-			$("#pageNo").val(n);
-			$("#pageSize").val(s);
-			$("#searchForm").submit();
-        	return false;
+        function page(n,s,t){
+            $("#pageNo").val(n);
+            $("#pageSize").val(s);
+            $("#includeTestData").val(t);
+            $("#searchForm").submit();
+            return false;
+        }
+        function testData(checkbox) {
+            $("#includeTestData").val(checkbox.checked);
         }
 	</script>
 </head>
@@ -55,6 +59,7 @@
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 
 			<input type="hidden" name="source" value="${source}"/>
+			<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 			<ul class="ul-form">
 				<li><label>备货单号：</label>
 					<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
@@ -81,7 +86,7 @@
 				</li>
 
 				<li><label>测试数据</label>
-					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+					<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 				</li>
 
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -94,8 +99,8 @@
 		<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/listV2" method="post" class="breadcrumb form-search">
 			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-
 			<input type="hidden" name="source" value="${source}"/>
+			<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 			<form:hidden path="consultantId"/>
 			<ul class="ul-form">
 				<li><label>订单编号：</label>
@@ -125,7 +130,7 @@
 					</c:if>
 				</li>
 				<li><label>测试数据</label>
-					<form:checkbox path="includeTestData" htmlEscape="false" maxlength="100" class="input-medium"/>
+					<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 				</li>
 
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -277,18 +282,16 @@
 					<td>
 						<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>
-							<td>
-								<shiro:hasPermission name="biz:order:bizOrderHeader:view">
-									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
-								</shiro:hasPermission>
-								<shiro:hasPermission name="biz:request:selecting:supplier:edit">
+					<td>
+						<shiro:hasPermission name="biz:order:bizOrderHeader:view">
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="biz:request:selecting:supplier:edit">
 
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
+							<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
 
-								</shiro:hasPermission>
-							</td>
-
-
+						</shiro:hasPermission>
+					</td>
 				</tr>
 			</c:forEach>
 			</tbody>
