@@ -11,6 +11,7 @@ public class RoleUtils {
         if (StringUtils.isBlank(roleStr)) {
             return false;
         }
+        roleStr = roleStr.replaceAll("\\[", StringUtils.EMPTY).replaceAll("\\]", StringUtils.EMPTY);
         String[] roleArr = ",".equalsIgnoreCase(roleStr) ? new String[]{roleStr} : roleStr.split(",");
         for (String role : roleArr) {
             if (roleSet.contains(role)) {
