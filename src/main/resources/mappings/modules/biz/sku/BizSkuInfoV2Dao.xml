@@ -70,7 +70,8 @@
 		bpi.brand_name AS "productInfo.brandName",
 		bpi.prod_code AS "productInfo.prodCode",
 		bpi.vendor_id AS "productInfo.office.id",
-		bpi.prod_type AS "productInfo.prodType"
+		bpi.prod_type AS "productInfo.prodType",
+		bpi.vendor_name AS "productInfo.vendorName"
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
@@ -151,6 +152,12 @@
 				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
 			<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.vendorName !=null and productInfo.vendorName!=''">
+				AND bpi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.vendorName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
 			</if>
 			<if test="productInfo != null and productInfo.prodCode !=null and productInfo.prodCode!=''">
 				AND bpi.prod_code LIKE

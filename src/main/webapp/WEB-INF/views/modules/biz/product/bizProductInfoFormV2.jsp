@@ -350,13 +350,22 @@
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='2' label='定制商品'>定制商品</option>
                                 <option value='3' label='非自选商品'>非自选商品</option>
+                                <option value='4' label='代采商品'>代采商品</option>
                             </c:if>
                             <c:if test="${v.skuType == 2}">
                                 <option value='2' label='定制商品'>定制商品</option>
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='3' label='非自选商品'>非自选商品</option>
+                                <option value='4' label='代采商品'>代采商品</option>
                             </c:if>
                             <c:if test="${v.skuType == 3}">
+                                <option value='3' label='非自选商品'>非自选商品</option>
+                                <option value='1' label='自选商品'>自选商品</option>
+                                <option value='2' label='定制商品'>定制商品</option>
+                                <option value='4' label='代采商品'>代采商品</option>
+                            </c:if>
+                            <c:if test="${v.skuType == 4}">
+                                <option value='4' label='代采商品'>代采商品</option>
                                 <option value='3' label='非自选商品'>非自选商品</option>
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='2' label='定制商品'>定制商品</option>
@@ -472,20 +481,29 @@
                         custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
                     }else if (oldSkuTypeSelect == "3") {
                         custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
+                    }else if (oldSkuTypeSelect == "4") {
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
                     }else {
                         custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
                     }
 
                 }else {
                     custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
                     custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
                     custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                    custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
                 }
                 custTypeSelector += "</select></th>";
 
