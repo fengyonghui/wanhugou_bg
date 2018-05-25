@@ -279,6 +279,18 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label">开户行:</label>
+        <div class="controls">
+            <form:input path="bizVendInfo.bankName" htmlEscape="false" maxlength="50"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">收款人:</label>
+        <div class="controls">
+            <form:input path="bizVendInfo.payee" htmlEscape="false" maxlength="50"/>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">合同图:
             <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'gys_view'}">
                 <p style="opacity: 0.5; color: red;">点击图片删除</p>

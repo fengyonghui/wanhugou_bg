@@ -259,23 +259,22 @@ public class BizPoHeaderController extends BaseController {
         if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
             PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
             model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
+        }
 
-            if (bizPoHeader.getVendOffice() != null && bizPoHeader.getVendOffice().getBizVendInfo() != null) {
-                CommonImg compactImg = new CommonImg();
-                compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
-                compactImg.setObjectId(bizPoHeader.getVendOffice().getId());
-                compactImg.setObjectName(VEND_IMG_TABLE_NAME);
-                List<CommonImg> compactImgList = commonImgService.findList(compactImg);
-                model.addAttribute("compactImgList", compactImgList);
+        if (bizPoHeader.getVendOffice() != null && bizPoHeader.getVendOffice().getBizVendInfo() != null) {
+            CommonImg compactImg = new CommonImg();
+            compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
+            compactImg.setObjectId(bizPoHeader.getVendOffice().getId());
+            compactImg.setObjectName(VEND_IMG_TABLE_NAME);
+            List<CommonImg> compactImgList = commonImgService.findList(compactImg);
+            model.addAttribute("compactImgList", compactImgList);
 
-                CommonImg identityCardImg = new CommonImg();
-                identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
-                identityCardImg.setObjectId(bizPoHeader.getVendOffice().getId());
-                identityCardImg.setObjectName(VEND_IMG_TABLE_NAME);
-                List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
-                model.addAttribute("identityCardImgList", identityCardImgList);
-
-            }
+            CommonImg identityCardImg = new CommonImg();
+            identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
+            identityCardImg.setObjectId(bizPoHeader.getVendOffice().getId());
+            identityCardImg.setObjectName(VEND_IMG_TABLE_NAME);
+            List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
+            model.addAttribute("identityCardImgList", identityCardImgList);
 
         }
 

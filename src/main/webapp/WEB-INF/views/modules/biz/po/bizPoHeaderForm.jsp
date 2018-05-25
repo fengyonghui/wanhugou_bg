@@ -318,6 +318,21 @@
             </div>
 
             <div class="control-group">
+                <label class="control-label">供应商收款人：</label>
+                <div class="controls">
+                    <form:input disabled="true" path="vendOffice.bizVendInfo.payee" htmlEscape="false" maxlength="30"
+                                class="input-xlarge "/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">供应商开户行：</label>
+                <div class="controls">
+                    <form:input disabled="true" path="vendOffice.bizVendInfo.bankName" htmlEscape="false" maxlength="30"
+                                class="input-xlarge "/>
+                </div>
+            </div>
+
+            <div class="control-group">
                 <label class="control-label">供应商合同：</label>
                 <div class="controls">
                     <c:forEach items="${compactImgList}" var="v">
@@ -418,38 +433,35 @@
                            maxlength="30" class="input-xlarge "/>
                 </div>
             </div>
-            <div class="control-group">
-            <div class="controls help_wrap">
-                <div class="help_step_box fa">
-                    <c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">
-                        <c:if test="${!stat.last}" >
-                            <div class="help_step_item">
-                                <div class="help_step_left"></div>
-                                <div class="help_step_num">${stat.index + 1}</div>
-                                    批注:${v.description}<br/><br/>
-                                    审批人:${v.user.name}<br/>
-                                    <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-                                <div class="help_step_right"></div>
-                            </div>
-                        </c:if>
-                        <c:if test="${stat.last}">
-                            <div class="help_step_item help_step_set">
-                                <div class="help_step_left"></div>
-                                <div class="help_step_num">${stat.index + 1}</div>
-                                    当前状态:${v.purchaseOrderProcess.name}<br/><br/>
-                                    ${v.user.name}<br/>
-                                <div class="help_step_right"></div>
-                            </div>
-                        </c:if>
-                    </c:forEach>
-                </div>
-            </div>
-            </div>
-
-
-
         </c:if>
     </c:if>
+    <div class="control-group">
+        <div class="controls help_wrap">
+            <div class="help_step_box fa">
+                <c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">
+                    <c:if test="${!stat.last}" >
+                        <div class="help_step_item">
+                            <div class="help_step_left"></div>
+                            <div class="help_step_num">${stat.index + 1}</div>
+                            批注:${v.description}<br/><br/>
+                            审批人:${v.user.name}<br/>
+                            <fmt:formatDate value="${v.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                            <div class="help_step_right"></div>
+                        </div>
+                    </c:if>
+                    <c:if test="${stat.last}">
+                        <div class="help_step_item help_step_set">
+                            <div class="help_step_left"></div>
+                            <div class="help_step_num">${stat.index + 1}</div>
+                            当前状态:${v.purchaseOrderProcess.name}<br/><br/>
+                                ${v.user.name}<br/>
+                            <div class="help_step_right"></div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
     <c:if test="${bizPoHeader.poDetailList!=null}">
         <div class="form-actions">
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
@@ -688,24 +700,29 @@
             }
             prew = true;
         }
-
-        top.$.jBox.confirm("确认开始审核流程吗？","系统提示",function(v,h,f){
-            if(v=="ok"){
-                var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-                var submit = function (v, h, f) {
-                    if ($String.isNullOrBlank(f.description)) {
-                        jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                        return false;
-                    }
+        var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+        var submit = function (v, h, f) {
+            if ($String.isNullOrBlank(f.description)) {
+                jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                return false;
+            }
+            top.$.jBox.confirm("确认开始审核流程吗？", "系统提示", function (v1, h1, f1) {
+                if (v1 == "ok") {
                     var id = $("#id").val();
                     $.ajax({
                         url: '${ctx}/biz/po/bizPoHeader/startAudit',
                         contentType: 'application/json',
-                        data: {"id": id, "prew":prew, "prewPayTotal": prewPayTotal, "prewPayDeadline":prewPayDeadline, "desc":f.description},
+                        data: {
+                            "id": id,
+                            "prew": prew,
+                            "prewPayTotal": prewPayTotal,
+                            "prewPayDeadline": prewPayDeadline,
+                            "desc": f.description
+                        },
                         type: 'get',
                         success: function (result) {
                             alert(result);
-                            if(result == '操作成功!') {
+                            if (result == '操作成功!') {
                                 window.location.href = "${ctx}/biz/po/bizPoHeader";
                             }
                         },
@@ -713,57 +730,61 @@
                             console.info(error);
                         }
                     });
-                    return true;
-                };
+                }
+            }, {buttonsFocus: 1});
+            return true;
+        };
 
-                jBox(html, {
-                    title: "请输入通过理由:", submit: submit, loaded: function (h) {
-                    }
-                });
-
+        jBox(html, {
+            title: "请输入通过理由:", submit: submit, loaded: function (h) {
             }
-        },{buttonsFocus:1});
+        });
+
+
     }
 
     function checkPass() {
-        top.$.jBox.confirm("确认审核通过吗？","系统提示",function(v,h,f){
-            if(v=="ok"){
-                var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-                var submit = function (v, h, f) {
-                    if ($String.isNullOrBlank(f.description)) {
-                        jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                        return false;
-                    }
+        var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
+        var submit = function (v, h, f) {
+            if ($String.isNullOrBlank(f.description)) {
+                jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                return false;
+            }
+            top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
+                if (v1 == "ok") {
                     audit(1, f.description);
-                    return true;
-                };
+                }
+            }, {buttonsFocus: 1});
+            return true;
+        };
 
-                jBox(html, {
-                    title: "请输入通过理由:", submit: submit, loaded: function (h) {
-                    }
-                });
+        jBox(html, {
+            title: "请输入通过理由:", submit: submit, loaded: function (h) {
             }
-        },{buttonsFocus:1});
+        });
+
     }
-    function checkReject() {
-        top.$.jBox.confirm("确认驳回该流程吗？","系统提示",function(v,h,f){
-            if(v=="ok"){
-                var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
-                var submit = function (v, h, f) {
-                    if ($String.isNullOrBlank(f.description)) {
-                        jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                        return false;
-                    }
-                    audit(2, f.description);
-                    return true;
-                };
 
-                jBox(html, {
-                    title: "请输入驳回理由:", submit: submit, loaded: function (h) {
-                    }
-                });
+    function checkReject() {
+        var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
+        var submit = function (v, h, f) {
+            if ($String.isNullOrBlank(f.description)) {
+                jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
+                return false;
             }
-        },{buttonsFocus:1});
+            top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
+                if (v1 == "ok") {
+                    audit(2, f.description);
+                }
+            }, {buttonsFocus: 1});
+            return true;
+        };
+
+        jBox(html, {
+            title: "请输入驳回理由:", submit: submit, loaded: function (h) {
+            }
+        });
+
     }
 
     function audit(auditType, description) {
