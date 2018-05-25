@@ -18,10 +18,12 @@
     </script>
 </head>
 <body>
+<shiro:hasPermission name="config:commonDynamicConfig:edit">
 <div class="up_top_l clearfix">
     <input type="file" id="myFile" name="file" class="upfile">
     <input type="button" class="btn" onclick="uploadFile()" value="上传文件"/>
 </div>
+</shiro:hasPermission>
 <br/>
 <br/>
 <form:form id="searchForm" modelAttribute="commonDynamicConfig" action="${ctx}/config/commonDynamicConfig/"
@@ -29,20 +31,13 @@
     <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
     <input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
     <ul class="ul-form">
-        <li><label>id：</label>
-            <form:input path="id" htmlEscape="false" maxlength="11" class="input-medium"/>
-        </li>
-        <li><label>配置文件名称：</label>
+        <li><label>名称：</label>
             <form:input path="confname" htmlEscape="false" maxlength="256" class="input-medium"/>
         </li>
         <li><label>创建时间：</label>
             <input name="created" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
                    value="<fmt:formatDate value="${commonDynamicConfig.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-        </li>
-        <li><label>状态：1:可用 0:不可用：</label>
-            <form:radiobuttons path="status" items="${fns:getDictList('status')}" itemLabel="label" itemValue="value"
-                               htmlEscape="false"/>
         </li>
         <li><label>版本号：</label>
             <form:input path="version" htmlEscape="false" maxlength="11" class="input-medium"/>
@@ -62,7 +57,7 @@
     <tr>
         <th>配置文件名称</th>
         <th>创建时间</th>
-        <th>状态：1:可用 0:不可用</th>
+        <th>状态</th>
         <th>版本号</th>
         <th>更新时间</th>
         <shiro:hasPermission name="config:commonDynamicConfig:edit">
