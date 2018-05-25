@@ -30,15 +30,12 @@
 				<sys:treeselect id="office" name="office.id" value="${sysOfficeAddress.office.id}"  labelName="office.name"
 								labelValue="${sysOfficeAddress.office.name}" notAllowSelectParent="true"
 								title="经销店"  url="/sys/office/queryTreeList?type=6&source=cgs"
-								cssClass="input-xlarge required"
+								cssClass="input-medium"
 								allowClear="true" dataMsgRequired="必填信息"/>
 			</li>
-			<%--<li><label>地址类型：</label>
-                 <form:select path="type" class="input-medium required">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('office_type')}" itemLabel="label" itemValue="value"
-                        htmlEscape="false"/></form:select>
-			</li>--%>
+			<li><label>联系电话：</label>
+				<form:input path="con.mobile" htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
