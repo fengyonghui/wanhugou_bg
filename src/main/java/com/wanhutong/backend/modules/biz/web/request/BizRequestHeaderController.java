@@ -112,62 +112,24 @@ public class BizRequestHeaderController extends BaseController {
 		if(bizRequestHeader.getId()!=null){
 			BizRequestDetail bizRequestDetail=new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
-			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
+			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findPoRequet(bizRequestDetail);
 			for(BizRequestDetail requestDetail:requestDetailList){
-				BizSkuInfo skuInfo=null;
-				if(requestDetail.getSkuInfo()!=null && requestDetail.getSkuInfo().getId()!=null){
-					BizSkuInfo bizSkuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo().getId());
-					if(bizSkuInfo!=null){
-						skuInfo=bizSkuInfoService.findListProd(bizSkuInfo);
-					}
+				if(requestDetail.getBizPoHeader()==null){
+					bizRequestHeader.setPoSource("poHeaderSource");
 				}
-				if(skuInfo!=null){
-					requestDetail.setSkuInfo(skuInfo);
-				}
+				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+				requestDetail.setSkuInfo(skuInfo);
 				reqDetailList.add(requestDetail);
 			}
+			if(requestDetailList.size()==0){
+				bizRequestHeader.setPoSource("poHeaderSource");
+			}
 		}
+
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) ) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
-		}
-
-		if(bizRequestHeader!=null && bizRequestHeader.getId()!=null && bizRequestHeader.getStr()!=null && bizRequestHeader.getStr().equals("detail")){
-			/*用于显示已经生成的采购单*/
-			BizPoOrderReq orderReq = new BizPoOrderReq();
-			orderReq.setRequestHeader(bizRequestHeader);
-			List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(orderReq);
-			if(poOrderReqList.size()!=0){
-				for (BizPoOrderReq poOrderReq : poOrderReqList) {
-					if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())){
-						BizPoHeader poHeader = bizPoHeaderService.get(poOrderReq.getPoHeader().getId());
-						if(poHeader!=null && poHeader.getDelFlag().equals("1") && poHeader.getIsPrewUseful()==0){
-							if(poOrderReq.getSoId()!=null){
-								if(bizRequestHeader.getId().equals(poOrderReq.getSoId())){
-									BizPoDetail bizPoDetail = new BizPoDetail();
-									bizPoDetail.setPoHeader(poOrderReq.getPoHeader());
-									List<BizPoDetail> poDetailList = bizPoDetailService.findList(bizPoDetail);
-									if(poDetailList.size()!=0){
-										if(poDetailList.size()==reqDetailList.size()){
-											for(int i=0;i<reqDetailList.size();i++){
-												reqDetailList.get(i).setPoDetail(poDetailList.get(i));
-											}
-										}
-										if(poDetailList.size()<reqDetailList.size()){
-											for(int i=0;i<poDetailList.size();i++){
-												reqDetailList.get(i).setPoDetail(poDetailList.get(i));
-											}
-										}
-									}
-									model.addAttribute("requestPoHeader", poHeader);
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 
 		model.addAttribute("entity", bizRequestHeader);
@@ -321,16 +283,8 @@ public class BizRequestHeaderController extends BaseController {
 					List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
 					if(requestDetailList.size()!=0){
 						for(BizRequestDetail requestDetail:requestDetailList){
-							BizSkuInfo skuInfo=null;
-							if(requestDetail.getSkuInfo()!=null && requestDetail.getSkuInfo().getId()!=null){
-								BizSkuInfo bizSkuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo().getId());
-								if(bizSkuInfo!=null){
-									skuInfo=bizSkuInfoService.findListProd(bizSkuInfo);
-								}
-								if(skuInfo!=null){
-									requestDetail.setSkuInfo(skuInfo);
-								}
-							}
+							BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+							requestDetail.setSkuInfo(skuInfo);
 							requestDetail.setRequestHeader(header);
 							reqDetailList.add(requestDetail);
 						}

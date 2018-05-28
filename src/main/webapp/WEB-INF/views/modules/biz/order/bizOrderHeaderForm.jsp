@@ -1011,7 +1011,7 @@
             </td>
             <td>
                 <c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
-                    ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}
+                    <fmt:formatNumber type="number" value=" ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}" pattern="0.00"/>
                 </c:if>
             </td>
             <td>

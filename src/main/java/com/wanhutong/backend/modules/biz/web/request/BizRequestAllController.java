@@ -243,13 +243,19 @@ public class BizRequestAllController {
             }
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(bizRequestHeader);
-            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
+            requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
             for (BizRequestDetail requestDetail : requestDetailList) {
+                if(requestDetail.getBizPoHeader()==null){
+                    requestHeader.setPoSource("poHeaderSource");
+                }
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
                 requestDetail.setSkuInfo(skuInfo);
                 reqDetailList.add(requestDetail);
             }
-            requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
+            if(requestDetailList.size()==0){
+                requestHeader.setPoSource("poHeaderSource");
+            }
         }
         if (bizOrderHeader != null && bizOrderHeader.getId() != null) {
             //取出用户所属采购中心
@@ -271,13 +277,20 @@ public class BizRequestAllController {
             }
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
-            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+            orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
             for (BizOrderDetail orderDetail : orderDetailList) {
+                if(orderDetail.getPoHeader()==null){
+                    orderHeader.setPoSource("poHeaderSource");
+                }
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
                 orderDetail.setSkuInfo(skuInfo);
                 ordDetailList.add(orderDetail);
             }
-            orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+            if(orderDetailList.size()==0){
+                orderHeader.setPoSource("poHeaderSource");
+            }
+
         }
         model.addAttribute("bizRequestHeader", requestHeader);
         model.addAttribute("bizOrderHeader", orderHeader);

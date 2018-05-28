@@ -117,6 +117,13 @@
 								<th>供货仓库</th>
 							</shiro:hasPermission>
 						</c:if>
+						<c:if test="${not empty source && source eq 'ghs'}">
+							<%--该备货单已生成采购单就显示--%>
+							<c:if test="${bizOrderHeader.poSource==null}">
+								<th>已生成的采购单</th>
+								<th>采购数量</th>
+							</c:if>
+						</c:if>
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
@@ -159,6 +166,13 @@
 									</td>
 								</shiro:hasPermission>
 							</c:if>
+								<c:if test="${not empty source && source eq 'ghs'}">
+									<%--该备货单已生成采购单就显示--%>
+									<c:if test="${ordDetail.poHeader!=null}">
+										<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${ordDetail.poHeader.id}&str=detail">${ordDetail.poHeader.orderNum}</a></td>
+										<td>${ordDetail.ordQty}</td>
+									</c:if>
+								</c:if>
 							</tr>
 						</c:forEach>
 					</c:if>
