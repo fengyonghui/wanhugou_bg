@@ -112,7 +112,7 @@ public class BizRequestHeaderController extends BaseController {
 		if(bizRequestHeader.getId()!=null){
 			BizRequestDetail bizRequestDetail=new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
-			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
+			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findPoRequet(bizRequestDetail);
 			for(BizRequestDetail requestDetail:requestDetailList){
 				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 				requestDetail.setSkuInfo(skuInfo);
@@ -123,34 +123,6 @@ public class BizRequestHeaderController extends BaseController {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
-		}
-
-		if(bizRequestHeader!=null && bizRequestHeader.getId()!=null && bizRequestHeader.getStr()!=null && bizRequestHeader.getStr().equals("detail")){
-			/*用于显示已经生成的采购单*/
-			BizPoOrderReq orderReq = new BizPoOrderReq();
-			orderReq.setRequestHeader(bizRequestHeader);
-			List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(orderReq);
-			if(poOrderReqList.size()!=0){
-				for (BizPoOrderReq poOrderReq : poOrderReqList) {
-					if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())){
-						BizPoHeader poHeader = bizPoHeaderService.get(poOrderReq.getPoHeader().getId());
-						if(poHeader!=null && poHeader.getDelFlag().equals("1") && poHeader.getIsPrewUseful()==0){
-							if(poOrderReq.getSoId()!=null){
-								if(bizRequestHeader.getId().equals(poOrderReq.getSoId())){
-									BizPoDetail bizPoDetail = new BizPoDetail();
-									bizPoDetail.setPoHeader(poOrderReq.getPoHeader());
-									List<BizPoDetail> poDetailList = bizPoDetailService.findList(bizPoDetail);
-										for(int i=0;i<reqDetailList.size();i++){
-											reqDetailList.get(i).setPoDetail(poDetailList.get(i));
-										}
-									model.addAttribute("requestPoHeader", poHeader);
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 
 		model.addAttribute("entity", bizRequestHeader);

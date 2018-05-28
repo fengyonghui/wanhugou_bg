@@ -235,7 +235,7 @@ public class BizRequestAllController {
             }
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
             bizRequestDetail.setRequestHeader(bizRequestHeader);
-            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+            List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
             for (BizRequestDetail requestDetail : requestDetailList) {
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
                 requestDetail.setSkuInfo(skuInfo);

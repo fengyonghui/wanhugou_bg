@@ -361,10 +361,9 @@
 					</c:if>
 					<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
 						<%--该备货单已生成采购单就显示--%>
-						<c:if test="${requestPoHeader!=null}">
-							<th>已生成的采购单</th>
-							<th>采购数量</th>
-						</c:if>
+						<th>已生成的采购单</th>
+						<th>采购数量</th>
+						<th>备注</th>
 					</c:if>
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 						<c:if test="${entity.str!='detail' && entity.str!='audit' }">
@@ -413,9 +412,10 @@
 
 							<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
 								<%--该备货单已生成采购单就显示--%>
-								<c:if test="${requestPoHeader!=null}">
-									<td>${requestPoHeader.orderNum}</td>
-									<td>${reqDetail.poDetail.ordQty}</td>
+								<c:if test="${reqDetail.bizPoHeader!=null}">
+									<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}">${reqDetail.bizPoHeader.orderNum}</a></td>
+									<td>${reqDetail.reqQty}</td>
+									<td>${reqDetail.bizPoHeader.remark}</td>
 								</c:if>
 							</c:if>
 

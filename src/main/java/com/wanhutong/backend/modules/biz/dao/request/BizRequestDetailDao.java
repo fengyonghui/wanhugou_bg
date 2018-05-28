@@ -19,5 +19,7 @@ import java.util.List;
 public interface BizRequestDetailDao extends CrudDao<BizRequestDetail> {
 
     List<BizRequestDetail>findReqTotalByVendor(BizRequestHeader bizRequestHeader);
+
+    List<BizRequestDetail> findPoRequet(BizRequestDetail bizRequestDetail);
 	
 }
