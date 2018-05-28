@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
 	<title>采购订单管理</title>
@@ -91,11 +91,11 @@
 				<th>采购单号</th>
 				<th>供应商</th>
 				<th>采购总价</th>
-				<th>交易费用</th>
+				<%--<th>交易费用</th>--%>
 				<th>应付金额</th>
-				<th>支付比例</th>
+				<%--<th>支付比例</th>--%>
 				<th>订单状态</th>
-				<th>采购单来源</th>
+				<%--<th>采购单来源</th>--%>
 				<th>创建时间</th>
 				<th>累积支付金额</th>
 				<th>审核状态</th>
@@ -115,28 +115,28 @@
 				<td>
 					${bizPoHeader.totalDetail}
 				</td>
-				<td>
-					${bizPoHeader.totalExp}
-				</td>
+				<%--<td>--%>
+					<%--${bizPoHeader.totalExp}--%>
+				<%--</td>--%>
 				<td>
 					${bizPoHeader.totalDetail+bizPoHeader.totalExp}
 				</td>
-				<td>
-					<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp == 0 || bizPoHeader.totalDetail+bizPoHeader.totalExp == ''}">0</c:if>
-					<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp > 0}">
-						<fmt:formatNumber value="${bizPoHeader.payTotal == 0 ? 0 : bizPoHeader.payTotal/(bizPoHeader.totalDetail+bizPoHeader.totalExp)*100}" pattern="0.00"/>%
-					</c:if>
-				</td>
+				<%--<td>--%>
+					<%--<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp == 0 || bizPoHeader.totalDetail+bizPoHeader.totalExp == ''}">0</c:if>--%>
+					<%--<c:if test="${bizPoHeader.totalDetail+bizPoHeader.totalExp > 0}">--%>
+						<%--<fmt:formatNumber value="${bizPoHeader.payTotal == 0 ? 0 : bizPoHeader.payTotal/(bizPoHeader.totalDetail+bizPoHeader.totalExp)*100}" pattern="0.00"/>%--%>
+					<%--</c:if>--%>
+				<%--</td>--%>
 				<td>
 						${fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型')}
 				</td>
-				<div style="display:none;">
-					<td style="display:none;">
-						<fmt:formatDate value="${bizPoHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-				</div>
-				<td>
-					${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}
-				</td>
+				<%--<div style="display:none;">--%>
+					<%--<td style="display:none;">--%>
+						<%--<fmt:formatDate value="${bizPoHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>--%>
+				<%--</div>--%>
+				<%--<td>--%>
+					<%--${fns:getPlatFormName(bizPoHeader.plateformInfo.id, '未知平台')}--%>
+				<%--</td>--%>
 				<td>
 					<fmt:formatDate value="${bizPoHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
