@@ -114,11 +114,18 @@ public class BizRequestHeaderController extends BaseController {
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
 			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findPoRequet(bizRequestDetail);
 			for(BizRequestDetail requestDetail:requestDetailList){
+				if(requestDetail.getBizPoHeader()==null){
+					bizRequestHeader.setPoSource("poHeaderSource");
+				}
 				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 				requestDetail.setSkuInfo(skuInfo);
 				reqDetailList.add(requestDetail);
 			}
+			if(requestDetailList.size()==0){
+				bizRequestHeader.setPoSource("poHeaderSource");
+			}
 		}
+
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) ) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));

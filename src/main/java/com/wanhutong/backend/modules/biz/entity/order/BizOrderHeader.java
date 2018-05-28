@@ -89,6 +89,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * */
     private Date orderUpdaEndTime;
 
+    /**
+     * 查看已经生成的采购单 标识符
+     * */
+    private String poSource;
+
     private List<BizPayRecord> BizPayRecordList;
     private String locationAddress;
 
@@ -493,5 +498,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSellers(Office sellers) {
         this.sellers = sellers;
+    }
+
+    public String getPoSource() {
+        return poSource;
+    }
+
+    public void setPoSource(String poSource) {
+        this.poSource = poSource;
     }
 }

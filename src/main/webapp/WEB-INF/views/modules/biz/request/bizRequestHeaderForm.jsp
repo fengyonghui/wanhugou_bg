@@ -361,9 +361,11 @@
 					</c:if>
 					<c:if test="${not empty bizRequestHeader.str && bizRequestHeader.str eq 'detail'}">
 						<%--该备货单已生成采购单就显示--%>
-						<th>已生成的采购单</th>
-						<th>采购数量</th>
-						<th>备注</th>
+						<c:if test="${empty bizRequestHeader.poSource}">
+							<th>已生成的采购单</th>
+							<th>采购数量</th>
+							<th>备注</th>
+						</c:if>
 					</c:if>
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
 						<c:if test="${entity.str!='detail' && entity.str!='audit' }">

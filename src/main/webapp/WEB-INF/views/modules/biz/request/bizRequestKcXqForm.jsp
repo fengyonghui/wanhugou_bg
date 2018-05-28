@@ -119,7 +119,7 @@
 						</c:if>
 						<c:if test="${not empty source && source eq 'ghs'}">
 							<%--该备货单已生成采购单就显示--%>
-							<c:if test="${ordDetailList!=null}">
+							<c:if test="${bizOrderHeader.poSource==null}">
 								<th>已生成的采购单</th>
 								<th>采购数量</th>
 							</c:if>

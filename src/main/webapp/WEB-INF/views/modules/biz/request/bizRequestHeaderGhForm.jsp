@@ -75,9 +75,11 @@
 					<th>已供货数量</th>
 					<c:if test="${not empty source && source eq 'gh'}">
 						<%--该备货单已生成采购单就显示--%>
-						<th>已生成的采购单</th>
-						<th>采购数量</th>
-						<th>备注</th>
+						<c:if test="${empty bizRequestHeader.poSource}">
+							<th>已生成的采购单</th>
+							<th>采购数量</th>
+							<th>备注</th>
+						</c:if>
 					</c:if>
 				</tr>
 				</thead>
