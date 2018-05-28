@@ -56,6 +56,7 @@
 			<tr>
 				<td>序号</td>
 				<th>发货号</th>
+				<th>物流单号</th>
 				<th>物流商</th>
 				<th>运费</th>
 				<th>操作费</th>
@@ -79,6 +80,7 @@
 				<c:if test="${bizInvoice.ship==1}">
 					<td><a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.sendNumber}</a></td>
 				</c:if>
+				<td>${bizInvoice.trackingNumber}</td>
 				<td>${bizInvoice.logistics.name}</td>
 				<td>${bizInvoice.freight}</td>
 				<td>${bizInvoice.operation}</td>
