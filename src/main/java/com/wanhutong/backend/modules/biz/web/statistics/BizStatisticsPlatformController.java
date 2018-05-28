@@ -1,23 +1,18 @@
 package com.wanhutong.backend.modules.biz.web.statistics;
 
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsPlatformService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
-import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
-import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import net.sf.json.JSONObject;
-import net.sourceforge.pinyin4j.PinyinHelper;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,14 +39,10 @@ import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -863,27 +854,27 @@ public class BizStatisticsPlatformController extends BaseController {
     }
 
     @RequiresPermissions("biz:statistics:receive:view")
-    @RequestMapping(value = {"receive", ""})
+    @RequestMapping(value = {"receive"})
     public String receive() {
         return "modules/biz/statistics/bizStatisticsReceive";
     }
 
     @RequiresPermissions("biz:statistics:receive:view")
-    @RequestMapping(value = {"receiveData", ""})
+    @RequestMapping(value = {"receiveData"})
     @ResponseBody
     public String receiveData(String startDate, String endDate, String centerType) {
         return JSONObject.fromObject(bizStatisticsPlatformService.getReceiveData(startDate, endDate, centerType)).toString();
     }
 
     @RequiresPermissions("biz:statistics:receive:view")
-    @RequestMapping(value = {"singleReceive", ""})
+    @RequestMapping(value = {"singleReceive"})
     public String singleReceive(HttpServletRequest request) {
         request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
         return "modules/biz/statistics/bizStatisticSingleReceive";
     }
 
     @RequiresPermissions("biz:statistics:receive:view")
-    @RequestMapping(value = {"singleReceiveData", ""})
+    @RequestMapping(value = {"singleReceiveData"})
     @ResponseBody
     public String singleReceiveData(String startDate, String endDate, String officeId) {
         return JSONObject.fromObject(bizStatisticsPlatformService.singleReceiveData(startDate, endDate, officeId)).toString();

@@ -23,7 +23,6 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
@@ -42,12 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -336,6 +331,47 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         }
 
+    }
+
+
+    public Set<Integer> findPrewPoHeader(BizPoHeader bizPoHeader){
+        String orderDetailIds = bizPoHeader.getOrderDetailIds();
+        String reqDetailIds = bizPoHeader.getReqDetailIds();
+        Set<Integer> poIdList=new LinkedHashSet<>();
+        BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
+        if (StringUtils.isNotBlank(orderDetailIds)) {
+            String[] orderDetailArr = orderDetailIds.split(",");
+            for(int i=0;i<orderDetailArr.length;i++){
+              BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(orderDetailArr[i]));
+                bizPoOrderReq.setSoLineNo(bizOrderDetail.getLineNo());
+                bizPoOrderReq.setOrderHeader(bizOrderDetail.getOrderHeader());
+                bizPoOrderReq.setSoType((byte)1);
+                List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+                if(poOrderReqList!=null && poOrderReqList.size()>0){
+                    BizPoOrderReq poOrderReq= poOrderReqList.get(0);
+                    BizPoHeader poHeader=poOrderReq.getPoHeader();
+                    poIdList.add(poHeader.getId());
+                }
+            }
+
+        }
+        if (StringUtils.isNotBlank(reqDetailIds)) {
+            String[] reqDetailIdArr = reqDetailIds.split(",");
+            for(int i=0;i<reqDetailIdArr.length;i++){
+                BizRequestDetail bizRequestDetail=bizRequestDetailService.get(Integer.parseInt(reqDetailIdArr[i]));
+                bizPoOrderReq.setSoLineNo(bizRequestDetail.getLineNo());
+                bizPoOrderReq.setRequestHeader(bizRequestDetail.getRequestHeader());
+                bizPoOrderReq.setSoType((byte)2);
+                List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+                if(poOrderReqList!=null && poOrderReqList.size()>0){
+                   BizPoOrderReq poOrderReq= poOrderReqList.get(0);
+                   BizPoHeader poHeader=poOrderReq.getPoHeader();
+                    poIdList.add(poHeader.getId());
+                }
+
+            }
+        }
+        return poIdList;
     }
 
     /**

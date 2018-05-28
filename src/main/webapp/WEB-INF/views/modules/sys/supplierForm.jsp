@@ -366,7 +366,7 @@
             </c:if>
         </shiro:hasPermission>
         <shiro:hasPermission name="sys:office:edit">
-            <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'onlySelect' && gysFlag != 'gys_view' && (office.bizVendInfo.auditStatus == 0 || office.bizVendInfo.auditStatus == 2)}">
+            <c:if test="${gysFlag != 'gys_audit' && gysFlag != 'onlySelect' && (office.bizVendInfo.auditStatus == 0 || office.bizVendInfo.auditStatus == 2)}">
                 <input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;
             </c:if>
         </shiro:hasPermission>

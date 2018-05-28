@@ -46,7 +46,7 @@
 					${bizPoPaymentOrder.payTotal}
 				</td>
 				<td>
-					${bizPoPaymentOrder.deadline}
+					<fmt:formatDate value="${bizPoPaymentOrder.deadline}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}

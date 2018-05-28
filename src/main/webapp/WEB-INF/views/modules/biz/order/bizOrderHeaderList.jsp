@@ -174,7 +174,7 @@
 		<th>创建人</th>
 		<th>创建时间</th>
 		<th>更新时间</th>
-		<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><th>操作</th></shiro:hasPermission>
+		<shiro:hasPermission name="biz:order:bizOrderHeader:view"><th>操作</th></shiro:hasPermission>
 	</tr>
 	</thead>
 	<tbody>
@@ -245,10 +245,11 @@
 			<td>
 				<fmt:formatDate value="${orderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
-			<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><td>
-				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
-					<c:choose>
+			<shiro:hasPermission name="biz:order:bizOrderHeader:view"><td>
+			<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '1'}">
+				<c:choose>
 					<c:when test="${bizOrderHeader.flag=='check_pending'}">
+						<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
 							<c:if test="${orderHeader.bizStatus==0 || orderHeader.bizStatus==5 || orderHeader.bizStatus==10}">
 								待审核
@@ -264,8 +265,9 @@
 						<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">
 							${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 						</c:if>
+						</shiro:hasPermission>
 					</c:when>
-					<c:otherwise>
+				<c:otherwise>
 						<%--<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">--%>
 							<%--<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">--%>
 								<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>--%>
@@ -275,17 +277,21 @@
 							<a href="${ctx}/biz/order/bizOrderHeaderUnline?orderHeader.id=${orderHeader.id}">支付流水</a>
 						</c:if>
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">查看详情</a>
+					<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 
 						</c:if>
+					</shiro:hasPermission>
 					</c:otherwise>
 				</c:choose>
 				</c:if >
-				<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
-					<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
-				</c:if>
+				<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+					<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
+						<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
+					</c:if>
+				</shiro:hasPermission>
 			</td></shiro:hasPermission>
 		</tr>
 	</c:forEach>

@@ -75,6 +75,9 @@
 				<form:input path="invInfo.name" htmlEscape="false"  class="input-medium"/>
 				<input id="invInfo.id" type="hidden" name="invInfo.id" value="${invInfo.id}"/>
 			</li>
+			<li><label>库龄时长(天)：</label>
+				<form:input path="inventoryAgeDay" htmlEscape="false"  class="input-medium"/>
+			</li>
 			<%--<li><label>库存类型：</label>
 				<form:select path="invType" class="input-medium">
 					<form:option value="" label="请选择"/>
