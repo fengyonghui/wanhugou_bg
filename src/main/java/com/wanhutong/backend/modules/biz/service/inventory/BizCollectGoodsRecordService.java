@@ -63,8 +63,13 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 
 	@Override
 	public List<BizCollectGoodsRecord> findList(BizCollectGoodsRecord bizCollectGoodsRecord) {
-
-		return super.findList(bizCollectGoodsRecord);
+		User user = UserUtils.getUser();
+		if (user.isAdmin()) {
+			return super.findList(bizCollectGoodsRecord);
+		} else {
+			bizCollectGoodsRecord.getSqlMap().put("collectGoodsRecord", BaseService.dataScopeFilter(user, "cent", "su"));
+			return super.findList(bizCollectGoodsRecord);
+		}
 	}
 
 	@Override
@@ -238,4 +243,11 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	public List<BizCollectGoodsRecord> getListBySkuIdCentId(Integer skuId, Integer centId) {
 		return dao.getListBySkuIdCentId(skuId, centId);
 	}
+	/**
+	 * 导出所有
+	 * */
+	public List<BizCollectGoodsRecord> collectSendFindList(BizCollectGoodsRecord bizCollectGoodsRecord) {
+		return dao.collectSendFindPage(bizCollectGoodsRecord);
+	}
+
 }

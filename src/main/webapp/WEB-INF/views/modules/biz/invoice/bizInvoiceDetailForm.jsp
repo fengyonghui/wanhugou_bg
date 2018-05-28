@@ -87,7 +87,7 @@ function makeShelfSelect(){
     <tr>
         <th>ID</th>
         <th>订单编号</th>
-        <th>采购商</th>
+        <th>经销店</th>
         <th>订单总费用</th>
         <th>运费</th>
         <th>创建时间</th>

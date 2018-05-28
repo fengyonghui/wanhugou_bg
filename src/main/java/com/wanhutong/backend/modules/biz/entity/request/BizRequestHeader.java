@@ -38,6 +38,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private Double totalDetail;
 	private Double recvTotal;
 
+	/**
+	 * 备货清单查看 已生成的采购单
+	 * */
+	private String poSource;
 
 	private String skuIds;
 	private String reqDetailIds;
@@ -390,4 +394,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 		this.commonProcess = commonProcess;
 	}
 
+	public String getPoSource() {
+		return poSource;
+	}
+
+	public void setPoSource(String poSource) {
+		this.poSource = poSource;
+	}
 }

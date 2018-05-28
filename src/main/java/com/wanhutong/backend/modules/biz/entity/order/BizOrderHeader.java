@@ -89,8 +89,20 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * */
     private Date orderUpdaEndTime;
 
+    /**
+     * 查看已经生成的采购单 标识符
+     * */
+    private String poSource;
+
     private List<BizPayRecord> BizPayRecordList;
     private String locationAddress;
+
+    /**
+     * 客户专员、会员搜索 查看订单开始下单时间与该采购商订单总金额
+     * */
+    private Double userOfficeReceiveTotal;
+    private Date userOfficeDeta;
+    private Integer officeChatRecord;//经销店的沟通次数
 
     public String getLocationAddress() {
         return locationAddress;
@@ -493,5 +505,37 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSellers(Office sellers) {
         this.sellers = sellers;
+    }
+
+    public String getPoSource() {
+        return poSource;
+    }
+
+    public void setPoSource(String poSource) {
+        this.poSource = poSource;
+    }
+
+    public Double getUserOfficeReceiveTotal() {
+        return userOfficeReceiveTotal;
+    }
+
+    public void setUserOfficeReceiveTotal(Double userOfficeReceiveTotal) {
+        this.userOfficeReceiveTotal = userOfficeReceiveTotal;
+    }
+
+    public Date getUserOfficeDeta() {
+        return userOfficeDeta;
+    }
+
+    public void setUserOfficeDeta(Date userOfficeDeta) {
+        this.userOfficeDeta = userOfficeDeta;
+    }
+
+    public Integer getOfficeChatRecord() {
+        return officeChatRecord;
+    }
+
+    public void setOfficeChatRecord(Integer officeChatRecord) {
+        this.officeChatRecord = officeChatRecord;
     }
 }

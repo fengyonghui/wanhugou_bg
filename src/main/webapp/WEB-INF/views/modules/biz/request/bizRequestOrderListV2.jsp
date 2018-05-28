@@ -111,11 +111,11 @@
 					<%--<form:option value="" label="请选择"/>--%>
 					<%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
 					<%--htmlEscape="false"/></form:select></li>--%>
-				<li><label>采购商名称：</label>
+				<li><label>经销店名称：</label>
 					<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
 						<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
 										labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6"
+										title="经销店"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
 										allowClear="true"  dataMsgRequired="必填信息"/>
 						<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
@@ -124,7 +124,7 @@
 					<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
 						<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
 										labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6"
+										title="经销店"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
@@ -225,7 +225,7 @@
 				<th>序号</th>
 				<th>订单编号</th>
 				<th>订单类型</th>
-				<th>采购商名称</th>
+				<th>经销店名称</th>
 				<th>订单详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>

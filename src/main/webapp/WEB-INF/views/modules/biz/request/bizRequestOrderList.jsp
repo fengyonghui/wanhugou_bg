@@ -15,7 +15,17 @@
                 }
             });
             $("#requesthExport").click(function(){
-				top.$.jBox.confirm("确认要导出备货清单数据吗？","系统提示",function(v,h,f){
+				top.$.jBox.confirm("确认要导出备货清单采购数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/ExportList");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/list");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
+			$("#orderHerExport").click(function(){
+				top.$.jBox.confirm("确认要导出订单采购数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
 						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestOrder/ExportList");
 						$("#searchForm").submit();
@@ -111,11 +121,11 @@
 					<%--<form:option value="" label="请选择"/>--%>
 					<%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
 					<%--htmlEscape="false"/></form:select></li>--%>
-				<li><label>采购商名称：</label>
+				<li><label>经销店名称：</label>
 					<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
 						<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
 										labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6"
+										title="经销店"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
 										allowClear="true"  dataMsgRequired="必填信息"/>
 						<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
@@ -124,7 +134,7 @@
 					<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
 						<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
 										labelValue="${bizOrderHeader.customer.name}" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6"
+										title="经销店"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
@@ -141,7 +151,7 @@
 				</li>
 
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
+				<li class="btns"><input id="orderHerExport" class="btn btn-primary" type="button" value="导出"/></li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
 
@@ -232,7 +242,7 @@
 				<th>序号</th>
 				<th>订单编号</th>
 				<th>订单类型</th>
-				<th>采购商名称</th>
+				<th>经销店名称</th>
 				<th>订单详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>

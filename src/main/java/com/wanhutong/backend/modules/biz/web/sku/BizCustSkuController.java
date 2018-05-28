@@ -67,7 +67,7 @@ public class BizCustSkuController extends BaseController {
 			return form(bizCustSku, model);
 		}
 		bizCustSkuService.save(bizCustSku);
-		addMessage(redirectAttributes, "保存采购商商品价格成功");
+		addMessage(redirectAttributes, "保存经销店商品价格成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/sku/bizCustSku/?repage";
 	}
 	
@@ -75,7 +75,7 @@ public class BizCustSkuController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(BizCustSku bizCustSku, RedirectAttributes redirectAttributes) {
 		bizCustSkuService.delete(bizCustSku);
-		addMessage(redirectAttributes, "删除采购商商品价格成功");
+		addMessage(redirectAttributes, "删除经销店商品价格成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/sku/bizCustSku/?repage";
 	}
 

@@ -415,17 +415,17 @@
         </div>
     </c:if>
     <div class="control-group">
-        <label class="control-label">采购商名称：</label>
+        <label class="control-label">经销店名称：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}" disabled="disabled"
                                 notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
+                                title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
                 <c:if test="${entity.orderDetails eq 'details'}">
                     <c:if test="${orderCenter.centers !=null }">
-                        该采购商的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
+                        该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
                         客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
                     </c:if>
                 </c:if>
@@ -434,7 +434,7 @@
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+                                title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
                 <span class="help-inline"><font color="red">*</font></span>
             </c:if>

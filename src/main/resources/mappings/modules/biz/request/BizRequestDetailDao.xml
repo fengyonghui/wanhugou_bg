@@ -222,5 +222,80 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<!-- 备货清单 查看 生成采购单 -->
+	<select id="findPoRequet" resultType="BizRequestDetail">
+		SELECT
+			a.id AS "id",
+			a.header_id AS "requestHeader.id",
+			reheader.req_no AS "requestHeader.reqNo",
+			a.line_no AS "lineNo",
+			a.sku_id AS "skuInfo.id",
+			a.unit_price AS "unitPrice",
+			si.item_no AS "skuInfo.itemNo",
+			bpi.vendor_name AS "skuInfo.vendorName",
+			si.buy_price AS "skuInfo.buyPrice",
+			a.req_qty AS "reqQty",
+			a.recv_qty AS "recvQty",
+			a.send_qty AS "sendQty",
+			a.remark AS "remark",
+			a.status AS "delFlag",
+			a.create_id AS "createBy.id",
+			a.create_time AS "createDate",
+			a.u_version AS "uVersion",
+			a.update_id AS "updateBy.id",
+			a.update_time AS "updateDate",
+		ph.id AS "bizPoHeader.id",
+		ph.order_num AS "bizPoHeader.orderNum",
+		ph.remark AS "bizPoHeader.remark"
+		FROM biz_request_detail a
+			LEFT JOIN biz_request_header reheader ON a.header_id = reheader.id
+			LEFT JOIN biz_sku_info si on si.id= a.sku_id
+			LEFT JOIN biz_product_info bpi ON bpi.id = si.prod_id
+
+			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = reheader.id AND a.line_no = bpor.so_line_no and bpor.so_type=2
+			LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			and ph.is_prew=0
+			<if test="skuInfo != null and skuInfo.id!=null and skuInfo.id != ''">
+				AND a.sku_id = #{skuInfo.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.itemNo!=null and skuInfo.itemNo != ''">
+				AND si.item_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.itemNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.itemNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.itemNo},'%')</if>
+
+			</if>
+			<if test="skuInfo != null and skuInfo.vendorName !=null and skuInfo.vendorName != ''">
+				AND bpi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.vendorName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.vendorName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.vendorName},'%')</if>
+
+			</if>
+			<if test="skuInfo != null and skuInfo.partNo!=null and skuInfo.partNo != ''">
+				AND si.part_no LIKE
+				<if test="dbName == 'oracle'">'%'||#{skuInfo.partNo}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuInfo.partNo}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{skuInfo.partNo},'%')</if>
+
+			</if>
+			<if test="requestHeader != null and requestHeader.id!=null and requestHeader.id != ''">
+				AND a.header_id = #{requestHeader.id}
+			</if>
+			<if test="lineNo!=null and lineNo!=''">
+				AND a.line_no = #{lineNo}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
 	
 </mapper>

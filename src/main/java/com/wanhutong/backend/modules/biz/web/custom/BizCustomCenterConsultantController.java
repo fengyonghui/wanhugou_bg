@@ -6,9 +6,15 @@ package com.wanhutong.backend.modules.biz.web.custom;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsPlatformService;
+import com.wanhutong.backend.modules.biz.web.statistics.BizStatisticsPlatformController;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -16,7 +22,10 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +42,12 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 客户专员管理Controller 采购商客户专营关联
@@ -44,6 +58,12 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/biz/custom/bizCustomCenterConsultant")
 public class BizCustomCenterConsultantController extends BaseController {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(BizStatisticsPlatformController.class);
+    /**
+     * 默认超时时间
+     */
+    private static final Long DEFAULT_TIME_OUT = TimeUnit.SECONDS.toMillis(60);
+
     @Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 
@@ -51,6 +71,8 @@ public class BizCustomCenterConsultantController extends BaseController {
     private OfficeService officeService;
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private BizOrderHeaderDao bizOrderHeaderDao;
 
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = "form")
@@ -80,12 +102,47 @@ public class BizCustomCenterConsultantController extends BaseController {
             userBcc.setId(user.getId());
             BCC.setConsultants(userBcc);//客户专员
             model.addAttribute("bcUser", BCC);
-            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(BCC);
+            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(BCC);
+            List<Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>> tasks =new ArrayList<>();
+            Map<BizCustomCenterConsultant, BizOrderHeader> resultMap = Maps.newLinkedHashMap();
             if(list.size()!=0){
+                for (BizCustomCenterConsultant customCenterConsultant : list) {
+                    tasks.add(new Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>() {
+                        @Override
+                        public Pair<BizCustomCenterConsultant, List<BizOrderHeader>> call() throws Exception {
+                            return Pair.of(customCenterConsultant, bizOrderHeaderDao.findUserOrderCountSecond(customCenterConsultant.getCustoms().getId()));
+                        }
+                    });
+                }
                 bizCustomCenterConsultant.setBccList(list);
             }
+            List<Future<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>> futures = null;
+            try {
+                futures = ThreadPoolManager.getDefaultThreadPool().invokeAll(tasks);
+            } catch (InterruptedException e) {
+                LOGGER.error("get user error (tasks)", e);
+            }
+            if (futures != null) {
+                for (Future<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>> future : futures) {
+                    try {
+                        Pair<BizCustomCenterConsultant, List<BizOrderHeader>> data = future.get(DEFAULT_TIME_OUT, TimeUnit.SECONDS);
+                        List<BizOrderHeader> countList = data.getRight();
+                        BizOrderHeader orHeaders = new BizOrderHeader();
+                        int totalCount = 0;
+                        for (BizOrderHeader b : countList) {
+                            totalCount += b.getOrderCount();
+                            orHeaders.setUserOfficeReceiveTotal(b.getUserOfficeReceiveTotal());
+                            orHeaders.setUserOfficeDeta(b.getUserOfficeDeta());
+                        }
+                        orHeaders.setOrderCount(totalCount);
+                        resultMap.put(data.getLeft(), orHeaders ==null?new BizOrderHeader():orHeaders);
+                    } catch (Exception e) {
+                        LOGGER.error("多线程取订单频率异常[{}]",bizCustomCenterConsultant.getCustoms().getId(), e);
+                    }
+                }
+            }
+            model.addAttribute("resultMap", resultMap);
         }
-        model.addAttribute("page", bizCustomCenterConsultant);
         return "modules/biz/custom/bizCustomCenterConsultantList";
     }
 

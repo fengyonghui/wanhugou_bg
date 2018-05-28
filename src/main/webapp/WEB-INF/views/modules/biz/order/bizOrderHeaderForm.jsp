@@ -381,8 +381,7 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post"
-           class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
@@ -390,39 +389,25 @@
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
-
-    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-        <div class="control-group">
-            <label class="control-label">订单编号：</label>
-            <div class="controls">
-                <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"
-                            class="input-xlarge"/>
-            </div>
-        </div>
-    </c:if>
-    <c:if test="${not empty entity.orderDetails}">
-        <div class="control-group">
-            <label class="control-label">订单类型：</label>
-            <div class="controls">
-                <form:select path="orderType" class="input-xlarge" disabled="true">
-                    <form:option value="" label="请选择"/>
-                    <form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"
-                                  htmlEscape="false"/></form:select>
-            </div>
-        </div>
-    </c:if>
     <div class="control-group">
-        <label class="control-label">采购商名称：</label>
+        <label class="control-label">订单编号：</label>
+        <div class="controls">
+            <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"
+                        class="input-xlarge"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">经销店名称：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}" disabled="disabled"
                                 notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
+                                title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
                 <c:if test="${entity.orderDetails eq 'details'}">
                     <c:if test="${orderCenter.centers !=null }">
-                        该采购商的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
+                        该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
                         客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
                     </c:if>
                 </c:if>
@@ -431,7 +416,7 @@
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
                                 labelValue="${entity2.customer.name}"
                                 notAllowSelectParent="true"
-                                title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
+                                title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
                 <span class="help-inline"><font color="red">*</font></span>
             </c:if>
@@ -469,7 +454,6 @@
             </c:if>
         </div>
     </div>
-    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
         <div class="control-group">
             <label class="control-label">应付金额：</label>
             <div class="controls">
@@ -480,15 +464,11 @@
         <div class="control-group">
             <label class="control-label">已付金额：</label>
             <div class="controls">
-                <%--<input type="text" value="<fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />"--%>
-                       <%--style="color:#088A29" class="input-xlarge" disabled="true" />--%>
-                        <%-----${bizOrderHeader.receiveTotal}----%>
                 <font color="#088A29">
                     <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}" maxFractionDigits="2" />
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
-    </c:if>
     <c:if test="${not empty entity.orderDetails}">
         <c:if test="${fns:getUser().isAdmin()==false}">
             <div class="control-group">
@@ -802,7 +782,7 @@
                     <div style="float: left">
                         <div style="padding-bottom: 1px;padding-top: 16px;">
                             &nbsp;&rarr;&nbsp;<button id="completed30" type="button" class="btn btn-arrow-right">已完成</button>&nbsp;&rarr;&nbsp;
-                            <button id="completed40" type="button" class="btn btn-arrow-right">隐藏</button>
+                            <button id="completed40" type="button" class="btn btn-arrow-right">已删除</button>
                         </div>
                     </div>
                 </div>
@@ -821,7 +801,7 @@
                     <div style="float: left">
                         <div style="padding-top: 31px;">
                             <button id="cancel35" type="button" class="btn btn-arrow-right">已取消</button>&nbsp;&rarr;&nbsp;
-                            <button id="cancel40" type="button" class="btn btn-arrow-right">隐藏</button>
+                            <button id="cancel40" type="button" class="btn btn-arrow-right">已删除</button>
                         </div>
                     </div>
                 </div>
@@ -836,37 +816,13 @@
                     </div>
                     <div style="float: left;">
                         <div style="padding-top: 16px;">
-                            &rarr;<button id="already_delete40" type="button" class="btn btn-arrow-right">隐藏</button>
+                            &rarr;<button id="already_delete40" type="button" class="btn btn-arrow-right">已删除</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         </c:if>
-        <div class="control-group">
-            <label class="control-label">创建人：</label>
-            <div class="controls">
-                <form:input path="totalDetail" value="${bizOrderHeader.createBy.name}" readOnly="true" class="input-xlarge"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">创建时间：</label>
-            <div class="controls">
-                <fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">更新人：</label>
-            <div class="controls">
-                <form:input path="totalDetail" value="${bizOrderHeader.updateBy.name}" readOnly="true" class="input-xlarge"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">更新时间：</label>
-            <div class="controls">
-                <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </div>
-        </div>
         <c:if test="${statu != '' && statu =='unline'}">
             <div class="control-group">
                 <label class="control-label">支付信息:</label>
@@ -956,9 +912,9 @@
                                                                                      type="submit"
                                                                                      value="保存"/>&nbsp;</shiro:hasPermission>
                 </c:if>
-                <c:if test="${not empty entity.orderDetails}">
-                    待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>
-                </c:if>
+                <%--<c:if test="${not empty entity.orderDetails}">--%>
+                    <%--待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>--%>
+                <%--</c:if>--%>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
 
@@ -988,7 +944,9 @@
         <th>采购数量</th>
         <th>总 额</th>
         <th>已发货数量</th>
-        <th>发货方</th>
+        <c:if test="${bizOrderHeader.bizStatus>15 && bizOrderHeader.bizStatus!=45}">
+            <th>发货方</th>
+        </c:if>
         <c:if test="${bizOrderHeader.flag=='check_pending'}">
             <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
                 <th>本地备货</th>
@@ -1053,15 +1011,17 @@
             </td>
             <td>
                 <c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
-                    ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}
+                    <fmt:formatNumber type="number" value=" ${bizOrderDetail.unitPrice * bizOrderDetail.ordQty}" pattern="0.00"/>
                 </c:if>
             </td>
             <td>
                     ${bizOrderDetail.sentQty}
             </td>
-            <td>
-                ${bizOrderDetail.suplyis.name}
-            </td>
+            <c:if test="${bizOrderHeader.bizStatus>15 && bizOrderHeader.bizStatus!=45}">
+                <td>
+                    ${bizOrderDetail.suplyis.name}
+                </td>
+            </c:if>
             <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <c:if test="${orderType != DefaultPropEnum.PURSEHANGER.propValue}">
                     <td>
