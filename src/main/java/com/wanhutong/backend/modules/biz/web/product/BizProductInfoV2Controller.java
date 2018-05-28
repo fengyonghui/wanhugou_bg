@@ -143,14 +143,18 @@ public class BizProductInfoV2Controller extends BaseController {
             String photos = "";
             String photoDetails = "";
             String photoLists = "";
+            Map<String,Integer> photosMap = new LinkedHashMap<>();
+            Map<String,Integer> detailsMap = new LinkedHashMap<>();
             for (CommonImg img : imgList) {
                 photos += img.getImgServer().concat(img.getImgPath()).concat("|");
+                photosMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (StringUtils.isNotBlank(photos)) {
                 bizProductInfo.setPhotos(photos);
             }
             for (CommonImg img : subImgList) {
                 photoDetails += "|" + img.getImgServer() + img.getImgPath();
+                detailsMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photoDetails)) {
                 bizProductInfo.setPhotoDetails(photoDetails);
@@ -160,6 +164,12 @@ public class BizProductInfoV2Controller extends BaseController {
             }
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
+            }
+            if (subImgList != null && !subImgList.isEmpty()) {
+                model.addAttribute("detailsMap", detailsMap);
+            }
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
             }
         }
 
@@ -298,14 +308,18 @@ public class BizProductInfoV2Controller extends BaseController {
             String photos = "";
             String photoDetails = "";
             String photoLists = "";
+            Map<String,Integer> photosMap = new LinkedHashMap<>();
+            Map<String,Integer> detailsMap = new LinkedHashMap<>();
             for (CommonImg img : imgList) {
                 photos += "|" + img.getImgServer() + img.getImgPath();
+                photosMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photos)) {
                 bizProductInfo.setPhotos(photos);
             }
             for (CommonImg img : subImgList) {
                 photoDetails += "|" + img.getImgServer() + img.getImgPath();
+                detailsMap.put(img.getImgServer()+img.getImgPath(),img.getImgSort());
             }
             if (!"".equals(photoDetails)) {
                 bizProductInfo.setPhotoDetails(photoDetails);
@@ -315,6 +329,12 @@ public class BizProductInfoV2Controller extends BaseController {
             }
             if (!"".equals(photoLists)) {
                 bizProductInfo.setPhotoLists(photoLists);
+            }
+            if (subImgList != null && !subImgList.isEmpty()) {
+                model.addAttribute("detailsMap", detailsMap);
+            }
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
             }
         }
 

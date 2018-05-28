@@ -24,9 +24,26 @@
                         alert("请选择分类");
                         return;
                     }
-
-                    loading('正在提交，请稍等...');
-                    form.submit();
+                    var aa = true;
+                    $("input[name='imgDetailSorts']").each(function () {
+                        if ($(this).val()=='') {
+                            aa = false;
+                            return;
+                        }
+                    });
+                    var bb = true;
+                    $("input[name='imgPhotosSorts']").each(function () {
+                        if ($(this).val()=='') {
+                            bb = false;
+                            return;
+                        }
+                    });
+                    if (aa && bb) {
+                        loading('正在提交，请稍等...');
+                        form.submit();
+                    } else {
+                        alert("主图和列表图的序号不能为空");
+                    }
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function (error, element) {
@@ -90,16 +107,31 @@
             <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
             <p style="opacity: 0.5;">图片建议比例为1:1</p>
             <p style="opacity: 0.5;">点击图片删除</p>
+            <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
         </label>
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
         </div>
         <div id="prodMainImgDiv">
-            <c:if test="${entity.photos != null && entity.photos != ''}">
-                <c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">
-                    <img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();">
-                </c:forEach>
-            </c:if>
+            <table>
+                <tr id="prodMainImgImg">
+                        <%--<c:if test="${entity.photos != null && entity.photos != ''}">--%>
+                        <%--<c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">--%>
+                    <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                        <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,'#mainImg'+${status.index});"></td>
+                    </c:forEach>
+                </tr>
+                <tr id="imgPhotosSorts">
+                    <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                        <td><input id="mainImg${status.index}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
+                    </c:forEach>
+                </tr>
+            </table>
+            <%--<c:if test="${entity.photos != null && entity.photos != ''}">--%>
+                <%--<c:forEach items='${fn:split(entity.photos,"|")}' var="v" varStatus="status">--%>
+                    <%--<img src="${v}" customInput="prodMainImgImg" style='width: 100px' onclick="$(this).remove();">--%>
+                <%--</c:forEach>--%>
+            <%--</c:if>--%>
         </div>
     </div>
     <div class="control-group">
@@ -135,16 +167,29 @@
             <p style="opacity: 0.5;">点击图片删除</p>
             <p style="opacity: 0;color: red;">*首图为列表页图</p>
             <p style="opacity: 0;">图片建议比例为1:1</p>
+            <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
         </label>
         <div class="controls">
             <input class="btn" type="file" name="productImg" onchange="submitPic('prodDetailImg', true)" value="上传图片" multiple="multiple" id="prodDetailImg"/>
         </div>
         <div id="prodDetailImgDiv">
-            <c:if test="${entity.photoDetails != null && entity.photoDetails != ''}">
-                <c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">
-                    <img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">
-                </c:forEach>
-            </c:if>
+            <table>
+                <tr id="prodDetailImgImg">
+                    <c:forEach items="${detailsMap}" var="detail" varStatus="status">
+                        <td><img src="${detail.key}" customInput="prodDetailImgImg" style='width: 100px' onclick="removeThis(this,'#detailImg'+${status.index});"></td>
+                    </c:forEach>
+                </tr>
+                <tr id="imgDetailSorts">
+                    <c:forEach items="${detailsMap}" var="detail" varStatus="status">
+                        <td><input id="detailImg${status.index}" name="imgDetailSorts" type="number" style="width: 100px" value="${detail.value}"/></td>
+                    </c:forEach>
+                </tr>
+            </table>
+            <%--<c:if test="${entity.photoDetails != null && entity.photoDetails != ''}">--%>
+                <%--<c:forEach items='${fn:split(entity.photoDetails,"|")}' var="v">--%>
+                    <%--<img src="${v}" customInput="prodDetailImgImg" style='width: 100px' onclick="$(this).remove();">--%>
+                <%--</c:forEach>--%>
+            <%--</c:if>--%>
         </div>
     </div>
     <div class="control-group">
@@ -607,7 +652,16 @@
                 var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
                 if (imgList && imgList.length > 0 && multiple) {
                     for (var i = 0; i < imgList.length; i ++) {
-                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        if (id == "prodMainImg") {
+                            $("#imgPhotosSorts").append("<td><input id='"+"main" + i + "' name='imgPhotosSorts' style='width: 70px' type='number'/></td>");
+                            // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
+                            $("#prodMainImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this,"+"$('#main" + i + "'));\"></td>");
+                        }
+                        if (id == "prodDetailImg") {
+                            $("#imgDetailSorts").append("<td><input id='"+"detail" + i + "' name='imgDetailSorts' style='width: 70px' type='number'/></td>");
+                            $("#prodDetailImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this,"+"$('#detail" + i + "'));\"></td>");
+                        }
                     }
                 }else if (imgList && imgList.length > 0 && !multiple) {
                     imgDiv.empty();
@@ -662,6 +716,11 @@
                     .replace("$id", j + "")
                     .replace("$id", j + ""));
         }
+    }
+
+    function removeThis(obj,item) {
+        $(obj).remove();
+        $(item).remove();
     }
 
     $(document).ready(function() {
