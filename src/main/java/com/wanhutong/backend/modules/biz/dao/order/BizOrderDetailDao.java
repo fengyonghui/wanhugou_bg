@@ -23,4 +23,6 @@ public interface BizOrderDetailDao extends CrudDao<BizOrderDetail> {
 	List<BizOrderDetail>findOrderTotalByVendor(BizOrderHeader bizOrderHeader);
 
 	List<Map> findRequestTotalByVendor(boolean includeTestData);
+
+	List<BizOrderDetail> findPoHeader(BizOrderDetail bizOrderDetail);
 }

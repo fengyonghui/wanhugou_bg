@@ -263,7 +263,7 @@ public class BizRequestAllController {
             }
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             bizOrderDetail.setOrderHeader(bizOrderHeader);
-            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
                 orderDetail.setSkuInfo(skuInfo);
