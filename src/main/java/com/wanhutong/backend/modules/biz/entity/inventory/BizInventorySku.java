@@ -8,6 +8,8 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -29,6 +31,10 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	private Office cust;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
 	private List invInfoList;		//仓库集合
 //	private String sOrdQty;
+
+	private Long inventoryAgeDay;
+
+	private String inventoryAgeDate;
 
 	public BizInventorySku() {
 		super();
@@ -122,4 +128,19 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	public void setCust(Office cust) {
 		this.cust = cust;
 	}
+
+	public Long getInventoryAgeDay() {
+		return inventoryAgeDay;
+	}
+
+	public void setInventoryAgeDay(Long inventoryAgeDay) {
+		this.inventoryAgeDay = inventoryAgeDay;
+	}
+
+	public String getInventoryAgeDate() {
+		LocalDate today = LocalDate.now();
+		LocalDate date = today.minus(this.getInventoryAgeDay(), ChronoUnit.DAYS);
+		return date.toString();
+	}
+
 }
