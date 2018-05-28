@@ -70,7 +70,8 @@
 		bpi.brand_name AS "productInfo.brandName",
 		bpi.prod_code AS "productInfo.prodCode",
 		bpi.vendor_id AS "productInfo.office.id",
-		bpi.prod_type AS "productInfo.prodType"
+		bpi.prod_type AS "productInfo.prodType",
+		bpi.vendor_name AS "productInfo.vendorName"
 	</sql>
 	
 	<sql id="bizSkuInfoJoins">
@@ -151,6 +152,12 @@
 				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
 			<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.vendorName !=null and productInfo.vendorName!=''">
+				AND bpi.vendor_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{productInfo.vendorName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{productInfo.vendorName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{productInfo.vendorName},'%')</if>
 			</if>
 			<if test="productInfo != null and productInfo.prodCode !=null and productInfo.prodCode!=''">
 				AND bpi.prod_code LIKE
@@ -452,6 +459,24 @@
 		LEFT JOIN	biz_purchaser_vendor bpv ON bpv.vendor_id = vend.id
 		LEFT JOIN sys_office purchaser ON purchaser.id = bpv.purchaser_id
 		WHERE purchaser.id = #{purchaser.id}
+		<if test="name != null and name != ''">
+			AND a.name LEFT
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		</if>
+		<if test="partNo != null and partNo != ''">
+			AND a.part_no LIKE
+			<if test="dbName == 'oracle'">'%'||#{partNo}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{partNo}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{partNo},'%')</if>
+		</if>
+		<if test="itemNo != null and itemNo != ''">
+			AND a.item_no LIKE
+			<if test="dbName == 'oracle'">'%'||#{itemNo}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{itemNo}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{itemNo},'%')</if>
+		</if>
 	</select>
 
 

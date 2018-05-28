@@ -68,6 +68,9 @@
 			<li><label>商品货号：</label>
 				<form:input path="itemNo" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
+			<li><label>供应商：</label>
+				<form:input path="productInfo.vendorName" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -91,6 +94,7 @@
 				<th>产品名称</th>
 				<th>商品编码</th>
 				<th>商品货号</th>
+				<th>供应商</th>
 				<%--<th>创建人</th>--%>
 				<th>工厂价格</th>
 				<th>创建时间</th>
@@ -124,6 +128,9 @@
 					<td>
 						<input name="itemNo" value="${bizSkuInfo.itemNo}" type="hidden"/>
 							${bizSkuInfo.itemNo}
+					</td>
+					<td>
+						${bizSkuInfo.productInfo.vendorName}
 					</td>
 					<td>
 						<input name="buyPrice" value="${bizSkuInfo.buyPrice}" type="hidden"/>
