@@ -107,11 +107,11 @@
 						<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
 									  htmlEscape="false"/></form:select>
 				</li>
-				<li><label>采购商名称：</label>
+				<li><label>经销店名称：</label>
 					<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
 						<sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
 										labelValue="" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6"
+										title="经销店"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
 										allowClear="true" dataMsgRequired="必填信息"/>
 						<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
@@ -120,7 +120,7 @@
 					<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
 						<sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
 										labelValue="" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6&source=cgs"
+										title="经销店"  url="/sys/office/queryTreeList?type=6&source=cgs"
 										cssClass="input-medium required"
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
