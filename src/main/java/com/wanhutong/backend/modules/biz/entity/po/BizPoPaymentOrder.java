@@ -28,6 +28,11 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     private Date deadline;
 
+    private Integer processId;
+
+    private CommonProcessEntity commonProcess;
+
+
     public BizPoPaymentOrder() {
         super();
     }
@@ -83,6 +88,22 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
+    }
+
+    public Integer getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(Integer processId) {
+        this.processId = processId;
+    }
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
     }
 
     public enum BizStatus {

@@ -21,6 +21,9 @@ import com.wanhutong.backend.modules.biz.dao.po.BizPoPaymentOrderDao;
 @Service
 @Transactional(readOnly = true)
 public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, BizPoPaymentOrder> {
+
+	public static final String DATABASE_TABLE_NAME = "biz_po_payment_order";
+
 	@Override
 	public BizPoPaymentOrder get(Integer id) {
 		return super.get(id);

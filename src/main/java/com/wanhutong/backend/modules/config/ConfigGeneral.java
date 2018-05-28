@@ -47,7 +47,7 @@ public abstract class ConfigGeneral {
 	public static final ConfigWrapper<RequestOrderProcessConfig> REQUEST_ORDER_PROCESS_CONFIG = new ConfigWrapper<RequestOrderProcessConfig>(
 			"RequestOrderProcessConfig.xml",new RequestOrderProcessConfig());
 
-	public static final ConfigWrapper<PaymentOrderProcessConfig> PAYMENT_ORDER_PROCESS_CONFIG = new ConfigWrapper<PaymentOrderProcessConfig>(
+	public static final ConfigWrapper<PaymentOrderProcessConfig> PAYMENT_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PaymentOrderProcessConfig.xml",new PaymentOrderProcessConfig());
 
 	/**

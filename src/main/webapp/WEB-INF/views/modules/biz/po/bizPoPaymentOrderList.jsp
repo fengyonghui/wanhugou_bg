@@ -29,6 +29,7 @@
 				<th>实际付款金额</th>
 				<th>最后付款时间</th>
 				<th>当前状态</th>
+				<th>审批状态</th>
 				<th>支付凭证</th>
 				<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -47,6 +48,9 @@
 				</td>
 				<td>
 					<fmt:formatDate value="${bizPoPaymentOrder.deadline}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}
 				</td>
 				<td>
 					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}

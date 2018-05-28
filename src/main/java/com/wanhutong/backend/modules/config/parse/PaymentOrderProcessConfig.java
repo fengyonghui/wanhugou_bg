@@ -2,7 +2,7 @@ package com.wanhutong.backend.modules.config.parse;
 
 /**
  * @author Ma.Qiang
- * 2017/10/8
+ * 2018/5/28
  */
 
 import com.google.common.collect.Maps;
@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @author ma.qiang
  */
-@XStreamAlias("PurchaseOrderProcessConfig")
+@XStreamAlias("PaymentOrderProcessConfig")
 public class PaymentOrderProcessConfig extends ConfigGeneral {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentOrderProcessConfig.class);
@@ -35,6 +35,9 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
     @XStreamAlias("payProcessId")
     private int payProcessId;
 
+    @XStreamAlias("defaultBaseMoney")
+    private BigDecimal defaultBaseMoney;
+
     @XStreamImplicit(itemFieldName = "process")
     private List<PurchaseOrderProcess> processList;
 
@@ -45,14 +48,14 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
 
     @Override
     public PaymentOrderProcessConfig parse(String content) throws Exception {
-        PaymentOrderProcessConfig purchaseOrderProcessConfig = XmlUtils.fromXml(content);
-        purchaseOrderProcessConfig.processMap = Maps.newHashMap();
-        if (CollectionUtils.isNotEmpty(purchaseOrderProcessConfig.processList)) {
-            for (PurchaseOrderProcess e : purchaseOrderProcessConfig.processList) {
-                purchaseOrderProcessConfig.processMap.put(e.getCode(), e);
+        PaymentOrderProcessConfig paymentOrderProcessConfig = XmlUtils.fromXml(content);
+        paymentOrderProcessConfig.processMap = Maps.newHashMap();
+        if (CollectionUtils.isNotEmpty(paymentOrderProcessConfig.processList)) {
+            for (PurchaseOrderProcess e : paymentOrderProcessConfig.processList) {
+                paymentOrderProcessConfig.processMap.put(e.getCode(), e);
             }
         }
-        return purchaseOrderProcessConfig;
+        return paymentOrderProcessConfig;
     }
 
     /**
@@ -93,7 +96,9 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
         return processList;
     }
 
-
+    public BigDecimal getDefaultBaseMoney() {
+        return defaultBaseMoney;
+    }
 
     public int getDefaultProcessId() {
         return defaultProcessId;
@@ -137,6 +142,7 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
         }
     }
 
+    @XStreamAlias("moneyRole")
     public static class MoneyRole {
         /**
          * 起始金额

@@ -9,10 +9,20 @@
 		a.pay_total AS "payTotal",
 		a.img AS "img",
 		a.biz_status AS bizStatus,
-		a.deadline AS deadline
+		a.deadline AS deadline,
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		process.create_time AS "commonProcess.createTime"
 	</sql>
 	
 	<sql id="bizPoPaymentOrderJoins">
+		LEFT JOIN common_process process ON process.id = a.process_id
 	</sql>
     
 	<select id="get" resultType="BizPoPaymentOrder">
@@ -71,13 +81,15 @@
 			po_header_id,
 			total,
 			img,
-			deadline
+			deadline,
+			process_id
 		) VALUES (
 			#{id},
 			#{poHeaderId},
 			#{total},
 			#{img},
-			#{deadline}
+			#{deadline},
+			#{processId}
 		)
 	</insert>
 	
@@ -88,7 +100,8 @@
 			deadline = #{deadline},
 			pay_total = #{payTotal},
 			biz_status = #{bizStatus},
-			img = #{img}
+			img = #{img},
+			process_id = #{processId}
 		WHERE id = #{id}
 	</update>
 	
