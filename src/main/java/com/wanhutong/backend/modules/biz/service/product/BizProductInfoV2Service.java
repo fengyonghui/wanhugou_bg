@@ -364,7 +364,10 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
             log.error("详情图转换编码异常." + e.getMessage(), e);
         }
         String photoLists = null;
-
+        String imgPhotosSorts = bizProductInfo.getImgPhotosSorts();
+        String[] photosSort = StringUtils.split(imgPhotosSorts, ",");
+        String imgDetailSorts = bizProductInfo.getImgDetailSorts();
+        String[] detailSort = StringUtils.split(imgDetailSorts, ",");
         if (StringUtils.isNotBlank(photos)) {
             List<String> strings = Arrays.asList(photos.split("\\|"));
             for (String s : strings) {
@@ -385,11 +388,19 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
             saveProdImg(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
         }
 
+        if (photoDetails != null) {
+            String[] photoArr = photoDetails.split("\\|");
+            saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
+        }
+
         //设置主图和图片次序
         List<CommonImg> commonImgs = getImgList(ImgEnum.MAIN_PRODUCT_TYPE.getCode(), bizProductInfo.getId());
+        List<CommonImg> detailCommonImg = getImgList(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo.getId());
         for (int i = 0; i < commonImgs.size(); i++) {
             CommonImg commonImg = commonImgs.get(i);
-            commonImg.setImgSort(i);
+            if (photosSort != null && photosSort.length > 0) {
+                commonImg.setImgSort(Integer.parseInt(photosSort[i]));
+            }
             commonImgService.save(commonImg);
 
             if (i == 0 && StringUtils.isBlank(bizProductInfo.getImgUrl())) {
@@ -397,12 +408,12 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
                 bizProductInfoDao.update(bizProductInfo);
             }
         }
-
-
-
-        if (photoDetails != null) {
-            String[] photoArr = photoDetails.split("\\|");
-            saveProdImg(ImgEnum.SUB_PRODUCT_TYPE.getCode(), bizProductInfo, photoArr, copy);
+        for (int i = 0; i < detailCommonImg.size(); i++) {
+            CommonImg commonImg = detailCommonImg.get(i);
+            if (detailSort != null && detailSort.length > 0) {
+                commonImg.setImgSort(Integer.parseInt(detailSort[i]));
+            }
+            commonImgService.save(commonImg);
         }
 
     }
@@ -415,13 +426,13 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
 
         List<CommonImg> commonImgs = getImgList(imgType, bizProductInfo.getId());
 
-        Set<String> existSet = new HashSet<>();
+        Set<String> existSet = new LinkedHashSet<>();
         for (CommonImg commonImg1 : commonImgs) {
             existSet.add(commonImg1.getImgServer() + commonImg1.getImgPath());
         }
-        Set<String> newSet = new HashSet<>(Arrays.asList(photoArr));
+        Set<String> newSet = new LinkedHashSet<>(Arrays.asList(photoArr));
 
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new LinkedHashSet<>();
         //差集，结果做删除操作
         result.clear();
         result.addAll(existSet);
@@ -590,15 +601,15 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
                     Integer propValueId = Integer.parseInt(prodPropertyValueList.get(i).trim());
                     PropValue propValue = propValueService.get(propValueId);
                     prodPropValue.setId(null);
-                        prodPropValue.setPropertyInfo(propertyInfo);
-                        prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
-                        prodPropValue.setSource("sys");
-                        prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
-                        prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
-                        prodPropValue.setPropValue(propValue.getValue());
-                        prodPropValue.setCode(propValue.getCode());
-                        prodPropValue.setSysPropValue(propValue);
-                        bizProdPropValueService.save(prodPropValue);
+                    prodPropValue.setPropertyInfo(propertyInfo);
+                    prodPropValue.setProdPropertyInfoId(propertyInfo.getId());
+                    prodPropValue.setSource("sys");
+                    prodPropValue.setPropName(bizProdPropertyInfo.getPropName());
+                    prodPropValue.setProdPropertyInfo(bizProdPropertyInfo);
+                    prodPropValue.setPropValue(propValue.getValue());
+                    prodPropValue.setCode(propValue.getCode());
+                    prodPropValue.setSysPropValue(propValue);
+                    bizProdPropValueService.save(prodPropValue);
                 }
 
             }
