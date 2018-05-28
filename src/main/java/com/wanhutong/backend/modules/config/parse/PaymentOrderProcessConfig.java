@@ -39,19 +39,19 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
     private BigDecimal defaultBaseMoney;
 
     @XStreamImplicit(itemFieldName = "process")
-    private List<PurchaseOrderProcess> processList;
+    private List<Process> processList;
 
     /**
      * 数据MAP
      */
-    private Map<Integer, PurchaseOrderProcess> processMap;
+    private Map<Integer, Process> processMap;
 
     @Override
     public PaymentOrderProcessConfig parse(String content) throws Exception {
         PaymentOrderProcessConfig paymentOrderProcessConfig = XmlUtils.fromXml(content);
         paymentOrderProcessConfig.processMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(paymentOrderProcessConfig.processList)) {
-            for (PurchaseOrderProcess e : paymentOrderProcessConfig.processList) {
+            for (Process e : paymentOrderProcessConfig.processList) {
                 paymentOrderProcessConfig.processMap.put(e.getCode(), e);
             }
         }
@@ -64,7 +64,7 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
      * @param currentProcess 当前状态
      * @return 通过后的状态
      */
-    public PurchaseOrderProcess getPassProcess(BigDecimal money, PurchaseOrderProcess currentProcess) {
+    public Process getPassProcess(BigDecimal money, Process currentProcess) {
         for (MoneyRole moneyRole : currentProcess.getMoneyRole()) {
            if (moneyRole.endMoney.compareTo(money) > 0 && moneyRole.startMoney.compareTo(money) <= 0) {
                 return processMap.get(moneyRole.getPassCode());
@@ -79,7 +79,7 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
      * @param currentProcess 当前状态
      * @return 通过后的状态
      */
-    public PurchaseOrderProcess getRejectProcess(BigDecimal money, PurchaseOrderProcess currentProcess) {
+    public Process getRejectProcess(BigDecimal money, Process currentProcess) {
         for (MoneyRole moneyRole : currentProcess.getMoneyRole()) {
             if (moneyRole.endMoney.compareTo(money) > 0 && moneyRole.startMoney.compareTo(money) <= 0) {
                 return processMap.get(moneyRole.getRejectCode());
@@ -88,11 +88,11 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
         return null;
     }
 
-    public Map<Integer, PurchaseOrderProcess> getProcessMap() {
+    public Map<Integer, Process> getProcessMap() {
         return processMap;
     }
 
-    public List<PurchaseOrderProcess> getProcessList() {
+    public List<Process> getProcessList() {
         return processList;
     }
 
@@ -109,7 +109,7 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
     }
 
     @XStreamAlias("process")
-    public static class PurchaseOrderProcess {
+    public static class Process {
         /**
          * 状态码
          */

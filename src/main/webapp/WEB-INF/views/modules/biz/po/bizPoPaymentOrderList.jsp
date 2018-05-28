@@ -53,13 +53,16 @@
 					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}
 				</td>
 				<td>
-					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}
+					${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name}
 				</td>
 				<td>
 					<a target="_blank" href="${bizPoPaymentOrder.img}"><img style="width: 100px" src="${bizPoPaymentOrder.img}"/></a>
 				</td>
 				<shiro:hasPermission name="biz.po:bizpopaymentorder:bizPoPaymentOrder:edit"><td>
-					<c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id && bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'}">
+					<c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id
+					&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
+					&& bizPoPaymentOrder.commonProcess.paymentOrderProcess.name == '审批完成'
+					}">
 						<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=pay">确认付款</a>
 					</c:if>
 				</td></shiro:hasPermission>

@@ -353,8 +353,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             return "操作失败,该订单已经有正在申请的支付单!";
         }
         PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
-        PaymentOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = null;
-        if (paymentOrderProcessConfig.getDefaultBaseMoney().compareTo(bizPoHeader.getPlanPay()) >= 0) {
+        PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
+        if (paymentOrderProcessConfig.getDefaultBaseMoney().compareTo(bizPoHeader.getPlanPay()) > 0) {
             purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getPayProcessId());
         }else {
             purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());

@@ -10,6 +10,7 @@
 		a.img AS "img",
 		a.biz_status AS bizStatus,
 		a.deadline AS deadline,
+		a.process_id AS processId,
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
@@ -109,5 +110,12 @@
 		DELETE FROM biz_po_payment_order
 		WHERE id = #{id}
 	</update>
+
+	<update id="updateProcessId">
+		UPDATE biz_po_payment_order SET
+		process_id  = #{processId}
+		WHERE id = #{headerId}
+	</update>
+
 
 </mapper>
