@@ -5,6 +5,7 @@
 	<sql id="bizInvoiceColumns">
 		a.id AS "id",
 		a.send_number AS "sendNumber",
+		a.tracking_number AS "trackingNumber",
 		a.logistics_id AS "logistics.id",
 		bl.name AS "logistics.name",
 		a.img_url AS "imgUrl",
@@ -79,6 +80,7 @@
                 ${sqlMap.bizInvoice}
             </if>
 		</where>
+		ORDER BY a.send_time DESC
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -109,6 +111,7 @@
 		INSERT INTO biz_invoice(
 			id,
 			send_number,
+			tracking_number,
 			<if test="logistics != null and logistics.id != null and logistics.id != ''">
 				logistics_id,
 			</if>
@@ -142,6 +145,7 @@
 		) VALUES (
 			#{id},
 			#{sendNumber},
+			#{trackingNumber},
 			<if test="logistics != null and logistics.id != null and logistics.id != ''">
 				#{logistics.id},
 			</if>
@@ -178,6 +182,7 @@
 	<update id="update">
 		UPDATE biz_invoice SET 	
 			send_number = #{sendNumber},
+			tracking_number = #{trackingNumber},
 			<if test="logistics != null and logistics.id != null and logistics.id != ''">
 				logistics_id = #{logistics.id},
 			</if>
