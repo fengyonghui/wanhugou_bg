@@ -104,7 +104,13 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	 * @return
 	 */
 	public Map<String, Object> getInventoryAge(Integer skuId, Integer centId) {
+		Map<String, Object> result = Maps.newHashMap();
+
 		Integer stockQtyBySkuIdCentId = bizInventorySkuDao.getStockQtyBySkuIdCentId(skuId, centId);
+		if (stockQtyBySkuIdCentId == null || stockQtyBySkuIdCentId == 0) {
+			return result;
+		}
+
 		List<BizCollectGoodsRecord> recordList = bizCollectGoodsRecordDao.getListBySkuIdCentId(skuId, centId);
 
 		recordList.sort((o1, o2) -> o2.getReceiveDate().compareTo(o1.getReceiveDate()));
@@ -136,7 +142,6 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			resultRecordList.put(bizCollectGoodsRecord, counter);
 		}
 
-		Map<String, Object> result = Maps.newHashMap();
 		result.put("stockQty", stockQtyBySkuIdCentId);
 		result.put("recordList", recordList);
 		result.put("resultRecordList", resultRecordList);

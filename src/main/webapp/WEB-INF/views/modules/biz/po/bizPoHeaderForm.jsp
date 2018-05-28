@@ -433,6 +433,7 @@
             </div>
         </c:if>
     </c:if>
+    <c:if test="${fn:length(bizPoHeader.commonProcessList) > 0}">
     <div class="control-group">
         <div class="controls help_wrap">
             <div class="help_step_box fa">
@@ -460,6 +461,7 @@
             </div>
         </div>
     </div>
+    </c:if>
     <c:if test="${bizPoHeader.poDetailList!=null}">
         <div class="form-actions">
             <shiro:hasPermission name="biz:po:bizPoHeader:audit">
