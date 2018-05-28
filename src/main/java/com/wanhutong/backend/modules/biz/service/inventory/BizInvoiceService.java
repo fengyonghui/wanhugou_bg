@@ -117,6 +117,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	    //修改发货单
 	    if (bizInvoice.getId() != null){
             BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
+            invoice.setTrackingNumber(bizInvoice.getTrackingNumber());
             invoice.setLogistics(bizInvoice.getLogistics());
             invoice.setOperation(bizInvoice.getOperation());
             invoice.setFreight(bizInvoice.getFreight());
