@@ -85,6 +85,16 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                         BizSkuInfo sku = bizSkuInfoService.get(skuId);
                         BizOrderDetail detailnew = new BizOrderDetail();
                         detailnew.setOrderHeader(bizOrderDetail.getOrderHeader());//order_header.id
+                        if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getId()!=null){
+                            List<BizOrderDetail> list = bizOrderDetailDao.findList(detailnew);
+                            if(list.size()!=0){
+                                for (BizOrderDetail orderDetail : list) {
+                                    if(orderDetail.getLineNo()!=null){
+                                        a=orderDetail.getLineNo();
+                                    }
+                                }
+                            }
+                        }
                         detailnew.setLineNo(++a);//行号
                         detailnew.setpLineNo(null);//bom产品
                         detailnew.setSkuInfo(sku);//sku产品
