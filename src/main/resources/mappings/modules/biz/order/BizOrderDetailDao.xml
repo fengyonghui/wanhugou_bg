@@ -34,7 +34,8 @@
 		off.id AS "vendor.id",
 		off.name AS "vendor.name",
 		us.id AS "primary.id",
-		us.mobile AS "primary.mobile"
+		us.mobile AS "primary.mobile",
+		a.status as "delFlag"
 	</sql>
 	
 	<sql id="bizOrderDetailJoins">
@@ -317,7 +318,8 @@ GROUP BY
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			status
 		) VALUES (
 			#{id},
 			#{orderHeader.id},
@@ -349,7 +351,8 @@ GROUP BY
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{delFlag}
 		)
 	</insert>
 	
@@ -394,7 +397,8 @@ GROUP BY
 	</update>
 	
 	<update id="delete">
-		DELETE FROM biz_order_detail
+		UPDATE biz_order_detail SET
+		status=#{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	
