@@ -48,7 +48,7 @@
 					<button class="btn btn-primary btn-lg" data-toggle="modal"
 							onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&source=chatRecordSave';">添加新的经销店</button>
 				</c:if>
-				<font color="red">没有需要的经销店时，请点击按钮，不添加请点击左侧放大镜选择经销店</font>
+				<font color="red">需要添加新的经销店时，请点击按钮</font>
 			</div>
 		</div>
 		<div class="control-group">

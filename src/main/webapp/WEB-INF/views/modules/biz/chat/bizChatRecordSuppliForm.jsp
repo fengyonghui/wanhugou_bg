@@ -48,7 +48,7 @@
 					<button class="btn btn-primary btn-lg" data-toggle="modal"
 							onclick="window.location.href='${ctx}/sys/office/supplierForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&gysFlag=chatRecordSave';">添加新的供应商</button>
 				</c:if>
-				<font color="red">没有需要的供应商时，请点击按钮，不添加请点击左侧放大镜选择供应商</font>
+				<font color="red">需要添加新的供应商时，请点击按钮</font>
 			</div>
 		</div>
 		<div class="control-group">
