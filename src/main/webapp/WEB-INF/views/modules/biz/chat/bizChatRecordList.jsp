@@ -75,7 +75,7 @@
 				<c:if test="${fns:getUser().isAdmin()}">
 					<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><td>
 						<a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}&office.type=6&office.parent.id=7&office.id=${bizChatRecord.office.id}&source=purchaser">修改</a>
-						<a href="${ctx}/biz/chat/bizChatRecord/delete?id=${bizChatRecord.id}" onclick="return confirmx('确认要删除该沟通记录吗？', this.href)">删除</a>
+						<a href="${ctx}/biz/chat/bizChatRecord/delete?id=${bizChatRecord.id}&office.id=${bizChatRecord.office.id}&source=purchaser" onclick="return confirmx('确认要删除该沟通记录吗？', this.href)">删除</a>
 					</td></shiro:hasPermission>
 				</c:if>
 			</tr>

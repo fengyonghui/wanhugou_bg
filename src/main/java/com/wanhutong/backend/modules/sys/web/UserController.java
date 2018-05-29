@@ -717,8 +717,8 @@ public class UserController extends BaseController {
 		for (int i=0; i<list.size(); i++){
 			User e = list.get(i);
 			Map<String, Object> map = Maps.newHashMap();
-			map.put("id", "u_"+e.getId());
-			map.put("pId", null);
+			map.put("id", e.getId());
+			map.put("pId", e.getRole().getId());
 			map.put("name", StringUtils.replace(e.getName(), " ", ""));
 			mapList.add(map);
 		}

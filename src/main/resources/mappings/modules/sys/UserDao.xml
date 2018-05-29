@@ -601,12 +601,13 @@
 	<select id="userSelectCompany" resultType="User">
 		SELECT
 		a.id,
-		a.company_id,
-		a.office_id,
-		a.login_name,
-		a. NAME,
-		sr.name,
-		sr.enname
+		a.company_id as "company.id",
+		a.office_id as "office.id",
+		a.login_name as "loginName",
+		a.name as "name",
+		sr.id as "role.id",
+		sr.name as "role.name",
+		sr.enname as "role.enname"
 		FROM sys_user a
 			left join sys_user_role sur on sur.user_id=a.id
 			left join sys_role sr on sr.id=sur.role_id

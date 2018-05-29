@@ -35,6 +35,7 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizChatRecord" action="${ctx}/biz/chat/bizChatRecord/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input type="hidden" name="source" value="purchaser">
 		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">经销店名称：</label>
