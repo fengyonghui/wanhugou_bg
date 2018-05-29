@@ -2003,10 +2003,11 @@ FROM
 			cl.region_id as "bizLocation.region.id",
 			reg.name as "bizLocation.region.name",
 			cl.address as "bizLocation.address",
-		(select count(1) from biz_chat_record where office_id=#{custId}) as "officeChatRecord"
+		(select count(1) from biz_chat_record as bizcr where office_id=#{custId} bizcr.status=1) as "officeChatRecord"
 		FROM biz_order_header AS oh
-		LEFT JOIN sys_office_address soa on soa.office_id=oh.cust_id and soa.status=1 and soa.default_status=1
-		left join common_location cl on cl.id=soa.addr_id
+		<!--LEFT JOIN sys_office_address soa on soa.office_id=oh.cust_id and soa.status=1 and soa.default_status=1
+		left join common_location cl on cl.id=soa.addr_id-->
+		left join biz_order_address cl on cl.id=oh.ship_to_addr
 		LEFT JOIN sys_region province ON cl.province_id = province.id
 		LEFT JOIN sys_region city ON cl.city_id = city.id
 		LEFT JOIN sys_region reg ON cl.region_id = reg.id
