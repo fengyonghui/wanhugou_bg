@@ -104,7 +104,7 @@
                     <a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
                     <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}&source=add_prim">添加下级机构</a>
 					<%--<c:if test="${off.type!=null && off.type eq '6'}">--%>
-                    	<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.type=6&office.parent.id=${office.id}">沟通记录</a>
+                    	<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.parent.id=7&office.type=6&source=purchaser">沟通记录</a>
 					<%--</c:if>--%>
                 </td></shiro:hasPermission>
 			</tr>

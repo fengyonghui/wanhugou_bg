@@ -28,7 +28,7 @@
 		<ul class="ul-form">
 			<li><label>经销店名称:</label>
 				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
-					title="经销店" url="/sys/office/queryTreeList?type=${bizChatRecord.office.type}" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+					title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label style="width: 130px;">品类主管或客户专员:</label>
 				<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"
@@ -57,7 +57,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizChatRecord">
 			<tr>
-				<td><a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}">
+				<td><a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}&office.type=6&office.parent.id=7&office.id=${bizChatRecord.office.id}&source=purchaser">
 					${bizChatRecord.office.name}
 				</a></td>
 				<td>
@@ -74,7 +74,7 @@
 				</td>
 				<c:if test="${fns:getUser().isAdmin()}">
 					<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><td>
-						<a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}&office.type=6&office.parent.id=7&office.id=${bizChatRecord.office.id}">修改</a>
+						<a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}&office.type=6&office.parent.id=7&office.id=${bizChatRecord.office.id}&source=purchaser">修改</a>
 						<a href="${ctx}/biz/chat/bizChatRecord/delete?id=${bizChatRecord.id}" onclick="return confirmx('确认要删除该沟通记录吗？', this.href)">删除</a>
 					</td></shiro:hasPermission>
 				</c:if>

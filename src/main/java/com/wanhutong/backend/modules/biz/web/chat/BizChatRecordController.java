@@ -76,7 +76,10 @@ public class BizChatRecordController extends BaseController {
 		}
 		bizChatRecordService.save(bizChatRecord);
 		addMessage(redirectAttributes, "保存沟通记录成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/list?office.id="+bizChatRecord.getOffice().getId();
+		if(bizChatRecord.getOffice()!=null && bizChatRecord.getOffice().getId()!=null){
+			return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/list?office.id="+bizChatRecord.getOffice().getId();
+		}
+		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/";
 	}
 	
 	@RequiresPermissions("biz:chat:bizChatRecord:edit")
@@ -84,7 +87,10 @@ public class BizChatRecordController extends BaseController {
 	public String delete(BizChatRecord bizChatRecord, RedirectAttributes redirectAttributes) {
 		bizChatRecordService.delete(bizChatRecord);
 		addMessage(redirectAttributes, "删除沟通记录成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/?repage";
+		if(bizChatRecord.getOffice()!=null && bizChatRecord.getOffice().getId()!=null){
+			return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/list?office.id="+bizChatRecord.getOffice().getId();
+		}
+		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/";
 	}
 
 }
