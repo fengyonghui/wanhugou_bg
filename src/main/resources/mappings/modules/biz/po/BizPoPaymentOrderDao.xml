@@ -110,10 +110,10 @@
 		WHERE id = #{id}
 	</update>
 	
-	<update id="delete">
-		DELETE FROM biz_po_payment_order
-		WHERE id = #{id}
-	</update>
+	<!--<update id="delete">-->
+		<!--DELETE FROM biz_po_payment_order-->
+		<!--WHERE id = #{id}-->
+	<!--</update>-->
 
 	<update id="updateProcessId">
 		UPDATE biz_po_payment_order SET

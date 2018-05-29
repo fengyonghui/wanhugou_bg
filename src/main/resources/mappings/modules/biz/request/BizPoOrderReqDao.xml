@@ -154,7 +154,8 @@
 	</update>
 	
 	<update id="delete">
-		DELETE FROM biz_po_order_req
+		UPDATE biz_po_order_req SET
+			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	
