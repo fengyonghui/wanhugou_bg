@@ -124,6 +124,8 @@ public class Page<T> {
 			this.setIncludeTestData(Boolean.valueOf(testData));
 			CookieUtils.setCookie(response, "includeTestData", testData);
 		}
+
+		funcParam = ""+isIncludeTestData();
 	}
 
 	/**
