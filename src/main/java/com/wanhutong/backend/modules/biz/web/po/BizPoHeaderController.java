@@ -335,6 +335,12 @@ public class BizPoHeaderController extends BaseController {
         if (!beanValidator(model, bizPoHeader)) {
             return form(bizPoHeader, model, prewStatus, null);
         }
+
+        Set<Integer> poIdSet= bizPoHeaderService.findPrewPoHeader(bizPoHeader);
+        if(poIdSet.size()==1){
+            addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
+            return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/form/?id=" + poIdSet.iterator().next() + "&prewStatus=" + prewStatus;
+        }
         int deOfifceId = 0;
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null) {
             deOfifceId = bizPoHeader.getDeliveryOffice().getId();

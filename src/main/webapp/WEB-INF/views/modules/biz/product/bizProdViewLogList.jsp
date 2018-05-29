@@ -6,7 +6,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+			$("#buttonExport").click(function(){
+				top.$.jBox.confirm("确认要导出产品查看日志数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/product/bizProdViewLog/prodExprot");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/product/bizProdViewLog/");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -26,21 +35,23 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>货架名称：</label>
-				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="60" class="input-medium"/>
 			</li>
-			<li><label>采购中心：</label>
-				<c:if test="${fns:getUser().isAdmin()}">
+			<c:if test="${fns:getUser().isAdmin()}">
+				<li><label>采购中心：</label>
 				<sys:treeselect id="center" name="center.id" value="${bizProdViewLog.center.id}" labelName="center.name"
 								labelValue="${bizProdViewLog.center.name}"  notAllowSelectParent="true" allowClear="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
+								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex"
+								cssClass="input-medium required" dataMsgRequired="必填信息">
 				</sys:treeselect>
-			</li>
+				</li>
 			</c:if>
 			</li>
 			<li><label>产品名称：</label>
-				<form:input path="productInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+				<form:input path="productInfo.name" htmlEscape="false" maxlength="60" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>

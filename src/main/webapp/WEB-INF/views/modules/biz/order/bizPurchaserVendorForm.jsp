@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>采购商供应商关联关系管理</title>
+	<title>经销店供应商关联关系管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -17,7 +17,7 @@
 						data:{purchaser:custOffice,vendor:vendOffice},
 						success:function (data) {
 							if (data == 'error') {
-							    alert("该采购商和供应商已经建立关联关系");
+							    alert("该经销店和供应商已经建立关联关系");
                             }else {
                                 loading('正在提交，请稍等...');
                                 form.submit();
@@ -40,8 +40,8 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/order/bizPurchaserVendor/">采购商供应商关联关系列表</a></li>
-		<li class="active"><a href="${ctx}/biz/order/bizPurchaserVendor/form?id=${bizPurchaserVendor.id}">采购商供应商关联关系<shiro:hasPermission name="biz:order:bizPurchaserVendor:edit">${not empty bizPurchaserVendor.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:order:bizPurchaserVendor:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz/order/bizPurchaserVendor/">经销店供应商关联关系列表</a></li>
+		<li class="active"><a href="${ctx}/biz/order/bizPurchaserVendor/form?id=${bizPurchaserVendor.id}">经销店供应商关联关系<shiro:hasPermission name="biz:order:bizPurchaserVendor:edit">${not empty bizPurchaserVendor.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:order:bizPurchaserVendor:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizPurchaserVendor" action="${ctx}/biz/order/bizPurchaserVendor/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
@@ -57,11 +57,11 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">采购商：</label>
+			<label class="control-label">经销店：</label>
 			<div class="controls">
 				<sys:treeselect id="custOffice" name="purchaser.id" value="${bizPurchaserVendor.purchaser.id}"  labelName="customer.name"
 								labelValue="${bizPurchaserVendor.purchaser.name}" notAllowSelectParent="true"
-								title="采购商"  url="/sys/office/queryTreeList?type=6"
+								title="经销店"  url="/sys/office/queryTreeList?type=6"
 								cssClass="input-medium required"
 								allowClear="true"  dataMsgRequired="必填信息"/>
 				<span class="help-inline"><font color="red">*</font> </span>

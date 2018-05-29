@@ -70,9 +70,18 @@
 					<th>商品名称</th>
 					<th>商品货号</th>
 					<th>供应商</th>
+					<th>供应商电话</th>
 					<th>品牌</th>
 					<th>申报数量</th>
 					<th>已供货数量</th>
+					<c:if test="${not empty source && source eq 'gh'}">
+						<%--该备货单已生成采购单就显示--%>
+						<c:if test="${empty bizRequestHeader.poSource}">
+							<th>已生成的采购单</th>
+							<th>采购数量</th>
+							<th>备注</th>
+						</c:if>
+					</c:if>
 				</tr>
 				</thead>
 				<tbody id="prodInfo">
@@ -88,6 +97,7 @@
 							<td>${reqDetail.skuInfo.itemNo}</td>
 							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
 								${reqDetail.skuInfo.productInfo.office.name}</a></td>
+							<td>${reqDetail.skuInfo.productInfo.office.user.mobile}</td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td>
 								<input   value="${reqDetail.reqQty}" readonly="readonly" class="input-medium" type='text'/>
@@ -95,6 +105,16 @@
 							<td>
 								<input  value="${reqDetail.sendQty}" readonly="readonly" class="input-medium" type='text'/>
 							</td>
+
+							<c:if test="${not empty source && source eq 'gh'}">
+								<%--该备货单已生成采购单就显示--%>
+								<c:if test="${reqDetail.bizPoHeader!=null}">
+									<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}&str=detail">${reqDetail.bizPoHeader.orderNum}</a></td>
+									<td>${reqDetail.reqQty}</td>
+									<td>${reqDetail.bizPoHeader.remark}</td>
+								</c:if>
+							</c:if>
+
 						</tr>
 					</c:forEach>
 				</c:if>

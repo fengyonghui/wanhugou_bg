@@ -66,7 +66,7 @@ public class SysCustDetailsController extends BaseController {
 			return form(sysCustDetails, model);
 		}
 		sysCustDetailsService.save(sysCustDetails);
-		addMessage(redirectAttributes, "保存采购商店铺成功");
+		addMessage(redirectAttributes, "保存经销店店铺成功");
 		return "redirect:"+ Global.getAdminPath()+"/sys/sysCustDetails/?repage";
 	}
 	
@@ -74,7 +74,7 @@ public class SysCustDetailsController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(SysCustDetails sysCustDetails, RedirectAttributes redirectAttributes) {
 		sysCustDetailsService.delete(sysCustDetails);
-		addMessage(redirectAttributes, "删除采购商店铺成功");
+		addMessage(redirectAttributes, "删除经销店店铺成功");
 		return "redirect:"+ Global.getAdminPath()+"/sys/sysCustDetails/?repage";
 	}
 

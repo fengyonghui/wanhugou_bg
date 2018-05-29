@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
@@ -18,6 +19,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -41,10 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -65,20 +64,22 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 	@Autowired
 	private BizPoDetailService bizPoDetailService;
 
-    @Autowired
-    private BizPoOrderReqService bizPoOrderReqService;
-    @Autowired
-    private BizOrderDetailService bizOrderDetailService;
-    @Autowired
-    private BizOrderHeaderService bizOrderHeaderService;
-    @Autowired
-    private BizRequestDetailService bizRequestDetailService;
-    @Autowired
-    private BizRequestHeaderService bizRequestHeaderService;
-    @Autowired
-    private BizPoPaymentOrderService bizPoPaymentOrderService;
-    @Autowired
-    private CommonProcessService commonProcessService;
+	@Autowired
+	private BizPoOrderReqService bizPoOrderReqService;
+	@Autowired
+	private BizOrderDetailService bizOrderDetailService;
+	@Autowired
+	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizRequestDetailService bizRequestDetailService;
+	@Autowired
+	private BizRequestHeaderService bizRequestHeaderService;
+	@Autowired
+	private BizPoPaymentOrderService bizPoPaymentOrderService;
+	@Autowired
+	private CommonProcessService commonProcessService;
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
 
 
     /**
@@ -256,6 +257,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
                     bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
                     bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+
+                    /*用于 订单状态表 insert状态*/
+                    if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+                        BizOrderStatus orderStatus = new BizOrderStatus();
+                        orderStatus.setOrderHeader(bizOrderHeader);
+                        orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+                        bizOrderStatusService.save(orderStatus);
+                    }
+
                 }
             } else if (orderDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setOrderHeader(bizOrderHeader);
@@ -267,9 +277,27 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     if (poOrderReqs.size() == orderDetailList.size()) {
                         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
                         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+
+                        /*用于 订单状态表 insert状态*/
+                        if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+                            BizOrderStatus orderStatus = new BizOrderStatus();
+                            orderStatus.setOrderHeader(bizOrderHeader);
+                            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+                            bizOrderStatusService.save(orderStatus);
+                        }
+
                     } else {
                         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
                         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+
+                        /*用于 订单状态表 insert状态*/
+                        if(bizOrderHeader!=null && bizOrderHeader.getId()!=null || bizOrderHeader.getBizStatus()!=null){
+                            BizOrderStatus orderStatus = new BizOrderStatus();
+                            orderStatus.setOrderHeader(bizOrderHeader);
+                            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+                            bizOrderStatusService.save(orderStatus);
+                        }
+
                     }
                 }
             }
@@ -304,6 +332,47 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         }
 
+    }
+
+
+    public Set<Integer> findPrewPoHeader(BizPoHeader bizPoHeader){
+        String orderDetailIds = bizPoHeader.getOrderDetailIds();
+        String reqDetailIds = bizPoHeader.getReqDetailIds();
+        Set<Integer> poIdList=new LinkedHashSet<>();
+        BizPoOrderReq bizPoOrderReq =new BizPoOrderReq();
+        if (StringUtils.isNotBlank(orderDetailIds)) {
+            String[] orderDetailArr = orderDetailIds.split(",");
+            for(int i=0;i<orderDetailArr.length;i++){
+              BizOrderDetail bizOrderDetail= bizOrderDetailService.get(Integer.parseInt(orderDetailArr[i]));
+                bizPoOrderReq.setSoLineNo(bizOrderDetail.getLineNo());
+                bizPoOrderReq.setOrderHeader(bizOrderDetail.getOrderHeader());
+                bizPoOrderReq.setSoType((byte)1);
+                List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+                if(poOrderReqList!=null && poOrderReqList.size()>0){
+                    BizPoOrderReq poOrderReq= poOrderReqList.get(0);
+                    BizPoHeader poHeader=poOrderReq.getPoHeader();
+                    poIdList.add(poHeader.getId());
+                }
+            }
+
+        }
+        if (StringUtils.isNotBlank(reqDetailIds)) {
+            String[] reqDetailIdArr = reqDetailIds.split(",");
+            for(int i=0;i<reqDetailIdArr.length;i++){
+                BizRequestDetail bizRequestDetail=bizRequestDetailService.get(Integer.parseInt(reqDetailIdArr[i]));
+                bizPoOrderReq.setSoLineNo(bizRequestDetail.getLineNo());
+                bizPoOrderReq.setRequestHeader(bizRequestDetail.getRequestHeader());
+                bizPoOrderReq.setSoType((byte)2);
+                List<BizPoOrderReq> poOrderReqList=bizPoOrderReqService.findList(bizPoOrderReq);
+                if(poOrderReqList!=null && poOrderReqList.size()>0){
+                   BizPoOrderReq poOrderReq= poOrderReqList.get(0);
+                   BizPoHeader poHeader=poOrderReq.getPoHeader();
+                    poIdList.add(poHeader.getId());
+                }
+
+            }
+        }
+        return poIdList;
     }
 
     /**

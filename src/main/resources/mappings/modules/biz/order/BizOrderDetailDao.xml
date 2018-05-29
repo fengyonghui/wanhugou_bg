@@ -34,7 +34,8 @@
 		off.id AS "vendor.id",
 		off.name AS "vendor.name",
 		us.id AS "primary.id",
-		us.mobile AS "primary.mobile"
+		us.mobile AS "primary.mobile",
+		a.status as "delFlag"
 	</sql>
 	
 	<sql id="bizOrderDetailJoins">
@@ -317,7 +318,8 @@ GROUP BY
 			create_time,
 			u_version,
 			update_id,
-			update_time
+			update_time,
+			status
 		) VALUES (
 			#{id},
 			#{orderHeader.id},
@@ -349,7 +351,8 @@ GROUP BY
 			#{createDate},
 			#{uVersion},
 			#{updateBy.id},
-			#{updateDate}
+			#{updateDate},
+			#{delFlag}
 		)
 	</insert>
 	
@@ -394,11 +397,108 @@ GROUP BY
 	</update>
 	
 	<update id="delete">
-		DELETE FROM biz_order_detail
+		UPDATE biz_order_detail SET
+		status=#{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	
 	<select id="findMaxLine" resultType="Integer" parameterType="BizOrderDetail">
 		select max(a.line_no) from biz_order_detail a where a.order_id=#{orderHeader.id}
 	</select>
+
+
+	<!-- 订单发货查看已经生成的 采购单  -->
+	<select id="findPoHeader" resultType="BizOrderDetail">
+		SELECT
+			a.id AS "id",
+			a.order_id AS "orderHeader.id",
+			boh.order_num AS "orderHeader.orderNum",
+			a.line_no AS "lineNo",
+			a.p_line_no AS "pLineNo",
+			a.sku_shelf_id as "shelfInfo.id",
+			si.name as "shelfInfo.opShelfInfo.name",
+			a.sku_id AS "skuInfo.id",
+			bsi.name as "skuInfo.name",
+			a.buy_price as "buyPrice",
+			<!--bsi.buy_price AS "buyPrice",
+			a.quality as "quality",
+			a.color as "color",
+			a.standard as "standard",-->
+			a.part_no AS "partNo",
+			a.sku_name AS "skuName",
+			bsi.item_no AS "skuInfo.itemNo",
+			a.unit_price AS "unitPrice",
+			a.sent_qty as "sentQty",
+			a.ord_qty AS "ordQty",
+			a.suply_id as "suplyis.id",
+			soo.name as "suplyis.name",
+			a.create_id AS "createBy.id",
+			su.name as "createBy.name",
+			a.create_time AS "createDate",
+			a.u_version AS "uVersion",
+			a.update_id AS "updateBy.id",
+			a.update_time AS "updateDate",
+			off.id AS "vendor.id",
+			off.name AS "vendor.name",
+			us.id AS "primary.id",
+			us.mobile AS "primary.mobile",
+			ph.id AS "poHeader.id",
+			ph.order_num AS "poHeader.orderNum",
+			ph.remark AS "poHeader.remark"
+		FROM biz_order_detail a
+			LEFT join sys_user su on a.create_id=su.id
+			left join biz_sku_info bsi on a.sku_id=bsi.id
+			left join biz_order_header boh on a.order_id=boh.id
+			LEFT JOIN biz_op_shelf_sku ois on a.sku_shelf_id=ois.id
+			Left Join biz_op_shelf_info si on si.id = ois.shelf_id
+			<!--LEFT join biz_order_sku_prop_value ospv on ospv.order_detail_id=a.id-->
+			LEFT join sys_office soo on soo.id=a.suply_id
+			LEFT JOIN biz_product_info pro ON pro.id = bsi.prod_id
+			LEFT JOIN sys_office off ON off.id = pro.vendor_id
+			LEFT JOIN sys_user us ON us.id = off.primary_person
+
+			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.order_id AND a.line_no = bpor.so_line_no and bpor.so_type=1
+		LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.is_prew=0
+		<where>
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
+				AND a.order_id = #{orderHeader.id}
+			</if>
+			<if test="orderHeader!=null and orderHeader.bizStatusStart !=null and orderHeader.bizStatusEnd !=null">
+				AND boh.biz_status BETWEEN #{orderHeader.bizStatusStart} and #{orderHeader.bizStatusEnd}
+			</if>
+			<if test="lineNo != null and lineNo != ''">
+				AND a.line_no = #{lineNo}
+			</if>
+			<if test="pLineNo != null and pLineNo != ''">
+				AND a.p_line_no = #{pLineNo}
+			</if>
+			<if test="shelfInfo != null and shelfInfo.id != null and shelfInfo.id != ''">
+				AND a.sku_shelf_id = #{shelfInfo.id}
+			</if>
+			<if test="skuInfo != null and skuInfo.id != null and skuInfo.id != ''">
+				AND a.sku_id = #{skuInfo.id}
+			</if>
+			<if test="suplyis != null and suplyis.id != null">
+				AND a.suply_id = #{suplyis.id}
+			</if>
+			<if test="createBy != null and createBy.id != null and createBy.id != ''">
+				AND a.create_id = #{createBy.id}
+			</if>
+			<if test="uVersion != null and uVersion != ''">
+				AND a.u_version = #{uVersion}
+			</if>
+			<if test="updateBy != null and updateBy.id != null and updateBy.id != ''">
+				AND a.update_id = #{updateBy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		order by a.line_no ASC
+	</select>
+
 </mapper>

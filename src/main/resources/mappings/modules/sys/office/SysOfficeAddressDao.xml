@@ -28,7 +28,8 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		suser.mobile as "con.mobile"
 	</sql>
 	
 	<sql id="sysOfficeAddressJoins">
@@ -41,6 +42,7 @@
         LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.office_id AND ccs.status = #{DEL_FLAG_NORMAL}
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id AND con.status = #{DEL_FLAG_NORMAL}
+		left join sys_user suser on suser.id=o2.primary_person and suser.status=1
 	</sql>
     
 	<select id="get" resultType="SysOfficeAddress">
@@ -81,6 +83,12 @@
 			</if>
 			<if test="con != null and con.id != null and con.id !=''">
 				AND con.id = #{con.id}
+			</if>
+			<if test="con != null and con.mobile != null and con.mobile != ''">
+				AND suser.mobile like
+				<if test="dbName == 'oracle'">'%'||#{con.mobile}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{con.mobile}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{con.mobile},'%')</if>
 			</if>
 			<if test="sqlMap != null and sqlMap.officeAddress != null and sqlMap.officeAddress != ''">
 				${sqlMap.officeAddress}

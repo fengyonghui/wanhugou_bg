@@ -14,8 +14,18 @@
                     choose.attr('checked',false);
                 }
             });
-            $("#requestShExport").click(function(){
+            $("#requestAllExport").click(function(){
 				top.$.jBox.confirm("确认要导出备货单收货数据吗？","系统提示",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/listExport");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/");
+					}
+				},{buttonsFocus:1});
+				top.$('.jbox-body .jbox-icon').css('top','55px');
+			});
+			$("#orderExport").click(function(){
+				top.$.jBox.confirm("确认要导出订单出库数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
 						$("#searchForm").attr("action","${ctx}/biz/request/bizRequestAll/listExport");
 						$("#searchForm").submit();
@@ -73,7 +83,10 @@
 					</form:select>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-				<li class="btns"><input id="requestShExport" class="btn btn-primary" type="button" value="导出"/></li>
+				<li class="btns">
+					<%--备货单收货--%>
+					<input id="requestAllExport" class="btn btn-primary" type="button" value="导出"/>
+				</li>
 				<li class="clearfix"></li>
 			</ul>
 		</form:form>
@@ -97,11 +110,11 @@
 						<form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
 									  htmlEscape="false"/></form:select>
 				</li>
-				<li><label>采购商名称：</label>
+				<li><label>经销店名称：</label>
 					<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
 						<sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
 										labelValue="" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6"
+										title="经销店"  url="/sys/office/queryTreeList?type=6"
 										cssClass="input-medium required"
 										allowClear="true" dataMsgRequired="必填信息"/>
 						<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}">
@@ -110,13 +123,16 @@
 					<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
 						<sys:treeselect id="office" name="customer.id" value=""  labelName="customer.name"
 										labelValue="" notAllowSelectParent="true"
-										title="采购商"  url="/sys/office/queryTreeList?type=6&source=cgs"
+										title="经销店"  url="/sys/office/queryTreeList?type=6&source=cgs"
 										cssClass="input-medium required"
 										allowClear="true"  dataMsgRequired="必填信息"/>
 					</c:if>
 				</li>
 				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-				<li class="btns"><input id="requestShExport" class="btn btn-primary" type="button" value="导出"/></li>
+				<li class="btns">
+					<%--订单出库--%>
+					<input id="orderExport" class="btn btn-primary" type="button" value="导出"/>
+				</li>
 				<c:if test="${bizOrderHeader.flag=='check_pending'}">
 					<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/></li>
 

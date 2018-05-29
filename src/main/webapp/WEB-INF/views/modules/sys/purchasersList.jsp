@@ -42,16 +42,16 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/sys/office/purchasersList">机构列表</a></li>
-		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/purchasersForm?parent.id=${office.id}&type=6">机构添加</a></li></shiro:hasPermission>
+		<shiro:hasPermission name="sys:office:edit"><li><a href="${ctx}/sys/office/purchasersForm?parent.id=${office.id}&type=6&source=add_prim">机构添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="office" action="${ctx}/sys/office/purchasersList" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>采购商名称：</label>
+			<li><label>经销店名称：</label>
 				<sys:treeselect id="office" name="id" value="" labelName="name"
 								labelValue="" notAllowSelectParent="true"
-								title="采购商" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-medium"
+								title="经销店" url="/sys/office/queryTreeList?type=6&source=purchaser" cssClass="input-medium"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
 				<input type="hidden" name="queryMemberGys" value="query">
 			</li>
@@ -90,7 +90,7 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="off">
 			<tr>
-                <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}">${off.name}</a></td>
+                <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">${off.name}</a></td>
 				<td>${off.area.name}</td>
 				<td>${off.code}</td>
 				<td>${off.moblieMoeny.mobile}</td>
@@ -100,9 +100,12 @@
 				<td>${off.remarks}</td>
                 <shiro:hasPermission name="sys:office:edit"><td>
                     <a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
-                    <a href="${ctx}/sys/office/purchasersForm?id=${off.id}">修改</a>
+                    <a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>
                     <a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
-                    <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}">添加下级机构</a>
+                    <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}&source=add_prim">添加下级机构</a>
+					<%--<c:if test="${off.type!=null && off.type eq '6'}">--%>
+                    	<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.type=6&office.parent.id=${office.id}">沟通记录</a>
+					<%--</c:if>--%>
                 </td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
