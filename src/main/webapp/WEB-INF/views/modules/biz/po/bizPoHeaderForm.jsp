@@ -380,7 +380,7 @@
                 </div>
             </div>
             <div class="control-group prewTimeTotal">
-                <label class="control-label">本次申请付款时间：</label>
+                <label class="control-label">最后付款时间：</label>
                 <div class="controls">
                     <input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
                            class="input-medium Wdate required"
