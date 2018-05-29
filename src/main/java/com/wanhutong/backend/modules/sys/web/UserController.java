@@ -6,16 +6,26 @@ package com.wanhutong.backend.modules.sys.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.lang3.tuple.Pair;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.web.statistics.BizStatisticsPlatformController;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,6 +67,12 @@ public class UserController extends BaseController {
     //用来判断仓储专员
     private static final String WAREHOUSESPECIALIST = "stoIndex";
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(BizStatisticsPlatformController.class);
+	/**
+	 * 默认超时时间
+	 */
+	private static final Long DEFAULT_TIME_OUT = TimeUnit.SECONDS.toMillis(60);
+
 	@Autowired
 	private SystemService systemService;
 
@@ -64,6 +80,8 @@ public class UserController extends BaseController {
 	private OfficeService officeService;
 	@Autowired
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
+	@Autowired
+	private BizOrderHeaderDao bizOrderHeaderDao;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -103,6 +121,10 @@ public class UserController extends BaseController {
 		}
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
+		if(user.getConn()!=null && user.getConn().equals("selectIndex")){
+			//选品专员
+			return "modules/sys/userSeleIndexList";
+		}
 		return "modules/sys/userList";
 	}
 
@@ -251,9 +273,13 @@ public class UserController extends BaseController {
 			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
 		}
 		if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
-		    //跳会仓储专员界面
+		    //跳回仓储专员界面
             return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
         }
+		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
+			//跳回选品专员界面
+			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
+		}
 		if(user.getConn()!=null && user.getConn().equals(officeUser)){
 //			添加 跳回用户管理列表
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
@@ -288,10 +314,15 @@ public class UserController extends BaseController {
 					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
 		}
         if(user.getConn() != null && user.getConn().equals(WAREHOUSESPECIALIST)) {
-            //跳会仓储专员界面
+            //跳回仓储专员界面
             return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
                     +"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
         }
+		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
+			//跳回选品专员界面
+			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
+					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
+		}
 		if(user.getConn() !=null && user.getConn().equals(officeUser)){
 //			跳回用户管理
 			return "redirect:" + adminPath + "/sys/user/officeUserList?repage";
@@ -544,6 +575,15 @@ public class UserController extends BaseController {
 	}
 
 	/**
+	 * 选品专员管理
+	 */
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"seleIndex"})
+	public String seleIndex(User user, Model model) {
+		return "modules/sys/seleIndex";
+	}
+
+	/**
 	 * 会员搜索
 	 * flag = ck 查看
 	 */
@@ -557,9 +597,14 @@ public class UserController extends BaseController {
 		company.setType(OfficeTypeEnum.CUSTOMER.getType());
 		user.setCompany(company);
 		Page<User> page = systemService.contact(new Page<User>(request, response),user);
+		for (User user1 : page.getList()) {
+			List<BizOrderHeader> userOrderCountSecond = bizOrderHeaderDao.findUserOrderCountSecond(user1.getCompany().getId());
+			for (BizOrderHeader bizOrderHeader : userOrderCountSecond) {
+				user1.setUserOrder(bizOrderHeader);
+			}
+		}
 		model.addAttribute("page", page);
 		model.addAttribute("flag","ck");
-//		model.addAttribute("userList",userList);
 		return "modules/sys/office/sysOfficeContact";
 	}
 
@@ -654,4 +699,30 @@ public class UserController extends BaseController {
         }
 		return sflag;
 	}
+
+	/**
+	 * 沟通记录 查询 品类主管或者客户专员
+	 * */
+	@RequiresPermissions("sys:user:view")
+	@ResponseBody
+	@RequestMapping(value = "userSelectTreeData")
+	public List<Map<String, Object>> userSelectTreeData() {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		Role role = new Role();
+		role.setName(RoleEnNameEnum.BUYER.getState());
+		role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+		User user = new User();
+		user.setRole(role);
+		List<User> list = systemService.userSelectCompany(user);
+		for (int i=0; i<list.size(); i++){
+			User e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", "u_"+e.getId());
+			map.put("pId", null);
+			map.put("name", StringUtils.replace(e.getName(), " ", ""));
+			mapList.add(map);
+		}
+		return mapList;
+	}
+
 }

@@ -15,6 +15,33 @@
         	return false;
         }
 	</script>
+	<script type="text/javascript">
+        function skuInfoDelete(a,b,c){
+            top.$.jBox.confirm("确认要删除该商品sku吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/sku/bizSkuInfo/deleteSku",
+                        data:"id="+a+"&sign="+b+"&productInfo.prodType="+c,
+                        success:function(data){
+							if(data=="opSheSku"){
+								alert("商品上下架还有该商品sku，不能删除 ");
+							}else if(data=="invSku"){
+								alert("库存盘点还有该商品sku，不能删除 ");
+							}else{
+								$("#messDele").css("display","block");
+								<%--使用setTimeout（）方法设定定时600毫秒--%>
+								setTimeout(function(){
+                                    window.location.reload();
+                                },600);
+							}
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+            top.$('.jbox-body .jbox-icon').css('top','55px');
+        }
+    </script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -49,6 +76,14 @@
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
+	<%--ajax删除保留当前搜索结果提示--%>
+	<div class="alert alert-warning" style="display: none" id="messDele">
+		<a href="#" class="close" data-dismiss="alert">
+			&times;
+		</a>
+		删除商品sku成功
+	</div>
+
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -114,7 +149,9 @@
 					<c:if test="${bizSkuInfo.delFlag!=null && bizSkuInfo.delFlag==1}">
 						<a href="${ctx}/biz/sku/bizSkuInfo/form?id=${bizSkuInfo.id}&str=detail&productInfo.prodType=${prodType}">详情</a>
 						<shiro:hasPermission name="biz:sku:bizSkuInfo:edit">
-							<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0&productInfo.prodType=${prodType}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>
+							<%--<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0&productInfo.prodType=${prodType}" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>--%>
+							<%--<a href="${ctx}/biz/sku/bizSkuInfo/delete?id=${bizSkuInfo.id}&sign=0" onclick="return confirmx('确认要删除该商品sku吗？', this.href)">删除</a>--%>
+							<a href="javascript:void(0);" onclick="skuInfoDelete(${bizSkuInfo.id},'0',${prodType});">删除</a>
 						</shiro:hasPermission>
 					</c:if>
 

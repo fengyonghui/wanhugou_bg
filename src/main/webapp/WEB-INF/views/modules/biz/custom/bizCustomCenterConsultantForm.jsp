@@ -36,19 +36,19 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/custom/bizCustomCenterConsultant/">客户专员列表</a></li>
-		<li class="active"><a href="${ctx}/biz/custom/bizCustomCenterConsultant/form?id=${bizCustomCenterConsultant.id}">采购商<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">${not empty bizCustomCenterConsultant.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:custom:bizCustomCenterConsultant:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/biz/custom/bizCustomCenterConsultant/form?id=${bizCustomCenterConsultant.id}">经销店<shiro:hasPermission name="biz:custom:bizCustomCenterConsultant:edit">${not empty bizCustomCenterConsultant.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:custom:bizCustomCenterConsultant:edit">查看</shiro:lacksPermission></a></li>
     </ul><br/>
 	<form:form id="inputForm" modelAttribute="bizCustomCenterConsultant" action="${ctx}/biz/custom/bizCustomCenterConsultant/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">采购商列表：</label>
+			<label class="control-label">经销店列表：</label>
 			<div class="controls" style="height: 300px;overflow:auto;">
 				<table class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
 						<th><input class="select_all"  type="checkbox"/></th>
-						<th>采购商名称</th>
+						<th>经销店名称</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -97,7 +97,7 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
-        <th>采购商名称</th>
+        <th>经销店名称</th>
         <shiro:hasPermission name="biz:sku:bizSkuInfo:edit"><th>操作</th></shiro:hasPermission>
     </tr>
     </thead>

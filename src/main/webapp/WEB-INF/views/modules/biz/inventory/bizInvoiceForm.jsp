@@ -207,10 +207,25 @@
 		<sys:message content="${message}"/>		
 		<form:hidden path="ship"/>
 		<form:hidden path="bizStatus"/>
+		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
+			<div class="control-group">
+				<label class="control-label">发货单号：</label>
+				<div class="controls">
+					<form:input path="sendNumber" htmlEscape="false" disabled="true" class="input-xlarge "/>
+				</div>
+			</div>
+		</c:if>
+		<div class="control-group">
+			<label class="control-label">物流单号：</label>
+			<div class="controls">
+				<form:input path="trackingNumber" htmlEscape="false" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label">物流商：</label>
 			<div class="controls">
-				<select id="bizLogistics" name="logistics.id" onmouseout="" class="input-medium">
+				<select id="bizLogistics" name="logistics.id" onmouseout="" class="input-medium required">
 					<c:forEach items="${logisticsList}" var="bizLogistics">
 						<option value="${bizLogistics.id}"/>${bizLogistics.name}
 					</c:forEach>
@@ -310,7 +325,7 @@
 					<tr>
 						<th><input id="select_all" type="checkbox" /></th>
 						<th>订单编号</th>
-						<th>采购商名称</th>
+						<th>经销店名称</th>
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>供应商</th>
@@ -339,7 +354,7 @@
 					<tr>
 						<th></th>
 						<th>订单编号</th>
-						<th>采购商名称</th>
+						<th>经销店名称</th>
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>供应商</th>

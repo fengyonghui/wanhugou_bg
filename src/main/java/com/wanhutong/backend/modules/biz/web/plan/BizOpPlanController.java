@@ -6,12 +6,17 @@ package com.wanhutong.backend.modules.biz.web.plan;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +32,8 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.plan.BizOpPlan;
 import com.wanhutong.backend.modules.biz.service.plan.BizOpPlanService;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -124,4 +131,46 @@ public class BizOpPlanController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/biz/plan/bizOpPlan/?repage";
 	}
 
+	@RequiresPermissions("biz:plan:bizOpPlan:view")
+	@RequestMapping(value = "planExprot")
+	public String planExprot(BizOpPlan bizOpPlan, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		try {
+			String fileName = "运营计划" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			List<BizOpPlan> list = bizOpPlanService.findList(bizOpPlan);
+			ArrayList<List<String>> header = Lists.newArrayList();
+			list.forEach(order->{
+				ArrayList<String> headerList = Lists.newArrayList();
+				if(order.getObjectName().indexOf("sys_office")!=-1){
+					Office office = officeService.get(Integer.parseInt(order.getObjectId()));
+					headerList.add(String.valueOf(office==null?"":office.getName()));
+				}else if(order.getObjectName().indexOf("sys_user")!=-1){
+					User user = systemService.getUser(Integer.parseInt(order.getObjectId()));
+					headerList.add(String.valueOf(user==null?"":user.getName()));
+				}else{
+					headerList.add("");
+				}
+				headerList.add(String.valueOf(order.getYear()==null?"":order.getYear()));
+				headerList.add(String.valueOf(order.getMonth()==null?"":order.getMonth()));
+				headerList.add(String.valueOf(order.getDay()==null?"":order.getDay()));
+				headerList.add(String.valueOf(order.getAmount()==null?"":order.getAmount()));
+				headerList.add(String.valueOf(sdf.format(order.getCreateDate())));
+				header.add(headerList);
+			});
+			String[] headerArr = {"名称", "年", "月", "日", "总额", "创建时间"};
+			ExportExcelUtils eeu = new ExportExcelUtils();
+			SXSSFWorkbook workbook = new SXSSFWorkbook();
+			eeu.exportExcel(workbook, 0, "运营计划", headerArr, header, fileName);
+			response.reset();
+			response.setContentType("application/octet-stream; charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+			workbook.write(response.getOutputStream());
+			workbook.dispose();
+			return null;
+		}catch (Exception e){
+			e.printStackTrace();
+			addMessage(redirectAttributes, "导出运营计划数据失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:"+Global.getAdminPath()+"/biz/plan/bizOpPlan/?repage";
+	}
 }

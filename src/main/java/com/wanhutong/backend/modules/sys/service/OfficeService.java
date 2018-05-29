@@ -56,6 +56,7 @@ import static com.wanhutong.backend.common.persistence.BaseEntity.DEL_FLAG_NORMA
 public class OfficeService extends TreeService<OfficeDao, Office> {
 
     public static final Integer VENDORROLEID = 29;
+    public static final Integer PURCHASERSPEOPLE = 9;
     @Autowired
     private OfficeDao officeDao;
     @Autowired
@@ -397,19 +398,27 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     @Transactional(readOnly = false)
     public void save(Office office, BizCustCredit bizCustCredit) {
         super.save(office);
-//		if(bizCustCredit.getId()== null){
-//			if(bizCustCredit != null ){
-////				bizCustCredit.setId(office.getId());
-//				bizCustCredit.setCustomer(office);
-//				bizCustCredit.setPayPwd(SystemService.entryptPassword(DictUtils.getDictValue("密码", "payment_password", "")));
-//				bizCustCredit.setuVersion(1);
-//				bizCustCredit.setCustFalg("officeCust");
-//				bizCustCreditService.save(bizCustCredit);
-//			}
-//		}else{
-//			bizCustCreditService.save(bizCustCredit);
-//		}
         UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
+
+        //经销店保存新建联系人
+        if (office.getPrimaryPerson() != null && office.getSource() != null && office.getSource().equals("add_prim")) {
+            if(office.getPrimaryPerson().getName()!=null && !office.getPrimaryPerson().getName().equals("")){
+                if (office.getPrimaryPerson().getId() == null || office.getPrimaryPerson().getId().equals("")) {
+                    User primaryPerson = office.getPrimaryPerson();
+                    primaryPerson.setCompany(office);
+                    primaryPerson.setOffice(office);
+                    primaryPerson.setPassword((SystemService.entryptPassword(primaryPerson.getNewPassword())));
+                    primaryPerson.setLoginFlag("1");
+                    List<Role> roleList = Lists.newArrayList();
+                    roleList.add(systemService.getRole(PURCHASERSPEOPLE));
+                    primaryPerson.setRoleList(roleList);
+                    systemService.saveUser(primaryPerson);
+                    UserUtils.clearCache(primaryPerson);
+                    office.setPrimaryPerson(primaryPerson);
+                    super.save(office);
+                }
+            }
+        }
     }
 
     @Override

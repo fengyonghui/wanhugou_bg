@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>采购商店铺管理</title>
+	<title>经销店店铺管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -27,17 +27,17 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/sys/sysCustDetails/">采购商店铺列表</a></li>
-		<li class="active"><a href="${ctx}/sys/sysCustDetails/form?id=${sysCustDetails.id}">采购商店铺<shiro:hasPermission name="sys:sysCustDetails:edit">${not empty sysCustDetails.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:sysCustDetails:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/sys/sysCustDetails/">经销店店铺列表</a></li>
+		<li class="active"><a href="${ctx}/sys/sysCustDetails/form?id=${sysCustDetails.id}">经销店店铺<shiro:hasPermission name="sys:sysCustDetails:edit">${not empty sysCustDetails.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:sysCustDetails:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="sysCustDetails" action="${ctx}/sys/sysCustDetails/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<div class="control-group">
-			<label class="control-label">采购商：</label>
+			<label class="control-label">经销店：</label>
 			<sys:treeselect id="cust" name="cust.id" value="${sysCustDetails.cust.id}"  labelName="cust.name"
 							labelValue="${sysCustDetails.cust.name}" notAllowSelectParent="true"
-							title="采购商"  url="/sys/office/queryTreeList?type=6"
+							title="经销店"  url="/sys/office/queryTreeList?type=6"
 							cssClass="input-medium required"
 							allowClear="${office.currentUser.admin}"  dataMsgRequired="必填信息"/>
 			<span class="help-inline"><font color="red">*</font> </span>

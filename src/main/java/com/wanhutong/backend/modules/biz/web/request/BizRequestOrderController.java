@@ -352,7 +352,7 @@ public class BizRequestOrderController extends BaseController {
             //2商品
             List<List<String>> detailData = new ArrayList<List<String>>();
             if ("bhgh".equals(source)) {
-                fileName = "备货清单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+                fileName = "备货清单采购数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
                 page = findBizRequest(bizRequestHeader, requestHeaderPage,request,response);
                 for (BizRequestHeader requestHeader : page.getList()) {
                     List<String> headerListData = new ArrayList();
@@ -578,7 +578,7 @@ public class BizRequestOrderController extends BaseController {
                 String[] details = {"备货单号", "采购中心", "商品名称", "商品分类", "商品代码","品牌名称", "供应商", "SKU","SKU编号","申报数量","已供货数量"};
                 ExportExcelUtils eeu = new ExportExcelUtils();
                 SXSSFWorkbook workbook = new SXSSFWorkbook();
-                eeu.exportExcel(workbook, 0, "备货清单数据", headers, data, fileName);
+                eeu.exportExcel(workbook, 0, "备货清单采购", headers, data, fileName);
                 eeu.exportExcel(workbook, 1, "备货商品数据", details, detailData, fileName);
                 response.reset();
                 response.setContentType("application/octet-stream; charset=utf-8");
@@ -586,7 +586,7 @@ public class BizRequestOrderController extends BaseController {
                 workbook.write(response.getOutputStream());
                 workbook.dispose();
             } else if ("xsgh".equals(source)) {
-                String[] headers = {"订单编号", "订单类型", "采购商名称", "订单详情总价", "订单总费用","运费", "发票状态", "业务状态",
+                String[] headers = {"订单编号", "订单类型", "经销店名称", "订单详情总价", "订单总费用","运费", "发票状态", "业务状态",
                         "订单来源","创建人","更新时间"};
                 String[] details = {"订单编号", "货架名称", "商品名称", "商品编号", "商品货号","商品出厂价", "供应商", "供应商电话","商品单价",
                         "采购数量","总额","已发货数量","创建时间"};
@@ -604,7 +604,7 @@ public class BizRequestOrderController extends BaseController {
         }catch (Exception e){
             e.printStackTrace();
             if ("bhgh".equals(source)) {
-                addMessage(redirectAttributes, "导出备货清单数据失败！失败信息：" + e.getMessage());
+                addMessage(redirectAttributes, "导出备货清单采购数据失败！失败信息：" + e.getMessage());
             } else if ("xsgh".equals(source)) {
                 addMessage(redirectAttributes, "导出订单采购数据失败！失败信息：" + e.getMessage());
             }

@@ -112,45 +112,24 @@ public class BizRequestHeaderController extends BaseController {
 		if(bizRequestHeader.getId()!=null){
 			BizRequestDetail bizRequestDetail=new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
-			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findList(bizRequestDetail);
+			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findPoRequet(bizRequestDetail);
 			for(BizRequestDetail requestDetail:requestDetailList){
+				if(requestDetail.getBizPoHeader()==null){
+					bizRequestHeader.setPoSource("poHeaderSource");
+				}
 				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 				requestDetail.setSkuInfo(skuInfo);
 				reqDetailList.add(requestDetail);
 			}
+			if(requestDetailList.size()==0){
+				bizRequestHeader.setPoSource("poHeaderSource");
+			}
 		}
+
 		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) ) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
-		}
-
-		if(bizRequestHeader!=null && bizRequestHeader.getId()!=null && bizRequestHeader.getStr()!=null && bizRequestHeader.getStr().equals("detail")){
-			/*用于显示已经生成的采购单*/
-			BizPoOrderReq orderReq = new BizPoOrderReq();
-			orderReq.setRequestHeader(bizRequestHeader);
-			List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(orderReq);
-			if(poOrderReqList.size()!=0){
-				for (BizPoOrderReq poOrderReq : poOrderReqList) {
-					if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())){
-						BizPoHeader poHeader = bizPoHeaderService.get(poOrderReq.getPoHeader().getId());
-						if(poHeader!=null && poHeader.getDelFlag().equals("1") && poHeader.getIsPrewUseful()==0){
-							if(poOrderReq.getSoId()!=null){
-								if(bizRequestHeader.getId().equals(poOrderReq.getSoId())){
-									BizPoDetail bizPoDetail = new BizPoDetail();
-									bizPoDetail.setPoHeader(poOrderReq.getPoHeader());
-									List<BizPoDetail> poDetailList = bizPoDetailService.findList(bizPoDetail);
-										for(int i=0;i<reqDetailList.size();i++){
-											reqDetailList.get(i).setPoDetail(poDetailList.get(i));
-										}
-									model.addAttribute("requestPoHeader", poHeader);
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 
 		model.addAttribute("entity", bizRequestHeader);
@@ -287,8 +266,9 @@ public class BizRequestHeaderController extends BaseController {
 	@RequestMapping(value = "requestHeaderExport")
 	public String requestHeaderExport(BizRequestHeader bizRequestHeader,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String fileName = "备货清单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			bizRequestHeader.setDataStatus("detailed");
 			List<BizRequestHeader> list = bizRequestHeaderService.findListExport(bizRequestHeader);
 			//1备货清单
 			List<List<String>> data = new ArrayList<List<String>>();
@@ -317,12 +297,16 @@ public class BizRequestHeaderController extends BaseController {
 					}else{
 						headerListData.add("");
 					}
+					//期望收货时间
+					headerListData.add(String.valueOf(sdf.format(header.getRecvEta())));
 					//	备货商品数量
-					headerListData.add(String.valueOf(header.getReqQtys()));
+					headerListData.add(String.valueOf(header.getReqQtys()==null?"":header.getReqQtys()));
 					//备货商品总价
-					headerListData.add(String.valueOf(header.getTotalMoney()));
-					headerListData.add(String.valueOf(header.getRecvQtys()));
-					headerListData.add(String.valueOf(header.getRemark()));
+					headerListData.add(String.valueOf(header.getTotalMoney()==null?"":header.getTotalMoney()));
+					//已收保证金
+					headerListData.add(String.valueOf(header.getRecvTotal()==null?"":header.getRecvTotal()));
+					headerListData.add(String.valueOf(header.getRecvQtys()==null?"":header.getRecvQtys()));
+					headerListData.add(String.valueOf(header.getRemark()==null?"":header.getRemark()));
 					Dict dict = new Dict();
 					dict.setDescription("备货单业务状态");
 					dict.setType("biz_req_status");
@@ -334,8 +318,12 @@ public class BizRequestHeaderController extends BaseController {
 							break;
 						}
 					}
-					//期望收货时间
-					headerListData.add(String.valueOf(sdf.format(header.getRecvEta())));
+					headerListData.add(String.valueOf(sdf.format(header.getCreateDate())));
+					if(header.getCreateBy()!=null && header.getCreateBy().getName()!=null){
+						headerListData.add(String.valueOf(header.getCreateBy().getName()));
+					}else{
+						headerListData.add("");
+					}
 					data.add(headerListData);
 					if(reqDetailList.size()!=0){
 						reqDetailList.forEach(detail->{
@@ -368,9 +356,9 @@ public class BizRequestHeaderController extends BaseController {
 								detailListData.add("");
 								detailListData.add("");
 							}
-							detailListData.add(String.valueOf(detail.getReqQty()));
+							detailListData.add(String.valueOf(detail.getReqQty()==null?"":detail.getReqQty()));
 							if(detail.getRequestHeader()!=null && detail.getRequestHeader().getRecvEta()!=null){
-								detailListData.add(String.valueOf(detail.getRequestHeader().getRecvEta()));
+								detailListData.add(String.valueOf(sdf.format(detail.getRequestHeader().getRecvEta())));
 							}else{
 								detailListData.add("");
 							}
@@ -379,7 +367,7 @@ public class BizRequestHeaderController extends BaseController {
 					}
 				}
 			}
-			String[] headers = {"备货单号", "采购中心", "备货商品数量", "备货商品总价","已到货数量", "备注", "业务状态","期望收货时间"};
+			String[] headers = {"备货单号", "采购中心","期望收货时间", "备货商品数量", "备货商品总价","已收保证金","已到货数量", "备注", "业务状态","下单时间","申请人"};
 			String[] details = {"备货单号", "产品名称", "品牌名称", "商品名称","商品编码", "商品货号", "商品属性", "工厂价", "申报数量","期望收货时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();

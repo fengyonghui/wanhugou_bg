@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.chat.BizChatRecordDao">
+    
+	<sql id="bizChatRecordColumns">
+		a.id AS "id",
+		a.office_id AS "office.id",
+		a.user_id AS "user.id",
+		a.chat_record AS "chatRecord",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		so.name AS "office.name",
+		su.name AS "user.name",
+		suu.name as "createBy.name",
+		uss.name as "updateBy.name"
+	</sql>
+	
+	<sql id="bizChatRecordJoins">
+		LEFT JOIN sys_office so ON so.id = a.office_id
+		LEFT JOIN sys_user su ON su.id = a.user_id
+		left join sys_user suu on suu.id=a.create_id
+		left join sys_user uss on uss.id=a.update_id
+	</sql>
+    
+	<select id="get" resultType="BizChatRecord">
+		SELECT 
+			<include refid="bizChatRecordColumns"/>
+		FROM biz_chat_record a
+		<include refid="bizChatRecordJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizChatRecord">
+		SELECT 
+			<include refid="bizChatRecordColumns"/>
+		FROM biz_chat_record a
+		<include refid="bizChatRecordJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="office != null and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id = #{user.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizChatRecord">
+		SELECT 
+			<include refid="bizChatRecordColumns"/>
+		FROM biz_chat_record a
+		<include refid="bizChatRecordJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_chat_record(
+			id,
+			office_id,
+			user_id,
+			chat_record,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{office.id},
+			#{user.id},
+			#{chatRecord},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_chat_record SET 	
+			office_id = #{office.id},
+			user_id = #{user.id},
+			chat_record = #{chatRecord},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_chat_record SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

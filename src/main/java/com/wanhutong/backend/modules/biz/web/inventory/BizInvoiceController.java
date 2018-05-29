@@ -42,7 +42,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -247,9 +249,9 @@ public class BizInvoiceController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
 	@RequestMapping(value = "save")
 	public String save(BizInvoice bizInvoice, Model model, RedirectAttributes redirectAttributes) {
-		/*if (!beanValidator(model, bizInvoice)){
+		if (!beanValidator(model, bizInvoice)){
 			return form(bizInvoice, model);
-		}*/
+		}
 		bizInvoiceService.save(bizInvoice);
 		addMessage(redirectAttributes, "保存发货单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage&bizStatus="+bizInvoice.getBizStatus()+"&ship="+bizInvoice.getShip();
@@ -271,13 +273,18 @@ public class BizInvoiceController extends BaseController {
     public String exportList(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String fileName = "订单发货信息数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-            Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
+            String fileName =null;
+            if(bizInvoice.getBizStatus()!=null && bizInvoice.getBizStatus().equals(1) && bizInvoice.getShip()!=null && bizInvoice.getShip().equals(1)) {
+                fileName = "备货单货信息数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+            }else {
+                fileName = "订发货信息数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+            }
+            List<BizInvoice> list = bizInvoiceService.findList(bizInvoice);
             //1订单
             List<List<String>> data = new ArrayList<List<String>>();
             //2商品
             List<List<String>> detailData = new ArrayList<List<String>>();
-            for (BizInvoice invoice : page.getList()) {
+            for (BizInvoice invoice : list) {
                 List<String> headData = new ArrayList();
                 headData.add(String.valueOf(invoice.getSendNumber()));
                 if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
@@ -285,35 +292,18 @@ public class BizInvoiceController extends BaseController {
                 }else{
                     headData.add("");
                 }
-                if(invoice.getFreight()!=null){
-                    headData.add(String.valueOf(invoice.getFreight()));
-                }else{
-                    headData.add("");
-                }
-                if(invoice.getOperation()!=null){
-                    headData.add(String.valueOf(invoice.getOperation()));
-                }else{
-                    headData.add("");
-                }
-                if(invoice.getValuePrice()!=null){
-                    headData.add(String.valueOf(invoice.getValuePrice()));
-                }else{
-                    headData.add("");
-                }
-                NumberFormat nf = NumberFormat.getPercentInstance();
-                //设置2位小数、四舍五入
-                nf.setMaximumFractionDigits(2);
-                nf.setRoundingMode(RoundingMode.HALF_UP);
-                Double price=0.0;
+                headData.add(String.valueOf(invoice.getFreight()==null?"":invoice.getFreight()));
+                headData.add(String.valueOf(invoice.getOperation()==null?"":invoice.getOperation()));
+                headData.add(String.valueOf(invoice.getValuePrice()==null?"":invoice.getValuePrice()));
+
+                double price=0.0;
                 if(invoice.getFreight()!=null && invoice.getValuePrice()!=null){
                     price=invoice.getFreight()*100/invoice.getValuePrice();
                 }//运费/货值
-                headData.add(String.valueOf(nf.format(price)));
-                if(invoice.getCarrier()!=null){
-                    headData.add(String.valueOf(invoice.getCarrier()));
-                }else{
-                    headData.add("");
-                }
+                BigDecimal   b   =   new   BigDecimal(price);
+                double   f1   =   b.setScale(0,   BigDecimal.ROUND_HALF_UP).doubleValue();
+                headData.add(String.valueOf(f1+"%"));
+                headData.add(String.valueOf(invoice.getCarrier()==null?"":invoice.getCarrier()));
                 Dict dict = new Dict();
                 dict.setDescription("物流结算方式");
                 dict.setType("biz_settlement_status");
@@ -325,74 +315,133 @@ public class BizInvoiceController extends BaseController {
                         break;
                     }
                 }
-                headData.add(String.valueOf(invoice.getSendDate()));
+                headData.add(String.valueOf(sdf.format(invoice.getSendDate())));
                 data.add(headData);
+
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(invoice);
                 List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
                 if(DetailInvoiceList.size()!=0){
                     for (BizDetailInvoice detailInvoice : DetailInvoiceList) {
-                        BizOrderDetail bizOrderDetail = new BizOrderDetail();
-                        List<BizOrderDetail> orderDetailList =null;
-                        BizOrderHeader orderHeader = bizOrderHeaderService.get(detailInvoice.getOrderHeader().getId());
-                        if(orderHeader!=null){
-                            bizOrderDetail.setOrderHeader(orderHeader);
-                            orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-                        }
-                        if(orderDetailList!=null && orderDetailList.size()!=0){
-                            for (BizOrderDetail orderDetail:orderDetailList) {
-                                List<String> detaData = new ArrayList();
-                                BizSkuInfo sku = bizSkuInfoService.get(orderDetail.getSkuInfo());
-                                BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
-                                orderDetail.setSkuInfo(skuInfo);
-                                detaData.add(String.valueOf(invoice.getSendNumber()));
-                                if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
-                                    detaData.add(String.valueOf(invoice.getLogistics().getName()));
-                                }else{
-                                    detaData.add("");
-                                }
-                                if(orderHeader!=null){
-                                    detaData.add(String.valueOf(orderDetail.getOrderHeader().getOrderNum()));
-                                    if(orderHeader.getCustomer()!=null && orderHeader.getCustomer().getName()!=null){
-                                        detaData.add(String.valueOf(orderHeader.getCustomer().getName()));
-                                    }else{
-                                        detaData.add("");
-                                    }
-                                }else{
-                                    detaData.add("");
-                                    detaData.add("");
-                                }
-                                Dict detadict = new Dict();
-                                detadict.setDescription("业务状态");
-                                detadict.setType("biz_order_status");
-                                List<Dict> detadictList = dictService.findList(detadict);
-                                for (Dict di : detadictList) {
-                                    if (di.getValue().equals(String.valueOf(orderHeader.getBizStatus()))) {
-                                        //业务状态
-                                        detaData.add(String.valueOf(di.getLabel()));
-                                        break;
-                                    }
-                                }
-                                if(orderDetail.getSkuName()!=null){
-                                    detaData.add(String.valueOf(orderDetail.getSkuName()));
-                                }else{
-                                    detaData.add("");
-                                }
-                                if(orderDetail.getPartNo()!=null){
-                                    detaData.add(String.valueOf(orderDetail.getPartNo()));
-                                }else{
-                                    detaData.add("");
-                                }
-                                if(orderDetail!=null && orderDetail.getSkuInfo()!=null && orderDetail.getSkuInfo().getSkuPropertyInfos()!=null){
-                                    detaData.add(String.valueOf(orderDetail.getSkuInfo().getSkuPropertyInfos()));
-                                }else{
-                                    detaData.add("");
-                                }
-                                detaData.add(String.valueOf(orderDetail.getOrdQty()));
-                                detaData.add(String.valueOf(orderDetail.getSentQty()));
-                                detailData.add(detaData);
+                        if(bizInvoice.getBizStatus()!=null && bizInvoice.getBizStatus().equals(1) && bizInvoice.getShip()!=null && bizInvoice.getShip().equals(1)){
+                            //备货单发货信息
+                            List<BizRequestDetail> requestDetailList =null;
+                            BizRequestHeader requestHeader = bizRequestHeaderService.get(detailInvoice.getRequestHeader().getId());
+                            if(detailInvoice.getRequestHeader()!=null && detailInvoice.getRequestHeader().getId()!=null){
+                                if(requestHeader!=null){
+                                    BizRequestDetail bizRequestDetail = new BizRequestDetail();
+                                    bizRequestDetail.setRequestHeader(requestHeader);
+                                    requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
                                 }
                             }
+                            if (requestHeader != null && requestDetailList.size() != 0) {
+                                List<String> detaData = new ArrayList();
+                                for (BizRequestDetail requeDetail : requestDetailList) {
+                                    requeDetail.setRequestHeader(requestHeader);
+                                    BizSkuInfo skuInfo = bizSkuInfoService.get(requeDetail.getSkuInfo());
+                                    BizSkuInfo sku = bizSkuInfoService.findListProd(skuInfo);
+                                    requeDetail.setSkuInfo(sku);
+                                    detaData.add(String.valueOf(invoice.getSendNumber() == null ? "" : invoice.getSendNumber()));
+                                    if (invoice.getLogistics() != null && invoice.getLogistics().getName() != null) {
+                                        detaData.add(String.valueOf(invoice.getLogistics().getName()));
+                                    } else {
+                                        detaData.add("");
+                                    }
+                                    if(requestHeader!=null){
+                                        detaData.add(String.valueOf(requestHeader.getReqNo()==null?"":requestHeader.getReqNo()));
+                                        if(requestHeader.getFromOffice()!=null && requestHeader.getFromOffice().getName()!=null){
+                                            detaData.add(String.valueOf(requestHeader.getFromOffice().getName()));
+                                        }
+                                        Dict detadict = new Dict();
+                                        detadict.setDescription("备货单业务状态");
+                                        detadict.setType("biz_req_status");
+                                        List<Dict> detadictList = dictService.findList(detadict);
+                                        if (detadictList.size() != 0) {
+                                            for (Dict di : detadictList) {
+                                                if (di.getValue().equals(String.valueOf(requestHeader.getBizStatus()))) {
+                                                    //业务状态
+                                                    detaData.add(String.valueOf(di.getLabel()));
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            detaData.add("");
+                                        }
+                                    }
+                                    if(requeDetail.getSkuInfo()!=null){
+                                        if(requeDetail.getSkuInfo()!=null && requeDetail.getSkuInfo().getName()!=null){
+                                            detaData.add(String.valueOf(requeDetail.getSkuInfo().getName()));
+                                            detaData.add(String.valueOf(requeDetail.getSkuInfo().getPartNo()==null?"":requeDetail.getSkuInfo().getPartNo()));
+                                            detaData.add(String.valueOf(requeDetail.getSkuInfo().getSkuPropertyInfos()==null?"":requeDetail.getSkuInfo().getSkuPropertyInfos()));
+                                        }else{
+                                            detaData.add("");detaData.add("");detaData.add("");
+                                        }
+                                        detaData.add(String.valueOf(requeDetail.getReqQty()==null?"":requeDetail.getReqQty()));
+                                        detaData.add(String.valueOf(requeDetail.getSendQty()==null?"":requeDetail.getSendQty()));
+                                        detailData.add(detaData);
+                                    }
+                                }
+                            }
+
+                        }else {
+                            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+                            List<BizOrderDetail> orderDetailList = null;
+                            BizOrderHeader orderHeader = bizOrderHeaderService.get(detailInvoice.getOrderHeader().getId());
+                            if (orderHeader != null) {
+                                bizOrderDetail.setOrderHeader(orderHeader);
+                                orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+                            }
+                            if (orderDetailList != null && orderDetailList.size() != 0) {
+                                for (BizOrderDetail orderDetail : orderDetailList) {
+                                    List<String> detaData = new ArrayList();
+                                    BizSkuInfo sku = bizSkuInfoService.get(orderDetail.getSkuInfo());
+                                    BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
+                                    orderDetail.setSkuInfo(skuInfo);
+                                    detaData.add(String.valueOf(invoice.getSendNumber() == null ? "" : invoice.getSendNumber()));
+                                    if (invoice.getLogistics() != null && invoice.getLogistics().getName() != null) {
+                                        detaData.add(String.valueOf(invoice.getLogistics().getName()));
+                                    } else {
+                                        detaData.add("");
+                                    }
+                                    if (orderHeader != null) {
+                                        detaData.add(String.valueOf(orderDetail.getOrderHeader().getOrderNum()));
+                                        if (orderHeader.getCustomer() != null && orderHeader.getCustomer().getName() != null) {
+                                            detaData.add(String.valueOf(orderHeader.getCustomer().getName()));
+                                        } else {
+                                            detaData.add("");
+                                        }
+                                    } else {
+                                        detaData.add("");
+                                        detaData.add("");
+                                    }
+                                    Dict detadict = new Dict();
+                                    detadict.setDescription("业务状态");
+                                    detadict.setType("biz_order_status");
+                                    List<Dict> detadictList = dictService.findList(detadict);
+                                    if (detadictList.size() != 0) {
+                                        for (Dict di : detadictList) {
+                                            if (di.getValue().equals(String.valueOf(orderHeader.getBizStatus()))) {
+                                                //业务状态
+                                                detaData.add(String.valueOf(di.getLabel()));
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        detaData.add("");
+                                    }
+                                    detaData.add(String.valueOf(orderDetail.getSkuName() == null ? "" : orderDetail.getSkuName()));
+                                    detaData.add(String.valueOf(orderDetail.getPartNo() == null ? "" : orderDetail.getPartNo()));
+                                    if (orderDetail != null && orderDetail.getSkuInfo() != null && orderDetail.getSkuInfo().getSkuPropertyInfos() != null) {
+                                        detaData.add(String.valueOf(orderDetail.getSkuInfo().getSkuPropertyInfos()));
+                                    } else {
+                                        detaData.add("");
+                                    }
+                                    detaData.add(String.valueOf(orderDetail.getOrdQty() == null ? "" : orderDetail.getOrdQty()));
+                                    detaData.add(String.valueOf(orderDetail.getSentQty() == null ? "" : orderDetail.getSentQty()));
+                                    detailData.add(detaData);
+                                }
+                            }
+                        }
                     }
                 }else{
                     List<String> detaData = new ArrayList();
@@ -409,12 +458,18 @@ public class BizInvoiceController extends BaseController {
                     detailData.add(detaData);
                 }
             }
-            String[] headers = {"发货号", "物流商", "运费", "操作费", "货值","运费/货值", "发货人", "物流结算方式", "发货时间"};
-            String[] details = {"发货号","物流商", "订单编号", "采购商名称", "业务状态", "商品名称","商品编码", "商品属性", "采购数量","已发货数量"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
-            eeu.exportExcel(workbook, 0, "发货数据", headers, data, fileName);
-            eeu.exportExcel(workbook, 1, "已发货详情", details, detailData, fileName);
+            String[] headers = {"发货号", "物流商", "运费", "操作费", "货值","运费/货值", "发货人", "物流结算方式", "发货时间"};
+            if(bizInvoice.getBizStatus()!=null && bizInvoice.getBizStatus().equals(1) && bizInvoice.getShip()!=null && bizInvoice.getShip().equals(1)){
+                String[] details = {"发货号", "物流商", "备货单编号", "采购中心", "业务状态", "商品名称", "商品编码", "商品属性", "采购数量", "已发货数量"};
+                eeu.exportExcel(workbook, 0, "发货数据", headers, data, fileName);
+                eeu.exportExcel(workbook, 1, "已发货详情", details, detailData, fileName);
+            }else {
+                String[] details = {"发货号", "物流商", "订单编号", "经销店名称", "业务状态", "商品名称", "商品编码", "商品属性", "采购数量", "已发货数量"};
+                eeu.exportExcel(workbook, 0, "发货数据", headers, data, fileName);
+                eeu.exportExcel(workbook, 1, "已发货详情", details, detailData, fileName);
+            }
             response.reset();
             response.setContentType("application/octet-stream; charset=utf-8");
             response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
@@ -423,7 +478,7 @@ public class BizInvoiceController extends BaseController {
             return null;
         }catch (Exception e){
             e.printStackTrace();
-            addMessage(redirectAttributes, "导出订单发货信息数据失败！失败信息：" + e.getMessage());
+            addMessage(redirectAttributes, "导出发货信息数据失败！失败信息：" + e.getMessage());
         }
         return "modules/biz/inventory/bizInvoiceList";
     }

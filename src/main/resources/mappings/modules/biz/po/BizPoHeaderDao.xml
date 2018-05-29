@@ -55,7 +55,6 @@
 		LEFT JOIN common_process process ON process.id = a.process_id
 	</sql>
 
-    
 	<select id="get" resultType="BizPoHeader">
 		SELECT 
 			<include refid="bizPoHeaderColumns"/>

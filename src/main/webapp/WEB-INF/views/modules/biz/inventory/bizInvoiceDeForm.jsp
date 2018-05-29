@@ -20,8 +20,22 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
-
+		<sys:message content="${message}"/>
+		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
+			<div class="control-group">
+				<label class="control-label">发货单号：</label>
+				<div class="controls">
+					<form:input path="sendNumber" htmlEscape="false" disabled="true" class="input-xlarge "/>
+				</div>
+			</div>
+		</c:if>
+		<div class="control-group">
+			<label class="control-label">物流单号：</label>
+			<div class="controls">
+				<form:input path="trackingNumber" htmlEscape="false" class="input-xlarge required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label">物流商：</label>
 			<div class="controls">
@@ -95,7 +109,7 @@
 					<thead>
 					<tr>
 						<th>订单编号</th>
-						<th>采购商名称</th>
+						<th>经销店名称</th>
 						<th>业务状态</th>
 						<th>商品名称</th>
 						<th>商品货号</th>

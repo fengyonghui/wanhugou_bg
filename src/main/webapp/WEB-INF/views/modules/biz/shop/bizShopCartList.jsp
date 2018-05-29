@@ -27,11 +27,11 @@
 			<li><label>商品货架：</label>
 				<form:input path="skuShelfinfo.opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li><label>采购商名称：</label>
+			<li><label>经销店名称：</label>
 				<sys:treeselect id="office" name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"
-					title="采购商" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+					title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
-			<li><label>采购商电话：</label>
+			<li><label>经销店电话：</label>
 				<form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>客户端：</label>
@@ -51,8 +51,8 @@
 				<td>序号</td>
 				<th>客户端</th>
 				<th>商品货架</th>
-				<th>采购商名称</th>
-				<th>采购商电话</th>
+				<th>经销店名称</th>
+				<th>经销店电话</th>
                 <th>sku名称</th>
 				<th>sku数量</th>
 				<th>创建人</th>
