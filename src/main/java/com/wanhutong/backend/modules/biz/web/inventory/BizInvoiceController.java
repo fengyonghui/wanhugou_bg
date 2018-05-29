@@ -99,6 +99,44 @@ public class BizInvoiceController extends BaseController {
 //	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
 //	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
+        List<BizInvoice> bizInvoiceList = page.getList();
+        for (int i=0; i<bizInvoiceList.size(); i++){
+            BizInvoice bizInvoiceTemp = bizInvoiceList.get(i);
+            String headerNo = "";
+            BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
+            bizDetailInvoice.setInvoice(bizInvoiceTemp);
+            List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
+
+            if (DetailInvoiceList != null && !DetailInvoiceList.isEmpty()){
+                for (BizDetailInvoice detailInvoice:DetailInvoiceList) {
+                    BizInvoice invoiceTemp = detailInvoice.getInvoice();
+                    invoiceTemp = bizInvoiceService.get(invoiceTemp.getId());
+                    if (invoiceTemp.getShip()!=null && invoiceTemp.getShip().intValue() ==0 ){
+                        BizOrderHeader bizorderHeader = detailInvoice.getOrderHeader();
+                        BizOrderHeader orderHeader = bizOrderHeaderService.get(bizorderHeader.getId());
+                        String orderNum = orderHeader.getOrderNum();
+                        if (orderNum != null){
+                            headerNo += orderNum + ",";
+                        }
+
+                    } else if (invoiceTemp.getShip() !=null && invoiceTemp.getShip().intValue() ==1){
+                        BizRequestHeader bizRequestHeader = detailInvoice.getRequestHeader();
+                        BizRequestHeader requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
+                        String reqNo = requestHeader.getReqNo() ;
+                        if (reqNo != null){
+                            headerNo += reqNo + ",";
+                        }
+                    }
+
+                }
+                if (headerNo.length()>0){
+                    headerNo = headerNo.substring(0 , headerNo.length()-1);
+                }
+            }
+            bizInvoiceTemp.setHeaderNo(headerNo);
+            bizInvoiceList.set(i,bizInvoiceTemp);
+        }
+        page.setList(bizInvoiceList);
 		model.addAttribute("page", page);
 //		model.addAttribute("ship",ship);
 //		model.addAttribute("bizStatu",bizStatu);

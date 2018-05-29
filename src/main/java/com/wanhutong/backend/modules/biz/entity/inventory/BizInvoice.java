@@ -42,6 +42,18 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String reqDetails;		//发货备货单详情ID
 	private String ordDetails;		//发货订单详情ID
 
+	private String headerNo; //订单号
+
+	public String getHeaderNo() {
+		return headerNo;
+	}
+
+	public void setHeaderNo(String headerNo) {
+		this.headerNo = headerNo;
+	}
+
+	private BizDetailInvoice bizDetailInvoice;
+
 	public BizInvoice() {
 		super();
 	}

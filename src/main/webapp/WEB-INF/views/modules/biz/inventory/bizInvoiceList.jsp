@@ -56,6 +56,7 @@
 			<tr>
 				<td>序号</td>
 				<th>发货号</th>
+				<th>订单号</th>
 				<th>物流商</th>
 				<th>运费</th>
 				<th>操作费</th>
@@ -74,6 +75,7 @@
 			<tr>
 				<td>${state.index+1}</td>
 				<td>${bizInvoice.sendNumber}</td>
+				<td>${bizInvoice.headerNo}</td>
 				<td>${bizInvoice.logistics.name}</td>
 				<td>${bizInvoice.freight}</td>
 				<td>${bizInvoice.operation}</td>
