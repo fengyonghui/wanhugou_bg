@@ -1827,6 +1827,13 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	a.plateform_id AS "platformInfo.id",
 	bpi.NAME AS "platformInfo.name",
 	a.ship_to_addr AS "bizLocation.id",
+		c.province_id as "bizLocation.province.id",
+		province.name as "bizLocation.province.name",
+		c.city_id as "bizLocation.city.id",
+		city.name as "bizLocation.city.name",
+		c.region_id as "bizLocation.region.id",
+		reg.name as "bizLocation.region.name",
+		c.address as "bizLocation.address",
 	a.STATUS AS "delFlag",
 	a.create_id AS "createBy.id",
 	su.NAME AS "createBy.name",
@@ -1848,6 +1855,12 @@ FROM
 	INNER JOIN biz_order_detail bod on bod.order_id = a.id
 	INNER JOIN biz_sku_info bsi on bod.sku_id = bsi.id
 	INNER JOIN biz_product_info pi ON bsi.prod_id = pi.id
+	<!-- 订单地址 -->
+		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
+		LEFT JOIN sys_region province ON c.province_id = province.id
+		LEFT JOIN sys_region city ON c.city_id = city.id
+		LEFT JOIN sys_region reg ON c.region_id = reg.id
+	<!-- end  -->
 	WHERE 1=1 and a.order_type != 4
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">
 			AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
