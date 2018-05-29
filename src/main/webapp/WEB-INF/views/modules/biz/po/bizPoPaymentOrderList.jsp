@@ -28,6 +28,7 @@
 				<th>付款金额</th>
 				<th>实际付款金额</th>
 				<th>最后付款时间</th>
+				<th>实际付款时间</th>
 				<th>当前状态</th>
 				<th>审批状态</th>
 				<th>支付凭证</th>
@@ -48,6 +49,9 @@
 				</td>
 				<td>
 					<fmt:formatDate value="${bizPoPaymentOrder.deadline}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+                <td>
+					<fmt:formatDate value="${bizPoPaymentOrder.payTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 					${bizPoPaymentOrder.bizStatus == 0 ? '未支付' : '已支付'}

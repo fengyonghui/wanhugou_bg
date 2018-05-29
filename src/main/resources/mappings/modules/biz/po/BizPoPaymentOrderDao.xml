@@ -11,6 +11,7 @@
 		a.biz_status AS bizStatus,
 		a.deadline AS deadline,
 		a.process_id AS processId,
+		a.pay_time AS payTime,
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
 		process.object_name AS "commonProcess.objectName",
@@ -102,8 +103,10 @@
 			pay_total = #{payTotal},
 			biz_status = #{bizStatus},
 			img = #{img},
-			process_id = #{processId},
-			pay_time = #{payTime}
+			process_id = #{processId}
+			<if test="payTime != null and payTime != ''">
+				, pay_time = #{payTime}
+			</if>
 		WHERE id = #{id}
 	</update>
 	
