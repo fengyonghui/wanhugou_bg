@@ -63,7 +63,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 采购订单表Controller
@@ -306,7 +312,14 @@ public class BizPoHeaderController extends BaseController {
     @RequestMapping(value = "audit")
     @ResponseBody
     public String audit(int id, String currentType, int auditType, String description) {
-        return bizPoHeaderService.audit(id, currentType, auditType, description);
+        return bizPoHeaderService.auditPo(id, currentType, auditType, description);
+    }
+
+    @RequiresPermissions("biz:po:bizpopaymentorder:bizPoPaymentOrder:audit")
+    @RequestMapping(value = "auditPay")
+    @ResponseBody
+    public String auditPay(int id, String currentType, int auditType, String description, BigDecimal money) {
+        return bizPoHeaderService.auditPay(id, currentType, auditType, description, money);
     }
 
 
