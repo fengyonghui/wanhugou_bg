@@ -35,7 +35,7 @@
 		bvi.audit_status AS "bizVendInfo.auditStatus",
 		bvi.card_number AS "bizVendInfo.cardNumber",
 		bvi.vend_name AS "bizVendInfo.vendName",
-		su.mobile AS "user.mobile"
+		pp.mobile AS "user.mobile"
 	</sql>
 
 	<sql id="officeJoins">
@@ -45,7 +45,6 @@
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
 		LEFT JOIN biz_custom_center_consultant ccc on a.id=ccc.cust_id
 		LEFT JOIN biz_vend_info bvi on a.id=bvi.office_id
-		LEFT JOIN sys_user su ON su.company_id = a.id
     </sql>
 
 	<select id="get" resultType="Office">
