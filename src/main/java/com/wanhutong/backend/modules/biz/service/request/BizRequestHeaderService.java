@@ -279,7 +279,11 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			Integer recvQtys = 0;
 			Double money=0.0;
 			for (BizRequestDetail requestDetail:detilDetailList) {
-				money+=(requestDetail.getReqQty()==null?0:requestDetail.getReqQty())*requestDetail.getSkuInfo().getBuyPrice();
+				Double buyPrice =0.0;
+				if(requestDetail.getSkuInfo()!=null && requestDetail.getSkuInfo().getBuyPrice()!=null){
+					buyPrice=requestDetail.getSkuInfo().getBuyPrice();
+				}
+				money+=(requestDetail.getReqQty()==null?0:requestDetail.getReqQty())*buyPrice;
 				reqQtys += requestDetail.getReqQty();
 				recvQtys += requestDetail.getRecvQty();
 			}
@@ -439,4 +443,38 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	public  int findContByFromOffice(Integer fromOfficeId ){
 		return  bizRequestHeaderDao.findContByFromOffice(fromOfficeId);
 	}
+
+	/**
+	 * 备货单收货、备货单发货 导出
+	 * */
+	public List<BizRequestHeader> findListAllExport(BizRequestHeader bizRequestHeader) {
+		User user = UserUtils.getUser();
+		boolean oflag = false;
+		boolean flag=false;
+		if(user.getRoleList()!=null){
+			for(Role role:user.getRoleList()){
+				if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+					flag=true;
+				}
+			}
+		}
+		if (UserUtils.getOfficeList() != null){
+			for (Office office:UserUtils.getOfficeList()){
+				if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+					oflag = true;
+				}
+			}
+		}
+		if (user.isAdmin()) {
+			return super.findList(bizRequestHeader);
+		} else {
+			if(oflag){
+
+			}else {
+				bizRequestHeader.getSqlMap().put("request", BaseService.dataScopeFilter(user, "so","su"));
+			}
+			return super.findList(bizRequestHeader);
+		}
+	}
+
 }

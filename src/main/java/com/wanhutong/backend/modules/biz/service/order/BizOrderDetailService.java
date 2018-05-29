@@ -85,6 +85,16 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                         BizSkuInfo sku = bizSkuInfoService.get(skuId);
                         BizOrderDetail detailnew = new BizOrderDetail();
                         detailnew.setOrderHeader(bizOrderDetail.getOrderHeader());//order_header.id
+                        if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getId()!=null){
+                            List<BizOrderDetail> list = bizOrderDetailDao.findList(detailnew);
+                            if(list.size()!=0){
+                                for (BizOrderDetail orderDetail : list) {
+                                    if(orderDetail.getLineNo()!=null){
+                                        a=orderDetail.getLineNo();
+                                    }
+                                }
+                            }
+                        }
                         detailnew.setLineNo(++a);//行号
                         detailnew.setpLineNo(null);//bom产品
                         detailnew.setSkuInfo(sku);//sku产品
@@ -121,6 +131,17 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                 BizOpShelfSku opShelfSku = bizOpShelfSkuService.get(shelfSkuId);//查询商品
                 BizOrderDetail detailnew = new BizOrderDetail();
                 detailnew.setOrderHeader(bizOrderDetail.getOrderHeader());//order_header.id
+                /*查询详情行号*/
+                if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getId()!=null){
+                    BizOrderDetail detail = new BizOrderDetail();
+                    detail.setOrderHeader(bizOrderDetail.getOrderHeader());
+                    List<BizOrderDetail> list = super.findList(detail);
+                    if(list.size()!=0){
+                        for (BizOrderDetail detailLinNo : list) {
+                            a=detailLinNo.getLineNo();
+                        }
+                    }
+                }
                 detailnew.setLineNo(++a);//行号
                 detailnew.setpLineNo(null);//bom产品
                 detailnew.setShelfInfo(opShelfSku);//货架
@@ -216,5 +237,9 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
 
     public List<Map> findRequestTotalByVendor() {
         return bizOrderDetailDao.findRequestTotalByVendor(false);
+    }
+
+    public List<BizOrderDetail> findPoHeader(BizOrderDetail bizOrderDetail) {
+        return dao.findPoHeader(bizOrderDetail);
     }
 }

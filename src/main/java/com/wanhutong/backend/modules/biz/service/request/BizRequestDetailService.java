@@ -52,5 +52,10 @@ public class BizRequestDetailService extends CrudService<BizRequestDetailDao, Bi
 	public void delete(BizRequestDetail bizRequestDetail) {
 		super.delete(bizRequestDetail);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public List<BizRequestDetail> findPoRequet(BizRequestDetail bizRequestDetail) {
+		return dao.findPoRequet(bizRequestDetail);
+	}
+
 }

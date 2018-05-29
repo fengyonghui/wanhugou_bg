@@ -6,16 +6,29 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("#invoiceExport").click(function(){
-				top.$.jBox.confirm("确认要导出订单发货信息数据吗？","系统提示",function(v,h,f){
-					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/exportList?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}");
-						$("#searchForm").submit();
-						$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/");
-					}
-				},{buttonsFocus:1});
-				top.$('.jbox-body .jbox-icon').css('top','55px');
-			});
+			if($("#ship").val()!=null && $("#ship").val()!="" && $("#ship").val()==1){
+				$("#invoiceExport").click(function(){
+					top.$.jBox.confirm("确认要导出备货单发货信息数据吗？","系统提示",function(v,h,f){
+						if(v=="ok"){
+							$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/exportList?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}");
+							$("#searchForm").submit();
+							$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/");
+						}
+					},{buttonsFocus:1});
+					top.$('.jbox-body .jbox-icon').css('top','55px');
+				});
+			}else{
+				$("#invoiceExport").click(function(){
+					top.$.jBox.confirm("确认要导出订单发货信息数据吗？","系统提示",function(v,h,f){
+						if(v=="ok"){
+							$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/exportList?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}");
+							$("#searchForm").submit();
+							$("#searchForm").attr("action","${ctx}/biz/inventory/bizInvoice/");
+						}
+					},{buttonsFocus:1});
+					top.$('.jbox-body .jbox-icon').css('top','55px');
+				});
+			}
 		});
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -33,8 +46,8 @@
 	<form:form id="searchForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<input id="pageSize" name="ship" type="hidden" value="${bizInvoice.ship}"/>
-		<input id="pageNo" name="bizStatus" type="hidden" value="${bizInvoice.bizStatus}"/>
+		<input id="ship" name="ship" type="hidden" value="${bizInvoice.ship}"/>
+		<input id="bizStatus" name="bizStatus" type="hidden" value="${bizInvoice.bizStatus}"/>
 		<ul class="ul-form">
 			<li><label>发货单号：</label>
 				<form:input path="sendNumber" htmlEscape="false" maxlength="30" class="input-medium"/>
@@ -56,6 +69,7 @@
 			<tr>
 				<td>序号</td>
 				<th>发货号</th>
+				<th>物流单号</th>
 				<th>订单号</th>
 				<th>物流商</th>
 				<th>运费</th>
@@ -74,6 +88,13 @@
 		<c:forEach items="${page.list}" var="bizInvoice" varStatus="state">
 			<tr>
 				<td>${state.index+1}</td>
+				<c:if test="${bizInvoice.ship==0}">
+					<td><a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.sendNumber}</a></td>
+				</c:if>
+				<c:if test="${bizInvoice.ship==1}">
+					<td><a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.sendNumber}</a></td>
+				</c:if>
+				<td>${bizInvoice.trackingNumber}</td>
 				<td>${bizInvoice.sendNumber}</td>
 				<td>${bizInvoice.headerNo}</td>
 				<td>${bizInvoice.logistics.name}</td>

@@ -46,6 +46,9 @@
 								if (data=="false") {
 								    alert("已经存在该区间数量");
 								    return false;
+                                }else if(data=="minMax"){
+                                	alert("最小数量必须小于最大数量");
+								    return false;
                                 }else if(data=="error"){
                                 	alert("最大数量需填写到 9999");
 								    return false;

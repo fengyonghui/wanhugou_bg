@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.shelf;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -25,6 +26,7 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,7 +68,21 @@ public class BizVarietyFactorController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizVarietyFactor bizVarietyFactor, Model model) {
 		model.addAttribute("bizVarietyFactor", bizVarietyFactor);
-		model.addAttribute("varietyList",bizVarietyInfoService.findList(new BizVarietyInfo()));
+		List<BizVarietyInfo> varietyFactorList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		if(bizVarietyFactor.getId()==null){
+			ArrayList<BizVarietyInfo> objects = Lists.newArrayList();
+			for (int i = 0; i < varietyFactorList.size(); i++) {
+				BizVarietyFactor bizCentVarietyFactor = new BizVarietyFactor();
+				bizCentVarietyFactor.setVarietyInfo(new BizVarietyInfo(varietyFactorList.get(i).getId()));
+				List<BizVarietyFactor> list = bizVarietyFactorService.findList(bizCentVarietyFactor);
+				if(list.size()==0){
+					objects.add(varietyFactorList.get(i));
+				}
+			}
+			model.addAttribute("varietyList",objects);
+		}else{
+			model.addAttribute("varietyList",varietyFactorList);
+		}
 		if(bizVarietyFactor!=null && bizVarietyFactor.getId()!=null){
 			BizVarietyFactor varietyFactor = new BizVarietyFactor();
 			varietyFactor.setVarietyInfo(new BizVarietyInfo(bizVarietyFactor.getVarietyInfo().getId()));
@@ -141,7 +157,26 @@ public class BizVarietyFactorController extends BaseController {
 								minQty < Integer.parseInt(maxQtyArr[i]) && maxQty > Integer.parseInt(minQtyArr[i])) {
 							flag = "false";
 						}
+						if(i>0) {
+							if (Integer.parseInt(minQtyArr[i]) <= Integer.parseInt(maxQtyArr[i])) {
+								flag = "false";
+								break;
+							}
+						}
+						if (Integer.parseInt(minQtyArr[i]) > Integer.parseInt(maxQtyArr[i])) {
+							flag = "minMax";
+						}
 					}
+				}
+			}else{
+				if(i>0){
+					if(Integer.parseInt(minQtyArr[i])<=Integer.parseInt(maxQtyArr[i-1])){
+						flag = "false";
+						break;
+					}
+				}
+				if(Integer.parseInt(minQtyArr[i])>Integer.parseInt(maxQtyArr[i])){
+					flag = "minMax";
 				}
 			}
 			if(flag!="" && flag.equals("true") && Integer.parseInt(maxQtyArr[i])!=9999){

@@ -41,6 +41,7 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String sendNums;		//供货数
 	private String reqDetails;		//发货备货单详情ID
 	private String ordDetails;		//发货订单详情ID
+	private String trackingNumber;		//物流单号
 
 	private String headerNo; //订单号
 
@@ -209,5 +210,13 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setBizStatus(Integer bizStatus) {
 		this.bizStatus = bizStatus;
+	}
+
+	public String getTrackingNumber() {
+		return trackingNumber;
+	}
+
+	public void setTrackingNumber(String trackingNumber) {
+		this.trackingNumber = trackingNumber;
 	}
 }

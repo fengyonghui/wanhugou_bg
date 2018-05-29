@@ -295,4 +295,10 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * 用于C端订单列表
      * */
     public List<BizOrderHeader> cendfindList(BizOrderHeader bizOrderHeader);
+
+    /**
+     *  客户专员查看 采购累计订单频次
+     * */
+    List<BizOrderHeader> findUserOrderCountSecond(@Param("custId") Integer custId);
+
 }

@@ -17,6 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.*;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
@@ -26,6 +27,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
@@ -89,6 +91,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     private BizPoHeaderService bizPoHeaderService;
 	@Autowired
 	private BizInventoryInfoService bizInventoryInfoService;
+	@Autowired
+    private BizOrderStatusService bizOrderStatusService;
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
@@ -117,6 +121,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	    //修改发货单
 	    if (bizInvoice.getId() != null){
             BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
+            invoice.setTrackingNumber(bizInvoice.getTrackingNumber());
             invoice.setLogistics(bizInvoice.getLogistics());
             invoice.setOperation(bizInvoice.getOperation());
             invoice.setFreight(bizInvoice.getFreight());
@@ -282,6 +287,15 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         bizSendGoodsRecordService.save(bsgr);
                     }
                 }
+
+                /*用于 订单状态表 保存状态*/
+                if(orderHeader!=null && orderHeader.getId()!=null || orderHeader.getBizStatus()!=null){
+                    BizOrderStatus orderStatus = new BizOrderStatus();
+                    orderStatus.setOrderHeader(orderHeader);
+                    orderStatus.setBizStatus(orderHeader.getBizStatus());
+                    bizOrderStatusService.save(orderStatus);
+                }
+
                 BizOrderDetail ordDetail = new BizOrderDetail();
                 ordDetail.setOrderHeader(orderHeader);
                 List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(ordDetail);
@@ -313,7 +327,15 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             }
                         }
                     }
+                    /*用于 订单状态表 保存状态*/
+                    if(orderHeader!=null && orderHeader.getId()!=null || orderHeader.getBizStatus()!=null){
+                        BizOrderStatus orderStatus = new BizOrderStatus();
+                        orderStatus.setOrderHeader(orderHeader);
+                        orderStatus.setBizStatus(orderHeader.getBizStatus());
+                        bizOrderStatusService.save(orderStatus);
+                    }
                 }
+
                 //当供货部或供应商发货时，才涉及采购单状态
                 if (bizInvoice.getBizStatus()==1) {
                     //更改采购单状态,已完成（5）

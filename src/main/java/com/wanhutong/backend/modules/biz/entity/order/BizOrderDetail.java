@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
 import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -71,6 +72,11 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String detailFlag;
 
     private BizOrderDetail orderDaillist;//商品
+
+    /**
+     * 订单发货查看 已经生成的采购单
+     * */
+    private BizPoHeader poHeader;
 
     public BizOrderDetail getOrderDaillist() {
         return orderDaillist;
@@ -388,5 +394,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setAttributeValueV2List(List<AttributeValueV2> attributeValueV2List) {
         this.attributeValueV2List = attributeValueV2List;
+    }
+
+    public BizPoHeader getPoHeader() {
+        return poHeader;
+    }
+
+    public void setPoHeader(BizPoHeader poHeader) {
+        this.poHeader = poHeader;
     }
 }

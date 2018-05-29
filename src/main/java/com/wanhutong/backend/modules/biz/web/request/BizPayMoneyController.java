@@ -1,47 +1,35 @@
 package com.wanhutong.backend.modules.biz.web.request;
 
 import com.alibaba.druid.support.json.JSONUtils;
-import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
-import com.wanhutong.backend.common.utils.ZxingHandler;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
-import com.wanhutong.backend.modules.biz.entity.pay.dto.RequestQRCodePayDto;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.TradeTypeEnum;
-import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import com.wanhutong.utils.WhgPaySign;
 import net.sf.json.JSONObject;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequestMapping(value = "/biz/payMoney")
 public class BizPayMoneyController extends BaseController {
+
+    private static Logger payLogger = LoggerFactory.getLogger("requestPay");
+
     @Resource
     private BizRequestHeaderService bizRequestHeaderService;
     @Resource
@@ -51,13 +39,13 @@ public class BizPayMoneyController extends BaseController {
     @Resource
     private SystemService systemService;
 
-
+    //0支付宝支付；1微信支付
 
 
     @RequestMapping(value = "payMoneyIng")
     public String payMoneyIng(@RequestBody Map<String, Object> map){
         String jsonstr = JSONObject.fromObject(map).toString();
-        logger.info("payMoneyIng======"+jsonstr);
+        payLogger.info("请求返回参数--------------"+jsonstr);
         BizPayRecord bizPayRecord =new BizPayRecord();
         Integer reqId=0;
         Double amount=0.0;
@@ -65,7 +53,7 @@ public class BizPayMoneyController extends BaseController {
         String photoName=null;
         if(map.containsKey("attach")) {
              params = (String) map.get("attach");
-
+             payLogger.info("微信返回参数--------"+params);
         }else {
             String payNum= (String) map.get("out_trade_no");
             BizPayRecord record= bizPayRecordService.findBizPayRecord(payNum);
@@ -78,7 +66,7 @@ public class BizPayMoneyController extends BaseController {
             bizPayRecord.setCustomer(record.getCustomer());
             String resultCode= (String) map.get("trade_status");
             Double receiptAmount = Double.parseDouble((String) map.get("receipt_amount"));
-         //   amount = (Double) map.get("buyer_pay_amount");
+            payLogger.info("支付宝返回参数-------------"+receiptAmount);
             amount=Double.parseDouble((String) map.get("buyer_pay_amount"));
             bizPayRecord.setPayMoney(amount);
             if("TRADE_SUCCESS".equalsIgnoreCase(resultCode)&& receiptAmount.equals(amount)){
@@ -152,10 +140,13 @@ public class BizPayMoneyController extends BaseController {
             bizRequestHeader.setRecvTotal(bizRequestHeader.getRecvTotal()+amount);
             if((bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.UNREVIEWED.getState()) || bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.INITIAL_PAY.getState())) && bizRequestHeader.getTotalDetail().equals(bizRequestHeader.getRecvTotal())){
                 bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ALL_PAY.getState());
+                payLogger.info("更新备货清单状态-------"+ReqHeaderStatusEnum.ALL_PAY.getState());
             }else if((bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.UNREVIEWED.getState()) || bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.INITIAL_PAY.getState()))  && bizRequestHeader.getTotalDetail() > bizRequestHeader.getRecvTotal()){
                 bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.INITIAL_PAY.getState());
+                payLogger.info("更新备货清单状态-------"+ReqHeaderStatusEnum.INITIAL_PAY.getState());
             }else if((bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.UNREVIEWED.getState()) || bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.INITIAL_PAY.getState())) && bizRequestHeader.getTotalDetail() < bizRequestHeader.getRecvTotal()){
                 bizRequestHeader.setBizStatus(-1);
+                payLogger.info("更新状态出问题");
             }
             bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
         }
@@ -164,6 +155,7 @@ public class BizPayMoneyController extends BaseController {
         File file =new File(pathFile);
         if(file.exists()){
             file.delete();
+            payLogger.info("删除生成的二维码");
         }
 
         return "redirect:"+ Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";

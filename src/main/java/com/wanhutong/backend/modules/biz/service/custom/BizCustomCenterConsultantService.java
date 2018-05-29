@@ -74,4 +74,9 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 		super.delete(bizCustomCenterConsultant);
 	}
 
+	@Transactional(readOnly = false)
+	public List<BizCustomCenterConsultant> userFindList(BizCustomCenterConsultant bizCustomCenterConsultant) {
+		return dao.userFindList(bizCustomCenterConsultant);
+	}
+
 }
