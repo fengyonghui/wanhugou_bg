@@ -2,6 +2,7 @@
 <PaymentOrderProcessConfig>
     <defaultProcessId>2</defaultProcessId>
     <payProcessId>666</payProcessId>
+    <endProcessId>-1</endProcessId>
     <defaultBaseMoney>50000</defaultBaseMoney>
 
     <!--流程节点-->

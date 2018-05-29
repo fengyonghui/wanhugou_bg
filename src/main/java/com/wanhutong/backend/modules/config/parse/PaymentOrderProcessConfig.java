@@ -35,6 +35,9 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
     @XStreamAlias("payProcessId")
     private int payProcessId;
 
+    @XStreamAlias("endProcessId")
+    private int endProcessId;
+
     @XStreamAlias("defaultBaseMoney")
     private BigDecimal defaultBaseMoney;
 
@@ -106,6 +109,10 @@ public class PaymentOrderProcessConfig extends ConfigGeneral {
 
     public int getPayProcessId() {
         return payProcessId;
+    }
+
+    public int getEndProcessId() {
+        return endProcessId;
     }
 
     @XStreamAlias("process")
