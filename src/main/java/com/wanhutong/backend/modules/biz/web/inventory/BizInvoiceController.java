@@ -91,17 +91,17 @@ public class BizInvoiceController extends BaseController {
 		return entity;
 	}
 
-	@RequiresPermissions("biz:inventory:bizInvoice:view")
-	@RequestMapping(value = {"list", ""})
-	public String list(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model) {
+    @RequiresPermissions("biz:inventory:bizInvoice:view")
+    @RequestMapping(value = {"list", ""})
+    public String list(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model) {
 //	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
 //	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
-		model.addAttribute("page", page);
+        model.addAttribute("page", page);
 //		model.addAttribute("ship",ship);
 //		model.addAttribute("bizStatu",bizStatu);
-		return "modules/biz/inventory/bizInvoiceList";
-	}
+        return "modules/biz/inventory/bizInvoiceList";
+    }
 
 	@ResponseBody
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
