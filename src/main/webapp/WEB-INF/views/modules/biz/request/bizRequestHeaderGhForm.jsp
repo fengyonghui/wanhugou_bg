@@ -70,6 +70,7 @@
 					<th>商品名称</th>
 					<th>商品货号</th>
 					<th>供应商</th>
+					<th>供应商电话</th>
 					<th>品牌</th>
 					<th>申报数量</th>
 					<th>已供货数量</th>
@@ -96,6 +97,7 @@
 							<td>${reqDetail.skuInfo.itemNo}</td>
 							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
 								${reqDetail.skuInfo.productInfo.office.name}</a></td>
+							<td>${reqDetail.skuInfo.productInfo.office.user.mobile}</td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td>
 								<input   value="${reqDetail.reqQty}" readonly="readonly" class="input-medium" type='text'/>
