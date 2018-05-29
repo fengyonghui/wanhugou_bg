@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,8 @@ public class BizChatRecordController extends BaseController {
 
 	@Autowired
 	private BizChatRecordService bizChatRecordService;
+	@Autowired
+	private OfficeService officeService;
 	
 	@ModelAttribute
 	public BizChatRecord get(@RequestParam(required=false) Integer id) {
@@ -61,6 +64,13 @@ public class BizChatRecordController extends BaseController {
 	@RequiresPermissions("biz:chat:bizChatRecord:view")
 	@RequestMapping(value = "form")
 	public String form(BizChatRecord bizChatRecord, Model model) {
+		if(bizChatRecord!=null && bizChatRecord.getId()==null && bizChatRecord.getOffice()!=null && bizChatRecord.getOffice().getId()!=null){
+//			查询经销店或供应商
+			Office office = officeService.get(bizChatRecord.getOffice());
+			if(office!=null){
+				bizChatRecord.setOffice(office);
+			}
+		}
 		model.addAttribute("bizChatRecord", bizChatRecord);
 		if(bizChatRecord.getSource()!=null && bizChatRecord.getSource().equals("purchaser")){
 			return "modules/biz/chat/bizChatRecordForm";

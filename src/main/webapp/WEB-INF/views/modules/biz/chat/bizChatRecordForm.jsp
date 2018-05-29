@@ -39,7 +39,8 @@
 		<div class="control-group">
 			<label class="control-label">经销店名称：</label>
 			<div class="controls">
-				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
+				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}"  disabled="disabled"
+								labelName="office.name" labelValue="${bizChatRecord.office.name}"
 					title="经销店" url="/sys/office/queryTreeList?type=6"
 					cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>

@@ -39,7 +39,8 @@
 		<div class="control-group">
 			<label class="control-label">供应商名称：</label>
 			<div class="controls">
-				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
+				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" disabled="disabled"
+								labelName="office.name" labelValue="${bizChatRecord.office.name}"
 					title="供应商" url="/sys/office/queryTreeList?type=7"
 					cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
