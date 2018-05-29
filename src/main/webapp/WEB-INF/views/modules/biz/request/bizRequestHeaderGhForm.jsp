@@ -79,7 +79,6 @@
 						<c:if test="${empty bizRequestHeader.poSource}">
 							<th>已生成的采购单</th>
 							<th>采购数量</th>
-							<th>备注</th>
 						</c:if>
 					</c:if>
 				</tr>
@@ -111,7 +110,6 @@
 								<c:if test="${reqDetail.bizPoHeader!=null}">
 									<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}&str=detail">${reqDetail.bizPoHeader.orderNum}</a></td>
 									<td>${reqDetail.reqQty}</td>
-									<td>${reqDetail.bizPoHeader.remark}</td>
 								</c:if>
 							</c:if>
 
