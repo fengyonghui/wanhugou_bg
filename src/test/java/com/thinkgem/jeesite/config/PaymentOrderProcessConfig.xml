@@ -5,46 +5,20 @@
     <defaultBaseMoney>50000</defaultBaseMoney>
 
     <!--流程节点-->
-    <!--采购中心负责人审批-->
-    <process>
-        <name>初级审批</name>
-        <code>1</code>
-        <moneyRole>
-            <startMoney>0</startMoney>
-            <endMoney>49999</endMoney>
-            <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-            <passCode>666</passCode>
-            <rejectCode>-1</rejectCode>
-        </moneyRole>
-        <moneyRole>
-            <startMoney>50000</startMoney>
-            <endMoney>99999</endMoney>
-            <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-            <passCode>2</passCode>
-            <rejectCode>-1</rejectCode>
-        </moneyRole>
-        <moneyRole>
-            <startMoney>100000</startMoney>
-            <endMoney>999999999</endMoney>
-            <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
-            <passCode>2</passCode>
-            <rejectCode>-1</rejectCode>
-        </moneyRole>
-    </process>
     <process>
         <name>财务经理审批</name>
         <code>2</code>
         <moneyRole>
             <startMoney>50000</startMoney>
             <endMoney>99999</endMoney>
-            <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+            <roleEnNameEnum>FINANCE</roleEnNameEnum>
             <passCode>666</passCode>
             <rejectCode>-1</rejectCode>
         </moneyRole>
         <moneyRole>
             <startMoney>100000</startMoney>
             <endMoney>999999999</endMoney>
-            <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+            <roleEnNameEnum>FINANCE</roleEnNameEnum>
             <passCode>3</passCode>
             <rejectCode>-1</rejectCode>
         </moneyRole>
@@ -55,7 +29,7 @@
         <moneyRole>
             <startMoney>100000</startMoney>
             <endMoney>999999999</endMoney>
-            <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+            <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
             <passCode>666</passCode>
             <rejectCode>-1</rejectCode>
         </moneyRole>

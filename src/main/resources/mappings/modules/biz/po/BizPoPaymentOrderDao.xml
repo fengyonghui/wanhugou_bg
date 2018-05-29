@@ -114,7 +114,7 @@
 	<update id="updateProcessId">
 		UPDATE biz_po_payment_order SET
 		process_id  = #{processId}
-		WHERE id = #{headerId}
+		WHERE id = #{paymentId}
 	</update>
 
 

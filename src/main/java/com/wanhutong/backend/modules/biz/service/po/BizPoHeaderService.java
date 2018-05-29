@@ -480,47 +480,55 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         // 当前流程
         PaymentOrderProcessConfig.Process currentProcess = paymentOrderProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
         // 下一流程
-//        TODO
-//        PaymentOrderProcessConfig.Process nextProcess = paymentOrderProcessConfig.getProcessMap().get(
-//                CommonProcessEntity.AuditType.PASS.getCode() == auditType ? currentProcess.getPassCode() : currentProcess.getRejectCode());
-//        if (nextProcess == null) {
-//            return "操作失败,当前流程已经结束!";
-//        }
-//
-//
-//        User user = UserUtils.getUser();
-//        List<String> roleEnNameEnumList = currentProcess.getRoleEnNameEnum();
-//        boolean hasRole = false;
-//        for (String s : roleEnNameEnumList) {
-//            RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
-//            Role role = new Role();
-//            role.setEnname(roleEnNameEnum.getState());
-//            if (user.getRoleList().contains(role)) {
-//                hasRole = true;
-//                break;
-//            }
-//        }
-//
-//        if (!user.isAdmin() && !hasRole) {
-//            return "操作失败,该用户没有权限!";
-//        }
-//
-//        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
-//            return "请输入驳回理由!";
-//        }
-//
-//        cureentProcessEntity.setBizStatus(auditType);
-//        cureentProcessEntity.setProcessor(user.getId().toString());
-//        cureentProcessEntity.setDescription(description);
-//        commonProcessService.save(cureentProcessEntity);
-//
-//        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-//        nextProcessEntity.setObjectId(String.valueOf(id));
-//        nextProcessEntity.setObjectName(BizPoPaymentOrderService.DATABASE_TABLE_NAME);
-//        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
-//        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
-//        commonProcessService.save(nextProcessEntity);
-//        bizPoPaymentOrderService.updateProcessId(id, nextProcessEntity.getId());
+        PaymentOrderProcessConfig.Process nextProcess = CommonProcessEntity.AuditType.PASS.getCode() == auditType ?
+                        paymentOrderProcessConfig.getPassProcess(money, currentProcess) : paymentOrderProcessConfig.getRejectProcess(money, currentProcess);
+        if (nextProcess == null) {
+            return "操作失败,当前流程已经结束!";
+        }
+
+        User user = UserUtils.getUser();
+        List<PaymentOrderProcessConfig.MoneyRole> moneyRoleList = currentProcess.getMoneyRole();
+        PaymentOrderProcessConfig.MoneyRole moneyRole = null;
+        for (PaymentOrderProcessConfig.MoneyRole role : moneyRoleList) {
+            if (role.getEndMoney().compareTo(money) > 0 && role.getStartMoney().compareTo(money) <= 0) {
+                moneyRole = role;
+            }
+        }
+        if (moneyRole == null) {
+            return "操作失败,当前流程无审批人,请联系技术部!";
+        }
+
+        boolean hasRole = false;
+        for (String s : moneyRole.getRoleEnNameEnum()) {
+            RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
+            Role role = new Role();
+            role.setEnname(roleEnNameEnum.getState());
+            if (user.getRoleList().contains(role)) {
+                hasRole = true;
+                break;
+            }
+        }
+
+        if (!user.isAdmin() && !hasRole) {
+            return "操作失败,该用户没有权限!";
+        }
+
+        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+            return "请输入驳回理由!";
+        }
+
+        cureentProcessEntity.setBizStatus(auditType);
+        cureentProcessEntity.setProcessor(user.getId().toString());
+        cureentProcessEntity.setDescription(description);
+        commonProcessService.save(cureentProcessEntity);
+
+        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+        nextProcessEntity.setObjectId(String.valueOf(id));
+        nextProcessEntity.setObjectName(BizPoPaymentOrderService.DATABASE_TABLE_NAME);
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+        commonProcessService.save(nextProcessEntity);
+        bizPoPaymentOrderService.updateProcessId(id, nextProcessEntity.getId());
 
         return "操作成功!";
     }

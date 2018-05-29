@@ -318,8 +318,8 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizpopaymentorder:bizPoPaymentOrder:audit")
     @RequestMapping(value = "auditPay")
     @ResponseBody
-    public String auditPay(int id, String currentType, int auditType, String description) {
-        return bizPoHeaderService.auditPay(id, currentType, auditType, description);
+    public String auditPay(int id, String currentType, int auditType, String description, BigDecimal money) {
+        return bizPoHeaderService.auditPay(id, currentType, auditType, description, money);
     }
 
 

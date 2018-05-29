@@ -61,8 +61,8 @@
 				<td>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:audit">
 					<c:if test="${bizPoPaymentOrder.id == bizPoHeader.bizPoPaymentOrder.id && bizPoPaymentOrder.commonProcess.paymentOrderProcess.name != '审批完成'}">
-						<a onclick="checkPass(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code})">审核通过</a>
-						<a onclick="checkReject(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code})">审核驳回</a>
+						<a onclick="checkPass(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total})">审核通过</a>
+						<a onclick="checkReject(${bizPoPaymentOrder.id}, ${bizPoPaymentOrder.commonProcess.paymentOrderProcess.code}, ${bizPoPaymentOrder.total})">审核驳回</a>
 					</c:if>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:edit">
@@ -81,7 +81,7 @@
 	<div ><input type="button" class="btn" onclick="window.history.go(-1);" value="返回"/></div>
 	<div class="pagination">${page}</div>
 	<script type="text/javascript">
-            function checkPass(id, currentType) {
+            function checkPass(id, currentType, money) {
                 var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
                 var submit = function (v, h, f) {
                     if ($String.isNullOrBlank(f.description)) {
@@ -90,7 +90,7 @@
                     }
                     top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
                         if (v1 == "ok") {
-                            audit(1, f.description, id);
+                            audit(1, f.description, id, currentType, money);
                         }
                     }, {buttonsFocus: 1});
                     return true;
@@ -103,7 +103,7 @@
 
             }
 
-            function checkReject(id, currentType) {
+            function checkReject(id, currentType, money) {
                 var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
                 var submit = function (v, h, f) {
                     if ($String.isNullOrBlank(f.description)) {
@@ -112,7 +112,7 @@
                     }
                     top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
                         if (v1 == "ok") {
-                            audit(2, f.description, id, currentType);
+                            audit(2, f.description, id, currentType, money);
                         }
                     }, {buttonsFocus: 1});
                     return true;
@@ -125,11 +125,11 @@
 
             }
 
-            function audit(auditType, description, id, currentType) {
+            function audit(auditType, description, id, currentType, money) {
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/auditPay',
                     contentType: 'application/json',
-                    data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
+                    data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description, "money": money},
                     type: 'get',
                     success: function (result) {
                         alert(result);
