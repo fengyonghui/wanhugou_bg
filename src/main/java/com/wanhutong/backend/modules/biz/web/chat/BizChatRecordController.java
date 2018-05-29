@@ -52,14 +52,20 @@ public class BizChatRecordController extends BaseController {
 	public String list(BizChatRecord bizChatRecord, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizChatRecord> page = bizChatRecordService.findPage(new Page<BizChatRecord>(request, response), bizChatRecord); 
 		model.addAttribute("page", page);
-		return "modules/biz/chat/bizChatRecordList";
+		if(bizChatRecord.getSource()!=null && bizChatRecord.getSource().equals("purchaser")){
+			return "modules/biz/chat/bizChatRecordList";
+		}
+		return "modules/biz/chat/bizChatRecordSuppliList";
 	}
 
 	@RequiresPermissions("biz:chat:bizChatRecord:view")
 	@RequestMapping(value = "form")
 	public String form(BizChatRecord bizChatRecord, Model model) {
 		model.addAttribute("bizChatRecord", bizChatRecord);
-		return "modules/biz/chat/bizChatRecordForm";
+		if(bizChatRecord.getSource()!=null && bizChatRecord.getSource().equals("purchaser")){
+			return "modules/biz/chat/bizChatRecordForm";
+		}
+		return "modules/biz/chat/bizChatRecordSuppliForm";
 	}
 
 	@RequiresPermissions("biz:chat:bizChatRecord:edit")

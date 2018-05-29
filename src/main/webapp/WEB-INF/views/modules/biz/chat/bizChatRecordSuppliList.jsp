@@ -26,9 +26,9 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input name="source" type="hidden" value="purchaser"/>
 		<ul class="ul-form">
-			<li><label>经销店名称:</label>
+			<li><label>供应商名称:</label>
 				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
-					title="经销店" url="/sys/office/queryTreeList?type=${bizChatRecord.office.type}" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
+					title="供应商" url="/sys/office/queryTreeList?type=${bizChatRecord.office.type}" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label style="width: 130px;">品类主管或客户专员:</label>
 				<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"
@@ -44,7 +44,7 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>经销店名称</th>
+				<th>供应商名称</th>
 				<th>品类主管或客户专员</th>
 				<th>沟通记录</th>
 				<th>创建人</th>

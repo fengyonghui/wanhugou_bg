@@ -37,21 +37,21 @@
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">经销店名称：</label>
+			<label class="control-label">供应商名称：</label>
 			<div class="controls">
 				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
-					title="经销店" url="/sys/office/queryTreeList?type=${bizChatRecord.office.type}"
+					title="供应商" url="/sys/office/queryTreeList?type=${bizChatRecord.office.type}"
 					cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 				<c:if test="${bizChatRecord.office.type==6}">
 					<button class="btn btn-primary btn-lg" data-toggle="modal"
-							onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&source=chatRecordSave';">添加新的机构</button>
+							onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&source=chatRecordSave';">添加新的经销店</button>
 				</c:if>
 				<c:if test="${bizChatRecord.office.type==7}">
 					<button class="btn btn-primary btn-lg" data-toggle="modal"
-							onclick="window.location.href='${ctx}/sys/office/supplierForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&gysFlag=chatRecordSave';">添加新的经销店</button>
+							onclick="window.location.href='${ctx}/sys/office/supplierForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&gysFlag=chatRecordSave';">添加新的供应商</button>
 				</c:if>
-				<font color="red">没有需要的经销店时，请点击按钮，不添加请点击左侧放大镜选择经销店</font>
+				<font color="red">没有需要的供应商时，请点击按钮，不添加请点击左侧放大镜选择供应商</font>
 			</div>
 		</div>
 		<div class="control-group">
