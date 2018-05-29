@@ -40,13 +40,11 @@ import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
-import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -65,7 +63,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 采购订单表Controller
@@ -308,7 +312,14 @@ public class BizPoHeaderController extends BaseController {
     @RequestMapping(value = "audit")
     @ResponseBody
     public String audit(int id, String currentType, int auditType, String description) {
-        return bizPoHeaderService.audit(id, currentType, auditType, description);
+        return bizPoHeaderService.auditPo(id, currentType, auditType, description);
+    }
+
+    @RequiresPermissions("biz:po:bizpopaymentorder:bizPoPaymentOrder:audit")
+    @RequestMapping(value = "auditPay")
+    @ResponseBody
+    public String auditPay(int id, String currentType, int auditType, String description) {
+        return bizPoHeaderService.auditPay(id, currentType, auditType, description);
     }
 
 
