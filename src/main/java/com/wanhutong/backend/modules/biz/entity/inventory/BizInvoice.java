@@ -43,8 +43,6 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String ordDetails;		//发货订单详情ID
 	private String trackingNumber;		//物流单号
 
-	private BizDetailInvoice bizDetailInvoice;
-
 	public BizInvoice() {
 		super();
 	}
