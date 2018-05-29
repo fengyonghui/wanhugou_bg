@@ -659,6 +659,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoPaymentOrder.setPayTotal(payTotal);
         bizPoPaymentOrder.setImg(img);
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.ALL_PAY.getStatus());
+        bizPoPaymentOrder.setPayTime(new Date());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
 

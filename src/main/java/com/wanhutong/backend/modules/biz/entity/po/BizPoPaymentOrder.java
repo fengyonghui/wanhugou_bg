@@ -32,6 +32,8 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     private CommonProcessEntity commonProcess;
 
+    private Date payTime;
+
 
     public BizPoPaymentOrder() {
         super();
@@ -104,6 +106,14 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setCommonProcess(CommonProcessEntity commonProcess) {
         this.commonProcess = commonProcess;
+    }
+
+    public Date getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(Date payTime) {
+        this.payTime = payTime;
     }
 
     public enum BizStatus {
