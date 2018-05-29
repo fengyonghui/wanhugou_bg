@@ -25,7 +25,6 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -43,9 +42,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,56 +90,18 @@ public class BizInvoiceController extends BaseController {
 		}
 		return entity;
 	}
-	
-	@RequiresPermissions("biz:inventory:bizInvoice:view")
-	@RequestMapping(value = {"list", ""})
-	public String list(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model) {
+
+    @RequiresPermissions("biz:inventory:bizInvoice:view")
+    @RequestMapping(value = {"list", ""})
+    public String list(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model) {
 //	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
 //	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
-        List<BizInvoice> bizInvoiceList = page.getList();
-        for (int i=0; i<bizInvoiceList.size(); i++){
-            BizInvoice bizInvoiceTemp = bizInvoiceList.get(i);
-            String headerNo = "";
-            BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
-            bizDetailInvoice.setInvoice(bizInvoiceTemp);
-            List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
-
-            if (DetailInvoiceList != null && !DetailInvoiceList.isEmpty()){
-                for (BizDetailInvoice detailInvoice:DetailInvoiceList) {
-                    BizInvoice invoiceTemp = detailInvoice.getInvoice();
-                    invoiceTemp = bizInvoiceService.get(invoiceTemp.getId());
-                    if (invoiceTemp.getShip()!=null && invoiceTemp.getShip().intValue() ==0 ){
-                        BizOrderHeader bizorderHeader = detailInvoice.getOrderHeader();
-                        BizOrderHeader orderHeader = bizOrderHeaderService.get(bizorderHeader.getId());
-                        String orderNum = orderHeader.getOrderNum();
-                        if (orderNum != null){
-                            headerNo += orderNum + ",";
-                        }
-
-                    } else if (invoiceTemp.getShip() !=null && invoiceTemp.getShip().intValue() ==1){
-                        BizRequestHeader bizRequestHeader = detailInvoice.getRequestHeader();
-                        BizRequestHeader requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
-                        String reqNo = requestHeader.getReqNo() ;
-                        if (reqNo != null){
-                            headerNo += reqNo + ",";
-                        }
-                    }
-
-                }
-                if (headerNo.length()>0){
-                    headerNo = headerNo.substring(0 , headerNo.length()-1);
-                }
-            }
-            bizInvoiceTemp.setHeaderNo(headerNo);
-            bizInvoiceList.set(i,bizInvoiceTemp);
-        }
-        page.setList(bizInvoiceList);
-		model.addAttribute("page", page);
+        model.addAttribute("page", page);
 //		model.addAttribute("ship",ship);
 //		model.addAttribute("bizStatu",bizStatu);
-		return "modules/biz/inventory/bizInvoiceList";
-	}
+        return "modules/biz/inventory/bizInvoiceList";
+    }
 
 	@ResponseBody
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
