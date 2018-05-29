@@ -271,7 +271,8 @@
 									${orderHeader.platformInfo.name}
 							</td>
 					<td>
-						${orderHeader.locationAddress}
+						${orderHeader.bizLocation.province.name}${orderHeader.bizLocation.city.name}
+						${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
 					</td>
 					<td>
 							${orderHeader.createBy.name}
