@@ -63,11 +63,11 @@
 					title="经销店" url="/sys/office/queryTreeList?type=6"
 					cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-				<c:if test="${bizChatRecord.office.type==6}">
-					<button class="btn btn-primary btn-lg" data-toggle="modal"
-							onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&source=chatRecordSave';">添加新的经销店</button>
-				</c:if>
-				<font color="red">需要添加新的经销店时，请点击按钮</font>
+				<%--<c:if test="${bizChatRecord.office.type==6}">--%>
+					<%--<button class="btn btn-primary btn-lg" data-toggle="modal"--%>
+							<%--onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&source=chatRecordSave';">添加新的经销店</button>--%>
+				<%--</c:if>--%>
+				<%--<font color="red">需要添加新的经销店时，请点击按钮</font>--%>
 			</div>
 		</div>
 		<div class="control-group">

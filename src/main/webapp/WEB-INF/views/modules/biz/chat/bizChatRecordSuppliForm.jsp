@@ -63,11 +63,11 @@
 					title="供应商" url="/sys/office/queryTreeList?type=7"
 					cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-				<c:if test="${bizChatRecord.office.type==7}">
-					<button class="btn btn-primary btn-lg" data-toggle="modal"
-							onclick="window.location.href='${ctx}/sys/office/supplierForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&gysFlag=chatRecordSave';">添加新的供应商</button>
-				</c:if>
-				<font color="red">需要添加新的供应商时，请点击按钮</font>
+				<%--<c:if test="${bizChatRecord.office.type==7}">--%>
+					<%--<button class="btn btn-primary btn-lg" data-toggle="modal"--%>
+							<%--onclick="window.location.href='${ctx}/sys/office/supplierForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&gysFlag=chatRecordSave';">添加新的供应商</button>--%>
+				<%--</c:if>--%>
+				<%--<font color="red">需要添加新的供应商时，请点击按钮</font>--%>
 			</div>
 		</div>
 		<div class="control-group">

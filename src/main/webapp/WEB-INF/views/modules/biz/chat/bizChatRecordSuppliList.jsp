@@ -26,12 +26,12 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input name="source" type="hidden" value="suppli"/>
 		<ul class="ul-form">
-			<li><label>供应商名称:</label>
-				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}"
-								labelName="office.name" labelValue="${bizChatRecord.office.name}"
-					title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-small"
-								allowClear="true" notAllowSelectParent="true"/>
-			</li>
+			<%--<li><label>供应商名称:</label>--%>
+				<%--<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}"--%>
+								<%--labelName="office.name" labelValue="${bizChatRecord.office.name}"--%>
+					<%--title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-small"--%>
+								<%--allowClear="true" notAllowSelectParent="true"/>--%>
+			<%--</li>--%>
 			<li><label style="width: 130px;">品类主管或客户专员:</label>
 				<%--<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"--%>
 					<%--title="品类主管或客户专员" url="/sys/user/userSelectTreeData" cssClass="input-small"--%>
