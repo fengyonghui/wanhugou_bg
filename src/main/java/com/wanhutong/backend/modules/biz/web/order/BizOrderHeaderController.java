@@ -96,6 +96,8 @@ public class BizOrderHeaderController extends BaseController {
     private DefaultPropService defaultPropService;
     @Autowired
     private BizOrderStatusService bizOrderStatusService;
+    @Autowired
+    private BizOrderAppointedTimeService bizOrderAppointedTimeService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -198,7 +200,12 @@ public class BizOrderHeaderController extends BaseController {
                 //供应商
                 User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
                 model.addAttribute("vendUser",vendUser);
-
+                BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
+                bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
+                List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
+                if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
+                    model.addAttribute("appointedTimeList",appointedTimeList);
+                }
             }
         }
         BizOrderHeader boh = new BizOrderHeader();

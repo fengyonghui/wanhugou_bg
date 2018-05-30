@@ -856,12 +856,18 @@
         <label class="control-label">付款约定:</label>
         <div class="controls">
             <table class="table table-striped table-bordered">
-                <%--<c:forEach items="" var="">--%>
-                    <%--<tr>--%>
-                        <%--<td></td>--%>
-                        <%--<td></td>--%>
-                    <%--</tr>--%>
-                <%--</c:forEach>--%>
+                <thead>
+                    <th>付款时间</th>
+                    <th>金额</th>
+                </thead>
+                <tbody>
+                    <c:forEach items="${appointedTimeList}" var="appointedTime">
+                        <tr>
+                            <td><fmt:formatDate value="${appointedTime.appointedDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                            <td>${appointedTime.appointedMoney}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
             </table>
         </div>
     </div>
