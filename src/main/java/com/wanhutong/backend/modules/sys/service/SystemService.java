@@ -693,7 +693,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		if(userAdmin.isAdmin()){
 			users=userDao.userSelectCompany(user);
 		}else{
-			user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+//			user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
 			users = userDao.userSelectCompany(user);
 		}
 		return users;
