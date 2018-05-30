@@ -143,7 +143,7 @@ public class BizPoHeaderController extends BaseController {
 //			List<Map<String,Integer>> poOrderReqs= Lists.newArrayList();
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
-            Map<Integer, List<BizPoOrderReq>> map = new HashMap<>();
+            Map<Integer, ArrayList<BizPoOrderReq>> map = new HashMap<>();
             Map<String, Integer> mapSource = new HashMap<>();
             for (BizPoOrderReq poOrderReq : poOrderReqList) {
                 if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())) {
@@ -164,7 +164,7 @@ public class BizPoHeaderController extends BaseController {
                         BizOrderDetail orderDetail = bizOrderDetailList.get(0);
                         Integer key = orderDetail.getSkuInfo().getId();
                         if (map.containsKey(key)) {
-                            List<BizPoOrderReq> bizPoOrderReqList = map.get(key);
+                            ArrayList<BizPoOrderReq> bizPoOrderReqList = map.get(key);
 
                             map.remove(key);
 
@@ -173,7 +173,7 @@ public class BizPoHeaderController extends BaseController {
                             bizPoOrderReqList.add(poOrderReq);
                             map.put(orderDetail.getSkuInfo().getId(), bizPoOrderReqList);
                         } else {
-                            List<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
+                            ArrayList<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
                             String orderNumStr = bizOrderHeader.getOrderNum();
                             poOrderReq.setOrderNumStr(orderNumStr);
                             bizPoOrderReqList.add(poOrderReq);
@@ -200,7 +200,7 @@ public class BizPoHeaderController extends BaseController {
                         Integer key = requestDetail.getSkuInfo().getId();
                         if (map.containsKey(key)) {
 
-                            List<BizPoOrderReq> bizPoOrderReqList = map.get(key);
+                            ArrayList<BizPoOrderReq> bizPoOrderReqList = map.get(key);
                             map.remove(key);
                             poOrderReq.setOrderNumStr(bizRequestHeader.getReqNo());
                             bizPoOrderReqList.add(poOrderReq);
@@ -209,7 +209,7 @@ public class BizPoHeaderController extends BaseController {
                         } else {
                             String orderNumStr = bizRequestHeader.getReqNo();
                             poOrderReq.setOrderNumStr(orderNumStr);
-                            List<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
+                            ArrayList<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
                             bizPoOrderReqList.add(poOrderReq);
                             map.put(requestDetail.getSkuInfo().getId(), bizPoOrderReqList);
                         }
