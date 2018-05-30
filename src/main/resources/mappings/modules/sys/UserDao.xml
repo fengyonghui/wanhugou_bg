@@ -611,18 +611,15 @@
 		FROM sys_user a
 			left join sys_user_role sur on sur.user_id=a.id
 			left join sys_role sr on sr.id=sur.role_id
+			LEFT JOIN sys_office o ON o.id = a.office_id
 		WHERE
 			a.STATUS = #{DEL_FLAG_NORMAL}
 			and sr.status = #{DEL_FLAG_NORMAL}
 		<if test="role!=null and role.name!=null and role.name!=''">
 			and sr.enname = #{role.name}
 		</if>
-		<if test="name!=null and name!=''">
-			and a.name = #{name}
-			<if test="role!=null and role.name!=null and role.name!=''">
-				and sr.enname in(#{role.name},#{role.enname})
-			</if>
-		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
 	</select>
 
 </mapper>
