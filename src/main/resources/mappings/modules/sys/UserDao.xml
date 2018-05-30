@@ -601,26 +601,25 @@
 	<select id="userSelectCompany" resultType="User">
 		SELECT
 		a.id,
-		a.company_id,
-		a.office_id,
-		a.login_name,
-		a. NAME,
-		sr.name,
-		sr.enname
+		a.company_id as "company.id",
+		a.office_id as "office.id",
+		a.login_name as "loginName",
+		a.name as "name",
+		sr.id as "role.id",
+		sr.name as "role.name",
+		sr.enname as "role.enname"
 		FROM sys_user a
 			left join sys_user_role sur on sur.user_id=a.id
 			left join sys_role sr on sr.id=sur.role_id
+			LEFT JOIN sys_office o ON o.id = a.office_id and o.status=1
 		WHERE
 			a.STATUS = #{DEL_FLAG_NORMAL}
 			and sr.status = #{DEL_FLAG_NORMAL}
-			<if test="role!=null and role.name!=null and role.name!=''">
-				and sr.enname in(
-				#{role.name}
-				<if test="role!=null and role.enname!=null and role.enname!=''">
-					,#{role.enname}
-				</if>
-				)
-			</if>
+		<if test="role!=null and role.name!=null and role.name!=''">
+			and sr.enname = #{role.name}
+		</if>
+		<!-- 数据范围过滤
+		${sqlMap.dsf}-->
 	</select>
 
 	<select id="findVendUser" resultType="User">

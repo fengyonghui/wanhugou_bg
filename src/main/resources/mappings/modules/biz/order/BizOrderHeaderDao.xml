@@ -1991,7 +1991,7 @@ FROM
 	</select>
 
 	<!-- 客户专员查看该采购商的采购累计频次 -->
-	<select id="findUserOrderCountSecond" resultType="BizOrderHeader">
+	<select id="findUserOrderCountSecond" resultType="BizOrderHeader" parameterType="BizChatRecord">
 		SELECT
 		count(1) AS "orderCount",
 		sum(receive_total) AS "userOfficeReceiveTotal",
@@ -2005,15 +2005,23 @@ FROM
 			cl.region_id as "bizLocation.region.id",
 			reg.name as "bizLocation.region.name",
 			cl.address as "bizLocation.address",
-		(select count(1) from biz_chat_record where office_id=#{custId}) as "officeChatRecord"
+		(select count(1) from biz_chat_record as bizcr
+		LEFT JOIN sys_office so ON so.id = bizcr.office_id
+		LEFT JOIN sys_user su ON su.id = bizcr.user_id
+		where bizcr.office_id=#{office.id} and bizcr.status=1
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
+		) as "officeChatRecord"
 		FROM biz_order_header AS oh
-		LEFT JOIN sys_office_address soa on soa.office_id=oh.cust_id and soa.status=1 and soa.default_status=1
-		left join common_location cl on cl.id=soa.addr_id
+		<!--LEFT JOIN sys_office_address soa on soa.office_id=oh.cust_id and soa.status=1 and soa.default_status=1
+		left join common_location cl on cl.id=soa.addr_id-->
+		left join biz_order_address cl on cl.id=oh.ship_to_addr
 		LEFT JOIN sys_region province ON cl.province_id = province.id
 		LEFT JOIN sys_region city ON cl.city_id = city.id
 		LEFT JOIN sys_region reg ON cl.region_id = reg.id
 		left join biz_chat_record bcr on bcr.office_id=oh.cust_id
-		WHERE oh.cust_id = #{custId}
+		WHERE oh.cust_id = #{office.id}
 		AND (
 		(
 		biz_status != 45

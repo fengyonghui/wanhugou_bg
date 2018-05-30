@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.entity.order;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
 import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
@@ -103,6 +104,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Double userOfficeReceiveTotal;
     private Date userOfficeDeta;
     private Integer officeChatRecord;//经销店的沟通次数
+    private BizChatRecord bizChatRecord;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -537,5 +539,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setOfficeChatRecord(Integer officeChatRecord) {
         this.officeChatRecord = officeChatRecord;
+    }
+
+    public BizChatRecord getBizChatRecord() {
+        return bizChatRecord;
+    }
+
+    public void setBizChatRecord(BizChatRecord bizChatRecord) {
+        this.bizChatRecord = bizChatRecord;
     }
 }
