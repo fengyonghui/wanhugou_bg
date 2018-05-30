@@ -133,6 +133,7 @@ public class BizCustomCenterConsultantController extends BaseController {
                             totalCount += b.getOrderCount();
                             orHeaders.setUserOfficeReceiveTotal(b.getUserOfficeReceiveTotal());
                             orHeaders.setUserOfficeDeta(b.getUserOfficeDeta());
+                            orHeaders.setBizLocation(b.getBizLocation());
                         }
                         orHeaders.setOrderCount(totalCount);
                         resultMap.put(data.getLeft(), orHeaders ==null?new BizOrderHeader():orHeaders);
