@@ -25,17 +25,9 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input name="source" type="hidden" value="suppli"/>
+		<input name="office.id" type="hidden" value="${bizChatRecord.office.id}"/>
 		<ul class="ul-form">
-			<%--<li><label>供应商名称:</label>--%>
-				<%--<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}"--%>
-								<%--labelName="office.name" labelValue="${bizChatRecord.office.name}"--%>
-					<%--title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-small"--%>
-								<%--allowClear="true" notAllowSelectParent="true"/>--%>
-			<%--</li>--%>
 			<li><label style="width: 130px;">品类主管或客户专员:</label>
-				<%--<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"--%>
-					<%--title="品类主管或客户专员" url="/sys/user/userSelectTreeData" cssClass="input-small"--%>
-						<%--allowClear="true" notAllowSelectParent="true"/>--%>
 				<form:input path="user.name" htmlEscape="false" maxlength="40" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
@@ -61,9 +53,7 @@
 		<c:forEach items="${page.list}" var="bizChatRecord">
 			<tr>
 				<td>
-					<%--<a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}&office.type=7&office.parent.id=12&office.id=${bizChatRecord.office.id}&source=suppli">--%>
 					${bizChatRecord.office.name}
-					<%--</a>--%>
 				</td>
 				<td>
 					${bizChatRecord.user.name}
