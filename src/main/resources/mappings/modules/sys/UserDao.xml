@@ -614,14 +614,15 @@
 		WHERE
 			a.STATUS = #{DEL_FLAG_NORMAL}
 			and sr.status = #{DEL_FLAG_NORMAL}
+		<if test="role!=null and role.name!=null and role.name!=''">
+			and sr.enname = #{role.name}
+		</if>
+		<if test="name!=null and name!=''">
+			and a.name = #{name}
 			<if test="role!=null and role.name!=null and role.name!=''">
-				and sr.enname in(
-				#{role.name}
-				<if test="role!=null and role.enname!=null and role.enname!=''">
-					,#{role.enname}
-				</if>
-				)
+				and sr.enname in(#{role.name},#{role.enname})
 			</if>
+		</if>
 	</select>
 
 </mapper>

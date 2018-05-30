@@ -706,23 +706,18 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@ResponseBody
 	@RequestMapping(value = "userSelectTreeData")
-	public List<Map<String, Object>> userSelectTreeData() {
-		List<Map<String, Object>> mapList = Lists.newArrayList();
+	public List<User> userSelectTreeData(String names) {
 		Role role = new Role();
-		role.setName(RoleEnNameEnum.BUYER.getState());
-		role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+		if(names!=null){
+			role.setName(names);
+		}
 		User user = new User();
 		user.setRole(role);
-		List<User> list = systemService.userSelectCompany(user);
-		for (int i=0; i<list.size(); i++){
-			User e = list.get(i);
-			Map<String, Object> map = Maps.newHashMap();
-			map.put("id", e.getId());
-			map.put("pId", e.getRole().getId());
-			map.put("name", StringUtils.replace(e.getName(), " ", ""));
-			mapList.add(map);
+		List<User> list =null;
+		if(names!=null){
+			list = systemService.userSelectCompany(user);
 		}
-		return mapList;
+		return list;
 	}
 
 }

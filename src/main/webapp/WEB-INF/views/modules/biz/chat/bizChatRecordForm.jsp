@@ -24,6 +24,24 @@
 			});
 		});
 	</script>
+<script type="text/javascript">
+	function func(m){
+		$("#two").empty();
+		$.ajax({
+			type:"post",
+			url:"${ctx}/sys/user/userSelectTreeData",
+			data:"names="+m,
+			success:function(data){
+				if(data!=null){
+					$("#two").append("<option value='' class='input-medium required'> ===请选择=== </option>");
+					$.each(data,function(index,items) {
+                    	$("#two").append("<option value='"+items.id+"'>"+items.name+"</option>");
+                	});
+				}
+			}
+		});
+	}
+</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -55,9 +73,17 @@
 		<div class="control-group">
 			<label class="control-label">品类主管或客户专员：</label>
 			<div class="controls">
-				<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"
-					title="品类主管或客户专员" url="/sys/user/userSelectTreeData" cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+				<%--<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"--%>
+					<%--title="品类主管或客户专员" url="/sys/user/userSelectTreeData" cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>--%>
+					<select id="one" onchange="func(this.value)"  name="names" class="input-medium required">
+						<option value="">&nbsp;===请选择===&nbsp;</option>
+						<option value="buyer">客户专员</option>
+						<option value="selection_of_specialist">品类主管</option>
+					</select>
+					<select id="two" class="input-medium required" name="user.id">
+						<option value="">&nbsp;===请选择===&nbsp;</option>
+					</select>
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">

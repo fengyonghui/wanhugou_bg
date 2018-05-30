@@ -6,8 +6,12 @@ package com.wanhutong.backend.modules.biz.web.chat;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +28,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
 
+import java.util.List;
+
 /**
  * 沟通记录：品类主管或客户专员，机构沟通Controller
  * @author Oy
@@ -37,6 +43,8 @@ public class BizChatRecordController extends BaseController {
 	private BizChatRecordService bizChatRecordService;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private SystemService systemService;
 	
 	@ModelAttribute
 	public BizChatRecord get(@RequestParam(required=false) Integer id) {
