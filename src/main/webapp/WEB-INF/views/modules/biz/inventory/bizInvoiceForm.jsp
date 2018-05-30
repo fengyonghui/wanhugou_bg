@@ -4,8 +4,6 @@
 <head>
 	<title>发货单管理</title>
 	<meta name="decorator" content="default"/>
-	<script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
-	<script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
             $('#select_all').live('click',function(){
