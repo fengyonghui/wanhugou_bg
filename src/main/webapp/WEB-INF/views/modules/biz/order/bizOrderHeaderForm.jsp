@@ -851,6 +851,40 @@
             </div>
         </c:if>
     </c:if>
+    <c:if test="${entity.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+    <div class="control-group">
+        <label class="control-label">付款约定:</label>
+        <div class="controls">
+            <table class="table table-striped table-bordered">
+                <%--<c:forEach items="" var="">--%>
+                    <%--<tr>--%>
+                        <%--<td></td>--%>
+                        <%--<td></td>--%>
+                    <%--</tr>--%>
+                <%--</c:forEach>--%>
+            </table>
+        </div>
+    </div>
+        <div class="control-group">
+            <div class="controls">
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                    甲方(经销店):${entity2.customer.name}<br>
+                负责人:${custUser.name}<br>
+                联系电话:${custUser.mobile}
+                </div>
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                乙方(供应商):${vendUser.vendor.name}<br>
+                负责人:${vendUser.name}<br>
+                联系电话:${vendUser.mobile}
+                </div>
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                丙方(万户通):万户通总公司<br>
+                负责人:${orderCenter.consultants.name}<br>
+                联系电话:${orderCenter.consultants.mobile}
+                </div>
+            </div>
+        </div>
+    </c:if>
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
             <div class="control-group" id="jhadd1">
@@ -920,7 +954,6 @@
 
         </c:otherwise>
     </c:choose>
-
 </form:form>
 
 <%--详情列表--%>

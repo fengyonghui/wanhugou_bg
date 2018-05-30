@@ -19,6 +19,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
@@ -53,6 +54,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
     @Autowired
     private BizOrderStatusService bizOrderStatusService;
+    @Autowired
+    private UserDao userDao;
 
 
     public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader) {
@@ -106,9 +109,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
            // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
             Page<BizOrderHeader> orderHeaderPage = super.findPage(page, bizOrderHeader);
           // page.setCount(count);
-            List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
-            List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
-            orderHeaderPage.setList(bizOrderHeaderList);
+//            List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
+//            List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
+//            orderHeaderPage.setList(bizOrderHeaderList);
 
             return orderHeaderPage;
         }else {
@@ -137,9 +140,9 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             Page<BizOrderHeader> orderHeaderPage=super.findPage(page, bizOrderHeader);
            // Integer count= bizOrderHeaderDao.findCount(bizOrderHeader);
           //  page.setCount(count);
-            List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
-            List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
-            orderHeaderPage.setList(bizOrderHeaderList);
+//            List<BizOrderHeader> orderHeaderList = orderHeaderPage.getList();
+//            List<BizOrderHeader> bizOrderHeaderList = getTotalBuyPrice(orderHeaderList);
+//            orderHeaderPage.setList(bizOrderHeaderList);
 
             return orderHeaderPage;
         }
@@ -269,7 +272,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      * @param orderHeaderList
      * @return
      */
-    public List<BizOrderHeader> getTotalBuyPrice(List<BizOrderHeader> orderHeaderList){
+    /*public List<BizOrderHeader> getTotalBuyPrice(List<BizOrderHeader> orderHeaderList){
         for (BizOrderHeader orderHeader:orderHeaderList) {
             Double totalBuyPrice = 0.0;
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
@@ -292,7 +295,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             orderHeader.setTotalBuyPrice(totalBuyPrice);
         }
         return orderHeaderList;
-    }
+    }*/
 
     /**
      * 查询线下支付订单
@@ -443,6 +446,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             List<BizOrderHeader> bizOrderHeaderList = super.findList(bizOrderHeader);
             return bizOrderHeaderList;
         }
+    }
+
+    /**
+     * 查询供应商主负责人
+     * @return
+     */
+    public User findVendUser(Integer orderId,String vendType) {
+        return userDao.findVendUser(orderId,vendType);
     }
 
 

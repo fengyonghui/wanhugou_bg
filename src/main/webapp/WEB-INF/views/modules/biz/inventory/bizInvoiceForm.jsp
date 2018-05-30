@@ -4,6 +4,8 @@
 <head>
 	<title>发货单管理</title>
 	<meta name="decorator" content="default"/>
+	<script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
+	<script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
             $('#select_all').live('click',function(){
@@ -236,7 +238,7 @@
 		<div class="control-group">
 			<label class="control-label">物流信息图：</label>
 			<div class="controls">
-				<input type="hidden" id="imgUrl" name="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
 							  maxHeight="100"/>
 			</div>

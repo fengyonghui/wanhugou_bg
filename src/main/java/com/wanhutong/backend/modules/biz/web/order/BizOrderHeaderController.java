@@ -189,6 +189,17 @@ public class BizOrderHeaderController extends BaseController {
                     model.addAttribute("address", address);
                 }
             }
+            //代采
+            if (bizOrderHeaderTwo.getOrderType()==Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+                //经销店
+                Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+                User user = systemService.getUser(office.getPrimaryPerson().getId());
+                model.addAttribute("custUser",user);
+                //供应商
+                User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
+                model.addAttribute("vendUser",vendUser);
+
+            }
         }
         BizOrderHeader boh = new BizOrderHeader();
         if (bizOrderHeader != null) {
@@ -595,11 +606,7 @@ public class BizOrderHeaderController extends BaseController {
                     //商品总价
                     rowData.add(String.valueOf(df.format(o.getTotalDetail())));
                     //商品工厂总价
-                    List<BizOrderHeader> orderHeaderList = new ArrayList<>();
-                    orderHeaderList.add(o);
-                    List<BizOrderHeader> oheaderList = bizOrderHeaderService.getTotalBuyPrice(orderHeaderList);
-                    BizOrderHeader orderHeader = oheaderList.get(0);
-                    rowData.add(String.valueOf(df.format(orderHeader.getTotalBuyPrice())));
+                    rowData.add(String.valueOf(df.format(o.getTotalBuyPrice())));
                     //交易金额
                     rowData.add(String.valueOf(o.getTotalExp()));
                     //运费
@@ -712,11 +719,7 @@ public class BizOrderHeaderController extends BaseController {
                         //商品总价
                         rowData.add(String.valueOf(df.format(o.getTotalDetail())));
                         //商品工厂总价
-                        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
-                        orderHeaderList.add(o);
-                        List<BizOrderHeader> oheaderList = bizOrderHeaderService.getTotalBuyPrice(orderHeaderList);
-                        BizOrderHeader orderHeader = oheaderList.get(0);
-                        rowData.add(String.valueOf(df.format(orderHeader.getTotalBuyPrice())));
+                        rowData.add(String.valueOf(df.format(o.getTotalBuyPrice())));
                         //交易金额
                         rowData.add(String.valueOf(o.getTotalExp()));
                         //运费
