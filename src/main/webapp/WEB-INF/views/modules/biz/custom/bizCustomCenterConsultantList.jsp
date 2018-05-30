@@ -88,7 +88,10 @@
                 ${bizCustomCenterConsultant.key.customs.primaryPerson.name}
             </td>
             <td>
-                ${bizCustomCenterConsultant.key.bizLocation.pcrName}${bizCustomCenterConsultant.key.bizLocation.address}
+                <c:if test="${bizCustomCenterConsultant.value.userOfficeReceiveTotal !=null}">
+                    ${bizCustomCenterConsultant.value.bizLocation.province.name}${bizCustomCenterConsultant.value.bizLocation.city.name}
+                    ${bizCustomCenterConsultant.value.bizLocation.region.name}${bizCustomCenterConsultant.value.bizLocation.address}
+                </c:if>
             </td>
             <td>${bizCustomCenterConsultant.value.orderCount}</td>
             <td>${bizCustomCenterConsultant.value.userOfficeReceiveTotal}</td>

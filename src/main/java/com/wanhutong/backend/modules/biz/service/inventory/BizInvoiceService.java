@@ -128,6 +128,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             invoice.setCarrier(bizInvoice.getCarrier());
             invoice.setSettlementStatus(bizInvoice.getSettlementStatus());
             invoice.setSendDate(bizInvoice.getSendDate());
+            //保存图片
+            saveCommonImg(bizInvoice);
             bizInvoiceDao.update(invoice);
             return;
         }

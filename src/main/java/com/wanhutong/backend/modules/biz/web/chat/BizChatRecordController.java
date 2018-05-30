@@ -6,7 +6,12 @@ package com.wanhutong.backend.modules.biz.web.chat;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +28,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
 
+import java.util.List;
+
 /**
  * 沟通记录：品类主管或客户专员，机构沟通Controller
  * @author Oy
@@ -34,6 +41,10 @@ public class BizChatRecordController extends BaseController {
 
 	@Autowired
 	private BizChatRecordService bizChatRecordService;
+	@Autowired
+	private OfficeService officeService;
+	@Autowired
+	private SystemService systemService;
 	
 	@ModelAttribute
 	public BizChatRecord get(@RequestParam(required=false) Integer id) {
@@ -52,14 +63,27 @@ public class BizChatRecordController extends BaseController {
 	public String list(BizChatRecord bizChatRecord, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<BizChatRecord> page = bizChatRecordService.findPage(new Page<BizChatRecord>(request, response), bizChatRecord); 
 		model.addAttribute("page", page);
-		return "modules/biz/chat/bizChatRecordList";
+		if(bizChatRecord.getSource()!=null && bizChatRecord.getSource().equals("purchaser")){
+			return "modules/biz/chat/bizChatRecordList";
+		}
+		return "modules/biz/chat/bizChatRecordSuppliList";
 	}
 
 	@RequiresPermissions("biz:chat:bizChatRecord:view")
 	@RequestMapping(value = "form")
 	public String form(BizChatRecord bizChatRecord, Model model) {
+		if(bizChatRecord!=null && bizChatRecord.getId()==null && bizChatRecord.getOffice()!=null && bizChatRecord.getOffice().getId()!=null){
+//			查询经销店或供应商
+			Office office = officeService.get(bizChatRecord.getOffice());
+			if(office!=null){
+				bizChatRecord.setOffice(office);
+			}
+		}
 		model.addAttribute("bizChatRecord", bizChatRecord);
-		return "modules/biz/chat/bizChatRecordForm";
+		if(bizChatRecord.getSource()!=null && bizChatRecord.getSource().equals("purchaser")){
+			return "modules/biz/chat/bizChatRecordForm";
+		}
+		return "modules/biz/chat/bizChatRecordSuppliForm";
 	}
 
 	@RequiresPermissions("biz:chat:bizChatRecord:edit")
@@ -70,7 +94,11 @@ public class BizChatRecordController extends BaseController {
 		}
 		bizChatRecordService.save(bizChatRecord);
 		addMessage(redirectAttributes, "保存沟通记录成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/list?office.id="+bizChatRecord.getOffice().getId();
+		if(bizChatRecord.getOffice()!=null && bizChatRecord.getOffice().getId()!=null){
+			return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/list?office.id="+bizChatRecord.getOffice().getId()+
+					"&source="+bizChatRecord.getSource();
+		}
+		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/";
 	}
 	
 	@RequiresPermissions("biz:chat:bizChatRecord:edit")
@@ -78,7 +106,11 @@ public class BizChatRecordController extends BaseController {
 	public String delete(BizChatRecord bizChatRecord, RedirectAttributes redirectAttributes) {
 		bizChatRecordService.delete(bizChatRecord);
 		addMessage(redirectAttributes, "删除沟通记录成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/?repage";
+		if(bizChatRecord.getOffice()!=null && bizChatRecord.getOffice().getId()!=null){
+			return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/list?office.id="+bizChatRecord.getOffice().getId()+
+					"&source="+bizChatRecord.getSource();
+		}
+		return "redirect:"+Global.getAdminPath()+"/biz/chat/bizChatRecord/";
 	}
 
 }

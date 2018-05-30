@@ -5,6 +5,9 @@ package com.wanhutong.backend.modules.biz.service.chat;
 
 import java.util.List;
 
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +34,13 @@ public class BizChatRecordService extends CrudService<BizChatRecordDao, BizChatR
 	}
 	
 	public Page<BizChatRecord> findPage(Page<BizChatRecord> page, BizChatRecord bizChatRecord) {
-		return super.findPage(page, bizChatRecord);
+		User user = UserUtils.getUser();
+		if(user.isAdmin()){
+			return super.findPage(page, bizChatRecord);
+		}else{
+			bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(user, "so", "su"));
+			return super.findPage(page, bizChatRecord);
+		}
 	}
 	
 	@Transactional(readOnly = false)
