@@ -11,9 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.entity.sku.BizSkuViewLog;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.sys.entity.Office;
@@ -130,10 +128,10 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSku.setSalePrice(Double.parseDouble(salePriceArr[i].trim()));
 			bizOpShelfSku.setShelfQty(Integer.parseInt(shelfQtyArr[i].trim()));
 			bizOpShelfSku.setShelfTime(DateUtils.parseDate(shelfTimeArr[i].trim()));
-			if (unShelfTimeArr.length > 0) {
-				if (!unShelfTimeArr[i].equals("0")) {
-					bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
-				}
+			if (unShelfTimeArr.length > 0 && i<unShelfTimeArr.length) {
+
+				bizOpShelfSku.setUnshelfTime(DateUtils.parseDate(unShelfTimeArr[i].trim()));
+
             }
 			bizOpShelfSkuService.save(bizOpShelfSku);
 		}

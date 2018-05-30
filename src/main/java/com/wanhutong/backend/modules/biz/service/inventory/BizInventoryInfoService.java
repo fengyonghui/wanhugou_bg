@@ -6,7 +6,6 @@ package com.wanhutong.backend.modules.biz.service.inventory;
 import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
-import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -87,5 +86,8 @@ public class BizInventoryInfoService extends CrudService<BizInventoryInfoDao, Bi
 	public void delete(BizInventoryInfo bizInventoryInfo) {
 		super.delete(bizInventoryInfo);
 	}
-	
+
+	public BizInventoryInfo getInventoryByCustId(Integer centId) {
+		return dao.getInventoryByCustId(centId);
+	}
 }

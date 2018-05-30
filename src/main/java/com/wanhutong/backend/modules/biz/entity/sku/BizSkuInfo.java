@@ -10,12 +10,12 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
 import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private List<CommonImg> skuImgs;
 	private List<BizSkuPropValue> skuPropValueList;
 	private List<AttributeValueV2> attrValueList;
-	private Map<String, List<AttributeValueV2>> attrValueMap;
+	private Map<String, ArrayList<AttributeValueV2>> attrValueMap;
 	private List<BizVarietyFactor> bvFactorList;
 	private String itemNo;
 
@@ -76,11 +76,11 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 		super(id);
 	}
 
-	public Map<String, List<AttributeValueV2>> getAttrValueMap() {
+	public Map<String, ArrayList<AttributeValueV2>> getAttrValueMap() {
 		return attrValueMap;
 	}
 
-	public void setAttrValueMap(Map<String, List<AttributeValueV2>> attrValueMap) {
+	public void setAttrValueMap(Map<String, ArrayList<AttributeValueV2>> attrValueMap) {
 		this.attrValueMap = attrValueMap;
 	}
 

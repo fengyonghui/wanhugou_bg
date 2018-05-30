@@ -34,7 +34,8 @@
 		dp.name AS "deputyPerson.name",
 		bvi.audit_status AS "bizVendInfo.auditStatus",
 		bvi.card_number AS "bizVendInfo.cardNumber",
-		bvi.vend_name AS "bizVendInfo.vendName"
+		bvi.vend_name AS "bizVendInfo.vendName",
+		pp.mobile AS "user.mobile"
 	</sql>
 
 	<sql id="officeJoins">

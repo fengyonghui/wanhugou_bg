@@ -81,6 +81,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				order by a.year desc, a.month desc, a.day desc
 			</otherwise>
 		</choose>
 	</select>

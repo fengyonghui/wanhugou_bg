@@ -11,8 +11,7 @@ import com.wanhutong.backend.modules.biz.dao.inventory.BizCollectGoodsRecordDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizCollectGoodsRecord;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +33,12 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	private BizInventorySkuDao bizInventorySkuDao;
 	@Autowired
 	private BizCollectGoodsRecordDao bizCollectGoodsRecordDao;
+
+	@Autowired
+	private BizInventoryInfoService bizInventoryInfoService;
+
+	@Autowired
+	private BizSkuInfoService bizSkuInfoService;
 
 	@Override
 	public BizInventorySku get(Integer id) {
@@ -106,6 +111,9 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 	public Map<String, Object> getInventoryAge(Integer skuId, Integer centId) {
 		Map<String, Object> result = Maps.newHashMap();
 
+		BizInventoryInfo inventoryByCustId = bizInventoryInfoService.getInventoryByCustId(centId);
+		BizSkuInfo bizSku = bizSkuInfoService.get(skuId);
+
 		Integer stockQtyBySkuIdCentId = bizInventorySkuDao.getStockQtyBySkuIdCentId(skuId, centId);
 		if (stockQtyBySkuIdCentId == null || stockQtyBySkuIdCentId == 0) {
 			return result;
@@ -117,12 +125,8 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		Map<BizCollectGoodsRecord, Integer> resultRecordList = Maps.newLinkedHashMap();
 
 		int counter = stockQtyBySkuIdCentId;
-		String skuName = StringUtils.EMPTY;
-		String invName = StringUtils.EMPTY;
-		if (CollectionUtils.isNotEmpty(recordList)) {
-			skuName = recordList.get(0).getSkuInfo().getName();
-			invName = recordList.get(0).getInvInfo().getName();
-		}
+		String skuName = bizSku.getName();
+		String invName = inventoryByCustId.getName();
 
 		for (BizCollectGoodsRecord bizCollectGoodsRecord : recordList) {
 			if (counter <=0) {
