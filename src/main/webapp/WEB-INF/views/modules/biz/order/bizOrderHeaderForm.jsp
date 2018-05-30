@@ -853,7 +853,7 @@
     </c:if>
     <c:if test="${entity.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
     <div class="control-group">
-        <label class="control-label">付款约定:</label>
+        <label class="control-label">付款约定：</label>
         <div class="controls">
             <table class="table table-striped table-bordered">
                 <thead>
