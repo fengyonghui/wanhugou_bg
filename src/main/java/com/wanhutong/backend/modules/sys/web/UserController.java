@@ -121,10 +121,6 @@ public class UserController extends BaseController {
 		}
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
-		if(user.getConn()!=null && user.getConn().equals("selectIndex")){
-			//选品专员
-			return "modules/sys/userSeleIndexList";
-		}
 		return "modules/sys/userList";
 	}
 
@@ -578,9 +574,11 @@ public class UserController extends BaseController {
 	 * 选品专员管理
 	 */
 	@RequiresPermissions("sys:user:view")
-	@RequestMapping(value = {"seleIndex"})
-	public String seleIndex(User user, Model model) {
-		return "modules/sys/seleIndex";
+	@RequestMapping(value = {"seleIndexList"})
+	public String seleIndex(User user, Model model,HttpServletRequest request, HttpServletResponse response) {
+        Page<User> page = systemService.findUserSele(new Page<User>(request, response), user);
+        model.addAttribute("page", page);
+        return "modules/sys/userSeleIndexList";
 	}
 
 	/**
@@ -724,5 +722,36 @@ public class UserController extends BaseController {
 		}
 		return mapList;
 	}
+
+	/**
+     * 品类主管 管理
+     * */
+    @RequiresPermissions("sys:user:view")
+    @RequestMapping(value = "userSeleForm")
+    public String userSeleForm(User user, Model model,String flag) {
+        if (user.getOffice()==null || user.getOffice().getId()==null){
+            user.setCompany(UserUtils.getUser().getCompany());
+            user.setOffice(UserUtils.getUser().getOffice());
+        }else{
+            Office off = new Office();
+            off.setParentIds("%"+user.getOffice().getId()+",");
+            List<Office> list = officeService.findList(off);
+            Office office = officeService.get(user.getOffice().getId());
+            if(list == null || list.isEmpty()){
+                user.setCompany(office);
+                user.setOffice(office);
+            }else{
+                user.setCompany(user.getCompany());
+                user.setOffice(user.getOffice());
+            }
+        }
+        if (flag != null && !"".equals(flag)){
+            model.addAttribute("flag",flag);
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("allRoles", systemService.findAllRole());
+
+        return "modules/sys/userSeleForm";
+    }
 
 }

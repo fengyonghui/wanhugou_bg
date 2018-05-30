@@ -623,4 +623,103 @@
 			</if>
 	</select>
 
+	<!-- 品类主管 管理 -->
+	<select id="findSeleList" resultType="User">
+		SELECT
+		a.id,
+		a.company_id AS "company.id",
+		c.type AS "company.type",
+		a.office_id AS "office.id",
+		a.login_name,
+		a.password,
+		a.no,
+		a.name,
+		a.email,
+		a.phone,
+		a.mobile,
+		a.user_type,
+		a.login_ip,
+		a.login_date,
+		a.remarks,
+		a.login_flag,
+		a.photo,
+		a.create_id AS "createBy.id",
+		a.create_date,
+		a.update_id AS "updateBy.id",
+		a.update_date,
+		a.status AS "delFlag",
+		c.name AS "company.name",
+		c.parent_id AS "company.parent.id",
+		c.parent_ids AS "company.parentIds",
+		ca.id AS "company.area.id",
+		ca.name AS "company.area.name",
+		ca.parent_id AS "company.area.parent.id",
+		ca.parent_ids AS "company.area.parentIds",
+		o.name AS "office.name",
+		o.parent_id AS "office.parent.id",
+		o.parent_ids AS "office.parentIds",
+		oa.id AS "office.area.id",
+		oa.name AS "office.area.name",
+		oa.parent_id AS "office.area.parent.id",
+		oa.parent_ids AS "office.area.parentIds",
+		cu.id AS "company.primaryPerson.id",
+		cu.name AS "company.primaryPerson.name",
+		cu2.id AS "company.deputyPerson.id",
+		cu2.name AS "company.deputyPerson.name",
+		FROM sys_user a
+			LEFT JOIN sys_office c ON c.id = a.company_id
+			LEFT JOIN sys_area ca ON ca.id = c.area_id
+			LEFT JOIN sys_office o ON o.id = a.office_id
+			LEFT JOIN sys_area oa ON oa.id = o.area_id
+			LEFT JOIN sys_user cu ON cu.id = c.primary_person
+			LEFT JOIN sys_user cu2 ON cu2.id = c.deputy_person
+		WHERE
+		  	a.status = #{DEL_FLAG_NORMAL}
+		<if test="role != null and role.name != null and role.name != ''">
+			AND sr.name = #{role.name}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND a.mobile LIKE
+			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{mobile}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if>
+		</if>
+		<!-- 是否是客户专员 -->
+		<if test="company != null and company.type != null and company.type != ''">
+			AND c.type in (#{company.type}
+			<if test="company != null and company.customerTypeTen != null and company.customerTypeTen != ''">
+				,#{company.customerTypeTen}
+			</if>
+			<if test="company != null and company.customerTypeEleven != null and company.customerTypeEleven != ''">
+				,#{company.customerTypeEleven}
+			</if>
+			)
+		</if>
+
+		<if test="office != null and office.id != null and office.id != ''">
+			AND (o.id = #{office.id} OR o.parent_ids LIKE
+			<if test="dbName == 'oracle'">'%,'||#{office.id}||',%')</if>
+			<if test="dbName == 'mssql'">'%,'+#{office.id}+',%')</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{office.id}, ',%'))</if>
+		</if>
+
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="!currentUser.admin">
+			AND a.id != '1'
+		</if>
+		<if test="loginName != null and loginName != ''">
+			AND a.login_name like
+			<if test="dbName == 'oracle'">'%'||#{loginName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{loginName}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{loginName}, '%')</if>
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name like
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+		</if>
+	</select>
+
+
 </mapper>
