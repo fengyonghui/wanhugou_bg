@@ -262,7 +262,7 @@ public class BizRequestOrderController extends BaseController {
             }
             model.addAttribute("orderDetailMap",orderDetailMap);
         }
-
+        model.addAttribute("type","goList");
         model.addAttribute("vendorId", vendorId);
         model.addAttribute("bizPoHeader", new BizPoHeader());
 

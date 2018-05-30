@@ -71,6 +71,11 @@ public class User extends DataEntity<User> {
 	 * */
 	private BizOrderHeader userOrder;
 
+	/**
+	 * 用户作为主负责人所属的供应商
+	 */
+	private Office vendor;
+
 	public String getConn() {
 		return conn;
 	}
@@ -398,5 +403,13 @@ public class User extends DataEntity<User> {
 
 	public void setUserOrder(BizOrderHeader userOrder) {
 		this.userOrder = userOrder;
+	}
+
+	public Office getVendor() {
+		return vendor;
+	}
+
+	public void setVendor(Office vendor) {
+		this.vendor = vendor;
 	}
 }

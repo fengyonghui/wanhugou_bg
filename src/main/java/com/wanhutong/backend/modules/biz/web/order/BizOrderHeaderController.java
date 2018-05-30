@@ -96,6 +96,8 @@ public class BizOrderHeaderController extends BaseController {
     private DefaultPropService defaultPropService;
     @Autowired
     private BizOrderStatusService bizOrderStatusService;
+    @Autowired
+    private BizOrderAppointedTimeService bizOrderAppointedTimeService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -187,6 +189,22 @@ public class BizOrderHeaderController extends BaseController {
 //				交货地址
                 if (address.getType() == 2) {
                     model.addAttribute("address", address);
+                }
+            }
+            //代采
+            if (bizOrderHeaderTwo.getOrderType()==Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+                //经销店
+                Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+                User user = systemService.getUser(office.getPrimaryPerson().getId());
+                model.addAttribute("custUser",user);
+                //供应商
+                User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
+                model.addAttribute("vendUser",vendUser);
+                BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
+                bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
+                List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
+                if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
+                    model.addAttribute("appointedTimeList",appointedTimeList);
                 }
             }
         }
@@ -595,11 +613,7 @@ public class BizOrderHeaderController extends BaseController {
                     //商品总价
                     rowData.add(String.valueOf(df.format(o.getTotalDetail())));
                     //商品工厂总价
-                    List<BizOrderHeader> orderHeaderList = new ArrayList<>();
-                    orderHeaderList.add(o);
-                    List<BizOrderHeader> oheaderList = bizOrderHeaderService.getTotalBuyPrice(orderHeaderList);
-                    BizOrderHeader orderHeader = oheaderList.get(0);
-                    rowData.add(String.valueOf(df.format(orderHeader.getTotalBuyPrice())));
+                    rowData.add(String.valueOf(df.format(o.getTotalBuyPrice())));
                     //交易金额
                     rowData.add(String.valueOf(o.getTotalExp()));
                     //运费
@@ -712,11 +726,7 @@ public class BizOrderHeaderController extends BaseController {
                         //商品总价
                         rowData.add(String.valueOf(df.format(o.getTotalDetail())));
                         //商品工厂总价
-                        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
-                        orderHeaderList.add(o);
-                        List<BizOrderHeader> oheaderList = bizOrderHeaderService.getTotalBuyPrice(orderHeaderList);
-                        BizOrderHeader orderHeader = oheaderList.get(0);
-                        rowData.add(String.valueOf(df.format(orderHeader.getTotalBuyPrice())));
+                        rowData.add(String.valueOf(df.format(o.getTotalBuyPrice())));
                         //交易金额
                         rowData.add(String.valueOf(o.getTotalExp()));
                         //运费

@@ -623,4 +623,22 @@
 			</if>
 	</select>
 
+	<select id="findVendUser" resultType="User">
+		SELECT
+			u.id,
+			u.name AS "name",
+			u.mobile AS "mobile",
+			vend.id AS "vendor.id",
+			vend.name AS "vendor.name"
+		from sys_user u
+		LEFT JOIN sys_office vend ON vend.primary_person = u.id
+		LEFT JOIN biz_product_info bpi ON bpi.vendor_id = vend.id
+		LEFT JOIN biz_sku_info bsi ON bsi.prod_id = bpi.id
+		LEFT JOIN biz_order_detail od ON od.sku_id = bsi.id
+		LEFT JOIN biz_order_header oh ON oh.id = od.order_id
+		WHERE oh.id = #{orderId}
+		AND vend.type = #{vendType}
+		GROUP BY u.id
+	</select>
+
 </mapper>
