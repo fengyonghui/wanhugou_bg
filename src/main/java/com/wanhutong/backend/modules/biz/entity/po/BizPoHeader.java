@@ -8,14 +8,12 @@ import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -54,7 +52,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private String ordQtys;
 	private List<BizPoOrderReq>poOrderReqList;
 
-	private Map<Integer,List<BizPoOrderReq>> orderNumMap;
+	private Map<Integer,ArrayList<BizPoOrderReq>> orderNumMap;
 	private Map<String,Integer> orderSourceMap;
 
 	private int isPrew;
@@ -271,11 +269,11 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		this.str = str;
 	}
 
-	public Map<Integer, List<BizPoOrderReq>> getOrderNumMap() {
+	public Map<Integer, ArrayList<BizPoOrderReq>> getOrderNumMap() {
 		return orderNumMap;
 	}
 
-	public void setOrderNumMap(Map<Integer, List<BizPoOrderReq>> orderNumMap) {
+	public void setOrderNumMap(Map<Integer, ArrayList<BizPoOrderReq>> orderNumMap) {
 		this.orderNumMap = orderNumMap;
 	}
 
