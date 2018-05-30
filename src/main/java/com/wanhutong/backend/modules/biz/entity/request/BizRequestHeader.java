@@ -16,7 +16,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.NotNull;
-import com.wanhutong.backend.modules.sys.entity.User;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -86,6 +85,8 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String recvQtys;
 
 	private CommonProcessEntity commonProcess;
+
+	private String dataFrom; //数据属于哪个页面
 
 	public BizRequestHeader() {
 		super();
@@ -400,5 +401,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setPoSource(String poSource) {
 		this.poSource = poSource;
+	}
+
+	public String getDataFrom() {
+		return dataFrom;
+	}
+
+	public void setDataFrom(String dataFrom) {
+		this.dataFrom = dataFrom;
 	}
 }
