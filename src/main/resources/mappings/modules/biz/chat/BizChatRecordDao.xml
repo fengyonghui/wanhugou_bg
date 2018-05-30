@@ -53,6 +53,9 @@
 				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{user.name},'%')</if>
 			</if>
+			<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+				${sqlMap.chat}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

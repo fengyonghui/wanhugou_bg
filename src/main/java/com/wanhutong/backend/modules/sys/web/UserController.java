@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import org.apache.commons.lang3.tuple.Pair;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
@@ -597,8 +599,18 @@ public class UserController extends BaseController {
 		company.setType(OfficeTypeEnum.CUSTOMER.getType());
 		user.setCompany(company);
 		Page<User> page = systemService.contact(new Page<User>(request, response),user);
+		User userAdmin = UserUtils.getUser();
+		BizChatRecord bizChatRecord = new BizChatRecord();
 		for (User user1 : page.getList()) {
-			List<BizOrderHeader> userOrderCountSecond = bizOrderHeaderDao.findUserOrderCountSecond(user1.getCompany().getId());
+			bizChatRecord.setOffice(user1.getCompany());
+			List<BizOrderHeader> userOrderCountSecond =null;
+			if(userAdmin.isAdmin()){
+				userOrderCountSecond = bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord);
+			}else{
+				bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+				userOrderCountSecond = bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord);
+			}
+
 			for (BizOrderHeader bizOrderHeader : userOrderCountSecond) {
 				user1.setUserOrder(bizOrderHeader);
 			}

@@ -73,16 +73,23 @@
 		<div class="control-group">
 			<label class="control-label">品类主管或客户专员：</label>
 			<div class="controls">
-				<%--<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"--%>
-					<%--title="品类主管或客户专员" url="/sys/user/userSelectTreeData" cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>--%>
-				<select id="one" onchange="func(this.value)"  name="names" class="input-medium required">
-					<option value="">&nbsp;===请选择===&nbsp;</option>
-					<option value="buyer">客户专员</option>
-					<option value="selection_of_specialist">品类主管</option>
-				</select>
-				<select id="two" class="input-medium required" name="user.id">
-					<option value="">&nbsp;===请选择===&nbsp;</option>
-				</select>
+				<c:choose>
+					<c:when test="${fns:getUser().isAdmin()}">
+						<select id="one" onchange="func(this.value)"  name="names" class="input-medium required">
+							<option value="">&nbsp;===请选择===&nbsp;</option>
+							<option value="buyer">客户专员</option>
+							<option value="selection_of_specialist">品类主管</option>
+						</select>
+						<select id="two" class="input-medium required" name="user.id">
+							<option value="">&nbsp;===请选择===&nbsp;</option>
+						</select>
+					</c:when>
+					<c:otherwise>
+						<select id="two" class="input-medium required" name="user.id">
+							<option value="${fns:getUser().id}">${fns:getUser().name}</option>
+						</select>
+					</c:otherwise>
+				</c:choose>
 				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
