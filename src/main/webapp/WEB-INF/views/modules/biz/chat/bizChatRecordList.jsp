@@ -31,9 +31,10 @@
 					title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
 			</li>
 			<li><label style="width: 130px;">品类主管或客户专员:</label>
-				<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"
-					title="品类主管或客户专员" url="/sys/user/userSelectTreeData" cssClass="input-small"
-						allowClear="true" notAllowSelectParent="true"/>
+				<%--<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"--%>
+					<%--title="品类主管或客户专员" url="/sys/user/userSelectTreeData" cssClass="input-small"--%>
+						<%--allowClear="true" notAllowSelectParent="true"/>--%>
+				<form:input path="user.name" htmlEscape="false" maxlength="40" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/></li>
