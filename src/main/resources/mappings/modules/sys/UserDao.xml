@@ -665,7 +665,7 @@
 		cu.id AS "company.primaryPerson.id",
 		cu.name AS "company.primaryPerson.name",
 		cu2.id AS "company.deputyPerson.id",
-		cu2.name AS "company.deputyPerson.name",
+		cu2.name AS "company.deputyPerson.name"
 		FROM sys_user a
 			LEFT JOIN sys_office c ON c.id = a.company_id
 			LEFT JOIN sys_area ca ON ca.id = c.area_id
@@ -675,9 +675,6 @@
 			LEFT JOIN sys_user cu2 ON cu2.id = c.deputy_person
 		WHERE
 		  	a.status = #{DEL_FLAG_NORMAL}
-		<if test="role != null and role.name != null and role.name != ''">
-			AND sr.name = #{role.name}
-		</if>
 		<if test="mobile != null and mobile != ''">
 			AND a.mobile LIKE
 			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>

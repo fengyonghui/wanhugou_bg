@@ -696,15 +696,6 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * 品类主管管理
 	 * */
 	public Page<User> findUserSele(Page<User> page, User user) {
-		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		boolean flag = false;
-		if(user.getCurrentUser().getRoleList()!=null) {
-			for (Role role : user.getCurrentUser().getRoleList()) {
-				if (RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())) {
-					flag = true;
-				}
-			}
-		}
 		//查询选品专员
 		Role role = new Role();
 		role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
@@ -715,7 +706,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.setRole(role);
 		// 执行分页查询
 		user.setPage(page);
-		page.setList(userDao.findList(user));
+		page.setList(userDao.findSeleList(user));
 		return page;
 	}
 

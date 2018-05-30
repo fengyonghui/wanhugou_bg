@@ -129,4 +129,9 @@ public interface UserDao extends CrudDao<User> {
 	 * */
 	public List<User> userSelectCompany(User user);
 
+	/**
+	 * 品类主管 管理
+	 * */
+	List<User> findSeleList(User user);
+
 }
