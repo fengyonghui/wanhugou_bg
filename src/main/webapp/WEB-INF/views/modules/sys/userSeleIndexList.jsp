@@ -20,8 +20,8 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<li class="active"><a href="${ctx}/sys/user/seleIndexList">用户列表</a></li>
-	<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/userSeleForm?id=${user.id}&conn=selectIndex">用户添加</a></li></shiro:hasPermission>
+	<li class="active"><a href="${ctx}/sys/user/seleIndexList">品类主管列表</a></li>
+	<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/userSeleForm?id=${user.id}&conn=selectIndex">品类主管添加</a></li></shiro:hasPermission>
 </ul>
 <form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/seleIndexList" method="post" class="breadcrumb form-search ">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
@@ -46,27 +46,31 @@
 			<th>归属部门</th>
 			<th>登录名</th>
 			<th>姓名</th>
-			<th>手机</th>
+			<th>电话</th>
+			<th>商品销售量</th>
+			<th>订单量</th>
+			<th>回款额</th>
+			<th>新品发布量</th>
+			<th>供应商</th>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
 	<c:forEach items="${page.list}" var="bizUser">
-
-		<c:if test="${not empty user.conn}">
-		<c:if test="${bizUser.delFlag==1}">
-			<tr>
-				<td>${bizUser.company.name}</td>
-				<td>${bizUser.office.name}</td>
-				<td>${bizUser.loginName}</td>
-				<td>${bizUser.name}</td>
-				<td>${bizUser.phone}</td>
-				<td>${bizUser.mobile}</td>
-				<shiro:hasPermission name="sys:user:edit"><td>
-						<a href="${ctx}/sys/user/form?id=${bizUser.id}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}&conn=selectIndex">修改</a>
-						<a href="${ctx}/sys/user/delete?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&id=${bizUser.id}&company.id=${user.company.id}&conn=selectIndex" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
-				</td></shiro:hasPermission>
-			</tr>
-		</c:if>
-		</c:if>
+		<tr>
+			<td>${bizUser.company.name}</td>
+			<td>${bizUser.office.name}</td>
+			<td>${bizUser.loginName}</td>
+			<td>${bizUser.name}</td>
+			<td>${bizUser.mobile}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<shiro:hasPermission name="sys:user:edit"><td>
+					<a href="${ctx}/sys/user/form?id=${bizUser.id}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}&conn=selectIndex">修改</a>
+					<a href="${ctx}/sys/user/delete?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&id=${bizUser.id}&company.id=${user.company.id}&conn=selectIndex" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+			</td></shiro:hasPermission>
+		</tr>
 	</c:forEach>
 	</tbody>
 </table>
