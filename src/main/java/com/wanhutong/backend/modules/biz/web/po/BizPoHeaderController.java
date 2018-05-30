@@ -431,10 +431,6 @@ public class BizPoHeaderController extends BaseController {
                             poDetail.setPoHeader(poHeader);
                         }
                     }
-                    CommonProcessEntity processEntity = new CommonProcessEntity();
-                    processEntity.setObjectId(poHeader.getId().toString());
-                    processEntity.setObjectName("biz_po_payment_order");
-                    List<CommonProcessEntity> processEntityList = commonProcessService.findList(processEntity);
                     for (BizPoDetail poDetail:poDetailList) {
                         List<String> headerListData = new ArrayList();
                         //采购单遍历
@@ -455,19 +451,22 @@ public class BizPoHeaderController extends BaseController {
                         Dict dict = new Dict();
                         dict.setType("biz_po_status");
                         List<Dict> dictList = dictService.findList(dict);
+                        String str = "";
                         for (Dict bizDict : dictList) {
                             if (bizDict.getValue().equals(String.valueOf(poHeader.getBizStatus()))) {
                                 //业务状态
-                                headerListData.add(String.valueOf(bizDict.getLabel()));
+                                str = bizDict.getLabel();
+//                                headerListData.add(String.valueOf(bizDict.getLabel()));
                                 break;
                             }
                         }
+                        headerListData.add(str);
 //                    //采购单来源
 //                    headerListData.add(String.valueOf());
                         //审核状态
-                        if (processEntityList != null && !processEntityList.isEmpty()) {
-                            CommonProcessEntity entity = processEntityList.get(processEntityList.size()-1);
-                            headerListData.add(entity.getPurchaseOrderProcess().getName()==null?"当前无审批流程":entity.getPurchaseOrderProcess().getName());
+                        CommonProcessEntity commonProcessEntity = commonProcessService.get(poHeader.getProcessId());
+                        if (commonProcessEntity != null) {
+                            headerListData.add(commonProcessEntity.getPurchaseOrderProcess().getName()==null?"当前无审批流程":commonProcessEntity.getPurchaseOrderProcess().getName());
                         }else {
                             headerListData.add("当前无审批流程");
                         }

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderAppointedTimeDao">
+    
+	<sql id="bizOrderAppointedTimeColumns">
+		a.id AS "id",
+		a.order_id AS "orderHeader.id",
+		a.appointed_time AS "appointedDate",
+		a.appointed_money AS "appointedMoney",
+		a.payment_money AS "paymentMoney",
+		a.u_version AS "uVersion",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.status AS "delFlag"
+	</sql>
+	
+	<sql id="bizOrderAppointedTimeJoins">
+	</sql>
+    
+	<select id="get" resultType="BizOrderAppointedTime">
+		SELECT 
+			<include refid="bizOrderAppointedTimeColumns"/>
+		FROM biz_order_appointed_time a
+		<include refid="bizOrderAppointedTimeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizOrderAppointedTime">
+		SELECT 
+			<include refid="bizOrderAppointedTimeColumns"/>
+		FROM biz_order_appointed_time a
+		<include refid="bizOrderAppointedTimeJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id != ''">
+				AND a.order_id = #{orderHeader.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizOrderAppointedTime">
+		SELECT 
+			<include refid="bizOrderAppointedTimeColumns"/>
+		FROM biz_order_appointed_time a
+		<include refid="bizOrderAppointedTimeJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_order_appointed_time(
+			id,
+			order_id,
+			appointed_time,
+			appointed_money,
+			payment_money,
+			u_version,
+			create_id,
+			create_time,
+			update_id,
+			update_time,
+			status
+		) VALUES (
+			#{id},
+			#{orderHeader.id},
+			#{appointedDate},
+			#{appointedMoney},
+			#{paymentMoney},
+			#{uVersion},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_order_appointed_time SET 	
+			order_id = #{orderHeader.id},
+			appointed_time = #{appointedDate},
+			appointed_money = #{appointedMoney},
+			payment_money = #{paymentMoney},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_order_appointed_time SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

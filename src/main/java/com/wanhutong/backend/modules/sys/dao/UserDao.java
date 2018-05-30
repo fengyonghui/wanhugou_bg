@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.wx.SysWxPersonalUser;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -128,5 +129,11 @@ public interface UserDao extends CrudDao<User> {
 	 * 沟通记录查询 客户专员和品类主管
 	 * */
 	public List<User> userSelectCompany(User user);
+
+	/**
+	 * 查询供应商和主负责人信息
+	 * @return
+	 */
+	User findVendUser(@Param("orderId") Integer orderId,@Param("vendType") String vendType);
 
 }

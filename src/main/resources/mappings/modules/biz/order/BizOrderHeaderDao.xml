@@ -20,6 +20,7 @@
 
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
+		<result property="totalBuyPrice" column="totalBuyPrice"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -260,7 +261,8 @@
 		si.id AS "orderDetailList.skuInfo.id",
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
-		pi.vendor_name AS "orderDetailList.vendor.name"
+		pi.vendor_name AS "orderDetailList.vendor.name",
+		sum(od.buy_price*od.ord_qty) AS "totalBuyPrice"
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		<if test="statu != null and statu =='unline'">
@@ -408,7 +410,7 @@
 		od.sent_qty AS "orderDetailList.sentQty",
 		si.id AS "orderDetailList.skuInfo.id",
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
-		si.item_no AS "orderDetailList.skuInfo.itemNo"
+		si.item_no AS "orderDetailList.skuInfo.itemNo",
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
