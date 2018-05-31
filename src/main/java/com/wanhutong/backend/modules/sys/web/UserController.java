@@ -742,7 +742,11 @@ public class UserController extends BaseController {
     @RequestMapping(value = "userSeleForm")
     public String userSeleForm(User user, Model model,String flag) {
         if (user.getOffice()==null || user.getOffice().getId()==null){
-            user.setCompany(UserUtils.getUser().getCompany());
+//			String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+//			Office office = officeService.get(712);
+//			user.setCompany(office);
+//			user.setOffice(office);
+			user.setCompany(UserUtils.getUser().getCompany());
             user.setOffice(UserUtils.getUser().getOffice());
         }else{
             Office off = new Office();
@@ -762,7 +766,6 @@ public class UserController extends BaseController {
         }
         model.addAttribute("user", user);
         model.addAttribute("allRoles", systemService.findAllRole());
-
         return "modules/sys/userSeleForm";
     }
 
