@@ -211,6 +211,7 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 }
                 bizSkuInfo.setProductInfo(bizProductInfo);
                 bizSkuInfo.setBuyPrice(StringUtils.isBlank(price) ? 0 : Double.valueOf(price));
+                bizSkuInfo.setBasePrice(bizSkuInfo.getBuyPrice());
                 bizSkuInfo.setSkuType(Integer.valueOf(type));
                 bizSkuInfo.setName(bizProductInfo.getName());
                 bizSkuInfo.setSort(String.valueOf(index));
