@@ -113,7 +113,7 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                             bizCustSkuService.save(bizCustSku);
                         }
                         detailnew.setUnitPrice(new BigDecimal(nowPriceArr[i].trim()).doubleValue());//单价
-                        detailnew.setBuyPrice(sku.getBuyPrice());
+                        detailnew.setBuyPrice(detailnew.getUnitPrice());
                         detailnew.setOrdQty(ordQty);//采购数量
                         detailnew.setSentQty(0);//发货数量默认0
                         detailnew.setSuplyis(new Office());
