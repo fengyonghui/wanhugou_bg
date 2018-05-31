@@ -146,6 +146,7 @@
 				<th>备货商品数量</th>
 				<th>备货商品总价</th>
 				<th>已收保证金</th>
+				<th>付款比例</th>
 				<th>已到货数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
@@ -184,6 +185,18 @@
 				<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
 					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
 				<td>${requestHeader.recvTotal}</td>
+				<td>
+					<a style="display: none">
+						<fmt:formatNumber type="number" var="totalMoneysss" value="${requestHeader.totalMoney}" pattern="0.0"/>
+						<fmt:formatNumber type="number" var="recvTotalsss" value="${requestHeader.recvTotal}" pattern="0.0"/>
+					</a>
+					<c:if test="${totalMoneysss==recvTotalsss}">
+						100%
+					</c:if>
+					<c:if test="${totalMoneysss!=recvTotalsss}">
+						<fmt:formatNumber type="percent" value="${requestHeader.recvTotal/(requestHeader.totalMoney-requestHeader.recvTotal)}" maxFractionDigits="2" />
+					</c:if>
+				</td>
 				<td>${requestHeader.recvQtys}</td>
 				<td>
 					${requestHeader.remark}
