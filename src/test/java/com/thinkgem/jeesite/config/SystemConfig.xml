@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SystemConfig>
-    <serviceChargeAudit>2</serviceChargeAudit>
+    <serviceChargeAudit>CHANNEL_MANAGER</serviceChargeAudit>
+    <orderLossAudit>CHANNEL_MANAGER</orderLossAudit>
 </SystemConfig>
