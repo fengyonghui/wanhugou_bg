@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.variety.BizVarietyUserInfoDao">
+    
+	<sql id="bizVarietyUserInfoColumns">
+		a.id AS "id",
+		a.variety_id AS "varietyInfo.id",
+		a.user_id AS "user.id",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		su.name AS "user.name",
+		bvi.name as "varietyInfo.name"
+	</sql>
+	
+	<sql id="bizVarietyUserInfoJoins">
+		LEFT JOIN sys_user su ON su.id = a.user_id
+		LEFT join biz_variety_info bvi on bvi.id=a.variety_id
+	</sql>
+    
+	<select id="get" resultType="BizVarietyUserInfo">
+		SELECT 
+			<include refid="bizVarietyUserInfoColumns"/>
+		FROM biz_variety_user_info a
+		<include refid="bizVarietyUserInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizVarietyUserInfo">
+		SELECT 
+			<include refid="bizVarietyUserInfoColumns"/>
+		FROM biz_variety_user_info a
+		<include refid="bizVarietyUserInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo != ''">
+				AND a.variety_id = #{varietyInfo.id}
+			</if>
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id = #{user.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizVarietyUserInfo">
+		SELECT 
+			<include refid="bizVarietyUserInfoColumns"/>
+		FROM biz_variety_user_info a
+		<include refid="bizVarietyUserInfoJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_variety_user_info(
+			id,
+			variety_id,
+			user_id,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{varietyInfo.id},
+			#{user.id},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_variety_user_info SET 	
+			variety_id = #{varietyInfo.id},
+			user_id = #{user.id},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_variety_user_info SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
