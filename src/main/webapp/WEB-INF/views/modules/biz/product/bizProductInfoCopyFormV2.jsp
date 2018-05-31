@@ -338,6 +338,7 @@
                     <th style="display: none">图片地址</th>
                     <th>类型</th>
                     <th>操作</th>
+                    <%--<th>同尺寸价格</th>--%>
                 </tr>
                 </thead>
                 <tbody id="skuTableData">
@@ -345,12 +346,12 @@
                     <tr customType="skuTr">
                         <td style="display: none"><input type="text" value="${v.id}" customInput="idInput" readonly/></td>
                         <td><input type="text" value="${v.itemNo}" customInput="itemNoInput" readonly/></td>
-                        <td><input type="text" value="${v.attrValueMap['2'][0].value}" customInput="sizeInput" readonly/></td>
-                        <td><input type="text" value="${v.attrValueMap['3'][0].value}" customInput="colorInput" readonly/></td>
-                        <td><input type="text" value="${v.buyPrice}" customInput="priceInput"/></td>
+                        <td><input type="text" style="width: 70px" value="${v.attrValueMap['2'][0].value}" customInput="sizeInput" readonly/></td>
+                        <td><input type="text" style="width: 120px" value="${v.attrValueMap['3'][0].value}" customInput="colorInput" readonly/></td>
+                        <td><input type="text" style="width: 70px" value="${v.buyPrice}" customInput="priceInput"/></td>
                         <td><img customInput="imgInputLab" style="width: 160px" src="${v.defaultImg}"></td>
                         <td style="display: none"><input type="text" value="${v.defaultImg}" customInput="imgInput" readonly/></td>
-                        <th><select customInput="skuTypeSelect">
+                        <th><select style="width: 120px" customInput="skuTypeSelect">
                             <c:if test="${v.skuType == 1}">
                                 <option value='1' label='自选商品'>自选商品</option>
                                 <option value='2' label='定制商品'>定制商品</option>
@@ -371,6 +372,7 @@
                             <input onclick='deleteImgEle(this)' class="btn" type="button" value="删除图片"/>
                             <input onclick='deleteParentParentEle(this)' class="btn" type="button" value="删除"/>
                         </td>
+                        <%--<td><input onclick='setUp(this)' class="btn" type="button" value="设置"/></td>--%>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -429,14 +431,15 @@
         var tableHtml = "<tr customType=\"skuTr\">" +
             "                   <td style=\"display: none\"><input type=\"text\" value=\"$id\" customInput=\"idInput\" readonly/></td>" +
             "                   <td><input type=\"text\" value=\"$imteNo\" customInput=\"itemNoInput\" readonly/></td>" +
-            "                   <td><input type=\"text\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
-            "                   <td><input type=\"text\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
-            "                   <td><input type=\"text\" value=\"$price\" customInput=\"priceInput\"/></td>" +
+            "                   <td><input type=\"text\" style=\"width: 70px\" value=\"$size\" customInput=\"sizeInput\" readonly/></td>" +
+            "                   <td><input type=\"text\" style=\"width: 120px\" value=\"$color\" customInput=\"colorInput\" readonly/></td>" +
+            "                   <td><input type=\"text\" style=\"width: 70px\" value=\"$price\" customInput=\"priceInput\"/></td>" +
             "                   <td><img customInput=\"imgInputLab\" src=\"$img\" style=\"width: 100px\"></td>" +
             "                   <td style=\"display: none\"><input type=\"text\" value=\"$img\" customInput=\"imgInput\" readonly/></td>" +
             "$typeSelector" +
             "                   <td><input onclick='deleteImgEle(this)' class=\"btn\" type=\"button\" value=\"删除图片\"/>" +
             "                   <input onclick='deleteParentParentEle(this)' class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
+            // "                   <td><input onclick='setUp(this)' class=\"btn\" type=\"button\" value=\"设置\"/></td>" +
             "               </tr>";
 
         var customTypeAttr = $("[customType]");
@@ -458,7 +461,7 @@
 
                 var oldDataStr = oldDataMap.get(selectedSizeArr[i] + colorInput);
 
-                var custTypeSelector = "<th><select customInput=\"skuTypeSelect\">";
+                var custTypeSelector = "<th><select style=\"width: 120px\" customInput=\"skuTypeSelect\">";
                 var custTypeSelectorItem = "<option value='$value' label='$label'>$text</option>";
 
 
@@ -477,20 +480,29 @@
                         custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
                     }else if (oldSkuTypeSelect == "3") {
                         custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
+                    }else if (oldSkuTypeSelect == "4") {
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
                     }else {
                         custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
                         custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                        custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
                     }
 
                 }else {
                     custTypeSelector += custTypeSelectorItem.replace("$value", "1").replace("$label", "自选商品").replace("$text", "自选商品");
                     custTypeSelector += custTypeSelectorItem.replace("$value", "2").replace("$label", "定制商品").replace("$text", "定制商品");
                     custTypeSelector += custTypeSelectorItem.replace("$value", "3").replace("$label", "非自选商品").replace("$text", "非自选商品");
+                    custTypeSelector += custTypeSelectorItem.replace("$value", "4").replace("$label", "代采商品").replace("$text", "代采商品");
                 }
                 custTypeSelector += "</select></th>";
 
@@ -636,6 +648,8 @@
         ajaxFileUploadPic(id, multiple);
     }
 
+    var a = 0;
+    var b = 0;
     function ajaxFileUploadPic(id, multiple) {
         $.ajaxFileUpload({
             url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
@@ -654,13 +668,15 @@
                     for (var i = 0; i < imgList.length; i ++) {
                         // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
                         if (id == "prodMainImg") {
-                            $("#imgPhotosSorts").append("<td><input id='"+"main" + i + "' name='imgPhotosSorts' style='width: 70px' type='number'/></td>");
+                            $("#imgPhotosSorts").append("<td><input id='"+"main" + i + "' name='imgPhotosSorts' value='"+a+"' style='width: 70px' type='number'/></td>");
                             // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
                             $("#prodMainImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this,"+"$('#main" + i + "'));\"></td>");
+                            a += 1;
                         }
                         if (id == "prodDetailImg") {
-                            $("#imgDetailSorts").append("<td><input id='"+"detail" + i + "' name='imgDetailSorts' style='width: 70px' type='number'/></td>");
+                            $("#imgDetailSorts").append("<td><input id='"+"detail" + i + "' name='imgDetailSorts' value='"+b+"' style='width: 70px' type='number'/></td>");
                             $("#prodDetailImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this,"+"$('#detail" + i + "'));\"></td>");
+                            b += 1;
                         }
                     }
                 }else if (imgList && imgList.length > 0 && !multiple) {
@@ -721,6 +737,16 @@
     function removeThis(obj,item) {
         $(obj).remove();
         $(item).remove();
+    }
+
+    function setUp(item) {
+        var size = $(item).parent().parent().find("td input[customInput='sizeInput']").val();
+        var price = $(item).parent().parent().find("td input[customInput='priceInput']").val();
+        $("input[customInput='sizeInput']").each(function () {
+            if ($(this).parent().parent().find("td input[customInput='sizeInput']").val()==size) {
+                $(this).parent().parent().find("input[customInput='priceInput']").val(price);
+            }
+        });
     }
 
     $(document).ready(function() {
