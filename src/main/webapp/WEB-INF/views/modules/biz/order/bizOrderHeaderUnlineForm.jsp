@@ -126,17 +126,18 @@
                 <form:input id="unlinePayMoney" readonly="true" class="input-mini" path="unlinePayMoney"/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">实收金额：</label>
-			<div class="controls">
-				<form:input id="realMoney" class="input-mini" readonly="true" path="realMoney"/>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">实收金额：</label>--%>
+			<%--<div class="controls">--%>
+				<form:hidden id="realMoney" class="input-mini" path="realMoney"/>
 				<%--<button id="confirm" disabled="disabled" type="button" class="btn btn-primary">确认</button>--%>
-			</div>
-		</div>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">流水状态：</label>
 			<div class="controls">
-				<input id="bizStatus" type="button" class="btn btn-primary" value="${fns:getDictLabel(bizOrderHeaderUnline.bizStatus, 'biz_order_unline_bizStatus', '未知状态')}"/>
+				<span style="font-size: large; font-style: initial; color: red; width: available; font-family: 楷体">${fns:getDictLabel(bizOrderHeaderUnline.bizStatus, 'biz_order_unline_bizStatus', '未知状态')}</span>
+				<%--<input id="bizStatus" type="button" class="btn btn-primary" value="${fns:getDictLabel(bizOrderHeaderUnline.bizStatus, 'biz_order_unline_bizStatus', '未知状态')}"/>--%>
 			</div>
 		</div>
 		<div class="form-actions">
