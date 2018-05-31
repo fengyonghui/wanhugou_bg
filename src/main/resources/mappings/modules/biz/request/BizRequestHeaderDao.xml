@@ -59,15 +59,21 @@
 	<select id="findList" resultType="BizRequestHeader">
 		SELECT 
 			<include refid="bizRequestHeaderColumns"/>,
-			pi.vendor_name AS "name"
+			pi.vendor_name AS "name",
+			bvi.id as "varietyInfo.id",
+			bvi.name as "varietyInfo.name"
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
 		INNER JOIN biz_sku_info bsi on brd.sku_id = bsi.id
 		INNER JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		LEFT JOIN biz_variety_info bvi on bvi.id=pi.vari_id and bvi.status=1
 		<where>
 			1=1
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="varietyInfo!=null and varietyInfo.id!=null and varietyInfo.id!=''">
+				and bvi.id = #{varietyInfo.id}
 			</if>
 			<if test="reqNo != null and reqNo != ''">
 				AND a.req_no

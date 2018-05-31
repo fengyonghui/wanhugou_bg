@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.request;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -67,6 +68,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 驳回原因,审核通过标识
 	 * */
 	private String remarkReject;
+
+	/**
+	 * 品类 id
+	 * */
+	private BizVarietyInfo varietyInfo;
 
 	private List<BizRequestDetail> requestDetailList;
 
@@ -409,5 +415,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setDataFrom(String dataFrom) {
 		this.dataFrom = dataFrom;
+	}
+
+	public BizVarietyInfo getVarietyInfo() {
+		return varietyInfo;
+	}
+
+	public void setVarietyInfo(BizVarietyInfo varietyInfo) {
+		this.varietyInfo = varietyInfo;
 	}
 }

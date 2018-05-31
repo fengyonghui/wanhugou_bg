@@ -11,9 +11,11 @@ import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
@@ -68,6 +70,8 @@ public class BizRequestHeaderController extends BaseController {
 	private BizPoHeaderService bizPoHeaderService;
 	@Autowired
 	private BizPoDetailService bizPoDetailService;
+	@Autowired
+	private BizVarietyInfoService bizVarietyInfoService;
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -88,6 +92,9 @@ public class BizRequestHeaderController extends BaseController {
 		bizRequestHeader.setDataFrom(dataFrom);
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
         model.addAttribute("page", page);
+        //品类名称
+		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return "modules/biz/request/bizRequestHeaderList";
