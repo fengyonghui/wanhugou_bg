@@ -92,7 +92,7 @@ public class BizProductInfoForVendorController extends BaseController {
             Collections.reverse(skuInfosList);
 
             skuInfosList.forEach(o -> {
-                Map<String, List<AttributeValueV2>> attMap = Maps.newHashMap();
+                Map<String, ArrayList<AttributeValueV2>> attMap = Maps.newHashMap();
                 AttributeValueV2 attributeValueV2 = new AttributeValueV2();
                 attributeValueV2.setObjectName(AttributeInfoV2.Level.SKU_FOR_VENDOR.getTableName());
                 attributeValueV2.setObjectId(o.getId());

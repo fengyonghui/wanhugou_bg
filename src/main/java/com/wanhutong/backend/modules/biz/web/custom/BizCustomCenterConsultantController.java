@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -110,7 +111,9 @@ public class BizCustomCenterConsultantController extends BaseController {
                     tasks.add(new Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>() {
                         @Override
                         public Pair<BizCustomCenterConsultant, List<BizOrderHeader>> call() throws Exception {
-                            return Pair.of(customCenterConsultant, bizOrderHeaderDao.findUserOrderCountSecond(customCenterConsultant.getCustoms().getId()));
+                            BizChatRecord bizChatRecord = new BizChatRecord();
+                            bizChatRecord.setOffice(customCenterConsultant.getCustoms());
+                            return Pair.of(customCenterConsultant, bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord));
                         }
                     });
                 }
@@ -133,6 +136,7 @@ public class BizCustomCenterConsultantController extends BaseController {
                             totalCount += b.getOrderCount();
                             orHeaders.setUserOfficeReceiveTotal(b.getUserOfficeReceiveTotal());
                             orHeaders.setUserOfficeDeta(b.getUserOfficeDeta());
+                            orHeaders.setBizLocation(b.getBizLocation());
                         }
                         orHeaders.setOrderCount(totalCount);
                         resultMap.put(data.getLeft(), orHeaders ==null?new BizOrderHeader():orHeaders);

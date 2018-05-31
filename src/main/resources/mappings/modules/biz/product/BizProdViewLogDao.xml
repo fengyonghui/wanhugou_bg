@@ -112,7 +112,8 @@
 	</update>
 	
 	<update id="delete">
-		DELETE FROM biz_prod_view_log
+		UPDATE biz_prod_view_log SET
+		status= #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	

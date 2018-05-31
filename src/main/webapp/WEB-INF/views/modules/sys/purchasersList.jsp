@@ -84,7 +84,7 @@
 	<%--</script>--%>
 	<table id="treeTable" class="table table-striped table-bordered table-condensed">
 		<thead>
-			<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>电话</th><th>机构类型</th><th>备注</th>
+			<tr><th>机构名称</th><th>归属区域</th><th>机构编码</th><th>电话</th><th>联系人电话</th><th>机构类型</th><th>备注</th>
 			<shiro:hasPermission name="sys:office:edit"><th>操作</th></shiro:hasPermission></tr>
 		</thead>
 		<tbody>
@@ -93,6 +93,7 @@
                 <td><a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">${off.name}</a></td>
 				<td>${off.area.name}</td>
 				<td>${off.code}</td>
+				<td>${off.phone}</td>
 				<td>${off.moblieMoeny.mobile}</td>
 				<td>
                     ${fns:getDictLabel(off.type, 'sys_office_type', '未知状态')}
@@ -104,7 +105,7 @@
                     <a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
                     <a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}&source=add_prim">添加下级机构</a>
 					<%--<c:if test="${off.type!=null && off.type eq '6'}">--%>
-                    	<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.type=6&office.parent.id=${office.id}">沟通记录</a>
+                    	<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.parent.id=7&office.type=6&source=purchaser">沟通记录</a>
 					<%--</c:if>--%>
                 </td></shiro:hasPermission>
 			</tr>

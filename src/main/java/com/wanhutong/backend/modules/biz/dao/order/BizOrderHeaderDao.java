@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.dao.order;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
@@ -299,6 +300,6 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     /**
      *  客户专员查看 采购累计订单频次
      * */
-    List<BizOrderHeader> findUserOrderCountSecond(@Param("custId") Integer custId);
+    List<BizOrderHeader> findUserOrderCountSecond(BizChatRecord bizChatRecord);
 
 }

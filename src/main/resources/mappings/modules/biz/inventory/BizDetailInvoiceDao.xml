@@ -98,7 +98,8 @@
 	</update>
 	
 	<update id="delete">
-		DELETE FROM biz_detail_invoice
+		UPDATE biz_detail_invoice SET
+		status= #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	

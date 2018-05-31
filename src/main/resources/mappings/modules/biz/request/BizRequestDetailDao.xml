@@ -254,10 +254,9 @@
 			LEFT JOIN biz_product_info bpi ON bpi.id = si.prod_id
 
 			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = reheader.id AND a.line_no = bpor.so_line_no and bpor.so_type=2
-			LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1
+			LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1 and ph.is_prew=0
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			and ph.is_prew=0
 			<if test="skuInfo != null and skuInfo.id!=null and skuInfo.id != ''">
 				AND a.sku_id = #{skuInfo.id}
 			</if>

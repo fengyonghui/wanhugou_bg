@@ -156,5 +156,13 @@
 		AND ii.cust_id = #{custId}
 		GROUP BY ii.cust_id
 	</select>
+
+	<select id="getInventoryByCustId" resultType="BizInventoryInfo">
+		SELECT
+		<include refid="bizInventoryInfoColumns"/>
+		FROM biz_inventory_info a
+		<include refid="bizInventoryInfoJoins"/>
+		WHERE a.cust_id = #{custId}
+	</select>
 	
 </mapper>

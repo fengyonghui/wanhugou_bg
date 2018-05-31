@@ -688,7 +688,14 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * */
 	@Transactional(readOnly = true)
 	public List<User> userSelectCompany(User user) {
-		List<User> users = userDao.userSelectCompany(user);
+		User userAdmin= UserUtils.getUser();
+		List<User> users =null;
+		if(userAdmin.isAdmin()){
+			users=userDao.userSelectCompany(user);
+		}else{
+//			user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+			users = userDao.userSelectCompany(user);
+		}
 		return users;
 	}
 

@@ -24,6 +24,11 @@ public class BizChatRecord extends DataEntity<BizChatRecord> {
 	private User user;		// 品类主管 或 客户专员，sys_user
 	private String chatRecord;		// 沟通记录
 
+	/**
+	 * 沟通记录 经销店/供应商 标识
+	 * */
+	private String source;
+
 	public BizChatRecord() {
 		super();
 	}
@@ -59,4 +64,11 @@ public class BizChatRecord extends DataEntity<BizChatRecord> {
 		this.chatRecord = chatRecord;
 	}
 
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
 }
