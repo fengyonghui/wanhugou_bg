@@ -609,15 +609,23 @@ public class BizOrderHeaderController extends BaseController {
                     //经销店名称/电话
                     rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
                     //所属采购中心
-                    rowData.add(String.valueOf(o.getCentersName()));
+                    rowData.add(String.valueOf(o.getCentersName()==null?"":o.getCentersName()));
                     //商品总价
-                    rowData.add(String.valueOf(df.format(o.getTotalDetail())));
+                    if(o.getTotalDetail()!=null){
+                        rowData.add(String.valueOf(df.format(o.getTotalDetail())));
+                    }else{
+                        rowData.add("");
+                    }
                     //商品工厂总价
-                    rowData.add(String.valueOf(df.format(o.getTotalBuyPrice())));
+                    if(o.getTotalBuyPrice()!=null){
+                        rowData.add(String.valueOf(df.format(o.getTotalBuyPrice())));
+                    }else{
+                        rowData.add("");
+                    }
                     //交易金额
-                    rowData.add(String.valueOf(o.getTotalExp()));
+                    rowData.add(String.valueOf(o.getTotalExp()==null?"":o.getTotalExp()));
                     //运费
-                    rowData.add(String.valueOf(o.getFreight()));
+                    rowData.add(String.valueOf(o.getFreight()==null?"":o.getFreight()));
                     //应付金额
                     rowData.add(String.valueOf(o.getTotalDetail() + o.getTotalExp() + o.getFreight()));
                     //已收货款
@@ -722,11 +730,19 @@ public class BizOrderHeaderController extends BaseController {
                         //经销店名称/电话
                         rowData.add(String.valueOf(o.getCustomer().getName() + "(" + o.getCustomer().getPhone() + ")"));
                         //所属采购中心
-                        rowData.add(String.valueOf(o.getCentersName()));
+                        rowData.add(String.valueOf(o.getCentersName()==null?"":o.getCentersName()));
                         //商品总价
-                        rowData.add(String.valueOf(df.format(o.getTotalDetail())));
+                        if(o.getTotalDetail()!=null){
+                            rowData.add(String.valueOf(df.format(o.getTotalDetail())));
+                        }else{
+                            rowData.add("");
+                        }
                         //商品工厂总价
-                        rowData.add(String.valueOf(df.format(o.getTotalBuyPrice())));
+                        if(o.getTotalBuyPrice()!=null){
+                            rowData.add(String.valueOf(df.format(o.getTotalBuyPrice())));
+                        }else{
+                            rowData.add("");
+                        }
                         //交易金额
                         rowData.add(String.valueOf(o.getTotalExp()));
                         //运费
