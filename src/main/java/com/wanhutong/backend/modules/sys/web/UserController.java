@@ -276,7 +276,7 @@ public class UserController extends BaseController {
         }
 		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
 			//跳回选品专员界面
-			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
+			return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
 		}
 		if(user.getConn()!=null && user.getConn().equals(officeUser)){
 //			添加 跳回用户管理列表
@@ -318,8 +318,7 @@ public class UserController extends BaseController {
         }
 		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
 			//跳回选品专员界面
-			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
-					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
+			return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
 		}
 		if(user.getConn() !=null && user.getConn().equals(officeUser)){
 //			跳回用户管理
@@ -579,6 +578,12 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"seleIndexList"})
 	public String seleIndex(User user, Model model,HttpServletRequest request, HttpServletResponse response) {
         Page<User> page = systemService.findUserSele(new Page<User>(request, response), user);
+		for (User user1 : page.getList()) {
+			BizOrderHeader orderHeades = bizOrderHeaderDao.categorySkuStatistics(user1);
+			if(orderHeades!=null){
+				user1.setUserOrder(orderHeades);
+			}
+		}
         model.addAttribute("page", page);
         return "modules/sys/userSeleIndexList";
 	}

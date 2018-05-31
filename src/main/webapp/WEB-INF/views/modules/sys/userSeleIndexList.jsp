@@ -12,7 +12,7 @@
 		function page(n,s){
 			if(n) $("#pageNo").val(n);
 			if(s) $("#pageSize").val(s);
-			$("#searchForm").attr("action","${ctx}/sys/user/list");
+			$("#searchForm").attr("action","${ctx}/sys/user/seleIndexList");
 			$("#searchForm").submit();
 	    	return false;
 	    }
@@ -51,7 +51,7 @@
 			<th>订单量</th>
 			<th>回款额</th>
 			<th>新品发布量</th>
-			<th>供应商</th>
+			<th>供应商洽谈数</th>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
 	<c:forEach items="${page.list}" var="bizUser">
@@ -61,14 +61,24 @@
 			<td>${bizUser.loginName}</td>
 			<td>${bizUser.name}</td>
 			<td>${bizUser.mobile}</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>
+				${bizUser.userOrder.skuCount}
+			</td>
+			<td>
+				${bizUser.userOrder.orderCount}
+			</td>
+			<td>
+				${bizUser.userOrder.receiveTotal}
+			</td>
+			<td>
+				${bizUser.userOrder.opShelfCount}
+			</td>
+			<td>
+				${bizUser.userOrder.officeChatRecord}
+			</td>
 			<shiro:hasPermission name="sys:user:edit"><td>
-					<a href="${ctx}/sys/user/form?id=${bizUser.id}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}&conn=selectIndex">修改</a>
-					<a href="${ctx}/sys/user/delete?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&id=${bizUser.id}&company.id=${user.company.id}&conn=selectIndex" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+					<a href="${ctx}/sys/user/userSeleForm?id=${bizUser.id}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}&conn=selectIndex">修改</a>
+					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&conn=selectIndex" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
 			</td></shiro:hasPermission>
 		</tr>
 	</c:forEach>

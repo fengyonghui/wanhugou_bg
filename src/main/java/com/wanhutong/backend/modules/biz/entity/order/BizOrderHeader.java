@@ -99,12 +99,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String locationAddress;
 
     /**
-     * 客户专员、会员搜索 查看订单开始下单时间与该采购商订单总金额
+     * 客户专员、会员搜索 查看订单开始下单时间与该采购商订单总金额，品类主管 管理 的商品统计
      * */
     private Double userOfficeReceiveTotal;
     private Date userOfficeDeta;
-    private Integer officeChatRecord;//经销店的沟通次数
+    private Integer officeChatRecord;//沟通次数
     private BizChatRecord bizChatRecord;
+    private Integer opShelfCount;//新品发布量
+    private Integer skuCount;//商品销售量
 
     public String getLocationAddress() {
         return locationAddress;
@@ -547,5 +549,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setBizChatRecord(BizChatRecord bizChatRecord) {
         this.bizChatRecord = bizChatRecord;
+    }
+
+    public Integer getOpShelfCount() {
+        return opShelfCount;
+    }
+
+    public void setOpShelfCount(Integer opShelfCount) {
+        this.opShelfCount = opShelfCount;
+    }
+
+    public Integer getSkuCount() {
+        return skuCount;
+    }
+
+    public void setSkuCount(Integer skuCount) {
+        this.skuCount = skuCount;
     }
 }

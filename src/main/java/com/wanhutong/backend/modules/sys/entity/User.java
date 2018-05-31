@@ -67,7 +67,7 @@ public class User extends DataEntity<User> {
 	private Integer ccStatus;
 
 	/**
-	 * 会员搜索查看 采购商的下单相关信息
+	 * 会员搜索查看 采购商的下单相关信息，品类主管的商品统计
 	 * */
 	private BizOrderHeader userOrder;
 

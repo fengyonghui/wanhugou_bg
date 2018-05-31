@@ -2035,4 +2035,85 @@ FROM
 	</select>
 
 
+	<!-- 品类主管 管理 统计商品  -->
+	<select id="categorySkuStatistics" resultType="BizOrderHeader" parameterType="User">
+		SELECT
+		(select count(1) from biz_order_header aa
+			LEFT JOIN biz_order_detail bb on bb.order_id=aa.id
+			LEFT JOIN biz_sku_info cc on cc.id=bb.sku_id
+			LEFT JOIN biz_product_info dd on dd.id=cc.prod_id
+			left join biz_variety_info ff on ff.id= dd.vari_id
+			LEFT JOIN biz_variety_user_info gg on gg.variety_id=ff.id
+			LEFT JOIN sys_user hh on hh.id=gg.user_id
+		WHERE
+				aa.status=1
+			and bb.status=1
+			and cc.status=1
+			and dd.status=1
+			and hh.status=1
+			AND (
+				(
+				aa.biz_status != 45
+				AND aa.biz_status != 35
+				AND aa.biz_status != 0
+				)
+			OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+			)
+			and hh.id=#{id}
+		) as "skuCount",
+		count(a.id) as "orderCount",
+		sum(a.receive_total) as "receiveTotal",
+		(select count(1)
+			from
+				biz_sku_info qq
+			LEFT JOIN biz_product_info bpi on bpi.id=qq.prod_id
+			left join biz_variety_info bvi on bvi.id= bpi.vari_id
+			LEFT JOIN biz_variety_user_info bvui on bvui.variety_id=bvi.id
+			LEFT JOIN sys_user su on su.id=bvui.user_id
+			WHERE
+				qq.status=1
+			and bpi.status=1
+			and bvi.status=1
+			and su.status=1
+			and su.id=#{id}
+			and qq.create_time BETWEEN CURRENT_DATE()-7 and SYSDATE()
+		) as "opShelfCount",
+		(
+			SELECT
+				count(1)
+			FROM
+				biz_chat_record AS bizcr
+			LEFT JOIN sys_office so ON so.id = bizcr.office_id
+			LEFT JOIN sys_user su ON su.id = bizcr.user_id
+			WHERE
+				bizcr. STATUS = 1
+			and so.status=1
+			and su.status=1
+			and su.id=#{id}
+			and bizcr.create_id=#{id}
+			and so.type=7
+		) as "officeChatRecord"
+		from
+			biz_order_header a
+		LEFT JOIN biz_order_detail bod on bod.order_id=a.id and bod.status=1
+		LEFT JOIN biz_sku_info bsi on bsi.id=bod.sku_id
+		LEFT JOIN biz_product_info bpi on bpi.id=bsi.prod_id
+		LEFT JOIN sys_office so on so.id=bpi.vendor_id
+		left join biz_variety_info bvi on bvi.id= bpi.vari_id
+		LEFT JOIN biz_variety_user_info bvui on bvui.variety_id=bvi.id
+		LEFT JOIN sys_user su on su.id=bvui.user_id
+		WHERE
+			a.status=1
+		and su.id=#{id}
+		and su.status=1
+		AND (
+			(
+			a.biz_status != 45
+			AND a.biz_status != 35
+			AND a.biz_status != 0
+			)
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		)
+	</select>
+
 </mapper>
