@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.product.BizVarietyAttrDao">
+    
+	<sql id="bizVarietyAttrColumns">
+		a.id AS "id",
+		a.variety_id AS "varietyInfo.id",
+		bvi.name AS "varietyInfo.name",
+		a.attribute_id AS "attributeInfo.id",
+		sai.name AS "attributeInfo.name",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_time AS "updateDate",
+		a.update_id AS "updateBy.id"
+	</sql>
+	
+	<sql id="bizVarietyAttrJoins">
+		LEFT JOIN biz_variety_info bvi ON bvi.id = a.variety_id
+		LEFT JOIN sys_attribute_info sai ON sai.id = a.attribute_id
+	</sql>
+    
+	<select id="get" resultType="BizVarietyAttr">
+		SELECT 
+			<include refid="bizVarietyAttrColumns"/>
+		FROM biz_variety_attr a
+		<include refid="bizVarietyAttrJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizVarietyAttr">
+		SELECT 
+			<include refid="bizVarietyAttrColumns"/>
+		FROM biz_variety_attr a
+		<include refid="bizVarietyAttrJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo.id != ''">
+				AND a.variety_id = #{varietyInfo.id}
+			</if>
+			<if test="varietyInfo != null and varietyInfo.name != null and varietyInfo.name != ''">
+				AND bvi.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{varietyInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{varietyInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{varietyInfo.name},'%')</if>
+			</if>
+			<if test="attributeInfo != null and attributeInfo.id != null and attributeInfo.id != ''">
+				AND a.attribute_id = #{attributeInfo.id}
+			</if>
+			<if test="attributeInfo != null and attributeInfo.name != null and attributeInfo.name != ''">
+				AND sai.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{attributeInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{attributeInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{attributeInfo.name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizVarietyAttr">
+		SELECT 
+			<include refid="bizVarietyAttrColumns"/>
+		FROM biz_variety_attr a
+		<include refid="bizVarietyAttrJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_variety_attr(
+			id,
+			variety_id,
+			attribute_id,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_time,
+			update_id
+		) VALUES (
+			#{id},
+			#{varietyInfo.id},
+			#{attributeInfo.id},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateDate},
+			#{updateBy.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_variety_attr SET 	
+			variety_id = #{varietyInfo.id},
+			attribute_id = #{attributeInfo.id},
+			create_id = #{createBy.id},
+			u_version = #{uVersion},
+			update_time = #{updateDate},
+			update_id = #{updateBy.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_variety_attr SET
+		status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
