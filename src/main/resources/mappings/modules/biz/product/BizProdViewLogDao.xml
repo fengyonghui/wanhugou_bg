@@ -124,8 +124,34 @@
 		SELECT
 			a.id as "id",
 			a.prod_id as "productInfo.id",
-			count(a.id) as "prodChick"
-		FROM biz_prod_view_log a
+			count(a.id) as "prodChick",
+		(select count(1) from biz_order_header aa
+		LEFT JOIN biz_order_detail bb on bb.order_id=aa.id and bb.status=1
+		LEFT JOIN biz_sku_info cc on cc.id=bb.sku_id and cc.status=1
+		LEFT JOIN biz_product_info dd on dd.id=cc.prod_id and dd.status=1
+		WHERE
+			aa.status=1
+			and aa.order_type!=4
+			and dd.id=#{productInfo.id}
+			AND (
+			(
+			aa.biz_status != 45
+			AND aa.biz_status != 35
+			AND aa.biz_status != 0
+			)
+			OR (aa.biz_status = 40 AND aa.receive_total > 0))
+			<!--AND NOT EXISTS (
+				SELECT
+				1
+				FROM
+				sys_test_account ta
+				WHERE
+				aa.cust_id = ta.object_id
+				AND ta.object_name = 'sys_office'
+			)-->
+		) as "orderCount"
+		FROM
+			biz_prod_view_log a
 		LEFT JOIN biz_product_info bpi on bpi.id=a.prod_id
 		<where>
 			<if test="productInfo !=null and productInfo.id !=null and productInfo.id !=''">

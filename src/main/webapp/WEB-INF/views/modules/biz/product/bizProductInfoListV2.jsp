@@ -120,6 +120,7 @@
 				<th>最高售价</th>
 				<th>点击量</th>
 				<th>负责人</th>
+				<th>商品下单量</th>
 				<th>创建时间</th>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -171,6 +172,9 @@
 				</td>
 				<td>
 					${productInfo.user.name}
+				</td>
+				<td>
+					${productInfo.prodVice.orderCount}
 				</td>
 				<td>
 					<fmt:formatDate value="${productInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
