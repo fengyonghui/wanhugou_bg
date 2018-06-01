@@ -14,8 +14,11 @@
 </head>
 <body>
 <span>
-    <label>
-        <select class="input-medium" id="purchasingId">
+    <form:form id="searchForm" modelAttribute="office" action="${ctx}/biz/statistics/platform/orderCountFrequency" method="post" class="breadcrumb form-search">
+        <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+        <input id="name" name="name" type="text" value="${office.name}" />
+        <label>
+        <select class="input-medium" id="purchasingId" name="centerId">
             <option value="0" label="全部"></option>
             <c:forEach items="${purchasingList}" var="v">
                 <c:if test="${v.id == officeId}">
@@ -26,9 +29,10 @@
                 </c:if>
             </c:forEach>
         </select>
-        <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="init();"/>
-        <%--<input id="exportTable"  onclick="exportTable()" class="btn btn-primary" type="submit" value="导出表格"/>--%>
+        <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>
     </label>
+    </form:form>
+
 </span>
 <table id="contentTable" class="table table-bordered table-condensed table_text_center">
     <thead>
@@ -46,28 +50,13 @@
     </c:forEach>
     </tbody>
 </table>
-<script type="application/javascript">
-    function init() {
-        $Mask.AddLogo("正在加载");
-        var officeId = $("#purchasingId").val();
-        window.location.href = "orderCountFrequency?&officeId=" + officeId;
+<div class="pagination">${page}</div>
+<script type="text/javascript">
+    function page(n,s){
+        $("#pageNo").val(n);
+        $("#searchForm").submit();
+        return false;
     }
-    function exportTable() {
-        var officeId = $("#purchasingId").val();
-        //定义一个form表单
-        var myform = $("<form></form>");
-        myform.attr('method','post');
-        myform.attr('action',"${adminPath}/biz/statistics/platform/overviewDownload");
-
-        var myOfficeId = $("<input type='hidden' name='officeId' />");
-        myOfficeId.attr('value', officeId);
-
-        myform.append(myOfficeId);
-
-        myform.appendTo('body').submit();
-
-    }
-
 </script>
 </body>
 </html>

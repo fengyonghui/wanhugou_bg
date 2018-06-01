@@ -43,7 +43,7 @@
 		LEFT JOIN sys_area ar ON ar.id = a.area_id
 		LEFT JOIN sys_user pp ON pp.id = a.primary_person
 		LEFT JOIN sys_user dp ON dp.id = a.deputy_person
-		LEFT JOIN biz_custom_center_consultant ccc on a.id=ccc.cust_id
+		LEFT JOIN biz_custom_center_consultant ccc on a.id = ccc.cust_id
 		LEFT JOIN biz_vend_info bvi on a.id=bvi.office_id
     </sql>
 
