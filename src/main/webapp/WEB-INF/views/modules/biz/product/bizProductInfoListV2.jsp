@@ -85,6 +85,9 @@
 					   value="<fmt:formatDate value="${bizProductInfo.createDateEnd}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
+			<li><label>品类主管：</label>
+				<form:input id="cpBr" path="brandName" htmlEscape="false" maxlength="40" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
