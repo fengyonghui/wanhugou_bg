@@ -28,6 +28,7 @@ public class BizProdViewLog extends DataEntity<BizProdViewLog> {
 
 	//产品点击量
 	private Integer prodChick;
+	private String prodChixkSource;
 	
 	public BizProdViewLog() {
 		super();
@@ -76,5 +77,13 @@ public class BizProdViewLog extends DataEntity<BizProdViewLog> {
 
 	public void setProdChick(Integer prodChick) {
 		this.prodChick = prodChick;
+	}
+
+	public String getProdChixkSource() {
+		return prodChixkSource;
+	}
+
+	public void setProdChixkSource(String prodChixkSource) {
+		this.prodChixkSource = prodChixkSource;
 	}
 }

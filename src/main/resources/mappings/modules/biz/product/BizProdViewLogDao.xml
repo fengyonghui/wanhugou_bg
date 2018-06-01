@@ -34,11 +34,10 @@
 		SELECT 
 			<include refid="bizProdViewLogColumns"/>
 		FROM biz_prod_view_log a
-		<include refid="bizProdViewLogJoins"/>
-
+			<include refid="bizProdViewLogJoins"/>
 		<where>
-			
-			<if test="opShelfInfo != null and opShelfInfo != '' and opShelfInfo.name != ''">
+
+			<if test="opShelfInfo != null and opShelfInfo.name != null and opShelfInfo.name != ''">
 				AND bosi.name  LIKE
 				<if test="dbName == 'oracle'">'%'||#{opShelfInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
@@ -47,11 +46,14 @@
 			<if test="center != null and center.name != null and center.name != ''">
 				AND so.name = #{center.name}
 			</if>
-			<if test="productInfo != null and productInfo != '' and productInfo.name != ''">
+			<if test="productInfo != null and productInfo.name != null and productInfo.name != ''">
 				AND bpi.NAME LIKE
 				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.id != null and productInfo.id != ''">
+				AND a.prod_id =#{productInfo.id}
 			</if>
 		</where>
 		ORDER BY a.create_time DESC
@@ -126,12 +128,10 @@
 		FROM biz_prod_view_log a
 		LEFT JOIN biz_product_info bpi on bpi.id=a.prod_id
 		<where>
-			1=1
-		  <if test="productInfo !=null and productInfo.id !=null and productInfo.id !=''">
+			<if test="productInfo !=null and productInfo.id !=null and productInfo.id !=''">
 				and bpi.id=#{productInfo.id}
-		  </if>
+			</if>
 		</where>
 	</select>
-
 
 </mapper>

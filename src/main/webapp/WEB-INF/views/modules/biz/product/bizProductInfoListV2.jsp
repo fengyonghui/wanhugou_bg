@@ -124,65 +124,65 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizProductInfo" varStatus="state">
-			<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==0}">
+		<c:forEach items="${page.list}" var="productInfo" varStatus="state">
+			<c:if test="${productInfo.delFlag!=null && productInfo.delFlag==0}">
 				<tr style="text-decoration:line-through;">
 			</c:if>
-			<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==1}">
+			<c:if test="${productInfo.delFlag!=null && productInfo.delFlag==1}">
 				<tr>
 			</c:if>
 				<td>${state.index+1}</td>
-				<td><img src="${bizProductInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+				<td><img src="${productInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				<td>
-					${bizProductInfo.bizVarietyInfo.name}
+					${productInfo.bizVarietyInfo.name}
 				</td>
 
 				<td>
 
-					<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}">
-					${bizProductInfo.name}
+					<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${productInfo.id}">
+					${productInfo.name}
 				</a></td>
 				<td>
-					${bizProductInfo.prodCode}
+					${productInfo.prodCode}
 				</td>
 				<td>
-					${bizProductInfo.itemNo}
+					${productInfo.itemNo}
 				</td>
 				<td>
-					${bizProductInfo.brandName}
+					${productInfo.brandName}
 				</td>
 				<td>
-					${bizProductInfo.description}
+					${productInfo.description}
 				</td>
 				<td>
-					${bizProductInfo.office.name}
+					${productInfo.office.name}
 				</td>
 				<td>
-					${bizProductInfo.minPrice}
+					${productInfo.minPrice}
 				</td>
 				<td>
-					${bizProductInfo.maxPrice}
+					${productInfo.maxPrice}
 				</td>
 				<td>
-					<a href="">
-						${bizProductInfo.prodVice.prodChick}
+					<a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${productInfo.id}&prodChixkSource=prod_chickCount">
+						${productInfo.prodVice.prodChick}
 					</a>
 				</td>
 				<td>
-					<fmt:formatDate value="${bizProductInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${productInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit">
 					<td>
-						<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==1}">
-							<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}&prodType=${prodType}">修改</a>
+						<c:if test="${productInfo.delFlag!=null && productInfo.delFlag==1}">
+							<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${productInfo.id}&prodType=${prodType}">修改</a>
 
-							<a href="${ctx}/biz/product/bizProductInfoV2/copy?id=${bizProductInfo.id}&prodType=${prodType}">复制</a>
-							<%--<a href="${ctx}/biz/product/bizProductInfoV2/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>--%>
-							<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
-							<%--<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}">sku商品管理</a>--%>
+							<a href="${ctx}/biz/product/bizProductInfoV2/copy?id=${productInfo.id}&prodType=${prodType}">复制</a>
+							<%--<a href="${ctx}/biz/product/bizProductInfoV2/delete?id=${productInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>--%>
+							<a href="#" onclick="productDelete(${productInfo.id});">删除</a>
+							<%--<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${productInfo.id}">sku商品管理</a>--%>
 						</c:if>
-						<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==0}">
-							<a href="${ctx}/biz/product/bizProductInfoV2/recovery?id=${bizProductInfo.id}&prodType=${prodType}" onclick="return confirmx('确认要恢复该产品信息表吗？', this.href)">恢复</a>
+						<c:if test="${productInfo.delFlag!=null && productInfo.delFlag==0}">
+							<a href="${ctx}/biz/product/bizProductInfoV2/recovery?id=${productInfo.id}&prodType=${prodType}" onclick="return confirmx('确认要恢复该产品信息表吗？', this.href)">恢复</a>
 						</c:if>
 					</td></shiro:hasPermission>
 			</tr>
