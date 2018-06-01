@@ -821,7 +821,7 @@ public class Configuration {
 			this.name = name;
 		}
 
-		// TODO 如果现在状态为刷新，则刷新(先删除后添加)
+		// 如果现在状态为刷新，则刷新(先删除后添加)
 		@SuppressWarnings("unchecked")
 		public V put(String key, V value) {
 			if (org.apache.ibatis.thread.Runnable.isRefresh()) {
