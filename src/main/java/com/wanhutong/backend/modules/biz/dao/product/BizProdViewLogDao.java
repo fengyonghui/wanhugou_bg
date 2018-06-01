@@ -14,5 +14,5 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProdViewLog;
  */
 @MyBatisDao
 public interface BizProdViewLogDao extends CrudDao<BizProdViewLog> {
-	
+	BizProdViewLog findProdView(BizProdViewLog bizProdViewLog);
 }

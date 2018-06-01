@@ -43,5 +43,11 @@ public class BizProdViewLogService extends CrudService<BizProdViewLogDao, BizPro
 	public void delete(BizProdViewLog bizProdViewLog) {
 		super.delete(bizProdViewLog);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public BizProdViewLog findProdView(BizProdViewLog bizProdViewLog) {
+	 	return dao.findProdView(bizProdViewLog);
+	}
+
+
 }

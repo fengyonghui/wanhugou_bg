@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +98,12 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	 * */
 	private Date createDateStart;
 	private Date createDateEnd;
+
+	/**
+	 * 品类主管
+	 * */
+	private User user;
+	private BizProdViewLog prodVice;//点击量
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
@@ -528,4 +535,20 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
     public void setImgDetailSorts(String imgDetailSorts) {
         this.imgDetailSorts = imgDetailSorts;
     }
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public BizProdViewLog getProdVice() {
+		return prodVice;
+	}
+
+	public void setProdVice(BizProdViewLog prodVice) {
+		this.prodVice = prodVice;
+	}
 }

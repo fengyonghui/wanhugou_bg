@@ -86,7 +86,10 @@
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li><label>品类主管：</label>
-				<form:input id="cpBr" path="brandName" htmlEscape="false" maxlength="40" class="input-medium"/>
+				<form:select id="user" about="choose" path="user.role.enname" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${usersList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -115,6 +118,7 @@
 				<th>供应商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
+				<th>点击量</th>
 				<th>创建时间</th>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -158,6 +162,11 @@
 				</td>
 				<td>
 					${bizProductInfo.maxPrice}
+				</td>
+				<td>
+					<a href="">
+						${bizProductInfo.prodVice.prodChick}
+					</a>
 				</td>
 				<td>
 					<fmt:formatDate value="${bizProductInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

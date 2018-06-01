@@ -116,5 +116,22 @@
 		status= #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<!-- 产品管理的点击量  -->
+	<select id="findProdView" resultType="BizProdViewLog">
+		SELECT
+			a.id as "id",
+			a.prod_id as "productInfo.id",
+			count(a.id) as "prodChick"
+		FROM biz_prod_view_log a
+		LEFT JOIN biz_product_info bpi on bpi.id=a.prod_id
+		<where>
+			1=1
+		  <if test="productInfo !=null and productInfo.id !=null and productInfo.id !=''">
+				and bpi.id=#{productInfo.id}
+		  </if>
+		</where>
+	</select>
+
+
 </mapper>

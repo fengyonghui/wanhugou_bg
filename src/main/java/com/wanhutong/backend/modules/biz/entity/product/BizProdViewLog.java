@@ -25,6 +25,9 @@ public class BizProdViewLog extends DataEntity<BizProdViewLog> {
 	private Office center;		// 采购中心ID
 	private BizProductInfo productInfo;		// 产品ID
 	private User user;		// 用户ID
+
+	//产品点击量
+	private Integer prodChick;
 	
 	public BizProdViewLog() {
 		super();
@@ -67,5 +70,11 @@ public class BizProdViewLog extends DataEntity<BizProdViewLog> {
 		this.user = user;
 	}
 
-	
+	public Integer getProdChick() {
+		return prodChick;
+	}
+
+	public void setProdChick(Integer prodChick) {
+		this.prodChick = prodChick;
+	}
 }
