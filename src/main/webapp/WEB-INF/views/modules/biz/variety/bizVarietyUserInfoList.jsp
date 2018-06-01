@@ -25,37 +25,8 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>编号：</label>
-				<form:input path="id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>类别 biz_variety_info：</label>
-				<form:input path="varietyId" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>用户 sys_user：</label>
-				<sys:treeselect id="user" name="user.id" value="${bizVarietyUserInfo.user.id}" labelName="user.name" labelValue="${bizVarietyUserInfo.user.name}"
-					title="用户" url="/sys/office/treeData?type=3" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>
-			</li>
-			<li><label>数据状态：</label>
-				<form:radiobuttons path="status" items="${fns:getDictList('status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-			</li>
-			<li><label>创建人：</label>
-				<form:input path="createId.id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>创建时间：</label>
-				<input name="createTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizVarietyUserInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
-			</li>
-			<li><label>版本控制：</label>
-				<form:input path="uVersion" htmlEscape="false" maxlength="4" class="input-medium"/>
-			</li>
-			<li><label>更新人：</label>
-				<form:input path="updateId.id" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
-			<li><label>更新时间：</label>
-				<input name="updateTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					value="<fmt:formatDate value="${bizVarietyUserInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
+			<li><label>品类名称：</label>
+				<form:input path="varietyInfo.id" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -65,14 +36,10 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>编号</th>
-				<th>类别 biz_variety_info</th>
-				<th>用户 sys_user</th>
-				<th>数据状态</th>
+				<th>类别名称</th>
+				<th>品类主管</th>
 				<th>创建人</th>
 				<th>创建时间</th>
-				<th>版本控制</th>
-				<th>更新人</th>
 				<th>更新时间</th>
 				<shiro:hasPermission name="biz:variety:bizVarietyUserInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -81,28 +48,16 @@
 		<c:forEach items="${page.list}" var="bizVarietyUserInfo">
 			<tr>
 				<td><a href="${ctx}/biz/variety/bizVarietyUserInfo/form?id=${bizVarietyUserInfo.id}">
-					${bizVarietyUserInfo.id}
+						${bizVarietyUserInfo.varietyId}
 				</a></td>
 				<td>
-					${bizVarietyUserInfo.varietyId}
-				</td>
-				<td>
 					${bizVarietyUserInfo.user.name}
-				</td>
-				<td>
-					${fns:getDictLabel(bizVarietyUserInfo.status, 'status', '')}
 				</td>
 				<td>
 					${bizVarietyUserInfo.createId.id}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizVarietyUserInfo.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
-				</td>
-				<td>
-					${bizVarietyUserInfo.uVersion}
-				</td>
-				<td>
-					${bizVarietyUserInfo.updateId.id}
 				</td>
 				<td>
 					<fmt:formatDate value="${bizVarietyUserInfo.updateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>

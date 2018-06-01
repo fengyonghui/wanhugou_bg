@@ -36,7 +36,7 @@
 		<include refid="bizVarietyUserInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo != ''">
+			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo.id != ''">
 				AND a.variety_id = #{varietyInfo.id}
 			</if>
 			<if test="user != null and user.id != null and user.id != ''">
