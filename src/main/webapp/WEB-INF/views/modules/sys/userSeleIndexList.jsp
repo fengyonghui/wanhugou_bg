@@ -43,7 +43,6 @@
 		<tr>
 			<th>归属公司</th>
 			<th>归属部门</th>
-			<th>登录名</th>
 			<th>姓名</th>
 			<th>电话</th>
 			<th>商品销售量</th>
@@ -57,7 +56,6 @@
 		<tr>
 			<td>${bizUser.company.name}</td>
 			<td>${bizUser.office.name}</td>
-			<td>${bizUser.loginName}</td>
 			<td>${bizUser.name}</td>
 			<td>${bizUser.mobile}</td>
 			<td>
