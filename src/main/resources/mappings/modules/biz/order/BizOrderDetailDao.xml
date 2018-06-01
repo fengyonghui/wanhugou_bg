@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
 		boh.order_num AS "orderHeader.orderNum",
+		boh.order_type AS "orderHeader.orderType",
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
 		a.sku_shelf_id as "shelfInfo.id",
@@ -376,8 +377,13 @@ GROUP BY
 		</if>
 			part_no = #{partNo},
 			sku_name = #{skuName},
+		<if test="unitPrice!=null and unitPrice!=0">
 			unit_price = #{unitPrice},
+		</if>
+		<if test="buyPrice!=null and buyPrice!=0">
 			buy_price = #{buyPrice},
+		</if>
+
 			sent_qty = #{sentQty},
 			ord_qty = #{ordQty},
 		<choose>
