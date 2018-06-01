@@ -3,6 +3,7 @@ package com.wanhutong.backend.modules.config;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.SystemConfig;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -38,9 +39,7 @@ import java.lang.reflect.Modifier;
  */
 public abstract class ConfigGeneral {
 
-	/**
-	 * 新首页配置文件
-	 */
+
 	public static final ConfigWrapper<PurchaseOrderProcessConfig> PURCHASE_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PurchaseOrderProcessConfig.xml",new PurchaseOrderProcessConfig());
 
@@ -49,6 +48,9 @@ public abstract class ConfigGeneral {
 
 	public static final ConfigWrapper<PaymentOrderProcessConfig> PAYMENT_ORDER_PROCESS_CONFIG = new ConfigWrapper<>(
 			"PaymentOrderProcessConfig.xml",new PaymentOrderProcessConfig());
+
+	public static final ConfigWrapper<SystemConfig> SYSTEM_CONFIG = new ConfigWrapper<>(
+			"SystemConfig.xml",new SystemConfig());
 
 	/**
 	 * 获取所有的配置对象实例所属的父容器，使用反射实现，由于仅在更新配置的内存版本时调用，属于可容忍的性能损耗
