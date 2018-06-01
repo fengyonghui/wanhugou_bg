@@ -29,7 +29,6 @@
 	<sys:tableSort id="orderBy" name="orderBy" value="${page.orderBy}" callback="page();"/>
 	<ul class="ul-form">
 		<input type="hidden" name="conn" value="selectIndex"></li>
-		<li><label>登录名：</label><form:input path="loginName" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li><label>电&nbsp;&nbsp;&nbsp;话：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="return page();"/>
