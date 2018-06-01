@@ -3,6 +3,7 @@ package com.wanhutong.backend.common.utils;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -29,11 +30,16 @@ public class RoleUtils {
 
 
     public static Boolean hasRole (User user, List<String> roleList) {
+        if (CollectionUtils.isEmpty(roleList)) {
+            return Boolean.FALSE;
+        }
+
+        List<Role> userRoleList = user.getRoleList();
         for (String s : roleList) {
             RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
             Role role = new Role();
             role.setEnname(roleEnNameEnum.getState());
-            if (user.getRoleList().contains(role)) {
+            if (userRoleList.contains(role)) {
                 return Boolean.TRUE;
             }
         }

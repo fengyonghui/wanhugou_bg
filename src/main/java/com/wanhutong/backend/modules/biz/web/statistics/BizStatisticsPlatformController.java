@@ -3,6 +3,7 @@ package com.wanhutong.backend.modules.biz.web.statistics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
@@ -11,7 +12,6 @@ import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsPlatfor
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
-import com.wanhutong.backend.modules.sys.utils.HanyuPinyinHelper;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -85,7 +85,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"overview", ""})
+    @RequestMapping(value = {"overview"})
     public String overview(HttpServletRequest request, String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
         Map<String, List<BizPlatformDataOverviewDto>> list = null;
@@ -121,7 +121,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"overviewSingle", ""})
+    @RequestMapping(value = {"overviewSingle"})
     public String overviewSingle(HttpServletRequest request, String date, Integer officeId) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
         Calendar calendar = Calendar.getInstance();
@@ -166,7 +166,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"overviewDownload", ""})
+    @RequestMapping(value = {"overviewDownload"})
     public void overviewDownload(HttpServletRequest request, HttpServletResponse response, String date) throws IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
         Map<String, List<BizPlatformDataOverviewDto>> dataMap = null;
@@ -291,7 +291,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"user", ""})
+    @RequestMapping(value = {"user"})
     public String user(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         Calendar cal = Calendar.getInstance();
@@ -315,7 +315,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"userData", ""})
+    @RequestMapping(value = {"userData"})
     @ResponseBody
     public String userData(HttpServletRequest request, String startDate, String endDate, String type, String centerType) {
         List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsPlatformService.userStatisticData(type, startDate, endDate, centerType);
@@ -378,7 +378,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"order", ""})
+    @RequestMapping(value = {"order"})
     public String order(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         return "modules/biz/statistics/bizStatisticsOrderPlatform";
@@ -391,7 +391,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"orderCategoryByCenter", ""})
+    @RequestMapping(value = {"orderCategoryByCenter"})
     public String orderCategoryByCenter(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         Calendar cal = Calendar.getInstance();
@@ -415,7 +415,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return 订单相关统计数据
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"orderData", ""})
+    @RequestMapping(value = {"orderData"})
     @ResponseBody
     public String orderData(HttpServletRequest request, String startDate, String endDate, String type, String centerType, String orderType) {
         return JSONObject.fromObject(getOrderData(startDate, endDate, type, centerType, orderType)).toString();
@@ -428,7 +428,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return 订单相关统计数据
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"orderDataCategoryByCenter", ""})
+    @RequestMapping(value = {"orderDataCategoryByCenter"})
     @ResponseBody
     public String orderDataCategoryByCenter(HttpServletRequest request, String startDate, String endDate, String type, String centerType, String orderType) {
         return JSONObject.fromObject(getOrderDataCategoryByCenter(startDate, endDate, type, centerType, orderType)).toString();
@@ -682,7 +682,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"profit", ""})
+    @RequestMapping(value = {"profit"})
     public String profit(HttpServletRequest request, HttpServletResponse response) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("month", org.joda.time.LocalDateTime.now().toString(BizStatisticsService.PARAM_DATE_FORMAT));
@@ -697,7 +697,7 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"profitData", ""})
+    @RequestMapping(value = {"profitData"})
     @ResponseBody
     public String profitData(HttpServletRequest request, HttpServletResponse response, String startDate, String endDate, String centerType, String type) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
@@ -794,31 +794,27 @@ public class BizStatisticsPlatformController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"orderCountFrequency", ""})
-    public String orderCountFrequency(HttpServletRequest request, Integer officeId) {
+    @RequestMapping(value = {"orderCountFrequency"})
+    public String orderCountFrequency(HttpServletRequest request, HttpServletResponse response, Office office) {
+
+        int pageSize = 20;
         long startTime = System.currentTimeMillis();
 
         request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
-        if (officeId == null) {
+        if (office == null) {
             return "modules/biz/statistics/bizPlatformOrderCountFrequency";
         }
 
-        List<Office> custList = officeService.findCustomByOfficeId(officeId);
-
-        custList.sort(new Comparator<Office>() {
-            @Override
-            public int compare(Office o1, Office o2) {
-                return HanyuPinyinHelper.getPinyinString(o1.getName()).compareTo(HanyuPinyinHelper.getPinyinString(o2.getName()));
-            }
-        });
-
+        List<Office> custList = officeService.findCustomByOfficeId(office.getCenterId());
+        custList.removeIf(o -> !o.getName().contains(office.getName()));
+        Integer officeId = office.getCenterId();
 
         List<Callable<Pair<String, List<Integer>>>> tasks = Lists.newArrayList();
         for (Office o : custList) {
             tasks.add(new Callable<Pair<String, List<Integer>>>() {
                 @Override
                 public Pair<String, List<Integer>> call() throws Exception {
-                    return Pair.of(o.getName() + o.getId(), bizStatisticsPlatformService.findOrderCountFrequency(o.getId()));
+                    return Pair.of(o.getName() + "_" + o.getId(), bizStatisticsPlatformService.findOrderCountFrequency(o.getId()));
                 }
             });
         }
@@ -829,7 +825,7 @@ public class BizStatisticsPlatformController extends BaseController {
             LOGGER.error("get user error (tasks)", e);
         }
 
-        Map<String, Integer> resultMap = Maps.newLinkedHashMap();
+        List<Pair<String, Integer>> resultList = Lists.newArrayList();
         if (futures != null) {
             for (Future<Pair<String, List<Integer>>> future : futures) {
                 try {
@@ -839,16 +835,31 @@ public class BizStatisticsPlatformController extends BaseController {
                     for (Integer b : countList) {
                         totalCount += b;
                     }
-                    resultMap.put(data.getLeft(), countList.size() == 0 ? 0 : (totalCount / countList.size()));
+                    resultList.add(Pair.of(data.getLeft(), countList.size() == 0 ? 0 : (totalCount / countList.size())));
                 } catch (Exception e) {
                     LOGGER.error("多线程取订单频率异常[{}]",officeId, e);
                 }
             }
         }
 
+        resultList.sort(new Comparator<Pair<String, Integer>>() {
+            @Override
+            public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
+                return o2.getRight().compareTo((o1.getRight()));
+            }
+        });
+
+        Page<Office> page = new Page<>(request, response);
+        page.setPageSize(pageSize);
+        page.setCount(custList.size());
+        page.initialize();
+        List<Pair<String, Integer>> pairs = resultList.subList((page.getPageNo() - 1) * pageSize, Math.min(page.getPageNo() * pageSize, resultList.size()));
+
+
         request.setAttribute("officeId", officeId);
-        request.setAttribute("dataMap", resultMap);
+        request.setAttribute("dataMap", pairs);
         request.setAttribute("custList", custList);
+        request.setAttribute("page", page);
         LOGGER.info("orderCountFrequency time[{}]", System.currentTimeMillis() - startTime);
         return "modules/biz/statistics/bizPlatformOrderCountFrequency";
     }

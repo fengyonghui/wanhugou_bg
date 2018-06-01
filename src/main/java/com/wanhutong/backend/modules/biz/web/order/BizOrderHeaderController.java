@@ -48,6 +48,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -912,8 +913,13 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "checkTotalExp")
     public String checkTotalExp(BizOrderHeader bizOrderHeader) {
         String flag = "ok";
-        Double totalDetail = bizOrderHeader.getTotalDetail();
-        Double totalExp = -bizOrderHeader.getTotalExp();
+        BigDecimal totalDetail = BigDecimal.valueOf(bizOrderHeader.getTotalDetail() == null ? 0 : bizOrderHeader.getTotalDetail());
+        BigDecimal freight = BigDecimal.valueOf(bizOrderHeader.getFreight() == null ? 0 : bizOrderHeader.getFreight());
+        BigDecimal totalExp = BigDecimal.valueOf(bizOrderHeader.getTotalExp() == null ? 0 : -bizOrderHeader.getTotalExp());
+
+        if (totalExp.compareTo(BigDecimal.ZERO) <= 0) {
+            return flag;
+        }
 
         if (bizOrderHeader.getId() == null) {
             return flag;
@@ -923,10 +929,10 @@ public class BizOrderHeaderController extends BaseController {
         BizOrderDetail orderDetail = new BizOrderDetail();
         orderDetail.setOrderHeader(orderHeader);
         List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
-        Double totalBuyPrice = 0.0;
+        BigDecimal totalBuyPrice = BigDecimal.ZERO;
         if (orderDetailList != null && !orderDetailList.isEmpty()) {
             for (BizOrderDetail bizOrderDetail : orderDetailList) {
-                totalBuyPrice += bizOrderDetail.getBuyPrice() * bizOrderDetail.getOrdQty();
+                totalBuyPrice = totalBuyPrice.add(BigDecimal.valueOf(bizOrderDetail.getBuyPrice()).multiply(BigDecimal.valueOf(bizOrderDetail.getOrdQty())));
             }
         }
 
@@ -945,25 +951,21 @@ public class BizOrderHeaderController extends BaseController {
         List<String> orderLowestAudit = systemConfig.getOrderLowestAudit();
 
         boolean serviceChargeStatus = RoleUtils.hasRole(user, serviceChargeAudit);
-        boolean orderLossStatus = RoleUtils.hasRole(user, orderLossAudit);
-        boolean orderLowestStatus = RoleUtils.hasRole(user, orderLowestAudit);
 
-        if (!serviceChargeStatus && totalExp.compareTo((totalDetail - totalBuyPrice) * 0.5) == 1) {
+        if (!serviceChargeStatus && totalExp.compareTo(totalDetail.subtract(totalBuyPrice).multiply(BigDecimal.valueOf(0.5))) > 0) {
             return "serviceCharge";
         }
 
-        if (!orderLossStatus && totalExp.compareTo(totalDetail - totalBuyPrice) == 1) {
+        boolean orderLossStatus = RoleUtils.hasRole(user, orderLossAudit);
+        BigDecimal resultPrice = totalDetail.subtract(totalExp);
+        if (!orderLossStatus && resultPrice.compareTo(totalBuyPrice) < 0) {
             return "orderLoss";
         }
 
-        /**
-         * TODO
-         * 5%
-         */
-        if (!orderLowestStatus && totalExp.compareTo(totalDetail - totalBuyPrice) == 1) {
+        boolean orderLowestStatus = RoleUtils.hasRole(user, orderLowestAudit);
+        if (!orderLowestStatus && resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.95))) < 0) {
             return "orderLowest";
         }
-
 
         return flag;
     }
