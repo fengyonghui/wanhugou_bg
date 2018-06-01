@@ -377,8 +377,13 @@ GROUP BY
 		</if>
 			part_no = #{partNo},
 			sku_name = #{skuName},
+		<if test="unitPrice!=null and unitPrice!=0">
 			unit_price = #{unitPrice},
+		</if>
+		<if test="buyPrice!=null and buyPrice!=0">
 			buy_price = #{buyPrice},
+		</if>
+
 			sent_qty = #{sentQty},
 			ord_qty = #{ordQty},
 		<choose>
