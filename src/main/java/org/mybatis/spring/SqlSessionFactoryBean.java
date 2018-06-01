@@ -500,7 +500,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>,
 				throw new NestedIOException("Failed getting a databaseId", e);
 			}
 		}
-		// TODO 增加location 获取加载xml的路径，也可配置
+		//  增加location 获取加载xml的路径，也可配置
 		String location = null;
 		if (!isEmpty(this.mapperLocations)) {
 			for (Resource mapperLocation : this.mapperLocations) {
@@ -536,7 +536,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>,
 			}
 		}
 
-		// TODO 编译sqlsession时，启动定时器
+		// 编译sqlsession时，启动定时器
 		new org.apache.ibatis.thread.Runnable(location, configuration).run();
 
 		return this.sqlSessionFactoryBuilder.build(configuration);
@@ -579,7 +579,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>,
 	}
 
 	/**
-	 * TODO 刷新
+	 * 刷新
 	 * 
 	 * @param inputStream
 	 * @param resource

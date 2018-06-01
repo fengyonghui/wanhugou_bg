@@ -61,11 +61,13 @@
                         url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
                         data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
                         success:function (data) {
-                            if (data == "error") {
+                            if (data == "serviceCharge") {
                                 alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
-                            } else if (data == "first"){
-                                alert("首单优惠不能低于出厂价，请修改调整金额");
-                            }else {
+                            } else if (data == "orderLoss") {
+                                alert("优惠后订单金额不能低于出厂价，请修改调整金额");
+                            } else if (data == "orderLowest") {
+                                alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
+                            } else {
                                 loading('正在提交，请稍等...');
                                 form.submit();
                             }

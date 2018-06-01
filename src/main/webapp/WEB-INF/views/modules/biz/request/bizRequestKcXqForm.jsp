@@ -80,6 +80,7 @@
 			</div>
 		</div>
 
+		<c:if test="${empty source || source ne 'ghs'}">
 		<div class="control-group">
 			<label class="control-label">期望收货时间：</label>
 			<div class="controls">
@@ -87,14 +88,15 @@
 						<c:if test="${bizRequestHeader != null}">
 							value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 						</c:if>
-						<c:if test="${bizOrderHeader != null}"	>
+						<%--<c:if test="${bizOrderHeader != null}"	>
 							value="<fmt:formatDate value="${bizOrderHeader.deliveryDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-						</c:if>
+						</c:if>--%>
 					<%--value="<fmt:formatDate value="${bizRequestHeader==null?'':bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
 				/>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		</c:if>
 
 
 

@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public class XmlUtils {
 		X_STREAM.processAnnotations(PurchaseOrderProcessConfig.class);
 		X_STREAM.processAnnotations(RequestOrderProcessConfig.class);
 		X_STREAM.processAnnotations(PaymentOrderProcessConfig.class);
+		X_STREAM.processAnnotations(SystemConfig.class);
 	}
 
 	@SuppressWarnings("unchecked")
