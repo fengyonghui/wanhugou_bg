@@ -86,7 +86,7 @@
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 			<li><label>品类主管：</label>
-				<form:select id="user" about="choose" path="user.role.enname" class="input-medium">
+				<form:select about="choose" path="user.id" class="input-medium">
 					<form:option value="" label="请选择"/>
 					<form:options items="${usersList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 				</form:select>
@@ -119,6 +119,7 @@
 				<th>最低售价</th>
 				<th>最高售价</th>
 				<th>点击量</th>
+				<th>负责人</th>
 				<th>创建时间</th>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -167,6 +168,9 @@
 					<a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${productInfo.id}&prodChixkSource=prod_chickCount">
 						${productInfo.prodVice.prodChick}
 					</a>
+				</td>
+				<td>
+					${productInfo.user.name}
 				</td>
 				<td>
 					<fmt:formatDate value="${productInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
