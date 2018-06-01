@@ -9,6 +9,7 @@ import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -105,6 +106,8 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Date userOfficeDeta;
     private Integer officeChatRecord;//经销店的沟通次数
     private BizChatRecord bizChatRecord;
+    private BizSkuInfo skuInfoId;//商品ID
+    private String skuChickCount;//下单量标识
 
     public String getLocationAddress() {
         return locationAddress;
@@ -547,5 +550,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setBizChatRecord(BizChatRecord bizChatRecord) {
         this.bizChatRecord = bizChatRecord;
+    }
+
+    public BizSkuInfo getSkuInfoId() {
+        return skuInfoId;
+    }
+
+    public void setSkuInfoId(BizSkuInfo skuInfoId) {
+        this.skuInfoId = skuInfoId;
+    }
+
+    public String getSkuChickCount() {
+        return skuChickCount;
+    }
+
+    public void setSkuChickCount(String skuChickCount) {
+        this.skuChickCount = skuChickCount;
     }
 }
