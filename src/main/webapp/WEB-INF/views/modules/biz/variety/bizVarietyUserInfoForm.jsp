@@ -36,15 +36,20 @@
 		<div class="control-group">
 			<label class="control-label">分类名称：</label>
 			<div class="controls">
-				<form:input path="varietyInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>
+				<form:select id="varietyInfo" path="varietyInfo.id" class="input-medium required">
+					<form:option label="请选择" value=""/>
+					<form:options items="${varietyList}" itemLabel="name" itemValue="id"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">品类主管：</label>
 			<div class="controls">
-				<sys:treeselect id="user" name="user.id" value="${bizVarietyUserInfo.user.id}" labelName="user.name" labelValue="${bizVarietyUserInfo.user.name}"
-					title="用户" url="/sys/office/treeData?type=3" cssClass="required" allowClear="true" notAllowSelectParent="true"/>
+				<form:select about="choose" path="user.id" class="input-medium required">
+					<form:option value="" label="请选择"/>
+					<form:options items="${usersList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

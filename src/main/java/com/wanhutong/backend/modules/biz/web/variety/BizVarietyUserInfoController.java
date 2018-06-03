@@ -6,6 +6,12 @@ package com.wanhutong.backend.modules.biz.web.variety;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +28,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
 import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
 
+import java.util.List;
+
 /**
  * 品类与用户 关联Controller
  * @author Oy
@@ -33,6 +41,10 @@ public class BizVarietyUserInfoController extends BaseController {
 
 	@Autowired
 	private BizVarietyUserInfoService bizVarietyUserInfoService;
+	@Autowired
+	private SystemService systemService;
+	@Autowired
+	private BizVarietyInfoService bizVarietyInfoService;
 	
 	@ModelAttribute
 	public BizVarietyUserInfo get(@RequestParam(required=false) Integer id) {
@@ -58,6 +70,14 @@ public class BizVarietyUserInfoController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizVarietyUserInfo bizVarietyUserInfo, Model model) {
 		model.addAttribute("bizVarietyUserInfo", bizVarietyUserInfo);
+		Role role = new Role();
+		role.setName(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+		User user = new User();
+		user.setRole(role);
+		List<User> users = systemService.userSelectCompany(user);
+		model.addAttribute("usersList", users);
+		List<BizVarietyInfo> varietyFactorList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		model.addAttribute("varietyList", varietyFactorList);
 		return "modules/biz/variety/bizVarietyUserInfoForm";
 	}
 
