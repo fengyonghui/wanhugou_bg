@@ -13,11 +13,13 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
 		su.name AS "user.name",
-		bvi.name as "varietyInfo.name"
+		bvi.name as "varietyInfo.name",
+		us.name as "createBy.name"
 	</sql>
 	
 	<sql id="bizVarietyUserInfoJoins">
 		LEFT JOIN sys_user su ON su.id = a.user_id
+		LEFT JOIN sys_user us ON us.id = a.create_id
 		LEFT join biz_variety_info bvi on bvi.id=a.variety_id
 	</sql>
     
@@ -38,6 +40,12 @@
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="varietyInfo != null and varietyInfo.id != null and varietyInfo.id != ''">
 				AND a.variety_id = #{varietyInfo.id}
+			</if>
+			<if test="varietyInfo != null and varietyInfo.name != null and varietyInfo.name != ''">
+				AND bvi.name like
+				<if test="dbName == 'oracle'">'%'||#{varietyInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{varietyInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{varietyInfo.name},'%')</if>
 			</if>
 			<if test="user != null and user.id != null and user.id != ''">
 				AND a.user_id = #{user.id}
