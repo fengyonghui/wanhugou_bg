@@ -307,4 +307,8 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * */
     BizOrderHeader findOrderCount(BizOrderHeader bizOrderHeader);
 
+    /**
+     * 客户专员的 统计
+     * */
+    BizOrderHeader findOrderUserCount(BizOrderHeader bizOrderHeader);
 }

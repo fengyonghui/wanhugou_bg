@@ -99,29 +99,15 @@
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead><tr><th>归属公司</th><th>归属部门</th><th class="sort-column login_name">登录名</th><th class="sort-column name">姓名</th>
-		<th>电话</th><th>手机</th><%--<th>角色</th> --%><shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
+		<th>手机</th><%--<th>角色</th> --%>
+			<c:if test="${not empty user.conn}">
+				<th>洽谈数</th>
+				<th>新增订单量</th>
+				<th>新增回款额</th>
+			</c:if>
+		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
 	<c:forEach items="${page.list}" var="bizUser">
-		<%--<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">--%>
-			<%--<c:if test="${bizUser.delFlag==1}">--%>
-				<%--<tr>--%>
-					<%--<td>${bizUser.company.name}</td>--%>
-					<%--<td>${bizUser.office.name}</td>--%>
-					<%--<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">--%>
-							<%--${bizUser.loginName}</a></td>--%>
-					<%--<td>${bizUser.name}</td>--%>
-					<%--<td>${bizUser.phone}</td>--%>
-					<%--<td>${bizUser.mobile}</td>--%>
-					<%--&lt;%&ndash;<td>${user.roleNames}</td> &ndash;%&gt;--%>
-					<%--<shiro:hasPermission name="sys:user:edit"><td>--%>
-						<%--<a href="${ctx}/biz/custom/bizCustomCenterConsultant/list?consultants.id=${bizUser.id}&conn=${user.conn}&office.id=${bizUser.office.id}">关联采购商</a>--%>
-						<%--<a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizUser.id}">订单管理</a>--%>
-						<%--<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>--%>
-						<%--<a href="${ctx}/sys/user/delete?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>--%>
-					<%--</td></shiro:hasPermission>--%>
-				<%--</tr>--%>
-			<%--</c:if>--%>
-		<%--</c:if>--%>
 		<c:if test="${empty user.conn}">
 		<tr>
 			<td>${bizUser.company.name}</td>
@@ -133,7 +119,6 @@
 				<c:if test="${bizUser.delFlag==0}">${bizUser.loginName}</c:if>
 			</td>
 			<td>${bizUser.name}</td>
-			<td>${bizUser.phone}</td>
 			<td>${bizUser.mobile}</td><%--
 				<td>${user.roleNames}</td> --%>
 			<shiro:hasPermission name="sys:user:edit"><td>
@@ -159,9 +144,13 @@
 					<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">${bizUser.loginName}</a></td>
 				</c:if>
 				<td>${bizUser.name}</td>
-				<td>${bizUser.phone}</td>
 				<td>${bizUser.mobile}</td><%--
 					<td>${user.roleNames}</td> --%>
+				<c:if test="${not empty user.conn}">
+					<td>${bizUser.userOrder.officeChatRecord}</td>
+					<td>${bizUser.userOrder.orderCount}</td>
+					<td>${bizUser.userOrder.userOfficeReceiveTotal}</td>
+				</c:if>
 				<shiro:hasPermission name="sys:user:edit"><td>
 					<c:if test="${user.conn != null}">
 						<c:if test="${user.conn eq 'connIndex'}">
