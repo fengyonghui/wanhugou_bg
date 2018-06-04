@@ -58,8 +58,9 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>")
-
+                    if (tt != '') {
+                        $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
+					}
                     if(window.confirm('你确定要发货吗？') && flag && total > 0){
 						var orderHeaders = $("input[name='orderHeaders']").val();
 						if(${bizInvoice.bizStatus == 0}){
@@ -83,8 +84,8 @@
                             loading('正在提交，请稍等...');
                         }
                     }else{
-                        //alert("取消");
-                        return false;
+						// alert("请勾选发货内容");
+						return false;
                     }
 				},
 				errorContainer: "#messageBox",

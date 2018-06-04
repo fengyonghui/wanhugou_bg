@@ -28,6 +28,7 @@ import com.wanhutong.backend.modules.biz.entity.product.BizVarietyAttr;
 import com.wanhutong.backend.modules.biz.service.product.BizVarietyAttrService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 分类属性中间表Controller
@@ -122,6 +123,24 @@ public class BizVarietyAttrController extends BaseController {
         varietyAttr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
         List<BizVarietyAttr> varietyAttrList = bizVarietyAttrService.findList(varietyAttr);
             return varietyAttrList;
+    }
+
+    /**
+     * 产品特有属性
+     * @param varietyId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "findAttr")
+    public List<BizVarietyAttr> findAttr(Integer varietyId) {
+        BizVarietyAttr varietyAttr = new BizVarietyAttr();
+        varietyAttr.setVarietyInfo(new BizVarietyInfo(varietyId));
+        List<BizVarietyAttr> list = bizVarietyAttrService.findList(varietyAttr);
+        for (BizVarietyAttr bizVarietyAttr:list) {
+            AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(bizVarietyAttr.getAttributeInfo().getId());
+            bizVarietyAttr.setAttributeInfo(attributeInfoV2);
+        }
+        return list;
     }
 
 }
