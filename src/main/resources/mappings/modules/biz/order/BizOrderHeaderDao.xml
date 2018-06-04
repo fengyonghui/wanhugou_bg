@@ -2071,7 +2071,7 @@ FROM
 			and TO_DAYS(oh.create_time)=TO_DAYS(NOW())
 		</if>
 		<if test="ordrHeaderStartTime !=null">
-			and oh.create_time &lt;= #{ordrHeaderStartTime}
+			and DATE_FORMAT(oh.create_time,'%Y%m%d')=DATE_FORMAT(#{ordrHeaderStartTime},'%Y%m%d')
 		</if>
 		AND (
 		(
@@ -2140,6 +2140,9 @@ FROM
 			and su.id=#{id}
 			and bizcr.create_id=#{id}
 			and so.type=7
+			<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+				${sqlMap.chat}
+			</if>
 		) as "officeChatRecord"
 		from
 			biz_order_header a
@@ -2154,6 +2157,12 @@ FROM
 			a.status=1
 		and su.id=#{id}
 		and su.status=1
+		<if test="ordrHeaderStartTime ==null">
+			and TO_DAYS(a.create_time)=TO_DAYS(NOW())
+		</if>
+		<if test="ordrHeaderStartTime !=null">
+			and DATE_FORMAT(a.create_time,'%Y%m%d')=DATE_FORMAT(#{ordrHeaderStartTime},'%Y%m%d')
+		</if>
 		AND (
 			(
 			a.biz_status != 45

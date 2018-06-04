@@ -601,8 +601,18 @@ public class UserController extends BaseController {
 	@RequestMapping(value = {"seleIndexList"})
 	public String seleIndex(User user, Model model,HttpServletRequest request, HttpServletResponse response) {
         Page<User> page = systemService.findUserSele(new Page<User>(request, response), user);
+		BizOrderHeader orderHeades=null;
+		User userAdmin = UserUtils.getUser();
 		for (User user1 : page.getList()) {
-			BizOrderHeader orderHeades = bizOrderHeaderDao.categorySkuStatistics(user1);
+			if(user.getOrdrHeaderStartTime()!=null){
+				user1.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+			}
+			if(userAdmin.isAdmin()){
+				orderHeades = bizOrderHeaderDao.categorySkuStatistics(user1);
+			}else{
+				user1.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+				orderHeades = bizOrderHeaderDao.categorySkuStatistics(user1);
+			}
 			if(orderHeades!=null){
 				user1.setUserOrder(orderHeades);
 			}
