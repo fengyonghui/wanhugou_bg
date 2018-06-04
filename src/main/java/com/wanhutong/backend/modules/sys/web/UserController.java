@@ -753,12 +753,12 @@ public class UserController extends BaseController {
     @RequestMapping(value = "userSeleForm")
     public String userSeleForm(User user, Model model,String flag) {
         if (user.getOffice()==null || user.getOffice().getId()==null){
-//			String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
-//			Office office = officeService.get(712);
-//			user.setCompany(office);
-//			user.setOffice(office);
-			user.setCompany(UserUtils.getUser().getCompany());
-            user.setOffice(UserUtils.getUser().getOffice());
+			String purchasersId = DictUtils.getDictValue("采销部", "office_suppl", "");
+			Office office = officeService.get(Integer.parseInt(purchasersId));
+			user.setCompany(office);
+			user.setOffice(office);
+//			user.setCompany(UserUtils.getUser().getCompany());
+//            user.setOffice(UserUtils.getUser().getOffice());
         }else{
             Office off = new Office();
             off.setParentIds("%"+user.getOffice().getId()+",");
