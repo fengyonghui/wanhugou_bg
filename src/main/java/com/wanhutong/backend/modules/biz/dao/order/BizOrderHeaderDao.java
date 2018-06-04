@@ -304,6 +304,15 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     List<BizOrderHeader> findUserOrderCountSecond(BizChatRecord bizChatRecord);
 
     /**
+     * 商品管理 的下单量
+     * */
+    BizOrderHeader findOrderCount(BizOrderHeader bizOrderHeader);
+
+    /**
+     * 客户专员的 统计
+     * */
+    BizOrderHeader findOrderUserCount(BizOrderHeader bizOrderHeader);
+    /**
      * 品类主管 管理 商品统计
      * */
     BizOrderHeader categorySkuStatistics(User user);

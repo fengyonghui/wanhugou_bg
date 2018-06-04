@@ -122,6 +122,17 @@ public class UserController extends BaseController {
 			}
 		}
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
+		if(user.getConn()!=null && user.getConn().equals("connIndex")){
+			//客户专员统计
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			for(int i=0;i<page.getList().size();i++){
+				bizOrderHeader.setCon(page.getList().get(i));
+				BizOrderHeader orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
+				if(orderUserCount!=null){
+					page.getList().get(i).setUserOrder(orderUserCount);
+				}
+			}
+		}
 		model.addAttribute("page", page);
 		return "modules/sys/userList";
 	}
