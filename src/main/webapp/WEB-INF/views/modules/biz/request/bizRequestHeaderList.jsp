@@ -34,18 +34,23 @@
             $("#includeTestData").val(checkbox.checked);
         }
         function checkInfo(obj,val,hid) {
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/request/bizRequestHeader/saveInfo",
-                data:{checkStatus:obj,id:hid},
-                success:function (data) {
-                    if(data){
-                        alert(val+"成功！");
-                        window.location.href="${ctx}/biz/request/bizRequestHeader";
+           if(confirm("您确认取消该采购单吗？")){
 
-                    }
-                }
-            })
+               $.ajax({
+                   type:"post",
+                   url:"${ctx}/biz/request/bizRequestHeader/saveInfo",
+                   data:{checkStatus:obj,id:hid},
+                   success:function (data) {
+                       if(data){
+                           alert(val+"成功！");
+                           window.location.href="${ctx}/biz/request/bizRequestHeader";
+
+                       }
+                   }
+               })
+
+			}
+
         }
         function pay(reqId){
 			$("#myModal").find("#reqId").val(reqId);
@@ -215,7 +220,10 @@
 							<c:if test="${requestHeader.delFlag!=null && requestHeader.delFlag!=0}">
 								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
 								<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
-								<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'关闭',${requestHeader.id})">关闭</a>
+								<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state}">
+									<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'取消',${requestHeader.id})">取消</a>
+								</c:if>
+
 							</c:if>
 							<c:if test="${requestHeader.delFlag!=null && requestHeader.delFlag==0}">
 								<a href="${ctx}/biz/request/bizRequestHeader/recovery?id=${requestHeader.id}" onclick="return confirmx('确认要恢复该备货清单吗？', this.href)">恢复</a>
@@ -226,7 +234,7 @@
 
 							<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
 
-							<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'关闭',${requestHeader.id})">关闭</a>
+							<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'取消',${requestHeader.id})">取消</a>
 
 						</c:when>
 
