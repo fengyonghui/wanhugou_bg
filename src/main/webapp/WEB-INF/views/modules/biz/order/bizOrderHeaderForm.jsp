@@ -985,7 +985,7 @@
         <th>采购数量</th>
         <th>总 额</th>
         <th>已发货数量</th>
-        <c:if test="${bizOrderHeader.bizStatus>15 && bizOrderHeader.bizStatus!=45}">
+        <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
             <th>发货方</th>
         </c:if>
         <c:if test="${bizOrderHeader.flag=='check_pending'}">
@@ -1058,7 +1058,7 @@
             <td>
                     ${bizOrderDetail.sentQty}
             </td>
-            <c:if test="${bizOrderHeader.bizStatus>15 && bizOrderHeader.bizStatus!=45}">
+            <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
                 <td>
                     ${bizOrderDetail.suplyis.name}
                 </td>
