@@ -48,6 +48,7 @@
                             }
                         });
                     }) ;
+                    var hasUnderPriceRole = $("#hasUnderPriceRole").val();
                     $("#tbody").find("tr").each(function (i) {
                         var minQty = $(this).find("td").find("input[name='minQtys']").val();
                         var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
@@ -67,14 +68,13 @@
                                 return false;
                             }
                         }
-
                         var orgPrice = $(this).find("td").find("input[name='orgPrices']").val();
                         var salePrice = $(this).find("td").find("input[name='salePrices']").val();
-                        if(parseInt(orgPrice)>parseInt(salePrice)){
+                        if (Number(orgPrice) > Number(salePrice) && hasUnderPriceRole == 'false') {
                             alert("售价不能低于工厂价");
                             numFlag = false;
                             return false;
-						}
+                        }
                     });
                     $("#tbody").find("td").each(function () {
                         var skuId = $(this).find("input[name='skuInfoIds']").val();
@@ -562,7 +562,7 @@
 		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 	</div>
-
+	<<input type="hidden" value="${hasUnderPriceRole}" id="hasUnderPriceRole">
 </form:form>
 <c:if test="${bizOpShelfSkuList.size() > 0 }">
 	<div class="control-group">
