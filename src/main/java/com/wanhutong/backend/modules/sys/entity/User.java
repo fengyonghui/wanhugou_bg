@@ -70,6 +70,7 @@ public class User extends DataEntity<User> {
 	 * 会员搜索查看 采购商的下单相关信息，品类主管的商品统计
 	 * */
 	private BizOrderHeader userOrder;
+	private Date ordrHeaderStartTime;//日期查询
 
 	/**
 	 * 用户作为主负责人所属的供应商
@@ -411,5 +412,13 @@ public class User extends DataEntity<User> {
 
 	public void setVendor(Office vendor) {
 		this.vendor = vendor;
+	}
+
+	public Date getOrdrHeaderStartTime() {
+		return ordrHeaderStartTime;
+	}
+
+	public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
+		this.ordrHeaderStartTime = ordrHeaderStartTime;
 	}
 }

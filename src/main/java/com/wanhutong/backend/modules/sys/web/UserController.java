@@ -3,7 +3,9 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -125,6 +127,9 @@ public class UserController extends BaseController {
 		if(user.getConn()!=null && user.getConn().equals("connIndex")){
 			//客户专员统计
 			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			if(user.getOrdrHeaderStartTime()!=null){
+				bizOrderHeader.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+			}
 			for(int i=0;i<page.getList().size();i++){
 				bizOrderHeader.setCon(page.getList().get(i));
 				BizOrderHeader orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);

@@ -90,6 +90,11 @@
 		</c:if>
 		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li><label>电&nbsp;&nbsp;&nbsp;话：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
+		<li><label>日&nbsp;&nbsp;&nbsp;期：</label>
+			<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${user.ordrHeaderStartTime}" pattern="yyyy-MM-dd"/>"
+				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
+		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="return page();"/>
 			<input id="btnExport" class="btn btn-primary" type="button" value="导出"/>
 			<input id="btnImport" class="btn btn-primary" type="button" value="导入"/></li>
@@ -102,8 +107,8 @@
 		<th>手机</th><%--<th>角色</th> --%>
 			<c:if test="${not empty user.conn}">
 				<th>洽谈数</th>
-				<th>新增订单量</th>
-				<th>新增回款额</th>
+				<th>每日新增订单量</th>
+				<th>每日新增回款额</th>
 			</c:if>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
@@ -147,7 +152,11 @@
 				<td>${bizUser.mobile}</td><%--
 					<td>${user.roleNames}</td> --%>
 				<c:if test="${not empty user.conn}">
-					<td>${bizUser.userOrder.officeChatRecord}</td>
+					<td>
+						<a href="${ctx}/biz/chat/bizChatRecord/list?user.id=${bizUser.id}&office.parent.id=7&office.type=6&source=purchaser">
+							${bizUser.userOrder.officeChatRecord}
+						</a>
+					</td>
 					<td>${bizUser.userOrder.orderCount}</td>
 					<td>${bizUser.userOrder.userOfficeReceiveTotal}</td>
 				</c:if>

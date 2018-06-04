@@ -2063,12 +2063,11 @@ FROM
 		WHERE
 			oh.status=1
 		and bcc.consultant_id=#{con.id}
-		<if test="ordrHeaderStartTime ==null and ordrHeaderStartTime==''">
+		<if test="ordrHeaderStartTime ==null">
 			and TO_DAYS(oh.create_time)=TO_DAYS(NOW())
 		</if>
-		<if test="ordrHeaderStartTime !=null and ordrHeaderStartTime!=''">
-			and oh.create_tim <= #{ordrHeaderStartTime}
-			<!--and str_to_date(DATE_FORMAT(oh.create_time,'%Y-%m-%d %H:%i:%s'),'%Y-%m-%d %H:%i:%s') as "userOfficeDeta"-->
+		<if test="ordrHeaderStartTime !=null">
+			and oh.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		AND (
 		(
