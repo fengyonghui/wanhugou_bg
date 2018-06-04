@@ -2,4 +2,5 @@
 <SystemConfig>
     <serviceChargeAudit>CHANNEL_MANAGER</serviceChargeAudit>
     <orderLossAudit>CHANNEL_MANAGER</orderLossAudit>
+    <putawayUnderCostAudit>CHANNEL_MANAGER</putawayUnderCostAudit>
 </SystemConfig>

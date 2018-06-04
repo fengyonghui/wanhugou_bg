@@ -52,6 +52,9 @@ public enum RoleEnNameEnum {
      */
     SUPPLY_CHAIN("supply-chain", "供应商"),
 
+    /**
+     * 渠道经理
+     */
     CHANNEL_MANAGER("channel_manager","渠道经理"),
 
     /**
