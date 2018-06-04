@@ -110,7 +110,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 		parsePendingStatements();
 	}
 
-	// TODO 增加解析方法，原方法不解析相同的resource
+	// 增加解析方法，原方法不解析相同的resource
 	public void parse1() {
 		// if (!configuration.isResourceLoaded(resource)) {
 		configurationElement(parser.evalNode("/mapper"));

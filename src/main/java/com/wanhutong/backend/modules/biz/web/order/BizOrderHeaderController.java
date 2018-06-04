@@ -8,6 +8,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.RoleUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -27,6 +28,8 @@ import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
@@ -45,6 +48,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -909,32 +913,60 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "checkTotalExp")
     public String checkTotalExp(BizOrderHeader bizOrderHeader) {
         String flag = "ok";
-        Double totalDetail = bizOrderHeader.getTotalDetail();
-        Double totalExp = -bizOrderHeader.getTotalExp();
-        if (bizOrderHeader.getId() != null && !bizOrderHeader.getId().equals("")) {
-            BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
-            BizOrderDetail orderDetail = new BizOrderDetail();
-            orderDetail.setOrderHeader(orderHeader);
-            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
-            Double totalBuyPrice = 0.0;
-            if (orderDetailList != null && !orderDetailList.isEmpty()) {
-                for (BizOrderDetail bizOrderDetail:orderDetailList) {
-                    totalBuyPrice += bizOrderDetail.getBuyPrice() * bizOrderDetail.getOrdQty();
-                }
-            }
-            if (orderHeader != null && orderHeader.getCustomer() != null) {
-                BizOrderHeader header = new BizOrderHeader();
-                header.setCustomer(orderHeader.getCustomer());
-                List<BizOrderHeader> firstOrderList = bizOrderHeaderService.findListFirstOrder(header);
-                if (firstOrderList.size() == 1) {//首单
-                    if (totalExp.compareTo(totalDetail - totalBuyPrice) == 1 ) {
-                        flag = "first";
-                    }
-                }else if (totalExp.compareTo((totalDetail - totalBuyPrice)/2) == 1) {
-                    flag = "error";
-                }
+        BigDecimal totalDetail = BigDecimal.valueOf(bizOrderHeader.getTotalDetail() == null ? 0 : bizOrderHeader.getTotalDetail());
+        BigDecimal freight = BigDecimal.valueOf(bizOrderHeader.getFreight() == null ? 0 : bizOrderHeader.getFreight());
+        BigDecimal totalExp = BigDecimal.valueOf(bizOrderHeader.getTotalExp() == null ? 0 : -bizOrderHeader.getTotalExp());
+
+        if (totalExp.compareTo(BigDecimal.ZERO) <= 0) {
+            return flag;
+        }
+
+        if (bizOrderHeader.getId() == null) {
+            return flag;
+        }
+
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+        BizOrderDetail orderDetail = new BizOrderDetail();
+        orderDetail.setOrderHeader(orderHeader);
+        List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
+        BigDecimal totalBuyPrice = BigDecimal.ZERO;
+        if (orderDetailList != null && !orderDetailList.isEmpty()) {
+            for (BizOrderDetail bizOrderDetail : orderDetailList) {
+                totalBuyPrice = totalBuyPrice.add(BigDecimal.valueOf(bizOrderDetail.getBuyPrice()).multiply(BigDecimal.valueOf(bizOrderDetail.getOrdQty())));
             }
         }
+
+        if (orderHeader == null || orderHeader.getCustomer() == null || orderHeader.getCustomer().getId() == null) {
+            return flag;
+        }
+
+        BizOrderHeader header = new BizOrderHeader();
+        header.setCustomer(orderHeader.getCustomer());
+
+        User user = UserUtils.getUser();
+        SystemConfig systemConfig = ConfigGeneral.SYSTEM_CONFIG.get();
+
+        List<String> serviceChargeAudit = systemConfig.getServiceChargeAudit();
+        List<String> orderLossAudit = systemConfig.getOrderLossAudit();
+        List<String> orderLowestAudit = systemConfig.getOrderLowestAudit();
+
+        boolean serviceChargeStatus = RoleUtils.hasRole(user, serviceChargeAudit);
+
+        if (!serviceChargeStatus && totalExp.compareTo(totalDetail.subtract(totalBuyPrice).multiply(BigDecimal.valueOf(0.5))) > 0) {
+            return "serviceCharge";
+        }
+
+        boolean orderLossStatus = RoleUtils.hasRole(user, orderLossAudit);
+        BigDecimal resultPrice = totalDetail.subtract(totalExp);
+        if (!orderLossStatus && resultPrice.compareTo(totalBuyPrice) < 0) {
+            return "orderLoss";
+        }
+
+        boolean orderLowestStatus = RoleUtils.hasRole(user, orderLowestAudit);
+        if (!orderLowestStatus && resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.95))) < 0) {
+            return "orderLowest";
+        }
+
         return flag;
     }
 
