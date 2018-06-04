@@ -89,12 +89,12 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
 	@RequestMapping(value = "form")
 	public String form(BizOpShelfSkus bizOpShelfSku, Model model) {
-		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null){
-            BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(bizOpShelfSku.getId());
-            model.addAttribute("bizOpShelfSku",bizOpShelfSku1);
-			List<BizOpShelfSku> bizOpShelfSkuList =  bizOpShelfSkuV2Service.findShelfSkuList(bizOpShelfSku1);
-			model.addAttribute("bizOpShelfSkuList",bizOpShelfSkuList);
-        }else {
+		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null) {
+			BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(bizOpShelfSku.getId());
+			model.addAttribute("bizOpShelfSku", bizOpShelfSku1);
+			List<BizOpShelfSku> bizOpShelfSkuList = bizOpShelfSkuV2Service.findShelfSkuList(bizOpShelfSku1);
+			model.addAttribute("bizOpShelfSkuList", bizOpShelfSkuList);
+		}else {
             model.addAttribute("bizOpShelfSku", bizOpShelfSku);
         }
 		model.addAttribute("varietyFactorList",bizVarietyFactorService.findList(new BizVarietyFactor()));
