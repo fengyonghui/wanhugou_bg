@@ -447,17 +447,18 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-		<div class="control-group" id="PurchaseID">
-			<label class="control-label">采购中心：</label>
-			<div class="controls">
-				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
-								labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
-								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
-				</sys:treeselect>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>
 	</c:if>
+
+	<div class="control-group" id="PurchaseID" style="display:none">
+		<label class="control-label">采购中心：</label>
+		<div class="controls">
+			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
+							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
+							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+			</sys:treeselect>
+			<span class="help-inline"><font color="red">*</font> </span>
+		</div>
+	</div>
 
 	<div class="control-group">
 		<label class="control-label">选择商品：</label>
