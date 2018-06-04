@@ -547,4 +547,12 @@ public class BizPoHeaderController extends BaseController {
 
     }
 
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "cancel")
+    @ResponseBody
+    public String cancel(int id, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        bizPoHeaderService.updateBizStatus(id, BizPoHeader.BizStatus.CANCEL);
+        return "取消采购订单成功";
+    }
 }
