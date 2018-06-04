@@ -94,9 +94,9 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 			model.addAttribute("bizOpShelfSku", bizOpShelfSku1);
 			List<BizOpShelfSku> bizOpShelfSkuList = bizOpShelfSkuV2Service.findShelfSkuList(bizOpShelfSku1);
 			model.addAttribute("bizOpShelfSkuList", bizOpShelfSkuList);
-		}else {
-            model.addAttribute("bizOpShelfSku", bizOpShelfSku);
-        }
+		} else {
+			model.addAttribute("bizOpShelfSku", bizOpShelfSku);
+		}
 		model.addAttribute("varietyFactorList",bizVarietyFactorService.findList(new BizVarietyFactor()));
         model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		BizOpShelfInfo opShelfInfo=new BizOpShelfInfo();
