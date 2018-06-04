@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 首页数据配置
+ * 备货清单审核配置文件
  *
  * @author ma.qiang
  */
