@@ -130,9 +130,16 @@ public class UserController extends BaseController {
 			if(user.getOrdrHeaderStartTime()!=null){
 				bizOrderHeader.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
 			}
+			User userAdmin = UserUtils.getUser();
+			BizOrderHeader orderUserCount =null;
 			for(int i=0;i<page.getList().size();i++){
 				bizOrderHeader.setCon(page.getList().get(i));
-				BizOrderHeader orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
+				if(userAdmin.isAdmin()){
+					orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
+				}else{
+					bizOrderHeader.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+					orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
+				}
 				if(orderUserCount!=null){
 					page.getList().get(i).setUserOrder(orderUserCount);
 				}

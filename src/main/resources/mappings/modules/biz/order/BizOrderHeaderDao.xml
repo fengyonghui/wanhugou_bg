@@ -2047,14 +2047,18 @@ FROM
 
 
 	<!-- 客户专员列表的 统计 -->
-	<select id="findOrderUserCount" resultType="BizOrderHeader">
+	<select id="findOrderUserCount" resultType="BizOrderHeader" parameterType="BizChatRecord">
 		SELECT
 		(
 		select count(1) FROM  biz_chat_record bcr
 		LEFT JOIN sys_user su on su.id=bcr.user_id and su.status=1
+		left join sys_office so on so.id=bcr.office_id and so.status=1
 		where
 			bcr.status=1
 		and su.id=#{con.id}
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
 		) as "officeChatRecord",
 		count(1) AS "orderCount",
 		sum(oh.receive_total) as "userOfficeReceiveTotal"
