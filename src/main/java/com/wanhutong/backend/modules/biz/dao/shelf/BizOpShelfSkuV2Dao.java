@@ -20,4 +20,5 @@ public interface BizOpShelfSkuV2Dao extends CrudDao<BizOpShelfSku> {
 	void shelvesUpdate(BizOpShelfSku bizOpShelfSku);
 	List<BizOpShelfSku> selectSort();
 	void sort(BizOpShelfSku opShelfSku);
+	List<BizOpShelfSku> findShelfSkuList(BizOpShelfSku bizOpShelfSku);
 }

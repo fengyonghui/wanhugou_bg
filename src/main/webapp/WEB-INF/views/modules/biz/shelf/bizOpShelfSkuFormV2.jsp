@@ -8,6 +8,7 @@
 	<title>商品上架管理</title>
 	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
 	<script type="text/javascript">
+        var opShelfType="";
         $(document).ready(function() {
 
             //$("#name").focus();
@@ -303,12 +304,32 @@
 
             });
 
-                        $("#contentTableService").tablesMergeCell({
-                             automatic: true,
-                            // 是否根据内容来合并
-                            cols:[0,0]
-                            // rows:[0,2]
-                        });
+            $("#contentTableService").tablesMergeCell({
+                automatic: true,
+                // 是否根据内容来合并
+                cols: [0, 0]
+                // rows:[0,2]
+            });
+            <c:if test="${bizOpShelfSku.id != null}">
+            var opShelfId=$("#shelfInfoId").val();
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
+                success:function (data) {
+                    opShelfType = data.type;
+                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>'){
+                        $("#PurchaseID").css("display","block");
+
+                        $("#centerOfficeName").prop("disabled", "disabled")
+                        $("#centerOfficeButton").prop("disabled", "disabled")
+                        $("#centerOfficeButton").css("pointer-events","none");
+                    }else{
+                        $("#PurchaseID").css("display","none");
+                        $("#centerOfficeId").prop("value","0");
+                    }
+                }
+            });
+            </c:if>
 
         });
         function removeItem(obj) {
@@ -331,6 +352,27 @@
 				$(this).val(num);
             });
         }
+
+        function shelfInfoChanged() {
+            var opShelfId=$("#shelfInfoId").val();
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
+                success:function (data) {
+                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>'){
+                        $("#PurchaseID").css("display","block");
+                        if (opShelfType != data.type) {
+                            $("#centerOfficeName").prop("disabled", false)
+                            $("#centerOfficeButton").prop("disabled", false)
+                            $("#centerOfficeButton").css("pointer-events","auto");
+                        }
+                    }else{
+                        $("#PurchaseID").css("display","none");
+                        $("#centerOfficeId").prop("value","0");
+                    }
+                }
+            });
+		}
 	</script>
 	<script type="text/javascript">
         function selectedColum(){
@@ -398,25 +440,24 @@
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required">
+				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required" onchange="shelfInfoChanged()">
 					<form:option value="">请选择</form:option>
 					<form:options items="${shelfList}" itemLabel="name" itemValue="id"/>
 				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
-	</c:if>
-
-	<div class="control-group" id="PurchaseID" style="display:none">
-		<label class="control-label">采购中心：</label>
-		<div class="controls">
-			<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
-							labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
-							title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
-			</sys:treeselect>
-			<span class="help-inline"><font color="red">*</font> </span>
+		<div class="control-group" id="PurchaseID">
+			<label class="control-label">采购中心：</label>
+			<div class="controls">
+				<sys:treeselect id="centerOffice" name="centerOffice.id" value="${bizOpShelfSku.centerOffice.id}" labelName="centerOffice.name"
+								labelValue="${bizOpShelfSku.centerOffice.name}"  notAllowSelectParent="true"
+								title="采购中心"  url="/sys/office/queryTreeList?type=8&customerTypeTen=10&customerTypeEleven=11&source=officeConnIndex" cssClass="input-xlarge required" dataMsgRequired="必填信息">
+				</sys:treeselect>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
 		</div>
-	</div>
+	</c:if>
 
 	<div class="control-group">
 		<label class="control-label">选择商品：</label>
@@ -522,6 +563,66 @@
 	</div>
 
 </form:form>
+<c:if test="${bizOpShelfSkuList.size() > 0 }">
+	<div class="control-group">
+		<div class="controls">
+			<table id="ShelfSkuTableRefer" class="table table-striped table-bordered table-condensed">
+				<thead>
+				<tr>
+					<th>商品名称：</th>
+					<th>上架数量(个)：</th>
+					<th>出厂价(元)：</th>
+					<th>销售单价(元)</th>
+					<th>最低销售数量(个)：</th>
+					<th>最高销售数量(个，9999表示不限制)：</th>
+					<th>上架时间：</th>
+					<th>下架时间：</th>
+					<th>显示次序：</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody id="tbody">
+				<c:if test="${bizOpShelfSku.id != null}">
+					<c:forEach items="${bizOpShelfSkuList}" var="bizOpShelfSku">
+						<tr>
+							<td>
+								<input name="skuInfoIds" readonly="readonly" value="${bizOpShelfSku.skuInfo.id}"
+									   class="input-medium required" type="hidden"/>${bizOpShelfSku.skuInfo.name}
+							</td>
+							<td><input name="shelfQtys" value="${bizOpShelfSku.shelfQty}" htmlEscape="false"
+									   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false"
+									   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false"
+									   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6"
+									   class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6"
+									   class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="shelfTimes" type="text" readonly="readonly" maxlength="20"
+									   class="input-medium Wdate required"
+									   value="<fmt:formatDate value="${bizOpShelfSku.shelfTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>"/>
+							</td>
+							<td><input name="unshelfTimes" type="text" readonly="readonly" maxlength="20"
+									   class="input-medium Wdate "
+									   value="<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
+							</td>
+							<td><input name="prioritys" value="${bizOpShelfSku.priority}" htmlEscape="false"
+									   maxlength="5" class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+						</tr>
+					</c:forEach>
+				</c:if>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</c:if>
 
 <form:form id="searchForm" modelAttribute="bizSkuInfo" >
 	<%--<form:hidden id="productNameCopy" path="productInfo.name"/>--%>

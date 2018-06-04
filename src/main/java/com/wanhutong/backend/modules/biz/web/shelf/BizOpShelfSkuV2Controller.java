@@ -92,6 +92,8 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null){
             BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(bizOpShelfSku.getId());
             model.addAttribute("bizOpShelfSku",bizOpShelfSku1);
+			List<BizOpShelfSku> bizOpShelfSkuList =  bizOpShelfSkuV2Service.findShelfSkuList(bizOpShelfSku1);
+			model.addAttribute("bizOpShelfSkuList",bizOpShelfSkuList);
         }else {
             model.addAttribute("bizOpShelfSku", bizOpShelfSku);
         }
@@ -329,6 +331,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		String[] skuIdArr = skuInfoIds.split(",");
 		String[] maxQtyArr = maxQtys.split(",");
 		String[] minQtyArr = minQtys.split(",");
+		if (shelfSkuId != null && !shelfSkuId.equals("")) {
+			BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(shelfSkuId);
+			Integer opShelfInfoId = bizOpShelfSku1.getOpShelfInfo().getId();
+			shelfInfoIds = String.valueOf(opShelfInfoId);
+		}
 		String[] shelfs = shelfInfoIds.split(",");
 		for (int j = 0; j < shelfs.length; j++) {
 			for (int i = 0; i < skuIdArr.length; i++) {
