@@ -8,6 +8,14 @@
 <head>
     <title>订单信息管理</title>
     <meta name="decorator" content="default"/>
+    <style type="text/css">
+        .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;height:200px;border-top:1px solid #FFF;width: 100%}
+        .help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
+        .help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
+        .help_step_set{background: #FFF;color: #3daae9;}
+        .help_step_set .help_step_left{width:8px;height:100px;position:absolute;left:0;top:0;}
+        .help_step_set .help_step_right{width:8px;height:100px; position:absolute;right:-8px;top:0;}
+    </style>
     <%--<script type="text/javascript" src="D:\IDEA_BatisJect\wanhugou_bg\src\main\webapp\static\ckeditor\_source\core\keyboard.js">
     </script>&lt;%&ndash;用于键盘Bcackspace回退BUG问题&ndash;%&gt;--%>
     <script type="text/javascript">
@@ -824,6 +832,36 @@
                 </div>
             </div>
         </div>
+        </c:if>
+        <c:if test="${fn:length(statusList) > 0}">
+            <div class="control-group">
+                <div class="controls help_wrap">
+                    <div class="help_step_box fa">
+                        <c:forEach items="${statusList}" var="v" varStatus="stat">
+                            <c:if test="${!stat.last}" >
+                                <div class="help_step_item">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    处理人:${v.createBy.name}<br/><br/>
+                                    状态:${statusMap[v.bizStatus].desc}<br/>
+                                    <fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                            <c:if test="${stat.last}">
+                                <div class="help_step_item help_step_set">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    处理人:${v.createBy.name}<br/><br/>
+                                    状态:${statusMap[v.bizStatus].desc}<br/>
+                                    <fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
         </c:if>
         <c:if test="${statu != '' && statu =='unline'}">
             <div class="control-group">

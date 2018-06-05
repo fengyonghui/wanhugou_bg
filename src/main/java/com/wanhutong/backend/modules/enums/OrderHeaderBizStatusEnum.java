@@ -1,20 +1,52 @@
 package com.wanhutong.backend.modules.enums;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.util.List;
+import java.util.Map;
 
 public enum OrderHeaderBizStatusEnum {
 
 
  //   地址管理里的默认地址类型  业务状态 0未支付； 5首付款支付  10全部支付 15同意发货(供货中) 17采购中 18采购完成 19 供应中心供货 20已发货 25客户已收货 30已完成35已取消40已删除45审核失败
-    ORDER_DEFAULTSTATUS(1),UNPAY(0),INITIAL_PAY(5),ALL_PAY(10),SUPPLYING(15),APPROVE(16),PURCHASING(17),ACCOMPLISH_PURCHASE(18),
-    STOCKING(19),SEND(20),RECEIVED(25),COMPLETE(30),CANCLE(35),DELETE(40),UNAPPROVE(45);
+    ORDER_DEFAULTSTATUS(1, "新建订单"),
+    UNPAY(0, "未支付"),
+    INITIAL_PAY(5, "首付款支付"),
+    ALL_PAY(10, "全部支付"),
+    SUPPLYING(15, "同意发货(供货中)"),
+    APPROVE(16, "采购中心供货"),
+    PURCHASING(17, "采购中"),
+    ACCOMPLISH_PURCHASE(18, "采购完成"),
+    STOCKING(19,"供应中心供货"),
+    SEND(20,"已发货"),
+    RECEIVED(25,"客户已收货"),
+    COMPLETE(30,"已完成"),
+    CANCLE(35,"已取消"),
+    DELETE(40,"已删除"),
+    UNAPPROVE(45,"审核失败");
 
     private Integer state;
-    OrderHeaderBizStatusEnum(int st) {
+    private String desc;
+
+    private static Map<Integer, OrderHeaderBizStatusEnum> statusMap;
+
+    OrderHeaderBizStatusEnum(int st, String desc) {
         this.state=st;
+        this.desc=desc;
     }
+
+    public static Map<Integer, OrderHeaderBizStatusEnum> getStatusMap() {
+        if (statusMap == null) {
+            Map<Integer, OrderHeaderBizStatusEnum> mapTemp = Maps.newHashMap();
+            for (OrderHeaderBizStatusEnum statusEnum : values()) {
+                mapTemp.put(statusEnum.getState(), statusEnum);
+            }
+            statusMap = mapTemp;
+        }
+        return statusMap;
+    }
+
     public static OrderHeaderBizStatusEnum stateOf(Integer index) {
         for (OrderHeaderBizStatusEnum statusEnum : values()) {
             if (statusEnum.state.intValue() == index) {
@@ -26,6 +58,10 @@ public enum OrderHeaderBizStatusEnum {
 
     public Integer getState() {
         return state;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     public void setState(Integer state) {
