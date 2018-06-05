@@ -137,6 +137,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        if(bizOrderHeader.getSkuChickCount()!=null){
+            bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
+        }
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
         model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());

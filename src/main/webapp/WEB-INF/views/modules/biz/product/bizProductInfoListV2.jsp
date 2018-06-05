@@ -179,9 +179,9 @@
 					<c:if test="${productInfo.orderCount !=0}">
 						<c:choose>
 							<c:when test="${productInfo.skuItemNo !=null}">
-								<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${productInfo.skuItemNo}&skuChickCount=prodCick_count">
+								<%--<a href="${ctx}/biz/order/bizOrderHeader/list?skuChickCount=prodCick_count&itemNo=${productInfo.skuItemNo}">--%>
 										${productInfo.orderCount}
-								</a>
+								<%--</a>--%>
 							</c:when>
 							<c:otherwise>${productInfo.orderCount}</c:otherwise>
 						</c:choose>
