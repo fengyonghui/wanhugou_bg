@@ -16,6 +16,7 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdViewLog;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -143,9 +144,12 @@ public class BizProductInfoV2Controller extends BaseController {
         BizProdViewLog prodViewLog = new BizProdViewLog();
         for(int i=0;i<page.getList().size();i++){
             prodViewLog.setProductInfo(page.getList().get(i));
-            BizProdViewLog prodView = bizProdViewLogService.findProdView(prodViewLog);
-            if(prodView!=null){
-                page.getList().get(i).setProdVice(prodView);
+            List<BizProdViewLog> prodView = bizProdViewLogService.findProdView(prodViewLog);
+            page.getList().get(i).setOrderCount(prodView.size());
+            if(prodView.size()!=0){
+                page.getList().get(i).setProdVice(prodView.get(0).getProdChick());
+            }else{
+                page.getList().get(i).setProdVice(0);
             }
         }
         model.addAttribute("page", page);

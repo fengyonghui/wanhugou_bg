@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.product;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class BizProdViewLogService extends CrudService<BizProdViewLogDao, BizPro
 	}
 
 	@Transactional(readOnly = false)
-	public BizProdViewLog findProdView(BizProdViewLog bizProdViewLog) {
+	public List<BizProdViewLog> findProdView(BizProdViewLog bizProdViewLog) {
 	 	return dao.findProdView(bizProdViewLog);
 	}
 

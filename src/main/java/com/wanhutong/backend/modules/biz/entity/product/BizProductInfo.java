@@ -103,7 +103,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	 * 品类主管
 	 * */
 	private User user;
-	private BizProdViewLog prodVice;//点击量
+	private Integer prodVice;//点击量
+	private Integer orderCount;//下单量
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
@@ -544,11 +545,19 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 		this.user = user;
 	}
 
-	public BizProdViewLog getProdVice() {
+	public Integer getProdVice() {
 		return prodVice;
 	}
 
-	public void setProdVice(BizProdViewLog prodVice) {
+	public void setProdVice(Integer prodVice) {
 		this.prodVice = prodVice;
+	}
+
+	public Integer getOrderCount() {
+		return orderCount;
+	}
+
+	public void setOrderCount(Integer orderCount) {
+		this.orderCount = orderCount;
 	}
 }

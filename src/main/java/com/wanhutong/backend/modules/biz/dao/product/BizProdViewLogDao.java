@@ -5,7 +5,10 @@ package com.wanhutong.backend.modules.biz.dao.product;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdViewLog;
+
+import java.util.List;
 
 /**
  * 产品查看日志DAO接口
@@ -14,5 +17,5 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProdViewLog;
  */
 @MyBatisDao
 public interface BizProdViewLogDao extends CrudDao<BizProdViewLog> {
-	BizProdViewLog findProdView(BizProdViewLog bizProdViewLog);
+	List<BizProdViewLog> findProdView(BizProdViewLog bizProdViewLog);
 }

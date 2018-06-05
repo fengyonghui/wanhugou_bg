@@ -166,14 +166,24 @@
 					${productInfo.maxPrice}
 				</td>
 				<td>
-					<a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${productInfo.id}&prodChixkSource=prod_chickCount">
-						${productInfo.prodVice.prodChick}
-					</a>
+					<c:if test="${productInfo.prodVice !=0}">
+						<a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${productInfo.id}&prodChixkSource=prod_chickCount">
+							${productInfo.prodVice}
+						</a>
+					</c:if>
+					<c:if test="${productInfo.prodVice ==0}">
+						${productInfo.prodVice}
+					</c:if>
 				</td>
 				<td>
-					<a href="${ctx}/biz/order/bizOrderHeader/list?skuChickCount=orderCick_count">
-						${productInfo.prodVice.orderCount}
-					</a>
+					<c:if test="${productInfo.orderCount !=0}">
+						<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${productInfo.itemNo}&skuChickCount=orderCick_count">
+							${productInfo.orderCount}
+						</a>
+					</c:if>
+					<c:if test="${productInfo.orderCount ==0}">
+						${productInfo.orderCount}
+					</c:if>
 				</td>
 				<td>
 					${productInfo.user.name}
