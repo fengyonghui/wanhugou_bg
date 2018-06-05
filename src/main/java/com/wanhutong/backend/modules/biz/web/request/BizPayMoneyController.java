@@ -5,6 +5,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
@@ -38,6 +39,9 @@ public class BizPayMoneyController extends BaseController {
     private BizPayRecordService bizPayRecordService;
     @Resource
     private SystemService systemService;
+
+    @Resource
+    private BizOrderStatusService bizOrderStatusService;
 
     //0支付宝支付；1微信支付
 
@@ -149,6 +153,7 @@ public class BizPayMoneyController extends BaseController {
                 payLogger.info("更新状态出问题");
             }
             bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+            bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
         }
 
         String pathFile = Global.getUserfilesBaseDir()+"/upload/" +photoName ;
