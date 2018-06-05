@@ -1840,7 +1840,8 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	a.update_time AS "updateDate" ,
 	concat(cl.pcr_name, ifnull( cl.address,'')) as locationAddress,
 		GROUP_CONCAT(bod.id) AS "orderDetails",
-		pi.vendor_id AS "onlyVendor"
+		pi.vendor_id AS "onlyVendor",
+		sx.NAME AS "centersName"
 FROM
 	biz_order_header a
 	LEFT JOIN sys_office so ON a.cust_id = so.id
@@ -1856,6 +1857,10 @@ FROM
 		LEFT JOIN sys_region province ON c.province_id = province.id
 		LEFT JOIN sys_region city ON c.city_id = city.id
 		LEFT JOIN sys_region reg ON c.region_id = reg.id
+	<!-- end  -->
+	<!-- 采购中心 -->
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office sx ON sx.id = ccs.center_id
 	<!-- end  -->
 	WHERE 1=1 and a.order_type != 4
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">

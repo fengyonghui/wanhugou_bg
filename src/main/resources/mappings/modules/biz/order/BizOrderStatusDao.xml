@@ -119,5 +119,32 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<insert id="insertByRequestHeader">
+		INSERT INTO biz_order_status(
+			id,
+			order_id,
+			biz_status,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+		  	order_type)
+		  SELECT
+		  	NULL,
+		  	brh.id,
+		  	brh.biz_status,
+		  	brh.status,
+		  	brh.create_id,
+		  	brh.create_time,
+		  	brh.u_version,
+		  	brh.update_id,
+		  	brh.update_time,
+		  	1
+		  FROM biz_request_header brh
+		WHERE brh.id = #{id}
+	</insert>
 	
 </mapper>

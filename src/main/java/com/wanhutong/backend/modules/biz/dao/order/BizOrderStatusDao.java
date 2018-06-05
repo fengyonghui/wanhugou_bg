@@ -14,5 +14,11 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
  */
 @MyBatisDao
 public interface BizOrderStatusDao extends CrudDao<BizOrderStatus> {
-	
+    /**
+     * 备货清单业务状态改变时，往订单状态修改日志表中插入相应日志数据
+     * @param id 备货清单id
+     * @return
+     */
+
+    public int insertByRequestHeader(Integer id);
 }

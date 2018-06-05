@@ -110,6 +110,7 @@
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead><tr><th>归属公司</th><th>归属部门</th><th class="sort-column login_name">登录名</th><th class="sort-column name">姓名</th>
+		<th>电话</th><th>手机</th><th>状态</th><shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 		<th>手机</th><%--<th>角色</th> --%>
 			<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 				<th>洽谈数</th>
@@ -120,7 +121,12 @@
 	<tbody>
 	<c:forEach items="${page.list}" var="bizUser">
 		<c:if test="${empty user.conn}">
-		<tr>
+			<c:if test="${bizUser.loginFlag == 0}">
+				<tr style="color: rgba(158,158,158,0.45)">
+			</c:if>
+			<c:if test="${bizUser.loginFlag == 1}">
+				<tr>
+			</c:if>
 			<td>${bizUser.company.name}</td>
 			<td>${bizUser.office.name}</td>
 			<td><c:if test="${bizUser.delFlag==1}">
@@ -130,6 +136,23 @@
 				<c:if test="${bizUser.delFlag==0}">${bizUser.loginName}</c:if>
 			</td>
 			<td>${bizUser.name}</td>
+			<td>${bizUser.phone}</td>
+			<td>${bizUser.mobile}</td>
+				<td>${bizUser.delFlag == 1 ? '正常' : '删除'}</td>
+			<shiro:hasPermission name="sys:user:edit">
+				<td>
+					<c:if test="${bizUser.delFlag==1}">
+						<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
+						<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}"
+						   onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+					</c:if>
+					<c:if test="${bizUser.delFlag==0}">
+						<a href="${ctx}/sys/user/recovery?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}"
+						   onclick="return confirmx('确认要恢复该用户吗？', this.href)">恢复</a>
+					</c:if>
+				</td>
+			</shiro:hasPermission>
+			</tr>
 			<td>${bizUser.mobile}</td><%--
 				<td>${user.roleNames}</td> --%>
 			<shiro:hasPermission name="sys:user:edit"><td>
@@ -145,7 +168,12 @@
 	</c:if>
 		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 		<c:if test="${bizUser.delFlag==1}">
-			<tr>
+			<c:if test="${bizUser.loginFlag == 0}">
+				<tr style="color: rgba(158,158,158,0.45)">
+			</c:if>
+			<c:if test="${bizUser.loginFlag == 1}">
+				<tr>
+			</c:if>
 				<td>${bizUser.company.name}</td>
 				<td>${bizUser.office.name}</td>
 				<c:if test="${user.conn != null}">
