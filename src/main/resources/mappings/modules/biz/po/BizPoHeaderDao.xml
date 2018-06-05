@@ -111,6 +111,14 @@
 			<if test="page !=null and page.includeTestData != true">
 				AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.create_id = ta.object_id AND ta.object_name = 'sys_user' )
 			</if>
+
+			<if test="startPrice !=null and startPrice != ''">
+				AND a.total_detail >= #{startPrice}
+			</if>
+
+			<if test="endPrice !=null and endPrice != ''">
+				AND #{endPrice} >= a.total_detail
+			</if>
 		</where>
 		GROUP BY a.id
 
