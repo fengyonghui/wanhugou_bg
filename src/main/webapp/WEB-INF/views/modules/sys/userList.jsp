@@ -110,8 +110,10 @@
 <sys:message content="${message}"/>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead><tr><th>归属公司</th><th>归属部门</th><th class="sort-column login_name">登录名</th><th class="sort-column name">姓名</th>
-		<th>电话</th><th>手机</th><th>状态</th><shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
-		<th>手机</th><%--<th>角色</th> --%>
+			<th>手机</th>
+			<c:if test="${empty user.conn}">
+				<th>状态</th>
+			</c:if>
 			<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 				<th>洽谈数</th>
 				<th>新增订单量</th>
@@ -136,9 +138,8 @@
 				<c:if test="${bizUser.delFlag==0}">${bizUser.loginName}</c:if>
 			</td>
 			<td>${bizUser.name}</td>
-			<td>${bizUser.phone}</td>
 			<td>${bizUser.mobile}</td>
-				<td>${bizUser.delFlag == 1 ? '正常' : '删除'}</td>
+			<td>${bizUser.delFlag == 1 ? '正常' : '删除'}</td>
 			<shiro:hasPermission name="sys:user:edit">
 				<td>
 					<c:if test="${bizUser.delFlag==1}">
@@ -183,8 +184,7 @@
 					<td><a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">${bizUser.loginName}</a></td>
 				</c:if>
 				<td>${bizUser.name}</td>
-				<td>${bizUser.mobile}</td><%--
-					<td>${user.roleNames}</td> --%>
+				<td>${bizUser.mobile}</td>
 				<c:if test="${not empty user.conn}">
 					<td>
 						<c:if test="${bizUser.userOrder.officeChatRecord !=0}">
