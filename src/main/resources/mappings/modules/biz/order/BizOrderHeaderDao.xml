@@ -2092,7 +2092,6 @@ FROM
 			bcr.status=1
 		and su.id=#{con.id}
 		and so.type=6
-		and bcr.create_id = #{con.id}
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bcr.create_time)
 		</if>
@@ -2107,7 +2106,24 @@ FROM
 		</if>
 		) as "officeChatRecord",
 		count(1) AS "orderCount",
-		sum(oh.receive_total) as "userOfficeReceiveTotal"
+		sum(oh.receive_total) as "userOfficeReceiveTotal",
+		(
+		select count(1) from biz_custom_center_consultant bcc
+			LEFT JOIN sys_user su on su.id=bcc.consultant_id
+		WHERE
+			bcc.status=1
+		and su.status=1
+		and su.id=#{con.id}
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bcc.create_time)
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND bcc.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bcc.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		) as "officeCount"
 		FROM biz_order_header AS oh
 		LEFT JOIN biz_custom_center_consultant bcc on bcc.cust_id=oh.cust_id and bcc.status=1
 		WHERE

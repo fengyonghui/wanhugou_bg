@@ -118,6 +118,7 @@
 				<th>洽谈数</th>
 				<th>新增订单量</th>
 				<th>新增回款额</th>
+				<th>新增经销店</th>
 			</c:if>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
@@ -198,6 +199,9 @@
 					</td>
 					<td>${bizUser.userOrder.orderCount}</td>
 					<td>${bizUser.userOrder.userOfficeReceiveTotal}</td>
+					<td>
+						${bizUser.userOrder.officeCount}
+					</td>
 				</c:if>
 				<shiro:hasPermission name="sys:user:edit"><td>
 					<c:if test="${user.conn != null}">

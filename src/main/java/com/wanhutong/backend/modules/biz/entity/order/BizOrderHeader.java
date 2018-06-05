@@ -110,6 +110,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String skuChickCount;//下单量标识
     private Integer opShelfCount;//新品发布量
     private Integer skuCount;//商品销售量
+    private Integer officeCount;//新增经销店数
 
     public String getLocationAddress() {
         return locationAddress;
@@ -584,5 +585,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSkuCount(Integer skuCount) {
         this.skuCount = skuCount;
+    }
+
+    public Integer getOfficeCount() {
+        return officeCount;
+    }
+
+    public void setOfficeCount(Integer officeCount) {
+        this.officeCount = officeCount;
     }
 }
