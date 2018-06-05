@@ -28,13 +28,13 @@
 				<form:input path="name" htmlEscape="false" maxlength="11" class="input-medium"/>
                 <%--<input id="id" type="hidden" name="id" value="${id}"/>--%>
 			</li>
+			<li class="clearfix"></li>
 			<li><label>联系人电话：</label>
 				<form:input path="mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>会员名称：</label>
 				<form:input path="company.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li class="clearfix"></li>
 			<li><label>日&nbsp;&nbsp;期：</label>
 				<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					   value="<fmt:formatDate value="${user.ordrHeaderStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
