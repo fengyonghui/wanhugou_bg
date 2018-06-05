@@ -645,6 +645,12 @@ public class UserController extends BaseController {
 		Page<User> page = systemService.contact(new Page<User>(request, response),user);
 		User userAdmin = UserUtils.getUser();
 		BizChatRecord bizChatRecord = new BizChatRecord();
+		if(user.getOrdrHeaderStartTime()!=null){
+			bizChatRecord.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+		}
+		if(user.getOrderHeaderEedTime()!=null){
+			bizChatRecord.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+		}
 		for (User user1 : page.getList()) {
 			bizChatRecord.setOffice(user1.getCompany());
 			List<BizOrderHeader> userOrderCountSecond =null;

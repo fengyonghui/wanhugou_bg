@@ -2003,6 +2003,15 @@ FROM
 		LEFT JOIN sys_office so ON so.id = bizcr.office_id
 		LEFT JOIN sys_user su ON su.id = bizcr.user_id
 		where bizcr.office_id=#{office.id} and bizcr.status=1
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bizcr.create_time)
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND bizcr.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
 		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
 			${sqlMap.chat}
 		</if>
@@ -2016,6 +2025,16 @@ FROM
 		LEFT JOIN sys_region reg ON cl.region_id = reg.id
 		left join biz_chat_record bcr on bcr.office_id=oh.cust_id
 		WHERE oh.cust_id = #{office.id}
+		and oh.order_type!=4
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(oh.create_time)
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND oh.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
 		AND (
 		(
 		biz_status != 45
@@ -2066,6 +2085,12 @@ FROM
 		where
 			bcr.status=1
 		and su.id=#{con.id}
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(oh.create_time)
+		</if>
+		<if test="ordrHeaderStartTime !=null">
+			and DATE_FORMAT(oh.create_time,'%Y%m%d')=DATE_FORMAT(#{ordrHeaderStartTime},'%Y%m%d')
+		</if>
 		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
 			${sqlMap.chat}
 		</if>
@@ -2078,7 +2103,7 @@ FROM
 			oh.status=1
 		and bcc.consultant_id=#{con.id}
 		<if test="ordrHeaderStartTime ==null">
-			and TO_DAYS(oh.create_time)=TO_DAYS(NOW())
+			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(oh.create_time)
 		</if>
 		<if test="ordrHeaderStartTime !=null">
 			and DATE_FORMAT(oh.create_time,'%Y%m%d')=DATE_FORMAT(#{ordrHeaderStartTime},'%Y%m%d')

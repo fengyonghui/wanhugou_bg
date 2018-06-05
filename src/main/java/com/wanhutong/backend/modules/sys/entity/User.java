@@ -72,6 +72,7 @@ public class User extends DataEntity<User> {
 	 * */
 	private BizOrderHeader userOrder;
 	private Date ordrHeaderStartTime;//日期查询
+	private Date orderHeaderEedTime;//日期查询
 	private BizVarietyInfo varietyInfoId;
 
 	/**
@@ -430,5 +431,13 @@ public class User extends DataEntity<User> {
 
 	public void setVarietyInfoId(BizVarietyInfo varietyInfoId) {
 		this.varietyInfoId = varietyInfoId;
+	}
+
+	public Date getOrderHeaderEedTime() {
+		return orderHeaderEedTime;
+	}
+
+	public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
+		this.orderHeaderEedTime = orderHeaderEedTime;
 	}
 }
