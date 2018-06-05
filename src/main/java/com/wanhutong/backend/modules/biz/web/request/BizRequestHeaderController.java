@@ -14,6 +14,7 @@ import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
@@ -68,6 +69,9 @@ public class BizRequestHeaderController extends BaseController {
 	private BizPoHeaderService bizPoHeaderService;
 	@Autowired
 	private BizPoDetailService bizPoDetailService;
+
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -221,6 +225,7 @@ public class BizRequestHeaderController extends BaseController {
 				}
 			}
 			bizRequestHeaderService.save(bizRequestHeader);
+			bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
 			boo=true;
 		}catch (Exception e){
 			boo=false;
