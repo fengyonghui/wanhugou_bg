@@ -17,7 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
+import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
 import org.apache.commons.lang3.tuple.Pair;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
@@ -86,6 +90,10 @@ public class UserController extends BaseController {
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 	@Autowired
 	private BizOrderHeaderDao bizOrderHeaderDao;
+	@Autowired
+	private BizVarietyInfoService bizVarietyInfoService;
+	@Autowired
+	private BizVarietyUserInfoService bizVarietyUserInfoService;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -799,7 +807,64 @@ public class UserController extends BaseController {
         }
         model.addAttribute("user", user);
         model.addAttribute("allRoles", systemService.findAllRole());
+		List<BizVarietyInfo> varietyFactorList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		model.addAttribute("varietyList", varietyFactorList);
+		if(user.getId()!=null){
+
+		}
         return "modules/sys/userSeleForm";
     }
+
+    /**
+	 * 品类主管 保存
+	 * */
+	@RequiresPermissions("sys:user:edit")
+	@RequestMapping(value = "userInfosave")
+	public String userInfosave(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+		if(Global.isDemoMode()){
+			addMessage(redirectAttributes, "演示模式，不允许操作！");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
+		user.setCompany(new Office(Integer.valueOf(request.getParameter("company.id"))));
+		user.setOffice(new Office(Integer.valueOf(request.getParameter("office.id"))));
+		// 如果新密码为空，则不更换密码
+		if (StringUtils.isNotBlank(user.getNewPassword())) {
+			user.setPassword(SystemService.entryptPassword(user.getNewPassword()));
+		}
+		if (!beanValidator(model, user)){
+			return form(user, model,null);
+		}
+		if (!"true".equals(checkLoginName(user.getOldLoginName(), user.getLoginName()))){
+			addMessage(model, "保存用户'" + user.getLoginName() + "'失败，登录名已存在");
+			return form(user, model,null);
+		}
+		// 角色数据有效性验证，过滤不在授权内的角色
+		List<Role> roleList = Lists.newArrayList();
+		List<Integer> roleIdList = user.getRoleIdList();
+		for (Role r : systemService.findAllRole()){
+			if (roleIdList.contains(r.getId())){
+				roleList.add(r);
+			}
+		}
+		user.setRoleList(roleList);
+		// 保存用户信息
+		systemService.saveVarInfoUser(user);
+		if(user.getVarietyInfoId()!=null && user.getVarietyInfoId().getId()!=null){
+			BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
+			bizVarietyUserInfo.setUser(user);
+			bizVarietyUserInfo.setVarietyInfo(user.getVarietyInfoId());
+			bizVarietyUserInfoService.save(bizVarietyUserInfo);
+		}
+		// 清除当前用户缓存
+		if (user.getLoginName().equals(UserUtils.getUser().getLoginName())){
+			UserUtils.clearCache();
+		}else {
+			UserUtils.clearCache(user);
+		}
+		addMessage(redirectAttributes, "保存品类主管'" + user.getLoginName() + "'成功");
+		return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
+	}
+
 
 }

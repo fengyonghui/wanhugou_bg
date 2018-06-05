@@ -55,7 +55,7 @@
 	<li><a href="${ctx}/sys/user/seleIndexList">品类主管列表</a></li>
 	<li class="active"><a href="${ctx}/sys/user/userSeleForm?id=${user.id}&conn=selectIndex">品类主管<shiro:hasPermission name="sys:user:edit">${not empty user.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="sys:user:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
-<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/userInfosave" method="post" class="form-horizontal">
 	<form:hidden id="userId" path="id"/>
 	<form:hidden path="conn"/>
 	<sys:message content="${message}"/>
@@ -115,6 +115,16 @@
 		<div class="controls">
 			<input id="confirmNewPassword" name="confirmNewPassword" type="password" value="" maxlength="50" minlength="3" equalTo="#newPassword"/>
 			<c:if test="${empty user.id}"><span class="help-inline"><font color="red">*</font> </span></c:if>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">分类名称：</label>
+		<div class="controls">
+			<form:select id="varietyInfo" path="varietyInfoId.id" class="input-medium">
+				<form:option label="请选择" value=""/>
+				<form:options items="${varietyList}" itemLabel="name" itemValue="id"/>
+			</form:select>
+			<span class="help-inline"><font color="red">*</font>不选择此项，代表不添加分类与品类主管关联</span>
 		</div>
 	</div>
 	<div class="control-group">
