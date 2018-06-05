@@ -177,9 +177,14 @@
 				</td>
 				<td>
 					<c:if test="${productInfo.orderCount !=0}">
-						<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${productInfo.skuItemNo}&skuChickCount=orderCick_count">
-							${productInfo.orderCount}
-						</a>
+						<c:choose>
+							<c:when test="${productInfo.skuItemNo !=null}">
+								<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${productInfo.skuItemNo}&skuChickCount=orderCick_count">
+										${productInfo.orderCount}
+								</a>
+							</c:when>
+							<c:otherwise>${productInfo.orderCount}</c:otherwise>
+						</c:choose>
 					</c:if>
 					<c:if test="${productInfo.orderCount ==0}">
 						${productInfo.orderCount}

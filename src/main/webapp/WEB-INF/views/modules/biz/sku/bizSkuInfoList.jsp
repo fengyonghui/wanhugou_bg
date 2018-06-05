@@ -139,9 +139,14 @@
 					</td>
 					<td>
 						<c:if test="${bizSkuInfo.orderCount !=0}">
-							<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${bizSkuInfo.itemNo}&skuChickCount=orderCick_count">
-								${bizSkuInfo.orderCount}
-							</a>
+							<c:choose>
+								<c:when test="${bizSkuInfo.itemNo !=null}">
+									<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${bizSkuInfo.itemNo}&skuChickCount=orderCick_count">
+										${bizSkuInfo.orderCount}
+									</a>
+								</c:when>
+								<c:otherwise>${bizSkuInfo.orderCount}</c:otherwise>
+							</c:choose>
 						</c:if>
 						<c:if test="${bizSkuInfo.orderCount ==0}">
 							${bizSkuInfo.orderCount}
