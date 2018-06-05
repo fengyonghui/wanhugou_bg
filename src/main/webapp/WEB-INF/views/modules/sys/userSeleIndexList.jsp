@@ -31,10 +31,14 @@
 		<input type="hidden" name="conn" value="selectIndex"></li>
 		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li><label>电&nbsp;&nbsp;&nbsp;话：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
-		<li><label>日&nbsp;&nbsp;&nbsp;期：</label>
+		<li><label>日期：</label>
 			<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-				   value="<fmt:formatDate value="${user.ordrHeaderStartTime}" pattern="yyyy-MM-dd"/>"
-				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
+				   value="<fmt:formatDate value="${user.ordrHeaderStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+			至
+			<input name="orderHeaderEedTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${user.orderHeaderEedTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="return page();"/>
 
@@ -51,16 +55,8 @@
 			<th>姓名</th>
 			<th>电话</th>
 			<th>商品销售量</th>
-			<c:choose>
-				<c:when test="${not empty user.ordrHeaderStartTime}">
-					<th>每月订单量</th>
-					<th>每月回款额</th>
-				</c:when>
-				<c:otherwise>
-					<th>每日订单量</th>
-					<th>每日回款额</th>
-				</c:otherwise>
-			</c:choose>
+			<th>订单量</th>
+			<th>回款额</th>
 			<th>新品发布量</th>
 			<th>供应商洽谈数</th>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
@@ -84,9 +80,14 @@
 				${bizUser.userOrder.opShelfCount}
 			</td>
 			<td>
-				<a href="${ctx}/biz/chat/bizChatRecord/list?user.id=${bizUser.id}&office.type=7&office.parent.id=12&source=suppli">
+				<c:if test="${bizUser.userOrder.officeChatRecord !=0}">
+					<a href="${ctx}/biz/chat/bizChatRecord/list?user.id=${bizUser.id}&office.type=7&office.parent.id=12&source=suppli">
+							${bizUser.userOrder.officeChatRecord}
+					</a>
+				</c:if>
+				<c:if test="${bizUser.userOrder.officeChatRecord ==0}">
 					${bizUser.userOrder.officeChatRecord}
-				</a>
+				</c:if>
 			</td>
 			<shiro:hasPermission name="sys:user:edit"><td>
 					<a href="${ctx}/sys/user/userSeleForm?id=${bizUser.id}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}&conn=selectIndex">修改</a>

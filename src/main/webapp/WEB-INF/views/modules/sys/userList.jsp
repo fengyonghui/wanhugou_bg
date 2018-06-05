@@ -90,7 +90,7 @@
 		</c:if>
 		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li><label>电&nbsp;&nbsp;&nbsp;话：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
-		<c:if test="${not empty user.conn}">
+		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 			<li><label>日期：</label>
 				<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					   value="<fmt:formatDate value="${user.ordrHeaderStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
@@ -111,7 +111,7 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
 	<thead><tr><th>归属公司</th><th>归属部门</th><th class="sort-column login_name">登录名</th><th class="sort-column name">姓名</th>
 		<th>手机</th><%--<th>角色</th> --%>
-			<c:if test="${not empty user.conn}">
+			<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 				<th>洽谈数</th>
 				<th>新增订单量</th>
 				<th>新增回款额</th>
@@ -143,7 +143,7 @@
 			</td></shiro:hasPermission>
 		</tr>
 	</c:if>
-		<c:if test="${not empty user.conn}">
+		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 		<c:if test="${bizUser.delFlag==1}">
 			<tr>
 				<td>${bizUser.company.name}</td>

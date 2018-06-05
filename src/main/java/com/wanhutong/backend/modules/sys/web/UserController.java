@@ -613,16 +613,20 @@ public class UserController extends BaseController {
         Page<User> page = systemService.findUserSele(new Page<User>(request, response), user);
 		BizOrderHeader orderHeades=null;
 		User userAdmin = UserUtils.getUser();
+		User ordUser = new User();
+		if(user.getOrdrHeaderStartTime()!=null){
+			ordUser.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+		}
+		if(user.getOrderHeaderEedTime()!=null){
+			ordUser.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+		}
+		if(userAdmin.isAdmin()){
+		}else{
+			ordUser.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+		}
 		for (User user1 : page.getList()) {
-			if(user.getOrdrHeaderStartTime()!=null){
-				user1.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
-			}
-			if(userAdmin.isAdmin()){
-				orderHeades = bizOrderHeaderDao.categorySkuStatistics(user1);
-			}else{
-				user1.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
-				orderHeades = bizOrderHeaderDao.categorySkuStatistics(user1);
-			}
+			ordUser.setId(user1.getId());
+			orderHeades = bizOrderHeaderDao.categorySkuStatistics(ordUser);
 			if(orderHeades!=null){
 				user1.setUserOrder(orderHeades);
 			}

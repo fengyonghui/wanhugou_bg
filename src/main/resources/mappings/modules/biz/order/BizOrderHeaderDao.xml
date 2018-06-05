@@ -2144,6 +2144,16 @@ FROM
 			and cc.status=1
 			and dd.status=1
 			and hh.status=1
+            and aa.order_type !=4
+        <if test="ordrHeaderStartTime ==null">
+            and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(aa.create_time)
+        </if>
+        <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+            AND aa.create_time &lt;= #{orderHeaderEedTime}
+        </if>
+        <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+            AND aa.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+        </if>
 			AND (
 				(
 				aa.biz_status != 45
@@ -2169,7 +2179,15 @@ FROM
 			and bvi.status=1
 			and su.status=1
 			and su.id=#{id}
-			and qq.create_time BETWEEN CURRENT_DATE()-7 and SYSDATE()
+        <if test="ordrHeaderStartTime ==null">
+            and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(qq.create_time)
+        </if>
+        <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+            AND qq.create_time &lt;= #{orderHeaderEedTime}
+        </if>
+        <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+            AND qq.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+        </if>
 		) as "opShelfCount",
 		(
 			SELECT
@@ -2185,9 +2203,18 @@ FROM
 			and su.id=#{id}
 			and bizcr.create_id=#{id}
 			and so.type=7
-			<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
-				${sqlMap.chat}
-			</if>
+        <if test="ordrHeaderStartTime ==null">
+            and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bizcr.create_time)
+        </if>
+        <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+            AND bizcr.create_time &lt;= #{orderHeaderEedTime}
+        </if>
+        <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+            AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+        </if>
+        <if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+            ${sqlMap.chat}
+        </if>
 		) as "officeChatRecord"
 		from
 			biz_order_header a
@@ -2203,12 +2230,15 @@ FROM
 		and su.id=#{id}
 		and su.status=1
 		AND a.order_type != 4
-		<if test="ordrHeaderStartTime ==null">
-			and TO_DAYS(a.create_time)=TO_DAYS(NOW())
-		</if>
-		<if test="ordrHeaderStartTime !=null">
-			and DATE_FORMAT(a.create_time,'%Y%m%d')=DATE_FORMAT(#{ordrHeaderStartTime},'%Y%m%d')
-		</if>
+        <if test="ordrHeaderStartTime ==null">
+            and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(a.create_time)
+        </if>
+        <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+            AND a.create_time &lt;= #{orderHeaderEedTime}
+        </if>
+        <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+            AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+        </if>
 		AND (
 			(
 			a.biz_status != 45
