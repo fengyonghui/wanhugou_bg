@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.order;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderStatusDao;
 @Service
 @Transactional(readOnly = true)
 public class BizOrderStatusService extends CrudService<BizOrderStatusDao, BizOrderStatus> {
+
+	@Autowired
+	private BizOrderStatusDao bizOrderStatusDao;
 
 	public BizOrderStatus get(Integer id) {
 		return super.get(id);
@@ -43,5 +47,10 @@ public class BizOrderStatusService extends CrudService<BizOrderStatusDao, BizOrd
 	public void delete(BizOrderStatus bizOrderStatus) {
 		super.delete(bizOrderStatus);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public void insertByRequestHeader(Integer id) {
+		bizOrderStatusDao.insertByRequestHeader(id);
+	}
+
 }
