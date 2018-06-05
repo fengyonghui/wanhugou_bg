@@ -63,7 +63,7 @@
 					<fmt:formatDate value="${varietyUserInfo.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:variety:bizVarietyUserInfo:edit"><td>
-    				<%--<a href="${ctx}/biz/variety/bizVarietyUserInfo/form?id=${varietyUserInfo.id}">修改</a>--%>
+    				<a href="${ctx}/biz/variety/bizVarietyUserInfo/form?id=${varietyUserInfo.id}">修改</a>
 					<a href="${ctx}/biz/variety/bizVarietyUserInfo/delete?id=${varietyUserInfo.id}" onclick="return confirmx('确认要删除该品类与用户 关联吗？', this.href)">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
