@@ -76,6 +76,16 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	private String type;    //createPo 为生成采购单的状态
 
+	/**
+	 * 起始金额
+	 */
+	private BigDecimal startPrice;
+	/**
+	 * 结束金额
+	 */
+	private BigDecimal endPrice;
+
+
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
 	}
@@ -364,6 +374,22 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 
 	public void setCommonProcessList(List<CommonProcessEntity> commonProcessList) {
 		this.commonProcessList = commonProcessList;
+	}
+
+	public BigDecimal getStartPrice() {
+		return startPrice;
+	}
+
+	public void setStartPrice(BigDecimal startPrice) {
+		this.startPrice = startPrice;
+	}
+
+	public BigDecimal getEndPrice() {
+		return endPrice;
+	}
+
+	public void setEndPrice(BigDecimal endPrice) {
+		this.endPrice = endPrice;
 	}
 
 	public enum BizStatus {
