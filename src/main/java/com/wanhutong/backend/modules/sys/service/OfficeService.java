@@ -3,11 +3,10 @@
  */
 package com.wanhutong.backend.modules.sys.service;
 
-import java.util.*;
-
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.service.TreeService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao;
@@ -26,22 +25,20 @@ import com.wanhutong.backend.modules.common.service.location.CommonLocationServi
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.sys.dao.OfficeDao;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wanhutong.backend.common.service.TreeService;
-import com.wanhutong.backend.modules.sys.dao.OfficeDao;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.utils.DictUtils;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
-
-import javax.annotation.Resource;
+import java.util.*;
 
 import static com.wanhutong.backend.common.persistence.BaseEntity.DEL_FLAG_NORMAL;
 
@@ -432,6 +429,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     public Page<Office> findPage(Page<Office> page, Office office) {
         User user = UserUtils.getUser();
         if (user.isAdmin()) {
+            office.setDataStatus("all");
             return super.findPage(page, office);
         } else {
             boolean flag = false;

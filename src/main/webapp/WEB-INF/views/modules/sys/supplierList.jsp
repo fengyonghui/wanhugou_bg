@@ -91,14 +91,19 @@
 							</c:if>
 						</shiro:hasPermission>
 						<shiro:hasPermission name="sys:office:edit">
-							<c:if test="${off.bizVendInfo.auditStatus == 0 || off.bizVendInfo.auditStatus == 2}">
-								<a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_save">修改</a>
+							<c:if test="${off.delRemark==1}">
+								<c:if test="${off.bizVendInfo.auditStatus == 0 || off.bizVendInfo.auditStatus == 2}">
+									<a href="${ctx}/sys/office/supplierForm?id=${off.id}&gysFlag=gys_save">修改</a>
+								</c:if>
+								<a href="${ctx}/sys/office/delete?id=${off.id}&gysFlag=gys_delete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
+								<a href="${ctx}/sys/office/supplierForm?parent.id=${off.id}&gysFlag=gys_save">添加下级机构</a>
+								<%--<c:if test="${off.type!=null && off.type eq '7'}">--%>
+									<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.type=7&office.parent.id=12&source=suppli">沟通记录</a>
+								<%--</c:if>--%>
 							</c:if>
-							<a href="${ctx}/sys/office/delete?id=${off.id}&gysFlag=gys_delete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
-							<a href="${ctx}/sys/office/supplierForm?parent.id=${off.id}&gysFlag=gys_save">添加下级机构</a>
-							<%--<c:if test="${off.type!=null && off.type eq '7'}">--%>
-								<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.type=7&office.parent.id=12&source=suppli">沟通记录</a>
-							<%--</c:if>--%>
+							<c:if test="${off.delRemark==0}">
+								<a href="${ctx}/sys/office/recovery?id=${off.id}&gysFlag=gys_delete" onclick="return confirmx('要恢复该机构及所有子机构项吗？', this.href)">恢复</a>
+							</c:if>
 						</shiro:hasPermission>
 					</td>
 				</tr>
