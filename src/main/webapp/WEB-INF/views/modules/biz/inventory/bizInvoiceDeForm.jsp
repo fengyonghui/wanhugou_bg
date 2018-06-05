@@ -75,6 +75,16 @@
 				<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
 			</div>
 		</div>
+		<c:if test="${userList==null}">
+			<div class="control-group">
+				<label class="control-label">发货人：</label>
+				<div class="controls">
+					<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${userList!=null}">
 		<div class="control-group">
 			<label class="control-label">发货人：</label>
 			<div class="controls">
@@ -85,6 +95,7 @@
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">发货时间：</label>
 			<div class="controls">
