@@ -49,6 +49,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private Byte prodType;		//产品类型
 	private String skuPartNo;  //sku编码，用于查询
 
+	private String dicts;		//多个产品特有属性
+
 	private String cateIds; //多种分类
 
 	private String cateNames;//多个分类名称
@@ -528,4 +530,12 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
     public void setImgDetailSorts(String imgDetailSorts) {
         this.imgDetailSorts = imgDetailSorts;
     }
+
+	public String getDicts() {
+		return dicts;
+	}
+
+	public void setDicts(String dicts) {
+		this.dicts = dicts;
+	}
 }

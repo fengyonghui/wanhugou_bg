@@ -540,7 +540,7 @@ public class BizPoHeaderController extends BaseController {
             workbook.dispose();
             return null;
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("dao=========",e);
             addMessage(redirectAttributes, "导出采购单数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/po/bizPoHeader/list";

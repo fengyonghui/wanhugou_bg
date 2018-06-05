@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
+import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoV2Service;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,8 @@ public class BizVarietyAttrController extends BaseController {
 	private BizVarietyInfoService bizVarietyInfoService;
 	@Autowired
 	private AttributeInfoV2Service attributeInfoV2Service;
+	@Autowired
+    private DictService dictService;
 	
 	@ModelAttribute
 	public BizVarietyAttr get(@RequestParam(required=false) Integer id) {
@@ -136,9 +140,13 @@ public class BizVarietyAttrController extends BaseController {
         BizVarietyAttr varietyAttr = new BizVarietyAttr();
         varietyAttr.setVarietyInfo(new BizVarietyInfo(varietyId));
         List<BizVarietyAttr> list = bizVarietyAttrService.findList(varietyAttr);
+        Dict dict = new Dict();
         for (BizVarietyAttr bizVarietyAttr:list) {
             AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(bizVarietyAttr.getAttributeInfo().getId());
             bizVarietyAttr.setAttributeInfo(attributeInfoV2);
+            dict.setType(attributeInfoV2.getDict().getType());
+            List<Dict> dictList = dictService.findList(dict);
+            bizVarietyAttr.setDictList(dictList);
         }
         return list;
     }

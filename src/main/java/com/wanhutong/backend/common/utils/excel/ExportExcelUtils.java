@@ -89,7 +89,7 @@ public class ExportExcelUtils {
                 int cellIndex = 0;
                 for (String str : m) {
                     Cell cell = row.createCell(cellIndex);
-                    cell.setCellValue(str.toString());
+                    cell.setCellValue(str);
                     cellIndex++;
                 }
                 index++;

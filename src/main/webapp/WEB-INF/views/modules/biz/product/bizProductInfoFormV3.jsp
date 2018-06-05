@@ -10,32 +10,6 @@
 
     <script type="text/javascript">
 
-        function selectAttr(item) {
-            var variety = $(item).val();
-            $.ajax({
-                type:"post",
-                url:"${ctx}/biz/product/bizVarietyAttr/findAttr?varietyId="+variety,
-                success:function (data) {
-                    var html = "";
-                    $.each(data,function (index, varietyAttr) {
-                        html += "<div id='varietyAttr' class='control-group'>" ;
-                        html +=    "        <label class='control-label'>请选择"+varietyAttr.attributeInfo.name+"：</label>";
-                        html +=    "        <div style='margin-left: 180px'>";
-                        html +=    "            <select id='attr' about='choose' name='' class='input-medium required'>";
-                        html +=    "                <c:forEach items='${fns:getDictList(varietyAttr.attributeInfo.dictType)}' var='dict'>";
-                        html +=    "                    <option value='${dict.id}' label='${dict.label}'/>";
-                        html +=    "                </c:forEach>";
-                        <%--html +=    "                <form:options items='${fns:getDictList(varietyAttr.attributeInfo.dictType)}' itemLabel='label' itemValue='id' htmlEscape='false'/>";--%>
-                        html +=    "            </select>";
-                        html +=    "            <span class='help-inline'><font color='red'>*</font></span>";
-                        html +=    "        </div>";
-                        html +=    "    </div>";
-
-                    });
-                    $("#variety").append(html);
-                }
-            });
-        }
         $(document).ready(function () {
             //$("#name").focus();
             $("#inputForm").validate({
@@ -89,15 +63,15 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/product/bizProductInfoV2?prodType=${entity.prodType}">产品信息表列表</a></li>
+    <li><a href="${ctx}/biz/product/bizProductInfoV3?prodType=${entity.prodType}">产品信息表列表</a></li>
     <li class="active"><a
-            href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}&prodType=${entity.prodType}">产品信息表<shiro:hasPermission
+            href="${ctx}/biz/product/bizProductInfoV3/form?id=${bizProductInfo.id}&prodType=${entity.prodType}">产品信息表<shiro:hasPermission
             name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
             name="biz:product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
 </ul>
 <br/>
 <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
-<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoV2/save" method="post"
+<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoV3/save" method="post"
            class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <form:hidden path="prodType"/>
@@ -229,7 +203,7 @@
     <div id="variety" class="control-group">
         <label class="control-label">请选择产品分类：</label>
         <div style="margin-left: 180px">
-            <form:select id="varietyInfoId" about="choose" onchange="selectAttr(this)" path="bizVarietyInfo.id" class="input-medium required">
+            <form:select id="varietyInfoId" about="" onclick="selectAttr(this)" path="bizVarietyInfo.id" class="input-medium required">
                 <form:option value="" label="请选择"/>
                 <form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
             </form:select>
@@ -251,22 +225,22 @@
     <div class="control-group">
         <label class="control-label">产品属性：</label>
         <div id="cateProp" style="margin-left: 180px">
-            <%--<c:forEach items="${prodTagList}" var="tagInfo">--%>
-                <%--<div  style="width: 100%;display: inline-block">--%>
-                    <%--<span  style="float:left;width:60px;padding-top:3px">${tagInfo.name}：</span>--%>
-                    <%--<c:choose>--%>
-                        <%--<c:when test="${tagInfo.dictList!=null}">--%>
-                            <%--<form:select about="choose" path="textureStr" class="input-medium required">--%>
-                                <%--<form:options items="${tagInfo.dictList}" itemLabel="label" itemValue="value" htmlEscape="false"/>--%>
-                            <%--</form:select>--%>
-                        <%--</c:when>--%>
-                        <%--<c:otherwise>--%>
-                            <%--<input type="text" class="input-medium"/>--%>
-                        <%--</c:otherwise>--%>
-                    <%--</c:choose>--%>
+            <c:forEach items="${prodTagList}" var="tagInfo">
+                <div  style="width: 100%;display: inline-block">
+                    <span  style="float:left;width:60px;padding-top:3px">${tagInfo.name}：</span>
+                    <c:choose>
+                        <c:when test="${tagInfo.dictList!=null}">
+                            <form:select about="choose" path="textureStr" class="input-medium required">
+                                <form:options items="${tagInfo.dictList}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+                            </form:select>
+                        </c:when>
+                        <c:otherwise>
+                            <input type="text" class="input-medium"/>
+                        </c:otherwise>
+                    </c:choose>
 
-                <%--</div>--%>
-            <%--</c:forEach>--%>
+                </div>
+            </c:forEach>
         </div>
     </div>
 
@@ -433,6 +407,8 @@
 <script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+
+
     function initSkuTable() {
         var skuTableData = $("#skuTableData");
         var skuTableDataTr = skuTableData.find("tr");
@@ -570,7 +546,7 @@
         var id = $("#id").val();
         var officeName = $("#officeName").val();
         $.ajax({
-            url : '${ctx}/biz/product/bizProductInfoV2/getItemNoExist',
+            url : '${ctx}/biz/product/bizProductInfoV3/getItemNoExist',
             contentType:'application/json',
             data : {"itemNo" : itemNo, "id" : id, "officeName" : officeName},
             type : 'get',
@@ -682,7 +658,7 @@
     var b = 0;
     function ajaxFileUploadPic(id, multiple) {
         $.ajaxFileUpload({
-            url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
+            url : '${ctx}/biz/product/bizProductInfoV3/saveColorImg', //用于文件上传的服务器端请求地址
             secureuri : false, //一般设置为false
             fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
             type : 'POST',
@@ -798,7 +774,7 @@
             searchable: true
         });
 
-        $('select[about="choose"]').searchableSelect();
+
 
         var testSelect2 = $("#test-select-2");
         var treeMultiselect = testSelect2.parent().find(".tree-multiselect")[0];
@@ -820,7 +796,48 @@
                 })
             }
         });
+
+        $("#varietyInfoId").searchableSelect({
+            afterSelectItem: function() {
+                alert(this.holder.text());
+                alert(this.holder.data("value"));
+                var variety = this.holder.data("value");
+                // var variety = $(item).val();
+                if (variety !='') {
+                    $("div[name='varietyAttr']").remove();
+                    alert(variety);
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/product/bizVarietyAttr/findAttr?varietyId="+variety,
+                        success:function (data) {
+                            var html = "";
+                            $.each(data,function (index, varietyAttr) {
+                                alert(index+"--"+varietyAttr);
+                                html += "<div name='varietyAttr' class='control-group'>" ;
+                                html +=    "        <label class='control-label'>请选择"+varietyAttr.attributeInfo.name+"：</label>";
+                                html +=    "        <div style='margin-left: 180px'>";
+                                html +=    "            <select about='choose' name='dicts' class='input-medium required'>";
+                                html +=    "                    <option value=''>请选择</option>";
+                                $.each(varietyAttr.dictList,function (index,dict) {
+                                    html +=    "                    <option value='"+varietyAttr.attributeInfo.id+"-"+dict.label+"'>"+dict.label+"</option>";
+                                });
+                                html +=    "            </select>";
+                                html +=    "            <span class='help-inline'><font color='red'>*</font></span>";
+                                html +=    "        </div>";
+                                html +=    "    </div>";
+
+                            });
+                            $("#variety").after(html);
+
+                        }
+                    });
+                }
+            }
+        });
+
     });
+
+    $('select[about="choose"]').searchableSelect();
 
 </script>
 
