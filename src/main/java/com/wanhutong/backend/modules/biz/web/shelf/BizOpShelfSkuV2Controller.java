@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.shelf;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.RoleUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
@@ -18,8 +19,8 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuV2Service;
 import com.wanhutong.backend.modules.biz.service.shelf.BizShelfUserService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
-import com.wanhutong.backend.modules.enums.BizOpShelfInfoEnum;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -89,12 +90,14 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
 	@RequestMapping(value = "form")
 	public String form(BizOpShelfSkus bizOpShelfSku, Model model) {
-		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null){
-            BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(bizOpShelfSku.getId());
-            model.addAttribute("bizOpShelfSku",bizOpShelfSku1);
-        }else {
-            model.addAttribute("bizOpShelfSku", bizOpShelfSku);
-        }
+		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null) {
+			BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(bizOpShelfSku.getId());
+			model.addAttribute("bizOpShelfSku", bizOpShelfSku1);
+			List<BizOpShelfSku> bizOpShelfSkuList = bizOpShelfSkuV2Service.findShelfSkuList(bizOpShelfSku1);
+			model.addAttribute("bizOpShelfSkuList", bizOpShelfSkuList);
+		} else {
+			model.addAttribute("bizOpShelfSku", bizOpShelfSku);
+		}
 		model.addAttribute("varietyFactorList",bizVarietyFactorService.findList(new BizVarietyFactor()));
         model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		BizOpShelfInfo opShelfInfo=new BizOpShelfInfo();
@@ -115,6 +118,10 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 			}
 			model.addAttribute("shelfList",list);
 		}
+
+		SystemConfig systemConfig = ConfigGeneral.SYSTEM_CONFIG.get();
+		boolean hasUnderPriceRole = RoleUtils.hasRole(user, systemConfig.getPutawayUnderCostAudit());
+		model.addAttribute("hasUnderPriceRole", hasUnderPriceRole || user.isAdmin());
 
 		return "modules/biz/shelf/bizOpShelfSkuFormV2";
 	}
@@ -329,6 +336,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		String[] skuIdArr = skuInfoIds.split(",");
 		String[] maxQtyArr = maxQtys.split(",");
 		String[] minQtyArr = minQtys.split(",");
+		if (shelfSkuId != null && !shelfSkuId.equals("")) {
+			BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(shelfSkuId);
+			Integer opShelfInfoId = bizOpShelfSku1.getOpShelfInfo().getId();
+			shelfInfoIds = String.valueOf(opShelfInfoId);
+		}
 		String[] shelfs = shelfInfoIds.split(",");
 		for (int j = 0; j < shelfs.length; j++) {
 			for (int i = 0; i < skuIdArr.length; i++) {

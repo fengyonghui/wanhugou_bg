@@ -30,9 +30,9 @@
                         var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
                         sObj.each(function (index) {
                             total+= parseInt($(this).val());
-                        });
-						$("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-							detail+=$(this).val()+"-"+sObj[i].value+"*";
+                        })
+                        $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
+                            detail+=$(this).val()+"-"+sObj[i].value+"*";
 
 						});
                         tt+=t+"#"+detail+",";
@@ -40,7 +40,7 @@
                     });
                     tt=tt.substring(0,tt.length-1);
                     if (tt != '') {
-                        $("#prodInfo").append("<input name='requestHeaders' type='hidden' value='" + tt + "'>")
+                    	$("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
                     }
                     if(window.confirm('你确定要发货吗？') && total > 0){
                         // alert("确定");
@@ -49,7 +49,7 @@
                         loading('正在提交，请稍等...');
 
                     }else{
-                        // alert("请勾选发货内容");
+                        alert("请勾选发货内容");
                         return false;
                     }
 				},

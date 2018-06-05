@@ -20,4 +20,11 @@ public interface BizOpShelfSkuV2Dao extends CrudDao<BizOpShelfSku> {
 	void shelvesUpdate(BizOpShelfSku bizOpShelfSku);
 	List<BizOpShelfSku> selectSort();
 	void sort(BizOpShelfSku opShelfSku);
+
+	/**
+	 *根据商品上架id获取根据同一货架，同一类商品其余商品list
+	 * @param bizOpShelfSku 商品上架管理Entity
+	 * @return
+	 */
+	List<BizOpShelfSku> findShelfSkuList(BizOpShelfSku bizOpShelfSku);
 }

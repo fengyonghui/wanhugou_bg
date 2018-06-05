@@ -334,4 +334,14 @@
 		and oss.sku_id = #{skuInfo.id}
 		and oss.shelf_id  = #{opShelfInfo.id}
 	</update>
+
+	<select id="findShelfSkuList" resultType="BizOpShelfSku">
+		SELECT
+		<include refid="bizOpShelfSkuColumns"/>
+		FROM biz_op_shelf_sku a
+		<include refid="bizOpShelfSkuJoins"/>
+		WHERE a.shelf_id = #{opShelfInfo.id}
+		AND a.sku_id = #{skuInfo.id}
+		AND a.id != #{id}
+	</select>
 </mapper>

@@ -46,6 +46,13 @@ public class SystemConfig extends ConfigGeneral {
     @XStreamImplicit(itemFieldName = "orderLowestAudit")
     private List<String> orderLowestAudit;
 
+    /**
+     * 商品上架金额小于成本审核权限角色
+     * {@link com.wanhutong.backend.modules.enums.RoleEnNameEnum}
+     */
+    @XStreamImplicit(itemFieldName = "putawayUnderCostAudit")
+    private List<String> putawayUnderCostAudit;
+
 
     @Override
     public SystemConfig parse(String content) throws Exception {
@@ -64,5 +71,9 @@ public class SystemConfig extends ConfigGeneral {
 
     public List<String> getOrderLowestAudit() {
         return orderLowestAudit;
+    }
+
+    public List<String> getPutawayUnderCostAudit() {
+        return putawayUnderCostAudit;
     }
 }

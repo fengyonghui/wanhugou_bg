@@ -540,11 +540,19 @@ public class BizPoHeaderController extends BaseController {
             workbook.dispose();
             return null;
         }catch (Exception e){
-            logger.error("dao=========",e);
+            logger.error("可能没有采购单详情",e);
             addMessage(redirectAttributes, "导出采购单数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/po/bizPoHeader/list";
 
     }
 
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "cancel")
+    @ResponseBody
+    public String cancel(int id, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        bizPoHeaderService.updateBizStatus(id, BizPoHeader.BizStatus.CANCEL);
+        return "取消采购订单成功";
+    }
 }
