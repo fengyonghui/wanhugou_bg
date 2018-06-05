@@ -125,14 +125,9 @@
 					</c:if>
 				</td>
 				<td>
-					<c:if test="${user.userOrder.officeChatRecord !=0}">
-						<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${user.company.id}&office.parent.id=7&office.type=6&source=purchaser">
-							${user.userOrder.officeChatRecord}
-						</a>
-					</c:if>
-					<c:if test="${user.userOrder.officeChatRecord ==0}">
+					<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${user.company.id}&office.parent.id=7&office.type=6&source=purchaser">
 						${user.userOrder.officeChatRecord}
-					</c:if>
+					</a>
 				</td>
 			</tr>
 		</c:forEach>
