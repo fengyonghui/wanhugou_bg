@@ -105,6 +105,7 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private User user;
 	private Integer prodVice;//点击量
 	private Integer orderCount;//下单量
+	private String skuItemNo;//商品货号
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
@@ -559,5 +560,13 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setOrderCount(Integer orderCount) {
 		this.orderCount = orderCount;
+	}
+
+	public String getSkuItemNo() {
+		return skuItemNo;
+	}
+
+	public void setSkuItemNo(String skuItemNo) {
+		this.skuItemNo = skuItemNo;
 	}
 }

@@ -90,13 +90,15 @@
 	
 	<select id="findList" resultType="BizProductInfo">
 		SELECT 
-			<include refid="bizProductInfoColumns"/>
-			,su.name as "user.name"
+			<include refid="bizProductInfoColumns"/>,
+			su.name as "user.name",
+			bsi.item_no as "skuItemNo"
 		FROM biz_product_info a
 			<include refid="bizProductInfoJoins"/>
 		<!-- 产品管理列表的品类主管 搜索 -->
 		LEFT JOIN biz_variety_user_info bvui on bvui.variety_id = vi.id and bvui.status=1
 		left JOIN sys_user su on su.id=bvui.user_id and su.status=1
+		LEFT JOIN biz_sku_info bsi on bsi.prod_id=a.id and bsi.status=1
 		<where>
 			1=1
 			<if test="dataStatus==null">
@@ -156,7 +158,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
+				GROUP BY a.id ORDER BY a.update_time DESC
 			</otherwise>
 		</choose>
 	</select>

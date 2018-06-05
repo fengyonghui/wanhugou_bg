@@ -177,7 +177,7 @@
 				</td>
 				<td>
 					<c:if test="${productInfo.orderCount !=0}">
-						<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${productInfo.itemNo}&skuChickCount=orderCick_count">
+						<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${productInfo.skuItemNo}&skuChickCount=orderCick_count">
 							${productInfo.orderCount}
 						</a>
 					</c:if>
