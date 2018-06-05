@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
@@ -23,6 +24,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -106,12 +108,23 @@ public class BizCustomCenterConsultantController extends BaseController {
             List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(BCC);
             List<Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>> tasks =new ArrayList<>();
             Map<BizCustomCenterConsultant, BizOrderHeader> resultMap = Maps.newLinkedHashMap();
+            BizChatRecord bizChatRecord = new BizChatRecord();
+            User userAdmin = UserUtils.getUser();
+            if(bizCustomCenterConsultant.getOrdrHeaderStartTime()!=null){
+                bizChatRecord.setOrdrHeaderStartTime(bizCustomCenterConsultant.getOrdrHeaderStartTime());
+            }
+            if(bizCustomCenterConsultant.getOrderHeaderEedTime()!=null){
+                bizChatRecord.setOrderHeaderEedTime(bizCustomCenterConsultant.getOrderHeaderEedTime());
+            }
+            if(userAdmin.isAdmin()){
+            }else{
+                bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+            }
             if(list.size()!=0){
                 for (BizCustomCenterConsultant customCenterConsultant : list) {
                     tasks.add(new Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>() {
                         @Override
                         public Pair<BizCustomCenterConsultant, List<BizOrderHeader>> call() throws Exception {
-                            BizChatRecord bizChatRecord = new BizChatRecord();
                             bizChatRecord.setOffice(customCenterConsultant.getCustoms());
                             return Pair.of(customCenterConsultant, bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord));
                         }
