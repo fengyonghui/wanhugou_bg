@@ -111,12 +111,12 @@
 				<th>洽谈数</th>
 				<c:choose>
 					<c:when test="${not empty user.ordrHeaderStartTime}">
-						<th>每月新增订单量</th>
-						<th>每月新增回款额</th>
+						<th>新增订单量</th>
+						<th>新增回款额</th>
 					</c:when>
 					<c:otherwise>
-						<th>每日新增订单量</th>
-						<th>每日新增回款额</th>
+						<th>新增订单量</th>
+						<th>新增回款额</th>
 					</c:otherwise>
 				</c:choose>
 			</c:if>
