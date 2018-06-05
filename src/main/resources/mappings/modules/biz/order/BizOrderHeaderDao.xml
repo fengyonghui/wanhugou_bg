@@ -2085,11 +2085,15 @@ FROM
 		where
 			bcr.status=1
 		and su.id=#{con.id}
+		and bcr.create_id = #{con.id}
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(oh.create_time)
+			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bcr.create_time)
 		</if>
-		<if test="ordrHeaderStartTime !=null">
-			and DATE_FORMAT(oh.create_time,'%Y%m%d')=DATE_FORMAT(#{ordrHeaderStartTime},'%Y%m%d')
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND bcr.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
 			${sqlMap.chat}
@@ -2102,11 +2106,15 @@ FROM
 		WHERE
 			oh.status=1
 		and bcc.consultant_id=#{con.id}
+		AND oh.order_type != 4
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(oh.create_time)
 		</if>
-		<if test="ordrHeaderStartTime !=null">
-			and DATE_FORMAT(oh.create_time,'%Y%m%d')=DATE_FORMAT(#{ordrHeaderStartTime},'%Y%m%d')
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND oh.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		AND (
 		(
@@ -2192,6 +2200,7 @@ FROM
 			a.status=1
 		and su.id=#{id}
 		and su.status=1
+		AND a.order_type != 4
 		<if test="ordrHeaderStartTime ==null">
 			and TO_DAYS(a.create_time)=TO_DAYS(NOW())
 		</if>

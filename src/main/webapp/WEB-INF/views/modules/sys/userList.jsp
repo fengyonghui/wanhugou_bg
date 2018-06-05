@@ -91,10 +91,14 @@
 		<li><label>姓&nbsp;&nbsp;&nbsp;名：</label><form:input path="name" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<li><label>电&nbsp;&nbsp;&nbsp;话：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class="input-medium"/></li>
 		<c:if test="${not empty user.conn}">
-			<li><label>日&nbsp;&nbsp;&nbsp;期：</label>
+			<li><label>日期：</label>
 				<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					   value="<fmt:formatDate value="${user.ordrHeaderStartTime}" pattern="yyyy-MM-dd"/>"
-					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
+					   value="<fmt:formatDate value="${user.ordrHeaderStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="orderHeaderEedTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${user.orderHeaderEedTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
 		</c:if>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="return page();"/>
@@ -109,16 +113,8 @@
 		<th>手机</th><%--<th>角色</th> --%>
 			<c:if test="${not empty user.conn}">
 				<th>洽谈数</th>
-				<c:choose>
-					<c:when test="${not empty user.ordrHeaderStartTime}">
-						<th>新增订单量</th>
-						<th>新增回款额</th>
-					</c:when>
-					<c:otherwise>
-						<th>新增订单量</th>
-						<th>新增回款额</th>
-					</c:otherwise>
-				</c:choose>
+				<th>新增订单量</th>
+				<th>新增回款额</th>
 			</c:if>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
@@ -163,9 +159,14 @@
 					<td>${user.roleNames}</td> --%>
 				<c:if test="${not empty user.conn}">
 					<td>
-						<a href="${ctx}/biz/chat/bizChatRecord/list?user.id=${bizUser.id}&office.parent.id=7&office.type=6&source=purchaser">
+						<c:if test="${bizUser.userOrder.officeChatRecord !=0}">
+							<a href="${ctx}/biz/chat/bizChatRecord/list?user.id=${bizUser.id}&office.parent.id=7&office.type=6&source=purchaser">
+								${bizUser.userOrder.officeChatRecord}
+							</a>
+						</c:if>
+						<c:if test="${bizUser.userOrder.officeChatRecord ==0}">
 							${bizUser.userOrder.officeChatRecord}
-						</a>
+						</c:if>
 					</td>
 					<td>${bizUser.userOrder.orderCount}</td>
 					<td>${bizUser.userOrder.userOfficeReceiveTotal}</td>

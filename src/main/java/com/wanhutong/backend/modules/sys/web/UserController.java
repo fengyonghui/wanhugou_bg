@@ -135,19 +135,21 @@ public class UserController extends BaseController {
 		if(user.getConn()!=null && user.getConn().equals("connIndex")){
 			//客户专员统计
 			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			User userAdmin = UserUtils.getUser();
 			if(user.getOrdrHeaderStartTime()!=null){
 				bizOrderHeader.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
 			}
-			User userAdmin = UserUtils.getUser();
+			if(user.getOrderHeaderEedTime()!=null){
+				bizOrderHeader.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+			}
+			if(userAdmin.isAdmin()){
+			}else{
+				bizOrderHeader.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+			}
 			BizOrderHeader orderUserCount =null;
 			for(int i=0;i<page.getList().size();i++){
 				bizOrderHeader.setCon(page.getList().get(i));
-				if(userAdmin.isAdmin()){
-					orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
-				}else{
-					bizOrderHeader.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
-					orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
-				}
+				orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
 				if(orderUserCount!=null){
 					page.getList().get(i).setUserOrder(orderUserCount);
 				}
