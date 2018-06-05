@@ -138,9 +138,14 @@
 						${bizSkuInfo.buyPrice}
 					</td>
 					<td>
-						<a href="${ctx}/biz/order/bizOrderHeader/list?customer.id=${bizSkuInfo.orderHeader.customer.id}&skuChickCount=orderCick_count">
-							${bizSkuInfo.orderHeader.orderCount}
-						</a>
+						<c:if test="${bizSkuInfo.orderCount !=0}">
+							<a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${bizSkuInfo.itemNo}&skuChickCount=orderCick_count">
+								${bizSkuInfo.orderCount}
+							</a>
+						</c:if>
+						<c:if test="${bizSkuInfo.orderCount ==0}">
+							${bizSkuInfo.orderCount}
+						</c:if>
 					</td>
 					<%--<td>--%>
 						<%--${bizSkuInfo.createBy.id}--%>

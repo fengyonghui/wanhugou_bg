@@ -116,10 +116,8 @@ public class BizSkuInfoController extends BaseController {
 		BizOrderHeader bizOrderHeader = new BizOrderHeader();
 		for(int i=0;i<page.getList().size();i++){
 			bizOrderHeader.setSkuInfoId(page.getList().get(i));
-			BizOrderHeader orderCount = bizOrderHeaderDao.findOrderCount(bizOrderHeader);
-			if(orderCount!=null){
-				page.getList().get(i).setOrderHeader(orderCount);
-			}
+			List<BizOrderHeader> orderCount = bizOrderHeaderDao.findOrderCount(bizOrderHeader);
+			page.getList().get(i).setOrderCount(orderCount.size());
 		}
 		model.addAttribute("page", page);
 		model.addAttribute("prodType", bizSkuInfo.getProductInfo().getProdType());

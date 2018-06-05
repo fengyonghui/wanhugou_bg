@@ -119,6 +119,7 @@
 				<th>最低售价</th>
 				<th>最高售价</th>
 				<th>点击量</th>
+				<th>下单量</th>
 				<th>负责人</th>
 				<th>创建时间</th>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
@@ -167,6 +168,11 @@
 				<td>
 					<a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${productInfo.id}&prodChixkSource=prod_chickCount">
 						${productInfo.prodVice.prodChick}
+					</a>
+				</td>
+				<td>
+					<a href="${ctx}/biz/order/bizOrderHeader/list?skuChickCount=orderCick_count">
+						${productInfo.prodVice.orderCount}
 					</a>
 				</td>
 				<td>

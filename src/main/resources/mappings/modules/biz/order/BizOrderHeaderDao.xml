@@ -283,6 +283,16 @@
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
+			<if test="skuChickCount!=null and skuChickCount!=''">
+				AND (
+				(
+				biz_status != 45
+				AND biz_status != 35
+				AND biz_status != 0
+				)
+				OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+				)
+			</if>
 			<if test="orderType != null and orderType != ''">
 				AND a.order_type = #{orderType}
 			</if>
@@ -375,8 +385,7 @@
 			<if test="statu != null and statu =='unline'">
 				AND ohu.id is not NULL
 			</if>
-
-			<if test="page != null and page.includeTestData != true">
+			<if test="page != null and page.includeTestData != true and skuChickCount==null">
 				AND NOT EXISTS(
 				select 1
 				from sys_test_account ta
@@ -2023,17 +2032,18 @@ FROM
 	<!-- 商品管理的 下单量 -->
 	<select id="findOrderCount" resultType="BizOrderHeader">
 		SELECT
-		COUNT(oh.id) as "orderCount",
-		oh.cust_id as "customer.id",
-		so.name as "customer.name"
-		FROM biz_order_header oh
-		LEFT JOIN biz_order_detail bod on bod.order_id=oh.id
-		LEFT JOIN biz_sku_info bsi on bsi.id=bod.sku_id
-		LEFT JOIN sys_office so on so.id=oh.cust_id
+			oh.id,
+			bsi.item_no
+		FROM
+			biz_order_header oh
+		LEFT JOIN biz_order_detail bod ON bod.order_id = oh.id
+		LEFT JOIN biz_sku_info bsi ON bsi.id = bod.sku_id
+		LEFT JOIN sys_office so ON so.id = oh.cust_id
 		WHERE
-			bsi.status=1
-		and bod.status=1
+			bsi. STATUS = 1
+		AND bod. STATUS = 1
 		and bsi.id=#{skuInfoId.id}
+		AND oh.order_type != 4
 		AND (
 			(
 			biz_status != 45

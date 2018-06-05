@@ -69,7 +69,7 @@
 <ul class="nav nav-tabs">
 	<c:choose>
 		<c:when test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
-			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?customer.id=${bizOrderHeader.customer.id}&skuChickCount=${bizOrderHeader.skuChickCount}">订单信息列表</a></li>
+			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?itemNo=${bizOrderHeader.itemNo}&skuChickCount=${bizOrderHeader.skuChickCount}">订单信息列表</a></li>
 		</c:when>
 		<c:otherwise>
 			<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
@@ -88,7 +88,6 @@
 	<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 	<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
-		<input type="hidden" name="customer.id" value="${bizOrderHeader.customer.id}"/>
 		<input type="hidden" name="skuChickCount" value="${bizOrderHeader.skuChickCount}"/>
 	</c:if>
 	<form:hidden path="consultantId"/>

@@ -68,6 +68,7 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	private Office purchaser;		//代采采购商
 	private BizOrderHeader orderHeader;
+	private Integer orderCount;
 
 
 	public BizSkuInfo() {
@@ -312,5 +313,13 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setOrderHeader(BizOrderHeader orderHeader) {
 		this.orderHeader = orderHeader;
+	}
+
+	public Integer getOrderCount() {
+		return orderCount;
+	}
+
+	public void setOrderCount(Integer orderCount) {
+		this.orderCount = orderCount;
 	}
 }
