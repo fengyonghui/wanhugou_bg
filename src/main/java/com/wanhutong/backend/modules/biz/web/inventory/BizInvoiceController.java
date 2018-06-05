@@ -26,7 +26,9 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -130,8 +132,15 @@ public class BizInvoiceController extends BaseController {
 	public String form(BizInvoice bizInvoice, Model model) {
         BizLogistics bizLogistics = new BizLogistics();
 		List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
-        List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
         User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        boolean flag = false;
+        for (Role role:roleList) {
+            if (role.getEnname().equals(RoleEnNameEnum.DEPT.getState())) {
+                flag = true;
+                break;
+            }
+        }
         model.addAttribute("logisticsList",logisticsList);
 //        List<BizOrderHeader> orderList = bizOrderHeaderService.findList(new BizOrderHeader());
 //        List<BizRequestHeader> requestList = bizRequestHeaderService.findList(new BizRequestHeader());
@@ -140,11 +149,19 @@ public class BizInvoiceController extends BaseController {
 //        model.addAttribute("orderList",orderList);
 //        model.addAttribute("requestList",requestList);
         if (StringUtils.isBlank(bizInvoice.getCarrier())) {
-            bizInvoice.setCarrier(String.valueOf(user.getId()));
+            bizInvoice.setCarrier(user.getName());
         }
 
 		model.addAttribute("bizInvoice", bizInvoice);
-		model.addAttribute("userList", userList);
+        if (flag && bizInvoice.getBizStatus()==1) {
+            List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
+            model.addAttribute("userList", userList);
+        }else if (flag && bizInvoice.getBizStatus()==0) {
+            List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
+            model.addAttribute("userList", userList);
+        }else {
+            model.addAttribute("userList",null);
+        }
 		model.addAttribute("bizOrderHeader",new BizOrderHeader());
 		if(bizInvoice.getShip() != null && bizInvoice.getShip()==1 ){
 			model.addAttribute("bizRequestHeader",new BizRequestHeader());
@@ -186,15 +203,30 @@ public class BizInvoiceController extends BaseController {
             }
         }
 
-        List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
         User user = UserUtils.getUser();
-        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
-            bizInvoice.setCarrier(String.valueOf(user.getId()));
+        List<Role> roleList = user.getRoleList();
+        boolean flag = false;
+        for (Role role:roleList) {
+            if (role.getEnname().equals(RoleEnNameEnum.DEPT.getState())) {
+                flag = true;
+                break;
+            }
+        }
+//        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
+//            bizInvoice.setCarrier(user.getName());
+//        }
+        if (flag && bizInvoice.getBizStatus()==1) {
+            List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
+            model.addAttribute("userList", userList);
+        }else if (flag && bizInvoice.getBizStatus()==0) {
+            List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
+            model.addAttribute("userList", userList);
+        }else {
+            model.addAttribute("userList",null);
         }
         BizLogistics bizLogistics = new BizLogistics();
         List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         model.addAttribute("logisticsList",logisticsList);
-        model.addAttribute("userList", userList);
         model.addAttribute("source",source);
         model.addAttribute("orderHeaderList",orderHeaderList);
         model.addAttribute("bizInvoice", bizInvoice);
@@ -232,6 +264,27 @@ public class BizInvoiceController extends BaseController {
                 }
                 requestHeaderList.add(requestHeader);
             }
+        }
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        boolean flag = false;
+        for (Role role:roleList) {
+            if (role.getEnname().equals(RoleEnNameEnum.DEPT.getState())) {
+                flag = true;
+                break;
+            }
+        }
+//        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
+//            bizInvoice.setCarrier(user.getName());
+//        }
+        if (flag && bizInvoice.getBizStatus()==1) {
+            List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
+            model.addAttribute("userList", userList);
+        }else if (flag && bizInvoice.getBizStatus()==0) {
+            List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
+            model.addAttribute("userList", userList);
+        }else {
+            model.addAttribute("userList",null);
         }
         BizLogistics bizLogistics = new BizLogistics();
         List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
