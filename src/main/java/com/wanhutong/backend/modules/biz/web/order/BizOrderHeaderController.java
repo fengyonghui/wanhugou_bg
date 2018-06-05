@@ -241,8 +241,18 @@ public class BizOrderHeaderController extends BaseController {
                 model.addAttribute("unlineList", unlineList);
             }
         }
+
+        BizOrderStatus bizOrderStatus = new BizOrderStatus();
+        bizOrderStatus.setOrderHeader(bizOrderHeader);
+        List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+        statusList.sort((o1,o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
+
+        Map<Integer, OrderHeaderBizStatusEnum> statusMap = OrderHeaderBizStatusEnum.getStatusMap();
+
         model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
         model.addAttribute("entity", bizOrderHeader);
+        model.addAttribute("statusList", statusList);
+        model.addAttribute("statusMap", statusMap);
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
