@@ -30,6 +30,7 @@ public class BizProdViewLog extends DataEntity<BizProdViewLog> {
 	private Integer prodChick;
 	private String prodChixkSource;
 	private Integer orderCount;
+	private String skuItemNo;
 	
 	public BizProdViewLog() {
 		super();
@@ -94,5 +95,13 @@ public class BizProdViewLog extends DataEntity<BizProdViewLog> {
 
 	public void setOrderCount(Integer orderCount) {
 		this.orderCount = orderCount;
+	}
+
+	public String getSkuItemNo() {
+		return skuItemNo;
+	}
+
+	public void setSkuItemNo(String skuItemNo) {
+		this.skuItemNo = skuItemNo;
 	}
 }

@@ -148,6 +148,7 @@ public class BizProductInfoV2Controller extends BaseController {
             page.getList().get(i).setOrderCount(prodView.size());
             if(prodView.size()!=0){
                 page.getList().get(i).setProdVice(prodView.get(0).getProdChick());
+                page.getList().get(i).setSkuItemNo(prodView.get(0).getSkuItemNo());
             }else{
                 page.getList().get(i).setProdVice(0);
             }

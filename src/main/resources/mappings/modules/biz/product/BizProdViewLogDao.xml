@@ -123,6 +123,7 @@
 	<select id="findProdView" resultType="BizProdViewLog">
 		SELECT
 			aa.id,
+			cc.item_no as "skuItemNo",
 		(
 			select count(1) from biz_prod_view_log bpvl
 			LEFT JOIN biz_product_info bpi ON bpi.id = bpvl.prod_id
