@@ -18,14 +18,21 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${bizChatRecord.office.id}&source=suppli">沟通记录列表</a></li>
-		<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><li><a href="${ctx}/biz/chat/bizChatRecord/form?office.type=7&office.parent.id=12&office.id=${bizChatRecord.office.id}&source=suppli">沟通记录添加</a></li></shiro:hasPermission>
+		<c:choose>
+			<c:when test="${empty bizChatRecord.user.id}">
+				<li class="active"><a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${bizChatRecord.office.id}&source=suppli">沟通记录列表</a></li>
+				<shiro:hasPermission name="biz:chat:bizChatRecord:edit"><li><a href="${ctx}/biz/chat/bizChatRecord/form?office.type=7&office.parent.id=12&office.id=${bizChatRecord.office.id}&source=suppli">沟通记录添加</a></li></shiro:hasPermission>
+			</c:when>
+			<c:otherwise><li class="active"><a href="${ctx}/biz/chat/bizChatRecord/list?user.id=${bizChatRecord.user.id}&source=suppli">沟通记录列表</a></li></c:otherwise>
+		</c:choose>
+
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizChatRecord" action="${ctx}/biz/chat/bizChatRecord/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input name="source" type="hidden" value="suppli"/>
 		<input name="office.id" type="hidden" value="${bizChatRecord.office.id}"/>
+		<input name="user.id" type="hidden" value="${bizChatRecord.user.id}"/>
 		<ul class="ul-form">
 			<li><label style="width: 130px;">品类主管或客户专员:</label>
 				<form:input path="user.name" htmlEscape="false" maxlength="40" class="input-medium"/>

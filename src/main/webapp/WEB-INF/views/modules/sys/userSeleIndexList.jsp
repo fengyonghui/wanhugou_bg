@@ -84,7 +84,9 @@
 				${bizUser.userOrder.opShelfCount}
 			</td>
 			<td>
-				${bizUser.userOrder.officeChatRecord}
+				<a href="${ctx}/biz/chat/bizChatRecord/list?user.id=${bizUser.id}&office.type=7&office.parent.id=12&source=suppli">
+					${bizUser.userOrder.officeChatRecord}
+				</a>
 			</td>
 			<shiro:hasPermission name="sys:user:edit"><td>
 					<a href="${ctx}/sys/user/userSeleForm?id=${bizUser.id}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}&conn=selectIndex">修改</a>
