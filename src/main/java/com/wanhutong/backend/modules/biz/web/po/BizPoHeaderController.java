@@ -42,6 +42,7 @@ import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -235,8 +236,15 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            bizPoHeader.setVendOffice(user.getCompany());
+        }
+
         Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
-        List<Role> roleList = UserUtils.getUser().getRoleList();
         Set<String> roleSet = Sets.newHashSet();
         Set<String> roleEnNameSet = Sets.newHashSet();
         for (Role r : roleList) {
