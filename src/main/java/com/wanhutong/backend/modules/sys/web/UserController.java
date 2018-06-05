@@ -849,7 +849,7 @@ public class UserController extends BaseController {
 		}
 		user.setRoleList(roleList);
 		// 保存用户信息
-		systemService.saveVarInfoUser(user);
+		systemService.saveUser(user);
 		if(user.getVarietyInfoId()!=null && user.getVarietyInfoId().getId()!=null){
 			BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
 			bizVarietyUserInfo.setUser(user);
