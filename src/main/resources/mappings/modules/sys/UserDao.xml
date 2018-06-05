@@ -333,6 +333,12 @@
 		<if test="company != null and company.type != null">
 			and cust.type = #{company.type}
 		</if>
+		<if test="cent != null and cent.name != null and cent.name !=''">
+			AND cent.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{cent.name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{cent.name}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{cent.name}, '%')</if>
+		</if>
 		<if test="phone != null and phone !=''">
 			AND u.phone LIKE
 			<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
