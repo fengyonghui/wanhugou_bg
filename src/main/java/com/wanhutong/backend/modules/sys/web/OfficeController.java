@@ -3,16 +3,12 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
@@ -21,9 +17,14 @@ import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,16 +38,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.service.OfficeService;
-import com.wanhutong.backend.modules.sys.utils.DictUtils;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 机构Controller
@@ -134,13 +132,6 @@ public class OfficeController extends BaseController {
             }
         }
         model.addAttribute("page", page);
-//		if(conn.equals("connIndex")){
-//			//TODO 客户专员管理页面跳转没解决：添加客户专员跳转，关联采购商跳转，修改跳转
-////			跳回客户专员管理
-//		System.out.println(centers);//必填
-//		System.out.println(consultants);//必填
-//			return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
-//		}
         return "modules/sys/purchasersList";
     }
 
