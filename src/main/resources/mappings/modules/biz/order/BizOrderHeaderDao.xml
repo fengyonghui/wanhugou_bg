@@ -2003,6 +2003,7 @@ FROM
 		LEFT JOIN sys_office so ON so.id = bizcr.office_id
 		LEFT JOIN sys_user su ON su.id = bizcr.user_id
 		where bizcr.office_id=#{office.id} and bizcr.status=1
+		and so.type=6
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bizcr.create_time)
 		</if>
@@ -2085,6 +2086,7 @@ FROM
 		where
 			bcr.status=1
 		and su.id=#{con.id}
+		and so.type=6
 		and bcr.create_id = #{con.id}
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bcr.create_time)
