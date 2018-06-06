@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -51,9 +52,10 @@ public class BizRequestPayController extends BaseController {
 
     @RequestMapping(value = "genPayQRCode")
     @ResponseBody
-    public String genPayQRCode(Double payMoney,Integer reqId,Integer payMethod){
+    public Map<String,String> genPayQRCode(Double payMoney,Integer reqId,Integer payMethod){
 
         User user=UserUtils.getUser();
+        Map<String,String> reMap =new HashMap<>();
         BizRequestHeader bizRequestHeader= bizRequestHeaderService.get(reqId);
         String postUrl=DsConfig.getAlipayPostUrl();
         if(payMethod==1){
@@ -88,7 +90,7 @@ public class BizRequestPayController extends BaseController {
 
             if(payMethod==0){
                 map.put("out_trade_no",aplipayNo);
-                map.put("amount",payMoney);
+                map.put("amount",payMoney.toString());
             }
             if(payMethod==1){
                 BigDecimal bigDecimal =new BigDecimal(payMoney.toString());
@@ -183,7 +185,24 @@ public class BizRequestPayController extends BaseController {
                 }
             }
         }
-        return "/upload/" +photoName;
+        reMap.put("imgUrl","/upload/" +photoName);
+        reMap.put("payNum",bizPayRecord.getPayNum());
+        return reMap;
+    }
+
+    @RequestMapping(value = "checkCondition")
+    @ResponseBody
+    public String checkCondition(String payNum){
+        BizPayRecord bizPayRecord =new BizPayRecord();
+        bizPayRecord.setPayNum(payNum);
+        bizPayRecord.setBizStatus(1);
+         List<BizPayRecord> list= bizPayRecordService.findList(bizPayRecord);
+         if(list.size()==1){
+             return "ok";
+         }
+         return "error";
+
+
     }
 
 }
