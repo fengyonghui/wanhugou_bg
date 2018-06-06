@@ -593,10 +593,9 @@ public class BizOrderHeaderController extends BaseController {
                             //商品单价
                             detailListData.add(String.valueOf(d.getUnitPrice()));
                             //商品工厂价
-                            BizSkuInfo skuInfo = bizSkuInfoService.get(d.getSkuInfo().getId());
-                            detailListData.add(String.valueOf(skuInfo.getBuyPrice()));
+                            detailListData.add(String.valueOf(d.getBuyPrice()==null?"":d.getBuyPrice()));
                             //采购数量
-                            detailListData.add(String.valueOf(d.getOrdQty()));
+                            detailListData.add(String.valueOf(d.getOrdQty()==null?"":d.getOrdQty()));
                             //商品总价
                             detailListData.add(String.valueOf(df.format(d.getUnitPrice() * d.getOrdQty())));
                             detailData.add(detailListData);
@@ -645,7 +644,9 @@ public class BizOrderHeaderController extends BaseController {
                     //已收货款
                     rowData.add(String.valueOf(o.getReceiveTotal()));
                     Integer ten = 10, forTy = 40;
-                    if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
+                    double sumTotal = o.getTotalDetail() + o.getTotalExp() + o.getFreight();
+                    double receiveTotal = o.getReceiveTotal();
+                    if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && df.format(sumTotal)!=df.format(receiveTotal)) {
                         //尾款信息
                         rowData.add("有尾款");
                     } else {
@@ -712,10 +713,9 @@ public class BizOrderHeaderController extends BaseController {
                                     detailListData.add("");
                                 }
                                 //商品单价
-                                detailListData.add(String.valueOf(d.getUnitPrice()));
+                                detailListData.add(String.valueOf(d.getUnitPrice()==null?"":d.getUnitPrice()));
                                 //商品工厂价
-                                BizSkuInfo skuInfo = bizSkuInfoService.get(d.getSkuInfo().getId());
-                                detailListData.add(String.valueOf(skuInfo.getBuyPrice()));
+                                detailListData.add(String.valueOf(d.getBuyPrice()==null?"":d.getBuyPrice()));
                                 //采购数量
                                 detailListData.add(String.valueOf(d.getOrdQty()));
                                 //商品总价
@@ -766,7 +766,9 @@ public class BizOrderHeaderController extends BaseController {
                         //已收货款
                         rowData.add(String.valueOf(o.getReceiveTotal()));
                         Integer ten = 10, forTy = 40;
-                        if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && o.getTotalDetail() + o.getTotalExp() + o.getFreight() != o.getReceiveTotal()) {
+                        double sumTotal= o.getTotalDetail() + o.getTotalExp() + o.getFreight();
+                        double receiveTotal = o.getReceiveTotal();
+                        if (!o.getBizStatus().equals(ten) && !o.getBizStatus().equals(forTy) && df.format(sumTotal) != df.format(receiveTotal)) {
                             //尾款信息
                             rowData.add("有尾款");
                         } else {
