@@ -1015,6 +1015,7 @@
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
+        <th>已生成的采购单</th>
         <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
             <th>商品出厂价</th>
         </c:if>
@@ -1071,6 +1072,9 @@
             </td>
             <td>
                 ${bizOrderDetail.skuInfo.itemNo}
+            </td>
+            <td>
+                <a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>
             </td>
             <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                 <td>
