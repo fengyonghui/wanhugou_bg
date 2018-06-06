@@ -78,6 +78,19 @@ public class Global {
 		}
 		return value;
 	}
+
+	/**
+	 * 获取配置
+	 * @see ${fns:getConfig('adminPath')}
+	 */
+	public static String getConfig(String key, String defaultStr) {
+		String value = map.get(key);
+		if (value == null){
+			value = loader.getProperty(key);
+			map.put(key, value != null ? value : StringUtils.EMPTY);
+		}
+		return StringUtils.isBlank(value) ? defaultStr : value;
+	}
 	
 	/**
 	 * 获取管理端根路径
