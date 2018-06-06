@@ -7,10 +7,22 @@
 	<%@include file="/WEB-INF/views/include/treetable.jsp" %>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			// var tpl = $("#treeTableTpl").html().replace(/(\/\/\<!\-\-)|(\/\/\-\->)/g,"");
+			 <%--var tpl = $("#treeTableTpl").html().replace(/(\/\/\<!\-\-)|(\/\/\-\->)/g,"");--%>
 			var data = ${fns:toJson(list)}, rootId = "${not empty office.id ? office.id : '0'}";
-			addRow("#treeTableList", tpl, data, rootId, true);
+			<%--addRow("#treeTableList", tpl, data, rootId, true);--%>
+			addRow("#treeTableList",data, rootId, true);
 			$("#treeTable").treeTable({expandLevel : 5});
+			<%--导出--%>
+			$("#buttonExport").click(function(){
+				top.$.jBox.confirm("确认要导出会员数据吗？","系统提示！",function(v,h,f){
+					if(v=="ok"){
+						$("#searchForm").attr("action","${ctx}/sys/office/exportOffice?id=${office.id}&parentIds=${office.parentIds}");
+						$("#searchForm").submit();
+						$("#searchForm").attr("action","${ctx}/sys/office/purchasersList");
+					}
+				},{buttonsFocus:1});
+				top.$(".jbox-body.jbox-icon").css("top","55px");
+			});
 		});
 		function addRow(list, tpl, data, pid, root){
 			for (var i=0; i<data.length; i++){
@@ -58,6 +70,7 @@
 			<li><label>联系人电话：</label>
 				<form:input path="moblieMoeny.mobile" htmlEscape="false" placeholder="请输入联系人电话"  class="input-medium"/></li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
