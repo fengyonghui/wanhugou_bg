@@ -52,7 +52,7 @@ public class BizPayMoneyController extends BaseController {
         payLogger.info("请求返回参数--------------"+jsonstr);
         BizPayRecord bizPayRecord =new BizPayRecord();
         Integer reqId=0;
-        Double amount=0.0;
+        double amount=0.0;
         String params =null;
         String photoName=null;
         if(map.containsKey("attach")) {
@@ -69,10 +69,10 @@ public class BizPayMoneyController extends BaseController {
             bizPayRecord.setPayer(record.getPayer());
             bizPayRecord.setCustomer(record.getCustomer());
             String resultCode= (String) map.get("trade_status");
-            Double receiptAmount = Double.parseDouble((String) map.get("receipt_amount"));
+            Double receiptAmount = Double.parseDouble(map.get("receipt_amount").toString());
             payLogger.info("支付宝返回参数-------------"+receiptAmount);
-            amount=Double.parseDouble((String) map.get("buyer_pay_amount"));
-            bizPayRecord.setPayMoney(amount);
+            amount= Double.parseDouble(map.get("buyer_pay_amount").toString());
+            bizPayRecord.setPayMoney(Double.valueOf(amount));
             if("TRADE_SUCCESS".equalsIgnoreCase(resultCode)&& receiptAmount.equals(amount)){
                 bizPayRecord.setBizStatus(1);
             }else {
@@ -98,7 +98,7 @@ public class BizPayMoneyController extends BaseController {
 
               Map paramsMap = (Map) JSONUtils.parse(params);
               Integer centerId = (Integer) paramsMap.get("centerId");
-              amount = (Double) paramsMap.get("amount");
+              amount =  Double.parseDouble(paramsMap.get("amount").toString());
               Integer payMethod = (Integer) paramsMap.get("payMethod");
               String orderNum = (String) paramsMap.get("orderNum");
               Integer payer = (Integer) paramsMap.get("payer");

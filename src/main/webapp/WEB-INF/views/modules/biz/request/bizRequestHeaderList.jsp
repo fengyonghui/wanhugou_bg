@@ -21,7 +21,9 @@
             $('#myModal').on('hide.bs.modal', function () {
                 window.location.href="${ctx}/biz/request/bizRequestHeader";
 
-            })
+            });
+
+            timeoutID= setInterval(tttt,5000);
 		});
         function page(n,s,t){
             $("#pageNo").val(n);
@@ -84,15 +86,37 @@
             $.ajax({
                 type:"post",
                 url:"${ctx}/biz/request/bizRequestPay/genPayQRCode",
-               data:{payMoney:payMoney,reqId:reqId,payMethod:payMethod},
+                data:{payMoney:payMoney,reqId:reqId,payMethod:payMethod},
                 success:function (data) {
-                    var img="<img src='"+data+"'/>"
+                    var img="<img src='"+data['imgUrl']+"'/>";
+					$("#payNum").val(data['payNum']);
                     $("#img").html(img);
 
                 }
-            })
+            });
 
         }
+        function tttt() {
+
+            if($("#payNum").val()!=''){
+                $.ajax({
+                    type:"post",
+                    url:"${ctx}/biz/request/bizRequestPay/checkCondition",
+                    data:{payNum:$("#payNum").val()},
+                    success:function (data) {
+                        if(data=='ok'){
+                            clearTimeout(timeoutID);
+                            alert("支付成功！");
+                            $('#myModal').modal('hide')
+
+                        }
+
+                    }
+                })
+            }
+        }
+
+
 	</script>
 </head>
 <body>
@@ -103,6 +127,7 @@
 	<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestHeader/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<input id="payNum" type="hidden" />
 		<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 		<ul class="ul-form">
 			<li><label>备货单号：</label>
