@@ -654,10 +654,9 @@ public class BizOrderHeaderController extends BaseController {
                     }
                     rowData.add(String.valueOf(total + exp + fre));
                     rowData.add(String.valueOf(order.getReceiveTotal()==null?"":order.getReceiveTotal()));
-                    Integer ten = 10, forTy = 40;
                     double sumTotal = total + exp + fre;
                     double receiveTotal = order.getReceiveTotal()==null?0.0:order.getReceiveTotal();
-                    if (!order.getBizStatus().equals(ten) && !order.getBizStatus().equals(forTy) && df.format(sumTotal)!=df.format(receiveTotal)) {
+                    if (order.getBizStatus()!=10 && order.getBizStatus()!=40 && df.format(sumTotal)!=df.format(receiveTotal)) {
                         //尾款信息
                         rowData.add("有尾款");
                     } else {
@@ -788,10 +787,9 @@ public class BizOrderHeaderController extends BaseController {
                         rowData.add(String.valueOf(total + exp + Fre));
                         //已收货款
                         rowData.add(String.valueOf(order.getReceiveTotal()==null?"":order.getReceiveTotal()));
-                        Integer ten = 10, forTy = 40;
                         double sumTotal= total + exp + Fre;
                         double receiveTotal = order.getReceiveTotal()==null?0.0:order.getReceiveTotal();
-                        if (!order.getBizStatus().equals(ten) && !order.getBizStatus().equals(forTy) && df.format(sumTotal) != df.format(receiveTotal)) {
+                        if (order.getBizStatus()!=10 && order.getBizStatus()!=40 && df.format(sumTotal) != df.format(receiveTotal)) {
                             rowData.add("有尾款");
                         } else {
                             rowData.add("");
