@@ -244,6 +244,7 @@ public class BizOrderHeaderController extends BaseController {
 
         BizOrderStatus bizOrderStatus = new BizOrderStatus();
         bizOrderStatus.setOrderHeader(bizOrderHeader);
+        bizOrderStatus.setOrderType(BizOrderStatus.OrderType.ORDER.getType());
         List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
         statusList.sort((o1,o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
 
@@ -288,7 +289,6 @@ public class BizOrderHeaderController extends BaseController {
         }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
     }
-
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "recovery")

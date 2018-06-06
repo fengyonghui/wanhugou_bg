@@ -435,6 +435,7 @@
     </c:if>
     <c:if test="${fn:length(bizPoHeader.commonProcessList) > 0}">
     <div class="control-group">
+        <label class="control-label">审批流程：</label>
         <div class="controls help_wrap">
             <div class="help_step_box fa">
                 <c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">

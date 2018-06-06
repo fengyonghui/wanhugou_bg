@@ -835,6 +835,7 @@
         </c:if>
         <c:if test="${fn:length(statusList) > 0}">
             <div class="control-group">
+                <label class="control-label">状态流程：</label>
                 <div class="controls help_wrap">
                     <div class="help_step_box fa">
                         <c:forEach items="${statusList}" var="v" varStatus="stat">

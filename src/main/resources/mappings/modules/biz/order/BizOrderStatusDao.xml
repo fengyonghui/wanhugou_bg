@@ -48,8 +48,14 @@
 			<if test="bizStatus != null and bizStatus != ''">
 				AND a.biz_status = #{bizStatus}
 			</if>
+			<if test="orderHeader != null and orderHeader.id != '' and orderHeader.id != null">
+				AND a.order_id = #{orderHeader.id}
+			</if>
 			<if test="orderHeader != null and orderHeader.orderType != null and orderHeader.orderType != ''">
 				AND boh.order_type = #{orderHeader.orderType}
+			</if>
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
 			</if>
 		</where>
 		<choose>

@@ -8,10 +8,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
+import com.wanhutong.backend.modules.enums.TradeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,6 +55,8 @@ public class BizOrderHeaderUnlineController extends BaseController {
 	private CommonImgService commonImgService;
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
+	@Autowired
+	private BizPayRecordService bizPayRecordService;
 	
 	@ModelAttribute
 	public BizOrderHeaderUnline get(@RequestParam(required=false) Integer id) {
@@ -104,22 +112,53 @@ public class BizOrderHeaderUnlineController extends BaseController {
         bizOrderHeaderUnline.setRealMoney(bizOrderHeaderUnline.getUnlinePayMoney());
         bizOrderHeaderUnline.setBizStatus(BIZSTATUSONE);
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
-            bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
+        bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
         bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal()+bizOrderHeaderUnline.getRealMoney().doubleValue());
         bizOrderHeaderService.save(bizOrderHeader);
-        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.UNPAY.getState()) {
+        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.UNPAY.getState().intValue()) {
             if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal())==0) {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
             }else {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.INITIAL_PAY.getState());
             }
         }
-        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.INITIAL_PAY.getState()) {
+        if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.INITIAL_PAY.getState().intValue()) {
             if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal())==0) {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
             }
         }
         bizOrderHeaderService.save(bizOrderHeader);
+
+
+		BizPayRecord bizPayRecord = new BizPayRecord();
+		// 支付编号 *同订单号*
+		bizPayRecord.setPayNum(bizOrderHeader.getOrderNum());
+		// 支付宝或微信的业务流水号
+		bizPayRecord.setOutTradeNo(bizOrderHeaderUnline.getSerialNum());
+		// 订单编号
+		bizPayRecord.setOrderNum(bizOrderHeader.getOrderNum());
+		// 支付人
+		bizPayRecord.setPayer(bizOrderHeaderUnline.getCreateBy().getId());
+		// 客户ID
+		bizPayRecord.setCustomer(bizOrderHeader.getCustomer());
+		// 支付账号
+		bizPayRecord.setAccount(String.valueOf(bizOrderHeader.getCustomer().getId()));
+		// 支付到账户
+		bizPayRecord.setToAccount("1");
+		// 交易类型：充值、提现、支付
+		bizPayRecord.setRecordType(TradeTypeEnum.REQUEST_PAY_TYPE.getCode());
+		bizPayRecord.setRecordTypeName(TradeTypeEnum.REQUEST_PAY_TYPE.getTradeNoType());
+		// 支付类型：wx(微信) alipay(支付宝)
+		bizPayRecord.setPayType(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE.getCode());
+		bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE.getMessage());
+
+		bizPayRecord.setPayMoney(bizOrderHeaderUnline.getUnlinePayMoney().doubleValue());
+		bizPayRecord.setBizStatus(1);
+
+		User user = UserUtils.getUser();
+		bizPayRecord.setCreateBy(user);
+		bizPayRecord.setUpdateBy(user);
+		bizPayRecordService.save(bizPayRecord);
         addMessage(redirectAttributes, "保存线下支付订单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeaderUnline/?repage&orderHeader.id="+bizOrderHeader.getId();
 	}
