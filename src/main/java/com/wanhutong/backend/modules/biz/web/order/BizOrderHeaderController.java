@@ -148,6 +148,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
         model.addAttribute("orderType",bizOrderHeader.getOrderType());
+        List<BizOrderDetail> ordDetailList = Lists.newArrayList();
+        Map<Integer, String> orderNumMap = new HashMap<Integer, String>();
+        Map<Integer, Integer> detailIdMap = new HashMap<Integer, Integer>();
         if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
             Office office = officeService.get(bizOrderHeader.getCustomer().getId());
             bizOrderHeader.setCustomer(office);
@@ -211,6 +214,20 @@ public class BizOrderHeaderController extends BaseController {
                     model.addAttribute("appointedTimeList",appointedTimeList);
                 }
             }
+
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(bizOrderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+            for (BizOrderDetail orderDetail : orderDetailList) {
+                BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
+                orderDetail.setSkuInfo(skuInfo);
+                ordDetailList.add(orderDetail);
+                int keyId = orderDetail.getLineNo();
+                String orderNum = orderDetail.getPoHeader().getOrderNum();
+                orderNumMap.put(keyId, orderNum);
+                int detailId = orderDetail.getPoHeader().getId();
+                detailIdMap.put(keyId, detailId);
+            }
         }
         BizOrderHeader boh = new BizOrderHeader();
         if (bizOrderHeader != null) {
@@ -252,7 +269,10 @@ public class BizOrderHeaderController extends BaseController {
 
         model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
         model.addAttribute("entity", bizOrderHeader);
+        model.addAttribute("ordDetailList", ordDetailList);
         model.addAttribute("statusList", statusList);
+        model.addAttribute("orderNumMap", orderNumMap);
+        model.addAttribute("detailIdMap", detailIdMap);
         model.addAttribute("statusMap", statusMap);
         return "modules/biz/order/bizOrderHeaderForm";
     }
