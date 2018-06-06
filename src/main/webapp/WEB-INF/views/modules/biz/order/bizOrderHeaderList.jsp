@@ -278,6 +278,7 @@
 								审核失败
 								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
 							</c:if></a>
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">详情</a>
 						<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">
 							${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 						</c:if>
@@ -305,6 +306,7 @@
 				</c:if >
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 					<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=detail">详情</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
 					</c:if>
 				</shiro:hasPermission>
