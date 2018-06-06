@@ -47,6 +47,7 @@
 	<form:form id="searchForm" modelAttribute="office" action="${ctx}/sys/office/supplierListGys" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<input type="hidden" name="id" value="${office.id}">
 		<ul class="ul-form">
 			<li><label>供应商名称：</label>
 				<sys:treeselect id="office" name="id" value="" labelName="name"

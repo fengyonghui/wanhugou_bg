@@ -109,10 +109,9 @@ public class OfficeController extends BaseController {
     public String purchasersList(Office office, String conn, Integer centers, Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
         String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
         Office customer = new Office();
-        if (office.getId() != null || office.getParentIds() != null) {
+        if (office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0) {
             customer.setParent(office);
         } else {
-//            查所有
             customer.setParentIds("%," + purchasersId + ",%");
         }
         if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
@@ -586,10 +585,9 @@ public class OfficeController extends BaseController {
     public String supplierListGys(Office office, HttpServletRequest request, HttpServletResponse response, Model model) {
         String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
         Office vendor = new Office();
-        if (office.getId() != null) {
+        if (office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0) {
             vendor.setParent(office);
         } else {
-//            查所有
             vendor.setParentIds("%," + supplierId + ",%");
         }
         if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
