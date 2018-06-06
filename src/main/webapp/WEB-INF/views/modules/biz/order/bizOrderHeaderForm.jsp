@@ -9,7 +9,7 @@
     <title>订单信息管理</title>
     <meta name="decorator" content="default"/>
     <style type="text/css">
-        .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;height:200px;border-top:1px solid #FFF;width: 100%}
+        .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;border-top:1px solid #FFF;width: 100%}
         .help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
         .help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
         .help_step_set{background: #FFF;color: #3daae9;}
@@ -836,6 +836,7 @@
         </c:if>
         <c:if test="${fn:length(statusList) > 0}">
             <div class="control-group">
+                <label class="control-label">状态流程：</label>
                 <div class="controls help_wrap">
                     <div class="help_step_box fa">
                         <c:forEach items="${statusList}" var="v" varStatus="stat">
