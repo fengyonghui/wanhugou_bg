@@ -7,15 +7,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
@@ -82,6 +85,8 @@ public class OfficeController extends BaseController {
     private DictService dictService;
     @Autowired
     private BuyerAdviserService buyerAdviserService;
+    @Autowired
+    private BizChatRecordService bizChatRecordService;
 
 
 
@@ -668,7 +673,7 @@ public class OfficeController extends BaseController {
     public String exportOffice(Office office,RedirectAttributes redirectAttributes, HttpServletResponse response) {
         String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
         Office customer = new Office();
-        if (office.getId() != null || office.getParentIds() != null && !office.getParentIds().equals("")) {
+        if(office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0){
             customer.setParent(office);
         } else {
             customer.setParentIds("%," + purchasersId + ",%");
@@ -681,20 +686,15 @@ public class OfficeController extends BaseController {
         try {
             List<Office> meetingExprotList = officeService.findMeetingExprot(customer);
             ArrayList<List<String>> heads = Lists.newArrayList();
-            ArrayList<List<String>> details = Lists.newArrayList();
             ArrayList<List<String>> chats = Lists.newArrayList();
+            BizChatRecord chatRecord = new BizChatRecord();
+            User userAdmin = UserUtils.getUser();
+            if(userAdmin.isAdmin()){
+            }else{
+                chatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+            }
             for(int i=0;i<meetingExprotList.size();i++){
                 ArrayList<String> headArr = Lists.newArrayList();
-                if(meetingExprotList.get(i).getParent()!=null && meetingExprotList.get(i).getParent().getName()!=null){
-                    headArr.add(String.valueOf(meetingExprotList.get(i).getParent().getName()));
-                }else{
-                    headArr.add("");
-                }
-                if(meetingExprotList.get(i).getArea()!=null && meetingExprotList.get(i).getArea().getName()!=null){
-                    headArr.add(String.valueOf(meetingExprotList.get(i).getArea().getName()));
-                }else{
-                    headArr.add("");
-                }
                 headArr.add(String.valueOf(meetingExprotList.get(i).getName()==null?"":meetingExprotList.get(i).getName()));
                 headArr.add(String.valueOf(meetingExprotList.get(i).getCode()==null?"":meetingExprotList.get(i).getCode()));
                 headArr.add(String.valueOf(meetingExprotList.get(i).getPhone()==null?"":meetingExprotList.get(i).getPhone()));
@@ -759,31 +759,36 @@ public class OfficeController extends BaseController {
                 headArr.add(String.valueOf(meetingExprotList.get(i).getPhone()==null?"":meetingExprotList.get(i).getPhone()));
                 headArr.add(String.valueOf(meetingExprotList.get(i).getFax()==null?"":meetingExprotList.get(i).getFax()));
                 headArr.add(String.valueOf(meetingExprotList.get(i).getEmail()==null?"":meetingExprotList.get(i).getEmail()));
-                heads.add(headArr);
-                //所属客户专员
-                ArrayList<Object> detaillist = Lists.newArrayList();
+                //所属采购中心，所属客户专员
                 BuyerAdviser buyerAdviser = buyerAdviserService.get(meetingExprotList.get(i).getId());
                 if(buyerAdviser != null && !buyerAdviser.getStatus().equals("0")){
                     User user = systemService.getUser(buyerAdviser.getConsultantId());
                     if(user!=null && user.getName()!=null && !user.getName().equals("") && !user.getDelFlag().equals("0")){
-                        buyerAdviser.setConsultantName(user.getName());
+                        headArr.add(String.valueOf(user.getCompany()==null?"":(user.getCompany().getName()==null?"":user.getCompany().getName())));
+                        headArr.add(String.valueOf(user.getName()));
                     }else{
-                        detaillist.add("");
+                        headArr.add("");
+                        headArr.add("");
                     }
                 }else{
-                    detaillist.add("");
+                    headArr.add("");
+                    headArr.add("");
                 }
+                heads.add(headArr);
+                chatRecord.setOffice(meetingExprotList.get(i));
+                List<BizChatRecord> chatList = bizChatRecordService.findList(chatRecord);
+                for(int chat=0;chat<chatList.size();chat++){
+                    ArrayList<String> chatArr = Lists.newArrayList();
 
+                }
             }
-            String[] orderArr ={"上级机构","归属区域","机构名称","机构编码","主负责人电话","机构类型","机构等级","是否可用","钱包账户","主负责人","副负责人",
-                    "联系地址","邮政编码","负责人","电话","传真","邮箱"};
-            String[] dateilArr ={"上级机构","归属区域","机构名称","机构编码","归属采购中心","归属客户专员"};
+            String[] orderArr ={"机构名称","机构编码","主负责人电话","机构类型","机构等级","是否可用","钱包账户","主负责人","副负责人",
+                    "联系地址","邮政编码","负责人","电话","传真","邮箱","所属采购中心","所属客户专员"};
             String[] chatArr ={"机构名称","品类主管或客户专员","沟通记录","创建人","创建时间"};
             ExportExcelUtils exportUtils = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             exportUtils.exportExcel(workbook, 0, "会员数据", orderArr, heads, fileName);
-            exportUtils.exportExcel(workbook, 1, "所属客户专员", dateilArr, details, fileName);
-            exportUtils.exportExcel(workbook, 2, "沟通记录", chatArr, chats, fileName);
+            exportUtils.exportExcel(workbook, 1, "沟通记录", chatArr, chats, fileName);
             response.reset();
             response.setContentType("application/octet-stream; charset=utf-8");
             response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
@@ -796,6 +801,5 @@ public class OfficeController extends BaseController {
         }
         return "redirect:" + adminPath + "/sys/office/purchasersList";
     }
-
 
 }
