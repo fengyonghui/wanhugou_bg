@@ -54,4 +54,28 @@ public class BizOrderStatus extends DataEntity<BizOrderStatus> {
 	public void setOrderType(Integer orderType) {
 		this.orderType = orderType;
 	}
+
+
+	public enum OrderType{
+		ORDER(0, "订单"),
+		REQUEST(1, "采购单"),
+		;
+
+
+		private int type;
+		private String desc;
+
+		OrderType(int type, String desc) {
+			this.type = type;
+			this.desc = desc;
+		}
+
+		public int getType() {
+			return type;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
+	}
 }

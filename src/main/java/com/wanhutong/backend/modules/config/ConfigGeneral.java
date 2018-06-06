@@ -1,5 +1,6 @@
 package com.wanhutong.backend.modules.config;
 
+import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
@@ -51,6 +52,9 @@ public abstract class ConfigGeneral {
 
 	public static final ConfigWrapper<SystemConfig> SYSTEM_CONFIG = new ConfigWrapper<>(
 			"SystemConfig.xml",new SystemConfig());
+
+	public static final ConfigWrapper<EmailConfig> EMAIL_CONFIG = new ConfigWrapper<>(
+			"EmailConfig.xml",new EmailConfig());
 
 	/**
 	 * 获取所有的配置对象实例所属的父容器，使用反射实现，由于仅在更新配置的内存版本时调用，属于可容忍的性能损耗

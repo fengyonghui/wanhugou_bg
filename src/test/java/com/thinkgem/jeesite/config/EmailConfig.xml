@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailConfig>
+    <email>
+        <name>OFFLINE_PAY_RECORD_EXCEPTION</name>
+        <receiveAddress>1175050111@qq.com,liuying@wanhutong.com</receiveAddress>
+        <sendAddress>admin@sms.marschariot.com</sendAddress>
+        <subject><![CDATA[运营管理后台异常:线下支付记录保存异常]]></subject>
+        <body><![CDATA[
+            您好!
+                线下支付记录保存异常!<br/>
+                异常订单号:%s<br/>
+                线下支付订单号:%s<br/>
+                时间:%s<br/>
+        ]]>
+        </body>
+    </email>
+</EmailConfig>
