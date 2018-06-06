@@ -565,11 +565,11 @@ public class BizOrderHeaderController extends BaseController {
                 bizPayRecord.setOrderNum(order.getOrderNum());
                 List<BizPayRecord> payList = bizPayRecordService.findList(bizPayRecord);
                 order.setBizLocation(bizOrderAddressService.get(order.getBizLocation().getId()));
+                orderDetail.setOrderHeader(order);
+                List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
                 if (payList == null || payList.size()==0){
-                    orderDetail.setOrderHeader(order);
-                    List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
-                    Double dou=0.0;
                     if (list.size() != 0) {
+                        Double dou=0.0;
                         for (BizOrderDetail detail : list) {
                             double buy=0.0;
                             int ord=0;
@@ -699,12 +699,9 @@ public class BizOrderHeaderController extends BaseController {
                     data.add(rowData);
                 }
                 if (payList.size() != 0) {
-                    order.setBizPayRecordList(payList);
-                    orderDetail.setOrderHeader(order);
                     payList.forEach(p -> {
                         //======================================================================
-                        List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
-                        Double dou=0.0;
+                        Double douSum=0.0;
                         if (list.size() != 0) {
                             for (BizOrderDetail d : list) {
                                 double buy=0.0;
@@ -715,7 +712,7 @@ public class BizOrderHeaderController extends BaseController {
                                 if(d.getOrdQty()!=null){
                                     ord=d.getOrdQty();
                                 }
-                                dou+=buy * ord;
+                                douSum+=buy * ord;
                                 List<String> detailListData = Lists.newArrayList();
                                 detailListData.add(String.valueOf(order.getOrderNum()==null?"":order.getOrderNum()));
                                 detailListData.add(String.valueOf(d.getSkuName()==null?"":d.getSkuName()));
@@ -741,7 +738,7 @@ public class BizOrderHeaderController extends BaseController {
                                 detailListData.add(String.valueOf(df.format(unPri * ordQty)));
                                 detailData.add(detailListData);
                             }
-                            order.setTotalBuyPrice(dou);
+                            order.setTotalBuyPrice(douSum);
                         }
                         //地址查询
                         List<String> rowData = Lists.newArrayList();
