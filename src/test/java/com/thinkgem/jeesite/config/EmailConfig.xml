@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailConfig>
+    <email>
+        <name>GET_GIFT</name>
+        <receiveAddress>huleilei@binzhi.com,huobaochong@binzhi.com,yangshuai@binzhi.com</receiveAddress>
+        <sendAddress>bzgj-customer@alimail.binzhi.cn</sendAddress>
+        <subject><![CDATA[%sAPP活动礼物领取通知:%s]]></subject>
+        <body><![CDATA[
+            您好!
+                手机号:%s,用户id:%s,礼品名称:%s,已成功领取活动中发放的礼物，请尽快跟用户取得联系。
+        ]]>
+        </body>
+    </email>
+</EmailConfig>
