@@ -2115,13 +2115,13 @@ FROM
 		and su.status=1
 		and su.id=#{con.id}
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_FORMAT(bcc.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+			and DATE_FORMAT(bcc.update_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND bcc.create_time &lt;= #{orderHeaderEedTime}
+			AND bcc.update_time &lt;= #{orderHeaderEedTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
-			AND bcc.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+			AND bcc.update_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		) as "officeCount"
 		FROM biz_order_header AS oh
