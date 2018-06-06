@@ -27,12 +27,22 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/biz/product/bizProdViewLog/">日志列表</a></li>
+		<c:choose>
+			<c:when test="${not empty bizProdViewLog.prodChixkSource && bizProdViewLog.prodChixkSource eq 'prod_chickCount'}">
+				<li class="active"><a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${bizProdViewLog.productInfo.id}&prodChixkSource=${bizProdViewLog.prodChixkSource}">
+					日志列表</a></li>
+			</c:when>
+			<c:otherwise><li class="active"><a href="${ctx}/biz/product/bizProdViewLog/">日志列表</a></li></c:otherwise>
+		</c:choose>
 		<%--<shiro:hasPermission name="biz:product:bizProdViewLog:edit"><li><a href="${ctx}/biz/product/bizProdViewLog/form">日志添加</a></li></shiro:hasPermission>--%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizProdViewLog" action="${ctx}/biz/product/bizProdViewLog/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<c:if test="${not empty bizProdViewLog.prodChixkSource && bizProdViewLog.prodChixkSource eq 'prod_chickCount'}">
+			<input type="hidden" name="prodChixkSource" value="${bizProdViewLog.prodChixkSource}"/>
+			<input type="hidden" name="productInfo.id" value="${bizProdViewLog.productInfo.id}"/>
+		</c:if>
 		<ul class="ul-form">
 			<li><label>货架名称：</label>
 				<form:input path="opShelfInfo.name" htmlEscape="false" maxlength="60" class="input-medium"/>
@@ -51,7 +61,13 @@
 				<form:input path="productInfo.name" htmlEscape="false" maxlength="60" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-			<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+
+			<c:choose>
+				<c:when test="${not empty bizProdViewLog.prodChixkSource && bizProdViewLog.prodChixkSource eq 'prod_chickCount'}">
+					<li class="btns"><input class="btn" type="button" value="返回产品信息管理" onclick="location.href=('${ctx}/biz/product/bizProductInfoV2?prodType=1')"/></li>
+				</c:when>
+				<c:otherwise><li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li></c:otherwise>
+			</c:choose>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>

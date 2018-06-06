@@ -8,10 +8,12 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
@@ -80,6 +82,8 @@ public class BizSkuInfoController extends BaseController {
 	private BizInventorySkuService bizInventorySkuService;
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
+	@Autowired
+	private BizOrderHeaderDao bizOrderHeaderDao;
 
 
 
@@ -108,7 +112,13 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizSkuInfo> page = bizSkuInfoService.findPage(new Page<BizSkuInfo>(request, response), bizSkuInfo); 
+		Page<BizSkuInfo> page = bizSkuInfoService.findPage(new Page<BizSkuInfo>(request, response), bizSkuInfo);
+		BizOrderHeader bizOrderHeader = new BizOrderHeader();
+		for(int i=0;i<page.getList().size();i++){
+			bizOrderHeader.setSkuInfoId(page.getList().get(i));
+			List<BizOrderHeader> orderCount = bizOrderHeaderDao.findOrderCount(bizOrderHeader);
+			page.getList().get(i).setOrderCount(orderCount.size());
+		}
 		model.addAttribute("page", page);
 		model.addAttribute("prodType", bizSkuInfo.getProductInfo().getProdType());
 		return "modules/biz/sku/bizSkuInfoList";

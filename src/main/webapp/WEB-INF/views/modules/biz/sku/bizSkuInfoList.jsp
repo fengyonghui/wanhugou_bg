@@ -97,6 +97,7 @@
 				<th>供应商</th>
 				<%--<th>创建人</th>--%>
 				<th>工厂价格</th>
+				<th>商品下单量</th>
 				<th>创建时间</th>
 				<th>更新人</th>
 				<%--<th>更新时间</th>--%>
@@ -135,6 +136,21 @@
 					<td>
 						<input name="buyPrice" value="${bizSkuInfo.buyPrice}" type="hidden"/>
 						${bizSkuInfo.buyPrice}
+					</td>
+					<td>
+						<c:if test="${bizSkuInfo.orderCount !=0}">
+							<c:choose>
+								<c:when test="${bizSkuInfo.itemNo !=null}">
+									<a href="${ctx}/biz/order/bizOrderHeader/list?skuChickCount=orderCick_count&partNo=${bizSkuInfo.partNo}">
+										${bizSkuInfo.orderCount}
+									</a>
+								</c:when>
+								<c:otherwise>${bizSkuInfo.orderCount}</c:otherwise>
+							</c:choose>
+						</c:if>
+						<c:if test="${bizSkuInfo.orderCount ==0}">
+							${bizSkuInfo.orderCount}
+						</c:if>
 					</td>
 					<%--<td>--%>
 						<%--${bizSkuInfo.createBy.id}--%>

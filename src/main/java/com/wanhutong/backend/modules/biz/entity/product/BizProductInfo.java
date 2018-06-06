@@ -12,6 +12,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.PropValue;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +98,14 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	 * */
 	private Date createDateStart;
 	private Date createDateEnd;
+
+	/**
+	 * 品类主管
+	 * */
+	private User user;
+	private Integer prodVice;//点击量
+	private Integer orderCount;//下单量
+	private String skuItemNo;//商品货号
 
 	private List<BizCategoryInfo> categoryInfoList = Lists.newArrayList();
 	private List<CommonImg> commonImgList = Lists.newArrayList();
@@ -528,4 +537,36 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
     public void setImgDetailSorts(String imgDetailSorts) {
         this.imgDetailSorts = imgDetailSorts;
     }
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Integer getProdVice() {
+		return prodVice;
+	}
+
+	public void setProdVice(Integer prodVice) {
+		this.prodVice = prodVice;
+	}
+
+	public Integer getOrderCount() {
+		return orderCount;
+	}
+
+	public void setOrderCount(Integer orderCount) {
+		this.orderCount = orderCount;
+	}
+
+	public String getSkuItemNo() {
+		return skuItemNo;
+	}
+
+	public void setSkuItemNo(String skuItemNo) {
+		this.skuItemNo = skuItemNo;
+	}
 }

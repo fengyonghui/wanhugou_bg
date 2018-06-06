@@ -44,7 +44,8 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 * 备货清单查看 已生成的采购单
 	 * */
 	private BizPoHeader bizPoHeader;
-
+	private String invName;//仓库名称
+	private Integer skuInvQty;//库存数量
 
 	public BizRequestDetail() {
 		super();
@@ -182,5 +183,21 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setBizPoHeader(BizPoHeader bizPoHeader) {
 		this.bizPoHeader = bizPoHeader;
+	}
+
+	public String getInvName() {
+		return invName;
+	}
+
+	public void setInvName(String invName) {
+		this.invName = invName;
+	}
+
+	public Integer getSkuInvQty() {
+		return skuInvQty;
+	}
+
+	public void setSkuInvQty(Integer skuInvQty) {
+		this.skuInvQty = skuInvQty;
 	}
 }

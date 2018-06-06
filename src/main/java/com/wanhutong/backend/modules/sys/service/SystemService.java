@@ -699,4 +699,22 @@ public class SystemService extends BaseService implements InitializingBean {
 		return users;
 	}
 
+	/**
+	 * 品类主管管理
+	 * */
+	public Page<User> findUserSele(Page<User> page, User user) {
+		//查询选品专员
+		Role role = new Role();
+		role.setEnname(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+		List<Role> roleList = findRole(role);
+		if (roleList != null && roleList.size() > 0){
+			role = roleList.get(0);
+		}
+		user.setRole(role);
+		// 执行分页查询
+		user.setPage(page);
+		page.setList(userDao.findSeleList(user));
+		return page;
+	}
+
 }

@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.chat;
 
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import javax.validation.constraints.NotNull;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -28,6 +29,9 @@ public class BizChatRecord extends DataEntity<BizChatRecord> {
 	 * 沟通记录 经销店/供应商 标识
 	 * */
 	private String source;
+	private BizOrderHeader order;
+	private Date ordrHeaderStartTime;//日期查询
+	private Date orderHeaderEedTime;//日期查询
 
 	public BizChatRecord() {
 		super();
@@ -70,5 +74,29 @@ public class BizChatRecord extends DataEntity<BizChatRecord> {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public BizOrderHeader getOrder() {
+		return order;
+	}
+
+	public void setOrder(BizOrderHeader order) {
+		this.order = order;
+	}
+
+	public Date getOrdrHeaderStartTime() {
+		return ordrHeaderStartTime;
+	}
+
+	public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
+		this.ordrHeaderStartTime = ordrHeaderStartTime;
+	}
+
+	public Date getOrderHeaderEedTime() {
+		return orderHeaderEedTime;
+	}
+
+	public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
+		this.orderHeaderEedTime = orderHeaderEedTime;
 	}
 }

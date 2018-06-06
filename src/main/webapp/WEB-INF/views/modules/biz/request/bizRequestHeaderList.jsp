@@ -156,6 +156,12 @@
 					<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</li>
+			<li><label>品类名称：</label>
+				<form:select id="varietyInfoId" about="choose" path="varietyInfo.id" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
+			</li>
 			<li><label>测试数据</label>
 				<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 			</li>
@@ -176,10 +182,12 @@
 				<th>备货商品数量</th>
 				<th>备货商品总价</th>
 				<th>已收保证金</th>
+				<th>付款比例</th>
 				<th>已到货数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
 				<th>下单时间</th>
+				<th>品类名称</th>
 				<th>申请人</th>
 				<th>更新时间</th>
 				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
@@ -214,6 +222,18 @@
 				<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
 					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
 				<td>${requestHeader.recvTotal}</td>
+				<td>
+					<a style="display: none">
+						<fmt:formatNumber type="number" var="totalMoneysss" value="${requestHeader.totalMoney}" pattern="0.0"/>
+						<fmt:formatNumber type="number" var="recvTotalsss" value="${requestHeader.recvTotal}" pattern="0.0"/>
+					</a>
+					<c:if test="${totalMoneysss==recvTotalsss}">
+						100%
+					</c:if>
+					<c:if test="${totalMoneysss!=recvTotalsss}">
+						<fmt:formatNumber type="percent" value="${requestHeader.recvTotal/(requestHeader.totalMoney-requestHeader.recvTotal)}" maxFractionDigits="2" />
+					</c:if>
+				</td>
 				<td>${requestHeader.recvQtys}</td>
 				<td>
 					${requestHeader.remark}
@@ -228,6 +248,9 @@
 				</td>
 				<td>
 					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</td>
+				<td>
+					${requestHeader.varietyInfo.name}
 				</td>
 				<td>
 					${requestHeader.createBy.name}

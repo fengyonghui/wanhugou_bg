@@ -34,11 +34,10 @@
 		SELECT 
 			<include refid="bizProdViewLogColumns"/>
 		FROM biz_prod_view_log a
-		<include refid="bizProdViewLogJoins"/>
-
+			<include refid="bizProdViewLogJoins"/>
 		<where>
-			
-			<if test="opShelfInfo != null and opShelfInfo != '' and opShelfInfo.name != ''">
+
+			<if test="opShelfInfo != null and opShelfInfo.name != null and opShelfInfo.name != ''">
 				AND bosi.name  LIKE
 				<if test="dbName == 'oracle'">'%'||#{opShelfInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{opShelfInfo.name}+'%'</if>
@@ -47,11 +46,14 @@
 			<if test="center != null and center.name != null and center.name != ''">
 				AND so.name = #{center.name}
 			</if>
-			<if test="productInfo != null and productInfo != '' and productInfo.name != ''">
+			<if test="productInfo != null and productInfo.name != null and productInfo.name != ''">
 				AND bpi.NAME LIKE
 				<if test="dbName == 'oracle'">'%'||#{productInfo.name}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{productInfo.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{productInfo.name},'%')</if>
+			</if>
+			<if test="productInfo != null and productInfo.id != null and productInfo.id != ''">
+				AND a.prod_id =#{productInfo.id}
 			</if>
 		</where>
 		ORDER BY a.create_time DESC
@@ -116,5 +118,36 @@
 		status= #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
-	
+
+	<!-- 产品管理的点击量  -->
+	<select id="findProdView" resultType="BizProdViewLog">
+		SELECT
+			aa.id,
+			cc.item_no as "skuItemNo",
+		(
+			select count(1) from biz_prod_view_log bpvl
+			LEFT JOIN biz_product_info bpi ON bpi.id = bpvl.prod_id
+			where
+			bpi.status=1
+			and bpi.id=#{productInfo.id}
+		) as "prodChick"
+		FROM
+			biz_order_header aa
+			LEFT JOIN biz_order_detail bb ON bb.order_id = aa.id AND bb. STATUS = 1
+			LEFT JOIN biz_sku_info cc ON cc.id = bb.sku_id AND cc. STATUS = 1
+			LEFT JOIN biz_product_info dd ON dd.id = cc.prod_id AND dd. STATUS = 1
+		WHERE
+			aa. STATUS = 1
+		AND aa.order_type != 4
+		AND dd.id =#{productInfo.id}
+		AND (
+			(
+				aa.biz_status != 45
+				AND aa.biz_status != 35
+				AND aa.biz_status != 0
+			)
+		OR (aa.biz_status = 40 AND aa.receive_total > 0)
+		)
+	</select>
+
 </mapper>

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -67,9 +68,12 @@ public class User extends DataEntity<User> {
 	private Integer ccStatus;
 
 	/**
-	 * 会员搜索查看 采购商的下单相关信息
+	 * 会员搜索查看 采购商的下单相关信息，品类主管的商品统计
 	 * */
 	private BizOrderHeader userOrder;
+	private Date ordrHeaderStartTime;//日期查询
+	private Date orderHeaderEedTime;//日期查询
+	private BizVarietyInfo varietyInfoId;
 
 	/**
 	 * 用户作为主负责人所属的供应商
@@ -411,5 +415,29 @@ public class User extends DataEntity<User> {
 
 	public void setVendor(Office vendor) {
 		this.vendor = vendor;
+	}
+
+	public Date getOrdrHeaderStartTime() {
+		return ordrHeaderStartTime;
+	}
+
+	public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
+		this.ordrHeaderStartTime = ordrHeaderStartTime;
+	}
+
+	public BizVarietyInfo getVarietyInfoId() {
+		return varietyInfoId;
+	}
+
+	public void setVarietyInfoId(BizVarietyInfo varietyInfoId) {
+		this.varietyInfoId = varietyInfoId;
+	}
+
+	public Date getOrderHeaderEedTime() {
+		return orderHeaderEedTime;
+	}
+
+	public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
+		this.orderHeaderEedTime = orderHeaderEedTime;
 	}
 }

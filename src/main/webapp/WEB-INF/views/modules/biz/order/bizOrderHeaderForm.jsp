@@ -415,12 +415,10 @@
                                 notAllowSelectParent="true"
                                 title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
-                <c:if test="${entity.orderDetails eq 'details'}">
                     <c:if test="${orderCenter.centers !=null }">
                         该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
                         客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
                     </c:if>
-                </c:if>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
@@ -428,6 +426,10 @@
                                 notAllowSelectParent="true"
                                 title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
+                    <c:if test="${orderCenter.centers !=null }">
+                        该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
+                        客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
+                    </c:if>
                 <span class="help-inline"><font color="red">*</font></span>
             </c:if>
         </div>
@@ -652,7 +654,6 @@
             <%--<span class="help-inline"></span>--%>
         <%--</div>--%>
     <%--</c:if>--%>
-    <c:if test="${not empty entity.orderDetails}">
         <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
             <label class="control-label">进展信息：</label>
@@ -891,7 +892,6 @@
                 </div>
             </div>
         </c:if>
-    </c:if>
     <c:if test="${entity.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
     <div class="control-group">
         <label class="control-label">付款约定：</label>
