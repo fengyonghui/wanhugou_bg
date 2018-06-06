@@ -28,10 +28,11 @@ public class EmailConfig extends ConfigGeneral {
     @Override
     public EmailConfig parse(String content) throws Exception {
         EmailConfig config = XmlUtils.fromXml(content);
-        emailMap = Maps.newHashMap();
+        Map<String, Email> tempMap = Maps.newHashMap();
         for (Email email : config.emailList) {
-            emailMap.put(email.getName(), email);
+            tempMap.put(email.getName(), email);
         }
+        emailMap = tempMap;
         return config;
     }
 
@@ -64,4 +65,10 @@ public class EmailConfig extends ConfigGeneral {
         }
     }
 
+    public enum EmailType {
+        /**
+         * 线下支付记录异常
+         */
+        OFFLINE_PAY_RECORD_EXCEPTION,
+    }
 }

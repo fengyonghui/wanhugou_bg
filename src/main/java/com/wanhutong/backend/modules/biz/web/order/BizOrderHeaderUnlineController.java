@@ -3,16 +3,20 @@
  */
 package com.wanhutong.backend.modules.biz.web.order;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.AliyunMailClient;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
+import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
@@ -31,13 +35,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
-
-import java.math.BigDecimal;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,9 +116,9 @@ public class BizOrderHeaderUnlineController extends BaseController {
 			return form(bizOrderHeaderUnline, model);
 		}
         bizOrderHeaderUnline = bizOrderHeaderUnlineService.get(bizOrderHeaderUnline.getId());
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
         bizOrderHeaderUnline.setRealMoney(bizOrderHeaderUnline.getUnlinePayMoney());
         bizOrderHeaderUnline.setBizStatus(BIZSTATUSONE);
-        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
         bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
         bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal()+bizOrderHeaderUnline.getRealMoney().doubleValue());
         bizOrderHeaderService.save(bizOrderHeader);
@@ -167,6 +168,13 @@ public class BizOrderHeaderUnlineController extends BaseController {
 			bizPayRecordService.save(bizPayRecord);
 		}catch (Exception e) {
         	LOGGER.error("[exception]线下支付交易记录保存异常[{}][{}]", bizOrderHeader.getId(), bizOrderHeaderUnline.getId(), e);
+			EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.OFFLINE_PAY_RECORD_EXCEPTION.name());
+			AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
+					String.format(email.getBody(),
+							bizOrderHeader.getId(),
+							bizOrderHeaderUnline.getId(),
+							LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+					));
 		}
         addMessage(redirectAttributes, "保存线下支付订单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeaderUnline/?repage&orderHeader.id="+bizOrderHeader.getId();
