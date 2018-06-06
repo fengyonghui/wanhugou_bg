@@ -11,6 +11,8 @@ import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -22,6 +24,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -45,6 +48,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 备货清单Controller
@@ -124,6 +128,19 @@ public class BizRequestHeaderController extends BaseController {
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
 		}
+
+		BizOrderStatus bizOrderStatus = new BizOrderStatus();
+		BizOrderHeader bizOrderHeader = new BizOrderHeader();
+		bizOrderHeader.setId(bizRequestHeader.getId());
+		bizOrderStatus.setOrderHeader(bizOrderHeader);
+		bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+		List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+		statusList.sort((o1,o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
+
+		Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+
+		model.addAttribute("statusList", statusList);
+		model.addAttribute("statusMap", statusMap);
 
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
