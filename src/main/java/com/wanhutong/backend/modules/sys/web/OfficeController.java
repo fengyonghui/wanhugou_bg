@@ -779,7 +779,21 @@ public class OfficeController extends BaseController {
                 List<BizChatRecord> chatList = bizChatRecordService.findList(chatRecord);
                 for(int chat=0;chat<chatList.size();chat++){
                     ArrayList<String> chatArr = Lists.newArrayList();
-
+                    chatArr.add(String.valueOf(meetingExprotList.get(i).getName()==null?"":meetingExprotList.get(i).getName()));
+                    //客户专员或品类主管
+                    if(chatList.get(chat).getUser()!=null && chatList.get(chat).getUser().getName()!=null){
+                        chatArr.add(String.valueOf(chatList.get(chat).getUser().getName()));
+                    }else{
+                        chatArr.add("");
+                    }
+                    chatArr.add(String.valueOf(chatList.get(chat).getChatRecord()==null?"":chatList.get(chat).getChatRecord()));
+                    if(chatList.get(chat).getCreateBy()!=null && chatList.get(chat).getCreateBy().getName()!=null){
+                        chatArr.add(String.valueOf(chatList.get(chat).getCreateBy().getName()));
+                    }else{
+                        chatArr.add("");
+                    }
+                    chatArr.add(String.valueOf(sdf.format(chatList.get(chat).getCreateDate())));
+                    chats.add(chatArr);
                 }
             }
             String[] orderArr ={"机构名称","机构编码","主负责人电话","机构类型","机构等级","是否可用","钱包账户","主负责人","副负责人",
