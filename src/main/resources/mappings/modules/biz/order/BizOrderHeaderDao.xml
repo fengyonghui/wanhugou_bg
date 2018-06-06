@@ -2010,7 +2010,7 @@ FROM
 		where bizcr.office_id=#{office.id} and bizcr.status=1
 		and so.type=6
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bizcr.create_time)
+			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
 			AND bizcr.create_time &lt;= #{orderHeaderEedTime}
@@ -2033,7 +2033,7 @@ FROM
 		WHERE oh.cust_id = #{office.id}
 		and oh.order_type!=4
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(oh.create_time)
+			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
 			AND oh.create_time &lt;= #{orderHeaderEedTime}
@@ -2093,7 +2093,7 @@ FROM
 		and su.id=#{con.id}
 		and so.type=6
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bcr.create_time)
+			and DATE_FORMAT(bcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
 			AND bcr.create_time &lt;= #{orderHeaderEedTime}
@@ -2115,7 +2115,7 @@ FROM
 		and su.status=1
 		and su.id=#{con.id}
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bcc.create_time)
+			and DATE_FORMAT(bcc.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
 			AND bcc.create_time &lt;= #{orderHeaderEedTime}
@@ -2131,7 +2131,7 @@ FROM
 		and bcc.consultant_id=#{con.id}
 		AND oh.order_type != 4
 		<if test="ordrHeaderStartTime ==null">
-			and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(oh.create_time)
+			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
 			AND oh.create_time &lt;= #{orderHeaderEedTime}
@@ -2167,7 +2167,7 @@ FROM
 			and hh.status=1
             and aa.order_type !=4
         <if test="ordrHeaderStartTime ==null">
-            and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(aa.create_time)
+			and DATE_FORMAT(aa.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
         </if>
         <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
             AND aa.create_time &lt;= #{orderHeaderEedTime}
@@ -2201,7 +2201,7 @@ FROM
 			and su.status=1
 			and su.id=#{id}
         <if test="ordrHeaderStartTime ==null">
-            and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(qq.create_time)
+			and DATE_FORMAT(qq.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
         </if>
         <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
             AND qq.create_time &lt;= #{orderHeaderEedTime}
@@ -2225,7 +2225,7 @@ FROM
 			and bizcr.create_id=#{id}
 			and so.type=7
         <if test="ordrHeaderStartTime ==null">
-            and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(bizcr.create_time)
+			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
         </if>
         <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
             AND bizcr.create_time &lt;= #{orderHeaderEedTime}
@@ -2252,7 +2252,7 @@ FROM
 		and su.status=1
 		AND a.order_type != 4
         <if test="ordrHeaderStartTime ==null">
-            and DATE_SUB(CURDATE(),INTERVAL 7 DAY) &lt;= DATE(a.create_time)
+			and DATE_FORMAT(a.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
         </if>
         <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
             AND a.create_time &lt;= #{orderHeaderEedTime}
