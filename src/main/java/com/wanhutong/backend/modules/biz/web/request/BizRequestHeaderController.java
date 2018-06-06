@@ -212,6 +212,7 @@ public class BizRequestHeaderController extends BaseController {
 			return form(bizRequestHeader, model);
 		}
 		bizRequestHeaderService.save(bizRequestHeader);
+		bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
 	}
