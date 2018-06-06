@@ -156,19 +156,15 @@
 		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
-		<c:choose>
-			<c:when test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
-				<li class="btns"><input class="btn" type="button" value="返回商品信息管理" onclick="location.href='${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=1'"/></li>
-			</c:when>
-			<c:otherwise>
-				<li class="btns"><input class="btn" type="button" value="返回产品信息管理" onclick="location.href='${ctx}/biz/product/bizProductInfoV2?prodType=1'"/></li>
-			</c:otherwise>
-		</c:choose>
-
+		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
+			<li class="btns"><input class="btn" type="button" value="返回商品信息管理" onclick="location.href='${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=1'"/></li>
+		</c:if>
+		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'prodCick_count'}">
+			<li class="btns"><input class="btn" type="button" value="返回产品信息管理" onclick="location.href='${ctx}/biz/product/bizProductInfoV2?prodType=1'"/></li>
+		</c:if>
 		<c:if test="${bizOrderHeader.flag=='check_pending'}">
 			<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
 		</c:if>
-
 		<li class="clearfix"></li>
 	</ul>
 </form:form>
