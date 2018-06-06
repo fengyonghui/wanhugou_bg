@@ -30,7 +30,7 @@ public enum OutTradeNoTypeEnum {
     /**
      * 线下付款
      */
-    OFFLINE_PAY_TYPE(8, "POP", "线下付款"),
+    OFFLINE_PAY_TYPE(8, "POP", "平台线下付款"),
     /**
      * 平台微信支付流水号类型
      */

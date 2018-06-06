@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
@@ -129,10 +130,10 @@ public class BizOrderHeaderUnlineController extends BaseController {
         }
         bizOrderHeaderService.save(bizOrderHeader);
 
-
+		User user = UserUtils.getUser();
 		BizPayRecord bizPayRecord = new BizPayRecord();
 		// 支付编号 *同订单号*
-		bizPayRecord.setPayNum(bizOrderHeader.getOrderNum());
+		bizPayRecord.setPayNum(GenerateOrderUtils.getTradeNum(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE, user.getCompany().getId()));
 		// 支付宝或微信的业务流水号
 		bizPayRecord.setOutTradeNo(bizOrderHeaderUnline.getSerialNum());
 		// 订单编号
@@ -155,7 +156,6 @@ public class BizOrderHeaderUnlineController extends BaseController {
 		bizPayRecord.setPayMoney(bizOrderHeaderUnline.getUnlinePayMoney().doubleValue());
 		bizPayRecord.setBizStatus(1);
 
-		User user = UserUtils.getUser();
 		bizPayRecord.setCreateBy(user);
 		bizPayRecord.setUpdateBy(user);
 		bizPayRecordService.save(bizPayRecord);
