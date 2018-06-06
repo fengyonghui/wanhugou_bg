@@ -683,6 +683,18 @@ public class OfficeController extends BaseController {
         String fileName="会员数据"+ DateUtils.getDate("yyyyMMddHHmmss")+".xlsx";
         try {
             List<Office> meetingExprotList = officeService.findMeetingExprot(customer);
+            if (meetingExprotList.size() == 0) {
+                if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && !office.getMoblieMoeny().getMobile().equals("")) {
+                    //列表页输入2个条件查询时
+                    Office officeUser = new Office();
+                    officeUser.setQueryMemberGys(office.getName()+"");
+                    officeUser.setMoblieMoeny(office.getMoblieMoeny());
+                    meetingExprotList = officeService.findMeetingExprot(officeUser);
+                } else {
+                    //当点击子节点显示
+                    meetingExprotList.add(officeService.get(office.getId()));
+                }
+            }
             ArrayList<List<String>> heads = Lists.newArrayList();
             ArrayList<List<String>> chats = Lists.newArrayList();
             BizChatRecord chatRecord = new BizChatRecord();
