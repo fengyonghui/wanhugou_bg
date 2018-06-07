@@ -48,9 +48,17 @@ public class BizOrderStatusService extends CrudService<BizOrderStatusDao, BizOrd
 		super.delete(bizOrderStatus);
 	}
 
+	/**
+	 * 备货清单业务状态改变时，往订单状态修改日志表中插入相应日志数据
+	 *
+	 * @param orderTypeDesc 订单类型对应的表
+	 * @param orderType     订单类型
+	 * @param id            备货清单id
+	 * @return
+	 */
 	@Transactional(readOnly = false)
-	public void insertByRequestHeader(Integer id) {
-		bizOrderStatusDao.insertByRequestHeader(id);
+	public void insertAfterBizStatusChanged(String orderTypeDesc, Integer orderType, Integer id) {
+		bizOrderStatusDao.insertAfterBizStatusChanged(orderTypeDesc, orderType, id);
 	}
 
 }

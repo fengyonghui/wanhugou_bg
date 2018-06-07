@@ -138,7 +138,7 @@
 		WHERE id = #{id}
 	</update>
 
-	<insert id="insertByRequestHeader">
+	<insert id="insertAfterBizStatusChanged">
 		INSERT INTO biz_order_status(
 			id,
 			order_id,
@@ -152,17 +152,25 @@
 		  	order_type)
 		  SELECT
 		  	NULL,
-		  	brh.id,
-		  	brh.biz_status,
-		  	brh.status,
-		  	brh.create_id,
-		  	brh.create_time,
-		  	brh.u_version,
-		  	brh.update_id,
-		  	brh.update_time,
-		  	1
-		  FROM biz_request_header brh
-		WHERE brh.id = #{id}
+			br.id,
+			br.biz_status,
+			br.status,
+			br.create_id,
+			br.create_time,
+			br.u_version,
+			br.update_id,
+			br.update_time,
+			#{orderType}
+		<if test='orderTypeDesc == "biz_order_header"'>
+		  FROM biz_order_header br
+		</if>
+		<if test='orderTypeDesc == "biz_request_header"'>
+			FROM biz_request_header br
+		</if>
+		<if test='orderTypeDesc == "biz_po_header"'>
+			FROM biz_po_header br
+		</if>
+		WHERE br.id = #{id}
 	</insert>
 	
 </mapper>

@@ -15,6 +15,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.InvSkuTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -184,7 +185,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			BizRequestHeader bizRequestHeader1 = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bizRequestHeader1.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader1);
-			bizOrderStatusService.insertByRequestHeader(bizCollectGoodsRecord.getBizRequestHeader().getId());
+			bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizCollectGoodsRecord.getBizRequestHeader().getId());
 
 			//当采购数量和(销售单供货记录的累计供货数+采购中心已收货数量)不相等时，更改采购单完成状态
 			//已采购数
@@ -206,7 +207,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.COMPLETE.getState());
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-			bizOrderStatusService.insertByRequestHeader(bizCollectGoodsRecord.getBizRequestHeader().getId());
+			bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizCollectGoodsRecord.getBizRequestHeader().getId());
 		}
 		//更改采购单状态
 		/*if(flagPo){

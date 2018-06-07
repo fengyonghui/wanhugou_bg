@@ -365,6 +365,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                             int status = PoHeaderStatusEnum.COMPLETE.getCode();
                             poHeader.setBizStatus((byte) status);
                             bizPoHeaderService.saveStatus(poHeader);
+                            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), poHeader.getId());
                         }
                     }
                 }
@@ -436,7 +437,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     //改备货单状态为备货中(20)
                     requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
                     bizRequestHeaderService.saveInfo(requestHeader);
-                    bizOrderStatusService.insertByRequestHeader(requestHeader.getId());
+                    bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), requestHeader.getId());
                     //生成供货记录
                     BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
                     bsgr.setSendNum(sendNum);
@@ -460,7 +461,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 if (reqFlag) {
                     requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
                     bizRequestHeaderService.saveRequestHeader(requestHeader);
-                    bizOrderStatusService.insertByRequestHeader(requestHeader.getId());
+                    bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), requestHeader.getId());
                 }
                 //更改采购单状态,已完成（5）
                 if (flagPo){
@@ -487,6 +488,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         int status = PoHeaderStatusEnum.COMPLETE.getCode();
                         poHeader.setBizStatus((byte) status);
                         bizPoHeaderService.saveStatus(poHeader);
+                        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), poHeader.getId());
                     }
                 }
             }

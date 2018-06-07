@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.sys.entity.Office;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +26,11 @@ public interface BizOrderDetailDao extends CrudDao<BizOrderDetail> {
 	List<Map> findRequestTotalByVendor(boolean includeTestData);
 
 	List<BizOrderDetail> findPoHeader(BizOrderDetail bizOrderDetail);
+
+	/**
+	 * 获取待供货需求汇总列表
+	 * @param office
+	 * @return
+	 */
+	List<Map> findRequestTotalByVendorList(Office office);
 }
