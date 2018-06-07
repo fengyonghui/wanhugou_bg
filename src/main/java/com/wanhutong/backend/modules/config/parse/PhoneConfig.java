@@ -38,8 +38,14 @@ public class PhoneConfig extends ConfigGeneral {
 
 
     public class Phone {
-        private String name; //接收方
-        private String number;//收件人
+        /**
+         * 接收方
+         */
+        private String name;
+        /**
+         * 收件人
+         */
+        private String number;
 
 
         public String getName() {

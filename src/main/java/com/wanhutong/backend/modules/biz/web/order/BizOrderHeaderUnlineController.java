@@ -180,10 +180,12 @@ public class BizOrderHeaderUnlineController extends BaseController {
 							bizOrderHeaderUnline.getId(),
 							LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
 					));
+
 			String exceptionName = e.toString();
 			exceptionName = exceptionName.substring(exceptionName.lastIndexOf(".") + 1, exceptionName.length());
 			PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.OFFLINE_PAY_RECORD_EXCEPTION.name());
-			AliyunSmsClient.getInstance().sendSMS("久仰", SmsTemplateCode.EXCEPTION_WARN.getCode(), phone == null ? "18612378866,18515060437" : phone.getNumber(),
+
+			AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone == null ? "18515060437" : phone.getNumber(),
 					ImmutableMap.of("type", exceptionName, "service", "线下支付记录"));
 		}
         addMessage(redirectAttributes, "保存线下支付订单成功");

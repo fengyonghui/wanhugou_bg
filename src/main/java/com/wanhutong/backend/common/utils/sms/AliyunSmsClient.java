@@ -46,9 +46,9 @@ public class AliyunSmsClient {
 
     private final static String PROPERTIES_NAME = "aliyun";
 
-	private final String REGIONID = "cn-hangzhou";
+	private final String REGIONID = "cn-beijing";
 
-    public final static String DEF_SMS_SIGN = "万户通";
+    public final static String DEF_SMS_SIGN = "万户购";
 
 
     // 验证码模板集合
@@ -109,8 +109,8 @@ public class AliyunSmsClient {
 				request.setTemplateParam(JSONObject.fromObject(paramsMap).toString());
                 try {
                     SendSmsResponse acsResponse = iAcsClient.getAcsResponse(request);// isp.RAM_PERMISSION_DENY 没有访问权限
-                    DATA_LOGGER.info("send SMS OK,{}|{}|{}|{}|{}", recNum, signName, templateCode,
-							JSONObject.fromObject(paramsMap).toString(), acsResponse.getMessage());
+                    DATA_LOGGER.info("send SMS {}|{}|{}|{}|{}", acsResponse.getMessage(), recNum, signName, templateCode,
+							JSONObject.fromObject(paramsMap).toString());
 					return Boolean.TRUE;
                 } catch (ClientException e) {
 					DATA_LOGGER.error("send SMS Error!{}|{}|{}|{}", recNum, signName, templateCode,
@@ -125,33 +125,33 @@ public class AliyunSmsClient {
 		});
     }
 
-    /**
-     * 发送验证码
-     * @param signName     管理控制台中配置的短信签名（状态必须是验证通过）
-     * @param recNum    目标手机号，多个手机号可以逗号分隔
-     * @param paramsMap 短信模板中的变量；数字需要转换为字符串；个人用户每个变量长度必须小于15个字符。例如:短信模板为：“接受短信验证码${no}
-     *                  ”,此参数传递{“no”:”123456”}，用户将接收到[短信签名]接受短信验证码123456
-     */
-    public void sendCheckCode(String signName,String recNum, Map<String, String> paramsMap) {
-       try {
-			Set<String> signSet = Sets.newLinkedHashSet();
-			signSet.add(signName);
-			signSet.addAll(SMS_SIGN_LIST);
-			for (String defaultSignName : signSet) {
-				Future<Boolean> future = sendSMS(defaultSignName, SmsTemplateCode.SECURITY_CODE.getCode(), recNum,
-						paramsMap);
-				Boolean sentStatus = future.get(FUTURE_TIME_OUT, TimeUnit.SECONDS);
-				// 如果不是已经完成状态,等待
-				if (future.isDone() && !future.isCancelled()) {
-					if (sentStatus) {
-						return;
-					}
-				}
-			}
-        } catch (Exception e) {
-            LOGGER.error("send checkCode SMS future Error!", e);
-        }
-    }
+//    /**
+//     * 发送验证码
+//     * @param signName     管理控制台中配置的短信签名（状态必须是验证通过）
+//     * @param recNum    目标手机号，多个手机号可以逗号分隔
+//     * @param paramsMap 短信模板中的变量；数字需要转换为字符串；个人用户每个变量长度必须小于15个字符。例如:短信模板为：“接受短信验证码${no}
+//     *                  ”,此参数传递{“no”:”123456”}，用户将接收到[短信签名]接受短信验证码123456
+//     */
+//    public void sendCheckCode(String signName,String recNum, Map<String, String> paramsMap) {
+//       try {
+//			Set<String> signSet = Sets.newLinkedHashSet();
+//			signSet.add(signName);
+//			signSet.addAll(SMS_SIGN_LIST);
+//			for (String defaultSignName : signSet) {
+//				Future<Boolean> future = sendSMS(defaultSignName, SmsTemplateCode.SECURITY_CODE.getCode(), recNum,
+//						paramsMap);
+//				Boolean sentStatus = future.get(FUTURE_TIME_OUT, TimeUnit.SECONDS);
+//				// 如果不是已经完成状态,等待
+//				if (future.isDone() && !future.isCancelled()) {
+//					if (sentStatus) {
+//						return;
+//					}
+//				}
+//			}
+//        } catch (Exception e) {
+//            LOGGER.error("send checkCode SMS future Error!", e);
+//        }
+//    }
 
     /**
 	 * 创建smsClient对象
@@ -159,8 +159,8 @@ public class AliyunSmsClient {
 	 * @throws ClientException
 	 */
 	private void create() {
-        String accessKeyId = Global.getConfig("mail.default.accessKeyId", StringUtils.EMPTY);
-        String accessKeySecret = Global.getConfig("mail.default.accessKeySecret", StringUtils.EMPTY);
+        String accessKeyId = Global.getConfig("sms.default.accessKeyId", StringUtils.EMPTY);
+        String accessKeySecret = Global.getConfig("sms.default.accessKeySecret", StringUtils.EMPTY);
 
         IClientProfile profile = DefaultProfile.getProfile(REGIONID, accessKeyId, accessKeySecret);
 		try {
