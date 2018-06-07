@@ -30,11 +30,11 @@
                         data:"bizVarietyInfo.name="+cp+"&name="+cpName+"&prodCode="+cpPc+"&itemNo="+cpIn+"&brandName="+cpBr,
                         success:function(data){
                             if(data=="opSheSku"){
-								alert("商品上下架还有该产品，不能删除 ");
+								alert("该产品下还有商品sku在上下架存在，不能删除！ ");
 							}else if(data=="skuS"){
-								alert("商品sku还有该产品，不能删除 ");
+								alert("该产品下还有该商品sku存在，不能删除！ ");
 							}else if(data=="invSku"){
-								alert("库存盘点里还有该产品里的商品sku，不能删除 ");
+								alert("该产品里的商品sku在库存盘点里还存在，不能删除！ ");
 							}else{
                                 <%--alert("删除产品信息成功");--%>
                                 $("#messDele").css("display","block");
