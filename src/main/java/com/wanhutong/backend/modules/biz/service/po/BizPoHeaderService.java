@@ -501,22 +501,22 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             return "请输入驳回理由!";
         }
 
-//        cureentProcessEntity.setBizStatus(auditType);
-//        cureentProcessEntity.setProcessor(user.getId().toString());
-//        cureentProcessEntity.setDescription(description);
-//        commonProcessService.save(cureentProcessEntity);
-//
-//        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-//        nextProcessEntity.setObjectId(String.valueOf(id));
-//        nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-//        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
-//        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
-//        commonProcessService.save(nextProcessEntity);
-//        this.updateProcessId(id, nextProcessEntity.getId());
-//
-//        if (nextProcess.getCode() == purchaseOrderProcessConfig.getPayProcessId()) {
-//            this.updateBizStatus(id, BizPoHeader.BizStatus.PROCESS_COMPLETE);
-//        }
+        cureentProcessEntity.setBizStatus(auditType);
+        cureentProcessEntity.setProcessor(user.getId().toString());
+        cureentProcessEntity.setDescription(description);
+        commonProcessService.save(cureentProcessEntity);
+
+        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+        nextProcessEntity.setObjectId(String.valueOf(id));
+        nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+        commonProcessService.save(nextProcessEntity);
+        this.updateProcessId(id, nextProcessEntity.getId());
+
+        if (nextProcess.getCode() == purchaseOrderProcessConfig.getPayProcessId()) {
+            this.updateBizStatus(id, BizPoHeader.BizStatus.PROCESS_COMPLETE);
+        }
 
         try {
             StringBuilder phone = new StringBuilder();
@@ -529,22 +529,19 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 }
             }
 
-            System.out.println(phone.toString());
             if (StringUtils.isNotBlank(phone.toString())) {
                 AliyunSmsClient.getInstance().sendSMS(
                         SmsTemplateCode.PENDING_AUDIT.getCode(),
-                        "18612378866",
-//                        phone.toString(), TODO
+                        phone.toString(),
                         ImmutableMap.of("order","采购单"));
             }
-            throw new Exception();
         } catch (Exception e) {
             LOGGER.error("[exception]PO审批短信提醒发送异常[poHeaderId:{}]", id, e);
             EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
             AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
                     String.format(email.getBody(),
                             "BizPoHeaderService:541",
-                            e.getMessage(),
+                            e.toString(),
                             "PO审批短信提醒发送异常",
                             LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
                     ));
