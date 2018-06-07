@@ -4,6 +4,15 @@ import com.google.common.collect.Maps;
 
 import java.util.Map;
 
+/**
+ * biz_order_status记录表中order_type类型
+ * <p>
+ * state:0 代表订单业务状态状态改变
+ * state:1 代表备货单业务状态状态改变
+ * state:0 代表采购单业务状态状态改变
+ *
+ * @author wangby
+ */
 public enum BizOrderStatusOrderTypeEnum {
     SELLORDER(0, "biz_order_header"),
     REPERTOIRE(1, "biz_request_header"),
