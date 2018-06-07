@@ -106,7 +106,6 @@ public class BizOrderHeaderController extends BaseController {
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
         BizOrderHeader entity = null;
-        Double sum = 0.0;
         if (id != null && id != 0) {
             entity = bizOrderHeaderService.get(id);
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
@@ -116,9 +115,6 @@ public class BizOrderHeaderController extends BaseController {
                 if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=null){
                     if(orderDetail.getSuplyis().getId().equals(0) || orderDetail.getSuplyis().getId().equals(721)){
                         Office office = new Office();
-//                        if(orderDetail.getSentQty()>0){
-//                            entity.setFlag("supply_commodity");
-//                        }
                         office.setName("供货部");
                         office.setId(orderDetail.getSuplyis().getId());
                         orderDetail.setSuplyis(office);
@@ -138,6 +134,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         if(bizOrderHeader.getSkuChickCount()!=null){
+            //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
         }
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
@@ -232,17 +229,6 @@ public class BizOrderHeaderController extends BaseController {
                 detailIdMap.put(keyId, detailId);
             }
         }
-        BizOrderHeader boh = new BizOrderHeader();
-        if (bizOrderHeader != null) {
-            boh.setCustomer(bizOrderHeader.getCustomer());
-            boh.setBizStatus(BizOrderDiscount.ONE_ORDER.getOneOr());//条件为0
-            List<BizOrderHeader> list = bizOrderHeaderDao.findListFirstOrder(boh);
-            if (list.size() == 0) {
-                logger.info("--是首单--");
-                bizOrderHeader.setOneOrder("firstOrder");
-            }
-        }
-
         boolean flag = false;
         User user = UserUtils.getUser();
         if (user.getRoleList() != null) {
@@ -291,13 +277,11 @@ public class BizOrderHeaderController extends BaseController {
         }
         bizOrderHeaderService.save(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
-        Integer orId = bizOrderHeader.getId();
-        String oneOrder = bizOrderHeader.getOneOrder();
         if (bizOrderHeader.getClientModify() != null && bizOrderHeader.getClientModify().equals("client_modify")) {
 //			保存跳回客户专员
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?oneOrder=" + oneOrder;
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
@@ -421,52 +405,53 @@ public class BizOrderHeaderController extends BaseController {
         String commis = "comError";
         try {
             if (bizOrderHeader.getId() != null) {
-                BizOrderHeader bh = bizOrderHeaderService.get(bizOrderHeader);
-                if (bh != null) {
-                    if (objJsp == OrderHeaderBizStatusEnum.SUPPLYING.getState()) {
-                        bh.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());//15供货中
-                        bizOrderHeaderService.saveOrderHeader(bh);//保存状态
+                BizOrderHeader order = bizOrderHeaderService.get(bizOrderHeader);
+                if (order != null) {
+                    if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
+                        order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());//15供货中
+                        bizOrderHeaderService.saveOrderHeader(order);//保存状态
 
                         /*用于 订单状态表 insert状态*/
-                        if(bh!=null && bh.getId()!=null || bh.getBizStatus()!=null){
+                        if(order!=null && order.getId()!=null || order.getBizStatus()!=null){
                             BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(bh);
-                            orderStatus.setBizStatus(bh.getBizStatus());
+                            orderStatus.setOrderHeader(order);
+                            orderStatus.setBizStatus(order.getBizStatus());
                             bizOrderStatusService.save(orderStatus);
                         }
 
-                        BizOrderAddress OrderAddressTwo = new BizOrderAddress();
-                        OrderAddressTwo.setOrderHeaderID(bh);
-                        List<BizOrderAddress> list = bizOrderAddressService.findList(OrderAddressTwo);
+                        BizOrderAddress orderAddres = new BizOrderAddress();
+                        orderAddres.setOrderHeaderID(order);
+                        List<BizOrderAddress> list = bizOrderAddressService.findList(orderAddres);
                         for (BizOrderAddress bizOrderAddress : list) {
                             if (bizOrderAddress.getType() == 2) {
-                                OrderAddressTwo.setId(bizOrderAddress.getId());
+                                orderAddres.setId(bizOrderAddress.getId());
+                                break;
                             }
                         }
-                        OrderAddressTwo.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
+                        orderAddres.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
                         if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getProvince()!=null && bizOrderHeader.getBizLocation().getCity()!=null
                                 && bizOrderHeader.getBizLocation().getRegion()!=null){
-                            OrderAddressTwo.setProvince(bizOrderHeader.getBizLocation().getProvince());
-                            OrderAddressTwo.setCity(bizOrderHeader.getBizLocation().getCity());
-                            OrderAddressTwo.setRegion(bizOrderHeader.getBizLocation().getRegion());
+                            orderAddres.setProvince(bizOrderHeader.getBizLocation().getProvince());
+                            orderAddres.setCity(bizOrderHeader.getBizLocation().getCity());
+                            orderAddres.setRegion(bizOrderHeader.getBizLocation().getRegion());
                         }
                         if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getAddress()!=null){
-                            OrderAddressTwo.setAddress(bizOrderHeader.getBizLocation().getAddress());
+                            orderAddres.setAddress(bizOrderHeader.getBizLocation().getAddress());
                         }else{
-                            OrderAddressTwo.setAddress("");
+                            orderAddres.setAddress("");
                         }
                         if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getReceiver()!=null){
-                            OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
+                            orderAddres.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
                         }else{
-                            OrderAddressTwo.setReceiver("");
+                            orderAddres.setReceiver("");
                         }
                         if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getPhone()!=null){
-                            OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());
+                            orderAddres.setPhone(bizOrderHeader.getBizLocation().getPhone());
                         }else{
-                            OrderAddressTwo.setPhone("");
+                            orderAddres.setPhone("");
                         }
-                        OrderAddressTwo.setType(2);
-                        bizOrderAddressService.save(OrderAddressTwo);
+                        orderAddres.setType(2);
+                        bizOrderAddressService.save(orderAddres);
                         if (StringUtils.isNotBlank(localSendIds) && StringUtils.isNotBlank(boo)) {
                             String[] sidArr = localSendIds.split(",");
                             String[] booStr = boo.split(",");
@@ -484,51 +469,17 @@ public class BizOrderHeaderController extends BaseController {
                             }
                         }
                         commis = "ok";
-                    } else if (objJsp == OrderHeaderBizStatusEnum.UNAPPROVE.getState()) {
-                        bh.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());//45审核失败
-                        bizOrderHeaderService.saveOrderHeader(bh);//保存状态
+                    } else if (objJsp.equals(OrderHeaderBizStatusEnum.UNAPPROVE.getState())) {
+                        order.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());//45审核失败
+                        bizOrderHeaderService.saveOrderHeader(order);//保存状态
 
                         /*用于 订单状态表 insert状态*/
-                        if(bh!=null && bh.getId()!=null || bh.getBizStatus()!=null){
+                        if(order!=null && order.getId()!=null || order.getBizStatus()!=null){
                             BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(bh);
-                            orderStatus.setBizStatus(bh.getBizStatus());
+                            orderStatus.setOrderHeader(order);
+                            orderStatus.setBizStatus(order.getBizStatus());
                             bizOrderStatusService.save(orderStatus);
                         }
-
-                        BizOrderAddress OrderAddressTwo = new BizOrderAddress();
-                        OrderAddressTwo.setOrderHeaderID(bh);
-                        List<BizOrderAddress> list = bizOrderAddressService.findList(OrderAddressTwo);
-                        for (BizOrderAddress bizOrderAddress : list) {
-                            if (bizOrderAddress.getType() == 2) {
-                                OrderAddressTwo.setId(bizOrderAddress.getId());
-                            }
-                        }
-                        OrderAddressTwo.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
-                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getProvince()!=null && bizOrderHeader.getBizLocation().getCity()!=null
-                                && bizOrderHeader.getBizLocation().getRegion()!=null){
-                            OrderAddressTwo.setProvince(bizOrderHeader.getBizLocation().getProvince());
-                            OrderAddressTwo.setCity(bizOrderHeader.getBizLocation().getCity());
-                            OrderAddressTwo.setRegion(bizOrderHeader.getBizLocation().getRegion());
-                        }
-                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getAddress()!=null){
-                            OrderAddressTwo.setAddress(bizOrderHeader.getBizLocation().getAddress());
-                        }else{
-                            OrderAddressTwo.setAddress("");
-                        }
-                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getReceiver()!=null){
-                            OrderAddressTwo.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
-                        }else{
-                            OrderAddressTwo.setReceiver("");
-                        }
-                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getPhone()!=null){
-                            OrderAddressTwo.setPhone(bizOrderHeader.getBizLocation().getPhone());
-                        }else{
-                            OrderAddressTwo.setPhone("");
-                        }
-                        OrderAddressTwo.setType(2);
-                        bizOrderAddressService.save(OrderAddressTwo);
-                        commis = "ok";
                     }
                 }
             }
