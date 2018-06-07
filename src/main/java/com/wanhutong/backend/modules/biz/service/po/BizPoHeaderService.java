@@ -3,9 +3,13 @@
  */
 package com.wanhutong.backend.modules.biz.service.po;
 
+import com.google.common.collect.ImmutableMap;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -25,6 +29,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.*;
@@ -32,7 +37,9 @@ import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +47,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -77,6 +86,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 	private CommonProcessService commonProcessService;
 	@Autowired
 	private BizOrderStatusService bizOrderStatusService;
+	@Autowired
+	private SystemService systemService;
 
 
     /**
@@ -490,21 +501,53 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             return "请输入驳回理由!";
         }
 
-        cureentProcessEntity.setBizStatus(auditType);
-        cureentProcessEntity.setProcessor(user.getId().toString());
-        cureentProcessEntity.setDescription(description);
-        commonProcessService.save(cureentProcessEntity);
+//        cureentProcessEntity.setBizStatus(auditType);
+//        cureentProcessEntity.setProcessor(user.getId().toString());
+//        cureentProcessEntity.setDescription(description);
+//        commonProcessService.save(cureentProcessEntity);
+//
+//        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+//        nextProcessEntity.setObjectId(String.valueOf(id));
+//        nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+//        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+//        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+//        commonProcessService.save(nextProcessEntity);
+//        this.updateProcessId(id, nextProcessEntity.getId());
+//
+//        if (nextProcess.getCode() == purchaseOrderProcessConfig.getPayProcessId()) {
+//            this.updateBizStatus(id, BizPoHeader.BizStatus.PROCESS_COMPLETE);
+//        }
 
-        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-        nextProcessEntity.setObjectId(String.valueOf(id));
-        nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
-        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
-        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
-        commonProcessService.save(nextProcessEntity);
-        this.updateProcessId(id, nextProcessEntity.getId());
+        try {
+            StringBuilder phone = new StringBuilder();
+            for (String s : roleEnNameEnumList) {
+                List<User> userList = systemService.findUser(new User(systemService.getRoleByEnname(s)));
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    for (User u : userList) {
+                        phone.append(u.getMobile()).append(",");
+                    }
+                }
+            }
 
-        if (nextProcess.getCode() == purchaseOrderProcessConfig.getPayProcessId()) {
-            this.updateBizStatus(id, BizPoHeader.BizStatus.PROCESS_COMPLETE);
+            System.out.println(phone.toString());
+            if (StringUtils.isNotBlank(phone.toString())) {
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT.getCode(),
+                        "18612378866",
+//                        phone.toString(), TODO
+                        ImmutableMap.of("order","采购单"));
+            }
+            throw new Exception();
+        } catch (Exception e) {
+            LOGGER.error("[exception]PO审批短信提醒发送异常[poHeaderId:{}]", id, e);
+            EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
+            AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
+                    String.format(email.getBody(),
+                            "BizPoHeaderService:541",
+                            e.getMessage(),
+                            "PO审批短信提醒发送异常",
+                            LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+                    ));
         }
 
         return "操作成功!";

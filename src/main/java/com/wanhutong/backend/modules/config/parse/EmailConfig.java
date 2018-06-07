@@ -85,5 +85,9 @@ public class EmailConfig extends ConfigGeneral {
          * 线下支付记录异常
          */
         OFFLINE_PAY_RECORD_EXCEPTION,
+        /**
+         * 通用异常
+         */
+        COMMON_EXCEPTION
     }
 }
