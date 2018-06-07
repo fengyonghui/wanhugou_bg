@@ -53,7 +53,7 @@ public class BizVarietyFactorService extends CrudService<BizVarietyFactorDao, Bi
 				}
 				varietyFactor.setMinQty(Integer.parseInt(minQtyArr[i]));
 				varietyFactor.setMaxQty(Integer.parseInt(maxQtyArr[i]));
-				varietyFactor.setServiceFactor(Integer.parseInt(serviceFactorArr[i]));
+				varietyFactor.setServiceFactor(Double.parseDouble(serviceFactorArr[i]));
 				super.save(varietyFactor);
 			}
 		}
