@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Ma.Qiang on 16/8/12.
+ * Created by Ma.Qiang on 18/6/6.
  * 邮件配置文件
  */
 @XStreamAlias("EmailConfig")

@@ -3,10 +3,13 @@
  */
 package com.wanhutong.backend.modules.biz.web.order;
 
+import com.google.common.collect.ImmutableMap;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.AliyunMailClient;
+import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -17,12 +20,14 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
+import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
 import com.wanhutong.backend.modules.enums.TradeTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,7 +172,7 @@ public class BizOrderHeaderUnlineController extends BaseController {
 			bizPayRecord.setUpdateBy(user);
 			bizPayRecordService.save(bizPayRecord);
 		}catch (Exception e) {
-        	LOGGER.error("[exception]线下支付交易记录保存异常[{}][{}]", bizOrderHeader.getId(), bizOrderHeaderUnline.getId(), e);
+        	LOGGER.error("[exception]线下支付交易记录保存异常[orderHeaderId:{}][orderHeaderOfflineId{}]", bizOrderHeader.getId(), bizOrderHeaderUnline.getId(), e);
 			EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.OFFLINE_PAY_RECORD_EXCEPTION.name());
 			AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
 					String.format(email.getBody(),
@@ -175,6 +180,11 @@ public class BizOrderHeaderUnlineController extends BaseController {
 							bizOrderHeaderUnline.getId(),
 							LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
 					));
+			String exceptionName = e.toString();
+			exceptionName = exceptionName.substring(exceptionName.lastIndexOf(".") + 1, exceptionName.length());
+			PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.OFFLINE_PAY_RECORD_EXCEPTION.name());
+			AliyunSmsClient.getInstance().sendSMS("久仰", SmsTemplateCode.EXCEPTION_WARN.getCode(), phone == null ? "18612378866,18515060437" : phone.getNumber(),
+					ImmutableMap.of("type", exceptionName, "service", "线下支付记录"));
 		}
         addMessage(redirectAttributes, "保存线下支付订单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeaderUnline/?repage&orderHeader.id="+bizOrderHeader.getId();
