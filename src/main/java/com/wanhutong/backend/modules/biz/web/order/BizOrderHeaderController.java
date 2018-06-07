@@ -106,7 +106,6 @@ public class BizOrderHeaderController extends BaseController {
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
         BizOrderHeader entity = null;
-        Double sum = 0.0;
         if (id != null && id != 0) {
             entity = bizOrderHeaderService.get(id);
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
@@ -116,9 +115,6 @@ public class BizOrderHeaderController extends BaseController {
                 if(orderDetail.getSuplyis()!=null && orderDetail.getSuplyis().getId()!=null){
                     if(orderDetail.getSuplyis().getId().equals(0) || orderDetail.getSuplyis().getId().equals(721)){
                         Office office = new Office();
-//                        if(orderDetail.getSentQty()>0){
-//                            entity.setFlag("supply_commodity");
-//                        }
                         office.setName("供货部");
                         office.setId(orderDetail.getSuplyis().getId());
                         orderDetail.setSuplyis(office);
@@ -138,6 +134,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
         if(bizOrderHeader.getSkuChickCount()!=null){
+            //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
         }
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
@@ -232,17 +229,6 @@ public class BizOrderHeaderController extends BaseController {
                 detailIdMap.put(keyId, detailId);
             }
         }
-        BizOrderHeader boh = new BizOrderHeader();
-        if (bizOrderHeader != null) {
-            boh.setCustomer(bizOrderHeader.getCustomer());
-            boh.setBizStatus(BizOrderDiscount.ONE_ORDER.getOneOr());//条件为0
-            List<BizOrderHeader> list = bizOrderHeaderDao.findListFirstOrder(boh);
-            if (list.size() == 0) {
-                logger.info("--是首单--");
-                bizOrderHeader.setOneOrder("firstOrder");
-            }
-        }
-
         boolean flag = false;
         User user = UserUtils.getUser();
         if (user.getRoleList() != null) {
@@ -291,13 +277,11 @@ public class BizOrderHeaderController extends BaseController {
         }
         bizOrderHeaderService.save(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
-        Integer orId = bizOrderHeader.getId();
-        String oneOrder = bizOrderHeader.getOneOrder();
         if (bizOrderHeader.getClientModify() != null && bizOrderHeader.getClientModify().equals("client_modify")) {
 //			保存跳回客户专员
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?oneOrder=" + oneOrder;
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
