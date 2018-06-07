@@ -226,6 +226,7 @@
 				<th>订单编号</th>
 				<th>订单类型</th>
 				<th>经销店名称</th>
+				<th>采购中心</th>
 				<th>订单详情总价</th>
 				<th>订单总费用</th>
 				<th>运费</th>
@@ -251,6 +252,9 @@
 					<td>${fns:getDictLabel(orderHeader.bizType, 'order_biz_type', '未知状态')}</td>
 							<td>
 									${orderHeader.customer.name}
+							</td>
+							<td>
+									${orderHeader.centersName}
 							</td>
 							<td>
 									${orderHeader.totalDetail}

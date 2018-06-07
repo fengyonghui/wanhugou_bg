@@ -602,4 +602,36 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     public Pair<Boolean, String> auditSupplier(int id, int status) {
         return bizVendInfoService.auditSupplier(id, status);
     }
+
+    /**
+     * 导出 查询list
+     * */
+    public List<Office> findMeetingExprot(Office office) {
+        User user = UserUtils.getUser();
+        if (user.isAdmin()) {
+            return dao.findList(office);
+        } else {
+            boolean flag = false;
+            boolean flagb = false;
+            if (user.getRoleList() != null) {
+                for (Role role : user.getRoleList()) {
+                    if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
+                        flag = true;
+
+                    } else if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())) {
+                        flagb = true;
+
+                    }
+                }
+            }
+            if (flag) {
+                office.setCenterId(user.getCompany().getId());
+            } else if (flagb) {
+                office.setConsultantId(user.getId());
+            }
+            return dao.findList(office);
+        }
+    }
+
+
 }

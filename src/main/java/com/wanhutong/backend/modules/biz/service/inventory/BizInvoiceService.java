@@ -128,9 +128,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             invoice.setCarrier(bizInvoice.getCarrier());
             invoice.setSettlementStatus(bizInvoice.getSettlementStatus());
             invoice.setSendDate(bizInvoice.getSendDate());
+            bizInvoiceDao.update(invoice);
             //保存图片
             saveCommonImg(bizInvoice);
-            bizInvoiceDao.update(invoice);
             return;
         }
         boolean flagRequest = true;		//备货单完成状态
@@ -436,6 +436,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     //改备货单状态为备货中(20)
                     requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
                     bizRequestHeaderService.saveInfo(requestHeader);
+                    bizOrderStatusService.insertByRequestHeader(requestHeader.getId());
                     //生成供货记录
                     BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
                     bsgr.setSendNum(sendNum);
@@ -459,6 +460,7 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 if (reqFlag) {
                     requestHeader.setBizStatus(ReqHeaderStatusEnum.STOCK_COMPLETE.getState());
                     bizRequestHeaderService.saveRequestHeader(requestHeader);
+                    bizOrderStatusService.insertByRequestHeader(requestHeader.getId());
                 }
                 //更改采购单状态,已完成（5）
                 if (flagPo){

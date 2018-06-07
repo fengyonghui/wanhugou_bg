@@ -66,7 +66,7 @@
 		FROM biz_order_detail a
 		<include refid="bizOrderDetailJoins"/>
 		<where>
-
+			  a.status = #{DEL_FLAG_NORMAL}
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
 				AND a.order_id = #{orderHeader.id}
 			</if>

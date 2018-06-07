@@ -8,6 +8,14 @@
 <head>
     <title>订单信息管理</title>
     <meta name="decorator" content="default"/>
+    <style type="text/css">
+        .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;border-top:1px solid #FFF;width: 100%}
+        .help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
+        .help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
+        .help_step_set{background: #FFF;color: #3daae9;}
+        .help_step_set .help_step_left{width:8px;height:100px;position:absolute;left:0;top:0;}
+        .help_step_set .help_step_right{width:8px;height:100px; position:absolute;right:-8px;top:0;}
+    </style>
     <%--<script type="text/javascript" src="D:\IDEA_BatisJect\wanhugou_bg\src\main\webapp\static\ckeditor\_source\core\keyboard.js">
     </script>&lt;%&ndash;用于键盘Bcackspace回退BUG问题&ndash;%&gt;--%>
     <script type="text/javascript">
@@ -407,12 +415,10 @@
                                 notAllowSelectParent="true"
                                 title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
-                <c:if test="${entity.orderDetails eq 'details'}">
                     <c:if test="${orderCenter.centers !=null }">
                         该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
                         客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
                     </c:if>
-                </c:if>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
@@ -420,6 +426,10 @@
                                 notAllowSelectParent="true"
                                 title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
+                    <c:if test="${orderCenter.centers !=null }">
+                        该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
+                        客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
+                    </c:if>
                 <span class="help-inline"><font color="red">*</font></span>
             </c:if>
         </div>
@@ -644,7 +654,6 @@
             <%--<span class="help-inline"></span>--%>
         <%--</div>--%>
     <%--</c:if>--%>
-    <c:if test="${not empty entity.orderDetails}">
         <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
             <label class="control-label">进展信息：</label>
@@ -825,6 +834,37 @@
             </div>
         </div>
         </c:if>
+        <c:if test="${fn:length(statusList) > 0}">
+            <div class="control-group">
+                <label class="control-label">状态流程：</label>
+                <div class="controls help_wrap">
+                    <div class="help_step_box fa">
+                        <c:forEach items="${statusList}" var="v" varStatus="stat">
+                            <c:if test="${!stat.last}" >
+                                <div class="help_step_item">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    处理人:${v.createBy.name}<br/><br/>
+                                    状态:${statusMap[v.bizStatus].desc}<br/>
+                                    <fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                            <c:if test="${stat.last}">
+                                <div class="help_step_item help_step_set">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    处理人:${v.createBy.name}<br/><br/>
+                                    状态:${statusMap[v.bizStatus].desc}<br/>
+                                    <fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
+        </c:if>
         <c:if test="${statu != '' && statu =='unline'}">
             <div class="control-group">
                 <label class="control-label">支付信息:</label>
@@ -852,7 +892,6 @@
                 </div>
             </div>
         </c:if>
-    </c:if>
     <c:if test="${entity.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
     <div class="control-group">
         <label class="control-label">付款约定：</label>
@@ -976,6 +1015,7 @@
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
+        <th>已生成的采购单</th>
         <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
             <th>商品出厂价</th>
         </c:if>
@@ -1032,6 +1072,9 @@
             </td>
             <td>
                 ${bizOrderDetail.skuInfo.itemNo}
+            </td>
+            <td>
+                <a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>
             </td>
             <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                 <td>

@@ -11,9 +11,14 @@ import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
@@ -21,6 +26,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -44,6 +50,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 备货清单Controller
@@ -68,6 +75,11 @@ public class BizRequestHeaderController extends BaseController {
 	private BizPoHeaderService bizPoHeaderService;
 	@Autowired
 	private BizPoDetailService bizPoDetailService;
+	@Autowired
+	private BizVarietyInfoService bizVarietyInfoService;
+
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -88,6 +100,9 @@ public class BizRequestHeaderController extends BaseController {
 		bizRequestHeader.setDataFrom(dataFrom);
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
         model.addAttribute("page", page);
+        //品类名称
+		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return "modules/biz/request/bizRequestHeaderList";
@@ -120,6 +135,19 @@ public class BizRequestHeaderController extends BaseController {
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
 		}
+
+		BizOrderStatus bizOrderStatus = new BizOrderStatus();
+		BizOrderHeader bizOrderHeader = new BizOrderHeader();
+		bizOrderHeader.setId(bizRequestHeader.getId());
+		bizOrderStatus.setOrderHeader(bizOrderHeader);
+		bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+		List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+		statusList.sort((o1,o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
+
+		Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+
+		model.addAttribute("statusList", statusList);
+		model.addAttribute("statusMap", statusMap);
 
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
@@ -191,6 +219,7 @@ public class BizRequestHeaderController extends BaseController {
 			return form(bizRequestHeader, model);
 		}
 		bizRequestHeaderService.save(bizRequestHeader);
+		bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
 	}
@@ -221,6 +250,7 @@ public class BizRequestHeaderController extends BaseController {
 				}
 			}
 			bizRequestHeaderService.save(bizRequestHeader);
+			bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
 			boo=true;
 		}catch (Exception e){
 			boo=false;

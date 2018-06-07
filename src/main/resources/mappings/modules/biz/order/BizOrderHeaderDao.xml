@@ -283,6 +283,16 @@
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 			</if>
+			<if test="skuChickCount!=null and skuChickCount!=''">
+				AND (
+				(
+				biz_status != 45
+				AND biz_status != 35
+				AND biz_status != 0
+				)
+				OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+				)
+			</if>
 			<if test="orderType != null and orderType != ''">
 				AND a.order_type = #{orderType}
 			</if>
@@ -375,8 +385,7 @@
 			<if test="statu != null and statu =='unline'">
 				AND ohu.id is not NULL
 			</if>
-
-			<if test="page != null and page.includeTestData != true">
+			<if test="page != null and page.includeTestData != true and skuChickCount==null">
 				AND NOT EXISTS(
 				select 1
 				from sys_test_account ta
@@ -1831,7 +1840,8 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	a.update_time AS "updateDate" ,
 	concat(cl.pcr_name, ifnull( cl.address,'')) as locationAddress,
 		GROUP_CONCAT(bod.id) AS "orderDetails",
-		pi.vendor_id AS "onlyVendor"
+		pi.vendor_id AS "onlyVendor",
+		sx.NAME AS "centersName"
 FROM
 	biz_order_header a
 	LEFT JOIN sys_office so ON a.cust_id = so.id
@@ -1847,6 +1857,10 @@ FROM
 		LEFT JOIN sys_region province ON c.province_id = province.id
 		LEFT JOIN sys_region city ON c.city_id = city.id
 		LEFT JOIN sys_region reg ON c.region_id = reg.id
+	<!-- end  -->
+	<!-- 采购中心 -->
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office sx ON sx.id = ccs.center_id
 	<!-- end  -->
 	WHERE 1=1 and a.order_type != 4
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">
@@ -1994,6 +2008,16 @@ FROM
 		LEFT JOIN sys_office so ON so.id = bizcr.office_id
 		LEFT JOIN sys_user su ON su.id = bizcr.user_id
 		where bizcr.office_id=#{office.id} and bizcr.status=1
+		and so.type=6
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND bizcr.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
 		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
 			${sqlMap.chat}
 		</if>
@@ -2007,6 +2031,16 @@ FROM
 		LEFT JOIN sys_region reg ON cl.region_id = reg.id
 		left join biz_chat_record bcr on bcr.office_id=oh.cust_id
 		WHERE oh.cust_id = #{office.id}
+		and oh.order_type!=4
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND oh.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
 		AND (
 		(
 		biz_status != 45
@@ -2019,5 +2053,221 @@ FROM
 		date_format(oh.create_time, '%Y-%m')-->
 	</select>
 
+
+	<!-- 商品管理的 下单量 -->
+	<select id="findOrderCount" resultType="BizOrderHeader">
+		SELECT
+			oh.id,
+			bsi.item_no
+		FROM
+			biz_order_header oh
+		LEFT JOIN biz_order_detail bod ON bod.order_id = oh.id
+		LEFT JOIN biz_sku_info bsi ON bsi.id = bod.sku_id
+		LEFT JOIN sys_office so ON so.id = oh.cust_id
+		WHERE
+			bsi. STATUS = 1
+		AND bod. STATUS = 1
+		and bsi.id=#{skuInfoId.id}
+		AND oh.order_type != 4
+		AND (
+			(
+			biz_status != 45
+			AND biz_status != 35
+			AND biz_status != 0
+			)
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		)
+		and oh.status=1
+	</select>
+
+
+	<!-- 客户专员列表的 统计 -->
+	<select id="findOrderUserCount" resultType="BizOrderHeader" parameterType="BizChatRecord">
+		SELECT
+		(
+		select count(1) FROM  biz_chat_record bcr
+		LEFT JOIN sys_user su on su.id=bcr.user_id and su.status=1
+		left join sys_office so on so.id=bcr.office_id and so.status=1
+		where
+			bcr.status=1
+		and su.id=#{con.id}
+		and so.type=6
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND bcr.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
+		) as "officeChatRecord",
+		count(1) AS "orderCount",
+		sum(oh.receive_total) as "userOfficeReceiveTotal",
+		(
+		select count(1) from biz_custom_center_consultant bcc
+			LEFT JOIN sys_user su on su.id=bcc.consultant_id
+		WHERE
+			bcc.status=1
+		and su.status=1
+		and su.id=#{con.id}
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bcc.update_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND bcc.update_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bcc.update_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		) as "officeCount"
+		FROM biz_order_header AS oh
+		LEFT JOIN biz_custom_center_consultant bcc on bcc.cust_id=oh.cust_id and bcc.status=1
+		WHERE
+			oh.status=1
+		and bcc.consultant_id=#{con.id}
+		AND oh.order_type != 4
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND oh.create_time &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		AND (
+		(
+		biz_status != 45
+		AND biz_status != 35
+		AND biz_status != 0
+		)
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		)
+	</select>
+
+	<!-- 品类主管 管理 统计商品  -->
+	<select id="categorySkuStatistics" resultType="BizOrderHeader" parameterType="User">
+		SELECT
+		(select count(1) from biz_order_header aa
+			LEFT JOIN biz_order_detail bb on bb.order_id=aa.id
+			LEFT JOIN biz_sku_info cc on cc.id=bb.sku_id
+			LEFT JOIN biz_product_info dd on dd.id=cc.prod_id
+			left join biz_variety_info ff on ff.id= dd.vari_id
+			LEFT JOIN biz_variety_user_info gg on gg.variety_id=ff.id
+			LEFT JOIN sys_user hh on hh.id=gg.user_id
+		WHERE
+				aa.status=1
+			and bb.status=1
+			and cc.status=1
+			and dd.status=1
+			and hh.status=1
+            and aa.order_type !=4
+        <if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(aa.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+        </if>
+        <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+            AND aa.create_time &lt;= #{orderHeaderEedTime}
+        </if>
+        <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+            AND aa.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+        </if>
+			AND (
+				(
+				aa.biz_status != 45
+				AND aa.biz_status != 35
+				AND aa.biz_status != 0
+				)
+			OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+			)
+			and hh.id=#{id}
+		) as "skuCount",
+		count(a.id) as "orderCount",
+		sum(a.receive_total) as "receiveTotal",
+		(select count(1)
+			from
+				biz_sku_info qq
+			LEFT JOIN biz_product_info bpi on bpi.id=qq.prod_id
+			left join biz_variety_info bvi on bvi.id= bpi.vari_id
+			LEFT JOIN biz_variety_user_info bvui on bvui.variety_id=bvi.id
+			LEFT JOIN sys_user su on su.id=bvui.user_id
+			WHERE
+				qq.status=1
+			and bpi.status=1
+			and bvi.status=1
+			and su.status=1
+			and su.id=#{id}
+        <if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(qq.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+        </if>
+        <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+            AND qq.create_time &lt;= #{orderHeaderEedTime}
+        </if>
+        <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+            AND qq.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+        </if>
+		) as "opShelfCount",
+		(
+			SELECT
+				count(1)
+			FROM
+				biz_chat_record AS bizcr
+			LEFT JOIN sys_office so ON so.id = bizcr.office_id
+			LEFT JOIN sys_user su ON su.id = bizcr.user_id
+			WHERE
+				bizcr. STATUS = 1
+			and so.status=1
+			and su.status=1
+			and su.id=#{id}
+			and bizcr.create_id=#{id}
+			and so.type=7
+        <if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+        </if>
+        <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+            AND bizcr.create_time &lt;= #{orderHeaderEedTime}
+        </if>
+        <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+            AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+        </if>
+        <if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+            ${sqlMap.chat}
+        </if>
+		) as "officeChatRecord"
+		from
+			biz_order_header a
+		LEFT JOIN biz_order_detail bod on bod.order_id=a.id and bod.status=1
+		LEFT JOIN biz_sku_info bsi on bsi.id=bod.sku_id
+		LEFT JOIN biz_product_info bpi on bpi.id=bsi.prod_id
+		LEFT JOIN sys_office so on so.id=bpi.vendor_id
+		left join biz_variety_info bvi on bvi.id= bpi.vari_id
+		LEFT JOIN biz_variety_user_info bvui on bvui.variety_id=bvi.id
+		LEFT JOIN sys_user su on su.id=bvui.user_id
+		WHERE
+			a.status=1
+		and su.id=#{id}
+		and su.status=1
+		AND a.order_type != 4
+        <if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(a.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+        </if>
+        <if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+            AND a.create_time &lt;= #{orderHeaderEedTime}
+        </if>
+        <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+            AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+        </if>
+		AND (
+			(
+			a.biz_status != 45
+			AND a.biz_status != 35
+			AND a.biz_status != 0
+			)
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		)
+	</select>
 
 </mapper>

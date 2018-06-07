@@ -8,21 +8,15 @@ import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizSendGoodsRecord;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.enums.InvSkuTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
-import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -55,6 +49,9 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	private BizInventorySkuService bizInventorySkuService;
 	@Resource
     private OfficeService officeService;
+
+	@Resource
+	private BizOrderStatusService bizOrderStatusService;
 
 	@Override
 	public BizCollectGoodsRecord get(Integer id) {
@@ -187,6 +184,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			BizRequestHeader bizRequestHeader1 = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bizRequestHeader1.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader1);
+			bizOrderStatusService.insertByRequestHeader(bizCollectGoodsRecord.getBizRequestHeader().getId());
 
 			//当采购数量和(销售单供货记录的累计供货数+采购中心已收货数量)不相等时，更改采购单完成状态
 			//已采购数
@@ -208,6 +206,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.COMPLETE.getState());
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+			bizOrderStatusService.insertByRequestHeader(bizCollectGoodsRecord.getBizRequestHeader().getId());
 		}
 		//更改采购单状态
 		/*if(flagPo){

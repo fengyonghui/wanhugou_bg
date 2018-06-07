@@ -312,6 +312,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
                     bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
                     bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                    bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
                 }
             } else if (requestDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setRequestHeader(bizRequestHeader);
@@ -323,9 +324,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     if (poOrderReqs.size() == requestDetailList.size()) {
                         bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
                         bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                        bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
                     } else {
                         bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.PURCHASING.getState());
                         bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+                        bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
                     }
                 }
             }

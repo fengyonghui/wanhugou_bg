@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.entity.sku;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
@@ -66,6 +67,8 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private int sign;//sku删除返回的标志
 
 	private Office purchaser;		//代采采购商
+	private BizOrderHeader orderHeader;
+	private Integer orderCount;
 
 
 	public BizSkuInfo() {
@@ -302,5 +305,21 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setPurchaser(Office purchaser) {
 		this.purchaser = purchaser;
+	}
+
+	public BizOrderHeader getOrderHeader() {
+		return orderHeader;
+	}
+
+	public void setOrderHeader(BizOrderHeader orderHeader) {
+		this.orderHeader = orderHeader;
+	}
+
+	public Integer getOrderCount() {
+		return orderCount;
+	}
+
+	public void setOrderCount(Integer orderCount) {
+		this.orderCount = orderCount;
 	}
 }

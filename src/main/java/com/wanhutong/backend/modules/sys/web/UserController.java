@@ -3,6 +3,48 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
+
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
+import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
+import org.apache.commons.lang3.tuple.Pair;
+import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
+import com.wanhutong.backend.modules.biz.web.statistics.BizStatisticsPlatformController;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.beanvalidator.BeanValidators;
@@ -74,6 +116,10 @@ public class UserController extends BaseController {
     private BizCustomCenterConsultantService bizCustomCenterConsultantService;
 	@Autowired
 	private BizOrderHeaderDao bizOrderHeaderDao;
+	@Autowired
+	private BizVarietyInfoService bizVarietyInfoService;
+	@Autowired
+	private BizVarietyUserInfoService bizVarietyUserInfoService;
 
 	@ModelAttribute
 	public User get(@RequestParam(required=false) Integer id) {
@@ -115,11 +161,30 @@ public class UserController extends BaseController {
 			user.setDataStatus("filter");
 		}
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
-		model.addAttribute("page", page);
-		if(user.getConn()!=null && user.getConn().equals("selectIndex")){
-			//选品专员
-			return "modules/sys/userSeleIndexList";
+		if(user.getConn()!=null && user.getConn().equals("connIndex")){
+			//客户专员统计
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			User userAdmin = UserUtils.getUser();
+			if(user.getOrdrHeaderStartTime()!=null){
+				bizOrderHeader.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+			}
+			if(user.getOrderHeaderEedTime()!=null){
+				bizOrderHeader.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+			}
+			if(userAdmin.isAdmin()){
+			}else{
+				bizOrderHeader.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+			}
+			BizOrderHeader orderUserCount =null;
+			for(int i=0;i<page.getList().size();i++){
+				bizOrderHeader.setCon(page.getList().get(i));
+				orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
+				if(orderUserCount!=null){
+					page.getList().get(i).setUserOrder(orderUserCount);
+				}
+			}
 		}
+		model.addAttribute("page", page);
 		return "modules/sys/userList";
 	}
 
@@ -273,7 +338,7 @@ public class UserController extends BaseController {
         }
 		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
 			//跳回选品专员界面
-			return "redirect:" + adminPath + "/sys/user/list?company.type=8&company.customerTypeTen=10&company.customerTypeEleven=11&conn="+user.getConn();
+			return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
 		}
 		if(user.getConn()!=null && user.getConn().equals(officeUser)){
 //			添加 跳回用户管理列表
@@ -315,8 +380,7 @@ public class UserController extends BaseController {
         }
 		if(user.getConn() != null && user.getConn().equals("selectIndex")) {
 			//跳回选品专员界面
-			return "redirect:" + adminPath + "/sys/user/list?company.type="+user.getCompany().getType()+"&company.customerTypeTen="+user.getCompany().getCustomerTypeTen()
-					+"&company.customerTypeEleven="+user.getCompany().getCustomerTypeEleven()+"&conn="+user.getConn();
+			return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
 		}
 		if(user.getConn() !=null && user.getConn().equals(officeUser)){
 //			跳回用户管理
@@ -573,9 +637,31 @@ public class UserController extends BaseController {
 	 * 选品专员管理
 	 */
 	@RequiresPermissions("sys:user:view")
-	@RequestMapping(value = {"seleIndex"})
-	public String seleIndex(User user, Model model) {
-		return "modules/sys/seleIndex";
+	@RequestMapping(value = {"seleIndexList"})
+	public String seleIndex(User user, Model model,HttpServletRequest request, HttpServletResponse response) {
+        Page<User> page = systemService.findUserSele(new Page<User>(request, response), user);
+		BizOrderHeader orderHeades=null;
+		User userAdmin = UserUtils.getUser();
+		User ordUser = new User();
+		if(user.getOrdrHeaderStartTime()!=null){
+			ordUser.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+		}
+		if(user.getOrderHeaderEedTime()!=null){
+			ordUser.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+		}
+		if(userAdmin.isAdmin()){
+		}else{
+			ordUser.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+		}
+		for (User user1 : page.getList()) {
+			ordUser.setId(user1.getId());
+			orderHeades = bizOrderHeaderDao.categorySkuStatistics(ordUser);
+			if(orderHeades!=null){
+				user1.setUserOrder(orderHeades);
+			}
+		}
+        model.addAttribute("page", page);
+        return "modules/sys/userSeleIndexList";
 	}
 
 	/**
@@ -594,6 +680,12 @@ public class UserController extends BaseController {
 		Page<User> page = systemService.contact(new Page<User>(request, response),user);
 		User userAdmin = UserUtils.getUser();
 		BizChatRecord bizChatRecord = new BizChatRecord();
+		if(user.getOrdrHeaderStartTime()!=null){
+			bizChatRecord.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+		}
+		if(user.getOrderHeaderEedTime()!=null){
+			bizChatRecord.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+		}
 		for (User user1 : page.getList()) {
 			bizChatRecord.setOffice(user1.getCompany());
 			List<BizOrderHeader> userOrderCountSecond =null;
@@ -724,5 +816,96 @@ public class UserController extends BaseController {
 		}
 		return list;
 	}
+
+	/**
+     * 品类主管 管理
+     * */
+    @RequiresPermissions("sys:user:view")
+    @RequestMapping(value = "userSeleForm")
+    public String userSeleForm(User user, Model model,String flag) {
+        if (user.getOffice()==null || user.getOffice().getId()==null){
+			String purchasersId = DictUtils.getDictValue("采销部", "office_suppl", "");
+			Office office = officeService.get(Integer.parseInt(purchasersId));
+			user.setCompany(office);
+			user.setOffice(office);
+//			user.setCompany(UserUtils.getUser().getCompany());
+//            user.setOffice(UserUtils.getUser().getOffice());
+        }else{
+            Office off = new Office();
+            off.setParentIds("%"+user.getOffice().getId()+",");
+            List<Office> list = officeService.findList(off);
+            Office office = officeService.get(user.getOffice().getId());
+            if(list == null || list.isEmpty()){
+                user.setCompany(office);
+                user.setOffice(office);
+            }else{
+                user.setCompany(user.getCompany());
+                user.setOffice(user.getOffice());
+            }
+        }
+        if (flag != null && !"".equals(flag)){
+            model.addAttribute("flag",flag);
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("allRoles", systemService.findAllRole());
+		List<BizVarietyInfo> varietyFactorList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		model.addAttribute("varietyList", varietyFactorList);
+		if(user.getId()!=null){
+
+		}
+        return "modules/sys/userSeleForm";
+    }
+
+    /**
+	 * 品类主管 保存
+	 * */
+	@RequiresPermissions("sys:user:edit")
+	@RequestMapping(value = "userInfosave")
+	public String userInfosave(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+		if(Global.isDemoMode()){
+			addMessage(redirectAttributes, "演示模式，不允许操作！");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
+		user.setCompany(new Office(Integer.valueOf(request.getParameter("company.id"))));
+		user.setOffice(new Office(Integer.valueOf(request.getParameter("office.id"))));
+		// 如果新密码为空，则不更换密码
+		if (StringUtils.isNotBlank(user.getNewPassword())) {
+			user.setPassword(SystemService.entryptPassword(user.getNewPassword()));
+		}
+		if (!beanValidator(model, user)){
+			return form(user, model,null);
+		}
+		if (!"true".equals(checkLoginName(user.getOldLoginName(), user.getLoginName()))){
+			addMessage(model, "保存用户'" + user.getLoginName() + "'失败，登录名已存在");
+			return form(user, model,null);
+		}
+		// 角色数据有效性验证，过滤不在授权内的角色
+		List<Role> roleList = Lists.newArrayList();
+		List<Integer> roleIdList = user.getRoleIdList();
+		for (Role r : systemService.findAllRole()){
+			if (roleIdList.contains(r.getId())){
+				roleList.add(r);
+			}
+		}
+		user.setRoleList(roleList);
+		// 保存用户信息
+		systemService.saveUser(user);
+		if(user.getVarietyInfoId()!=null && user.getVarietyInfoId().getId()!=null){
+			BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
+			bizVarietyUserInfo.setUser(user);
+			bizVarietyUserInfo.setVarietyInfo(user.getVarietyInfoId());
+			bizVarietyUserInfoService.save(bizVarietyUserInfo);
+		}
+		// 清除当前用户缓存
+		if (user.getLoginName().equals(UserUtils.getUser().getLoginName())){
+			UserUtils.clearCache();
+		}else {
+			UserUtils.clearCache(user);
+		}
+		addMessage(redirectAttributes, "保存品类主管'" + user.getLoginName() + "'成功");
+		return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
+	}
+
 
 }
