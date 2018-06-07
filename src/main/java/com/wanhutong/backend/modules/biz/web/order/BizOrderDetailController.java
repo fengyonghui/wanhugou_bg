@@ -97,7 +97,6 @@ public class BizOrderDetailController extends BaseController {
 	@RequiresPermissions("biz:order:bizOrderDetail:view")
 	@RequestMapping(value = "form")
 	public String form(BizOrderDetail bizOrderDetail, Model model) {
-//		用于往页面传给savg保存 首单标记 OneOrder
 		bizOrderDetail.setOrdQtyUpda(bizOrderDetail.getOrdQty());
         BizOrderHeader orderHeader = bizOrderDetail.getOrderHeader();
         if(orderHeader!=null){
@@ -142,9 +141,6 @@ public class BizOrderDetailController extends BaseController {
 		bizOrderDetailService.save(bizOrderDetail);
 		addMessage(redirectAttributes, "保存订单详情成功");
 		Integer orderId=bizOrderDetail.getOrderHeader().getId();
-////		if(orderId !=null && orderId !=0){
-//		return "redirect:"+Global.getAdminPath()+"/biz/order/bizOrderHeader/form?id="+orderId;
-////		}
 		String consultantId ="";
 		String a="header_save";
 		if(bizOrderDetail.getOrderHeader()!=null && bizOrderDetail.getOrderHeader().getConsultantId()!=null){

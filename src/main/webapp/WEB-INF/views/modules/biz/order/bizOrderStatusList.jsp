@@ -49,6 +49,7 @@
 		<thead>
 			<tr>
 				<th>订单编号</th>
+				<th>经销店/用户名称</th>
 				<th>订单类型</th>
 				<th>订单状态</th>
 				<th>创建人</th>
@@ -64,6 +65,9 @@
 			<tr>
 				<td>
 					${bizOrderStatus.orderHeader.orderNum}
+				</td>
+				<td>
+					${bizOrderStatus.office.name}
 				</td>
 				<td>
 					${fns:getDictLabel(bizOrderStatus.orderHeader.orderType, 'biz_order_type', '未知类型')}
