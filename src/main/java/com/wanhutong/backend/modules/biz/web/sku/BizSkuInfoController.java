@@ -272,7 +272,7 @@ public class BizSkuInfoController extends BaseController {
                     List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
                     DecimalFormat df = new DecimalFormat("0.00");
                     for (BizVarietyFactor varietyFactor:bvFactorList) {
-                        Double salePrice = bizSkuInfo1.getBuyPrice()*(1+(float)varietyFactor.getServiceFactor()/100);
+                        Double salePrice = bizSkuInfo1.getBuyPrice()*(1+varietyFactor.getServiceFactor()/100);
                         String price = df.format(salePrice);
                         varietyFactor.setSalePrice(Double.parseDouble(price));
                     }
