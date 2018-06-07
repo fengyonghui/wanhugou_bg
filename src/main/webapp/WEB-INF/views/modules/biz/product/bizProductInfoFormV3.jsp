@@ -153,7 +153,9 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">产品描述：</label>
+        <label class="control-label">产品描述：
+            <p style="color: red">是否允许退换货，在此说明</p>
+        </label>
         <div class="controls">
             <form:textarea path="description" htmlEscape="false" class="input-xlarge "/>
         </div>
@@ -208,8 +210,24 @@
                 <form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
             </form:select>
             <span class="help-inline"><font color="red">*</font> </span>
+            <span style="color: red">为规范产品，选择分类后请选择特有属性</span>
         </div>
     </div>
+    <%--<c:forEach items="${attributeValueList}" var="attributeValue">--%>
+        <%--<div name="varietyAttr" class="control-group">--%>
+            <%--<label class="control-label">请选择${attributeValue.attributeInfo.name}：</label>--%>
+            <%--<div style="margin-left: 180px">--%>
+                <%--<select about='' name='dicts' class="input-medium required">--%>
+                    <%--<option value="" label="请选择"/>--%>
+                    <%--<c:forEach items="${attributeValue.dictList}" var="dict">--%>
+                        <%--<option value="${attributeValue.attributeInfo.id}-${dict.label}" <c:if test="${attributeValue.value == dict.label}">selected="selected"</c:if>/>${dict.label}--%>
+                    <%--</c:forEach>--%>
+                    <%--&lt;%&ndash;<form:options items="${attributeValue.dictList}" itemLabel="name" itemValue="id" htmlEscape="false"/>&ndash;%&gt;--%>
+                <%--</select>--%>
+                <%--<span class="help-inline"><font color="red">*</font> </span>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+    <%--</c:forEach>--%>
 
     <div class="control-group">
         <label class="control-label">请选择产品标签：</label>
@@ -321,7 +339,7 @@
             <input onclick="setBatchPrice()" class="btn" type="button" value="确 定"/>
         </div>
         <br/>
-        <div class="controls">
+        <div class="controls" style="overflow-x: auto; overflow-y: auto; height: 400px;">
             <table class="table  table-bordered table-condensed" id="skuTable">
                 <thead>
                 <tr>
@@ -802,14 +820,22 @@
                 alert(this.holder.text());
                 alert(this.holder.data("value"));
                 var variety = this.holder.data("value");
+                var prodId = $("#id").val();
                 // var variety = $(item).val();
                 if (variety !='') {
-                    $("div[name='varietyAttr']").remove();
+                    // if (prodId == null) {
+                    //     $("div[name='varietyAttr']").remove();
+                    // }
                     alert(variety);
                     $.ajax({
                         type:"post",
-                        url:"${ctx}/biz/product/bizVarietyAttr/findAttr?varietyId="+variety,
+                        url:"${ctx}/biz/product/bizVarietyAttr/findAttr",
+                        data:{varietyId:variety,prodId:prodId},
                         success:function (data) {
+                            $("div[name='varietyAttr']").remove();
+                            if (data.length==0) {
+                                return;
+                            }
                             var html = "";
                             $.each(data,function (index, varietyAttr) {
                                 alert(index+"--"+varietyAttr);
@@ -819,7 +845,18 @@
                                 html +=    "            <select about='choose' name='dicts' class='input-medium required'>";
                                 html +=    "                    <option value=''>请选择</option>";
                                 $.each(varietyAttr.dictList,function (index,dict) {
-                                    html +=    "                    <option value='"+varietyAttr.attributeInfo.id+"-"+dict.label+"'>"+dict.label+"</option>";
+                                    if (varietyAttr.attributeValueV2List == null) {
+                                        html +=    "<option value='"+varietyAttr.attributeInfo.id+"-"+dict.label+"'>"+dict.label+"</option>";
+                                    } else {
+                                        html +=    "<option value='"+varietyAttr.attributeInfo.id+"-"+dict.label+"'";
+                                        $.each(varietyAttr.attributeValueV2List,function (index, attributeValue) {
+                                            if (attributeValue.value==dict.label) {
+                                                html +=     "selected='selected'";
+                                                return false;
+                                            }
+                                        });
+                                        html +=        ">"+dict.label+"</option>";
+                                    }
                                 });
                                 html +=    "            </select>";
                                 html +=    "            <span class='help-inline'><font color='red'>*</font></span>";

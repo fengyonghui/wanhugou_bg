@@ -160,6 +160,7 @@
         <label class="control-label">产品描述：</label>
         <div class="controls">
             <form:textarea path="description" htmlEscape="false" class="input-xlarge "/>
+            <p style="color: red">是否允许退换货，在此说明</p>
         </div>
     </div>
     <div class="control-group">
@@ -204,10 +205,10 @@
         </div>
     </div>
 
-    <div class="control-group">
+    <div id="variety" class="control-group">
         <label class="control-label">请选择产品分类：</label>
         <div style="margin-left: 180px">
-            <form:select id="varietyInfoId" about="choose" path="bizVarietyInfo.id" class="input-medium required">
+            <form:select id="varietyInfoId" about="" onclick="selectAttr(this)" path="bizVarietyInfo.id" class="input-medium required">
                 <form:option value="" label="请选择"/>
                 <form:options items="${varietyInfoList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
             </form:select>
@@ -325,7 +326,7 @@
             <input onclick="setBatchPrice()" class="btn" type="button" value="确 定"/>
         </div>
         <br/>
-        <div class="controls">
+        <div class="controls" style="overflow-x: auto; overflow-y: auto; height: 400px;">
             <table class="table  table-bordered table-condensed" id="skuTable">
                 <thead>
                 <tr>
@@ -785,6 +786,62 @@
                         $($(that).find(".option")).click();
                     }
                 })
+            }
+        });
+        $("#varietyInfoId").searchableSelect({
+            afterSelectItem: function() {
+                alert(this.holder.text());
+                alert(this.holder.data("value"));
+                var variety = this.holder.data("value");
+                var prodId = $("#id").val();
+                // var variety = $(item).val();
+                if (variety !='') {
+                    // if (prodId == null) {
+                    //     $("div[name='varietyAttr']").remove();
+                    // }
+                    alert(variety);
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/product/bizVarietyAttr/findAttr",
+                        data:{varietyId:variety,prodId:prodId},
+                        success:function (data) {
+                            $("div[name='varietyAttr']").remove();
+                            if (data.length==0) {
+                                return;
+                            }
+                            var html = "";
+                            $.each(data,function (index, varietyAttr) {
+                                alert(index+"--"+varietyAttr);
+                                html += "<div name='varietyAttr' class='control-group'>" ;
+                                html +=    "        <label class='control-label'>请选择"+varietyAttr.attributeInfo.name+"：</label>";
+                                html +=    "        <div style='margin-left: 180px'>";
+                                html +=    "            <select about='choose' name='dicts' class='input-medium required'>";
+                                html +=    "                    <option value=''>请选择</option>";
+                                $.each(varietyAttr.dictList,function (index,dict) {
+                                    if (varietyAttr.attributeValueV2List == null) {
+                                        html +=    "<option value='"+varietyAttr.attributeInfo.id+"-"+dict.label+"'>"+dict.label+"</option>";
+                                    } else {
+                                        html +=    "<option value='"+varietyAttr.attributeInfo.id+"-"+dict.label+"'";
+                                        $.each(varietyAttr.attributeValueV2List,function (index, attributeValue) {
+                                            if (attributeValue.value==dict.label) {
+                                                html +=     "selected='selected'";
+                                                return false;
+                                            }
+                                        });
+                                        html +=        ">"+dict.label+"</option>";
+                                    }
+                                });
+                                html +=    "            </select>";
+                                html +=    "            <span class='help-inline'><font color='red'>*</font></span>";
+                                html +=    "        </div>";
+                                html +=    "    </div>";
+
+                            });
+                            $("#variety").after(html);
+
+                        }
+                    });
+                }
             }
         });
     });

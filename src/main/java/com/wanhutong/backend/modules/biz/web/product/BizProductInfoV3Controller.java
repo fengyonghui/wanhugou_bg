@@ -288,6 +288,12 @@ public class BizProductInfoV3Controller extends BaseController {
             }
         }
 
+        //产品特有属性
+//        if (bizProductInfo.getId() != null) {
+//            List<AttributeValueV2> valueV2List = specificAttr(bizProductInfo);
+//            model.addAttribute("attributeValueList",valueV2List);
+//        }
+
         model.addAttribute("prodPropertyInfo", new BizProdPropertyInfo());
         model.addAttribute("prodCategoryIdList", prodCategoryIdList);
         model.addAttribute("entity", bizProductInfo);
@@ -696,6 +702,23 @@ public class BizProductInfoV3Controller extends BaseController {
         }
         return String.valueOf(CollectionUtils.isNotEmpty(list) || CollectionUtils.isNotEmpty(listForVendor));
     }
+
+//    private List<AttributeValueV2> specificAttr(BizProductInfo bizProductInfo) {
+//        AttributeValueV2 valueV2 = new AttributeValueV2();
+//        valueV2.setObjectId(bizProductInfo.getId());
+//        valueV2.setObjectName(AttributeInfoV2.Level.PRODUCT.getTableName());
+//        List<AttributeValueV2> attributeValueV2List = attributeValueV2Service.findSpecificList(valueV2);
+//        Dict dict = new Dict();
+//        for (AttributeValueV2 attributeValueV2:attributeValueV2List) {
+//            String type = attributeValueV2.getAttributeInfo().getDict().getType();
+//            dict.setType(type);
+//            List<Dict> dictList = dictService.findList(dict);
+//            attributeValueV2.setDictList(dictList);
+////            dict.setValue(attributeValueV2.getValue());
+////            attributeValueV2.getAttributeInfo().setDict();
+//        }
+//        return attributeValueV2List;
+//    }
 
 
 }

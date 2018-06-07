@@ -235,6 +235,15 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 sizeAttrVal.setAttributeInfo(sizeAttributeInfo);
                 attributeValueV2Service.save(sizeAttrVal);
 
+//                AttributeValueV2 sizeAttrVal2 = new AttributeValueV2();
+//                sizeAttrVal2.setValue(size);
+//                sizeAttrVal2.setObjectName(BizProductInfoV3Service.SKU_TABLE);
+//                sizeAttrVal2.setObjectId(bizSkuInfo.getId());
+//                AttributeInfoV2 sizeAttributeInfo2 = new AttributeInfoV2();
+//                sizeAttributeInfo2.setId(SIZE_ATTR_ID);
+//                sizeAttrVal2.setAttributeInfo(sizeAttributeInfo2);
+//                attributeValueV2Service.save(sizeAttrVal2);
+
                 AttributeValueV2 colorAttrVal = new AttributeValueV2();
                 colorAttrVal.setValue(color);
                 colorAttrVal.setObjectName(SKU_TABLE);
@@ -243,6 +252,15 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 colorAttributeInfo.setId(COLOR_ATTR_ID);
                 colorAttrVal.setAttributeInfo(colorAttributeInfo);
                 attributeValueV2Service.save(colorAttrVal);
+
+//                AttributeValueV2 colorAttrVal2 = new AttributeValueV2();
+//                colorAttrVal2.setValue(color);
+//                colorAttrVal2.setObjectName(BizProductInfoV3Service.SKU_TABLE);
+//                colorAttrVal2.setObjectId(bizSkuInfo.getId());
+//                AttributeInfoV2 colorAttributeInfo2 = new AttributeInfoV2();
+//                colorAttributeInfo2.setId(COLOR_ATTR_ID);
+//                colorAttrVal2.setAttributeInfo(colorAttributeInfo2);
+//                attributeValueV2Service.save(colorAttrVal2);
 
                 CommonImg commonImg = new CommonImg();
                 commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());

@@ -8,6 +8,7 @@ import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class BizVarietyAttr extends DataEntity<BizVarietyAttr> {
 	private String attributeIds;		//多选的属性id
 
 	private List<Dict> dictList;        //字典表属性值
+    private List<AttributeValueV2> attributeValueV2List;
 	
 	public BizVarietyAttr() {
 		super();
@@ -63,5 +65,13 @@ public class BizVarietyAttr extends DataEntity<BizVarietyAttr> {
 
     public void setDictList(List<Dict> dictList) {
         this.dictList = dictList;
+    }
+
+    public List<AttributeValueV2> getAttributeValueV2List() {
+        return attributeValueV2List;
+    }
+
+    public void setAttributeValueV2List(List<AttributeValueV2> attributeValueV2List) {
+        this.attributeValueV2List = attributeValueV2List;
     }
 }

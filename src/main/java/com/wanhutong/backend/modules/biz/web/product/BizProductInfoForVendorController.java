@@ -180,7 +180,7 @@ public class BizProductInfoForVendorController extends BaseController {
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();
         List<AttributeInfoV2> skuTagInfos = Lists.newArrayList();
-        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findList(new AttributeInfoV2());
+        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findVList();
         Dict dict = new Dict();
 
         AttributeValueV2 attributeValue = new AttributeValueV2();
@@ -439,14 +439,14 @@ public class BizProductInfoForVendorController extends BaseController {
         List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
 
         bizProductInfo.setId(null);
-        bizProductInfo.setSkuAttrStrList(null);
+//        bizProductInfo.setSkuAttrStrList(null);
         bizProductInfo.setProdType(Byte.parseByte(ProdTypeEnum.PROD.getType()));
         bizProductInfoV2Service.save(bizProductInfo);
         skuInfosList.forEach(o -> {
             CommonImg commonSkuImg = new CommonImg();
             commonSkuImg.setImgType(ImgEnum.SKU_TYPE.getCode());
             commonSkuImg.setObjectId(o.getId());
-            commonSkuImg.setObjectName(AttributeInfoV2.Level.SKU_FOR_VENDOR.getTableName());
+            commonSkuImg.setObjectName(AttributeInfoV2.Level.SKU.getTableName());
             List<CommonImg> imgList = commonImgService.findList(commonSkuImg);
             String photos = "";
             for (CommonImg img : imgList) {
@@ -511,7 +511,7 @@ public class BizProductInfoForVendorController extends BaseController {
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();
         List<AttributeInfoV2> skuTagInfos = Lists.newArrayList();
-        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findList(new AttributeInfoV2());
+        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findVList();
         Dict dict = new Dict();
 
         AttributeValueV2 attributeValue = new AttributeValueV2();

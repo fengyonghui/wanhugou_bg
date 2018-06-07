@@ -433,9 +433,13 @@
         top.$('.jbox-body .jbox-icon').css('top','55px');
     }
     function checkPass(id){
+        $("input[name='skuAttrStrList']").each(function () {
+            alert($(this));
+        });
+        var skuAttrStrList = $("input[name='skuAttrStrList']").val();
         top.$.jBox.confirm("确认要通过审核吗？","系统提示",function(v,h,f){
             if(v=="ok"){
-                window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=2&id=" + id;
+                window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=2&id=" + id+"&skuAttrStrList="+skuAttrStrList;
             }
         },{buttonsFocus:1});
         top.$('.jbox-body .jbox-icon').css('top','55px');
