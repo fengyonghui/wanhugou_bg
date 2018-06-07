@@ -8,9 +8,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
-import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.enums.TradeTypeEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -153,7 +151,7 @@ public class BizPayMoneyController extends BaseController {
                 payLogger.info("更新状态出问题");
             }
             bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-            bizOrderStatusService.insertByRequestHeader(bizRequestHeader.getId());
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
         }
 
         String pathFile = Global.getUserfilesBaseDir()+"/upload/" +photoName ;

@@ -243,6 +243,12 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
         return dao.findPoHeader(bizOrderDetail);
     }
 
+    /**
+     * 获取待供货需求汇总列表
+     *
+     * @param office
+     * @return
+     */
     public List<Map> findRequestTotalByVendorList(Office office) {
         return bizOrderDetailDao.findRequestTotalByVendorList(office);
     }

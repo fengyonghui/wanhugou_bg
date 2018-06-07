@@ -27,5 +27,10 @@ public interface BizOrderDetailDao extends CrudDao<BizOrderDetail> {
 
 	List<BizOrderDetail> findPoHeader(BizOrderDetail bizOrderDetail);
 
+	/**
+	 * 获取待供货需求汇总列表
+	 * @param office
+	 * @return
+	 */
 	List<Map> findRequestTotalByVendorList(Office office);
 }
