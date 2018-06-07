@@ -242,4 +242,8 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
     public List<BizOrderDetail> findPoHeader(BizOrderDetail bizOrderDetail) {
         return dao.findPoHeader(bizOrderDetail);
     }
+
+    public List<Map> findRequestTotalByVendorList(Office office) {
+        return bizOrderDetailDao.findRequestTotalByVendorList(office);
+    }
 }
