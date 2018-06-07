@@ -30,7 +30,7 @@
 	<sql id="bizOrderStatusJoins">
 		left join sys_user su on a.create_id=su.id
 		left join sys_user suu on a.update_id=suu.id
-		left join biz_order_header boh on boh.id=a.order_id
+		left join biz_order_header boh on boh.id=a.order_id and boh.status=1
 		LEFT JOIN sys_office so on so.id=boh.cust_id
 		LEFT JOIN sys_user cosu on cosu.id=boh.cust_id
 	</sql>
@@ -50,7 +50,6 @@
 		<include refid="bizOrderStatusJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			and boh.status=#{DEL_FLAG_NORMAL}
 			<if test="orderHeader != null and orderHeader.orderNum != null and orderHeader.orderNum != ''">
 				AND boh.order_num like
 				<if test="dbName == 'oracle'">'%'||#{orderHeader.orderNum}||'%'</if>
