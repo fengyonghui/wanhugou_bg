@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Ma.Qiang on 16/8/12.
+ * Created by Ma.Qiang on 18/6/6.
  * 邮件配置文件
  */
 @XStreamAlias("EmailConfig")
@@ -38,11 +38,26 @@ public class EmailConfig extends ConfigGeneral {
 
 
     public class Email {
-        private String name; //接收方
-        private String receiveAddress;//收件人
-        private String sendAddress;//发件人
-        private String subject; //主题
-        private String body; //邮件内容
+        /**
+         * 接收方
+         */
+        private String name;
+        /**
+         * 收件人
+         */
+        private String receiveAddress;
+        /**
+         * 发件人
+         */
+        private String sendAddress;
+        /**
+         * 主题
+         */
+        private String subject;
+        /**
+         * 邮件内容
+         */
+        private String body;
 
         public String getSubject() {
             return subject;

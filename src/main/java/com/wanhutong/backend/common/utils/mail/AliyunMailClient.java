@@ -1,4 +1,4 @@
-package com.wanhutong.backend.common.utils;
+package com.wanhutong.backend.common.utils.mail;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.common.utils.RandomUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
