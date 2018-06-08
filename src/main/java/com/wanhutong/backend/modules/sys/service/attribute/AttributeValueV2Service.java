@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.sys.dao.attribute.AttributeValueDao;
 import com.wanhutong.backend.modules.sys.dao.attribute.AttributeValueV2Dao;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValue;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +24,19 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class AttributeValueV2Service extends CrudService<AttributeValueV2Dao, AttributeValueV2> {
 
+	@Autowired
+	private AttributeValueV2Dao attributeValueV2Dao;
+
 	public AttributeValueV2 get(Integer id) {
 		return super.get(id);
 	}
 	
 	public List<AttributeValueV2> findList(AttributeValueV2 attributeValue) {
 		return super.findList(attributeValue);
+	}
+
+	public List<AttributeValueV2> findSpecificList(AttributeValueV2 attributeValueV2){
+		return attributeValueV2Dao.findSpecificList(attributeValueV2);
 	}
 	
 	public Page<AttributeValueV2> findPage(Page<AttributeValueV2> page, AttributeValueV2 attributeValue) {

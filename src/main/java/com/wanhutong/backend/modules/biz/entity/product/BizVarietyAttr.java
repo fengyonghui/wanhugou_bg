@@ -4,10 +4,13 @@
 package com.wanhutong.backend.modules.biz.entity.product;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
-import org.hibernate.validator.constraints.Length;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+
+import java.util.List;
 
 /**
  * 分类属性中间表Entity
@@ -20,6 +23,9 @@ public class BizVarietyAttr extends DataEntity<BizVarietyAttr> {
 	private BizVarietyInfo varietyInfo;		// biz_variety_info.id ;分类ID
 	private AttributeInfoV2 attributeInfo;		// sys_attribute_info.id ;系统属性ID
 	private String attributeIds;		//多选的属性id
+
+	private List<Dict> dictList;        //字典表属性值
+    private List<AttributeValueV2> attributeValueV2List;
 	
 	public BizVarietyAttr() {
 		super();
@@ -52,4 +58,20 @@ public class BizVarietyAttr extends DataEntity<BizVarietyAttr> {
 	public void setAttributeIds(String attributeIds) {
 		this.attributeIds = attributeIds;
 	}
+
+    public List<Dict> getDictList() {
+        return dictList;
+    }
+
+    public void setDictList(List<Dict> dictList) {
+        this.dictList = dictList;
+    }
+
+    public List<AttributeValueV2> getAttributeValueV2List() {
+        return attributeValueV2List;
+    }
+
+    public void setAttributeValueV2List(List<AttributeValueV2> attributeValueV2List) {
+        this.attributeValueV2List = attributeValueV2List;
+    }
 }

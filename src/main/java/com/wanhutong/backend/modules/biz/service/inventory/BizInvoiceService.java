@@ -157,9 +157,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 //        List<BizRequestHeader> requestHeaderList = bizInvoice.getRequestHeaderList();
         if(StringUtils.isNotBlank(orderHeaders)) {
             boolean ordFlag = true;
-            String[] orders = orderHeaders.split(",".trim());
+            String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
-                String[] oheaders = orders[a].split("#".trim());
+                String[] oheaders = orders[a].split("#");
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(oheaders[0]));
                 //加入中间表关联关系
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
@@ -186,8 +186,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                     //采购中心订单发货
                     if (bizInvoice.getBizStatus()==0) {
-                        //销售单状态改为同意供货（供货中）（15）
-                        orderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+                        //销售单状态改为采购中心供货（16）
+                        orderHeader.setBizStatus(OrderHeaderBizStatusEnum.APPROVE.getState());
                         bizOrderHeaderService.saveOrderHeader(orderHeader);
                         //获取库存数
                         BizInventorySku bizInventorySku = new BizInventorySku();

@@ -4,7 +4,10 @@
 package com.wanhutong.backend.modules.sys.entity.attribute;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
 
 /**
  * 标签属性值Entity
@@ -20,6 +23,7 @@ public class AttributeValueV2 extends DataEntity<AttributeValueV2> {
 	private Integer objectId;		// 对应表的主键
 	private String value;		// 记录该属性值
 	private String code;		// code
+    private List<Dict> dictList;        //用于存放特有属性列表
 
 	public Integer getAttrId() {
 		return attrId;
@@ -80,4 +84,12 @@ public class AttributeValueV2 extends DataEntity<AttributeValueV2> {
 	public void setObjectId(Integer objectId) {
 		this.objectId = objectId;
 	}
+
+    public List<Dict> getDictList() {
+        return dictList;
+    }
+
+    public void setDictList(List<Dict> dictList) {
+        this.dictList = dictList;
+    }
 }

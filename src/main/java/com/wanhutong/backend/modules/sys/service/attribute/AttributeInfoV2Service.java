@@ -9,6 +9,7 @@ import com.wanhutong.backend.modules.sys.dao.attribute.AttributeInfoDao;
 import com.wanhutong.backend.modules.sys.dao.attribute.AttributeInfoV2Dao;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfo;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,9 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class AttributeInfoV2Service extends CrudService<AttributeInfoV2Dao, AttributeInfoV2> {
+
+	@Autowired
+	private AttributeInfoV2Dao attributeInfoV2Dao;
 
 	public AttributeInfoV2 get(Integer id) {
 		return super.get(id);
@@ -44,5 +48,7 @@ public class AttributeInfoV2Service extends CrudService<AttributeInfoV2Dao, Attr
 	public void delete(AttributeInfoV2 attributeInfo) {
 		super.delete(attributeInfo);
 	}
+
+	public List<AttributeInfoV2> findVList() {return attributeInfoV2Dao.findVList();}
 	
 }

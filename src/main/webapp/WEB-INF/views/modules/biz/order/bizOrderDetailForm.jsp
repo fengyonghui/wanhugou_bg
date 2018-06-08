@@ -272,7 +272,7 @@
                     <th>商品编码</th>
                     <th>商品货号</th>
                     <th>商品属性</th>
-                    <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                    <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state || orderH.bizStatus==OrderHeaderBizStatusEnum.APPROVE.state}">
                         <th>已发货数量</th>
                     </c:if>
                     <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">
@@ -298,7 +298,7 @@
                                     ${attributeValueV2.attributeInfo.name}:${attributeValueV2.value},
                                 </c:forEach>
                             </td>
-                            <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
+                            <c:if test="${orderH.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state || orderH.bizStatus==OrderHeaderBizStatusEnum.APPROVE.state}">
                                 <td>${detail.sentQty}</td>
                             </c:if>
                             <c:if test="${orderH.orderType != DefaultPropEnum.PURSEHANGER.propValue}">

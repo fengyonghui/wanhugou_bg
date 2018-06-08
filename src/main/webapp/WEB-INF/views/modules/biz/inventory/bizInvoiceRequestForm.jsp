@@ -34,7 +34,7 @@
                         $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
                             detail+=$(this).val()+"-"+sObj[i].value+"*";
 
-                        });
+						});
                         tt+=t+"#"+detail+",";
 
                     });

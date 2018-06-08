@@ -7,9 +7,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorV2Service;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
+import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
+import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
+import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoV2Service;
+import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +35,7 @@ import com.wanhutong.backend.modules.biz.entity.product.BizVarietyAttr;
 import com.wanhutong.backend.modules.biz.service.product.BizVarietyAttrService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 分类属性中间表Controller
@@ -44,6 +52,14 @@ public class BizVarietyAttrController extends BaseController {
 	private BizVarietyInfoService bizVarietyInfoService;
 	@Autowired
 	private AttributeInfoV2Service attributeInfoV2Service;
+	@Autowired
+    private DictService dictService;
+	@Autowired
+	private AttributeValueV2Service attributeValueV2Service;
+	@Autowired
+	private BizProductInfoV3Service bizProductInfoV3Service;
+	@Autowired
+	private BizProductInfoForVendorV2Service bizProductInfoForVendorV2Service;
 	
 	@ModelAttribute
 	public BizVarietyAttr get(@RequestParam(required=false) Integer id) {
@@ -123,5 +139,77 @@ public class BizVarietyAttrController extends BaseController {
         List<BizVarietyAttr> varietyAttrList = bizVarietyAttrService.findList(varietyAttr);
             return varietyAttrList;
     }
+
+    /**
+     * 产品特有属性
+     * @param varietyId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "findAttr")
+    public List<BizVarietyAttr> findAttr(Integer varietyId,Integer prodId) {
+
+        BizVarietyAttr varietyAttr = new BizVarietyAttr();
+        varietyAttr.setVarietyInfo(new BizVarietyInfo(varietyId));
+        List<BizVarietyAttr> list = bizVarietyAttrService.findList(varietyAttr);
+        Dict dict = new Dict();
+        for (BizVarietyAttr bizVarietyAttr:list) {
+            AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(bizVarietyAttr.getAttributeInfo().getId());
+            bizVarietyAttr.setAttributeInfo(attributeInfoV2);
+            dict.setType(attributeInfoV2.getDict().getType());
+            List<Dict> dictList = dictService.findList(dict);
+            bizVarietyAttr.setDictList(dictList);
+			if (prodId == null) {
+				continue;
+			}
+            BizProductInfo bizProductInfo = bizProductInfoV3Service.get(prodId);
+			if (!bizProductInfo.getBizVarietyInfo().getId().equals(varietyId)) {
+			    continue;
+            }
+            AttributeValueV2 valueV2 = new AttributeValueV2();
+			valueV2.setObjectId(prodId);
+			valueV2.setObjectName(AttributeInfoV2.Level.PRODUCT.getTableName());
+			List<AttributeValueV2> attributeValueV2List = attributeValueV2Service.findSpecificList(valueV2);
+			bizVarietyAttr.setAttributeValueV2List(attributeValueV2List);
+        }
+
+        return list;
+    }
+
+	/**
+	 * 供应商产品特有属性
+	 * @param varietyId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "findVendAttr")
+	public List<BizVarietyAttr> findVendAttr(Integer varietyId,Integer prodId) {
+
+		BizVarietyAttr varietyAttr = new BizVarietyAttr();
+		varietyAttr.setVarietyInfo(new BizVarietyInfo(varietyId));
+		List<BizVarietyAttr> list = bizVarietyAttrService.findList(varietyAttr);
+		Dict dict = new Dict();
+		for (BizVarietyAttr bizVarietyAttr:list) {
+			AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(bizVarietyAttr.getAttributeInfo().getId());
+			bizVarietyAttr.setAttributeInfo(attributeInfoV2);
+			dict.setType(attributeInfoV2.getDict().getType());
+			List<Dict> dictList = dictService.findList(dict);
+			bizVarietyAttr.setDictList(dictList);
+			if (prodId == null) {
+				continue;
+			}
+			BizProductInfo bizProductInfo = bizProductInfoForVendorV2Service.get(prodId);
+			if (!bizProductInfo.getBizVarietyInfo().getId().equals(varietyId)) {
+				continue;
+			}
+			AttributeValueV2 valueV2 = new AttributeValueV2();
+			valueV2.setObjectId(prodId);
+			valueV2.setObjectName(AttributeInfoV2.Level.PRODUCT_FOR_VENDOR.getTableName());
+			List<AttributeValueV2> attributeValueV2List = attributeValueV2Service.findSpecificList(valueV2);
+			bizVarietyAttr.setAttributeValueV2List(attributeValueV2List);
+		}
+
+		return list;
+	}
 
 }

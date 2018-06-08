@@ -20,8 +20,9 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorV2Service;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.*;
@@ -39,10 +40,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -57,13 +55,13 @@ import java.util.*;
  * @version 2017-12-13
  */
 @Controller
-@RequestMapping(value = "${adminPath}/biz/product/bizProductInfoForVendor")
-public class BizProductInfoForVendorController extends BaseController {
+@RequestMapping(value = "${adminPath}/biz/product/bizProductInfoForVendorV2")
+public class BizProductInfoForVendorV2Controller extends BaseController {
 
     @Autowired
-    private BizProductInfoForVendorService bizProductInfoForVendorService;
+    private BizProductInfoForVendorV2Service bizProductInfoForVendorService;
     @Autowired
-    private BizProductInfoV2Service bizProductInfoV2Service;
+    private BizProductInfoV3Service bizProductInfoV3Service;
     @Autowired
     private BizSkuInfoForVendorService bizSkuInfoForVendorService;
     @Autowired
@@ -128,7 +126,7 @@ public class BizProductInfoForVendorController extends BaseController {
         Page<BizProductInfo> page = bizProductInfoForVendorService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
         model.addAttribute("page", page);
         model.addAttribute("view", view);
-        return "modules/biz/product/bizProductInfoListForVendor";
+        return "modules/biz/product/bizProductInfoListForVendorV2";
     }
 
 
@@ -138,7 +136,7 @@ public class BizProductInfoForVendorController extends BaseController {
         CommonImg commonImg = new CommonImg();
         commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
         commonImg.setObjectId(bizProductInfo.getId());
-        commonImg.setObjectName(BizProductInfoForVendorService.PRODUCT_TABLE);
+        commonImg.setObjectName(BizProductInfoForVendorV2Service.PRODUCT_TABLE);
         if (bizProductInfo.getId() != null) {
             List<CommonImg> imgList = commonImgService.findList(commonImg);
             commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
@@ -302,7 +300,7 @@ public class BizProductInfoForVendorController extends BaseController {
         model.addAttribute("cateList", categoryInfos);
         model.addAttribute("varietyInfoList", varietyInfoList);
         model.addAttribute("skuTypeLit", skuTypeLit);
-        return "modules/biz/product/bizProductInfoFormForVendor";
+        return "modules/biz/product/bizProductInfoFormForVendorV2";
     }
 
 
@@ -314,7 +312,7 @@ public class BizProductInfoForVendorController extends BaseController {
         }
         bizProductInfoForVendorService.save(bizProductInfo);
         addMessage(redirectAttributes, "保存产品信息表成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendorV2/?repage";
     }
 
     @RequiresPermissions("biz:product:bizProductInfoForVendor:edit")
@@ -322,7 +320,7 @@ public class BizProductInfoForVendorController extends BaseController {
     public String delete(BizProductInfo bizProductInfo, RedirectAttributes redirectAttributes) {
         bizProductInfoForVendorService.delete(bizProductInfo);
         addMessage(redirectAttributes, "删除产品信息表成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendorV2/?repage";
     }
 
     @ResponseBody
@@ -382,17 +380,17 @@ public class BizProductInfoForVendorController extends BaseController {
 
 
     @RequiresPermissions("biz:product:bizProductInfoForVendor:check")
-    @RequestMapping(value = "checkPass")
+    @RequestMapping(value = "checkPass", method = RequestMethod.POST)
     public String checkPass(BizProductInfo bizProductInfo, Integer id, RedirectAttributes redirectAttributes, int bizStatus) {
-            bizProductInfoForVendorService.checkPass(id, bizStatus);
+            bizProductInfoForVendorService.checkPass(bizProductInfo.getId(), bizStatus);
         if (BizProductInfo.BizStatus.AUDIT_PASS.getStatus() != bizStatus) {
             addMessage(redirectAttributes, "审核未通过");
-            return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
+            return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendorV2/?repage";
         }
         CommonImg commonImg = new CommonImg();
         commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
         commonImg.setObjectId(bizProductInfo.getId());
-        commonImg.setObjectName(BizProductInfoForVendorService.PRODUCT_TABLE);
+        commonImg.setObjectName(BizProductInfoForVendorV2Service.PRODUCT_TABLE);
         if (bizProductInfo.getId() != null) {
             List<CommonImg> imgList = commonImgService.findList(commonImg);
             commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
@@ -436,30 +434,31 @@ public class BizProductInfoForVendorController extends BaseController {
             bizProductInfo.setTextureStr(a.getValue());
         }
 
-        List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
+//        List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
 
         bizProductInfo.setId(null);
-        bizProductInfo.setSkuAttrStrList(null);
+//        bizProductInfo.setSkuAttrStrList(null);
         bizProductInfo.setProdType(Byte.parseByte(ProdTypeEnum.PROD.getType()));
-        bizProductInfoV2Service.save(bizProductInfo);
-        skuInfosList.forEach(o -> {
-            CommonImg commonSkuImg = new CommonImg();
-            commonSkuImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-            commonSkuImg.setObjectId(o.getId());
-            commonSkuImg.setObjectName(AttributeInfoV2.Level.SKU_FOR_VENDOR.getTableName());
-            List<CommonImg> imgList = commonImgService.findList(commonSkuImg);
-            String photos = "";
-            for (CommonImg img : imgList) {
-                photos += "|" + img.getImgServer() + img.getImgPath();
-            }
-            o.setPhotos(photos);
-
-            o.setId(null);
-            o.setProductInfo(bizProductInfo);
-            bizSkuInfoV2Service.save(o, Boolean.TRUE);
-        });
+        bizProductInfoV3Service.save(bizProductInfo);
+//        skuInfosList.forEach(o -> {
+//            CommonImg commonSkuImg = new CommonImg();
+//            commonSkuImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+//            commonSkuImg.setObjectId(o.getId());
+//            commonSkuImg.setObjectName(AttributeInfoV2.Level.SKU_FOR_VENDOR.getTableName());
+//            List<CommonImg> imgList = commonImgService.findList(commonSkuImg);
+//            String photos = "";
+//            for (CommonImg img : imgList) {
+//                photos += "|" + img.getImgServer() + img.getImgPath();
+//            }
+//            o.setPhotos(photos);
+//
+//            o.setId(null);
+//            o.setProductInfo(bizProductInfo);
+//            bizSkuInfoV2Service.save(o, Boolean.TRUE);
+//
+//        });
         addMessage(redirectAttributes, "审核通过");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendorV2/?repage";
     }
 
 
@@ -469,7 +468,7 @@ public class BizProductInfoForVendorController extends BaseController {
         CommonImg commonImg = new CommonImg();
         commonImg.setImgType(ImgEnum.MAIN_PRODUCT_TYPE.getCode());
         commonImg.setObjectId(bizProductInfo.getId());
-        commonImg.setObjectName(BizProductInfoForVendorService.PRODUCT_TABLE);
+        commonImg.setObjectName(BizProductInfoForVendorV2Service.PRODUCT_TABLE);
         if (bizProductInfo.getId() != null) {
             List<CommonImg> imgList = commonImgService.findList(commonImg);
             commonImg.setImgType(ImgEnum.SUB_PRODUCT_TYPE.getCode());
@@ -615,6 +614,10 @@ public class BizProductInfoForVendorController extends BaseController {
                 prodCategoryIdList.add(String.valueOf(b.getId()));
             }
         }
+        //获取产品信息表Entity的id
+        Integer idVal = bizProductInfo.getId();
+
+        model.addAttribute("idVal", idVal);
         bizProductInfo.setId(null);
         bizProductInfo.setProdCode(StringUtils.EMPTY);
         bizProductInfo.setItemNo(StringUtils.EMPTY);
@@ -628,7 +631,7 @@ public class BizProductInfoForVendorController extends BaseController {
         model.addAttribute("cateList", categoryInfos);
         model.addAttribute("varietyInfoList", varietyInfoList);
         model.addAttribute("skuTypeLit", skuTypeLit);
-        return "modules/biz/product/bizProductInfoCopyFormVendor";
+        return "modules/biz/product/bizProductInfoCopyFormVendorV2";
     }
 
     @RequiresPermissions("biz:product:bizProductInfoForVendor:edit")
@@ -639,7 +642,7 @@ public class BizProductInfoForVendorController extends BaseController {
         }
         bizProductInfoForVendorService.save(bizProductInfo, true);
         addMessage(redirectAttributes, "保存产品信息表成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendor/?repage";
+        return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendorV2/?repage";
     }
 
 }

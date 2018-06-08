@@ -48,6 +48,28 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<!--排除特有属性-->
+	<select id="findVList" resultType="AttributeInfoV2">
+		SELECT
+		<include refid="attributeInfoColumns"/>
+		FROM sys_attribute_info a
+		<include refid="attributeInfoJoins"/>
+		<where>
+			a.status = 1
+			AND
+			NOT EXISTS
+			(
+			SELECT b.id
+			FROM sys_attribute_info b
+			LEFT JOIN biz_variety_attr va ON va.attribute_id = b.id
+			WHERE va.id is NOT NULL
+			AND b.status = 1
+			AND va.`status` = 1
+			AND b.id = a.id
+			)
+		</where>
+	</select>
 	
 	<select id="findAllList" resultType="AttributeInfoV2">
 		SELECT 

@@ -213,7 +213,7 @@ public class BizProductInfoV2Controller extends BaseController {
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();
         List<AttributeInfoV2> skuTagInfos = Lists.newArrayList();
-        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findList(new AttributeInfoV2());
+        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findVList();
         Dict dict = new Dict();
 
         AttributeValueV2 attributeValue = new AttributeValueV2();
@@ -378,7 +378,7 @@ public class BizProductInfoV2Controller extends BaseController {
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();
         List<AttributeInfoV2> skuTagInfos = Lists.newArrayList();
-        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findList(new AttributeInfoV2());
+        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findVList();
         Dict dict = new Dict();
 
         AttributeValueV2 attributeValue = new AttributeValueV2();
