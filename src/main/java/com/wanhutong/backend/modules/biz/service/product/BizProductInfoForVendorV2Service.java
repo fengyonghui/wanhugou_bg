@@ -157,6 +157,9 @@ public class BizProductInfoForVendorV2Service extends CrudService<BizProductInfo
         //保存产品图片
         saveCommonImg(bizProductInfo, copy);
 
+        //保存产品特有属性
+        saveProdAttr(bizProductInfo,varietyInfo);
+
         // 标签
         if(StringUtils.isNotBlank(bizProductInfo.getTagStr())) {
             List<BizCategoryInfo> byIds = bizCategoryInfoV2Service.findByIds(bizProductInfo.getTagStr());
@@ -328,6 +331,24 @@ public class BizProductInfoForVendorV2Service extends CrudService<BizProductInfo
     @Transactional(readOnly = false)
     public void saveProd(BizProductInfo bizProductInfo) {
         super.save(bizProductInfo);
+    }
+
+    @Transactional(readOnly = false)
+    public void saveProdAttr(BizProductInfo bizProductInfo,BizVarietyInfo bizVarietyInfo) {
+        if (bizProductInfo.getDicts()==null || bizProductInfo.getDicts().isEmpty()) {
+            return;
+        }
+        String dicts = bizProductInfo.getDicts();
+        String[] dictArr = StringUtils.split(dicts, ",");
+        AttributeValueV2 attributeValue = new AttributeValueV2();
+        for (int i = 0; i < dictArr.length; i++) {
+            String[] attrArr = StringUtils.split(dictArr[i], "-");
+            attributeValue.setValue(attrArr[1]);
+            attributeValue.setObjectName(PRODUCT_TABLE);
+            attributeValue.setObjectId(bizProductInfo.getId());
+            attributeValue.setAttributeInfo(new AttributeInfoV2(Integer.parseInt(attrArr[0])));
+            attributeValueV2Service.save(attributeValue);
+        }
     }
 
     private List<CommonImg> getImgList(Integer imgType, Integer prodId) {

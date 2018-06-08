@@ -212,7 +212,7 @@
         </div>
     </div>
 
-    <div class="control-group">
+    <div id="variety" class="control-group">
         <label class="control-label">请选择产品分类：</label>
         <div style="margin-left: 180px">
             <form:select id="varietyInfoId" about="" path="bizVarietyInfo.id" class="input-medium required">
@@ -416,6 +416,7 @@
 <from:form id="checkPassForm" modelAttribute="bizProductInfo" action="" method="post">
     <input id="checkPassId" type="hidden" name="id" value=""/>
     <input id="checkPassList" name="skuAttrStrList" type="hidden" value="" />
+    <input id="checkPassDicts" name="dicts" type="hidden" value=""/>
 </from:form>
 
 <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
@@ -433,7 +434,10 @@
     function checkUnPass(id){
         top.$.jBox.confirm("确认要拒绝通过审核吗？","系统提示",function(v,h,f){
             if(v=="ok"){
-                window.location.href = "${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=3&id=" + id;
+                $("#checkPassId").val(id);
+                $("#checkPassForm").attr("action","${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=3");
+                $("#checkPassForm").submit();
+                <%--window.location.href = "${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=3&id=" + id;--%>
             }
         },{buttonsFocus:1});
         top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -444,12 +448,12 @@
         var sizeInput = $("input[customInput='sizeInput']");
         var skuTypeSelect = $("select[customInput='skuTypeSelect']").find("option:selected");
         var priceInput = $("input[customInput='priceInput']");
-        // var imgInput = $("img[customInput='imgInputLab']");
+        var imgInput = $("img[customInput='imgInputLab']");
         $("input[customInput='sizeInput']").each(function (index) {
             var price = priceInput != undefined ?  priceInput[index].value : undefined;
-            // var img = imgInput != undefined ?  imgInput[index].src : undefined;
+            var img = imgInput != undefined ?  imgInput[index].src : undefined;
             var skuType = skuTypeSelect != undefined ?  skuTypeSelect[index].value : undefined;
-            var skuAttrStr = sizeInput[index].value+"|"+colorInput[index].value+"|"+price+"|"+skuType+"|"+undefined;
+            var skuAttrStr = sizeInput[index].value+"|"+colorInput[index].value+"|"+price+"|"+skuType+"|"+undefined+"|"+img;
             skuAttrStrList.push(skuAttrStr);
         });
 
@@ -458,6 +462,11 @@
             if(v=="ok"){
                 $("#checkPassId").val(id);
                 $("#checkPassList").val(skuAttrStrList);
+                var checkPassDicts = "";
+                $("select[name='dicts']").find("option:selected").each(function () {
+                    checkPassDicts += $(this).val()+",";
+                });
+                $("#checkPassDicts").val(checkPassDicts);
                 $("#checkPassForm").attr("action","${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=2");
                 $("#checkPassForm").submit();
                 <%--window.location.href = "${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=2&id=" + id+"&skuAttrStrList="+skuAttrStrList;--%>
@@ -859,7 +868,7 @@
                     // alert(variety);
                     $.ajax({
                         type:"post",
-                        url:"${ctx}/biz/product/bizVarietyAttr/findAttr",
+                        url:"${ctx}/biz/product/bizVarietyAttr/findVendAttr",
                         data:{varietyId:variety,prodId:prodId},
                         success:function (data) {
                             $("div[name='varietyAttr']").remove();
@@ -871,6 +880,7 @@
                                 // alert(index+"--"+varietyAttr);
                                 // alert(varietyAttr.dictList != undefined);
                                 if (varietyAttr.dictList != undefined) {
+                                    // alert(varietyAttr.dictList != undefined);
                                     html += "<div name='varietyAttr' class='control-group'>";
                                     html += "        <label class='control-label'>请选择" + varietyAttr.attributeInfo.name + "：</label>";
                                     html += "        <div style='margin-left: 180px'>";

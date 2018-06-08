@@ -62,15 +62,15 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/product/bizProductInfoForVendor/">产品信息表列表</a></li>
+    <li><a href="${ctx}/biz/product/bizProductInfoForVendorV2/">产品信息表列表</a></li>
     <li class="active"><a
-            href="${ctx}/biz/product/bizProductInfoForVendor/form?id=${bizProductInfo.id}">产品信息表<shiro:hasPermission
+            href="${ctx}/biz/product/bizProductInfoForVendorV2/form?id=${bizProductInfo.id}">产品信息表<shiro:hasPermission
             name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
             name="biz:product:bizProductInfoForVendor:edit">查看</shiro:lacksPermission></a></li>
 </ul>
 <br/>
 <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
-<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoForVendor/saveCopy" method="post"
+<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoForVendorV2/saveCopy" method="post"
            class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <input type="hidden" id="brandDefId" value="${DefaultPropEnum.PROPBRAND.getPropValue()}"/>
@@ -212,7 +212,7 @@
         </div>
     </div>
 
-    <div class="control-group">
+    <div id="variety" class="control-group">
         <label class="control-label">请选择产品分类：</label>
         <div style="margin-left: 180px">
             <form:select id="varietyInfoId" about="" onclick="selectAttr(this)" path="bizVarietyInfo.id" class="input-medium required">
@@ -413,7 +413,7 @@
     function checkUnPass(id){
         top.$.jBox.confirm("确认要拒绝通过审核吗？","系统提示",function(v,h,f){
             if(v=="ok"){
-                window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=3&id=" + id;
+                window.location.href = "${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=3&id=" + id;
             }
         },{buttonsFocus:1});
         top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -421,7 +421,7 @@
     function checkPass(id){
         top.$.jBox.confirm("确认要通过审核吗？","系统提示",function(v,h,f){
             if(v=="ok"){
-                window.location.href = "${ctx}/biz/product/bizProductInfoForVendor/checkPass?bizStatus=2&id=" + id;
+                window.location.href = "${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=2&id=" + id;
             }
         },{buttonsFocus:1});
         top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -819,7 +819,7 @@
                     // alert(variety);
                     $.ajax({
                         type:"post",
-                        url:"${ctx}/biz/product/bizVarietyAttr/findAttr",
+                        url:"${ctx}/biz/product/bizVarietyAttr/findVendAttr",
                         data:{varietyId:variety,prodId:prodId},
                         success:function (data) {
                             $("div[name='varietyAttr']").remove();

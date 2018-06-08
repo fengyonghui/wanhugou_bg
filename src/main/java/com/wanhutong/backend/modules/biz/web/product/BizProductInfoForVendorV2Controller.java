@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorV2Service;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.*;
@@ -60,7 +61,7 @@ public class BizProductInfoForVendorV2Controller extends BaseController {
     @Autowired
     private BizProductInfoForVendorV2Service bizProductInfoForVendorService;
     @Autowired
-    private BizProductInfoV2Service bizProductInfoV2Service;
+    private BizProductInfoV3Service bizProductInfoV3Service;
     @Autowired
     private BizSkuInfoForVendorService bizSkuInfoForVendorService;
     @Autowired
@@ -433,28 +434,29 @@ public class BizProductInfoForVendorV2Controller extends BaseController {
             bizProductInfo.setTextureStr(a.getValue());
         }
 
-        List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
+//        List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
 
         bizProductInfo.setId(null);
 //        bizProductInfo.setSkuAttrStrList(null);
         bizProductInfo.setProdType(Byte.parseByte(ProdTypeEnum.PROD.getType()));
-        bizProductInfoV2Service.save(bizProductInfo);
-        skuInfosList.forEach(o -> {
-            CommonImg commonSkuImg = new CommonImg();
-            commonSkuImg.setImgType(ImgEnum.SKU_TYPE.getCode());
-            commonSkuImg.setObjectId(o.getId());
-            commonSkuImg.setObjectName(AttributeInfoV2.Level.SKU.getTableName());
-            List<CommonImg> imgList = commonImgService.findList(commonSkuImg);
-            String photos = "";
-            for (CommonImg img : imgList) {
-                photos += "|" + img.getImgServer() + img.getImgPath();
-            }
-            o.setPhotos(photos);
-
-            o.setId(null);
-            o.setProductInfo(bizProductInfo);
-            bizSkuInfoV2Service.save(o, Boolean.TRUE);
-        });
+        bizProductInfoV3Service.save(bizProductInfo);
+//        skuInfosList.forEach(o -> {
+//            CommonImg commonSkuImg = new CommonImg();
+//            commonSkuImg.setImgType(ImgEnum.SKU_TYPE.getCode());
+//            commonSkuImg.setObjectId(o.getId());
+//            commonSkuImg.setObjectName(AttributeInfoV2.Level.SKU_FOR_VENDOR.getTableName());
+//            List<CommonImg> imgList = commonImgService.findList(commonSkuImg);
+//            String photos = "";
+//            for (CommonImg img : imgList) {
+//                photos += "|" + img.getImgServer() + img.getImgPath();
+//            }
+//            o.setPhotos(photos);
+//
+//            o.setId(null);
+//            o.setProductInfo(bizProductInfo);
+//            bizSkuInfoV2Service.save(o, Boolean.TRUE);
+//
+//        });
         addMessage(redirectAttributes, "审核通过");
         return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendorV2/?repage";
     }
