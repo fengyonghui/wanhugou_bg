@@ -153,8 +153,10 @@ public class BizOrderHeaderController extends BaseController {
         Map<Integer, Integer> detailIdMap = new HashMap<Integer, Integer>();
         if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
             Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-            bizOrderHeader.setCustomer(office);
-            model.addAttribute("entity2", bizOrderHeader);
+            if(office!=null){
+                bizOrderHeader.setCustomer(office);
+                model.addAttribute("entity2", bizOrderHeader);
+            }
 //			用于销售订单页面展示属于哪个采购中心哪个客户专员
             if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
                 BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
@@ -192,26 +194,32 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderAddress orderAddress = new BizOrderAddress();
             orderAddress.setOrderHeaderID(bizOrderHeaderTwo);
             List<BizOrderAddress> Addresslist = bizOrderAddressService.findList(orderAddress);
-            for (BizOrderAddress address : Addresslist) {
-//				交货地址
-                if (address.getType() == 2) {
-                    model.addAttribute("address", address);
+            if(Addresslist.size()!=0){
+                for (BizOrderAddress address : Addresslist) {
+    //				交货地址
+                    if (address.getType() == 2) {
+                        model.addAttribute("address", address);
+                    }
                 }
             }
             //代采
-            if (bizOrderHeaderTwo.getOrderType()==Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
-                //经销店
-                Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-                User user = systemService.getUser(office.getPrimaryPerson().getId());
-                model.addAttribute("custUser",user);
-                //供应商
-                User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
-                model.addAttribute("vendUser",vendUser);
-                BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
-                bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
-                List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
-                if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
-                    model.addAttribute("appointedTimeList",appointedTimeList);
+            if(bizOrderHeaderTwo!=null){
+                if (bizOrderHeaderTwo.getOrderType()==Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+                    //经销店
+                    Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+                    if(office!=null && office.getPrimaryPerson()!=null && office.getPrimaryPerson().getId()!=null){
+                        User user = systemService.getUser(office.getPrimaryPerson().getId());
+                        model.addAttribute("custUser",user);
+                    }
+                    //供应商
+                    User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
+                    model.addAttribute("vendUser",vendUser);
+                    BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
+                    bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
+                    List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
+                    if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
+                        model.addAttribute("appointedTimeList",appointedTimeList);
+                    }
                 }
             }
 
@@ -219,15 +227,24 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
             for (BizOrderDetail orderDetail : orderDetailList) {
-                BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(orderDetail.getSkuInfo().getId()));
-                orderDetail.setSkuInfo(skuInfo);
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
+                if(bizSkuInfo!=null) {
+                    BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfo);
+                    if(skuInfo!=null) {
+                        orderDetail.setSkuInfo(skuInfo);
+                    }
+                }
                 ordDetailList.add(orderDetail);
                 int keyId = orderDetail.getLineNo();
-                String orderNum = orderDetail.getPoHeader().getOrderNum();
-                orderNumMap.put(keyId, orderNum);
-                int detailId = orderDetail.getPoHeader().getId();
-                detailIdMap.put(keyId, detailId);
-            }
+                if(orderDetail.getPoHeader()!=null && orderDetail.getPoHeader().getOrderNum()!=null){
+                    String orderNum = orderDetail.getPoHeader().getOrderNum();
+                    orderNumMap.put(keyId, orderNum);
+                }
+                if(orderDetail.getPoHeader()!=null && orderDetail.getPoHeader().getId()!=null){
+                    int detailId = orderDetail.getPoHeader().getId();
+                    detailIdMap.put(keyId, detailId);
+                }
+             }
         }
         boolean flag = false;
         User user = UserUtils.getUser();
@@ -243,7 +260,7 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
             bizOrderHeaderUnline.setOrderHeader(bizOrderHeader);
             List<BizOrderHeaderUnline> unlineList = bizOrderHeaderUnlineService.findList(bizOrderHeaderUnline);
-            if (unlineList != null && !unlineList.isEmpty()) {
+            if (unlineList != null && unlineList.size()!=0 && !unlineList.isEmpty()) {
                 model.addAttribute("unlineList", unlineList);
             }
         }
