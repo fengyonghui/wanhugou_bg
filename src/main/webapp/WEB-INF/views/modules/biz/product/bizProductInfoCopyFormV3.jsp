@@ -326,7 +326,7 @@
             <input onclick="setBatchPrice()" class="btn" type="button" value="确 定"/>
         </div>
         <br/>
-        <div class="controls" style="overflow-x: auto; overflow-y: auto; height: 400px;">
+        <div class="controls" style="overflow-x: auto; overflow-y: auto; max-height: 400px;">
             <table class="table  table-bordered table-condensed" id="skuTable">
                 <thead>
                 <tr>
