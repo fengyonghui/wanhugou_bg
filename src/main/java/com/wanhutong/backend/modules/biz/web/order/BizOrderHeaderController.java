@@ -261,7 +261,7 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
             bizOrderHeaderUnline.setOrderHeader(bizOrderHeader);
             List<BizOrderHeaderUnline> unlineList = bizOrderHeaderUnlineService.findList(bizOrderHeaderUnline);
-            if (unlineList != null && unlineList.size()!=0 && !unlineList.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(unlineList)) {
                 model.addAttribute("unlineList", unlineList);
             }
         }
