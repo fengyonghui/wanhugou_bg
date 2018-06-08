@@ -385,8 +385,10 @@
 					<th>价格</th>
 					<th>申报数量</th>
 
-					<th>仓库名称</th>
-					<th>库存数量</th>
+					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
+						<th>仓库名称</th>
+						<th>库存数量</th>
+					</c:if>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
 					</c:if>
@@ -439,8 +441,11 @@
 								<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 							</td>
 
-							<td>${reqDetail.invName}</td>
-							<td>${reqDetail.skuInvQty}</td>
+							<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
+								<td>${reqDetail.invName}</td>
+								<td>${reqDetail.skuInvQty}</td>
+							</c:if>
+
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
