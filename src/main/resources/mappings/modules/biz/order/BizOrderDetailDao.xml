@@ -588,7 +588,7 @@ GROUP BY
 			LEFT JOIN sys_user us ON us.id = off.primary_person
 
 			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.order_id
-		LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.is_prew=0
+		LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1 and ph.is_prew=0
 		<where>
 			AND a.line_no = bpor.so_line_no
 			and bpor.so_type=1
