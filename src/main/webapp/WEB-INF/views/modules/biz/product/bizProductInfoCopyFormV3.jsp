@@ -62,15 +62,15 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctx}/biz/product/bizProductInfoV2?prodType=${entity.prodType}">产品信息表列表</a></li>
+    <li><a href="${ctx}/biz/product/bizProductInfoV3?prodType=${entity.prodType}">产品信息表列表</a></li>
     <li class="active"><a
-            href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}&prodType=${entity.prodType}">产品信息表<shiro:hasPermission
+            href="${ctx}/biz/product/bizProductInfoV3/form?id=${bizProductInfo.id}&prodType=${entity.prodType}">产品信息表<shiro:hasPermission
             name="product:bizProductInfo:edit">${not empty bizProductInfo.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
             name="biz:product:bizProductInfo:edit">查看</shiro:lacksPermission></a></li>
 </ul>
 <br/>
 <%--@elvariable id="bizProductInfo" type="com.wanhutong.backend.modules.biz.entity.product.BizProductInfo"--%>
-<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoV2/saveCopy" method="post"
+<form:form id="inputForm" modelAttribute="bizProductInfo" action="${ctx}/biz/product/bizProductInfoV3/saveCopy" method="post"
            class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <form:hidden path="prodType"/>
