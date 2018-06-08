@@ -551,7 +551,8 @@
 
     function submitCustomForm() {
         var itemNo = $("#itemNo").val();
-        var id = $("#id").val();
+        // var id = $("#id").val();
+        var id = '${idVal}';
         var supplyIsNull = $("#supplyIsNull").val();
         var officeName = $("#officeName").val();
         if (supplyIsNull == '0') {
@@ -808,8 +809,9 @@
                 // alert(this.holder.text());
                 // alert(this.holder.data("value"));
                 var variety = this.holder.data("value");
-                var prodId = $("#id").val();
+                // var prodId = $("#id").val();
                 // var variety = $(item).val();
+                var prodId = '${idVal}';
                 if (variety !='') {
                     // if (prodId == null) {
                     //     $("div[name='varietyAttr']").remove();

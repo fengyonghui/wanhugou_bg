@@ -458,6 +458,10 @@ public class BizProductInfoV3Controller extends BaseController {
                 prodCategoryIdList.add(String.valueOf(b.getId()));
             }
         }
+        //获取产品信息表Entity的id
+        Integer idVal = bizProductInfo.getId();
+        model.addAttribute("idVal", idVal);
+
         bizProductInfo.setId(null);
         bizProductInfo.setProdCode(StringUtils.EMPTY);
         bizProductInfo.setItemNo(StringUtils.EMPTY);

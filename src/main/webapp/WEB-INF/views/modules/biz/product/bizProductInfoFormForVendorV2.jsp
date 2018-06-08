@@ -413,6 +413,11 @@
     </div>
 </form:form>
 
+<from:form id="checkPassForm" modelAttribute="bizProductInfo" action="" method="post">
+    <input id="checkPassId" type="hidden" name="id" value=""/>
+    <input id="checkPassList" name="skuAttrStrList" type="hidden" value="" />
+</from:form>
+
 <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
 <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
 <script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
@@ -437,25 +442,25 @@
         var skuAttrStrList = [];
         var colorInput = $("input[customInput='colorInput']");
         var sizeInput = $("input[customInput='sizeInput']");
-        var skuTypeSelect = $("input[customInput='skuTypeSelect']");
+        var skuTypeSelect = $("select[customInput='skuTypeSelect']").find("option:selected");
         var priceInput = $("input[customInput='priceInput']");
-        var imgInput = $("input[customInput='imgInput']");
+        // var imgInput = $("img[customInput='imgInputLab']");
         $("input[customInput='sizeInput']").each(function (index) {
-            alert($(this).val());
-            // alert(colorInput[index].value);
             var price = priceInput != undefined ?  priceInput[index].value : undefined;
-            alert(price);
-            var img = $String.isNullOrBlank(priceInput) ?  imgInput[index].value : undefined;
-            var skuType = $String.isNullOrBlank(priceInput) ?  skuTypeSelect[index].value : undefined;
-            var skuAttrStr = sizeInput[index].value+"|"+colorInput[index].value+"|"+price+"|"+img+"|"+skuType+"|"+undefined;
+            // var img = imgInput != undefined ?  imgInput[index].src : undefined;
+            var skuType = skuTypeSelect != undefined ?  skuTypeSelect[index].value : undefined;
+            var skuAttrStr = sizeInput[index].value+"|"+colorInput[index].value+"|"+price+"|"+skuType+"|"+undefined;
             skuAttrStrList.push(skuAttrStr);
-            alert(index);
         });
 
 
         top.$.jBox.confirm("确认要通过审核吗？","系统提示",function(v,h,f){
             if(v=="ok"){
-                window.location.href = "${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=2&id=" + id+"&skuAttrStrList="+skuAttrStrList;
+                $("#checkPassId").val(id);
+                $("#checkPassList").val(skuAttrStrList);
+                $("#checkPassForm").attr("action","${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=2");
+                $("#checkPassForm").submit();
+                <%--window.location.href = "${ctx}/biz/product/bizProductInfoForVendorV2/checkPass?bizStatus=2&id=" + id+"&skuAttrStrList="+skuAttrStrList;--%>
             }
         },{buttonsFocus:1});
         top.$('.jbox-body .jbox-icon').css('top','55px');

@@ -39,10 +39,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -382,9 +379,9 @@ public class BizProductInfoForVendorV2Controller extends BaseController {
 
 
     @RequiresPermissions("biz:product:bizProductInfoForVendor:check")
-    @RequestMapping(value = "checkPass")
+    @RequestMapping(value = "checkPass", method = RequestMethod.POST)
     public String checkPass(BizProductInfo bizProductInfo, Integer id, RedirectAttributes redirectAttributes, int bizStatus) {
-            bizProductInfoForVendorService.checkPass(id, bizStatus);
+            bizProductInfoForVendorService.checkPass(bizProductInfo.getId(), bizStatus);
         if (BizProductInfo.BizStatus.AUDIT_PASS.getStatus() != bizStatus) {
             addMessage(redirectAttributes, "审核未通过");
             return "redirect:" + Global.getAdminPath() + "/biz/product/bizProductInfoForVendorV2/?repage";
@@ -615,6 +612,10 @@ public class BizProductInfoForVendorV2Controller extends BaseController {
                 prodCategoryIdList.add(String.valueOf(b.getId()));
             }
         }
+        //获取产品信息表Entity的id
+        Integer idVal = bizProductInfo.getId();
+
+        model.addAttribute("idVal", idVal);
         bizProductInfo.setId(null);
         bizProductInfo.setProdCode(StringUtils.EMPTY);
         bizProductInfo.setItemNo(StringUtils.EMPTY);
