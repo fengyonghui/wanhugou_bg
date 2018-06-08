@@ -140,6 +140,7 @@ public class BizPayMoneyController extends BaseController {
         if(bizPayRecord.getBizStatus()==1 && reqId!=0){
             BizRequestHeader bizRequestHeader=bizRequestHeaderService.get(reqId);
             bizRequestHeader.setRecvTotal(bizRequestHeader.getRecvTotal()+amount);
+            Integer bizStatus = bizRequestHeader.getBizStatus();
             if((bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.UNREVIEWED.getState()) || bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.INITIAL_PAY.getState())) && bizRequestHeader.getTotalDetail().equals(bizRequestHeader.getRecvTotal())){
                 bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ALL_PAY.getState());
                 payLogger.info("更新备货清单状态-------"+ReqHeaderStatusEnum.ALL_PAY.getState());
@@ -151,7 +152,9 @@ public class BizPayMoneyController extends BaseController {
                 payLogger.info("更新状态出问题");
             }
             bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
-            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            }
         }
 
         String pathFile = Global.getUserfilesBaseDir()+"/upload/" +photoName ;

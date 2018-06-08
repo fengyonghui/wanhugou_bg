@@ -357,8 +357,11 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeader.setOrderNum(poNo);
         bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
         bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
+        Integer id = bizPoHeader.getId();
         bizPoHeaderService.save(bizPoHeader);
-        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        if (id == null) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
         if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
             poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
             bizPoHeader.setOrderNum(poNo);

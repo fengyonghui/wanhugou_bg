@@ -260,7 +260,7 @@
 								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}">修改</a>
 								<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
 								<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state}">
-									<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'取消',${requestHeader.id})">取消</a>
+									<a href="#" onclick="checkInfo('<%=ReqHeaderStatusEnum.CLOSE.getState() %>','取消',${requestHeader.id})">取消</a>
 								</c:if>
 
 							</c:if>
@@ -273,7 +273,7 @@
 
 							<a href="${ctx}/biz/request/bizRequestHeader/delete?id=${requestHeader.id}" onclick="return confirmx('确认要删除该备货清单吗？', this.href)">删除</a>
 
-							<a href="#" onclick="checkInfo(${ReqHeaderStatusEnum.CLOSE.state},'取消',${requestHeader.id})">取消</a>
+							<a href="#" onclick="checkInfo('<%=ReqHeaderStatusEnum.CLOSE.getState() %>','取消',${requestHeader.id})">取消</a>
 
 						</c:when>
 

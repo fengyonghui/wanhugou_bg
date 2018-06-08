@@ -220,8 +220,11 @@ public class BizRequestHeaderController extends BaseController {
 		if (!beanValidator(model, bizRequestHeader)){
 			return form(bizRequestHeader, model);
 		}
+		Integer id = bizRequestHeader.getId();
 		bizRequestHeaderService.save(bizRequestHeader);
-		bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+		if (id == null){
+			bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+		}
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
 	}
@@ -229,6 +232,7 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "saveInfo")
 	public boolean saveInfo(BizRequestHeader bizRequestHeader, String checkStatus) {
+		Integer bizStatus = bizRequestHeader.getBizStatus();
 		bizRequestHeader.setBizStatus(Integer.parseInt(checkStatus));
 		boolean boo=false;
 		try {
@@ -252,7 +256,9 @@ public class BizRequestHeaderController extends BaseController {
 				}
 			}
 			bizRequestHeaderService.save(bizRequestHeader);
-			bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
 			boo=true;
 		}catch (Exception e){
 			boo=false;
