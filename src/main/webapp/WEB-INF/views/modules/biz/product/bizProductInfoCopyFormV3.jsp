@@ -790,8 +790,8 @@
         });
         $("#varietyInfoId").searchableSelect({
             afterSelectItem: function() {
-                alert(this.holder.text());
-                alert(this.holder.data("value"));
+                // alert(this.holder.text());
+                // alert(this.holder.data("value"));
                 var variety = this.holder.data("value");
                 var prodId = $("#id").val();
                 // var variety = $(item).val();
@@ -799,7 +799,7 @@
                     // if (prodId == null) {
                     //     $("div[name='varietyAttr']").remove();
                     // }
-                    alert(variety);
+                    // alert(variety);
                     $.ajax({
                         type:"post",
                         url:"${ctx}/biz/product/bizVarietyAttr/findAttr",
@@ -811,31 +811,32 @@
                             }
                             var html = "";
                             $.each(data,function (index, varietyAttr) {
-                                alert(index+"--"+varietyAttr);
-                                html += "<div name='varietyAttr' class='control-group'>" ;
-                                html +=    "        <label class='control-label'>请选择"+varietyAttr.attributeInfo.name+"：</label>";
-                                html +=    "        <div style='margin-left: 180px'>";
-                                html +=    "            <select about='choose' name='dicts' class='input-medium required'>";
-                                html +=    "                    <option value=''>请选择</option>";
-                                $.each(varietyAttr.dictList,function (index,dict) {
-                                    if (varietyAttr.attributeValueV2List == null) {
-                                        html +=    "<option value='"+varietyAttr.attributeInfo.id+"-"+dict.label+"'>"+dict.label+"</option>";
-                                    } else {
-                                        html +=    "<option value='"+varietyAttr.attributeInfo.id+"-"+dict.label+"'";
-                                        $.each(varietyAttr.attributeValueV2List,function (index, attributeValue) {
-                                            if (attributeValue.value==dict.label) {
-                                                html +=     "selected='selected'";
-                                                return false;
-                                            }
-                                        });
-                                        html +=        ">"+dict.label+"</option>";
-                                    }
-                                });
-                                html +=    "            </select>";
-                                html +=    "            <span class='help-inline'><font color='red'>*</font></span>";
-                                html +=    "        </div>";
-                                html +=    "    </div>";
-
+                                // alert(index+"--"+varietyAttr);
+                                if (varietyAttr.dictList != undefined) {
+                                    html += "<div name='varietyAttr' class='control-group'>";
+                                    html += "        <label class='control-label'>请选择" + varietyAttr.attributeInfo.name + "：</label>";
+                                    html += "        <div style='margin-left: 180px'>";
+                                    html += "            <select about='choose' name='dicts' class='input-medium required'>";
+                                    html += "                    <option value=''>请选择</option>";
+                                    $.each(varietyAttr.dictList, function (index, dict) {
+                                        if (varietyAttr.attributeValueV2List == null) {
+                                            html += "<option value='" + varietyAttr.attributeInfo.id + "-" + dict.label + "'>" + dict.label + "</option>";
+                                        } else {
+                                            html += "<option value='" + varietyAttr.attributeInfo.id + "-" + dict.label + "'";
+                                            $.each(varietyAttr.attributeValueV2List, function (index, attributeValue) {
+                                                if (attributeValue.value == dict.label) {
+                                                    html += "selected='selected'";
+                                                    return false;
+                                                }
+                                            });
+                                            html += ">" + dict.label + "</option>";
+                                        }
+                                    });
+                                    html += "            </select>";
+                                    html += "            <span class='help-inline'><font color='red'>*</font></span>";
+                                    html += "        </div>";
+                                    html += "    </div>";
+                                }
                             });
                             $("#variety").after(html);
 

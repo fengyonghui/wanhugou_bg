@@ -10,7 +10,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoForVendorDao;
+import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoForVendorV2Dao;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -49,13 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -66,14 +60,14 @@ import java.util.Set;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizProductInfoForVendorService extends CrudService<BizProductInfoForVendorDao, BizProductInfo> {
+public class BizProductInfoForVendorV2Service extends CrudService<BizProductInfoForVendorV2Dao, BizProductInfo> {
 
     @Resource
     private PropertyInfoService propertyInfoService;
     @Resource
     private BizProdPropertyInfoService bizProdPropertyInfoService;
     @Autowired
-    private BizProductInfoForVendorDao bizProductInfoForVendorDao;
+    private BizProductInfoForVendorV2Dao bizProductInfoForVendorDao;
     @Resource
     private BizProdPropValueService bizProdPropValueService;
     @Resource
@@ -235,6 +229,15 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 sizeAttrVal.setAttributeInfo(sizeAttributeInfo);
                 attributeValueV2Service.save(sizeAttrVal);
 
+//                AttributeValueV2 sizeAttrVal2 = new AttributeValueV2();
+//                sizeAttrVal2.setValue(size);
+//                sizeAttrVal2.setObjectName(BizProductInfoV3Service.SKU_TABLE);
+//                sizeAttrVal2.setObjectId(bizSkuInfo.getId());
+//                AttributeInfoV2 sizeAttributeInfo2 = new AttributeInfoV2();
+//                sizeAttributeInfo2.setId(SIZE_ATTR_ID);
+//                sizeAttrVal2.setAttributeInfo(sizeAttributeInfo2);
+//                attributeValueV2Service.save(sizeAttrVal2);
+
                 AttributeValueV2 colorAttrVal = new AttributeValueV2();
                 colorAttrVal.setValue(color);
                 colorAttrVal.setObjectName(SKU_TABLE);
@@ -243,6 +246,15 @@ public class BizProductInfoForVendorService extends CrudService<BizProductInfoFo
                 colorAttributeInfo.setId(COLOR_ATTR_ID);
                 colorAttrVal.setAttributeInfo(colorAttributeInfo);
                 attributeValueV2Service.save(colorAttrVal);
+
+//                AttributeValueV2 colorAttrVal2 = new AttributeValueV2();
+//                colorAttrVal2.setValue(color);
+//                colorAttrVal2.setObjectName(BizProductInfoV3Service.SKU_TABLE);
+//                colorAttrVal2.setObjectId(bizSkuInfo.getId());
+//                AttributeInfoV2 colorAttributeInfo2 = new AttributeInfoV2();
+//                colorAttributeInfo2.setId(COLOR_ATTR_ID);
+//                colorAttrVal2.setAttributeInfo(colorAttributeInfo2);
+//                attributeValueV2Service.save(colorAttrVal2);
 
                 CommonImg commonImg = new CommonImg();
                 commonImg.setImgType(ImgEnum.SKU_TYPE.getCode());

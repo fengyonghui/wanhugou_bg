@@ -201,10 +201,11 @@
 
                           //  var factorArr=$(factorStr).split(",");
                             var f="";
-                            $.each(factorStr,function (i){
-                               f+=factorStr[i]+"<br/>";
-							});
-
+                            if (factorStr!=undefined) {
+                                $.each(factorStr,function (i){
+                                    f+=factorStr[i]+"<br/>";
+                                });
+							}
 
                             $.each(skuInfoList,function (index,skuInfo) {
 
@@ -265,21 +266,37 @@
                         var htmlInfo = "";
                         var pri = 10;
                         $.each(data,function(index,item) {
-                            $.each(item.bvFactorList,function(index,bvFactor){
-								htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
-									"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
-									"<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
-									"<td><input name=\"salePrices\" value=\""+bvFactor.salePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
-									"<td><input name=\"minQtys\" value=\""+bvFactor.minQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
-									"<td><input name=\"maxQtys\" value=\""+bvFactor.maxQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
-									"<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
-									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
+                            if (item.bvFactorList != undefined) {
+								$.each(item.bvFactorList,function(index,bvFactor){
+									htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
+										"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
+										"<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
+										"<td><input name=\"salePrices\" value=\""+bvFactor.salePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+										"<td><input name=\"minQtys\" value=\""+bvFactor.minQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
+										"<td><input name=\"maxQtys\" value=\""+bvFactor.maxQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
+										"<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+										"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
-									"<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
-									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-									"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" onchange='changeNum(this.value,"+item.id+")' htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
-									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
-                            });
+										"<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+										"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
+										"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" onchange='changeNum(this.value,"+item.id+")' htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
+										"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+								});
+                            } else {
+                                htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
+                                    "<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
+                                    "<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
+                                    "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+                                    "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
+                                    "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
+                                    "<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+                                    "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
+
+                                    "<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+                                    "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
+                                    "<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" onchange='changeNum(this.value,"+item.id+")' htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
+                                    "<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+							}
                             pri += 10;
                         });
                         $("#tbody").append(htmlInfo);
