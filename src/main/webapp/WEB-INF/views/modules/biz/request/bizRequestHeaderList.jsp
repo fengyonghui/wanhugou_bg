@@ -223,16 +223,7 @@
 					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
 				<td>${requestHeader.recvTotal}</td>
 				<td>
-					<a style="display: none">
-						<fmt:formatNumber type="number" var="totalMoneysss" value="${requestHeader.totalMoney}" pattern="0.0"/>
-						<fmt:formatNumber type="number" var="recvTotalsss" value="${requestHeader.recvTotal}" pattern="0.0"/>
-					</a>
-					<c:if test="${totalMoneysss==recvTotalsss}">
-						100%
-					</c:if>
-					<c:if test="${totalMoneysss!=recvTotalsss}">
-						<fmt:formatNumber type="percent" value="${requestHeader.recvTotal/(requestHeader.totalMoney-requestHeader.recvTotal)}" maxFractionDigits="2" />
-					</c:if>
+					<fmt:formatNumber type="number" value="${requestHeader.recvTotal*100/requestHeader.totalMoney}" pattern="0.00" />%
 				</td>
 				<td>${requestHeader.recvQtys}</td>
 				<td>
