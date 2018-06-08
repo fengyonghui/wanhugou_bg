@@ -25,9 +25,9 @@
                         data:"id="+a+"&sign="+b+"&productInfo.prodType="+c,
                         success:function(data){
 							if(data=="opSheSku"){
-								alert("商品上下架还有该商品sku，不能删除 ");
+								alert("该商品sku在上下架存在，不能删除！ ");
 							}else if(data=="invSku"){
-								alert("库存盘点还有该商品sku，不能删除 ");
+								alert("该商品sku在库存盘点里存在，不能删除！ ");
 							}else{
 								$("#messDele").css("display","block");
 								<%--使用setTimeout（）方法设定定时600毫秒--%>

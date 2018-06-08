@@ -24,6 +24,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -33,10 +34,7 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -108,6 +106,8 @@ public class BizPoHeaderController extends BaseController {
     private DictService dictService;
     @Autowired
     private CommonProcessService commonProcessService;
+    @Autowired
+    private BizOrderStatusService bizOrderStatusService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
 
@@ -358,6 +358,7 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
         bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
         bizPoHeaderService.save(bizPoHeader);
+        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
         if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
             poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
             bizPoHeader.setOrderNum(poNo);
@@ -561,6 +562,7 @@ public class BizPoHeaderController extends BaseController {
     @ResponseBody
     public String cancel(int id, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         bizPoHeaderService.updateBizStatus(id, BizPoHeader.BizStatus.CANCEL);
+        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), id);
         return "取消采购订单成功";
     }
 }

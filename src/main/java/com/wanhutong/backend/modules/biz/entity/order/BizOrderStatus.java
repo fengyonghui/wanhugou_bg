@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.order;
 
+import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,11 @@ public class BizOrderStatus extends DataEntity<BizOrderStatus> {
 	private BizOrderHeader orderHeader;		// biz_order_detail
 	private Integer bizStatus;		// biz_order_header.biz_status
 	private Integer orderType;		//订单类型：0订单，1备货清单
+
+	/**
+	 * 显示经销店
+	 * */
+	private Office office;
 	
 	public BizOrderStatus() {
 		super();
@@ -77,5 +83,13 @@ public class BizOrderStatus extends DataEntity<BizOrderStatus> {
 		public String getDesc() {
 			return desc;
 		}
+	}
+
+	public Office getOffice() {
+		return office;
+	}
+
+	public void setOffice(Office office) {
+		this.office = office;
 	}
 }
