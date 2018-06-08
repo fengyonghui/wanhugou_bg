@@ -55,15 +55,14 @@
 					<if test="dbName == 'mysql'">concat('%',#{skuInfo.name},'%')</if>
 			</if>
 		</where>
-		ORDER BY a.create_time
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				 ,${page.orderBy}
+				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				ORDER BY a.create_time DESC
 			</otherwise>
 		</choose>
-		DESC
 	</select>
 	
 	<select id="findAllList" resultType="BizInventoryViewLog">

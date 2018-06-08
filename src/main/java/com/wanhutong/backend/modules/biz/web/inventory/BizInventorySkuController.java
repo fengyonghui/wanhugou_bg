@@ -37,6 +37,7 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,9 +201,11 @@ public class BizInventorySkuController extends BaseController {
             for (BizSkuInfo sku : list) {
                 List<BizSkuPropValue> skuPropValueList = sku.getSkuPropValueList();
                 StringBuffer skuPropName = new StringBuffer();
-                for (BizSkuPropValue skuPropValue : skuPropValueList) {
-                    skuPropName.append("-");
-                    skuPropName.append(skuPropValue.getPropValue());
+                if (CollectionUtils.isNotEmpty(skuPropValueList)) {
+                    for (BizSkuPropValue skuPropValue : skuPropValueList) {
+                        skuPropName.append("-");
+                        skuPropName.append(skuPropValue.getPropValue());
+                    }
                 }
                 String propNames = "";
                 if (skuPropName.toString().length() > 1) {
