@@ -58,6 +58,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				a.confname , a.version desc
 			</otherwise>
 		</choose>
 	</select>

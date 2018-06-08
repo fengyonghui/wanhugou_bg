@@ -520,7 +520,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         try {
             StringBuilder phone = new StringBuilder();
-            for (String s : roleEnNameEnumList) {
+            for (String s : nextProcess.getRoleEnNameEnum()) {
                 List<User> userList = systemService.findUser(new User(systemService.getRoleByEnname(s)));
                 if (CollectionUtils.isNotEmpty(userList)) {
                     for (User u : userList) {
@@ -644,6 +644,45 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         if (nextProcess.getCode() == paymentOrderProcessConfig.getEndProcessId()) {
             this.updatePaymentOrderId(bizPoPaymentOrder.getPoHeaderId(), null);
+        }
+
+        try {
+            List<PaymentOrderProcessConfig.MoneyRole> nextMoneyRoleList = nextProcess.getMoneyRole();
+            PaymentOrderProcessConfig.MoneyRole nextMoneyRole = null;
+            for (PaymentOrderProcessConfig.MoneyRole role : nextMoneyRoleList) {
+                if (role.getEndMoney().compareTo(money) > 0 && role.getStartMoney().compareTo(money) <= 0) {
+                    nextMoneyRole = role;
+                }
+            }
+
+            if (nextMoneyRole != null) {
+                StringBuilder phone = new StringBuilder();
+                for (String s : nextMoneyRole.getRoleEnNameEnum()) {
+                    List<User> userList = systemService.findUser(new User(systemService.getRoleByEnname(s)));
+                    if (CollectionUtils.isNotEmpty(userList)) {
+                        for (User u : userList) {
+                            phone.append(u.getMobile()).append(",");
+                        }
+                    }
+                }
+
+                if (StringUtils.isNotBlank(phone.toString())) {
+                    AliyunSmsClient.getInstance().sendSMS(
+                            SmsTemplateCode.PENDING_AUDIT.getCode(),
+                            phone.toString(),
+                            ImmutableMap.of("order","采购单支付"));
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("[exception]PO支付审批短信提醒发送异常[poHeaderId:{}]", id, e);
+            EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
+            AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
+                    String.format(email.getBody(),
+                            "BizPoHeaderService:541",
+                            e.toString(),
+                            "PO支付审批短信提醒发送异常",
+                            LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+                    ));
         }
 
         return "操作成功!";
