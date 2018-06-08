@@ -767,7 +767,7 @@
             searchable: true
         });
 
-        $('select[about="choose"]').searchableSelect();
+
 
         var testSelect2 = $("#test-select-2");
         var treeMultiselect = testSelect2.parent().find(".tree-multiselect")[0];
@@ -848,6 +848,7 @@
             }
         });
     });
+    $('select[about="choose"]').searchableSelect();
 
 </script>
 

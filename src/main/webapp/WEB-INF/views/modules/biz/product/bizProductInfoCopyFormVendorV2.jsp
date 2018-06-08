@@ -559,7 +559,7 @@
             officeName = $("#officeName").children().html();
         }
         $.ajax({
-            url: '${ctx}/biz/product/bizProductInfoV2/getItemNoExist',
+            url: '${ctx}/biz/product/bizProductInfoV3/getItemNoExist',
             contentType: 'application/json',
             data: {"itemNo": itemNo, "id": id, "officeName" : officeName},
             type: 'get',
@@ -671,7 +671,7 @@
     var b = 0;
     function ajaxFileUploadPic(id, multiple) {
         $.ajaxFileUpload({
-            url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
+            url : '${ctx}/biz/product/bizProductInfoV3/saveColorImg', //用于文件上传的服务器端请求地址
             secureuri : false, //一般设置为false
             fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
             type : 'POST',
@@ -782,7 +782,7 @@
             searchable: true
         });
 
-        $('select[about="choose"]').searchableSelect();
+
 
         var testSelect2 = $("#test-select-2");
         var treeMultiselect = testSelect2.parent().find(".tree-multiselect")[0];
@@ -863,6 +863,7 @@
             }
         });
     });
+    $('select[about="choose"]').searchableSelect();
 
 </script>
 
