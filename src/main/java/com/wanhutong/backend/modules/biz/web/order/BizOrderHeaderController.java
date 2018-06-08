@@ -37,6 +37,7 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,9 +194,9 @@ public class BizOrderHeaderController extends BaseController {
             }
             BizOrderAddress orderAddress = new BizOrderAddress();
             orderAddress.setOrderHeaderID(bizOrderHeaderTwo);
-            List<BizOrderAddress> Addresslist = bizOrderAddressService.findList(orderAddress);
-            if(Addresslist.size()!=0){
-                for (BizOrderAddress address : Addresslist) {
+            List<BizOrderAddress> addresslist = bizOrderAddressService.findList(orderAddress);
+            if(CollectionUtils.isNotEmpty(addresslist)){
+                for (BizOrderAddress address : addresslist) {
     //				交货地址
                     if (address.getType() == 2) {
                         model.addAttribute("address", address);
@@ -203,22 +204,22 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
             //代采
-            if(bizOrderHeaderTwo!=null){
-                if (bizOrderHeaderTwo.getOrderType()==Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+            if (bizOrderHeaderTwo != null) {
+                if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
                     //经销店
                     Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-                    if(office!=null && office.getPrimaryPerson()!=null && office.getPrimaryPerson().getId()!=null){
+                    if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
                         User user = systemService.getUser(office.getPrimaryPerson().getId());
-                        model.addAttribute("custUser",user);
+                        model.addAttribute("custUser", user);
                     }
                     //供应商
                     User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
-                    model.addAttribute("vendUser",vendUser);
+                    model.addAttribute("vendUser", vendUser);
                     BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
                     bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
                     List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
                     if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
-                        model.addAttribute("appointedTimeList",appointedTimeList);
+                        model.addAttribute("appointedTimeList", appointedTimeList);
                     }
                 }
             }
