@@ -20,9 +20,14 @@ public enum RoleEnNameEnum {
      */
     GENERAL_MANAGER("General manager", "总经理"),
     /**
-     * 财务
+     * 财务经理
      */
-    FINANCE("finance", "财务"),
+    FINANCE("finance", "财务经理"),
+
+    /**
+     * 财务总监
+     */
+    FINANCE_DIRECTOR("finance_director", "财务总监"),
     /**
      * 出纳
      */

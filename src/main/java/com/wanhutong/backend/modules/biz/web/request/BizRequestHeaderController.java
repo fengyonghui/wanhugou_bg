@@ -138,18 +138,20 @@ public class BizRequestHeaderController extends BaseController {
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
 		}
 
-		BizOrderStatus bizOrderStatus = new BizOrderStatus();
-		BizOrderHeader bizOrderHeader = new BizOrderHeader();
-		bizOrderHeader.setId(bizRequestHeader.getId());
-		bizOrderStatus.setOrderHeader(bizOrderHeader);
-		bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
-		List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
-		statusList.sort((o1,o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
+		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
+			BizOrderStatus bizOrderStatus = new BizOrderStatus();
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizRequestHeader.getId());
+			bizOrderStatus.setOrderHeader(bizOrderHeader);
+			bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+			List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+			statusList.sort((o1,o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
 
-		Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
 
-		model.addAttribute("statusList", statusList);
-		model.addAttribute("statusMap", statusMap);
+			model.addAttribute("statusList", statusList);
+			model.addAttribute("statusMap", statusMap);
+		}
 
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);
