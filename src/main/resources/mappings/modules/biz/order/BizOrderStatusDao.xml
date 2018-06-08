@@ -155,7 +155,7 @@
 			br.id,
 			br.biz_status,
 			br.status,
-			br.create_id,
+			br.update_id,
 			br.create_time,
 			br.u_version,
 			br.update_id,
