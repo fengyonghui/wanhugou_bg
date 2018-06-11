@@ -256,6 +256,7 @@ public class BizProductInfoV3Controller extends BaseController {
         }
 
         List<BizSkuInfo> skuInfosList = bizProductInfo.getSkuInfosList();
+        skuInfosList.sort((o1, o2) -> o1.getItemNo().compareTo(o2.getItemNo()));
         Map<Integer, List<String>> skuAttrMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(skuInfosList)) {
             for (BizSkuInfo b : skuInfosList) {

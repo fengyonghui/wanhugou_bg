@@ -8,8 +8,9 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoDao;
+import com.wanhutong.backend.modules.biz.dao.product.BizProductInfoV3Dao;
 import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV2Dao;
+import com.wanhutong.backend.modules.biz.dao.sku.BizSkuInfoV3Dao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
@@ -54,9 +55,9 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	@Resource
 	private CommonImgService commonImgService;
 	@Autowired
-	private BizSkuInfoV2Dao bizSkuInfoDao;
+	private BizSkuInfoV3Dao bizSkuInfoDao;
 	@Autowired
-	private BizProductInfoDao bizProductInfoDao;
+	private BizProductInfoV3Dao bizProductInfoDao;
 	@Autowired
 	private OfficeService officeService;
 	@Autowired
@@ -181,12 +182,24 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 		save(bizSkuInfo, Boolean.FALSE);
 	}
 
-	@Transactional(readOnly = false)
+
+	public boolean hasEntityByPartNo(String partNo) {
+		BizSkuInfo bizSkuInfo = bizSkuInfoDao.getEntityByPartNo(partNo);
+		return bizSkuInfo != null;
+	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void save(BizSkuInfo bizSkuInfo, boolean copy) {
 
 		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
 		String prodCode = bizProductInfo.getProdCode();
-		String partNo = prodCode + bizSkuInfo.getSort();
+		int sort = Integer.valueOf(bizSkuInfo.getSort());
+		String partNo = prodCode + sort;
+
+		while (this.hasEntityByPartNo(partNo)) {
+			sort ++;
+			partNo = prodCode + sort;
+		}
 
 		if (StringUtils.isBlank(bizSkuInfo.getPartNo())) {
 			bizSkuInfo.setPartNo(partNo);

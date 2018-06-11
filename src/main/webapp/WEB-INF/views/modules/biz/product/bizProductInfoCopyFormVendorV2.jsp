@@ -464,6 +464,7 @@
             "$typeSelector" +
             "                   <td><input onclick='deleteImgEle(this)' class=\"btn\" type=\"button\" value=\"删除图片\"/>" +
             "                   <input onclick='deleteParentParentEle(this)' class=\"btn\" type=\"button\" value=\"删除\"/></td>" +
+            // "                   <td><input onclick='setUp(this)' class=\"btn\" type=\"button\" value=\"设置\"/></td>" +
             "               </tr>";
 
         var customTypeAttr = $("[customType]");

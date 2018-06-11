@@ -411,7 +411,7 @@
                 </label>
 
                 <div class="controls">
-                    <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" id="payImg"/>
+                    <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
                 </div>
                 <div id="payImgDiv">
                     <img src="${bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
@@ -817,7 +817,7 @@
         var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
         var img = "";
         for (var i = 0; i < mainImg.length; i ++) {
-            img += $(mainImg[i]).attr("src");
+            img += $(mainImg[i]).attr("src") + ",";
         }
 
         if ($String.isNullOrBlank(payTotal)) {

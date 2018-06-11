@@ -29,4 +29,11 @@ public interface BizSkuInfoV3Dao extends CrudDao<BizSkuInfo> {
     List<BizSkuInfo> findPurseSkuList(BizSkuInfo bizSkuInfo);
 
     void recovery(BizSkuInfo bizSkuInfo);
+
+    /**
+     * 根据PART NO 查询数据
+     * @param partNo
+     * @return
+     */
+    BizSkuInfo getEntityByPartNo(String partNo);
 }

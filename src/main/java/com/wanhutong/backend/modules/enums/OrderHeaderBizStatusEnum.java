@@ -75,4 +75,13 @@ public enum OrderHeaderBizStatusEnum {
     public static final List<OrderHeaderBizStatusEnum> INVALID_STATUS = Lists.newArrayList(
             UNAPPROVE,CANCLE,UNPAY,DELETE
     );
+
+    /**
+     * 订单导出集合
+     *  尾款信息 状态判断是否有尾款
+     * */
+    public static final List<OrderHeaderBizStatusEnum> EXPORT_TAIL = Lists.newArrayList(
+            ALL_PAY, CANCLE, DELETE, UNAPPROVE
+    );
+
 }

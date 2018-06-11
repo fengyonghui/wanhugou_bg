@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.ProdTypeEnum" %>
 <html>
 <head>
 	<title>产品信息表管理</title>
@@ -61,9 +62,11 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>产品品类：</label>
-				<form:input id="cp" path="bizVarietyInfo.name" htmlEscape="false" class="input-small"/>
-			</li>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+				<li><label>产品品类：</label>
+					<form:input id="cp" path="bizVarietyInfo.name" htmlEscape="false" class="input-small"/>
+				</li>
+			</c:if>
 			<li><label>产品名称：</label>
 				<form:input id="cpName" path="name" htmlEscape="false" class="input-medium"/>
 			</li>
@@ -103,12 +106,16 @@
 			<tr>
 				<th>序号</th>
 				<th>产品图片</th>
-				<th>产品品类</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>产品品类</th>
+				</c:if>
 				<th>产品名称</th>
 				<th>产品代码</th>
 				<th>产品货号</th>
 				<th>品牌名称</th>
-				<th>产品描述</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>产品描述</th>
+				</c:if>
 				<th>供应商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
@@ -126,10 +133,11 @@
 			</c:if>
 				<td>${state.index+1}</td>
 				<td><img src="${bizProductInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
 				<td>
 					${bizProductInfo.bizVarietyInfo.name}
 				</td>
-
+			</c:if>
 				<td>
 
 					<a href="${ctx}/biz/product/bizProductInfoV3/form?id=${bizProductInfo.id}">
@@ -144,9 +152,11 @@
 				<td>
 					${bizProductInfo.brandName}
 				</td>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
 				<td>
 					${bizProductInfo.description}
 				</td>
+			</c:if>
 				<td>
 					${bizProductInfo.office.name}
 				</td>

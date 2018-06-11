@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.po;
 
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import org.hibernate.validator.constraints.Length;
 
@@ -10,6 +11,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 采购付款单Entity
@@ -25,6 +27,8 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
     private BigDecimal payTotal;        // 付款金额
     private Integer bizStatus;        // 当前状态
     private String img;        // 图片
+
+    private List<CommonImg> imgList;
 
     private Date deadline;
 
@@ -114,6 +118,14 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setPayTime(Date payTime) {
         this.payTime = payTime;
+    }
+
+    public List<CommonImg> getImgList() {
+        return imgList;
+    }
+
+    public void setImgList(List<CommonImg> imgList) {
+        this.imgList = imgList;
     }
 
     public enum BizStatus {

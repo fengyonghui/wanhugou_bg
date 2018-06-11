@@ -180,56 +180,57 @@
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                          $("#prodInfo2").empty();
+                         if (data == '') {
+                             return false;
+                         } else {
+                             $.each(data.skuMap, function (keys, skuInfoList) {
 
+                                 var prodKeys = keys.split(",");
+                                 var prodId = prodKeys[0];
+                                 var prodUrl = prodKeys[2];
+                                 var brandName = prodKeys[6];
+                                 var varietyId = prodKeys[7];
+                                 var varietyName = prodKeys[8];
 
-                        $.each(data.skuMap,function (keys,skuInfoList) {
+                                 var flag = true;
 
-                            var prodKeys= keys.split(",");
-                            var prodId= prodKeys[0];
-                            var prodUrl= prodKeys[2];
-                            var brandName=prodKeys[6];
-                            var varietyId = prodKeys[7];
-                            var varietyName= prodKeys[8];
+                                 var tr_tds = "";
+                                 var t = 0;
 
-                            var flag=true;
+                                 var factorMap = data.serviceFactor;
+                                 var factorStr = factorMap[varietyId];
 
-                            var tr_tds="";
-                            var t=0;
+                                 //  var factorArr=$(factorStr).split(",");
+                                 var f = "";
+                                 if (factorStr != undefined) {
+                                     $.each(factorStr, function (i) {
+                                         f += factorStr[i] + "<br/>";
+                                     });
+                                 }
 
-                            var factorMap=data.serviceFactor;
-                            var factorStr=factorMap[varietyId];
+                                 $.each(skuInfoList, function (index, skuInfo) {
 
-                          //  var factorArr=$(factorStr).split(",");
-                            var f="";
-                            if (factorStr!=undefined) {
-                                $.each(factorStr,function (i){
-                                    f+=factorStr[i]+"<br/>";
-                                });
-							}
+                                     tr_tds += "<tr class='" + prodId + "'>";
+                                     tr_tds += "<td><input type='checkbox' value='" + skuInfo.id + "' title='shelfIds'/></td>";
+                                     tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td><td>" + skuInfo.skuPropertyInfos + "</td>";
 
-                            $.each(skuInfoList,function (index,skuInfo) {
+                                     if (flag) {
+                                         tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + varietyName + "<br/>" + f + "</td>";
+                                         tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + brandName + "</td>";
+                                         tr_tds += "<td rowspan='" + skuInfoList.length + "'><img style='width: 160px;height: 160px' src='" + prodUrl + "' maxWidth='100' maxHeight='100'></td>"
+                                     }
 
-                                tr_tds+= "<tr class='"+prodId+"'>";
-                                tr_tds+="<td><input type='checkbox' value='"+skuInfo.id+"' title='shelfIds'/></td>";
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.buyPrice+"</td><td>" +skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td>" ;
+                                     tr_tds += "</tr>";
+                                     if (skuInfoList.length > 1) {
+                                         flag = false;
+                                     }
+                                 });
 
-                                if(flag){
-                                    tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+varietyName+"<br/>"+f+"</td>";
-                                    tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img style='width: 160px;height: 160px' src='"+prodUrl+"' maxWidth='100' maxHeight='100'></td>"
-                                }
+                                 t++;
+                                 $("#prodInfo2").append(tr_tds);
 
-                                tr_tds+="</tr>";
-                                if(skuInfoList.length>1){
-                                    flag=false;
-                                }
-                            });
-
-                            t++;
-                            $("#prodInfo2").append(tr_tds);
-
-                        });
-
+                             });
+                         }
                     }
                 })
             });
