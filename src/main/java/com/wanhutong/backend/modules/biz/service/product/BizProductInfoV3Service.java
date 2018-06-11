@@ -198,7 +198,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
             List<BizSkuInfo> newSkuList = Lists.newArrayList();
 
             Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
-            int index = oldSkuList.size();
+            int index = oldSkuList.size() + 1;
             for(String s : skuAttrStrSet) {
                 String[] split = s.split("\\|");
                 String size = split[0];
@@ -243,11 +243,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
                 bizSkuInfo.setItemNo(bizProductInfo.getItemNo().concat("/").concat(size).concat("/").concat(color));
 
                 BizSkuInfo oldBizSkuInfo = bizSkuInfoV2Service.getSkuInfoByItemNoProdId(bizSkuInfo.getItemNo(), bizProductInfo.getId());
-                if (oldBizSkuInfo != null && !copy) {
-                    bizSkuInfo.setId(oldBizSkuInfo.getId());
-                }else {
-                    index ++;
-                }
+                index ++;
                 bizSkuInfoV2Service.save(bizSkuInfo);
                 newSkuList.add(bizSkuInfo);
 

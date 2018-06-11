@@ -66,9 +66,9 @@ public enum ImgEnum{
         this.name = name;
     }
 
-    private ImgEnum(int code, String name, String tableName){
+    ImgEnum(int code, String name, String tableName){
         this.code = code;
         this.name = name;
         this.tableName = tableName;
-        }
+    }
 }
