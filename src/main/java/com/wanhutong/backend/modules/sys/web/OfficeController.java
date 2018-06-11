@@ -692,8 +692,7 @@ public class OfficeController extends BaseController {
             ArrayList<List<String>> chats = Lists.newArrayList();
             BizChatRecord chatRecord = new BizChatRecord();
             User userAdmin = UserUtils.getUser();
-            if (userAdmin.isAdmin()) {
-            } else {
+            if (!userAdmin.isAdmin()) {
                 chatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
             }
             for (int i = 0; i < meetingExprotList.size(); i++) {
