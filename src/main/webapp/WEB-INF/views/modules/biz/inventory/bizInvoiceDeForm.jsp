@@ -158,6 +158,12 @@
 				</table>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">备注：</label>
+			<div class="controls">
+				<form:textarea path="remarks" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+			</div>
+		</div>
 		<div class="form-actions">
 			<input onclick="window.print();" type="button" class="btn btn-primary" value="打印发货单" style="background:#F78181;"/>
 			<c:if test="${source ne 'xq'}">

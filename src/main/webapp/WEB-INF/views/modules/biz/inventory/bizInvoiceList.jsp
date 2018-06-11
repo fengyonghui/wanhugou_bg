@@ -121,6 +121,7 @@
 				<th>运费/货值</th>
 				<th>发货人</th>
 				<th>物流结算方式</th>
+				<th>备注</th>
 				<th>发货时间</th>
 				<th>物流信息图</th>
 				<th>操作</th>
@@ -149,6 +150,7 @@
 				</td>
 				<td>${bizInvoice.carrier}</td>
 				<td>${fns:getDictLabel(bizInvoice.settlementStatus, 'biz_settlement_status', '未知状态')}</td>
+				<td>${bizInvoice.remarks}</td>
 				<td>
 					<fmt:formatDate value="${bizInvoice.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
