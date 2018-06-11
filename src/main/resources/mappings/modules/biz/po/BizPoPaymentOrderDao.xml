@@ -1,7 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanhutong.backend.modules.biz.dao.po.BizPoPaymentOrderDao">
-    
+
+	<resultMap type="BizPoPaymentOrder" id="bizPoPaymentOrderMaps">
+		<id column="id" property="id"/>
+		<result column="poHeaderId" property="poHeaderId"/>
+		<result column="total" property="total"/>
+		<result column="payTotal" property="payTotal"/>
+		<result column="bizStatus" property="bizStatus"/>
+		<result column="img" property="img"/>
+		<result column="deadline" property="deadline"/>
+		<result column="processId" property="processId"/>
+		<result column="payTime" property="payTime"/>
+		<result column="commonProcess.id" property="commonProcess.id"/>
+		<result column="commonProcess.objectName" property="commonProcess.objectName"/>
+		<result column="commonProcess.prevId" property="commonProcess.prevId"/>
+		<result column="commonProcess.bizStatus" property="commonProcess.bizStatus"/>
+		<result column="commonProcess.processor" property="commonProcess.processor"/>
+		<result column="commonProcess.description" property="commonProcess.description"/>
+		<result column="commonProcess.type" property="commonProcess.type"/>
+		<result column="commonProcess.createTime" property="commonProcess.createTime"/>
+		<collection property="imgList" ofType="CommonImg" select="getImgList" column="id">
+		</collection>
+	</resultMap>
+
+	<select id="getImgList" parameterType="int" resultType="CommonImg">
+		select
+		a.id AS "id",
+		a.object_name AS "objectName",
+		a.object_id AS "objectId",
+		a.img_type AS "imgType",
+		a.img_sort AS "imgSort",
+		a.img_server AS "imgServer",
+		a.img_path AS "imgPath",
+		a.img_link AS "imgLink",
+		a.comment AS "comment",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate"
+		from common_img a
+		where a.object_id = #{id} and a.object_name = 'biz_po_payment_order'
+	</select>
+
 	<sql id="bizPoPaymentOrderColumns">
 		a.id AS "id",
 		a.po_header_id AS "poHeaderId",
@@ -21,6 +64,7 @@
 		process.description AS "commonProcess.description",
 		process.type AS "commonProcess.type",
 		process.create_time AS "commonProcess.createTime"
+
 	</sql>
 	
 	<sql id="bizPoPaymentOrderJoins">
@@ -35,7 +79,7 @@
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="BizPoPaymentOrder">
+	<select id="findList" resultMap="bizPoPaymentOrderMaps">
 		SELECT 
 			<include refid="bizPoPaymentOrderColumns"/>
 		FROM biz_po_payment_order a
