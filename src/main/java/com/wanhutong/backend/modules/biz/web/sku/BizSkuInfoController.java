@@ -196,11 +196,8 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuListV2")
     public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds) {
-        boolean emptyName = bizSkuInfo.getName().isEmpty();//商品名称
-        boolean emptyPart = bizSkuInfo.getPartNo().isEmpty();//商品编码
-        boolean emptyItemNo = bizSkuInfo.getItemNo().isEmpty();//商品货号
-        boolean brandName = bizSkuInfo.getProductInfo().getBrandName().isEmpty();//产品品牌
-        if (emptyName && emptyPart && emptyItemNo && brandName) {
+        if (bizSkuInfo.getName().isEmpty() && bizSkuInfo.getPartNo().isEmpty() &&
+                bizSkuInfo.getItemNo().isEmpty() && bizSkuInfo.getProductInfo().getBrandName().isEmpty()) {
             return null;
         }
         if (skuIds != null && !"".equals(skuIds)) {

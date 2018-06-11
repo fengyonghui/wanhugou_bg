@@ -223,29 +223,26 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
 	@ResponseBody
 	@RequestMapping(value = "findOpShelfSku")
-	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku){
-		AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
-		List<BizOpShelfSku> list=null;
-		boolean emptyName = bizOpShelfSku.getSkuInfo().getName().isEmpty();//商品名称
-		boolean emptyPart = bizOpShelfSku.getSkuInfo().getPartNo().isEmpty();//商品编码
-		boolean emptyItemNo = bizOpShelfSku.getSkuInfo().getItemNo().isEmpty();//商品货号
-		if(emptyName && emptyPart && emptyItemNo){
-			System.out.println("为空 不查询sku商品");
-		}else {
-			list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
-		}
-		if(list!=null){
-			for (BizOpShelfSku skuValue : list) {
-				bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
-				bizSkuPropValue.setObjectName("biz_sku_info");
-				List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
-				if(skuValueList.size()!=0){
-					skuValue.setSkuValueList(skuValueList);
-				}
-			}
-		}
-		return 	list;
-	}
+	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku) {
+        AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
+        List<BizOpShelfSku> list = null;
+        if (bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty() && bizOpShelfSku.getSkuInfo().getItemNo().isEmpty()) {
+            logger.info("查询条件为空 不查询sku商品");
+        } else {
+            list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+        }
+        if (list != null) {
+            for (BizOpShelfSku skuValue : list) {
+                bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
+                bizSkuPropValue.setObjectName("biz_sku_info");
+                List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
+                if (skuValueList.size() != 0) {
+                    skuValue.setSkuValueList(skuValueList);
+                }
+            }
+        }
+        return list;
+    }
 
     /**
      * 根据商品ID查询上架商品
