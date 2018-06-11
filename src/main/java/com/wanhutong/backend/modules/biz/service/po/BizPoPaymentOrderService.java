@@ -5,9 +5,14 @@ package com.wanhutong.backend.modules.biz.service.po;
 
 import java.util.List;
 
+import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
@@ -25,6 +30,8 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoPaymentOrder;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoPaymentOrderDao;
 
+import javax.annotation.Resource;
+
 /**
  * 采购付款单Service
  * @author Ma.Qiang
@@ -38,7 +45,8 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 
 	@Autowired
 	private CommonProcessService commonProcessService;
-
+	@Resource
+	private CommonImgService commonImgService;
 
 	public static final String DATABASE_TABLE_NAME = "biz_po_payment_order";
 
@@ -60,10 +68,34 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 		return super.findPage(page, bizPoPaymentOrder);
 	}
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void save(BizPoPaymentOrder bizPoPaymentOrder) {
 		super.save(bizPoPaymentOrder);
+		saveImg(bizPoPaymentOrder);
 	}
+
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
+	public void saveImg(BizPoPaymentOrder bizPoPaymentOrder) {
+		String imgStr = bizPoPaymentOrder.getImg();
+		String[] split = imgStr.split(",");
+
+		for (int i = 0; i < split.length; i++) {
+			String img = split[i];
+			if (StringUtils.isNotBlank(img)) {
+				CommonImg commonImg = new CommonImg();
+				commonImg.setObjectName(DATABASE_TABLE_NAME);
+				commonImg.setObjectId(bizPoPaymentOrder.getId());
+				commonImg.setImgType(ImgEnum.BIZ_PO_HEADER_PAY_OFFLINE.getCode());
+				commonImg.setImg(img);
+				commonImg.setImgSort(i);
+				commonImg.setImgServer(StringUtils.isBlank(img) ? StringUtils.EMPTY : DsConfig.getImgServer());
+				commonImg.setImgPath(img.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY));
+				commonImgService.save(commonImg);
+			}
+		}
+	}
+
+
 	
 	@Transactional(readOnly = false)
 	@Override
@@ -131,7 +163,7 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 
 		CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
 		nextProcessEntity.setObjectId(bizPoPaymentOrder.getId().toString());
-		nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
+		nextProcessEntity.setObjectName(DATABASE_TABLE_NAME);
 		nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
 		nextProcessEntity.setPrevId(cureentProcessEntity.getId());
 		commonProcessService.save(nextProcessEntity);

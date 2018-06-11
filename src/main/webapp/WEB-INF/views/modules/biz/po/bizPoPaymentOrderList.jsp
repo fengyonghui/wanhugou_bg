@@ -60,7 +60,9 @@
 					${bizPoPaymentOrder.commonProcess.paymentOrderProcess.name}
 				</td>
 				<td>
-					<a target="_blank" href="${bizPoPaymentOrder.img}"><img style="width: 100px" src="${bizPoPaymentOrder.img}"/></a>
+					<c:forEach items="${bizPoPaymentOrder.imgList}" var="v">
+						<a target="_blank" href="${v.imgServer}${v.imgPath}"><img style="width: 100px" src="${v.imgServer}${v.imgPath}"/></a>
+					</c:forEach>
 				</td>
 				<td>
 				<shiro:hasPermission name="biz:po:bizpopaymentorder:bizPoPaymentOrder:audit">
