@@ -155,7 +155,9 @@ public class SystemService extends BaseService implements InitializingBean {
 	 */
 	public List<User> findUser(User user){
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+		if(user.getRole()!=null&&user.getRole().getEnname()!=null&&!user.getRole().getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState())){
+			user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+		}
 		List<User> list = userDao.findList(user);
 		return list;
 	}

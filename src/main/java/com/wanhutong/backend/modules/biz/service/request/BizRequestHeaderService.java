@@ -3,11 +3,14 @@
  */
 package com.wanhutong.backend.modules.biz.service.request;
 
+import com.google.common.collect.ImmutableMap;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -27,7 +30,9 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +68,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	private CommonProcessService commonProcessService;
 	@Resource
 	private BizRequestHeaderDao bizRequestHeaderDao;
+	@Resource
+	private SystemService systemService;
 
 
 	@Override
@@ -171,13 +178,6 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			bizRequestHeader.setToOffice(office);
 		}
 		if(bizRequestHeader.getId()==null){
-//			BizRequestHeader requestHeader=new BizRequestHeader();
-//			requestHeader.setFromOffice(bizRequestHeader.getFromOffice());
-//			List<BizRequestHeader> requestHeaderList=findList(requestHeader);
-//			int s=0;
-//			if (requestHeaderList!=null && requestHeaderList.size()>0){
-//				s=requestHeaderList.size();
-//			}
 			int s=findContByFromOffice(bizRequestHeader.getFromOffice().getId());
 			String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId(),bizRequestHeader.getToOffice().getId(),s+1);
 			bizRequestHeader.setReqNo(reqNo);
@@ -245,6 +245,24 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		commonProcessEntity.setObjectName(BizRequestHeaderService.DATABASE_TABLE_NAME);
 		commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
 		commonProcessService.save(commonProcessEntity);
+		StringBuilder phone = new StringBuilder();
+		User user=UserUtils.getUser();
+		User sendUser=new User(systemService.getRoleByEnname(purchaseOrderProcess.getRoleEnNameEnum()==null?"":purchaseOrderProcess.getRoleEnNameEnum().toLowerCase()));
+		sendUser.setCent(user.getCompany());
+			List<User> userList = systemService.findUser(sendUser);
+			if (CollectionUtils.isNotEmpty(userList)) {
+				for (User u : userList) {
+					phone.append(u.getMobile()).append(",");
+				}
+			}
+//		if (StringUtils.isNotBlank(phone.toString())) {
+//			AliyunSmsClient.getInstance().sendSMS(
+//					SmsTemplateCode.PENDING_AUDIT.getCode(),
+//					phone.toString(),
+//					ImmutableMap.of("order","备货清单"));
+//		}
+
+
 		return commonProcessEntity.getId();
 	}
 	@Transactional(readOnly = false)
@@ -426,6 +444,25 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		}
 		commonProcessService.save(nextProcessEntity);
 		this.updateProcessId(reqHeaderId, nextProcessEntity.getId());
+
+		StringBuilder phone = new StringBuilder();
+
+		User sendUser=new User(systemService.getRoleByEnname(nextProcess.getRoleEnNameEnum()==null?"":nextProcess.getRoleEnNameEnum().toLowerCase()));
+	//	sendUser.setCent(UserUtils.getUser().getCompany());
+		List<User> userList = systemService.findUser(sendUser);
+		if (CollectionUtils.isNotEmpty(userList)) {
+			for (User u : userList) {
+				phone.append(u.getMobile()).append(",");
+			}
+		}
+		if (StringUtils.isNotBlank(phone.toString())) {
+			AliyunSmsClient.getInstance().sendSMS(
+					SmsTemplateCode.PENDING_AUDIT.getCode(),
+					phone.toString(),
+					ImmutableMap.of("order","备货清单"));
+		}
+
+
 		return "ok";
 	}
 
