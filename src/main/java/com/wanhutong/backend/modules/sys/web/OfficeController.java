@@ -16,10 +16,12 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -87,6 +89,8 @@ public class OfficeController extends BaseController {
     private BuyerAdviserService buyerAdviserService;
     @Autowired
     private BizChatRecordService bizChatRecordService;
+    @Autowired
+    private BizProductInfoV2Service bizProductInfoV2Service;
 
 
 
@@ -485,6 +489,15 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
+        if (office.getGysFlag() != null && office.getGysFlag().equals("gys_delete")) {
+            BizProductInfo bizProductInfo = new BizProductInfo();
+            bizProductInfo.setOffice(office);
+            List<BizProductInfo> productInfoList = bizProductInfoV2Service.findList(bizProductInfo);
+            if (CollectionUtils.isNotEmpty(productInfoList)) {
+                addMessage(redirectAttributes,"该供应商下有产品，请修改产品所属的供应商后再进行删除");
+                return "redirect:" + adminPath + "/sys/office/supplierListGys";
+            }
+        }
         office.setDelFlag(Office.DEL_FLAG_DELETE);
         officeService.delete(office);
         addMessage(redirectAttributes, "删除机构成功");
