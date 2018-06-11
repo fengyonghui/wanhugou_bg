@@ -28,7 +28,6 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.ProdTypeEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -123,7 +122,7 @@ public class BizSkuInfoController extends BaseController {
 		model.addAttribute("prodType", bizSkuInfo.getProductInfo().getProdType());
 		return "modules/biz/sku/bizSkuInfoList";
 	}
-	
+
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizSkuInfo bizSkuInfo, Model model) {
@@ -196,42 +195,42 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuListV2")
-	public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds){
-		boolean emptyName = bizSkuInfo.getName().isEmpty();//商品名称
-		boolean emptyPart = bizSkuInfo.getPartNo().isEmpty();//商品编码
-		boolean emptyItemNo = bizSkuInfo.getItemNo().isEmpty();//商品货号
-		boolean brandName = bizSkuInfo.getProductInfo().getBrandName().isEmpty();//产品品牌
-		if(emptyName && emptyPart && emptyItemNo && brandName){
-			return null;
-		}
-		if (skuIds != null && !"".equals(skuIds)){
-			String[] ids =StringUtils.split(skuIds, ",");
-			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
-		}
-		Map<String,Object> map =new HashMap<>();
-		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
-		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
-		List<BizVarietyFactor> varietyInfoList=bizVarietyFactorService.findList(new BizVarietyFactor());
-		Map<Integer,List<String>> factorMap=new HashMap<>();
-		for(BizVarietyFactor varietyFactor:varietyInfoList){
-			Integer key = varietyFactor.getVarietyInfo().getId();
+    public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds) {
+        boolean emptyName = bizSkuInfo.getName().isEmpty();//商品名称
+        boolean emptyPart = bizSkuInfo.getPartNo().isEmpty();//商品编码
+        boolean emptyItemNo = bizSkuInfo.getItemNo().isEmpty();//商品货号
+        boolean brandName = bizSkuInfo.getProductInfo().getBrandName().isEmpty();//产品品牌
+        if (emptyName && emptyPart && emptyItemNo && brandName) {
+            return null;
+        }
+        if (skuIds != null && !"".equals(skuIds)) {
+            String[] ids = StringUtils.split(skuIds, ",");
+            bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
+        }
+        Map<String, Object> map = new HashMap<>();
+        bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
+        Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
+        List<BizVarietyFactor> varietyInfoList = bizVarietyFactorService.findList(new BizVarietyFactor());
+        Map<Integer, List<String>> factorMap = new HashMap<>();
+        for (BizVarietyFactor varietyFactor : varietyInfoList) {
+            Integer key = varietyFactor.getVarietyInfo().getId();
 
-			if(factorMap.containsKey(key)){
-				List<String> stringList=factorMap.get(key);
-				stringList.add((varietyFactor.getServiceFactor().toString().length()<2?"0"+varietyFactor.getServiceFactor():varietyFactor.getServiceFactor())+":["+varietyFactor.getMinQty()+"~"+varietyFactor.getMaxQty()+"]");
-				factorMap.remove(key);
-				factorMap.put(key,stringList);
-			}else {
-				List<String> lists=Lists.newArrayList();
-				lists.add((varietyFactor.getServiceFactor().toString().length()<2?"0"+varietyFactor.getServiceFactor():varietyFactor.getServiceFactor())+":["+varietyFactor.getMinQty()+"~"+varietyFactor.getMaxQty()+"]");
-				factorMap.put(key,lists);
-			}
-		}
-		map.put("skuMap",listMap);
-		map.put("serviceFactor",factorMap);
-		return map;
+            if (factorMap.containsKey(key)) {
+                List<String> stringList = factorMap.get(key);
+                stringList.add((varietyFactor.getServiceFactor().toString().length() < 2 ? "0" + varietyFactor.getServiceFactor() : varietyFactor.getServiceFactor()) + ":[" + varietyFactor.getMinQty() + "~" + varietyFactor.getMaxQty() + "]");
+                factorMap.remove(key);
+                factorMap.put(key, stringList);
+            } else {
+                List<String> lists = Lists.newArrayList();
+                lists.add((varietyFactor.getServiceFactor().toString().length() < 2 ? "0" + varietyFactor.getServiceFactor() : varietyFactor.getServiceFactor()) + ":[" + varietyFactor.getMinQty() + "~" + varietyFactor.getMaxQty() + "]");
+                factorMap.put(key, lists);
+            }
+        }
+        map.put("skuMap", listMap);
+        map.put("serviceFactor", factorMap);
+        return map;
 
-	}
+    }
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSysBySku")

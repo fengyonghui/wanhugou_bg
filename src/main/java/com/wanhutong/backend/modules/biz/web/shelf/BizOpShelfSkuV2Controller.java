@@ -229,7 +229,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		boolean emptyName = bizOpShelfSku.getSkuInfo().getName().isEmpty();//商品名称
 		boolean emptyPart = bizOpShelfSku.getSkuInfo().getPartNo().isEmpty();//商品编码
 		boolean emptyItemNo = bizOpShelfSku.getSkuInfo().getItemNo().isEmpty();//商品货号
-		if(emptyName==true && emptyPart==true && emptyItemNo==true){
+		if(emptyName && emptyPart && emptyItemNo){
 			System.out.println("为空 不查询sku商品");
 		}else {
 			list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
