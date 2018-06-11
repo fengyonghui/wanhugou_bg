@@ -22,7 +22,8 @@
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
 		a.update_id AS "updateBy.id",
-		a.update_time AS "updateDate"
+		a.update_time AS "updateDate",
+		a.remarks AS "remarks"
 	</sql>
 	
 	<sql id="bizInvoiceJoins">
@@ -133,6 +134,9 @@
 			<if test="settlementStatus != null and settlementStatus != ''">
 				settlement_status,
 			</if>
+			<if test="remarks != null and remarks != ''">
+				remarks,
+			</if>
 			biz_status,
 			ship,
 			send_time,
@@ -166,6 +170,9 @@
 			</if>
 			<if test="settlementStatus != null and settlementStatus != ''">
 				#{settlementStatus},
+			</if>
+			<if test="remarks != null and remarks != ''">
+				#{remarks},
 			</if>
 			#{bizStatus},
 			#{ship},
@@ -203,6 +210,9 @@
 			</if>
 			<if test="settlementStatus != null and settlementStatus != ''">
 				settlement_status = #{settlementStatus},
+			</if>
+			<if test="remarks != null and remarks != ''">
+				remarks = #{remarks},
 			</if>
 			biz_status = #{bizStatus},
 			ship = #{ship},
