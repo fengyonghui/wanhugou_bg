@@ -438,6 +438,15 @@
 	</select>
 
 
+	<select id="getEntityByPartNo" resultType="BizSkuInfo">
+		SELECT
+		<include refid="bizSkuInfoColumns"/>
+		FROM biz_sku_info a
+		<include refid="bizSkuInfoJoins"/>
+		WHERE a.part_no = #{partNo}
+	</select>
+
+
 	<delete id="deleteSkuPropInfoReal">
 		DELETE FROM biz_sku_prop_value
 		WHERE

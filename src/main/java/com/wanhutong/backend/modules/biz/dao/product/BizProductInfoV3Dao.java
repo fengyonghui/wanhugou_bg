@@ -20,5 +20,5 @@ public interface BizProductInfoV3Dao extends CrudDao<BizProductInfo> {
     int insertProdCate(BizProductInfo bizProductInfo);
 
     int deleteProdPropInfoReal(BizProductInfo bizProductInfo);
-	
+
 }
