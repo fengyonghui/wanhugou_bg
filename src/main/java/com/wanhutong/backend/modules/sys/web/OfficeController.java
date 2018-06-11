@@ -669,7 +669,7 @@ public class OfficeController extends BaseController {
         } else {
             customer.setParentIds("%," + purchasersId + ",%");
         }
-        if (StringUtils.isNotBlank(office.getMoblieMoeny().getMobile())) {
+        if (office.getMoblieMoeny() != null && StringUtils.isNotBlank(office.getMoblieMoeny().getMobile())) {
             customer.setMoblieMoeny(office.getMoblieMoeny());
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
