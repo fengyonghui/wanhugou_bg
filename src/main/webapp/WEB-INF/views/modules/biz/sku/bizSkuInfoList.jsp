@@ -63,9 +63,11 @@
             <li><label>商品名称：</label>
                 <form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
             </li>
-			<%--<li><label>商品编码：</label>--%>
-				<%--<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-medium"/>--%>
-			<%--</li>--%>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+			<li><label>商品编码：</label>
+				<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-medium"/>
+			</li>
+			</c:if>
 			<li><label>商品货号：</label>
 				<form:input path="itemNo" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
@@ -93,7 +95,9 @@
 				<th>商品名称</th>
 				<th>商品类型</th>
 				<th>产品名称</th>
-				<%--<th>商品编码</th>--%>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>商品编码</th>
+				</c:if>
 				<th>商品货号</th>
 				<th>供应商</th>
 				<%--<th>创建人</th>--%>
@@ -123,10 +127,12 @@
 					<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizSkuInfo.productInfo.id}&prodType=${prodType}">
 						${bizSkuInfo.productInfo.name}
 					</a></td>
-				    <%--<td>--%>
-						<%--<input name="partNo" value="${bizSkuInfo.partNo}" type="hidden"/>--%>
-						<%--${bizSkuInfo.partNo}--%>
-					<%--</td>--%>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+				    <td>
+						<input name="partNo" value="${bizSkuInfo.partNo}" type="hidden"/>
+						${bizSkuInfo.partNo}
+					</td>
+				</c:if>
 					<td>
 						<input name="itemNo" value="${bizSkuInfo.itemNo}" type="hidden"/>
 							${bizSkuInfo.itemNo}
