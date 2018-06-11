@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.enums;
 
 import com.google.common.collect.Maps;
+import org.restlet.resource.Get;
 
 import java.util.Map;
 
@@ -15,7 +16,13 @@ public enum ReqHeaderStatusEnum {
     STOCKING(20, "备货中"),
     STOCK_COMPLETE(25, "供货完成"),
     COMPLETE(30, "收货完成"),
-    CLOSE(35, "关闭");
+    CLOSE(35, "关闭"),
+
+    //通用流程Entity对应业务状态
+    PURCHASE(40, "待采购中心经理审批"),
+    CHANNEL(45, "待渠道部经理审批"),
+    REJECT(50, "驳回");
+
 
     private Integer state;
     private String desc;
@@ -55,5 +62,14 @@ public enum ReqHeaderStatusEnum {
 
     public String getDesc() {
         return desc;
+    }
+
+    public static ReqHeaderStatusEnum getEnum(String desc){
+        for (ReqHeaderStatusEnum statusEnum : values()) {
+            if (desc.equals(statusEnum.getDesc())){
+                return statusEnum;
+            }
+        }
+        return null;
     }
 }

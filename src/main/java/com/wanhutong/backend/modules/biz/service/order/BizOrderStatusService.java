@@ -3,8 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.service.order;
 
+import java.util.Date;
 import java.util.List;
 
+import com.wanhutong.backend.common.persistence.DataEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +60,17 @@ public class BizOrderStatusService extends CrudService<BizOrderStatusDao, BizOrd
 	 */
 	@Transactional(readOnly = false)
 	public void insertAfterBizStatusChanged(String orderTypeDesc, Integer orderType, Integer id) {
-		bizOrderStatusDao.insertAfterBizStatusChanged(orderTypeDesc, orderType, id);
+		Date createTime = new Date();
+		Date updateTime = createTime;
+		Integer bizStatusTemp = null;
+		bizOrderStatusDao.insertAfterBizStatusChanged(bizStatusTemp, createTime, updateTime, orderTypeDesc, orderType, id);
+	}
+
+	@Transactional(readOnly = false)
+	public void insertAfterBizStatusChangedNew(Integer bizStatusTemp, String orderTypeDesc, Integer orderType, Integer id) {
+		Date createTime = new Date();
+		Date updateTime = createTime;
+		bizOrderStatusDao.insertAfterBizStatusChanged(bizStatusTemp, createTime, updateTime, orderTypeDesc, orderType, id);
 	}
 
 }
