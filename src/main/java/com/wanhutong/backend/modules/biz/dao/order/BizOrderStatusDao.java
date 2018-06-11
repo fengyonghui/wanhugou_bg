@@ -8,6 +8,8 @@ import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
+
 /**
  * 订单状态修改日志DAO接口
  * @author Oy
@@ -22,5 +24,5 @@ public interface BizOrderStatusDao extends CrudDao<BizOrderStatus> {
      * @param id 备货清单id
      * @return
      */
-    public int insertAfterBizStatusChanged(@Param("orderTypeDesc") String orderTypeDesc, @Param("orderType") Integer orderType, @Param("id") Integer id);
+    public int insertAfterBizStatusChanged(@Param("bizStatusTemp") Integer bizStatusTemp, @Param("createTime") Date createTime, @Param("updateTime") Date updateTime, @Param("orderTypeDesc") String orderTypeDesc, @Param("orderType") Integer orderType, @Param("id") Integer id);
 }

@@ -15,13 +15,11 @@ import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.DefaultProp;
@@ -71,6 +69,8 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 	@Resource
 	private SystemService systemService;
 
+	@Resource
+	private BizOrderStatusService bizOrderStatusService;
 
 	@Override
 	public BizRequestHeader get(Integer id) {
@@ -182,8 +182,11 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			String reqNo= GenerateOrderUtils.getOrderNum(OrderTypeEnum.RE,bizRequestHeader.getFromOffice().getId(),bizRequestHeader.getToOffice().getId(),s+1);
 			bizRequestHeader.setReqNo(reqNo);
 		}
+		Integer id = bizRequestHeader.getId();
 		super.save(bizRequestHeader);
-
+		if (id == null){
+			bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+		}
 		Integer processId=saveCommonProcess(bizRequestHeader);
 
 		this.updateProcessId(bizRequestHeader.getId(),processId);
@@ -245,6 +248,10 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		commonProcessEntity.setObjectName(BizRequestHeaderService.DATABASE_TABLE_NAME);
 		commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
 		commonProcessService.save(commonProcessEntity);
+
+		/*String desc = purchaseOrderProcess.getName();
+		Integer bizStatus = ReqHeaderStatusEnum.getEnum(desc).getState();
+		bizOrderStatusService.insertAfterBizStatusChangedNew(bizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
 		StringBuilder phone = new StringBuilder();
 		User user=UserUtils.getUser();
 		User sendUser=new User(systemService.getRoleByEnname(purchaseOrderProcess.getRoleEnNameEnum()==null?"":purchaseOrderProcess.getRoleEnNameEnum().toLowerCase()));
@@ -432,6 +439,11 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		cureentProcessEntity.setDescription(description);
 		commonProcessService.save(cureentProcessEntity);
 
+		/*String currentDesc = currentProcess.getName();
+		Integer currentBizStatus = ReqHeaderStatusEnum.getEnum(currentDesc).getState();
+		bizOrderStatusService.insertAfterBizStatusChangedNew(currentBizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
+
+
 		CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
 		nextProcessEntity.setObjectId(bizRequestHeader.getId().toString());
 		nextProcessEntity.setObjectName(BizRequestHeaderService.DATABASE_TABLE_NAME);
@@ -439,10 +451,19 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		nextProcessEntity.setPrevId(cureentProcessEntity.getId());
 
 		if(nextProcessEntity.getType().equals(requestOrderProcessConfig.getAutProcessId().toString())){
+			Integer bizStatus = bizRequestHeader.getBizStatus();
 			bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.APPROVE.getState());
 			saveRequestHeader(bizRequestHeader);
+			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
 		}
 		commonProcessService.save(nextProcessEntity);
+
+		/*String nextDesc = currentProcess.getName();
+		Integer nextBizStatus = ReqHeaderStatusEnum.getEnum(currentDesc).getState();
+		bizOrderStatusService.insertAfterBizStatusChangedNew(nextBizStatus, BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());*/
+
 		this.updateProcessId(reqHeaderId, nextProcessEntity.getId());
 
 		StringBuilder phone = new StringBuilder();

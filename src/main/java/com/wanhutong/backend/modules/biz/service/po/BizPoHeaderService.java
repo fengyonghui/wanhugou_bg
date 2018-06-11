@@ -516,7 +516,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         this.updateProcessId(id, nextProcessEntity.getId());
 
         if (nextProcess.getCode() == purchaseOrderProcessConfig.getPayProcessId()) {
+            BizPoHeader bizPoHeader = this.get(id);
+            Byte bizStatus = bizPoHeader.getBizStatus();
             this.updateBizStatus(id, BizPoHeader.BizStatus.PROCESS_COMPLETE);
+            if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+            }
         }
 
         try {
@@ -708,7 +713,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizPoHeader.setPlanPay(prewPayTotal);
             this.genPaymentOrder(bizPoHeader);
         }
+        Byte bizStatus = bizPoHeader.getBizStatus();
         this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS);
+        if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
         this.updateProcessToInit(bizPoHeader);
         auditPo(id, String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId()), auditType, desc);
         return "操作成功!";
@@ -750,9 +759,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 //      DOWN_PAYMENT(1, "付款支付"),
 //      ALL_PAY(2, "全部支付"),
         BigDecimal orderTotal = BigDecimal.valueOf(bizPoHeader.getTotalDetail()).add(BigDecimal.valueOf(bizPoHeader.getTotalExp())).add(BigDecimal.valueOf(bizPoHeader.getFreight()));
-
+        Byte bizStatus = bizPoHeader.getBizStatus();
         this.updateBizStatus(bizPoHeader.getId(), bizPoHeader.getPayTotal().add(payTotal).compareTo(orderTotal) >= 0 ? BizPoHeader.BizStatus.ALL_PAY : BizPoHeader.BizStatus.DOWN_PAYMENT);
-
+        if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
         incrPayTotal(bizPoHeader.getId(), payTotal);
 
         // 清除关联的支付申请单
