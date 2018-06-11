@@ -222,11 +222,7 @@ public class BizRequestHeaderController extends BaseController {
 		if (!beanValidator(model, bizRequestHeader)){
 			return form(bizRequestHeader, model);
 		}
-		Integer id = bizRequestHeader.getId();
 		bizRequestHeaderService.save(bizRequestHeader);
-		if (id == null){
-			bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
-		}
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
 	}

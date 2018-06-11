@@ -153,13 +153,20 @@
 		  SELECT
 		  	NULL,
 			br.id,
-			br.biz_status,
+			<choose>
+				<when test="bizStatusTemp !=null and bizStatusTemp!= ''">
+					${bizStatusTemp},
+				</when>
+				<otherwise>
+					br.biz_status,
+				</otherwise>
+			</choose>
 			br.status,
 			br.update_id,
-			br.create_time,
+			#{createTime},
 			br.u_version,
 			br.update_id,
-			br.update_time,
+			#{updateTime},
 			#{orderType}
 		<if test='orderTypeDesc == "biz_order_header"'>
 		  FROM biz_order_header br
