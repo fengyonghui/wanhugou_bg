@@ -102,7 +102,9 @@
 		<thead>
 			<tr>
 				<th>序号</th>
-				<th>产品图片</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>产品图片</th>
+				</c:if>
 				<th>产品品类</th>
 				<th>产品名称</th>
 				<th>产品代码</th>
@@ -125,7 +127,9 @@
 				<tr>
 			</c:if>
 				<td>${state.index+1}</td>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
 				<td><img src="${bizProductInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+			</c:if>
 				<td>
 					${bizProductInfo.bizVarietyInfo.name}
 				</td>

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.ProdTypeEnum" %>
 <html>
 <head>
 	<title>产品信息表管理</title>
@@ -108,7 +109,9 @@
 		<thead>
 			<tr>
 				<th>序号</th>
-				<th>产品图片</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>产品图片</th>
+				</c:if>
 				<th>产品品类</th>
 				<th>产品名称</th>
 				<th>产品代码</th>
@@ -118,9 +121,11 @@
 				<th>供应商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
-				<th>点击量</th>
-				<th>下单量</th>
-				<th>负责人</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>点击量</th>
+					<th>下单量</th>
+					<th>负责人</th>
+				</c:if>
 				<th>创建时间</th>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
@@ -134,7 +139,9 @@
 				<tr>
 			</c:if>
 				<td>${state.index+1}</td>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
 				<td><img src="${productInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+			</c:if>
 				<td>
 					${productInfo.bizVarietyInfo.name}
 				</td>
@@ -165,6 +172,7 @@
 				<td>
 					${productInfo.maxPrice}
 				</td>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
 				<td>
 					<c:if test="${productInfo.prodVice !=0}">
 						<a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${productInfo.id}&prodChixkSource=prod_chickCount">
@@ -193,6 +201,7 @@
 				<td>
 					${productInfo.user.name}
 				</td>
+			</c:if>
 				<td>
 					<fmt:formatDate value="${productInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
