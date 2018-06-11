@@ -225,12 +225,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequestMapping(value = "findOpShelfSku")
 	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku) {
         AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
-        List<BizOpShelfSku> list = null;
         if (bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty() && bizOpShelfSku.getSkuInfo().getItemNo().isEmpty()) {
             logger.info("查询条件为空 不查询sku商品");
-        } else {
-            list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
-        }
+			return null;
+		}
+		List<BizOpShelfSku> list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
         if (list != null) {
             for (BizOpShelfSku skuValue : list) {
                 bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id

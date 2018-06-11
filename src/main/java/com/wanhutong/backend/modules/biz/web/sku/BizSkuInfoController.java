@@ -198,6 +198,7 @@ public class BizSkuInfoController extends BaseController {
     public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds) {
         if (bizSkuInfo.getName().isEmpty() && bizSkuInfo.getPartNo().isEmpty() &&
                 bizSkuInfo.getItemNo().isEmpty() && bizSkuInfo.getProductInfo().getBrandName().isEmpty()) {
+            logger.info("查询条件为空 不查询sku商品");
             return null;
         }
         if (skuIds != null && !"".equals(skuIds)) {
