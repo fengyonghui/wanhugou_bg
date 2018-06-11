@@ -648,7 +648,8 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add(String.valueOf(order.getReceiveTotal()==null?"":order.getReceiveTotal()));
                     double sumTotal = total + exp + fre;
                     double receiveTotal = order.getReceiveTotal()==null?0.0:order.getReceiveTotal();
-                    if (order.getBizStatus()!=10 && order.getBizStatus()!=40 && df.format(sumTotal)!=df.format(receiveTotal)) {
+                    if (order.getBizStatus()!=10 && order.getBizStatus()!=35 && order.getBizStatus()!=40 && order.getBizStatus()!=45 &&
+                            !df.format(sumTotal).equals(df.format(receiveTotal))) {
                         //尾款信息
                         rowData.add("有尾款");
                     } else {
@@ -781,7 +782,8 @@ public class BizOrderHeaderController extends BaseController {
                         rowData.add(String.valueOf(order.getReceiveTotal()==null?"":order.getReceiveTotal()));
                         double sumTotal= total + exp + Fre;
                         double receiveTotal = order.getReceiveTotal()==null?0.0:order.getReceiveTotal();
-                        if (order.getBizStatus()!=10 && order.getBizStatus()!=40 && df.format(sumTotal) != df.format(receiveTotal)) {
+                        if (order.getBizStatus()!=10 && order.getBizStatus()!=35 && order.getBizStatus()!=40 && order.getBizStatus()!=45 &&
+                                !df.format(sumTotal).equals(df.format(receiveTotal))) {
                             rowData.add("有尾款");
                         } else {
                             rowData.add("");
@@ -819,7 +821,13 @@ public class BizOrderHeaderController extends BaseController {
                         rowData.add(sdf.format(order.getCreateDate()));
                         //支付类型名称
                         rowData.add(String.valueOf(p.getPayTypeName()==null?"":p.getPayTypeName()));
+                        //支付编号
+                        rowData.add(String.valueOf(p.getPayNum()==null?"":p.getPayNum()));
                         rowData.add(String.valueOf(p.getOutTradeNo()==null?"":p.getOutTradeNo()));
+                        //支付账号
+                        rowData.add(String.valueOf(p.getAccount()==null?"":p.getAccount()));
+                        //交易类型名称
+                        rowData.add(String.valueOf(p.getRecordTypeName()==null?"":p.getRecordTypeName()));
                         rowData.add(String.valueOf(p.getPayMoney()==null?"":p.getPayMoney()));
                         //交易时间
                         rowData.add(String.valueOf(sdf.format(p.getCreateDate())));
@@ -828,7 +836,7 @@ public class BizOrderHeaderController extends BaseController {
                 }
             }
             String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "商品总价","商品工厂总价", "调整金额", "运费",
-                    "应付金额", "已收货款", "尾款信息", "服务费", "发票状态", "业务状态","创建时间","支付类型名称","业务流水号","支付金额","交易时间"};
+                    "应付金额", "已收货款", "尾款信息", "服务费", "发票状态", "业务状态","创建时间","支付类型名称","支付编号","业务流水号","支付账号","交易类型名称","支付金额","交易时间"};
             String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价","商品工厂价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
