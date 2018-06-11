@@ -199,6 +199,9 @@
 			<if test="dbName == 'mssql'">'%,'+#{company.id}+',%')</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{company.id}, ',%'))</if>
 		</if>
+		<if test="cent != null and cent.id != null and cent.id != ''">
+			AND c.id = #{cent.id}
+		</if>
 		<if test="mobile != null and mobile != ''">
 			AND a.mobile LIKE
 			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
