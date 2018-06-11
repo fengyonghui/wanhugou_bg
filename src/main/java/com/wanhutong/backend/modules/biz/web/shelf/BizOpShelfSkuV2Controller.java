@@ -28,6 +28,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -223,29 +224,25 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
 	@ResponseBody
 	@RequestMapping(value = "findOpShelfSku")
-	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku){
-		AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
-		List<BizOpShelfSku> list=null;
-		boolean emptyName = bizOpShelfSku.getSkuInfo().getName().isEmpty();//商品名称
-		boolean emptyPart = bizOpShelfSku.getSkuInfo().getPartNo().isEmpty();//商品编码
-		boolean emptyItemNo = bizOpShelfSku.getSkuInfo().getItemNo().isEmpty();//商品货号
-		if(emptyName==true && emptyPart==true && emptyItemNo==true){
-			System.out.println("为空 不查询sku商品");
-		}else {
-			list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku) {
+        AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
+        if (bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty() && bizOpShelfSku.getSkuInfo().getItemNo().isEmpty()) {
+            logger.info("修改订单详情和添加、修改备货单时，需要添加商品，由于未输入查询条件，导致不查询商品，点击查询没反应");
+			return null;
 		}
-		if(list!=null){
-			for (BizOpShelfSku skuValue : list) {
-				bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
-				bizSkuPropValue.setObjectName("biz_sku_info");
-				List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
-				if(skuValueList.size()!=0){
-					skuValue.setSkuValueList(skuValueList);
-				}
-			}
-		}
-		return 	list;
-	}
+		List<BizOpShelfSku> list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (BizOpShelfSku skuValue : list) {
+                bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
+                bizSkuPropValue.setObjectName("biz_sku_info");
+                List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
+                if (skuValueList.size() != 0) {
+                    skuValue.setSkuValueList(skuValueList);
+                }
+            }
+        }
+        return list;
+    }
 
     /**
      * 根据商品ID查询上架商品
