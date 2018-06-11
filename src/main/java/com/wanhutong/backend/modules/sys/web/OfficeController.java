@@ -669,7 +669,7 @@ public class OfficeController extends BaseController {
         } else {
             customer.setParentIds("%," + purchasersId + ",%");
         }
-        if (!StringUtils.isEmpty(office.getMoblieMoeny().getMobile())) {
+        if (StringUtils.isNotBlank(office.getMoblieMoeny().getMobile())) {
             customer.setMoblieMoeny(office.getMoblieMoeny());
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -677,7 +677,7 @@ public class OfficeController extends BaseController {
         try {
             List<Office> meetingExprotList = officeService.findMeetingExprot(customer);
             if (CollectionUtils.isEmpty(meetingExprotList)) {
-                if ("query".equals(office.getQueryMemberGys()) && !StringUtils.isEmpty(office.getMoblieMoeny().getMobile())) {
+                if ("query".equals(office.getQueryMemberGys()) && StringUtils.isNotEmpty(office.getMoblieMoeny().getMobile())) {
                     //列表页输入2个条件查询时
                     Office officeUser = new Office();
                     officeUser.setQueryMemberGys(office.getName());
@@ -716,7 +716,7 @@ public class OfficeController extends BaseController {
                         break;
                     }
                 }
-                if (!StringUtils.isEmpty(offtype)) {
+                if (StringUtils.isNotEmpty(offtype)) {
                     headArr.add(offtype);
                 } else {
                     headArr.add(StringUtils.EMPTY);
@@ -732,7 +732,7 @@ public class OfficeController extends BaseController {
                         break;
                     }
                 }
-                if (!StringUtils.isEmpty(yesNo)) {
+                if (StringUtils.isNotEmpty(yesNo)) {
                     headArr.add(yesNo);
                 } else {
                     headArr.add(StringUtils.EMPTY);
