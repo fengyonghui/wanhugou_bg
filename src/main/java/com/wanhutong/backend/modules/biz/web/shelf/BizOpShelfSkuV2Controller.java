@@ -28,6 +28,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -230,7 +231,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 			return null;
 		}
 		List<BizOpShelfSku> list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
-        if (list != null) {
+        if (CollectionUtils.isNotEmpty(list)) {
             for (BizOpShelfSku skuValue : list) {
                 bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
                 bizSkuPropValue.setObjectName("biz_sku_info");
