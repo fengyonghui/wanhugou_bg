@@ -306,18 +306,11 @@ public class OfficeController extends BaseController {
     @RequestMapping(value = "supplierTreeData")
     public List<Map<String, Object>> supplierTreeData(@RequestParam(required = false) String extId, @RequestParam(required = false) String type,
                                                       @RequestParam(required = false) Long grade, @RequestParam(required = false) Boolean isAll, HttpServletResponse response) {
-//		List<Map<String, Object>> mapList = Lists.newArrayList();
-//		String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
-//		Office office = new Office();
-//		office.setParentIds("%,"+supplierId+",");
-//		List<Office> list = officeService.findList(office);
-//		Office off = officeService.get(Integer.valueOf(supplierId));
-//		list.add(off);
         List<Map<String, Object>> mapList = Lists.newArrayList();
-//        List<Office> list = officeService.filerOffice(null, "supplier", OfficeTypeEnum.VENDOR);
+        List<Office> list = officeService.filerOffice(null, "supplier", OfficeTypeEnum.VENDOR);
 
-        String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
-        List<Office> list = officeService.findVendor(supplierId);
+//        String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
+//        List<Office> list = officeService.findVendor(supplierId);
         for (int i = 0; i < list.size(); i++) {
             Office e = list.get(i);
             if ((StringUtils.isBlank(extId) || (extId != null && !extId.equals(e.getId()) && e.getParentIds().indexOf("," + extId + ",") == -1))
@@ -671,23 +664,23 @@ public class OfficeController extends BaseController {
     public String exportOffice(Office office,RedirectAttributes redirectAttributes, HttpServletResponse response) {
         String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
         Office customer = new Office();
-        if(office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0){
+        if (office.getParent() != null && office.getParent().getId() != null && office.getParent().getId() != 0) {
             customer.setParent(office);
         } else {
             customer.setParentIds("%," + purchasersId + ",%");
         }
-        if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
+        if (office.getMoblieMoeny() != null && StringUtils.isNotBlank(office.getMoblieMoeny().getMobile())) {
             customer.setMoblieMoeny(office.getMoblieMoeny());
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String fileName="会员数据"+ DateUtils.getDate("yyyyMMddHHmmss")+".xlsx";
+        String fileName = "会员数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
         try {
             List<Office> meetingExprotList = officeService.findMeetingExprot(customer);
-            if (meetingExprotList.size() == 0) {
-                if (office.getQueryMemberGys() != null && office.getQueryMemberGys().equals("query") && !office.getMoblieMoeny().getMobile().equals("")) {
+            if (CollectionUtils.isEmpty(meetingExprotList)) {
+                if ("query".equals(office.getQueryMemberGys()) && StringUtils.isNotEmpty(office.getMoblieMoeny().getMobile())) {
                     //列表页输入2个条件查询时
                     Office officeUser = new Office();
-                    officeUser.setQueryMemberGys(office.getName()+"");
+                    officeUser.setQueryMemberGys(office.getName());
                     officeUser.setMoblieMoeny(office.getMoblieMoeny());
                     meetingExprotList = officeService.findMeetingExprot(officeUser);
                 } else {
@@ -699,116 +692,106 @@ public class OfficeController extends BaseController {
             ArrayList<List<String>> chats = Lists.newArrayList();
             BizChatRecord chatRecord = new BizChatRecord();
             User userAdmin = UserUtils.getUser();
-            if(userAdmin.isAdmin()){
-            }else{
+            if (!userAdmin.isAdmin()) {
                 chatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
             }
-            for(int i=0;i<meetingExprotList.size();i++){
+            for (int i = 0; i < meetingExprotList.size(); i++) {
                 ArrayList<String> headArr = Lists.newArrayList();
-                headArr.add(String.valueOf(meetingExprotList.get(i).getName()==null?"":meetingExprotList.get(i).getName()));
-                headArr.add(String.valueOf(meetingExprotList.get(i).getCode()==null?"":meetingExprotList.get(i).getCode()));
-                headArr.add(String.valueOf(meetingExprotList.get(i).getPhone()==null?"":meetingExprotList.get(i).getPhone()));
-                if(meetingExprotList.get(i).getMoblieMoeny()!=null && meetingExprotList.get(i).getMoblieMoeny().getName()!=null){
-                    headArr.add(String.valueOf(meetingExprotList.get(i).getMoblieMoeny().getName()));
-                }else{
-                    headArr.add("");
+                headArr.add(meetingExprotList.get(i).getName() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getName());
+                headArr.add(meetingExprotList.get(i).getCode() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getCode());
+                if (meetingExprotList.get(i).getMoblieMoeny() != null && meetingExprotList.get(i).getMoblieMoeny().getMobile() != null) {
+                    headArr.add(meetingExprotList.get(i).getMoblieMoeny().getMobile());
+                } else {
+                    headArr.add(StringUtils.EMPTY);
                 }
                 Dict dict = new Dict();
                 dict.setDescription("机构类型");
                 dict.setType("sys_office_type");
+                String offtype = "";
                 List<Dict> dictList = dictService.findList(dict);
                 for (Dict dict1 : dictList) {
-                    if(dict1.getValue().equals(String.valueOf(meetingExprotList.get(i).getType()))){
-                        headArr.add(String.valueOf(dict1.getLabel()));
+                    if (dict1.getValue().equals(meetingExprotList.get(i).getType())) {
+                        offtype = dict1.getLabel();
                         break;
                     }
                 }
-                Dict dictGra = new Dict();
-                dictGra.setDescription("机构等级");
-                dictGra.setType("sys_office_grade");
-                List<Dict> dictAraList = dictService.findList(dictGra);
-                for (Dict dict1 : dictAraList) {
-                    if(dict1.getValue().equals(String.valueOf(meetingExprotList.get(i).getGrade()))){
-                        headArr.add(String.valueOf(dict1.getLabel()));
-                        break;
-                    }
+                if (StringUtils.isNotEmpty(offtype)) {
+                    headArr.add(offtype);
+                } else {
+                    headArr.add(StringUtils.EMPTY);
                 }
                 Dict dictUse = new Dict();
                 dictUse.setDescription("是/否");
                 dictUse.setType("yes_no");
+                String yesNo = "";
                 List<Dict> dictUseList = dictService.findList(dictUse);
                 for (Dict dict1 : dictUseList) {
-                    if(dict1.getValue().equals(String.valueOf(meetingExprotList.get(i).getUseable()))){
-                        headArr.add(String.valueOf(dict1.getLabel()));
+                    if (dict1.getValue().equals(meetingExprotList.get(i).getUseable())) {
+                        yesNo = dict1.getLabel();
                         break;
                     }
                 }
-                Dict dictLev = new Dict();
-                dictLev.setDescription("用户钱包等级");
-                dictLev.setType("biz_cust_credit_level");
-                List<Dict> dictLevList = dictService.findList(dictLev);
-                for (Dict dict1 : dictLevList) {
-                    if(dict1.getValue().equals(String.valueOf(meetingExprotList.get(i).getLevel()))){
-                        headArr.add(String.valueOf(dict1.getLabel()));
-                        break;
-                    }
+                if (StringUtils.isNotEmpty(yesNo)) {
+                    headArr.add(yesNo);
+                } else {
+                    headArr.add(StringUtils.EMPTY);
                 }
-                if(meetingExprotList.get(i).getPrimaryPerson()!=null && meetingExprotList.get(i).getPrimaryPerson().getName()!=null){
-                    headArr.add(String.valueOf(meetingExprotList.get(i).getPrimaryPerson().getName()));
-                }else{
-                    headArr.add("");
+                if (meetingExprotList.get(i).getPrimaryPerson() != null && meetingExprotList.get(i).getPrimaryPerson().getName() != null) {
+                    headArr.add(meetingExprotList.get(i).getPrimaryPerson().getName());
+                } else {
+                    headArr.add(StringUtils.EMPTY);
                 }
-                if(meetingExprotList.get(i).getDeputyPerson()!=null && meetingExprotList.get(i).getDeputyPerson().getName()!=null){
-                    headArr.add(String.valueOf(meetingExprotList.get(i).getDeputyPerson().getName()));
-                }else{
-                    headArr.add("");
+                if (meetingExprotList.get(i).getDeputyPerson() != null && meetingExprotList.get(i).getDeputyPerson().getName() != null) {
+                    headArr.add(meetingExprotList.get(i).getDeputyPerson().getName());
+                } else {
+                    headArr.add(StringUtils.EMPTY);
                 }
-                headArr.add(String.valueOf(meetingExprotList.get(i).getAddress()==null?"":meetingExprotList.get(i).getAddress()));
-                headArr.add(String.valueOf(meetingExprotList.get(i).getZipCode()==null?"":meetingExprotList.get(i).getZipCode()));
-                headArr.add(String.valueOf(meetingExprotList.get(i).getMaster()==null?"":meetingExprotList.get(i).getMaster()));
-                headArr.add(String.valueOf(meetingExprotList.get(i).getPhone()==null?"":meetingExprotList.get(i).getPhone()));
-                headArr.add(String.valueOf(meetingExprotList.get(i).getFax()==null?"":meetingExprotList.get(i).getFax()));
-                headArr.add(String.valueOf(meetingExprotList.get(i).getEmail()==null?"":meetingExprotList.get(i).getEmail()));
+                headArr.add(meetingExprotList.get(i).getAddress() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getAddress());
+                headArr.add(meetingExprotList.get(i).getZipCode() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getZipCode());
+                headArr.add(meetingExprotList.get(i).getMaster() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getMaster());
+                headArr.add(meetingExprotList.get(i).getPhone() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getPhone());
+                headArr.add(meetingExprotList.get(i).getFax() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getFax());
+                headArr.add(meetingExprotList.get(i).getEmail() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getEmail());
                 //所属采购中心，所属客户专员
                 BuyerAdviser buyerAdviser = buyerAdviserService.get(meetingExprotList.get(i).getId());
-                if(buyerAdviser != null && !buyerAdviser.getStatus().equals("0")){
+                if (!"0".equals(buyerAdviser.getStatus())) {
                     User user = systemService.getUser(buyerAdviser.getConsultantId());
-                    if(user!=null && user.getName()!=null && !user.getName().equals("") && !user.getDelFlag().equals("0")){
-                        headArr.add(String.valueOf(user.getCompany()==null?"":(user.getCompany().getName()==null?"":user.getCompany().getName())));
-                        headArr.add(String.valueOf(user.getName()));
-                    }else{
-                        headArr.add("");
-                        headArr.add("");
+                    if (StringUtils.isNotEmpty(user.getName()) && !"0".equals(user.getDelFlag())) {
+                        headArr.add(user.getCompany() == null ? StringUtils.EMPTY : (user.getCompany().getName() == null ? StringUtils.EMPTY : user.getCompany().getName()));
+                        headArr.add(user.getName());
+                    } else {
+                        headArr.add(StringUtils.EMPTY);
+                        headArr.add(StringUtils.EMPTY);
                     }
-                }else{
-                    headArr.add("");
-                    headArr.add("");
+                } else {
+                    headArr.add(StringUtils.EMPTY);
+                    headArr.add(StringUtils.EMPTY);
                 }
                 heads.add(headArr);
                 chatRecord.setOffice(meetingExprotList.get(i));
                 List<BizChatRecord> chatList = bizChatRecordService.findList(chatRecord);
-                for(int chat=0;chat<chatList.size();chat++){
+                for (int chat = 0; chat < chatList.size(); chat++) {
                     ArrayList<String> chatArr = Lists.newArrayList();
-                    chatArr.add(String.valueOf(meetingExprotList.get(i).getName()==null?"":meetingExprotList.get(i).getName()));
+                    chatArr.add(meetingExprotList.get(i).getName() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getName());
                     //客户专员或品类主管
-                    if(chatList.get(chat).getUser()!=null && chatList.get(chat).getUser().getName()!=null){
-                        chatArr.add(String.valueOf(chatList.get(chat).getUser().getName()));
-                    }else{
-                        chatArr.add("");
+                    if (chatList.get(chat).getUser() != null && chatList.get(chat).getUser().getName() != null) {
+                        chatArr.add(chatList.get(chat).getUser().getName());
+                    } else {
+                        chatArr.add(StringUtils.EMPTY);
                     }
-                    chatArr.add(String.valueOf(chatList.get(chat).getChatRecord()==null?"":chatList.get(chat).getChatRecord()));
-                    if(chatList.get(chat).getCreateBy()!=null && chatList.get(chat).getCreateBy().getName()!=null){
-                        chatArr.add(String.valueOf(chatList.get(chat).getCreateBy().getName()));
-                    }else{
-                        chatArr.add("");
+                    chatArr.add(chatList.get(chat).getChatRecord() == null ? StringUtils.EMPTY : chatList.get(chat).getChatRecord());
+                    if (chatList.get(chat).getCreateBy() != null && chatList.get(chat).getCreateBy().getName() != null) {
+                        chatArr.add(chatList.get(chat).getCreateBy().getName());
+                    } else {
+                        chatArr.add(StringUtils.EMPTY);
                     }
                     chatArr.add(String.valueOf(sdf.format(chatList.get(chat).getCreateDate())));
                     chats.add(chatArr);
                 }
             }
-            String[] orderArr ={"机构名称","机构编码","主负责人电话","机构类型","机构等级","是否可用","钱包账户","主负责人","副负责人",
-                    "联系地址","邮政编码","负责人","电话","传真","邮箱","所属采购中心","所属客户专员"};
-            String[] chatArr ={"机构名称","品类主管或客户专员","沟通记录","创建人","创建时间"};
+            String[] orderArr = {"机构名称", "机构编码", "主负责人电话", "机构类型", "是否可用", "主负责人", "副负责人",
+                    "联系地址", "邮政编码", "负责人", "电话", "传真", "邮箱", "所属采购中心", "所属客户专员"};
+            String[] chatArr = {"机构名称", "品类主管或客户专员", "沟通记录", "创建人", "创建时间"};
             ExportExcelUtils exportUtils = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             exportUtils.exportExcel(workbook, 0, "会员数据", orderArr, heads, fileName);
@@ -819,9 +802,9 @@ public class OfficeController extends BaseController {
             workbook.write(response.getOutputStream());
             workbook.dispose();
             return null;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            addMessage(redirectAttributes,"导出会员数据失败！失败信息："+e.getMessage());
+            addMessage(redirectAttributes, "导出会员数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/sys/office/purchasersList";
     }
