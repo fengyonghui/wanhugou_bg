@@ -198,7 +198,7 @@ public class BizProductInfoV3Service extends CrudService<BizProductInfoV3Dao, Bi
             List<BizSkuInfo> newSkuList = Lists.newArrayList();
 
             Set<String> skuAttrStrSet = Sets.newHashSet(skuAttrStrList);
-            int index = oldSkuList.size() + 1;
+            int index = oldSkuList.size();
             for(String s : skuAttrStrSet) {
                 String[] split = s.split("\\|");
                 String size = split[0];
