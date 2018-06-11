@@ -227,7 +227,7 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku) {
         AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
         if (bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty() && bizOpShelfSku.getSkuInfo().getItemNo().isEmpty()) {
-            logger.info("查询条件为空 不查询sku商品");
+            logger.info("修改订单详情和添加、修改备货单时，需要添加商品，由于未输入查询条件，导致不查询商品，点击查询没反应");
 			return null;
 		}
 		List<BizOpShelfSku> list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
