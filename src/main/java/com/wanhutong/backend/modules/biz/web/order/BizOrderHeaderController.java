@@ -647,7 +647,7 @@ public class BizOrderHeaderController extends BaseController {
                     rowData.add(order.getReceiveTotal() == null ? StringUtils.EMPTY : String.valueOf(order.getReceiveTotal()));
                     double sumTotal = total + exp + fre;
                     double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
-                    if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && !df.format(sumTotal).equals(df.format(receiveTotal))) {
+                    if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
                         //尾款信息
                         rowData.add("有尾款");
                     } else {
@@ -776,7 +776,7 @@ public class BizOrderHeaderController extends BaseController {
                         rowData.add(String.valueOf(order.getReceiveTotal() == null ? StringUtils.EMPTY : order.getReceiveTotal()));
                         double sumTotal = total + exp + Fre;
                         double receiveTotal = order.getReceiveTotal() == null ? 0.0 : order.getReceiveTotal();
-                        if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && !df.format(sumTotal).equals(df.format(receiveTotal))) {
+                        if (!OrderHeaderBizStatusEnum.EXPORT_TAIL.contains(order.getBizStatus()) && sumTotal > receiveTotal) {
                             rowData.add("有尾款");
                         } else {
                             rowData.add(StringUtils.EMPTY);
