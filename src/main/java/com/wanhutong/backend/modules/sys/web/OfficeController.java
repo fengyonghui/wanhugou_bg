@@ -669,7 +669,7 @@ public class OfficeController extends BaseController {
         } else {
             customer.setParentIds("%," + purchasersId + ",%");
         }
-        if (!StringUtils.EMPTY.equals(office.getMoblieMoeny().getMobile())) {
+        if (!StringUtils.isEmpty(office.getMoblieMoeny().getMobile())) {
             customer.setMoblieMoeny(office.getMoblieMoeny());
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -677,7 +677,7 @@ public class OfficeController extends BaseController {
         try {
             List<Office> meetingExprotList = officeService.findMeetingExprot(customer);
             if (CollectionUtils.isEmpty(meetingExprotList)) {
-                if ("query".equals(office.getQueryMemberGys()) && !StringUtils.EMPTY.equals(office.getMoblieMoeny().getMobile())) {
+                if ("query".equals(office.getQueryMemberGys()) && !StringUtils.isEmpty(office.getMoblieMoeny().getMobile())) {
                     //列表页输入2个条件查询时
                     Office officeUser = new Office();
                     officeUser.setQueryMemberGys(office.getName());
@@ -716,7 +716,7 @@ public class OfficeController extends BaseController {
                         break;
                     }
                 }
-                if (!StringUtils.EMPTY.equals(offtype)) {
+                if (!StringUtils.isEmpty(offtype)) {
                     headArr.add(offtype);
                 } else {
                     headArr.add(StringUtils.EMPTY);
@@ -732,7 +732,7 @@ public class OfficeController extends BaseController {
                         break;
                     }
                 }
-                if (!StringUtils.EMPTY.equals(yesNo)) {
+                if (!StringUtils.isEmpty(yesNo)) {
                     headArr.add(yesNo);
                 } else {
                     headArr.add(StringUtils.EMPTY);
@@ -757,7 +757,7 @@ public class OfficeController extends BaseController {
                 BuyerAdviser buyerAdviser = buyerAdviserService.get(meetingExprotList.get(i).getId());
                 if (!"0".equals(buyerAdviser.getStatus())) {
                     User user = systemService.getUser(buyerAdviser.getConsultantId());
-                    if (user.getName() != null && !user.getName().equals(StringUtils.EMPTY) && !"0".equals(user.getDelFlag())) {
+                    if (StringUtils.isNotEmpty(user.getName()) && !"0".equals(user.getDelFlag())) {
                         headArr.add(user.getCompany() == null ? StringUtils.EMPTY : (user.getCompany().getName() == null ? StringUtils.EMPTY : user.getCompany().getName()));
                         headArr.add(user.getName());
                     } else {
