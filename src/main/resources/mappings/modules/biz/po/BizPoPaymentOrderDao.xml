@@ -126,14 +126,12 @@
 			id,
 			po_header_id,
 			total,
-			img,
 			deadline,
 			process_id
 		) VALUES (
 			#{id},
 			#{poHeaderId},
 			#{total},
-			#{img},
 			#{deadline},
 			#{processId}
 		)
@@ -146,7 +144,6 @@
 			deadline = #{deadline},
 			pay_total = #{payTotal},
 			biz_status = #{bizStatus},
-			img = #{img},
 			process_id = #{processId}
 			<if test="payTime != null and payTime != ''">
 				, pay_time = #{payTime}

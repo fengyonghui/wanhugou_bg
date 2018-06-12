@@ -77,6 +77,9 @@ public class BizPoPaymentOrderService extends CrudService<BizPoPaymentOrderDao, 
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public void saveImg(BizPoPaymentOrder bizPoPaymentOrder) {
 		String imgStr = bizPoPaymentOrder.getImg();
+		if (StringUtils.isBlank(imgStr)) {
+			return;
+		}
 		String[] split = imgStr.split(",");
 
 		for (int i = 0; i < split.length; i++) {
