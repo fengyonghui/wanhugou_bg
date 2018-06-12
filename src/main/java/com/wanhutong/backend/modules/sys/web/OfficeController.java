@@ -767,9 +767,9 @@ public class OfficeController extends BaseController {
                 headArr.add(meetingExprotList.get(i).getEmail() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getEmail());
                 //所属采购中心，所属客户专员
                 BuyerAdviser buyerAdviser = buyerAdviserService.get(meetingExprotList.get(i).getId());
-                if (!"0".equals(buyerAdviser.getStatus())) {
+                if (buyerAdviser!=null && !"0".equals(buyerAdviser.getStatus())) {
                     User user = systemService.getUser(buyerAdviser.getConsultantId());
-                    if (StringUtils.isNotEmpty(user.getName()) && !"0".equals(user.getDelFlag())) {
+                    if (user!=null && StringUtils.isNotEmpty(user.getName()) && !"0".equals(user.getDelFlag())) {
                         headArr.add(user.getCompany() == null ? StringUtils.EMPTY : (user.getCompany().getName() == null ? StringUtils.EMPTY : user.getCompany().getName()));
                         headArr.add(user.getName());
                     } else {
