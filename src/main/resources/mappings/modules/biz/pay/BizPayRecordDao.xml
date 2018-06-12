@@ -11,7 +11,7 @@
 		a.original_amount as"originalAmount",
 		a.cash_amount as "cashAmount",
 		a.payer AS "payer",
-		s.name AS  "bizPayRecord.payer.name",
+		s.name AS  "payerEntity.name",
 		a.cust_id AS "customer.id",
 		so.name as "customer.name",
 		so.phone as "customer.phone",

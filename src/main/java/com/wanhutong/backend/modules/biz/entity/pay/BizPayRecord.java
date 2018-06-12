@@ -58,6 +58,12 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 	 * */
 	private String listPayQuery;
 
+	/**
+	 * 支付人实体
+	 */
+	private User payerEntity;
+
+
 	public BizPayRecord() {
 		super();
 	}
@@ -245,5 +251,13 @@ public class BizPayRecord extends DataEntity<BizPayRecord> {
 
 	public void setReqId(Integer reqId) {
 		this.reqId = reqId;
+	}
+
+	public User getPayerEntity() {
+		return payerEntity;
+	}
+
+	public void setPayerEntity(User payerEntity) {
+		this.payerEntity = payerEntity;
 	}
 }

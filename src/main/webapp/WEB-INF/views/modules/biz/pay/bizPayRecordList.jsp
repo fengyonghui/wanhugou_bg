@@ -86,7 +86,7 @@
 				</form:select>
 			</li>
 			<li><label>支付人：</label>
-				<form:input path="createBy.name" htmlEscape="false" maxlength="30" class="input-medium"/>
+				<form:input path="payerEntity.name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>联系电话：</label>
 				<form:input path="customer.moblieMoeny.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
