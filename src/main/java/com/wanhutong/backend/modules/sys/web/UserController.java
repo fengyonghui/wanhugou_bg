@@ -138,53 +138,58 @@ public class UserController extends BaseController {
 
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
-		String userSou="officeConnIndex";
-		if(user.getCompany()!=null && user.getCompany().getSource()!=null && user.getCompany().getSource().equals(userSou)){
+	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model,Date ordrHeaderStartTime,Date orderHeaderEedTime) {
+		if (user.getCompany() != null && user.getCompany().getSource() != null && "officeConnIndex".equals(user.getCompany().getSource())) {
 			//属于客户专员左边点击菜单查询
 			Office queryOffice = officeService.get(user.getCompany().getId());
-			if(queryOffice!=null){
-				if(queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()))){//采购中心8
+			if (queryOffice != null) {
+				if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()))) {//采购中心8
 					user.getCompany().setType(queryOffice.getType());
-				} else if(queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()))){ //配资中心 10
+				} else if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()))) { //配资中心 10
 					user.getCompany().setCustomerTypeTen(queryOffice.getType());
-				}else if(queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()))){	//网供中心 11
+				} else if (queryOffice.getType().equals(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()))) {    //网供中心 11
 					user.getCompany().setCustomerTypeEleven(queryOffice.getType());
-				}else{
+				} else {
 					user.getCompany().setType(String.valueOf(OfficeTypeEnum.PURCHASINGCENTER.getType()));
 					user.getCompany().setCustomerTypeTen(String.valueOf(OfficeTypeEnum.WITHCAPITAL.getType()));
 					user.getCompany().setCustomerTypeEleven(String.valueOf(OfficeTypeEnum.NETWORKSUPPLY.getType()));
 				}
 			}
 		}
-		if(UserUtils.getUser().isAdmin()){
+		if (UserUtils.getUser().isAdmin()) {
 			user.setDataStatus("filter");
 		}
+		if (ordrHeaderStartTime != null) {
+			user.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+		}
+		if (orderHeaderEedTime != null) {
+			user.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+		}
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
-		if(user.getConn()!=null && user.getConn().equals("connIndex")){
+		if (user.getConn() != null && "connIndex".equals(user.getConn())) {
 			//客户专员统计
 			BizOrderHeader bizOrderHeader = new BizOrderHeader();
 			User userAdmin = UserUtils.getUser();
-			if(user.getOrdrHeaderStartTime()!=null){
-				bizOrderHeader.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+			if (ordrHeaderStartTime != null) {
+				bizOrderHeader.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
 			}
-			if(user.getOrderHeaderEedTime()!=null){
-				bizOrderHeader.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+			if (orderHeaderEedTime != null) {
+				bizOrderHeader.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
 			}
-			if(userAdmin.isAdmin()){
-			}else{
+			if (!userAdmin.isAdmin()) {
 				bizOrderHeader.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
 			}
-			BizOrderHeader orderUserCount =null;
-			for(int i=0;i<page.getList().size();i++){
+			for (int i = 0; i < page.getList().size(); i++) {
 				bizOrderHeader.setCon(page.getList().get(i));
-				orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
-				if(orderUserCount!=null){
+				BizOrderHeader orderUserCount = bizOrderHeaderDao.findOrderUserCount(bizOrderHeader);
+				if (orderUserCount != null) {
 					page.getList().get(i).setUserOrder(orderUserCount);
 				}
 			}
 		}
 		model.addAttribute("page", page);
+		model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
+		model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
 		return "modules/sys/userList";
 	}
 
@@ -638,30 +643,36 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"seleIndexList"})
-	public String seleIndex(User user, Model model,HttpServletRequest request, HttpServletResponse response) {
-        Page<User> page = systemService.findUserSele(new Page<User>(request, response), user);
-		BizOrderHeader orderHeades=null;
+	public String seleIndex(User user, Model model,HttpServletRequest request, HttpServletResponse response,Date ordrHeaderStartTime,Date orderHeaderEedTime) {
+		if (ordrHeaderStartTime != null) {
+			user.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+		}
+		if (orderHeaderEedTime != null) {
+			user.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+		}
+		Page<User> page = systemService.findUserSele(new Page<User>(request, response), user);
 		User userAdmin = UserUtils.getUser();
 		User ordUser = new User();
-		if(user.getOrdrHeaderStartTime()!=null){
-			ordUser.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+		if (ordrHeaderStartTime != null) {
+			ordUser.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
 		}
-		if(user.getOrderHeaderEedTime()!=null){
-			ordUser.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+		if (orderHeaderEedTime != null) {
+			ordUser.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
 		}
-		if(userAdmin.isAdmin()){
-		}else{
+		if (!userAdmin.isAdmin()) {
 			ordUser.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
 		}
 		for (User user1 : page.getList()) {
 			ordUser.setId(user1.getId());
-			orderHeades = bizOrderHeaderDao.categorySkuStatistics(ordUser);
-			if(orderHeades!=null){
+			BizOrderHeader orderHeades = bizOrderHeaderDao.categorySkuStatistics(ordUser);
+			if (orderHeades != null) {
 				user1.setUserOrder(orderHeades);
 			}
 		}
-        model.addAttribute("page", page);
-        return "modules/sys/userSeleIndexList";
+		model.addAttribute("page", page);
+		model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
+		model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
+		return "modules/sys/userSeleIndexList";
 	}
 
 	/**
@@ -670,38 +681,42 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "contact")
-	public String contact(User user, HttpServletRequest request, HttpServletResponse response, Model model){
+	public String contact(User user, HttpServletRequest request, HttpServletResponse response, Model model,Date ordrHeaderStartTime,Date orderHeaderEedTime){
 		Office company = new Office();
-		if (user.getCompany() != null && user.getCompany().getName() != null && !"".equals(user.getCompany().getName())){
+		if (user.getCompany() != null && user.getCompany().getName() != null && !"".equals(user.getCompany().getName())) {
 			company.setName(user.getCompany().getName());
 		}
 		company.setType(OfficeTypeEnum.CUSTOMER.getType());
 		user.setCompany(company);
-		Page<User> page = systemService.contact(new Page<User>(request, response),user);
+		if (ordrHeaderStartTime != null) {
+			user.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+		}
+		if (orderHeaderEedTime != null) {
+			user.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+		}
+		Page<User> page = systemService.contact(new Page<User>(request, response), user);
 		User userAdmin = UserUtils.getUser();
 		BizChatRecord bizChatRecord = new BizChatRecord();
-		if(user.getOrdrHeaderStartTime()!=null){
-			bizChatRecord.setOrdrHeaderStartTime(user.getOrdrHeaderStartTime());
+		if (ordrHeaderStartTime != null) {
+			bizChatRecord.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
 		}
-		if(user.getOrderHeaderEedTime()!=null){
-			bizChatRecord.setOrderHeaderEedTime(user.getOrderHeaderEedTime());
+		if (orderHeaderEedTime != null) {
+			bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+		}
+		if (!userAdmin.isAdmin()) {
+			bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
 		}
 		for (User user1 : page.getList()) {
 			bizChatRecord.setOffice(user1.getCompany());
-			List<BizOrderHeader> userOrderCountSecond =null;
-			if(userAdmin.isAdmin()){
-				userOrderCountSecond = bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord);
-			}else{
-				bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
-				userOrderCountSecond = bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord);
-			}
-
+			List<BizOrderHeader> userOrderCountSecond = bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord);
 			for (BizOrderHeader bizOrderHeader : userOrderCountSecond) {
 				user1.setUserOrder(bizOrderHeader);
 			}
 		}
 		model.addAttribute("page", page);
-		model.addAttribute("flag","ck");
+		model.addAttribute("flag", "ck");
+		model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
+		model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
 		return "modules/sys/office/sysOfficeContact";
 	}
 

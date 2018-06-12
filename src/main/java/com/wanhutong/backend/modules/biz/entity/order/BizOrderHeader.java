@@ -80,16 +80,18 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String centersName;    //用于订单列表查询采购中心
 
     private User con;        //订单所属客户专员
-    private Date ordrHeaderStartTime;    //订单创建开始时间
-    private Date orderHeaderEedTime;    //订单创建结束时间
+    private String ordrHeaderStartTime;    //订单创建开始时间
+    private String orderHeaderEedTime;    //订单创建结束时间
     /**
      * 订单更新开始时间
      * */
     private Date orderUpdaStartTime;
+    private Date orderCreatStartTime;
     /**
      * 订单更新结束时间
      * */
     private Date orderUpdaEndTime;
+    private Date orderCreatEndTime;
 
     /**
      * 查看已经生成的采购单 标识符
@@ -439,22 +441,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.con = con;
     }
 
-    public Date getOrdrHeaderStartTime() {
-        return ordrHeaderStartTime;
-    }
-
-    public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
-        this.ordrHeaderStartTime = ordrHeaderStartTime;
-    }
-
-    public Date getOrderHeaderEedTime() {
-        return orderHeaderEedTime;
-    }
-
-    public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
-        this.orderHeaderEedTime = orderHeaderEedTime;
-    }
-
     public Office getCustomer() {
         return customer;
     }
@@ -593,5 +579,37 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setOfficeCount(Integer officeCount) {
         this.officeCount = officeCount;
+    }
+
+    public String getOrdrHeaderStartTime() {
+        return ordrHeaderStartTime;
+    }
+
+    public void setOrdrHeaderStartTime(String ordrHeaderStartTime) {
+        this.ordrHeaderStartTime = ordrHeaderStartTime;
+    }
+
+    public String getOrderHeaderEedTime() {
+        return orderHeaderEedTime;
+    }
+
+    public void setOrderHeaderEedTime(String orderHeaderEedTime) {
+        this.orderHeaderEedTime = orderHeaderEedTime;
+    }
+
+    public Date getOrderCreatStartTime() {
+        return orderCreatStartTime;
+    }
+
+    public void setOrderCreatStartTime(Date orderCreatStartTime) {
+        this.orderCreatStartTime = orderCreatStartTime;
+    }
+
+    public Date getOrderCreatEndTime() {
+        return orderCreatEndTime;
+    }
+
+    public void setOrderCreatEndTime(Date orderCreatEndTime) {
+        this.orderCreatEndTime = orderCreatEndTime;
     }
 }

@@ -324,10 +324,10 @@
 				AND a.biz_status=#{bizStatus}
 			</if>
 			<!-- 列表时间查询 -->
-			<if test="ordrHeaderStartTime !=null and ordrHeaderStartTime !=''">
-				AND a.create_time &gt;= #{ordrHeaderStartTime}
-				<if test="orderHeaderEedTime!=null and orderHeaderEedTime!=''">
-                    AND a.create_time &lt;= #{orderHeaderEedTime}
+			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
+				AND a.create_time &gt;= #{orderCreatStartTime}
+				<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
+                    AND a.create_time &lt;= #{orderCreatEndTime}
 				</if>
 			</if>
 			<if test="orderUpdaStartTime !=null and orderUpdaStartTime !=''">
@@ -2223,7 +2223,7 @@ FROM
 			and su.status=1
 			and su.id=#{id}
 			and bizcr.create_id=#{id}
-			and so.type=7
+			and so.type=6
         <if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
         </if>
@@ -2262,9 +2262,9 @@ FROM
         </if>
 		AND (
 			(
-			a.biz_status != 45
-			AND a.biz_status != 35
-			AND a.biz_status != 0
+			a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 			)
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
 		)

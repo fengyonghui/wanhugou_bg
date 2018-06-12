@@ -193,6 +193,12 @@
 		<if test="role != null and role.name != null and role.name != ''">
 			AND sr.name = #{role.name}
 		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND a.create_date &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND a.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
 		<if test="company != null and company.id != null and company.id != ''">
 			AND (c.id = #{company.id} OR c.parent_ids LIKE
 			<if test="dbName == 'oracle'">'%,'||#{company.id}||',%')</if>
@@ -335,6 +341,12 @@
 			AND cust.status = #{DEL_FLAG_NORMAL}
 		<if test="company != null and company.type != null">
 			and cust.type = #{company.type}
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND u.create_date &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND u.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		<if test="cent != null and cent.name != null and cent.name !=''">
 			AND cent.name LIKE
@@ -711,6 +723,12 @@
 			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
 			<if test="dbName == 'mssql'">'%'+#{mobile}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if>
+		</if>
+		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			AND a.create_date &lt;= #{orderHeaderEedTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND a.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		<!-- 是否是客户专员 -->
 		<if test="company != null and company.type != null and company.type != ''">
