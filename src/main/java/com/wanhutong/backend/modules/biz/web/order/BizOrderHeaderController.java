@@ -618,7 +618,14 @@ public class BizOrderHeaderController extends BaseController {
                     } else {
                         rowData.add(StringUtils.EMPTY);
                     }
+                    //所属采购中心
                     rowData.add(order.getCentersName() == null ? StringUtils.EMPTY : order.getCentersName());
+                    //所属客户专员
+                    if (order.getCon() != null && order.getCon().getName() != null) {
+                        rowData.add(order.getCon().getName());
+                    } else {
+                        rowData.add(StringUtils.EMPTY);
+                    }
                     if (order.getTotalDetail() != null) {
                         rowData.add(String.valueOf(df.format(order.getTotalDetail())));
                     } else {
