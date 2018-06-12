@@ -93,12 +93,12 @@
 		<c:if test="${not empty user.conn && user.conn eq 'connIndex'}">
 			<li><label>日期：</label>
 				<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					   value="<fmt:formatDate value="${user.ordrHeaderStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+					   value="<fmt:formatDate value="${ordrHeaderStartTime}" pattern="yyyy-MM-dd"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
 				至
 				<input name="orderHeaderEedTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-					   value="<fmt:formatDate value="${user.orderHeaderEedTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+					   value="<fmt:formatDate value="${orderHeaderEedTime}" pattern="yyyy-MM-dd"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
 			</li>
 		</c:if>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="return page();"/>
@@ -123,7 +123,7 @@
 				<th>洽谈数</th>
 				<th>新增订单量</th>
 				<th>新增回款额</th>
-				<th>新增经销店</th>
+				<th>新增会员</th>
 			</c:if>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
@@ -214,6 +214,31 @@
 				</td></shiro:hasPermission>
 			</tr>
 		</c:if>
+		</c:if>
+		<c:if test="${not empty user.conn && user.conn eq 'stoIndex'}">
+			<c:if test="${bizUser.loginFlag == 0}">
+				<tr style="color: rgba(158,158,158,0.45)">
+			</c:if>
+			<c:if test="${bizUser.loginFlag == 1}">
+				<tr>
+			</c:if>
+			<td>${bizUser.company.name}</td>
+			<td>${bizUser.office.name}</td>
+			<td>
+				<c:if test="${bizUser.delFlag==1}">
+					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">
+							${bizUser.loginName}</a>
+				</c:if>
+				<c:if test="${bizUser.delFlag==0}">${bizUser.loginName}</c:if>
+			</td>
+			<td>${bizUser.name}</td>
+			<td>${bizUser.mobile}</td>
+			<td>${bizUser.delFlag == 1 ? '正常' : '删除'}</td>
+			<shiro:hasPermission name="sys:user:edit"><td>
+				<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
+				<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+			</td></shiro:hasPermission>
+			</tr>
 		</c:if>
 	</c:forEach>
 	</tbody>

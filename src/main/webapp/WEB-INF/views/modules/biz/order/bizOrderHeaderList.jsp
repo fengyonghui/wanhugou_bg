@@ -131,12 +131,12 @@
 			<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
 		</li>
 		<li><label>创建日期：</label>
-			<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-				   value="<fmt:formatDate value="${bizOrderHeader.ordrHeaderStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+			<input name="orderCreatStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${bizOrderHeader.orderCreatStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			至
-			<input name="orderHeaderEedTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-				   value="<fmt:formatDate value="${bizOrderHeader.orderHeaderEedTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+			<input name="orderCreatEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${bizOrderHeader.orderCreatEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 		</li>
         <li><label>客户专员：</label>
