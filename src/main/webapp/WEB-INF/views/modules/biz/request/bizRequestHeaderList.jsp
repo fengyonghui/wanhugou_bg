@@ -289,7 +289,7 @@
 				</shiro:hasPermission>
 
 					<shiro:hasPermission name="biz:request:bizRequestHeader:audit">
-					<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum) && requestHeader.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
+					<c:if test="${fn:containsIgnoreCase(fns:getUser().roleList, requestHeader.commonProcess.requestOrderProcess.roleEnNameEnum) && requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state && requestHeader.commonProcess.requestOrderProcess.name != '驳回'
 							&& requestHeader.commonProcess.requestOrderProcess.code != auditStatus
 							}">
 						<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=audit">审核</a>
