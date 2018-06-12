@@ -11,6 +11,7 @@
     <tr>
         <th>采购中心</th>
         <th>SKU名称</th>
+        <th>货号</th>
         <th>数量</th>
         <th>入库时间</th>
         <th>入库时长(天)</th>
@@ -22,6 +23,7 @@
         <tr>
             <td>${v.key.invInfo.name}</td>
             <td>${v.key.skuInfo.name}</td>
+            <td>${v.key.skuInfo.itemNo}</td>
             <td>${v.value}</td>
             <td>
                 <c:if test="${v.key.id != null}">
