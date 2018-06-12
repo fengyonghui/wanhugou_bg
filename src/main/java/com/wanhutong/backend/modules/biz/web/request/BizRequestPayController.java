@@ -5,7 +5,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
-import com.wanhutong.backend.common.utils.ZxingHandler;
+import com.wanhutong.backend.common.utils.QRCodeKit;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -28,8 +28,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.ContextLoader;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
@@ -52,7 +56,7 @@ public class BizRequestPayController extends BaseController {
 
     @RequestMapping(value = "genPayQRCode")
     @ResponseBody
-    public Map<String,String> genPayQRCode(Double payMoney,Integer reqId,Integer payMethod){
+    public Map<String,String> genPayQRCode(Double payMoney, Integer reqId, Integer payMethod){
 
         User user=UserUtils.getUser();
         Map<String,String> reMap =new HashMap<>();
@@ -169,7 +173,10 @@ public class BizRequestPayController extends BaseController {
             }
             payLogger.info("二维码地址-------------"+qrCodeUrl);
 
-            ZxingHandler.encode2(qrCodeUrl,300,300,pathFile);
+            String basePath = ContextLoader.getCurrentWebApplicationContext().getServletContext().getRealPath("/");;
+            payLogger.info("获取logo图片地址---------"+basePath);
+            BufferedImage image = QRCodeKit.createQRCodeWithLogo(qrCodeUrl,260,260, new File(basePath+"/static/images/whtLogo.png"));
+            ImageIO.write(image, "png", new File(pathFile));
 
 
         } catch (Exception e) {
