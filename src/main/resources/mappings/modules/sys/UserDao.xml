@@ -336,8 +336,8 @@
 		<if test="company != null and company.type != null">
 			and cust.type = #{company.type}
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND u.create_date &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND u.create_date &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND u.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
