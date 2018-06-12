@@ -215,6 +215,31 @@
 			</tr>
 		</c:if>
 		</c:if>
+		<c:if test="${not empty user.conn && user.conn eq 'stoIndex'}">
+			<c:if test="${bizUser.loginFlag == 0}">
+				<tr style="color: rgba(158,158,158,0.45)">
+			</c:if>
+			<c:if test="${bizUser.loginFlag == 1}">
+				<tr>
+			</c:if>
+			<td>${bizUser.company.name}</td>
+			<td>${bizUser.office.name}</td>
+			<td>
+				<c:if test="${bizUser.delFlag==1}">
+					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">
+							${bizUser.loginName}</a>
+				</c:if>
+				<c:if test="${bizUser.delFlag==0}">${bizUser.loginName}</c:if>
+			</td>
+			<td>${bizUser.name}</td>
+			<td>${bizUser.mobile}</td>
+			<td>${bizUser.delFlag == 1 ? '正常' : '删除'}</td>
+			<shiro:hasPermission name="sys:user:edit"><td>
+				<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
+				<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+			</td></shiro:hasPermission>
+			</tr>
+		</c:if>
 	</c:forEach>
 	</tbody>
 </table>
