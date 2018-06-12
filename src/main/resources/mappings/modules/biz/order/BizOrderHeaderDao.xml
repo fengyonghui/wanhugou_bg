@@ -2042,12 +2042,13 @@ FROM
 			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		AND (
-		(
-		biz_status != 45
-		AND biz_status != 35
-		AND biz_status != 0
+			(
+			a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+			)
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
 		)
-		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		and oh.status=1
 		<!--GROUP BY
 		date_format(oh.create_time, '%Y-%m')-->
@@ -2071,9 +2072,9 @@ FROM
 		AND oh.order_type != 4
 		AND (
 			(
-			biz_status != 45
-			AND biz_status != 35
-			AND biz_status != 0
+			a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 			)
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
 		)
@@ -2140,11 +2141,11 @@ FROM
 			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
 		</if>
 		AND (
-		(
-		biz_status != 45
-		AND biz_status != 35
-		AND biz_status != 0
-		)
+			(
+			a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+			)
 		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
 		)
 	</select>
@@ -2175,15 +2176,15 @@ FROM
         <if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
             AND aa.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
         </if>
-			AND (
-				(
-				aa.biz_status != 45
-				AND aa.biz_status != 35
-				AND aa.biz_status != 0
-				)
-			OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		AND (
+			(
+			a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 			)
-			and hh.id=#{id}
+		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		)
+		and hh.id=#{id}
 		) as "skuCount",
 		count(a.id) as "orderCount",
 		sum(a.receive_total) as "receiveTotal",
