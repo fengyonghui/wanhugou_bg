@@ -2128,10 +2128,12 @@ FROM
 		count(1) AS "orderCount",
 		sum(oh.receive_total) as "userOfficeReceiveTotal",
 		(
-		select count(1) from biz_custom_center_consultant bcc
-		LEFT JOIN sys_user su on su.id=bcc.consultant_id
+		select count(1) from
+			biz_custom_center_consultant bcc,
+			sys_user su
 		WHERE
-		bcc.status=1
+			bcc.status=1
+		and su.id=bcc.consultant_id
 		and su.status=1
 		and su.id=#{con.id}
 		and bcc.cust_id = ANY (
@@ -2152,9 +2154,8 @@ FROM
 		AND ta.object_name = 'sys_office'
 		)
 		AND s1.type = 6
-
-		AND s1. STATUS = 1
-		AND u1. STATUS = 1
+		AND s1.STATUS = 1
+		AND u1.STATUS = 1
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(s1.create_date,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
