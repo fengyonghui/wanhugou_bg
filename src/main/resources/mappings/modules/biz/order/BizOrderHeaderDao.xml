@@ -2043,11 +2043,11 @@ FROM
 		</if>
 		AND (
 			(
-			a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
-			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
-			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+			oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 			)
-		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		OR (oh.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND oh.receive_total > 0)
 		)
 		and oh.status=1
 		<!--GROUP BY
@@ -2072,11 +2072,11 @@ FROM
 		AND oh.order_type != 4
 		AND (
 			(
-			a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
-			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
-			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+			oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 			)
-		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		OR (oh.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND oh.receive_total > 0)
 		)
 		and oh.status=1
 	</select>
@@ -2142,11 +2142,11 @@ FROM
 		</if>
 		AND (
 			(
-			a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
-			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
-			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+			oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 			)
-		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		OR (oh.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND oh.receive_total > 0)
 		)
 	</select>
 
@@ -2182,7 +2182,7 @@ FROM
 			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
 			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 			)
-		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		OR (a.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND a.receive_total > 0)
 		)
 		and hh.id=#{id}
 		) as "skuCount",
@@ -2267,7 +2267,7 @@ FROM
 			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
 			AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 			)
-		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+		OR (a.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND a.receive_total > 0)
 		)
 	</select>
 
