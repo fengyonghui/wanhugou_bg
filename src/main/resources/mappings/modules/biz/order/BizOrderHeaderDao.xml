@@ -2012,8 +2012,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND bizcr.create_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bizcr.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2035,8 +2035,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND oh.create_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND oh.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2115,8 +2115,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(bcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND bcr.create_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bcr.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND bcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2159,8 +2159,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(s1.create_date,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND s1.create_date &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND s1.create_date &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND s1.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2169,8 +2169,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(bcc.update_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND bcc.update_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bcc.update_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND bcc.update_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2185,8 +2185,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND oh.create_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND oh.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2240,8 +2240,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(aa.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND aa.create_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND aa.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND aa.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2275,8 +2275,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(qq.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND qq.create_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND qq.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND qq.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2299,8 +2299,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND bizcr.create_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bizcr.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2326,8 +2326,8 @@ FROM
 		<if test="ordrHeaderStartTime ==null">
 			and DATE_FORMAT(a.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
-		<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
-			AND a.create_time &lt;= #{orderHeaderEedTime}
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND a.create_time &lt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
