@@ -123,7 +123,7 @@
 				<th>洽谈数</th>
 				<th>新增订单量</th>
 				<th>新增回款额</th>
-				<th>新增经销店</th>
+				<th>新增会员</th>
 			</c:if>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
