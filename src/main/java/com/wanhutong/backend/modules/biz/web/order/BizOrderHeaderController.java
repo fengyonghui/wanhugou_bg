@@ -53,6 +53,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -270,7 +271,7 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderStatus.setOrderHeader(bizOrderHeader);
         bizOrderStatus.setOrderType(BizOrderStatus.OrderType.ORDER.getType());
         List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
-        statusList.sort((o1,o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
+        statusList.sort(Comparator.comparing(BizOrderStatus::getCreateDate).thenComparing(BizOrderStatus::getId));
 
         Map<Integer, OrderHeaderBizStatusEnum> statusMap = OrderHeaderBizStatusEnum.getStatusMap();
 
