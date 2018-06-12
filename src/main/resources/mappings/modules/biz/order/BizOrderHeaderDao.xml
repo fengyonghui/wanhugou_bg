@@ -17,6 +17,7 @@
 		<result property="itemNo" column="itemNo"/>
 		<result property="delFlag" column="delFlag"/>
 		<result property="centersName" column="centersName"/>
+		<result property="con.name" column="con.name"/>
 
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
