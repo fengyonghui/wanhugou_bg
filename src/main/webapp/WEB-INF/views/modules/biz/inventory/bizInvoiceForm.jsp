@@ -388,6 +388,12 @@
 				<%--<input id="ensureData" class="btn btn-primary" type="button"  value="确定"/>--%>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label">备注：</label>
+			<div class="controls">
+				<form:textarea path="remarks" htmlEscape="false" maxlength="200" class="input-xlarge "/>
+			</div>
+		</div>
 		<div class="form-actions">
 			<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="发 货"/>&nbsp;</shiro:hasPermission>
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
