@@ -127,6 +127,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		int counter = stockQtyBySkuIdCentId;
 		String skuName = bizSku.getName();
 		String invName = inventoryByCustId.getName();
+		String itemNo = bizSku.getItemNo();
 
 		for (BizCollectGoodsRecord bizCollectGoodsRecord : recordList) {
 			if (counter <=0) {
@@ -142,6 +143,7 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 			bizCollectGoodsRecord.setInvInfo(bizInventoryInfo);
 			BizSkuInfo bizSkuInfo = new BizSkuInfo();
 			bizSkuInfo.setName(skuName);
+			bizSkuInfo.setItemNo(itemNo);
 			bizCollectGoodsRecord.setSkuInfo(bizSkuInfo);
 			resultRecordList.put(bizCollectGoodsRecord, counter);
 		}
