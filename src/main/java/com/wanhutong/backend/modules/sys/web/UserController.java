@@ -159,12 +159,6 @@ public class UserController extends BaseController {
 		if (UserUtils.getUser().isAdmin()) {
 			user.setDataStatus("filter");
 		}
-		if (ordrHeaderStartTime != null) {
-			user.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
-		}
-		if (orderHeaderEedTime != null) {
-			user.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
-		}
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		if (user.getConn() != null && "connIndex".equals(user.getConn())) {
 			//客户专员统计
@@ -644,12 +638,6 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"seleIndexList"})
 	public String seleIndex(User user, Model model,HttpServletRequest request, HttpServletResponse response,Date ordrHeaderStartTime,Date orderHeaderEedTime) {
-		if (ordrHeaderStartTime != null) {
-			user.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
-		}
-		if (orderHeaderEedTime != null) {
-			user.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
-		}
 		Page<User> page = systemService.findUserSele(new Page<User>(request, response), user);
 		User userAdmin = UserUtils.getUser();
 		User ordUser = new User();
