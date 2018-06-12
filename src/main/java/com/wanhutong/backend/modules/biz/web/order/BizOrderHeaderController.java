@@ -618,7 +618,14 @@ public class BizOrderHeaderController extends BaseController {
                     } else {
                         rowData.add(StringUtils.EMPTY);
                     }
+                    //所属采购中心
                     rowData.add(order.getCentersName() == null ? StringUtils.EMPTY : order.getCentersName());
+                    //所属客户专员
+                    if (order.getCon() != null && order.getCon().getName() != null) {
+                        rowData.add(order.getCon().getName());
+                    } else {
+                        rowData.add(StringUtils.EMPTY);
+                    }
                     if (order.getTotalDetail() != null) {
                         rowData.add(String.valueOf(df.format(order.getTotalDetail())));
                     } else {
@@ -812,18 +819,20 @@ public class BizOrderHeaderController extends BaseController {
                         }
                         //订单创建时间
                         rowData.add(String.valueOf(sdf.format(order.getCreateDate())));
-                        //支付类型名称
-                        rowData.add(p.getPayTypeName() == null ? StringUtils.EMPTY : p.getPayTypeName());
-                        //支付编号
-                        rowData.add(p.getPayNum() == null ? StringUtils.EMPTY : p.getPayNum());
-                        rowData.add(p.getOutTradeNo() == null ? StringUtils.EMPTY : p.getOutTradeNo());
-                        //支付账号
-                        rowData.add(p.getAccount() == null ? StringUtils.EMPTY : p.getAccount());
-                        //交易类型名称
-                        rowData.add(p.getRecordTypeName() == null ? StringUtils.EMPTY : p.getRecordTypeName());
-                        rowData.add(p.getPayMoney() == null ? StringUtils.EMPTY : String.valueOf(p.getPayMoney()));
-                        //交易时间
-                        rowData.add(String.valueOf(sdf.format(p.getCreateDate())));
+                        if (p.getBizStatus() != null && p.getBizStatus() == 1) {
+                            //支付类型名称
+                            rowData.add(p.getPayTypeName() == null ? StringUtils.EMPTY : p.getPayTypeName());
+                            //支付编号
+                            rowData.add(p.getPayNum() == null ? StringUtils.EMPTY : p.getPayNum());
+                            rowData.add(p.getOutTradeNo() == null ? StringUtils.EMPTY : p.getOutTradeNo());
+                            //支付账号
+                            rowData.add(p.getAccount() == null ? StringUtils.EMPTY : p.getAccount());
+                            //交易类型名称
+                            rowData.add(p.getRecordTypeName() == null ? StringUtils.EMPTY : p.getRecordTypeName());
+                            rowData.add(p.getPayMoney() == null ? StringUtils.EMPTY : String.valueOf(p.getPayMoney()));
+                            //交易时间
+                            rowData.add(String.valueOf(sdf.format(p.getCreateDate())));
+                        }
                         data.add(rowData);
                     });
                 }
