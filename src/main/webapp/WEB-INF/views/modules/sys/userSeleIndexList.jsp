@@ -58,7 +58,7 @@
 			<th>订单量</th>
 			<th>回款额</th>
 			<th>新品发布量</th>
-			<th>供应商洽谈数</th>
+			<th>经销店洽谈数</th>
 		<shiro:hasPermission name="sys:user:edit"><th>操作</th></shiro:hasPermission></tr></thead>
 	<tbody>
 	<c:forEach items="${page.list}" var="bizUser">
