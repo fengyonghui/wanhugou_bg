@@ -318,6 +318,7 @@
 		a.sku_id AS "skuInfo.id",
 		sku.part_no AS "skuInfo.partNo",
 		sku.name AS "skuInfo.name",
+		sku.item_no AS "skuInfo.itemNo",
 		a.order_id AS "bizOrderHeader.id",
 		a.request_id AS "bizRequestHeader.id",
 		a.order_num AS "orderNum",

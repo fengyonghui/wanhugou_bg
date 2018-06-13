@@ -30,8 +30,8 @@ public class BizChatRecord extends DataEntity<BizChatRecord> {
 	 * */
 	private String source;
 	private BizOrderHeader order;
-	private Date ordrHeaderStartTime;//日期查询
-	private Date orderHeaderEedTime;//日期查询
+	private String ordrHeaderStartTime;//日期查询
+	private String orderHeaderEedTime;//日期查询
 
 	public BizChatRecord() {
 		super();
@@ -84,19 +84,19 @@ public class BizChatRecord extends DataEntity<BizChatRecord> {
 		this.order = order;
 	}
 
-	public Date getOrdrHeaderStartTime() {
+	public String getOrdrHeaderStartTime() {
 		return ordrHeaderStartTime;
 	}
 
-	public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
+	public void setOrdrHeaderStartTime(String ordrHeaderStartTime) {
 		this.ordrHeaderStartTime = ordrHeaderStartTime;
 	}
 
-	public Date getOrderHeaderEedTime() {
+	public String getOrderHeaderEedTime() {
 		return orderHeaderEedTime;
 	}
 
-	public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
+	public void setOrderHeaderEedTime(String orderHeaderEedTime) {
 		this.orderHeaderEedTime = orderHeaderEedTime;
 	}
 }

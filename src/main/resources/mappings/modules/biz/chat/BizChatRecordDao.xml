@@ -47,6 +47,12 @@
 			<if test="user != null and user.id != null and user.id != ''">
 				AND a.user_id = #{user.id}
 			</if>
+			<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+				AND a.create_time &lt;= #{ordrHeaderStartTime}
+			</if>
+			<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+				AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+			</if>
 			<if test="office != null and office.type != null and office.type != ''">
 				AND so.type = #{office.type}
 			</if>

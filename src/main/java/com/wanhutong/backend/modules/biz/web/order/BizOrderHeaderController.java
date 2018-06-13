@@ -135,13 +135,13 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-        if(bizOrderHeader.getSkuChickCount()!=null){
+        if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
         }
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
-        model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
+        model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
 
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -618,7 +618,14 @@ public class BizOrderHeaderController extends BaseController {
                     } else {
                         rowData.add(StringUtils.EMPTY);
                     }
+                    //所属采购中心
                     rowData.add(order.getCentersName() == null ? StringUtils.EMPTY : order.getCentersName());
+                    //所属客户专员
+                    if (order.getCon() != null && order.getCon().getName() != null) {
+                        rowData.add(order.getCon().getName());
+                    } else {
+                        rowData.add(StringUtils.EMPTY);
+                    }
                     if (order.getTotalDetail() != null) {
                         rowData.add(String.valueOf(df.format(order.getTotalDetail())));
                     } else {
@@ -746,6 +753,12 @@ public class BizOrderHeaderController extends BaseController {
                             rowData.add(order.getCustomer().getName() + "(" + order.getCustomer().getPhone() + ")");
                         }
                         rowData.add(order.getCentersName() == null ? StringUtils.EMPTY : order.getCentersName());
+                        //所属客户专员
+                        if (order.getCon() != null && order.getCon().getName() != null) {
+                            rowData.add(order.getCon().getName());
+                        } else {
+                            rowData.add(StringUtils.EMPTY);
+                        }
                         if (order.getTotalDetail() != null) {
                             rowData.add(String.valueOf(df.format(order.getTotalDetail())));
                         } else {
@@ -812,23 +825,25 @@ public class BizOrderHeaderController extends BaseController {
                         }
                         //订单创建时间
                         rowData.add(String.valueOf(sdf.format(order.getCreateDate())));
-                        //支付类型名称
-                        rowData.add(p.getPayTypeName() == null ? StringUtils.EMPTY : p.getPayTypeName());
-                        //支付编号
-                        rowData.add(p.getPayNum() == null ? StringUtils.EMPTY : p.getPayNum());
-                        rowData.add(p.getOutTradeNo() == null ? StringUtils.EMPTY : p.getOutTradeNo());
-                        //支付账号
-                        rowData.add(p.getAccount() == null ? StringUtils.EMPTY : p.getAccount());
-                        //交易类型名称
-                        rowData.add(p.getRecordTypeName() == null ? StringUtils.EMPTY : p.getRecordTypeName());
-                        rowData.add(p.getPayMoney() == null ? StringUtils.EMPTY : String.valueOf(p.getPayMoney()));
-                        //交易时间
-                        rowData.add(String.valueOf(sdf.format(p.getCreateDate())));
+                        if (p.getBizStatus() != null && p.getBizStatus() == 1) {
+                            //支付类型名称
+                            rowData.add(p.getPayTypeName() == null ? StringUtils.EMPTY : p.getPayTypeName());
+                            //支付编号
+                            rowData.add(p.getPayNum() == null ? StringUtils.EMPTY : p.getPayNum());
+                            rowData.add(p.getOutTradeNo() == null ? StringUtils.EMPTY : p.getOutTradeNo());
+                            //支付账号
+                            rowData.add(p.getAccount() == null ? StringUtils.EMPTY : p.getAccount());
+                            //交易类型名称
+                            rowData.add(p.getRecordTypeName() == null ? StringUtils.EMPTY : p.getRecordTypeName());
+                            rowData.add(p.getPayMoney() == null ? StringUtils.EMPTY : String.valueOf(p.getPayMoney()));
+                            //交易时间
+                            rowData.add(String.valueOf(sdf.format(p.getCreateDate())));
+                        }
                         data.add(rowData);
                     });
                 }
             }
-            String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "商品总价", "商品工厂总价", "调整金额", "运费",
+            String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心","所属客户专员", "商品总价", "商品工厂总价", "调整金额", "运费",
                     "应付金额", "已收货款", "尾款信息", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品工厂价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();

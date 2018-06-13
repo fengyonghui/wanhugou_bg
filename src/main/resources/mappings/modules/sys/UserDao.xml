@@ -336,6 +336,12 @@
 		<if test="company != null and company.type != null">
 			and cust.type = #{company.type}
 		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND u.create_date &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND u.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
 		<if test="cent != null and cent.name != null and cent.name !=''">
 			AND cent.name LIKE
 			<if test="dbName == 'oracle'">'%'||#{cent.name}||'%'</if>
