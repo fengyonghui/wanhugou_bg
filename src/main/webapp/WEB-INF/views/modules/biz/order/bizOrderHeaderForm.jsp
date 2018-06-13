@@ -112,24 +112,24 @@
                     $("#jhaddress").val("${address.address}");
                     $("#appointedDate").val("<fmt:formatDate value="${address.appointedTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>");
                 }else{
-                    var option2=$("<option/>").text("${address.province.name}").val(${address.province.id});
-                    $("#jhprovince").append(option2);
-                    var option3=$("<option/>").text("${address.city.name}").val(${address.city.id});
-                    $("#jhcity").append(option3);
-                    var option4=$("<option/>").text("${address.region.name}").val(${address.region.id});
-                    $("#jhregion").append(option4);
-                    $("#jhaddress").val("${address.address}");
-                    $("#appointedDate").val("<fmt:formatDate value="${address.appointedTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>");
+                    <%--var option2=$("<option/>").text("${address.province.name}").val(${address.province.id});--%>
+                    <%--$("#jhprovince").append(option2);--%>
+                    <%--var option3=$("<option/>").text("${address.city.name}").val(${address.city.id});--%>
+                    <%--$("#jhcity").append(option3);--%>
+                    <%--var option4=$("<option/>").text("${address.region.name}").val(${address.region.id});--%>
+                    <%--$("#jhregion").append(option4);--%>
+                    <%--$("#jhaddress").val("${address.address}");--%>
+                    <%--$("#appointedDate").val("<fmt:formatDate value="${address.appointedTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>");--%>
                 }
                 $("#province").change();
                 $("#city").change();
                 $("#region").change();
                 $("#address").change();
                 <%--交货地址--%>
-                $("#jhprovince").change();
-                $("#jhcity").change();
-                $("#jhregion").change();
-                $("#jhaddress").change();
+                <%--$("#jhprovince").change();--%>
+                <%--$("#jhcity").change();--%>
+                <%--$("#jhregion").change();--%>
+                <%--$("#jhaddress").change();--%>
             }
             $("#addAddressHref").click(function () {
                 var officeId=$("#officeId").val();
@@ -879,53 +879,27 @@
     </c:if>
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
-            <div class="control-group" id="jhadd1">
-                <label class="control-label">交货地址:</label>
+            <div class="control-group">
+                <label class="control-label">所在地区：</label>
                 <div class="controls">
-                    <select id="jhprovince" class="input-medium" name="bizLocation.province.id" disabled="disabled"
-                            style="width:150px;text-align: center;">
-                        <c:if test="${bizOrderHeader.id ==null}">
-                            <option value="-1">—— 省 ——</option>
-                        </c:if>
-                    </select>
-                    <select id="jhcity" class="input-medium" name="bizLocation.city.id" disabled="disabled"
-                            style="width:150px;text-align: center;">
-                        <c:if test="${bizOrderHeader.id ==null}">
-                            <option value="-1">—— 市 ——</option>
-                        </c:if>
-                    </select>
-                    <select id="jhregion" class="input-medium" name="bizLocation.region.id" disabled="disabled" style="width:150px;text-align: center;">
-                        <c:if test="${bizOrderHeader.id ==null}">
-                            <option value="-1">—— 区 ——</option>
-                        </c:if>
-                    </select>
-                    <span class="help-inline"><font color="red">*</font> </span>
+                    <input type="hidden" id="locationId" name="locationId" value="${entity.bizLocation.id}"/>
+                    <form:hidden path="bizLocation.selectedRegionId" id="regionId" value="${entity.bizLocation.selectedRegionId}"/>
+                    <input type="text" id="regionName" value="${entity.bizLocation.pcrName}" readonly="readonly"/>
+                    <biz:selectregion id="region_id" name="regionName" selectedId="regionId"/>
                 </div>
             </div>
-            <div class="control-group" id="jhadd2" style="display:none">
-                <label class="control-label">交货地址:</label>
+            <div class="control-group">
+                <label class="control-label">详细地址：</label>
                 <div class="controls">
-                    <input id="addJhAddressHref" type="button" value="新增地址" htmlEscape="false"
-                           class="input-xlarge required"/>
-                    <label class="error" id="addError" style="display:none;">必填信息</label>
-                    <span class="help-inline"><font color="red">*</font></span>
-                </div>
-            </div>
-            <div class="control-group" id="jhadd3">
-                <label class="control-label">详细地址:</label>
-                <div class="controls">
-                    <input type="text" id="jhaddress" name="bizLocation.address" htmlEscape="false"
-                           class="input-xlarge required"/>
-                    <span class="help-inline"><font color="red">*</font></span>
+                    <form:input path="bizLocation.address" value="${address.bizLocation.address}" htmlEscape="false" maxlength="255" class="input-xlarge"/>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label">交货时间:</label>
                 <div class="controls">
                     <input id="appointedDate" name="bizLocation.appointedTime" type="text" readonly="readonly"
-                           maxlength="20" class="input-xlarge Wdate required"
+                           maxlength="20" class="input-xlarge Wdate"
                            onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
-                    <span class="help-inline"><font color="red">*</font></span>
                 </div>
             </div>
         </c:when>

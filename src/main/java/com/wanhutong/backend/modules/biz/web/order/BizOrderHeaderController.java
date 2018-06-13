@@ -426,17 +426,16 @@ public class BizOrderHeaderController extends BaseController {
                 BizOrderHeader order = bizOrderHeaderService.get(bizOrderHeader);
                 if (order != null) {
                     if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
-                        order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());//15供货中
-                        bizOrderHeaderService.saveOrderHeader(order);//保存状态
+                        order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+                        bizOrderHeaderService.saveOrderHeader(order);
 
-                        /*用于 订单状态表 insert状态*/
-                        if(order!=null && order.getId()!=null || order.getBizStatus()!=null){
+                        if (order.getId() != null || order.getBizStatus() != null) {
+                            /*用于 订单状态表 insert状态*/
                             BizOrderStatus orderStatus = new BizOrderStatus();
                             orderStatus.setOrderHeader(order);
                             orderStatus.setBizStatus(order.getBizStatus());
                             bizOrderStatusService.save(orderStatus);
                         }
-
                         BizOrderAddress orderAddres = new BizOrderAddress();
                         orderAddres.setOrderHeaderID(order);
                         List<BizOrderAddress> list = bizOrderAddressService.findList(orderAddres);
@@ -447,26 +446,26 @@ public class BizOrderHeaderController extends BaseController {
                             }
                         }
                         orderAddres.setAppointedTime(bizOrderHeader.getBizLocation().getAppointedTime());
-                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getProvince()!=null && bizOrderHeader.getBizLocation().getCity()!=null
-                                && bizOrderHeader.getBizLocation().getRegion()!=null){
+                        if (bizOrderHeader.getBizLocation() != null && bizOrderHeader.getBizLocation().getProvince() != null && bizOrderHeader.getBizLocation().getCity() != null
+                                && bizOrderHeader.getBizLocation().getRegion() != null) {
                             orderAddres.setProvince(bizOrderHeader.getBizLocation().getProvince());
                             orderAddres.setCity(bizOrderHeader.getBizLocation().getCity());
                             orderAddres.setRegion(bizOrderHeader.getBizLocation().getRegion());
                         }
-                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getAddress()!=null){
+                        if (bizOrderHeader.getBizLocation() != null && bizOrderHeader.getBizLocation().getAddress() != null) {
                             orderAddres.setAddress(bizOrderHeader.getBizLocation().getAddress());
-                        }else{
-                            orderAddres.setAddress("");
+                        } else {
+                            orderAddres.setAddress(StringUtils.EMPTY);
                         }
-                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getReceiver()!=null){
+                        if (bizOrderHeader.getBizLocation() != null && bizOrderHeader.getBizLocation().getReceiver() != null) {
                             orderAddres.setReceiver(bizOrderHeader.getBizLocation().getReceiver());
-                        }else{
-                            orderAddres.setReceiver("");
+                        } else {
+                            orderAddres.setReceiver(StringUtils.EMPTY);
                         }
-                        if(bizOrderHeader.getBizLocation()!=null && bizOrderHeader.getBizLocation().getPhone()!=null){
+                        if (bizOrderHeader.getBizLocation() != null && bizOrderHeader.getBizLocation().getPhone() != null) {
                             orderAddres.setPhone(bizOrderHeader.getBizLocation().getPhone());
-                        }else{
-                            orderAddres.setPhone("");
+                        } else {
+                            orderAddres.setPhone(StringUtils.EMPTY);
                         }
                         orderAddres.setType(2);
                         bizOrderAddressService.save(orderAddres);
@@ -488,11 +487,11 @@ public class BizOrderHeaderController extends BaseController {
                         }
                         commis = "ok";
                     } else if (objJsp.equals(OrderHeaderBizStatusEnum.UNAPPROVE.getState())) {
-                        order.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());//45审核失败
-                        bizOrderHeaderService.saveOrderHeader(order);//保存状态
+                        order.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());
+                        bizOrderHeaderService.saveOrderHeader(order);
 
                         /*用于 订单状态表 insert状态*/
-                        if(order!=null && order.getId()!=null || order.getBizStatus()!=null){
+                        if (order.getId() != null || order.getBizStatus() != null) {
                             BizOrderStatus orderStatus = new BizOrderStatus();
                             orderStatus.setOrderHeader(order);
                             orderStatus.setBizStatus(order.getBizStatus());
