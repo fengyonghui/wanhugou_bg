@@ -36,8 +36,8 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	 * 客户专员关联采购商显示详细地址
 	 * */
 	private CommonLocation bizLocation;
-	private Date ordrHeaderStartTime;//日期查询
-	private Date orderHeaderEedTime;//日期查询
+	private String ordrHeaderStartTime;//日期查询
+	private String orderHeaderEedTime;//日期查询
 
 	public BizCustomCenterConsultant() {
 		super();
@@ -103,19 +103,19 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 		this.bizLocation = bizLocation;
 	}
 
-	public Date getOrdrHeaderStartTime() {
+	public String getOrdrHeaderStartTime() {
 		return ordrHeaderStartTime;
 	}
 
-	public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
+	public void setOrdrHeaderStartTime(String ordrHeaderStartTime) {
 		this.ordrHeaderStartTime = ordrHeaderStartTime;
 	}
 
-	public Date getOrderHeaderEedTime() {
+	public String getOrderHeaderEedTime() {
 		return orderHeaderEedTime;
 	}
 
-	public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
+	public void setOrderHeaderEedTime(String orderHeaderEedTime) {
 		this.orderHeaderEedTime = orderHeaderEedTime;
 	}
 }
