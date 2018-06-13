@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizOrderCommentDao">
+    
+	<sql id="bizOrderCommentColumns">
+		a.id AS "id",
+		a.order_id AS "order.id",
+		a.comments AS "comments",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		su.name as "createBy.name"
+	</sql>
+	
+	<sql id="bizOrderCommentJoins">
+		LEFT JOIN sys_user su on su.id=a.create_id
+	 	LEFT join sys_user us on us.id=a.update_id
+	 	LEFT join biz_order_header oh on oh.id=a.order_id
+	</sql>
+    
+	<select id="get" resultType="BizOrderComment">
+		SELECT 
+			<include refid="bizOrderCommentColumns"/>
+		FROM biz_order_comment a
+		<include refid="bizOrderCommentJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizOrderComment">
+		SELECT 
+			<include refid="bizOrderCommentColumns"/>
+		FROM biz_order_comment a
+		<include refid="bizOrderCommentJoins"/>
+		<where>
+			<if test="order != null and order.id != null and order.id != ''">
+				AND a.order_id = #{order.id}
+			</if>
+			<if test="comments != null and comments != ''">
+				AND a.comments = #{comments}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizOrderComment">
+		SELECT 
+			<include refid="bizOrderCommentColumns"/>
+		FROM biz_order_comment a
+		<include refid="bizOrderCommentJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_order_comment(
+			id,
+			order_id,
+			comments,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time
+		) VALUES (
+			#{id},
+			#{order.id},
+			#{comments},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_order_comment SET 	
+			order_id = #{order.id},
+			comments = #{comments},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM biz_order_comment
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

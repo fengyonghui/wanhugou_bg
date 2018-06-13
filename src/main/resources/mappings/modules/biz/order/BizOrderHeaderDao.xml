@@ -18,7 +18,8 @@
 		<result property="delFlag" column="delFlag"/>
 		<result property="centersName" column="centersName"/>
 		<result property="con.name" column="con.name"/>
-
+		<result property="orderComment.id" column="orderComment.id"/>
+		<result property="orderComment.comments" column="orderComment.comments"/>
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
 		<result property="totalBuyPrice" column="totalBuyPrice"/>
@@ -125,7 +126,9 @@
 		a.update_time AS "updateDate",
 		s.name as "centersName",
 		con.id AS "con.id",
-		con.name AS "con.name"
+		con.name AS "con.name",
+		boc.id as "orderComment.id",
+		boc.comments as "orderComment.comments"
 	</sql>
 
 	<!-- C端订单管理 -->
@@ -176,6 +179,7 @@
     	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
+		left join biz_order_comment boc on boc.order_id=a.id
 	</sql>
 
 	<select id="get" resultType="BizOrderHeader">

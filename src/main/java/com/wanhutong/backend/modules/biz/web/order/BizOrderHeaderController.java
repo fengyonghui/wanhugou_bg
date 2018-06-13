@@ -292,11 +292,12 @@ public class BizOrderHeaderController extends BaseController {
             return form(bizOrderHeader, model, null, null);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
+            //后台默认保存为 系统后台订单
             bizOrderHeader.getPlatformInfo().setId(6);
         }
         bizOrderHeaderService.save(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
-        if (bizOrderHeader.getClientModify() != null && bizOrderHeader.getClientModify().equals("client_modify")) {
+        if (bizOrderHeader.getClientModify() != null && "client_modify".equals(bizOrderHeader.getClientModify())) {
 //			保存跳回客户专员
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
@@ -309,8 +310,7 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "删除订单信息成功");
-        String a="cendDelete";
-        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(a)){
+        if (bizOrderHeader.getFlag() != null && "cendDelete".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
@@ -322,8 +322,7 @@ public class BizOrderHeaderController extends BaseController {
         bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
         bizOrderHeaderService.delete(bizOrderHeader);
         addMessage(redirectAttributes, "恢复订单信息成功");
-        String a="cendRecover";
-        if(bizOrderHeader.getFlag()!=null && bizOrderHeader.getFlag().equals(a)){
+        if (bizOrderHeader.getFlag() != null && "cendRecover".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();

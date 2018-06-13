@@ -187,6 +187,7 @@
 		<th>发票状态</th>
 		<th>业务状态</th>
 		<th>订单来源</th>
+		<th>备注</th>
 		<th>创建人</th>
 		<th>创建时间</th>
 		<th>更新时间</th>
@@ -251,6 +252,9 @@
 			</td>
 			<td>
 					${orderHeader.platformInfo.name}
+			</td>
+			<td>
+					${orderHeader.orderComment.comments}
 			</td>
 			<td>
 					${orderHeader.createBy.name}
