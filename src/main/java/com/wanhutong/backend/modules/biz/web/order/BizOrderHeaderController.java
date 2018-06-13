@@ -890,27 +890,22 @@ public class BizOrderHeaderController extends BaseController {
             office.setName(user.getName());
             bizOrderHeader.setCustomer(office);
         }
-        BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
+        BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
         if (bizOrderHeader.getId() != null) {
-            Double totalDetail = bizOrderHeaderTwo.getTotalDetail();
-            Double totalExp = bizOrderHeaderTwo.getTotalExp();
-            Double freight = bizOrderHeaderTwo.getFreight();
+            Double totalDetail = orderHeader.getTotalDetail();
+            Double totalExp = orderHeader.getTotalExp();
+            Double freight = orderHeader.getFreight();
             Double orderHeaderTotal = totalDetail + totalExp + freight;
             //cendForm页面显示待支付总价
-            bizOrderHeader.setTobePaid(orderHeaderTotal - bizOrderHeaderTwo.getReceiveTotal());
-            //不可编辑标识符
-            String a = "editable";
-            String b = "details";
-            if (orderNoEditable != null && orderNoEditable.equals(a)) {
-                //待支付cendForm页面不能修改
-                bizOrderHeaderTwo.setOrderNoEditable(a);
+            bizOrderHeader.setTobePaid(orderHeaderTotal - orderHeader.getReceiveTotal());
+            if (orderNoEditable != null && "editable".equals(orderNoEditable)) {
+                orderHeader.setOrderNoEditable("editable");
             }
-            if (orderDetails != null && orderDetails.equals(b)) {
-                //查看详情cendForm页面不能修改
-                bizOrderHeaderTwo.setOrderDetails(b);
+            if (orderDetails != null && "details".equals(orderDetails)) {
+                orderHeader.setOrderDetails("details");
             }
             BizOrderAddress bizOrderAddress = new BizOrderAddress();
-            bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
+            bizOrderAddress.setId(orderHeader.getBizLocation().getId());
             List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
             if (CollectionUtils.isNotEmpty(list)) {
                 for (BizOrderAddress orderAddress : list) {
