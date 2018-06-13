@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.category;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import com.wanhutong.backend.modules.biz.dao.category.BizVarietyInfoDao;
 @Service
 @Transactional(readOnly = true)
 public class BizVarietyInfoService extends CrudService<BizVarietyInfoDao, BizVarietyInfo> {
+
+	@Autowired
+	private BizVarietyInfoDao bizVarietyInfoDao;
 
 	public BizVarietyInfo get(Integer id) {
 		return super.get(id);
@@ -42,6 +46,10 @@ public class BizVarietyInfoService extends CrudService<BizVarietyInfoDao, BizVar
 	@Transactional(readOnly = false)
 	public void delete(BizVarietyInfo bizVarietyInfo) {
 		super.delete(bizVarietyInfo);
+	}
+
+	public List<BizVarietyInfo> findNotSpecialList() {
+		return bizVarietyInfoDao.findNotSpecialList();
 	}
 	
 }

@@ -7,6 +7,7 @@
 		a.variety_id AS "varietyInfo.id",
 		bvi.name AS "varietyInfo.name",
 		a.attribute_id AS "attributeInfo.id",
+		a.required AS "required",
 		sai.name AS "attributeInfo.name",
 		a.status AS "delFlag",
 		a.create_id AS "createBy.id",
@@ -86,6 +87,9 @@
 			id,
 			variety_id,
 			attribute_id,
+		<if test="required != null">
+			required,
+		</if>
 			status,
 			create_id,
 			create_time,
@@ -96,6 +100,9 @@
 			#{id},
 			#{varietyInfo.id},
 			#{attributeInfo.id},
+		<if test="required != null">
+			#{required},
+		</if>
 			#{delFlag},
 			#{createBy.id},
 			#{createDate},
@@ -109,6 +116,9 @@
 		UPDATE biz_variety_attr SET 	
 			variety_id = #{varietyInfo.id},
 			attribute_id = #{attributeInfo.id},
+			<if test="required != null">
+				required = #{required},
+			</if>
 			create_id = #{createBy.id},
 			u_version = #{uVersion},
 			update_time = #{updateDate},

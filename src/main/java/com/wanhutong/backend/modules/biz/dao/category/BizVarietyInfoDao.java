@@ -7,6 +7,8 @@ import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 
+import java.util.List;
+
 /**
  * 产品种类管理DAO接口
  * @author liuying
@@ -14,5 +16,5 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
  */
 @MyBatisDao
 public interface BizVarietyInfoDao extends CrudDao<BizVarietyInfo> {
-	
+    List<BizVarietyInfo> findNotSpecialList();
 }
