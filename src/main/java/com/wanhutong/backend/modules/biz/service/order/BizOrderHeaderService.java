@@ -208,7 +208,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderComment.setComments(bizOrderHeader.getOrderComment().getComments());
             bizOrderCommentService.save(bizOrderComment);
         }
-
         if (bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
             BizOrderStatus orderStatus = new BizOrderStatus();
             orderStatus.setOrderHeader(bizOrderHeader);
@@ -225,7 +224,6 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 bizOrderStatusService.save(orderStatus);
             }
         }
-
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
         if (CollectionUtils.isNotEmpty(orderDetailList)) {
