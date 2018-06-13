@@ -131,13 +131,13 @@
 		<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
 		<ul class="ul-form">
 			<li><label>备货单号：</label>
-				<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="reqNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<%--<li><label>货号：</label>--%>
 				<%--<form:input path="itemNo" htmlEscape="false" maxlength="20" class="input-medium"/>--%>
 			<%--</li>--%>
 			<li><label>供应商：</label>
-				<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="name" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
 			<li><label>采购中心：</label>
 				<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
@@ -218,7 +218,7 @@
 				<td>
 					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<td>${requestHeader.reqQtys}</td>
+				<td>${requestHeader.ordCount}</td>
 				<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
 					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
 				<td>${requestHeader.recvTotal}</td>
