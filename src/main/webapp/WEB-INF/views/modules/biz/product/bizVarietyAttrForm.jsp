@@ -7,11 +7,6 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("input[name='requireds']").each(function () {
-				if ($(this).attr("checked")=='checked') {
-				    $(this).val($(this).prev().val());
-				}
-            });
 		    if ($("#id").val()!='') {
                 $("#varietyInfoId").attr("disabled",true);
                 ajaxGetAttributeInfo($("#id").val());
@@ -30,6 +25,7 @@
                                     $(this).attr("checked","checked");
                                     if (item.required==1) {
 										$(this).next().attr("checked","checked");
+										$(this).next().val(item.attributeInfo.id);
 									}
 								}
                             });
@@ -37,7 +33,8 @@
                     }
 				});
             }
-            
+
+
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){

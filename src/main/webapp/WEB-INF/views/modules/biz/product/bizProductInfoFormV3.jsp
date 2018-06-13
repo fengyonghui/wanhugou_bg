@@ -426,6 +426,31 @@
 
 <script type="text/javascript">
 
+    //解决动态生成表单时，name相同只校验第一条的BUG
+    $(function () {
+        if ($.validator) {
+            //fix: when several input elements shares the same name, but has different id-ies....
+            $.validator.prototype.elements = function () {
+                var validator = this,
+                    rulesCache = {};
+                // select all valid inputs inside the form (no submit or reset buttons)
+                // workaround $Query([]).add until http://dev.jquery.com/ticket/2114 is solved
+                return $([]).add(this.currentForm.elements)
+                    .filter(":input")
+                    .not(":submit, :reset, :image, [disabled]")
+                    .not(this.settings.ignore)
+                    .filter(function () {
+                        var elementIdentification = this.id || this.name;
+                        !elementIdentification && validator.settings.debug && window.console && console.error("%o has no id nor name assigned", this);
+                        // select only the first element for each name, and only those with rules specified
+                        if (elementIdentification in rulesCache || !validator.objectLength($(this).rules()))
+                            return false;
+                        rulesCache[elementIdentification] = true;
+                        return true;
+                    });
+            };
+        }
+    });
 
     function initSkuTable() {
         var skuTableData = $("#skuTableData");
@@ -844,7 +869,7 @@
                                     html +=    "        <label class='control-label'>请选择"+varietyAttr.attributeInfo.name+"：</label>";
                                     html +=    "        <div style='margin-left: 180px'>";
                                     if (varietyAttr.required==1) {
-                                        html +=    "            <select about='choose' name='dicts' class='input-medium required'>";
+                                        html +=    "            <select id='"+index+"' about='choose' name='dicts' class='input-medium required'>";
                                     }else {
                                         html +=    "            <select about='choose' name='dicts' class='input-medium'>";
                                     }
