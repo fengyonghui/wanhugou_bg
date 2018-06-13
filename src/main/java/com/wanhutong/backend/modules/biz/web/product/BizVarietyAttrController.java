@@ -111,38 +111,38 @@ public class BizVarietyAttrController extends BaseController {
 	@RequiresPermissions("biz:product:bizVarietyAttr:edit")
 	@RequestMapping(value = "save")
 	public String save(BizVarietyAttr bizVarietyAttr, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizVarietyAttr)){
+		if (!beanValidator(model, bizVarietyAttr)) {
 			return form(bizVarietyAttr, model);
 		}
 		if (bizVarietyAttr.getId() != null) {
-            BizVarietyAttr attr = new BizVarietyAttr();
-            attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
-            List<BizVarietyAttr> list = bizVarietyAttrService.findList(attr);
-            for (BizVarietyAttr attr1:list) {
-                bizVarietyAttrService.delete(attr1);
-            }
-        }
-        String attributeIds = bizVarietyAttr.getAttributeIds();
+			BizVarietyAttr attr = new BizVarietyAttr();
+			attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
+			List<BizVarietyAttr> list = bizVarietyAttrService.findList(attr);
+			for (BizVarietyAttr attr1 : list) {
+				bizVarietyAttrService.delete(attr1);
+			}
+		}
+		String attributeIds = bizVarietyAttr.getAttributeIds();
 		String requireds = bizVarietyAttr.getRequireds();
 		String[] attributeArr = StringUtils.split(attributeIds, ",");
 		String[] requiredArr = StringUtils.split(requireds, ",");
 		BizVarietyAttr attr = new BizVarietyAttr();
-        for (int i= 0; i < attributeArr.length; i++) {
-            AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(Integer.parseInt(attributeArr[i].trim()));
-            attr.setAttributeInfo(attributeInfoV2);
-            attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
-            for (int j = 0; j < requiredArr.length; j++) {
-            	if (requiredArr[j].equals(attributeArr[i])) {
+		for (int i = 0; i < attributeArr.length; i++) {
+			AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(Integer.parseInt(attributeArr[i].trim()));
+			attr.setAttributeInfo(attributeInfoV2);
+			attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
+			for (int j = 0; j < requiredArr.length; j++) {
+				if (requiredArr[j].equals(attributeArr[i])) {
 					attr.setRequired(REQUIRED);
 					break;
 				} else {
-            		attr.setRequired(NOTREQUIRED);
+					attr.setRequired(NOTREQUIRED);
 				}
 			}
-            bizVarietyAttrService.save(attr);
-        }
+			bizVarietyAttrService.save(attr);
+		}
 		addMessage(redirectAttributes, "保存分类属性中间表成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/product/bizVarietyAttr/?repage";
+		return "redirect:" + Global.getAdminPath() + "/biz/product/bizVarietyAttr/?repage";
 	}
 	
 	@RequiresPermissions("biz:product:bizVarietyAttr:edit")
