@@ -23,6 +23,9 @@ public class BizVarietyAttr extends DataEntity<BizVarietyAttr> {
 	private BizVarietyInfo varietyInfo;		// biz_variety_info.id ;分类ID
 	private AttributeInfoV2 attributeInfo;		// sys_attribute_info.id ;系统属性ID
 	private String attributeIds;		//多选的属性id
+	private Integer required;		//是否是必选属性：0:不是必选；1:是必选
+
+	private String requireds;		//多个required
 
 	private List<Dict> dictList;        //字典表属性值
     private List<AttributeValueV2> attributeValueV2List;
@@ -49,6 +52,22 @@ public class BizVarietyAttr extends DataEntity<BizVarietyAttr> {
 
 	public void setAttributeInfo(AttributeInfoV2 attributeInfo) {
 		this.attributeInfo = attributeInfo;
+	}
+
+	public Integer getRequired() {
+		return required;
+	}
+
+	public String getRequireds() {
+		return requireds;
+	}
+
+	public void setRequireds(String requireds) {
+		this.requireds = requireds;
+	}
+
+	public void setRequired(Integer required) {
+		this.required = required;
 	}
 
 	public String getAttributeIds() {

@@ -8,6 +8,7 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 		    if ($("#id").val()!='') {
+                $("#varietyInfoId").attr("disabled",true);
                 ajaxGetAttributeInfo($("#id").val());
 			}
             /**
@@ -22,15 +23,22 @@
 						    $("input[name='attributeIds']").each(function () {
                                 if (parseInt(item.attributeInfo.id)==parseInt($(this).val())) {
                                     $(this).attr("checked","checked");
+                                    if (item.required==1) {
+										$(this).next().attr("checked","checked");
+										$(this).next().val(item.attributeInfo.id);
+									}
 								}
                             });
                         });
                     }
 				});
             }
+
+
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+                    $("#varietyInfoId").removeAttr("disabled");
 					loading('正在提交，请稍等...');
 					form.submit();
 				},
@@ -45,6 +53,16 @@
 				}
 			});
 		});
+
+        function selectRequired(item,obj) {
+            // alert($(obj).attr("checked"));
+            // alert($(obj).prev("input").val());
+            if ($(obj).attr("checked")=='checked' && $(obj).prev().attr("checked")=='checked') {
+                $(obj).val(item);
+			} else {
+                $(obj).val("");
+			}
+        }
 	</script>
 </head>
 <body>
@@ -58,7 +76,7 @@
 		<div class="control-group">
 			<label class="control-label">分类：</label>
 			<div class="controls">
-				<from:select path="varietyInfo.id" cssClass="input-xlarge required">
+				<from:select id="varietyInfoId" path="varietyInfo.id" cssClass="input-xlarge required">
 					<from:option label="请选择分类" value=""/>
 					<from:options items="${varietyInfoList}" itemValue="id" itemLabel="name"/>
 				</from:select>
@@ -69,8 +87,12 @@
 		<div class="control-group">
 			<label class="control-label">属性：</label>
 			<div class="controls">
-				<c:forEach items="${attributeInfoList}" var="attribute">
+				<c:forEach items="${attributeInfoList}" var="attribute" varStatus="attr">
 					<input name="attributeIds" type="checkbox" value="${attribute.id}" />${attribute.name}
+					(是否为必选属性<input name="requireds" type="checkbox" value="" onclick="selectRequired(${attribute.id},this)"/>)&ensp;&ensp;&ensp;&ensp;
+					<c:if test="${attr.index != 0 && attr.index % 4==0}">
+						<br>
+					</c:if>
 				</c:forEach>
 				<%--<form:input path="attributeInfo.id" htmlEscape="false" maxlength="11" class="input-xlarge required"/>--%>
 				<span class="help-inline"><font color="red">*</font> </span>
