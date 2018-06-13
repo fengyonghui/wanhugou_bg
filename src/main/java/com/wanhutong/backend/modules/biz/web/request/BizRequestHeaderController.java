@@ -113,26 +113,25 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizRequestHeader bizRequestHeader, Model model) {
-
-		List<BizRequestDetail> reqDetailList=Lists.newArrayList();
-		if(bizRequestHeader.getId()!=null){
-			BizRequestDetail bizRequestDetail=new BizRequestDetail();
+		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
+		if (bizRequestHeader.getId() != null) {
+			BizRequestDetail bizRequestDetail = new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
-			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findPoRequet(bizRequestDetail);
-			for(BizRequestDetail requestDetail:requestDetailList){
-				if(requestDetail.getBizPoHeader()==null){
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
+			for (BizRequestDetail requestDetail : requestDetailList) {
+				if (requestDetail.getBizPoHeader() == null) {
 					bizRequestHeader.setPoSource("poHeaderSource");
 				}
-				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 				requestDetail.setSkuInfo(skuInfo);
 				reqDetailList.add(requestDetail);
 			}
-			if(requestDetailList.size()==0){
+			if (requestDetailList.size() == 0) {
 				bizRequestHeader.setPoSource("poHeaderSource");
 			}
 		}
 
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) ) {
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
@@ -145,7 +144,7 @@ public class BizRequestHeaderController extends BaseController {
 			bizOrderStatus.setOrderHeader(bizOrderHeader);
 			bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
 			List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
-			statusList.sort((o1,o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
+			statusList.sort((o1, o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
 
 			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
 
