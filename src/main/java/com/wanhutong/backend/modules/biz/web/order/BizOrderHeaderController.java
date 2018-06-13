@@ -135,13 +135,13 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-        if(bizOrderHeader.getSkuChickCount()!=null){
+        if (bizOrderHeader.getSkuChickCount() != null) {
             //商品下单量标识
             bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
         }
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
-        model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
+        model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
 
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -149,21 +149,21 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
-        model.addAttribute("orderType",bizOrderHeader.getOrderType());
+        model.addAttribute("orderType", bizOrderHeader.getOrderType());
         List<BizOrderDetail> ordDetailList = Lists.newArrayList();
         Map<Integer, String> orderNumMap = new HashMap<Integer, String>();
         Map<Integer, Integer> detailIdMap = new HashMap<Integer, Integer>();
         if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
             Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-            if(office!=null){
+            if (office != null) {
                 bizOrderHeader.setCustomer(office);
                 model.addAttribute("entity2", bizOrderHeader);
             }
 //			用于销售订单页面展示属于哪个采购中心哪个客户专员
             if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
                 BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
-                if (bizCustomCenterConsultant != null && bizCustomCenterConsultant.getConsultants()!=null &&
-                        bizCustomCenterConsultant.getConsultants().getName()!=null) {
+                if (bizCustomCenterConsultant != null && bizCustomCenterConsultant.getConsultants() != null &&
+                        bizCustomCenterConsultant.getConsultants().getName() != null) {
                     bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
                     model.addAttribute("orderCenter", bizCustomCenterConsultant);
                 } else {
@@ -196,9 +196,9 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderAddress orderAddress = new BizOrderAddress();
             orderAddress.setOrderHeaderID(bizOrderHeaderTwo);
             List<BizOrderAddress> addresslist = bizOrderAddressService.findList(orderAddress);
-            if(CollectionUtils.isNotEmpty(addresslist)){
+            if (CollectionUtils.isNotEmpty(addresslist)) {
                 for (BizOrderAddress address : addresslist) {
-    //				交货地址
+                    //				交货地址
                     if (address.getType() == 2) {
                         model.addAttribute("address", address);
                     }
@@ -230,23 +230,23 @@ public class BizOrderHeaderController extends BaseController {
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
             for (BizOrderDetail orderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
-                if(bizSkuInfo!=null) {
+                if (bizSkuInfo != null) {
                     BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfo);
-                    if(skuInfo!=null) {
+                    if (skuInfo != null) {
                         orderDetail.setSkuInfo(skuInfo);
                     }
                 }
                 ordDetailList.add(orderDetail);
                 int keyId = orderDetail.getLineNo();
-                if(orderDetail.getPoHeader()!=null && orderDetail.getPoHeader().getOrderNum()!=null){
+                if (orderDetail.getPoHeader() != null && orderDetail.getPoHeader().getOrderNum() != null) {
                     String orderNum = orderDetail.getPoHeader().getOrderNum();
                     orderNumMap.put(keyId, orderNum);
                 }
-                if(orderDetail.getPoHeader()!=null && orderDetail.getPoHeader().getId()!=null){
+                if (orderDetail.getPoHeader() != null && orderDetail.getPoHeader().getId() != null) {
                     int detailId = orderDetail.getPoHeader().getId();
                     detailIdMap.put(keyId, detailId);
                 }
-             }
+            }
         }
         boolean flag = false;
         User user = UserUtils.getUser();
@@ -275,7 +275,7 @@ public class BizOrderHeaderController extends BaseController {
 
         Map<Integer, OrderHeaderBizStatusEnum> statusMap = OrderHeaderBizStatusEnum.getStatusMap();
 
-        model.addAttribute("statu",bizOrderHeader.getStatu()==null?"":bizOrderHeader.getStatu());
+        model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("entity", bizOrderHeader);
         model.addAttribute("ordDetailList", ordDetailList);
         model.addAttribute("statusList", statusList);
