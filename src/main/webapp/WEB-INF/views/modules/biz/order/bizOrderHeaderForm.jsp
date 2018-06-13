@@ -587,6 +587,17 @@
                 </c:if>
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label">备&nbsp;注；</label>
+        <div class="controls">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>
+            </c:if>
+        </div>
+    </div>
 
         <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
