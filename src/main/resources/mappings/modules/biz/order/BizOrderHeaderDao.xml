@@ -283,7 +283,6 @@
 			<if test="dataStatus==null">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
-
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
 				LIKE
@@ -390,8 +389,22 @@
 				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
 			</if>
-			<if test="statu != null and statu =='unline'">
-				AND ohu.id is not NULL
+			<if test="statu != null and statu == 'unline'">
+				AND ohu.id IS NOT NULL
+			</if>
+			<if test="statu != null and statu =='unline' and examine != null and examine == 2">
+				AND (ohu.biz_status = 0 OR ohu.biz_status = 2)
+			</if>
+			<if test="statu != null and statu =='unline' and examine != null and examine == 1">
+				AND a.id NOT IN (
+					SELECT b.id
+					FROM biz_order_header b
+					LEFT JOIN biz_order_header_unline bohu ON bohu.order_id = b.id
+					WHERE (bohu.biz_status = 0 OR bohu.biz_status = 2)
+					AND bohu.`status` = 1
+					AND b.`status` = 1
+					AND b.order_type != 4
+				)
 			</if>
 			<if test="page != null and page.includeTestData != true and skuChickCount==null">
 				AND NOT EXISTS(

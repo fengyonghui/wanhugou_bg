@@ -151,6 +151,15 @@
                    value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
+		<c:if test="${statu == 'unline'}">
+			<li><label>审核状态:</label>
+				<select name="examine" class="input-medium">
+					<option value="0">请选择</option>
+					<option value="1">审核完成</option>
+					<option value="2">未审核完成</option>
+				</select>
+			</li>
+		</c:if>
 		<li><label>测试数据</label>
 			<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 		</li>

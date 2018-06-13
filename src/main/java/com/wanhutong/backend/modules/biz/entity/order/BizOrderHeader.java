@@ -76,6 +76,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String partNo;      //根据sku编号搜索
     private Integer orderCount; //find List中订单总条数据
     private String name;  //根据供应商名搜索
+    private Integer examine;        //线下支付订单审核状态
 
     private String orderNum2;        //用于删除订单页面传值
     private String localSendIds;
@@ -623,5 +624,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setOrderCreatEndTime(Date orderCreatEndTime) {
         this.orderCreatEndTime = orderCreatEndTime;
+    }
+
+    public Integer getExamine() {
+        return examine;
+    }
+
+    public void setExamine(Integer examine) {
+        this.examine = examine;
     }
 }
