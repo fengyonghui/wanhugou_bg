@@ -213,7 +213,17 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             BizOrderStatus orderStatus = new BizOrderStatus();
             orderStatus.setOrderHeader(bizOrderHeader);
             orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-            bizOrderStatusService.save(orderStatus);
+            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
+            if (CollectionUtils.isNotEmpty(list)) {
+                for (BizOrderStatus bizOrderStatus : list) {
+                    if (!bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
+                        bizOrderStatusService.save(orderStatus);
+                        break;
+                    }
+                }
+            } else {
+                bizOrderStatusService.save(orderStatus);
+            }
         }
 
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
