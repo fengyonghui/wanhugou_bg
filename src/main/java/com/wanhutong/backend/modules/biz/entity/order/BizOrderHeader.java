@@ -47,6 +47,10 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      *  ｝
      * */
     private Office sellers;
+    /**
+     * 订单备注
+     * */
+    private BizOrderComment orderComment;
 
 
     private CommonLocation location;          //订单交货地址
@@ -580,6 +584,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setOfficeCount(Integer officeCount) {
         this.officeCount = officeCount;
+    }
+
+    public BizOrderComment getOrderComment() {
+        return orderComment;
+    }
+
+    public void setOrderComment(BizOrderComment orderComment) {
+        this.orderComment = orderComment;
     }
 
     public String getOrdrHeaderStartTime() {

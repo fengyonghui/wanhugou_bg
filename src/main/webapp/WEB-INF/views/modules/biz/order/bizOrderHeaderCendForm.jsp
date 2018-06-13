@@ -194,9 +194,6 @@
         <c:if test="${empty bizOrderHeader.clientModify}">
             <li><a href="${ctx}/biz/order/bizOrderHeader/cendList">订单信息列表</a></li>
         </c:if>
-        <%--<c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">--%>
-            <%--<li><a href="${ctx}/biz/order/bizOrderHeader/cendList?flag=check_pending&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a></li>--%>
-        <%--</c:if>--%>
     </c:if>
 
     <li class="active">
@@ -215,11 +212,6 @@
                         name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission
                         name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>
             </c:if>
-            <%--<c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">--%>
-                <%--<a href="${ctx}/biz/order/bizOrderHeader/cendform?id=${bizOrderHeader.id}&flag=check_pending&consultantId=${bizOrderHeader.consultantId}">订单信息<shiro:hasPermission--%>
-                        <%--name="biz:order:bizOrderHeader:edit">${not empty bizOrderHeader.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission--%>
-                        <%--name="biz:order:bizOrderHeader:edit">查看</shiro:lacksPermission></a>--%>
-            <%--</c:if>--%>
         </c:if>
     </li>
 </ul>
@@ -230,14 +222,13 @@
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
-    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-        <div class="control-group">
-            <label class="control-label">订单编号：</label>
-            <div class="controls">
-                <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="50" class="input-xlarge"/>
-            </div>
+
+    <div class="control-group">
+        <label class="control-label">订单编号：</label>
+        <div class="controls">
+            <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="50" class="input-xlarge"/>
         </div>
-    </c:if>
+    </div>
     <c:if test="${not empty entity.orderDetails}">
         <div class="control-group">
             <label class="control-label">订单类型：</label>
@@ -314,67 +305,42 @@
             </div>
         </div>
     </c:if>
-    <c:if test="${not empty entity.orderDetails}">
-        <c:if test="${fns:getUser().isAdmin()==false}">
-            <div class="control-group">
-                <label class="control-label">发票状态：</label>
-                <div class="controls">
-                    <form:select path="invStatus" class="input-xlarge" disabled="true">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label"
-                                      itemValue="value"
-                                      htmlEscape="false"/></form:select>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">业务状态：</label>
-                <div class="controls">
-                    <form:select path="bizStatus" class="input-xlarge" disabled="true">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
-                                      htmlEscape="false"/></form:select>
-                </div>
-            </div>
-        </c:if>
-    </c:if>
-    <c:if test="${fns:getUser().isAdmin()}">
-        <div class="control-group">
-            <label class="control-label">发票状态：</label>
-            <div class="controls">
-                <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-                    <form:select path="invStatus" class="input-xlarge" disabled="true">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
-                                      htmlEscape="false"/></form:select>
-                </c:if>
-                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                    <form:select path="invStatus" class="input-xlarge required">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
-                                      htmlEscape="false"/></form:select>
-                    <span class="help-inline"><font color="red">*</font>默认选择</span>
-                </c:if>
-            </div>
+    <div class="control-group">
+        <label class="control-label">发票状态：</label>
+        <div class="controls">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+                <form:select path="invStatus" class="input-xlarge" disabled="true">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/></form:select>
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <form:select path="invStatus" class="input-xlarge required">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/></form:select>
+                <span class="help-inline"><font color="red">*</font>默认选择</span>
+            </c:if>
         </div>
-        <div class="control-group">
-            <label class="control-label">业务状态：</label>
-            <div class="controls">
-                <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-                    <form:select path="bizStatus" class="input-xlarge" disabled="true">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
-                                      htmlEscape="false"/></form:select>
-                </c:if>
-                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                    <form:select path="bizStatus" class="input-xlarge required">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
-                                      htmlEscape="false"/></form:select>
-                    <span class="help-inline"><font color="red">*</font>默认选择</span>
-                </c:if>
-            </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">业务状态：</label>
+        <div class="controls">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+                <form:select path="bizStatus" class="input-xlarge" disabled="true">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/></form:select>
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <form:select path="bizStatus" class="input-xlarge required">
+                    <form:option value="" label="请选择"/>
+                    <form:options items="${fns:getDictList('biz_cend_orderType')}" itemLabel="label" itemValue="value"
+                                  htmlEscape="false"/></form:select>
+                <span class="help-inline"><font color="red">*</font>默认选择</span>
+            </c:if>
         </div>
-    </c:if>
+    </div>
     <div class="control-group">
         <label class="control-label">收货人：</label>
         <div class="controls">
@@ -457,52 +423,31 @@
             <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
-    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-        <div class="control-group" id="add3">
-            <label class="control-label">详细地址；</label>
-            <div class="controls">
+    <div class="control-group" id="add3">
+        <label class="control-label">详细地址；</label>
+        <div class="controls">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <input type="text" id="address" name="bizLocation.address" htmlEscape="false" readOnly="true"
-                       class="input-xlarge required"/>
+                    class="input-xlarge"/>
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <input type="text" id="address" name="bizLocation.address" htmlEscape="false" class="input-xlarge required"/>
                 <span class="help-inline"><font color="red">*</font> </span>
-            </div>
+            </c:if>
         </div>
-    </c:if>
-    <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-        <div class="control-group" id="add3">
-            <label class="control-label">详细地址；</label>
-            <div class="controls">
-                <input type="text" id="address" name="bizLocation.address" htmlEscape="false"
-                       class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font> </span>
-            </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">备&nbsp;注；</label>
+        <div class="controls">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>
+            </c:if>
         </div>
-    </c:if>
-    <c:if test="${not empty entity.orderDetails}">
-        <div class="control-group">
-            <label class="control-label">创建人：</label>
-            <div class="controls">
-                <form:input path="createBy.id" value="${bizOrderHeader.createBy.name}" readOnly="true" class="input-xlarge"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">创建时间：</label>
-            <div class="controls">
-                <fmt:formatDate value="${bizOrderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">更新人：</label>
-            <div class="controls">
-                <form:input path="updateBy.id" value="${bizOrderHeader.updateBy.name}" readOnly="true" class="input-xlarge"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">更新时间：</label>
-            <div class="controls">
-                <fmt:formatDate value="${bizOrderHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-            </div>
-        </div>
-    </c:if>
+    </div>
+
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
 
@@ -513,9 +458,6 @@
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
                         <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>
                     </shiro:hasPermission>
-                </c:if>
-                <c:if test="${not empty entity.orderDetails}">
-                    待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
@@ -538,7 +480,7 @@
         <th>供应商电话</th>
         <th>商品单价</th>
         <th>采购数量</th>
-        <th>总 额</th>
+        <th>总&nbsp;&nbsp;额</th>
         <th>已发货数量</th>
         <c:if test="${bizOrderHeader.flag=='check_pending'}">
             <th>本地备货</th>
@@ -569,10 +511,6 @@
                         <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&detailFlag=header_save">
                                 ${bizOrderDetail.skuName}</a>
                     </c:if>
-                    <%--<c:if test="${not empty bizOrderHeader.clientModify && bizOrderHeader.clientModify eq 'client_modify'}">--%>
-                        <%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=client_modify&orderHeader.consultantId=${bizOrderHeader.consultantId}">--%>
-                            <%--${bizOrderDetail.skuName}</a>--%>
-                    <%--</c:if>--%>
                 </c:if>
             </td>
             <td>
@@ -621,14 +559,8 @@
                     <td>
                         <c:if test="${empty bizOrderHeader.clientModify}">
                             <a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&detailFlag=header_save">修改</a>
-                            <%--<a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1" onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>--%>
                             <a href="javascript:void(0);" onclick="DetailDelete(${bizOrderDetail.id},'1');">删除</a>
                         </c:if>
-                        <%--<c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">--%>
-                            <%--<a href="${ctx}/biz/order/bizOrderDetail/form?id=${bizOrderDetail.id}&orderId=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}">修改</a>--%>
-                            <%--<a href="${ctx}/biz/order/bizOrderDetail/delete?id=${bizOrderDetail.id}&sign=1&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.flag=check_pending&orderHeader.consultantId=${bizOrderHeader.consultantId}"--%>
-                               <%--onclick="return confirmx('确认要删除该sku商品吗？', this.href)">删除</a>--%>
-                        <%--</c:if>--%>
                     </td>
                 </c:if>
             </shiro:hasPermission>
@@ -646,12 +578,6 @@
                            onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&detailFlag=header_save';"
                            class="btn btn-primary"
                            value="订单商品信息添加"/></c:if>
-                    <%--<c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">--%>
-                        <%--<input type="button"--%>
-                               <%--onclick="javascript:window.location.href='${ctx}/biz/order/bizOrderDetail/form?orderHeader.id=${bizOrderHeader.id}&orderHeader.oneOrder=${entity.oneOrder}&orderHeader.clientModify=cend_modifSave&orderHeader.consultantId=${bizOrderHeader.consultantId}';"--%>
-                               <%--class="btn btn-primary"--%>
-                               <%--value="订单商品信息添加"/>--%>
-                    <%--</c:if>--%>
                 </shiro:hasPermission>
             </c:if>
             <c:if test="${not empty entity.orderDetails}">
@@ -660,16 +586,6 @@
         </c:if>
     </c:if>
 </div>
-<%--<c:if test="${bizOrderHeader.flag=='check_pending'}">--%>
-    <%--<div class="form-actions">--%>
-        <%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit">--%>
-            <%--<input class="btn btn-primary" type="button"--%>
-                   <%--onclick="checkPending(${OrderHeaderBizStatusEnum.SUPPLYING.state})" value="同意发货"/>&nbsp;--%>
-            <%--<input class="btn btn-primary" type="button"--%>
-                   <%--onclick="checkPending(${OrderHeaderBizStatusEnum.UNAPPROVE.state})" value="不同意发货"/>&nbsp;--%>
-        <%--</shiro:hasPermission>--%>
-    <%--</div>--%>
-<%--</c:if>--%>
 
 </body>
 </html>

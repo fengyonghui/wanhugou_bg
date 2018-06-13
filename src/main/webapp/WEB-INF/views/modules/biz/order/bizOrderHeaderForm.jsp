@@ -587,6 +587,17 @@
                 </c:if>
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label">备&nbsp;注；</label>
+        <div class="controls">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>
+            </c:if>
+        </div>
+    </div>
 
         <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
@@ -888,33 +899,29 @@
                             <option value="-1">—— 区 ——</option>
                         </c:if>
                     </select>
-                    <span class="help-inline"><font color="red">*</font> </span>
                 </div>
             </div>
             <div class="control-group" id="jhadd2" style="display:none">
                 <label class="control-label">交货地址:</label>
                 <div class="controls">
                     <input id="addJhAddressHref" type="button" value="新增地址" htmlEscape="false"
-                           class="input-xlarge required"/>
+                           class="input-xlarge"/>
                     <label class="error" id="addError" style="display:none;">必填信息</label>
-                    <span class="help-inline"><font color="red">*</font></span>
                 </div>
             </div>
             <div class="control-group" id="jhadd3">
                 <label class="control-label">详细地址:</label>
                 <div class="controls">
                     <input type="text" id="jhaddress" name="bizLocation.address" htmlEscape="false"
-                           class="input-xlarge required"/>
-                    <span class="help-inline"><font color="red">*</font></span>
+                           class="input-xlarge"/>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label">交货时间:</label>
                 <div class="controls">
                     <input id="appointedDate" name="bizLocation.appointedTime" type="text" readonly="readonly"
-                           maxlength="20" class="input-xlarge Wdate required"
-                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
-                    <span class="help-inline"><font color="red">*</font></span>
+                           maxlength="20" class="input-xlarge Wdate"
+                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
                 </div>
             </div>
         </c:when>
