@@ -353,48 +353,56 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      * */
     @Transactional(readOnly = false)
     public void CendorderSave(BizOrderHeader bizOrderHeader) {
-        if(bizOrderHeader.getBizType()==null){
-            bizOrderHeader.setBizType(1);//订单商品类型默认 2非专营      ----1专营
+        if (bizOrderHeader.getBizType() == null) {
+            bizOrderHeader.setBizType(1);
         }
-        if(bizOrderHeader.getOrderType()==null){
-            bizOrderHeader.setOrderType(4);//订单类型，默认选中  1普通订单
+        if (bizOrderHeader.getOrderType() == null) {
+            bizOrderHeader.setOrderType(4);
         }
         BizOrderAddress bizLocation = bizOrderHeader.getBizLocation();
         if (bizLocation.getRegion() == null) {
             bizLocation.setRegion(new SysRegion());
         }
         bizOrderAddressService.save(bizLocation);
-        if(bizOrderHeader.getId()==null || bizOrderHeader.getId()==0){
-            BizOrderHeader orderHeader=new BizOrderHeader();
+        if (bizOrderHeader.getId() == null || bizOrderHeader.getId() == 0) {
+            BizOrderHeader orderHeader = new BizOrderHeader();
             orderHeader.setCustomer(bizOrderHeader.getCustomer());
             orderHeader.setOrderType(Integer.parseInt(OrderTypeEnum.CO.getOrderType()));
-            List<BizOrderHeader> bizOrderHeaderList= bizOrderHeaderDao.findList(orderHeader);
-            int s=0;
-            if(bizOrderHeaderList!=null && bizOrderHeaderList.size()>0){
-                s=bizOrderHeaderList.size();
+            List<BizOrderHeader> bizOrderHeaderList = bizOrderHeaderDao.findList(orderHeader);
+            int s = 0;
+            if (bizOrderHeaderList != null && bizOrderHeaderList.size() > 0) {
+                s = bizOrderHeaderList.size();
             }
-            BizCustomCenterConsultant centerConsultant=bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
-            int c=0;
-            if(centerConsultant!=null){
-                c=centerConsultant.getCenters().getId();
+            BizCustomCenterConsultant centerConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+            int c = 0;
+            if (centerConsultant != null) {
+                c = centerConsultant.getCenters().getId();
             }
-            String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), c, bizOrderHeader.getCustomer().getId(),s+1);
+            String orderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.stateOf(bizOrderHeader.getOrderType().toString()), c, bizOrderHeader.getCustomer().getId(), s + 1);
             bizOrderHeader.setOrderNum(orderNum);
-        }else{
+        } else {
             bizOrderHeader.setOrderNum(bizOrderHeader.getOrderNum());
         }
         bizOrderHeader.setBizLocation(bizLocation);
-        if(bizOrderHeader.getTotalDetail()==null){
+        if (bizOrderHeader.getTotalDetail() == null) {
             bizOrderHeader.setTotalDetail(0.0);
-        }else{
+        } else {
             bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
         }
         bizOrderHeader.setBizStatus(bizOrderHeader.getBizStatus());
         super.save(bizOrderHeader);
 
+        if (bizOrderHeader.getOrderComment() != null && StringUtils.isNotBlank(bizOrderHeader.getOrderComment().getComments())) {
+            BizOrderComment bizOrderComment = new BizOrderComment();
+            bizOrderComment.setId(bizOrderHeader.getOrderComment().getId() == null ? null : bizOrderHeader.getOrderComment().getId());
+            bizOrderComment.setOrder(bizOrderHeader);
+            bizOrderComment.setComments(bizOrderHeader.getOrderComment().getComments());
+            bizOrderCommentService.save(bizOrderComment);
+        }
+
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
-        if(orderDetailList != null && !orderDetailList.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(orderDetailList)) {
             for (BizOrderDetail bizOrderDetail : orderDetailList) {
                 BizSkuInfo bizSkuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
                 bizOrderDetail.setSkuInfo(bizSkuInfo);

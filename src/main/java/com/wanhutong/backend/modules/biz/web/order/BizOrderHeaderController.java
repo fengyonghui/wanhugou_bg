@@ -899,8 +899,8 @@ public class BizOrderHeaderController extends BaseController {
             //cendForm页面显示待支付总价
             bizOrderHeader.setTobePaid(orderHeaderTotal - bizOrderHeaderTwo.getReceiveTotal());
             //不可编辑标识符
-            String a="editable";
-            String b="details";
+            String a = "editable";
+            String b = "details";
             if (orderNoEditable != null && orderNoEditable.equals(a)) {
                 //待支付cendForm页面不能修改
                 bizOrderHeaderTwo.setOrderNoEditable(a);
@@ -912,9 +912,9 @@ public class BizOrderHeaderController extends BaseController {
             BizOrderAddress bizOrderAddress = new BizOrderAddress();
             bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
             List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
-            if(list.size()!=0){
+            if (CollectionUtils.isNotEmpty(list)) {
                 for (BizOrderAddress orderAddress : list) {
-    //				    收货地址
+                    //收货地址
                     if (orderAddress.getType() == 1) {
                         model.addAttribute("orderAddress", orderAddress);
                     }

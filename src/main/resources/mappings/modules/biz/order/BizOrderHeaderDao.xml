@@ -156,7 +156,9 @@
 		wxsu.name AS "customer.name",
 		bpi.name as "platformInfo.name",
 		su.name as "createBy.name",
-		suu.name as "updateBy.name"
+		suu.name as "updateBy.name",
+		boc.id as "orderComment.id",
+		boc.comments as "orderComment.comments"
 	</sql>
 	<sql id="cendOrderHeaderJoins">
 		left join sys_user wxsu on wxsu.id=a.cust_id
@@ -164,6 +166,7 @@
 		<!--left join sys_wx_personal_user wxpu on wxpu.id=a.create_id-->
 		left join sys_user su on a.create_id=su.id
 		left join sys_user suu on a.update_id=suu.id
+		left join biz_order_comment boc on boc.order_id=a.id
 	</sql>
 	<!-- end -->
 
