@@ -542,7 +542,7 @@ public class BizOrderHeaderController extends BaseController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             List<BizOrderHeader> pageList = null;
-            if ("cend_listPage".equals(cendExportbs)) {
+            if (cendExportbs!=null && "cend_listPage".equals(cendExportbs)) {
                 //C端导出
                 bizOrderHeader.setDataStatus("filter");
                 Page<BizOrderHeader> bizOrderHeaderPage = bizOrderHeaderService.cendfindPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
