@@ -118,7 +118,7 @@ public class BizRequestHeaderController extends BaseController {
 		if (bizRequestHeader.getId() != null) {
 			BizRequestDetail bizRequestDetail = new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
-			if (bizRequestHeader.getBizStatus() >= ReqHeaderStatusEnum.PURCHASING.getState()) {
+			if (!bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.CLOSE.getState()) && bizRequestHeader.getBizStatus() >= ReqHeaderStatusEnum.PURCHASING.getState()) {
 				/* 查询已生成的采购单 标识*/
 				bizRequestDetail.setPoheaderSource("poHeader");
 			}
