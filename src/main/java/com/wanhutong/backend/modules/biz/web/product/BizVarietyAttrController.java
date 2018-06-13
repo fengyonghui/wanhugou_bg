@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorV2Service;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV3Service;
+import com.wanhutong.backend.modules.enums.VarietyAttrEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -34,6 +35,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.product.BizVarietyAttr;
 import com.wanhutong.backend.modules.biz.service.product.BizVarietyAttrService;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +48,9 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/product/bizVarietyAttr")
 public class BizVarietyAttrController extends BaseController {
+
+	private static final Integer REQUIRED = 1;
+	private static final Integer NOTREQUIRED = 0;
 
 	@Autowired
 	private BizVarietyAttrService bizVarietyAttrService;
@@ -85,37 +91,58 @@ public class BizVarietyAttrController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(BizVarietyAttr bizVarietyAttr, Model model) {
         model.addAttribute("bizVarietyAttr", bizVarietyAttr);
+        if (bizVarietyAttr == null || bizVarietyAttr.getId() == null) {
+            model.addAttribute("varietyInfoList", bizVarietyInfoService.findNotSpecialList());
+        } else {
+            model.addAttribute("varietyInfoList", bizVarietyInfoService.findList(new BizVarietyInfo()));
+        }
+        List<AttributeInfoV2> attributeInfoV2List = attributeInfoV2Service.findList(new AttributeInfoV2());
+        for (Iterator<AttributeInfoV2> it = attributeInfoV2List.iterator(); it.hasNext(); ) {
+            AttributeInfoV2 attributeInfoV2 = it.next();
+            if (VarietyAttrEnum.NOT_VARIETY_ATTR.contains(attributeInfoV2.getId())) {
+                it.remove();
+            }
+        }
 
-		model.addAttribute("varietyInfoList",bizVarietyInfoService.findList(new BizVarietyInfo()));
-		model.addAttribute("attributeInfoList",attributeInfoV2Service.findList(new AttributeInfoV2()));
-		return "modules/biz/product/bizVarietyAttrForm";
-	}
+        model.addAttribute("attributeInfoList", attributeInfoV2List);
+        return "modules/biz/product/bizVarietyAttrForm";
+    }
 
 	@RequiresPermissions("biz:product:bizVarietyAttr:edit")
 	@RequestMapping(value = "save")
 	public String save(BizVarietyAttr bizVarietyAttr, Model model, RedirectAttributes redirectAttributes) {
-		if (!beanValidator(model, bizVarietyAttr)){
+		if (!beanValidator(model, bizVarietyAttr)) {
 			return form(bizVarietyAttr, model);
 		}
 		if (bizVarietyAttr.getId() != null) {
-            BizVarietyAttr attr = new BizVarietyAttr();
-            attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
-            List<BizVarietyAttr> list = bizVarietyAttrService.findList(attr);
-            for (BizVarietyAttr attr1:list) {
-                bizVarietyAttrService.delete(attr1);
-            }
-        }
-        String attributeIds = bizVarietyAttr.getAttributeIds();
-        String[] attributeArr = StringUtils.split(attributeIds, ",");
-        BizVarietyAttr attr = new BizVarietyAttr();
-        for (int i= 0; i < attributeArr.length; i++) {
-            AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(Integer.parseInt(attributeArr[i].trim()));
-            attr.setAttributeInfo(attributeInfoV2);
-            attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
-            bizVarietyAttrService.save(attr);
-        }
+			BizVarietyAttr attr = new BizVarietyAttr();
+			attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
+			List<BizVarietyAttr> list = bizVarietyAttrService.findList(attr);
+			for (BizVarietyAttr attr1 : list) {
+				bizVarietyAttrService.delete(attr1);
+			}
+		}
+		String attributeIds = bizVarietyAttr.getAttributeIds();
+		String requireds = bizVarietyAttr.getRequireds();
+		String[] attributeArr = StringUtils.split(attributeIds, ",");
+		String[] requiredArr = StringUtils.split(requireds, ",");
+		BizVarietyAttr attr = new BizVarietyAttr();
+		for (int i = 0; i < attributeArr.length; i++) {
+			AttributeInfoV2 attributeInfoV2 = attributeInfoV2Service.get(Integer.parseInt(attributeArr[i].trim()));
+			attr.setAttributeInfo(attributeInfoV2);
+			attr.setVarietyInfo(bizVarietyAttr.getVarietyInfo());
+			for (int j = 0; j < requiredArr.length; j++) {
+				if (requiredArr[j].equals(attributeArr[i])) {
+					attr.setRequired(REQUIRED);
+					break;
+				} else {
+					attr.setRequired(NOTREQUIRED);
+				}
+			}
+			bizVarietyAttrService.save(attr);
+		}
 		addMessage(redirectAttributes, "保存分类属性中间表成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/product/bizVarietyAttr/?repage";
+		return "redirect:" + Global.getAdminPath() + "/biz/product/bizVarietyAttr/?repage";
 	}
 	
 	@RequiresPermissions("biz:product:bizVarietyAttr:edit")
