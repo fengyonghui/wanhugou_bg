@@ -131,7 +131,7 @@ public class BizRequestHeaderController extends BaseController {
 			}
 		}
 
-		if (bizRequestHeader.getStr() != null && "audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);

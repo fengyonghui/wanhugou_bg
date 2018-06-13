@@ -42,6 +42,9 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 备货清单查看 已生成的采购单
 	 * */
 	private String poSource;
+	/**
+	 * 备货清单的 备货商品数量
+	 * */
 	private Integer ordCount;
 
 	private String skuIds;
