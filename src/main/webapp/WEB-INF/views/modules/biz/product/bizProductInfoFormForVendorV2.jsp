@@ -884,7 +884,11 @@
                                     html += "<div name='varietyAttr' class='control-group'>";
                                     html += "        <label class='control-label'>请选择" + varietyAttr.attributeInfo.name + "：</label>";
                                     html += "        <div style='margin-left: 180px'>";
-                                    html += "            <select about='choose' name='dicts' class='input-medium required'>";
+                                    if (varietyAttr.required==1) {
+                                        html +=    "            <select id='"+index+"' about='choose' name='dicts' class='input-medium required'>";
+                                    }else {
+                                        html +=    "            <select about='choose' name='dicts' class='input-medium'>";
+                                    }
                                     html += "                    <option value=''>请选择</option>";
                                     $.each(varietyAttr.dictList, function (index, dict) {
                                         if (varietyAttr.attributeValueV2List == null) {
@@ -901,7 +905,9 @@
                                         }
                                     });
                                     html += "            </select>";
-                                    html += "            <span class='help-inline'><font color='red'>*</font></span>";
+                                    if (varietyAttr.required==1) {
+                                        html += "            <span class='help-inline'><font color='red'>*</font></span>";
+                                    }
                                     html += "        </div>";
                                     html += "    </div>";
                                 }
