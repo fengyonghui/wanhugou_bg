@@ -509,8 +509,6 @@ public class SystemService extends BaseService implements InitializingBean {
 	 */
 	@Transactional(readOnly = true)
 	public Page<User> contact(Page<User> page,User user){
-        user.setPage(page);
-		List<User> contact;
 		User nowUser = UserUtils.getUser();
 		boolean flag=false;
 		boolean flagb=false;
@@ -524,7 +522,9 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 		}
         if (nowUser.isAdmin()) {
-            contact = userDao.contact(user);
+			user.setPage(page);
+			page.setList(userDao.contact(user));
+			return page;
         } else {
 			if(flag){
 				user.setCenterId(nowUser.getCompany().getId());
@@ -534,10 +534,10 @@ public class SystemService extends BaseService implements InitializingBean {
 				user.setConsultantId(nowUser.getId());
 				user.setCcStatus(1);
 			}
-			contact = userDao.contact(user);
         }
-         page.setList(contact);
-		 return page;
+		user.setPage(page);
+		page.setList(userDao.contact(user));
+		return page;
 	}
 	
 	/**
