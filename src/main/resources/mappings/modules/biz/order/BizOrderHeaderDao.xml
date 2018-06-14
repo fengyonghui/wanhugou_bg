@@ -287,7 +287,14 @@
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
 		pi.vendor_name AS "orderDetailList.vendor.name",
-		sum(od.buy_price*od.ord_qty) AS "totalBuyPrice"
+		(select
+			sum(od.buy_price * od.ord_qty)
+		from
+			biz_order_detail od
+		WHERE
+			od.status=1
+		and od.order_id=a.id
+		GROUP BY a.id ) as "totalBuyPrice"
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		<if test="statu != null and statu =='unline'">

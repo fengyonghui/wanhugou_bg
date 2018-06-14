@@ -105,7 +105,6 @@
 		UPDATE biz_variety_user_info SET 	
 			variety_id = #{varietyInfo.id},
 			user_id = #{user.id},
-			create_time = #{createDate},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
