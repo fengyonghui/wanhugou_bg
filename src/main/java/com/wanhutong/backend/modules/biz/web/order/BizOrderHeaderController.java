@@ -4,12 +4,11 @@
 package com.wanhutong.backend.modules.biz.web.order;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.DateUtils;
-import com.wanhutong.backend.common.utils.Encodes;
-import com.wanhutong.backend.common.utils.RoleUtils;
-import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.*;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
@@ -29,14 +28,19 @@ import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -44,19 +48,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Controller
@@ -104,6 +107,8 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderStatusService bizOrderStatusService;
     @Autowired
     private BizOrderAppointedTimeService bizOrderAppointedTimeService;
+    @Autowired
+    private CommonProcessService commonProcessService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -142,6 +147,20 @@ public class BizOrderHeaderController extends BaseController {
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+
+        Set<String> roleSet = Sets.newHashSet();
+        for (Role r : roleList) {
+            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
+            if (parse != null) {
+                roleSet.add(parse.name());
+            }
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("roleSet", roleSet);
 
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -282,6 +301,42 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("orderNumMap", orderNumMap);
         model.addAttribute("detailIdMap", detailIdMap);
         model.addAttribute("statusMap", statusMap);
+
+        //图片处理
+        CommonImg commonImg = new CommonImg();
+        commonImg.setImgType(ImgEnum.UNlINE_REFUND_VOUCHER.getCode());
+        commonImg.setObjectId(bizOrderHeader.getId());
+        commonImg.setObjectName("biz_order_header");
+        if (bizOrderHeader.getId() != null) {
+            List<CommonImg> imgList = commonImgService.findList(commonImg);
+            /*commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
+            List<CommonImg> itemImgList = commonImgService.findList(commonImg);*/
+            String photos = "";
+            /*String photoDetails = "";
+            String photoLists = "";*/
+            Map<String, Integer> photosMap = new LinkedHashMap<>();
+
+            for (CommonImg img : imgList) {
+                photos += img.getImgServer().concat(img.getImgPath()).concat("|");
+                photosMap.put(img.getImgServer() + img.getImgPath(), img.getImgSort());
+            }
+            if (StringUtils.isNotBlank(photos)) {
+                bizOrderHeader.setPhotos(photos);
+            }
+            /*if (!"".equals(photoDetails)) {
+                bizOrderHeader.setPhotoDetails(photoDetails);
+            }
+            for (CommonImg img : itemImgList) {
+                photoLists += "|" + img.getImgServer() + img.getImgPath();
+            }
+            if (!"".equals(photoLists)) {
+                bizOrderHeader.setPhotoLists(photoLists);
+            }*/
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
+            }
+        }
+
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
@@ -1015,6 +1070,250 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         return flag;
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "saveInfo")
+    public boolean saveInfo(BizOrderHeader bizOrderHeader, String checkStatus) {
+        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+        PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.getProcessMap().get(Integer.valueOf(3));
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(bizOrderHeader.getId().toString());
+        commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+        commonProcessService.save(commonProcessEntity);
+        bizOrderHeader.setCommonProcess(commonProcessEntity);
+
+        bizOrderHeader.setBizStatus(Integer.parseInt(checkStatus));
+        boolean boo = false;
+        try {
+            bizOrderHeaderService.save(bizOrderHeader);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeader:view")
+    @RequestMapping(value = "refund")
+    public String refund(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
+        List<BizOrderDetail> ordDetailList = Lists.newArrayList();
+        Map<Integer, String> orderNumMap = new HashMap<Integer, String>();
+        Map<Integer, Integer> detailIdMap = new HashMap<Integer, Integer>();
+        if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            if (office != null) {
+                bizOrderHeader.setCustomer(office);
+                model.addAttribute("entity2", bizOrderHeader);
+            }
+//			用于销售订单页面展示属于哪个采购中心哪个客户专员
+            if (bizOrderHeader.getCustomer() != null && bizOrderHeader.getCustomer().getId() != null) {
+                BizCustomCenterConsultant bizCustomCenterConsultant = bizCustomCenterConsultantService.get(bizOrderHeader.getCustomer().getId());
+                if (bizCustomCenterConsultant != null && bizCustomCenterConsultant.getConsultants() != null &&
+                        bizCustomCenterConsultant.getConsultants().getName() != null) {
+                    bizCustomCenterConsultant.setConsultants(systemService.getUser(bizCustomCenterConsultant.getConsultants().getId()));
+                    model.addAttribute("orderCenter", bizCustomCenterConsultant);
+                } else {
+                    model.addAttribute("orderCenter", new BizCustomCenterConsultant());
+                }
+            }
+        }
+        BizOrderHeader bizOrderHeaderTwo = bizOrderHeaderService.get(bizOrderHeader.getId());
+        if (bizOrderHeader.getId() != null) {
+            Double totalDetail = bizOrderHeaderTwo.getTotalDetail();//订单详情总价
+            Double totalExp = bizOrderHeaderTwo.getTotalExp();//订单总费用
+            Double freight = bizOrderHeaderTwo.getFreight();//运费
+            Double orderHeaderTotal = totalDetail + totalExp + freight;
+            bizOrderHeader.setTobePaid(orderHeaderTotal - bizOrderHeaderTwo.getReceiveTotal());//页面显示待支付总价
+            if (orderNoEditable != null && orderNoEditable.equals("editable")) {//不可编辑标识符
+                bizOrderHeaderTwo.setOrderNoEditable("editable");//待支付页面不能修改
+            }
+            if (orderDetails != null && orderDetails.equals("details")) {
+                bizOrderHeaderTwo.setOrderDetails("details");//查看详情页面不能修改
+            }
+            BizOrderAddress bizOrderAddress = new BizOrderAddress();
+            bizOrderAddress.setId(bizOrderHeaderTwo.getBizLocation().getId());
+            List<BizOrderAddress> list = bizOrderAddressService.findList(bizOrderAddress);
+            for (BizOrderAddress orderAddress : list) {
+//				    收货地址
+                if (orderAddress.getType() == 1) {
+                    model.addAttribute("orderAddress", orderAddress);
+                }
+            }
+            BizOrderAddress orderAddress = new BizOrderAddress();
+            orderAddress.setOrderHeaderID(bizOrderHeaderTwo);
+            List<BizOrderAddress> addresslist = bizOrderAddressService.findList(orderAddress);
+            if (CollectionUtils.isNotEmpty(addresslist)) {
+                for (BizOrderAddress address : addresslist) {
+                    //				交货地址
+                    if (address.getType() == 2) {
+                        model.addAttribute("address", address);
+                    }
+                }
+            }
+            //代采
+            if (bizOrderHeaderTwo != null) {
+                if (bizOrderHeaderTwo.getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+                    //经销店
+                    Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+                    if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
+                        User user = systemService.getUser(office.getPrimaryPerson().getId());
+                        model.addAttribute("custUser", user);
+                    }
+                    //供应商
+                    User vendUser = bizOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
+                    model.addAttribute("vendUser", vendUser);
+                    BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
+                    bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
+                    List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
+                    if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
+                        model.addAttribute("appointedTimeList", appointedTimeList);
+                    }
+                }
+            }
+
+            BizOrderDetail bizOrderDetail = new BizOrderDetail();
+            bizOrderDetail.setOrderHeader(bizOrderHeader);
+            List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
+            for (BizOrderDetail orderDetail : orderDetailList) {
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
+                if (bizSkuInfo != null) {
+                    BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfo);
+                    if (skuInfo != null) {
+                        orderDetail.setSkuInfo(skuInfo);
+                    }
+                }
+                ordDetailList.add(orderDetail);
+                int keyId = orderDetail.getLineNo();
+                if (orderDetail.getPoHeader() != null && orderDetail.getPoHeader().getOrderNum() != null) {
+                    String orderNum = orderDetail.getPoHeader().getOrderNum();
+                    orderNumMap.put(keyId, orderNum);
+                }
+                if (orderDetail.getPoHeader() != null && orderDetail.getPoHeader().getId() != null) {
+                    int detailId = orderDetail.getPoHeader().getId();
+                    detailIdMap.put(keyId, detailId);
+                }
+            }
+        }
+        boolean flag = false;
+        User user = UserUtils.getUser();
+        if (user.getRoleList() != null) {
+            for (Role role : user.getRoleList()) {
+                if (RoleEnNameEnum.FINANCE.getState().equals(role.getEnname())) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if (bizOrderHeader.getId() != null) {
+            BizOrderHeaderUnline bizOrderHeaderUnline = new BizOrderHeaderUnline();
+            bizOrderHeaderUnline.setOrderHeader(bizOrderHeader);
+            List<BizOrderHeaderUnline> unlineList = bizOrderHeaderUnlineService.findList(bizOrderHeaderUnline);
+            if (CollectionUtils.isNotEmpty(unlineList)) {
+                model.addAttribute("unlineList", unlineList);
+            }
+        }
+
+        BizOrderStatus bizOrderStatus = new BizOrderStatus();
+        bizOrderStatus.setOrderHeader(bizOrderHeader);
+        bizOrderStatus.setOrderType(BizOrderStatus.OrderType.ORDER.getType());
+
+
+        model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+        model.addAttribute("entity", bizOrderHeader);
+        model.addAttribute("ordDetailList", ordDetailList);
+        model.addAttribute("orderNumMap", orderNumMap);
+        model.addAttribute("detailIdMap", detailIdMap);
+
+        //图片处理
+        CommonImg commonImg = new CommonImg();
+        commonImg.setImgType(ImgEnum.UNlINE_REFUND_VOUCHER.getCode());
+        commonImg.setObjectId(bizOrderHeader.getId());
+        commonImg.setObjectName("biz_order_header");
+        if (bizOrderHeader.getId() != null) {
+            List<CommonImg> imgList = commonImgService.findList(commonImg);
+            /*commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
+            List<CommonImg> itemImgList = commonImgService.findList(commonImg);*/
+            String photos = "";
+            /*String photoDetails = "";
+            String photoLists = "";*/
+            Map<String, Integer> photosMap = new LinkedHashMap<>();
+
+            for (CommonImg img : imgList) {
+                photos += img.getImgServer().concat(img.getImgPath()).concat("|");
+                photosMap.put(img.getImgServer() + img.getImgPath(), img.getImgSort());
+            }
+            if (StringUtils.isNotBlank(photos)) {
+                bizOrderHeader.setPhotos(photos);
+            }
+            /*if (!"".equals(photoDetails)) {
+                bizOrderHeader.setPhotoDetails(photoDetails);
+            }
+            for (CommonImg img : itemImgList) {
+                photoLists += "|" + img.getImgServer() + img.getImgPath();
+            }
+            if (!"".equals(photoLists)) {
+                bizOrderHeader.setPhotoLists(photoLists);
+            }*/
+            if (imgList != null && !imgList.isEmpty()) {
+                model.addAttribute("photosMap", photosMap);
+            }
+        }
+
+
+        return "modules/biz/order/bizOrderHeaderRefund";
+    }
+
+    @RequestMapping(value = "saveColorImg")
+    public void saveFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        // 获取上传文件名
+        MultipartFile colorFile = multipartRequest.getFile("colorImg");
+        if (colorFile != null) {
+            String originalFilename = colorFile.getOriginalFilename();
+            String fullName = UUID.randomUUID().toString().replaceAll("-", "").concat(originalFilename.substring(originalFilename.indexOf(".")));
+            String msg = "";
+            boolean ret = false;
+            try {
+                String result = AliOssClientUtil.uploadObject2OSS(colorFile.getInputStream(), fullName, colorFile.getSize(), AliOssClientUtil.getOssUploadPath());
+                if (StringUtils.isNotBlank(result)) {
+                    fullName = DsConfig.getImgServer().concat("/").concat(AliOssClientUtil.getOssUploadPath()).concat(fullName);
+                    ret = true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            resultMap.put("fullName", fullName);
+            resultMap.put("ret", ret);
+            resultMap.put("msg", msg);
+        }
+
+        List<MultipartFile> files = multipartRequest.getFiles("productImg");
+        if (CollectionUtils.isNotEmpty(files)) {
+            List<String> imgList = Lists.newArrayList();
+            for (MultipartFile file : files) {
+                String originalFilename = file.getOriginalFilename();
+                String fullName = UUID.randomUUID().toString().replaceAll("-", "").concat(originalFilename.substring(originalFilename.indexOf(".")));
+                try {
+                    String result = AliOssClientUtil.uploadObject2OSS(file.getInputStream(), fullName, file.getSize(), AliOssClientUtil.getOssUploadPath());
+                    if (StringUtils.isNotBlank(result)) {
+                        fullName = DsConfig.getImgServer().concat("/").concat(AliOssClientUtil.getOssUploadPath()).concat(fullName);
+                        imgList.add(fullName);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            resultMap.put("imgList", imgList);
+            resultMap.put("ret", CollectionUtils.isNotEmpty(imgList));
+            resultMap.put("msg", "");
+        }
+
+        response.getWriter().write(JSONObject.fromObject(resultMap).toString());
     }
 
 }

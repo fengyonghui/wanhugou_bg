@@ -64,6 +64,27 @@
             $("#includeTestData").val(checkbox.checked);
         }
 	</script>
+	<script type="text/javascript">
+        function checkInfo(obj, val, hid) {
+            if (confirm("您确认同意该订单退款申请吗？")) {
+
+                $.ajax({
+                    type: "post",
+                    url: "${ctx}/biz/order/bizOrderHeader/saveInfo",
+                    data: {checkStatus: obj, id: hid},
+                    success: function (data) {
+                        if (data) {
+                            alert(val + "成功！");
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader";
+
+                        }
+                    }
+                })
+
+            }
+
+        }
+	</script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -312,6 +333,19 @@
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 
+						</c:if>
+						<!-- 退款增加 -->
+						<c:if test='${orderHeader.bizStatus==50 && (orderHeader.createBy.id==user.id || fns:getUser().isAdmin())}'>
+							<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>
+						</c:if>
+						<c:if test="${orderHeader.bizStatus==55 && (orderHeader.createBy.id==user.id )}">
+							退款中
+						</c:if>
+						<c:if test="${orderHeader.bizStatus==55 && (fns:hasRole(roleSet, orderHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
+							<a href="${ctx}/biz/order/bizOrderHeader/refund?id=${orderHeader.id}">同意退款</a>
+						</c:if>
+						<c:if test="${orderHeader.bizStatus==60 && (fns:hasRole(roleSet, orderHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
+							退款完成
 						</c:if>
 					</shiro:hasPermission>
 					</c:otherwise>

@@ -67,6 +67,13 @@
 			<id property="name" column="updateBy.name"/>
 		</association>
 
+		<association property="commonProcess" javaType="CommonProcessEntity" column="process.id">
+			<id property="id" column="commonProcess.id"/>
+			<result property="objectId" column="commonProcess.objectId"/>
+			<result property="objectName" column="commonProcess.objectName"/>
+			<result property="type" column="commonProcess.type"/>
+		</association>
+
 		<collection property="orderDetailList" ofType="BizOrderDetail">
 			<id property="id" column="orderDetailList.id" />
 			<result property="ordQty" column="orderDetailList.ordQty" />
@@ -128,7 +135,16 @@
 		con.id AS "con.id",
 		con.name AS "con.name",
 		boc.id as "orderComment.id",
-		boc.comments as "orderComment.comments"
+		boc.comments as "orderComment.comments",
+		process.id AS "commonProcess.id",
+		process.object_id AS "commonProcess.objectId",
+		process.object_name AS "commonProcess.objectName",
+		process.prev_id AS "commonProcess.prevId",
+		process.biz_status AS "commonProcess.bizStatus",
+		process.processor AS "commonProcess.processor",
+		process.description AS "commonProcess.description",
+		process.type AS "commonProcess.type",
+		process.create_time AS "commonProcess.createTime"
 	</sql>
 
 	<!-- C端订单管理 -->
@@ -183,6 +199,7 @@
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
 		left join biz_order_comment boc on boc.order_id=a.id
+		LEFT JOIN common_process process ON process.id = a.process_id
 	</sql>
 
 	<select id="get" resultType="BizOrderHeader">
@@ -573,6 +590,7 @@
 		<if test="bizStatus !=null and bizStatus !=''">
 			biz_status,
 		</if>
+		img_url,
 		biz_type,
 		plateform_id,
 		ship_to_addr,
@@ -623,8 +641,9 @@
 		seller_id = #{sellers.id},
 		</if>
 		total_detail = #{totalDetail},
-		<if test="receiveTotal !=null and receiveTotal !=''">
-			receive_total = #{receiveTotal},
+		receive_total = #{receiveTotal},
+		<if test="commonProcess!=null and commonProcess.id!=null and commonProcess.id!=''">
+			process_id = #{commonProcess.id},
 		</if>
 		total_exp = #{totalExp},
 		freight = #{freight},

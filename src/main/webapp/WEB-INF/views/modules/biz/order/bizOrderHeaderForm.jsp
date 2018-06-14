@@ -325,6 +325,124 @@
             }
         }
     </script>
+
+    <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
+    <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
+    <script src="${ctxStatic}/jquery-select2/3.5.3/select2.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        function submitPic(id, multiple) {
+            var f = $("#" + id).val();
+            if (f == null || f == "") {
+                alert("错误提示:上传文件不能为空,请重新选择文件");
+                return false;
+            } else {
+                var extname = f.substring(f.lastIndexOf(".") + 1, f.length);
+                extname = extname.toLowerCase();//处理了大小写
+                if (extname != "jpeg" && extname != "jpg" && extname != "gif" && extname != "png") {
+                    $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+                    return false;
+                }
+            }
+            var file = document.getElementById(id).files;
+            var size = file[0].size;
+            if (size > 2097152) {
+                alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
+                return false;
+            }
+            ajaxFileUploadPic(id, multiple);
+        }
+
+        var a = 0;
+
+        function ajaxFileUploadPic(id, multiple) {
+            $.ajaxFileUpload({
+                url: '${ctx}/biz/order/bizOrderHeader/saveColorImg', //用于文件上传的服务器端请求地址
+                secureuri: false, //一般设置为false
+                fileElementId: id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+                type: 'POST',
+                dataType: 'text', //返回值类型 一般设置为json
+                success: function (data, status) {
+                    //服务器成功响应处理函数
+                    var msg = data.substring(data.indexOf("{"), data.indexOf("}") + 1);
+                    var msgJSON = JSON.parse(msg);
+                    var imgList = msgJSON.imgList;
+                    var imgDiv = $("#" + id + "Div");
+                    var imgDivHtml = "<td><img src=\"$Src\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this);\"></td>";
+                    var imgPhotosSorts = "<td id=''><input name='imgPhotosSorts' style='width: 70px' type='number'/></td>";
+                    if (imgList && imgList.length > 0 && multiple) {
+                        for (var i = 0; i < imgList.length; i++) {
+                            // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                            if (id == "prodMainImg") {
+                                $("#imgPhotosSorts").append("<td><input id='" + "main" + i + "' name='imgPhotosSorts' value='" + a + "' style='width: 70px' type='number'/></td>");
+                                // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
+                                $("#prodMainImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this," + "$('#main" + i + "'));\"></td>");
+                                a += 1;
+                            }
+                        }
+                    } else if (imgList && imgList.length > 0 && !multiple) {
+                        imgDiv.empty();
+                        for (var i = 0; i < imgList.length; i++) {
+                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        }
+                    } else {
+                        var img = $("#" + id + "Img");
+                        img.attr("src", msgJSON.fullName);
+                    }
+                },
+                error: function (data, status, e) {
+                    //服务器响应失败处理函数
+                    console.info(data);
+                    console.info(status);
+                    console.info(e);
+                    alert("上传失败");
+                }
+            });
+            return false;
+        }
+
+        function deletePic(id) {
+            var f = $("#" + id);
+            f.attr("src", "");
+        }
+
+        function removeThis(obj, item) {
+            $(obj).remove();
+            $(item).remove();
+        }
+
+        function deleteParentParentEle(that) {
+            $(that).parent().parent().remove();
+        }
+
+        function submitCustomForm() {
+            var bb = true;
+            $("input[name='imgPhotosSorts']").each(function () {
+                if ($(this).val() == '') {
+                    bb = false;
+                    return;
+                }
+            });
+            if (bb) {
+                loading('正在提交，请稍等...');
+                var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
+                var mainImgStr = "";
+                for (var i = 0; i < mainImg.length; i++) {
+                    mainImgStr += ($(mainImg[i]).attr("src") + "|");
+                }
+                $("#photos").val(mainImgStr);
+                inputForm.submit();
+            } else {
+                alert("退货凭证图片序号不能为空");
+            }
+        }
+    </script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -373,6 +491,7 @@
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
+    <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -596,6 +715,31 @@
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>
             </c:if>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">退货凭证:
+            <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
+            <p style="opacity: 0.5;">图片建议比例为1:1</p>
+            <p style="opacity: 0.5;">点击图片删除</p>
+            <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
+        </div>
+        <div id="prodMainImgDiv">
+            <table>
+                <tr id="prodMainImgImg">
+                    <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                        <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,'#mainImg'+${status.index});"></td>
+                    </c:forEach>
+                </tr>
+                <tr id="imgPhotosSorts">
+                    <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                        <td><input id="mainImg${status.index}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
+                    </c:forEach>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -929,7 +1073,7 @@
             <div class="form-actions">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                        <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
+                        <input id="btnSubmit" class="btn btn-primary" type="button" value="保存" onclick="return submitCustomForm()"/>&nbsp;
                     </shiro:hasPermission>
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>

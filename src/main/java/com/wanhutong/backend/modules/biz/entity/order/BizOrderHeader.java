@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
+import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
@@ -118,6 +119,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer opShelfCount;//新品发布量
     private Integer skuCount;//商品销售量
     private Integer officeCount;//新增经销店数
+
+    private CommonProcessEntity commonProcess;
+
+    private String photos; //产品图片
+    private String photoDetails;
+    //private String imgUrl;   //图片地址
+    private String imgPhotosSorts;		//主图顺序
+    private String imgDetailSorts;      //列表图顺序
 
     public String getLocationAddress() {
         return locationAddress;
@@ -632,5 +641,53 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setExamine(Integer examine) {
         this.examine = examine;
+    }
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
+
+    public String getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(String photos) {
+        this.photos = photos;
+    }
+
+    public String getPhotoDetails() {
+        return photoDetails;
+    }
+
+    public void setPhotoDetails(String photoDetails) {
+        this.photoDetails = photoDetails;
+    }
+
+//    public String getImgUrl() {
+//        return imgUrl;
+//    }
+//
+//    public void setImgUrl(String imgUrl) {
+//        this.imgUrl = imgUrl;
+//    }
+
+    public String getImgPhotosSorts() {
+        return imgPhotosSorts;
+    }
+
+    public void setImgPhotosSorts(String imgPhotosSorts) {
+        this.imgPhotosSorts = imgPhotosSorts;
+    }
+
+    public String getImgDetailSorts() {
+        return imgDetailSorts;
+    }
+
+    public void setImgDetailSorts(String imgDetailSorts) {
+        this.imgDetailSorts = imgDetailSorts;
     }
 }
