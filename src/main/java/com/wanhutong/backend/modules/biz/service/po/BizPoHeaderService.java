@@ -3,9 +3,13 @@
  */
 package com.wanhutong.backend.modules.biz.service.po;
 
+import com.google.common.collect.ImmutableMap;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -25,16 +29,17 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.EmailConfig;
+import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +47,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -79,12 +86,14 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 	private CommonProcessService commonProcessService;
 	@Autowired
 	private BizOrderStatusService bizOrderStatusService;
+	@Autowired
+	private SystemService systemService;
 
 
     /**
      * 默认表名
      */
-    public static final String DATABASE_TABLE_NAME = "biz_po_payment_order";
+    public static final String DATABASE_TABLE_NAME = "biz_po_header";
 
     @Override
     public BizPoHeader get(Integer id) {
@@ -161,6 +170,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             for (String orderDetailId : orderDetailArr) {
                 BizOrderDetail bizOrderDetail = bizOrderDetailService.get(Integer.parseInt(orderDetailId));
                 BizSkuInfo skuInfo = bizSkuInfoService.get(bizOrderDetail.getSkuInfo().getId());
+                if (bizOrderDetail.getOrderHeader() != null && bizOrderDetail.getOrderHeader().getOrderType() == Integer.parseInt(DefaultPropEnum.PURSEHANGER.getPropValue())) {
+                    skuInfo.setBuyPrice(bizOrderDetail.getBuyPrice());
+                }
                 if (skuMap.containsKey(skuInfo.getId())) {
                     BizSkuInfo sku = skuMap.get(skuInfo.getId());
                     Integer ordQty = sku.getReqQty() + bizOrderDetail.getOrdQty() - bizOrderDetail.getSentQty();
@@ -307,6 +319,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(entry.getKey());
             bizRequestDetail.setRequestHeader(bizRequestHeader);
             List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+            Integer bizStatus = bizRequestHeader.getBizStatus();
             if (requestDetailList.size() == entry.getValue().size()) {
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
                     bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
@@ -327,6 +340,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                         bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
                     }
                 }
+            }
+            if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
             }
 
         }
@@ -418,12 +434,26 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         if (bizPoHeader.getBizPoPaymentOrder() != null && bizPoHeader.getBizPoPaymentOrder().getId() != null && bizPoHeader.getBizPoPaymentOrder().getId() != 0) {
             return "操作失败,该订单已经有正在申请的支付单!";
         }
+        PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+        PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
+        if (paymentOrderProcessConfig.getDefaultBaseMoney().compareTo(bizPoHeader.getPlanPay()) > 0) {
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getPayProcessId());
+        }else {
+            purchaseOrderProcess = paymentOrderProcessConfig.getProcessMap().get(paymentOrderProcessConfig.getDefaultProcessId());
+        }
+
+        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+        commonProcessEntity.setObjectId(bizPoHeader.getId().toString());
+        commonProcessEntity.setObjectName(BizPoPaymentOrderService.DATABASE_TABLE_NAME);
+        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+        commonProcessService.save(commonProcessEntity);
 
         BizPoPaymentOrder bizPoPaymentOrder = new BizPoPaymentOrder();
         bizPoPaymentOrder.setPoHeaderId(bizPoHeader.getId());
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.NO_PAY.getStatus());
         bizPoPaymentOrder.setTotal(bizPoHeader.getPlanPay());
         bizPoPaymentOrder.setDeadline(bizPoHeader.getPayDeadline());
+        bizPoPaymentOrder.setProcessId(commonProcessEntity.getId());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
         bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
@@ -431,23 +461,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         return "操作成功!";
     }
 
-    /**
-     * @param poHeaderId
-     * @param currentType
-     * @param auditType
-     * @param description
-     * @return
-     */
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public String audit(int poHeaderId, String currentType, int auditType, String description) {
-        BizPoHeader bizPoHeader = this.get(poHeaderId);
-        CommonProcessEntity cureentProcessEntity = bizPoHeader.getCommonProcess();
+    public String audit(int id, String currentType, int auditType, String description, CommonProcessEntity cureentProcessEntity) {
         if (cureentProcessEntity == null) {
             return "操作失败,当前订单无审核状态!";
         }
-        cureentProcessEntity = commonProcessService.get(bizPoHeader.getCommonProcess().getId());
+        cureentProcessEntity = commonProcessService.get(cureentProcessEntity.getId());
         if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
-            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", poHeaderId, currentType);
+            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", id, currentType);
             return "操作失败,当前审核状态异常!";
         }
 
@@ -488,15 +508,187 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         commonProcessService.save(cureentProcessEntity);
 
         CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
-        nextProcessEntity.setObjectId(bizPoHeader.getId().toString());
+        nextProcessEntity.setObjectId(String.valueOf(id));
         nextProcessEntity.setObjectName(BizPoHeaderService.DATABASE_TABLE_NAME);
         nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
         nextProcessEntity.setPrevId(cureentProcessEntity.getId());
         commonProcessService.save(nextProcessEntity);
-        this.updateProcessId(bizPoHeader.getId(), nextProcessEntity.getId());
+        this.updateProcessId(id, nextProcessEntity.getId());
 
         if (nextProcess.getCode() == purchaseOrderProcessConfig.getPayProcessId()) {
-            this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS_COMPLETE);
+            BizPoHeader bizPoHeader = this.get(id);
+            Byte bizStatus = bizPoHeader.getBizStatus();
+            this.updateBizStatus(id, BizPoHeader.BizStatus.PROCESS_COMPLETE);
+            if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+            }
+        }
+
+        try {
+            StringBuilder phone = new StringBuilder();
+            for (String s : nextProcess.getRoleEnNameEnum()) {
+                List<User> userList = systemService.findUser(new User(systemService.getRoleByEnname(s)));
+                if (CollectionUtils.isNotEmpty(userList)) {
+                    for (User u : userList) {
+                        phone.append(u.getMobile()).append(",");
+                    }
+                }
+            }
+
+            if (StringUtils.isNotBlank(phone.toString())) {
+                AliyunSmsClient.getInstance().sendSMS(
+                        SmsTemplateCode.PENDING_AUDIT.getCode(),
+                        phone.toString(),
+                        ImmutableMap.of("order","采购单"));
+            }
+        } catch (Exception e) {
+            LOGGER.error("[exception]PO审批短信提醒发送异常[poHeaderId:{}]", id, e);
+            EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
+            AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
+                    String.format(email.getBody(),
+                            "BizPoHeaderService:541",
+                            e.toString(),
+                            "PO审批短信提醒发送异常",
+                            LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+                    ));
+        }
+
+        return "操作成功!";
+    }
+
+
+    /**
+     * 审批PO
+     *
+     * @param id
+     * @param currentType
+     * @param auditType
+     * @param description
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public String auditPo(int id, String currentType, int auditType, String description) {
+        BizPoHeader bizPoHeader = this.get(id);
+        CommonProcessEntity cureentProcessEntity = bizPoHeader.getCommonProcess();
+        return audit(id, currentType, auditType, description, cureentProcessEntity);
+    }
+    /**
+     * 审批支付单
+     *
+     * @param id
+     * @param currentType
+     * @param auditType
+     * @param description
+     * @return
+     */
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public String auditPay(int id, String currentType, int auditType, String description, BigDecimal money) {
+        BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(id);
+        CommonProcessEntity cureentProcessEntity = bizPoPaymentOrder.getCommonProcess();
+        if (cureentProcessEntity == null) {
+            return "操作失败,当前订单无审核状态!";
+        }
+        cureentProcessEntity = commonProcessService.get(cureentProcessEntity.getId());
+        if (!cureentProcessEntity.getType().equalsIgnoreCase(currentType)) {
+            LOGGER.warn("[exception]BizPoHeaderController audit currentType mismatching [{}][{}]", id, currentType);
+            return "操作失败,当前审核状态异常!";
+        }
+
+        PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
+        // 当前流程
+        PaymentOrderProcessConfig.Process currentProcess = paymentOrderProcessConfig.getProcessMap().get(Integer.valueOf(currentType));
+        // 下一流程
+        PaymentOrderProcessConfig.Process nextProcess = CommonProcessEntity.AuditType.PASS.getCode() == auditType ?
+                        paymentOrderProcessConfig.getPassProcess(money, currentProcess) : paymentOrderProcessConfig.getRejectProcess(money, currentProcess);
+        if (nextProcess == null) {
+            return "操作失败,当前流程已经结束!";
+        }
+
+        User user = UserUtils.getUser();
+        List<PaymentOrderProcessConfig.MoneyRole> moneyRoleList = currentProcess.getMoneyRole();
+        PaymentOrderProcessConfig.MoneyRole moneyRole = null;
+        for (PaymentOrderProcessConfig.MoneyRole role : moneyRoleList) {
+            if (role.getEndMoney().compareTo(money) > 0 && role.getStartMoney().compareTo(money) <= 0) {
+                moneyRole = role;
+            }
+        }
+        if (moneyRole == null) {
+            return "操作失败,当前流程无审批人,请联系技术部!";
+        }
+
+        boolean hasRole = false;
+        for (String s : moneyRole.getRoleEnNameEnum()) {
+            RoleEnNameEnum roleEnNameEnum = RoleEnNameEnum.valueOf(s);
+            Role role = new Role();
+            role.setEnname(roleEnNameEnum.getState());
+            if (user.getRoleList().contains(role)) {
+                hasRole = true;
+                break;
+            }
+        }
+
+        if (!user.isAdmin() && !hasRole) {
+            return "操作失败,该用户没有权限!";
+        }
+
+        if (CommonProcessEntity.AuditType.PASS.getCode() != auditType && org.apache.commons.lang3.StringUtils.isBlank(description)) {
+            return "请输入驳回理由!";
+        }
+
+        cureentProcessEntity.setBizStatus(auditType);
+        cureentProcessEntity.setProcessor(user.getId().toString());
+        cureentProcessEntity.setDescription(description);
+        commonProcessService.save(cureentProcessEntity);
+
+        CommonProcessEntity nextProcessEntity = new CommonProcessEntity();
+        nextProcessEntity.setObjectId(String.valueOf(id));
+        nextProcessEntity.setObjectName(BizPoPaymentOrderService.DATABASE_TABLE_NAME);
+        nextProcessEntity.setType(String.valueOf(nextProcess.getCode()));
+        nextProcessEntity.setPrevId(cureentProcessEntity.getId());
+        commonProcessService.save(nextProcessEntity);
+        bizPoPaymentOrderService.updateProcessId(id, nextProcessEntity.getId());
+
+        if (nextProcess.getCode() == paymentOrderProcessConfig.getEndProcessId()) {
+            this.updatePaymentOrderId(bizPoPaymentOrder.getPoHeaderId(), null);
+        }
+
+        try {
+            List<PaymentOrderProcessConfig.MoneyRole> nextMoneyRoleList = nextProcess.getMoneyRole();
+            PaymentOrderProcessConfig.MoneyRole nextMoneyRole = null;
+            for (PaymentOrderProcessConfig.MoneyRole role : nextMoneyRoleList) {
+                if (role.getEndMoney().compareTo(money) > 0 && role.getStartMoney().compareTo(money) <= 0) {
+                    nextMoneyRole = role;
+                }
+            }
+
+            if (nextMoneyRole != null) {
+                StringBuilder phone = new StringBuilder();
+                for (String s : nextMoneyRole.getRoleEnNameEnum()) {
+                    List<User> userList = systemService.findUser(new User(systemService.getRoleByEnname(s)));
+                    if (CollectionUtils.isNotEmpty(userList)) {
+                        for (User u : userList) {
+                            phone.append(u.getMobile()).append(",");
+                        }
+                    }
+                }
+
+                if (StringUtils.isNotBlank(phone.toString())) {
+                    AliyunSmsClient.getInstance().sendSMS(
+                            SmsTemplateCode.PENDING_AUDIT.getCode(),
+                            phone.toString(),
+                            ImmutableMap.of("order","采购单支付"));
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("[exception]PO支付审批短信提醒发送异常[poHeaderId:{}]", id, e);
+            EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
+            AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(), email.getSubject(),
+                    String.format(email.getBody(),
+                            "BizPoHeaderService:541",
+                            e.toString(),
+                            "PO支付审批短信提醒发送异常",
+                            LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+                    ));
         }
 
         return "操作成功!";
@@ -521,9 +713,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             bizPoHeader.setPlanPay(prewPayTotal);
             this.genPaymentOrder(bizPoHeader);
         }
+        Byte bizStatus = bizPoHeader.getBizStatus();
         this.updateBizStatus(bizPoHeader.getId(), BizPoHeader.BizStatus.PROCESS);
+        if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
         this.updateProcessToInit(bizPoHeader);
-        audit(id, String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId()), auditType, desc);
+        auditPo(id, String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId()), auditType, desc);
         return "操作成功!";
     }
 
@@ -555,6 +751,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         bizPoPaymentOrder.setPayTotal(payTotal);
         bizPoPaymentOrder.setImg(img);
         bizPoPaymentOrder.setBizStatus(BizPoPaymentOrder.BizStatus.ALL_PAY.getStatus());
+        bizPoPaymentOrder.setPayTime(new Date());
         bizPoPaymentOrderService.save(bizPoPaymentOrder);
 
 
@@ -562,9 +759,11 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 //      DOWN_PAYMENT(1, "付款支付"),
 //      ALL_PAY(2, "全部支付"),
         BigDecimal orderTotal = BigDecimal.valueOf(bizPoHeader.getTotalDetail()).add(BigDecimal.valueOf(bizPoHeader.getTotalExp())).add(BigDecimal.valueOf(bizPoHeader.getFreight()));
-
+        Byte bizStatus = bizPoHeader.getBizStatus();
         this.updateBizStatus(bizPoHeader.getId(), bizPoHeader.getPayTotal().add(payTotal).compareTo(orderTotal) >= 0 ? BizPoHeader.BizStatus.ALL_PAY : BizPoHeader.BizStatus.DOWN_PAYMENT);
-
+        if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
         incrPayTotal(bizPoHeader.getId(), payTotal);
 
         // 清除关联的支付申请单

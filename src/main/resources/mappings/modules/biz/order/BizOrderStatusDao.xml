@@ -15,13 +15,24 @@
 		su.name as "createBy.name",
 		suu.name as "updateBy.name",
 		boh.order_num as "orderHeader.orderNum",
-		boh.order_type as "orderHeader.orderType"
+		boh.order_type as "orderHeader.orderType",
+		so.id as "office.id",
+		(
+			CASE
+			WHEN boh.order_num like 'CO%' THEN
+				cosu.name
+			ELSE
+				so.name
+			END
+		)AS "office.name"
 	</sql>
 	
 	<sql id="bizOrderStatusJoins">
 		left join sys_user su on a.create_id=su.id
 		left join sys_user suu on a.update_id=suu.id
 		left join biz_order_header boh on boh.id=a.order_id
+		LEFT JOIN sys_office so on so.id=boh.cust_id
+		LEFT JOIN sys_user cosu on cosu.id=boh.cust_id
 	</sql>
     
 	<select id="get" resultType="BizOrderStatus">
@@ -39,6 +50,7 @@
 		<include refid="bizOrderStatusJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			and boh.status=#{DEL_FLAG_NORMAL}
 			<if test="orderHeader != null and orderHeader.orderNum != null and orderHeader.orderNum != ''">
 				AND boh.order_num like
 				<if test="dbName == 'oracle'">'%'||#{orderHeader.orderNum}||'%'</if>
@@ -48,8 +60,14 @@
 			<if test="bizStatus != null and bizStatus != ''">
 				AND a.biz_status = #{bizStatus}
 			</if>
+			<if test="orderHeader != null and orderHeader.id != '' and orderHeader.id != null">
+				AND a.order_id = #{orderHeader.id}
+			</if>
 			<if test="orderHeader != null and orderHeader.orderType != null and orderHeader.orderType != ''">
 				AND boh.order_type = #{orderHeader.orderType}
+			</if>
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
 			</if>
 		</where>
 		<choose>
@@ -57,7 +75,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				order by a.update_time desc
+				GROUP BY a.id order by a.update_time desc
 			</otherwise>
 		</choose>
 	</select>
@@ -119,5 +137,47 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<insert id="insertAfterBizStatusChanged">
+		INSERT INTO biz_order_status(
+			id,
+			order_id,
+			biz_status,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+		  	order_type)
+		  SELECT
+		  	NULL,
+			br.id,
+			<choose>
+				<when test="bizStatusTemp !=null and bizStatusTemp!= ''">
+					${bizStatusTemp},
+				</when>
+				<otherwise>
+					br.biz_status,
+				</otherwise>
+			</choose>
+			br.status,
+			br.update_id,
+			#{createTime},
+			br.u_version,
+			br.update_id,
+			#{updateTime},
+			#{orderType}
+		<if test='orderTypeDesc == "biz_order_header"'>
+		  FROM biz_order_header br
+		</if>
+		<if test='orderTypeDesc == "biz_request_header"'>
+			FROM biz_request_header br
+		</if>
+		<if test='orderTypeDesc == "biz_po_header"'>
+			FROM biz_po_header br
+		</if>
+		WHERE br.id = #{id}
+	</insert>
 	
 </mapper>

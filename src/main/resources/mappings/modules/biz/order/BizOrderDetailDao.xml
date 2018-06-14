@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.order_id AS "orderHeader.id",
 		boh.order_num AS "orderHeader.orderNum",
+		boh.order_type AS "orderHeader.orderType",
 		a.line_no AS "lineNo",
 		a.p_line_no AS "pLineNo",
 		a.sku_shelf_id as "shelfInfo.id",
@@ -65,7 +66,7 @@
 		FROM biz_order_detail a
 		<include refid="bizOrderDetailJoins"/>
 		<where>
-
+			  a.status = #{DEL_FLAG_NORMAL}
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
 				AND a.order_id = #{orderHeader.id}
 			</if>
@@ -147,6 +148,130 @@
 		</if>
 		GROUP BY
 		pi.vendor_id
+	</select>
+
+	<select id="findRequestTotalByVendorList" resultType="java.util.Map">
+		SELECT
+		GROUP_CONCAT( reqDetailIds ) AS reqDetailIds,
+		GROUP_CONCAT( detailIds ) AS detailIds,
+		sum( totalReqQty ) AS "totalReqQty",
+		sum( totalOrdQty ) AS "totalOrdQty",
+		vendorId AS "vendorId",
+		vendorName AS "vendorName"
+		FROM
+		(
+		(
+		SELECT
+		GROUP_CONCAT( rd.id ) AS "reqDetailIds",
+		'' AS "detailIds",
+		sum( rd.req_qty ) AS "totalReqQty",
+		0 AS "totalOrdQty",
+		rd.vendor_id AS "vendorId",
+		rd.vendor_name AS "vendorName"
+		FROM
+		(
+		SELECT
+		rd.id,
+		rd.sku_id,
+		rd.req_qty,
+		rd.send_qty,
+		rd.recv_qty,
+		rd.header_id,
+		rd.line_no,
+		pi.vendor_id,
+		pi.vendor_name
+		FROM
+		biz_request_header rh,
+		biz_request_detail rd,
+		biz_sku_info si,
+		biz_product_info pi
+		WHERE
+		rh.biz_status BETWEEN 5
+		AND 20
+		AND rh.biz_status != 15
+		AND rh.STATUS = 1
+		AND rd.STATUS = 1
+		AND rd.header_id = rh.id
+		AND si.id = rd.sku_id
+		AND pi.id = si.prod_id
+		AND NOT EXISTS (
+		SELECT
+		por.so_line_no,
+		por.so_id
+		FROM
+		biz_po_order_req por ,biz_po_header ph
+		WHERE
+		por.so_line_no = rd.line_no
+		AND por.so_id = rd.header_id
+		AND por.so_type = 2
+		and ph.id=por.po_id and is_prew=0
+		)
+		AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE rh.from_id = ta.object_id AND ta.object_name = 'sys_office' )
+		) rd
+		GROUP BY
+		rd.vendor_id
+		) UNION ALL
+		(
+		SELECT
+		'' AS "reqDetailIds",
+		GROUP_CONCAT( od.id ) AS "detailIds",
+		0 AS "totalReqQty",
+		sum( od.ord_qty ) AS "totalOrdQty",
+		od.vendor_id AS "vendorId",
+		od.vendor_name AS "vendorName"
+		FROM
+		(
+		SELECT
+		od.id,
+		od.sku_id,
+		od.ord_qty,
+		od.sent_qty,
+		od.order_id,
+		od.suply_id,
+		od.line_no,
+		pi.vendor_id,
+		pi.vendor_name
+		FROM
+		biz_order_header oh,
+		biz_order_detail od,
+		biz_sku_info si,
+		biz_product_info pi
+		WHERE
+		( od.suply_id = 0 OR od.suply_id = 721 )
+		AND od.order_id = oh.id
+		AND oh.STATUS = 1
+		AND od.STATUS = 1
+		AND oh.order_type != 5
+		AND oh.biz_status BETWEEN 15
+		AND 19
+		AND oh.biz_status != 18
+		AND od.ord_qty > od.sent_qty
+		AND si.id = od.sku_id
+		AND pi.id = si.prod_id
+		AND NOT EXISTS (
+		SELECT
+		por.so_line_no,
+		por.so_id
+		FROM
+		biz_po_order_req por ,biz_po_header ph
+		WHERE
+		por.so_line_no = od.line_no
+		AND por.so_id = od.order_id
+		AND por.so_type = 1
+		and ph.id=por.po_id and is_prew=0
+		)
+		AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id AND ta.object_name = 'sys_office' )
+		) od
+		GROUP BY
+		od.vendor_id
+		)
+		) t1
+		WHERE 1 =1
+		<if test="name!=null and name!=''">
+			and t1.vendorName = #{name}
+		</if>
+		GROUP BY
+		vendorId
 	</select>
 	
 	<select id="findRequestTotalByVendor" resultType="java.util.Map">
@@ -376,8 +501,13 @@ GROUP BY
 		</if>
 			part_no = #{partNo},
 			sku_name = #{skuName},
+		<if test="unitPrice!=null and unitPrice!=0">
 			unit_price = #{unitPrice},
+		</if>
+		<if test="buyPrice!=null and buyPrice!=0">
 			buy_price = #{buyPrice},
+		</if>
+
 			sent_qty = #{sentQty},
 			ord_qty = #{ordQty},
 		<choose>
@@ -457,9 +587,11 @@ GROUP BY
 			LEFT JOIN sys_office off ON off.id = pro.vendor_id
 			LEFT JOIN sys_user us ON us.id = off.primary_person
 
-			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.order_id AND a.line_no = bpor.so_line_no and bpor.so_type=1
-		LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.is_prew=0
+			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.order_id
+		LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1 and ph.is_prew=0
 		<where>
+			AND a.line_no = bpor.so_line_no
+			and bpor.so_type=1
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
 				AND a.order_id = #{orderHeader.id}
 			</if>

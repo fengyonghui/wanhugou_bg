@@ -27,6 +27,7 @@
 		sum(recv_qty) as "recvQtys",
 		sum(req_qty * unit_price) AS totalMoney,
 		GROUP_CONCAT(brd.id) AS reqDetailIds,
+		count(brd.id) as "ordCount",
 		(@rownum:=@rownum+1) as "numberRownum",
 		process.id AS "commonProcess.id",
 		process.object_id AS "commonProcess.objectId",
@@ -58,14 +59,22 @@
 	
 	<select id="findList" resultType="BizRequestHeader">
 		SELECT 
-			<include refid="bizRequestHeaderColumns"/>
+			<include refid="bizRequestHeaderColumns"/>,
+			pi.vendor_name AS "name",
+			bvi.id as "varietyInfo.id",
+			bvi.name as "varietyInfo.name"
 		FROM biz_request_header a
 		<include refid="bizRequestHeaderJoins"/>
-
+		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
+		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		LEFT JOIN biz_variety_info bvi on bvi.id=pi.vari_id and bvi.status=1
 		<where>
 			1=1
 			<if test="dataStatus!=null and dataStatus!=''">
 				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="varietyInfo!=null and varietyInfo.id!=null and varietyInfo.id!=''">
+				and bvi.id = #{varietyInfo.id}
 			</if>
 			<if test="reqNo != null and reqNo != ''">
 				AND a.req_no
@@ -92,6 +101,9 @@
 			<if test="createBy != null and createBy.id != null and createBy.id != ''">
 				AND a.create_id = #{createBy.id}
 			</if>
+			<if test="name != null and name != ''">
+				AND  pi.vendor_name = #{name}
+			</if>
 
 			<if test="page != null and page.includeTestData != true">
 				AND NOT EXISTS(
@@ -115,7 +127,14 @@
 				<!--GROUP  BY a.id-->
 			</otherwise>
 		</choose>
-		order by updateDate desc
+		<choose>
+			<when test="dataFrom != null and dataFrom != '' and dataFrom == 'biz_request_bizRequestHeader'">
+				order by createDate desc
+			</when>
+			<otherwise>
+				order by updateDate desc
+			</otherwise>
+		</choose>
 	</select>
 
 	<select id="findListForPoHeader" resultType="BizRequestHeader">

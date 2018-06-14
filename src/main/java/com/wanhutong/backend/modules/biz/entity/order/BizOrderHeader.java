@@ -6,8 +6,10 @@ package com.wanhutong.backend.modules.biz.entity.order;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
 import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
+import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -45,6 +47,10 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      *  ｝
      * */
     private Office sellers;
+    /**
+     * 订单备注
+     * */
+    private BizOrderComment orderComment;
 
 
     private CommonLocation location;          //订单交货地址
@@ -70,6 +76,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String partNo;      //根据sku编号搜索
     private Integer orderCount; //find List中订单总条数据
     private String name;  //根据供应商名搜索
+    private Integer examine;        //线下支付订单审核状态
 
     private String orderNum2;        //用于删除订单页面传值
     private String localSendIds;
@@ -78,16 +85,18 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String centersName;    //用于订单列表查询采购中心
 
     private User con;        //订单所属客户专员
-    private Date ordrHeaderStartTime;    //订单创建开始时间
-    private Date orderHeaderEedTime;    //订单创建结束时间
+    private String ordrHeaderStartTime;    //订单创建开始时间
+    private String orderHeaderEedTime;    //订单创建结束时间
     /**
      * 订单更新开始时间
      * */
     private Date orderUpdaStartTime;
+    private Date orderCreatStartTime;
     /**
      * 订单更新结束时间
      * */
     private Date orderUpdaEndTime;
+    private Date orderCreatEndTime;
 
     /**
      * 查看已经生成的采购单 标识符
@@ -98,11 +107,17 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String locationAddress;
 
     /**
-     * 客户专员、会员搜索 查看订单开始下单时间与该采购商订单总金额
+     * 客户专员、会员搜索 查看订单开始下单时间与该采购商订单总金额，品类主管 管理 的商品统计
      * */
     private Double userOfficeReceiveTotal;
     private Date userOfficeDeta;
-    private Integer officeChatRecord;//经销店的沟通次数
+    private Integer officeChatRecord;//沟通次数
+    private BizChatRecord bizChatRecord;
+    private BizSkuInfo skuInfoId;//商品ID
+    private String skuChickCount;//下单量标识
+    private Integer opShelfCount;//新品发布量
+    private Integer skuCount;//商品销售量
+    private Integer officeCount;//新增经销店数
 
     public String getLocationAddress() {
         return locationAddress;
@@ -431,22 +446,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.con = con;
     }
 
-    public Date getOrdrHeaderStartTime() {
-        return ordrHeaderStartTime;
-    }
-
-    public void setOrdrHeaderStartTime(Date ordrHeaderStartTime) {
-        this.ordrHeaderStartTime = ordrHeaderStartTime;
-    }
-
-    public Date getOrderHeaderEedTime() {
-        return orderHeaderEedTime;
-    }
-
-    public void setOrderHeaderEedTime(Date orderHeaderEedTime) {
-        this.orderHeaderEedTime = orderHeaderEedTime;
-    }
-
     public Office getCustomer() {
         return customer;
     }
@@ -537,5 +536,101 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setOfficeChatRecord(Integer officeChatRecord) {
         this.officeChatRecord = officeChatRecord;
+    }
+
+    public BizChatRecord getBizChatRecord() {
+        return bizChatRecord;
+    }
+
+    public void setBizChatRecord(BizChatRecord bizChatRecord) {
+        this.bizChatRecord = bizChatRecord;
+    }
+
+    public BizSkuInfo getSkuInfoId() {
+        return skuInfoId;
+    }
+
+    public void setSkuInfoId(BizSkuInfo skuInfoId) {
+        this.skuInfoId = skuInfoId;
+    }
+
+    public String getSkuChickCount() {
+        return skuChickCount;
+    }
+
+    public void setSkuChickCount(String skuChickCount) {
+        this.skuChickCount = skuChickCount;
+    }
+
+    public Integer getOpShelfCount() {
+        return opShelfCount;
+    }
+
+    public void setOpShelfCount(Integer opShelfCount) {
+        this.opShelfCount = opShelfCount;
+    }
+
+    public Integer getSkuCount() {
+        return skuCount;
+    }
+
+    public void setSkuCount(Integer skuCount) {
+        this.skuCount = skuCount;
+    }
+
+    public Integer getOfficeCount() {
+        return officeCount;
+    }
+
+    public void setOfficeCount(Integer officeCount) {
+        this.officeCount = officeCount;
+    }
+
+    public BizOrderComment getOrderComment() {
+        return orderComment;
+    }
+
+    public void setOrderComment(BizOrderComment orderComment) {
+        this.orderComment = orderComment;
+    }
+
+    public String getOrdrHeaderStartTime() {
+        return ordrHeaderStartTime;
+    }
+
+    public void setOrdrHeaderStartTime(String ordrHeaderStartTime) {
+        this.ordrHeaderStartTime = ordrHeaderStartTime;
+    }
+
+    public String getOrderHeaderEedTime() {
+        return orderHeaderEedTime;
+    }
+
+    public void setOrderHeaderEedTime(String orderHeaderEedTime) {
+        this.orderHeaderEedTime = orderHeaderEedTime;
+    }
+
+    public Date getOrderCreatStartTime() {
+        return orderCreatStartTime;
+    }
+
+    public void setOrderCreatStartTime(Date orderCreatStartTime) {
+        this.orderCreatStartTime = orderCreatStartTime;
+    }
+
+    public Date getOrderCreatEndTime() {
+        return orderCreatEndTime;
+    }
+
+    public void setOrderCreatEndTime(Date orderCreatEndTime) {
+        this.orderCreatEndTime = orderCreatEndTime;
+    }
+
+    public Integer getExamine() {
+        return examine;
+    }
+
+    public void setExamine(Integer examine) {
+        this.examine = examine;
     }
 }

@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.po;
 
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import org.hibernate.validator.constraints.Length;
 
@@ -10,6 +11,7 @@ import com.wanhutong.backend.common.persistence.DataEntity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 采购付款单Entity
@@ -26,7 +28,16 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
     private Integer bizStatus;        // 当前状态
     private String img;        // 图片
 
+    private List<CommonImg> imgList;
+
     private Date deadline;
+
+    private Integer processId;
+
+    private CommonProcessEntity commonProcess;
+
+    private Date payTime;
+
 
     public BizPoPaymentOrder() {
         super();
@@ -83,6 +94,38 @@ public class BizPoPaymentOrder extends DataEntity<BizPoPaymentOrder> {
 
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
+    }
+
+    public Integer getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(Integer processId) {
+        this.processId = processId;
+    }
+
+    public CommonProcessEntity getCommonProcess() {
+        return commonProcess;
+    }
+
+    public void setCommonProcess(CommonProcessEntity commonProcess) {
+        this.commonProcess = commonProcess;
+    }
+
+    public Date getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(Date payTime) {
+        this.payTime = payTime;
+    }
+
+    public List<CommonImg> getImgList() {
+        return imgList;
+    }
+
+    public void setImgList(List<CommonImg> imgList) {
+        this.imgList = imgList;
     }
 
     public enum BizStatus {

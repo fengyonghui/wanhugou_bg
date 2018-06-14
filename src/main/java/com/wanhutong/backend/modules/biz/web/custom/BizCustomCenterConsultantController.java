@@ -8,8 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
+import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -22,6 +25,8 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -43,6 +48,7 @@ import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -83,34 +89,53 @@ public class BizCustomCenterConsultantController extends BaseController {
 
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = {"list", ""})
-    public String list(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model) {
-        BizCustomCenterConsultant BCC = new BizCustomCenterConsultant();
+    public String list(BizCustomCenterConsultant bizCustomCenterConsultant, HttpServletRequest request, HttpServletResponse response, Model model,Date ordrHeaderStartTime,Date orderHeaderEedTime) {
+        BizCustomCenterConsultant centersCust = new BizCustomCenterConsultant();
         User userBcc = new User();
         User user = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
         Office office = officeService.get(user.getOffice());
-        if(bizCustomCenterConsultant.getConsultants()!=null){
-            if(bizCustomCenterConsultant.getQueryCustomes()!=null && bizCustomCenterConsultant.getQueryCustomes().equals("query_Custome")){
-                if(bizCustomCenterConsultant.getCustoms()!=null && bizCustomCenterConsultant.getCustoms().getId()!=null){
-                    BCC.setCustoms(bizCustomCenterConsultant.getCustoms());//采购商
+        if (bizCustomCenterConsultant.getConsultants() != null) {
+            if (bizCustomCenterConsultant.getQueryCustomes() != null && "query_Custome".equals(bizCustomCenterConsultant.getQueryCustomes())) {
+                if (bizCustomCenterConsultant.getCustoms() != null && bizCustomCenterConsultant.getCustoms().getId() != null) {
+                    centersCust.setCustoms(bizCustomCenterConsultant.getCustoms());//采购商
                 }
-                if(bizCustomCenterConsultant.getConsultants()!=null && !bizCustomCenterConsultant.getConsultants().getMobile().equals("")){
+                if (bizCustomCenterConsultant.getConsultants() != null && StringUtils.isNotEmpty(bizCustomCenterConsultant.getConsultants().getMobile())) {
                     userBcc.setMobile(bizCustomCenterConsultant.getConsultants().getMobile());
-                    BCC.setConsultants(userBcc);//电话查询
+                    centersCust.setConsultants(userBcc);//电话查询
                 }
             }
-            BCC.setCenters(office);//采购中心
+            centersCust.setCenters(office);//采购中心
             userBcc.setId(user.getId());
-            BCC.setConsultants(userBcc);//客户专员
-            model.addAttribute("bcUser", BCC);
-            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(BCC);
-            List<Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>> tasks =new ArrayList<>();
+            centersCust.setConsultants(userBcc);//客户专员
+            model.addAttribute("bcUser", centersCust);
+            if (ordrHeaderStartTime != null) {
+                centersCust.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+            }
+            if (orderHeaderEedTime != null) {
+                centersCust.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+            }
+            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(centersCust);
+
+            List<Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>> tasks = new ArrayList<>();
             Map<BizCustomCenterConsultant, BizOrderHeader> resultMap = Maps.newLinkedHashMap();
-            if(list.size()!=0){
+            BizChatRecord bizChatRecord = new BizChatRecord();
+            User userAdmin = UserUtils.getUser();
+            if (ordrHeaderStartTime != null) {
+                bizChatRecord.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
+            }
+            if (orderHeaderEedTime != null) {
+                bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+            }
+            if (!userAdmin.isAdmin()) {
+                bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+            }
+            if (list.size() != 0) {
                 for (BizCustomCenterConsultant customCenterConsultant : list) {
                     tasks.add(new Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>() {
                         @Override
                         public Pair<BizCustomCenterConsultant, List<BizOrderHeader>> call() throws Exception {
-                            return Pair.of(customCenterConsultant, bizOrderHeaderDao.findUserOrderCountSecond(customCenterConsultant.getCustoms().getId()));
+                            bizChatRecord.setOffice(customCenterConsultant.getCustoms());
+                            return Pair.of(customCenterConsultant, bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord));
                         }
                     });
                 }
@@ -133,66 +158,48 @@ public class BizCustomCenterConsultantController extends BaseController {
                             totalCount += b.getOrderCount();
                             orHeaders.setUserOfficeReceiveTotal(b.getUserOfficeReceiveTotal());
                             orHeaders.setUserOfficeDeta(b.getUserOfficeDeta());
+                            orHeaders.setBizLocation(b.getBizLocation());
                         }
                         orHeaders.setOrderCount(totalCount);
-                        resultMap.put(data.getLeft(), orHeaders ==null?new BizOrderHeader():orHeaders);
+                        resultMap.put(data.getLeft(), orHeaders == null ? new BizOrderHeader() : orHeaders);
                     } catch (Exception e) {
-                        LOGGER.error("多线程取订单频率异常[{}]",bizCustomCenterConsultant.getCustoms().getId(), e);
+                        LOGGER.error("多线程取订单频率异常[{}]", bizCustomCenterConsultant.getCustoms().getId(), e);
                     }
                 }
             }
             model.addAttribute("resultMap", resultMap);
         }
+        model.addAttribute("ordrHeaderStartTime", ordrHeaderStartTime);
+        model.addAttribute("orderHeaderEedTime", orderHeaderEedTime);
         return "modules/biz/custom/bizCustomCenterConsultantList";
     }
 
-//    @RequiresPermissions("sys:office:view")
-//    @RequestMapping(value = "returnConnIndex")
-//    public String returnConnIndex(BizCustomCenterConsultant bizCustomCenterConsultant,HttpServletRequest request, HttpServletResponse response, Model model){
-////        Page<BizCustomCenterConsultant> page = bizCustomCenterConsultantService.findPage(new Page<BizCustomCenterConsultant>(request, response), bizCustomCenterConsultant);
-//        if(bizCustomCenterConsultant.getCenters()==null || bizCustomCenterConsultant.getConsultants()==null){
-//            model.addAttribute("entity", bizCustomCenterConsultant);
-//        }else {
-//            BizCustomCenterConsultant BCC = new BizCustomCenterConsultant();
-//            Office Centers = officeService.get(bizCustomCenterConsultant.getCenters());
-//            User Consultants = systemService.getUser(bizCustomCenterConsultant.getConsultants().getId());
-//            BCC.setCenters(Centers);//采购中心
-//            BCC.setConsultants(Consultants);//客户专员
-//            List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(BCC);
-//            bizCustomCenterConsultant.setBccList(list);
-//            model.addAttribute("entity", bizCustomCenterConsultant);
-//        }
-//        return "modules/biz/custom/bizCustomCenterConsultantList";
-//    }
 
-    //    关联采购商
+    /**
+     * 关联经销店
+     * */
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = "connOfficeForm")
     public String connOfficeForm(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
         Office off = new Office();
-//        Office parentOff = new Office();
-//        String socID = DictUtils.getDictValue("部门", "sys_office_centerId","");
-        String center = DictUtils.getDictValue("采购中心", "sys_office_type","");
-//        parentOff.setId(Integer.parseInt(socID));
-//        off.setParent(parentOff);
+        String center = DictUtils.getDictValue("采购中心", "sys_office_type", "");
         off.setType(center);
         off.setCustomerTypeTen("10");
         off.setCustomerTypeEleven("11");
         List<Office> officeList = officeService.queryCenterList(off);
         for (int i = 0; i < officeList.size(); i++) {
-            if(officeList.get(i).getId().equals(user.getOffice().getId()) ){//关联时，判断采购中心
+            if (officeList.get(i).getId().equals(user.getOffice().getId())) {//关联时，判断采购中心
                 officeList.add(officeList.get(i));//把采购中心放到集合最后一位，保证能默认显示采购中心
                 officeList.remove(i);//删除之前采购中心
                 break;
             }
         }
         user = systemService.getUser(user.getId());
-//      Integer aaa=user.getOffice().getId();
         BizCustomCenterConsultant bc = new BizCustomCenterConsultant();
         bc.setCenters(user.getOffice());//采购中心
         bc.setConsultants(user);
         List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.findList(bc);
-        if(list.size() != 0){
+        if (CollectionUtils.isNotEmpty(list)) {
             bc.setConsultants(systemService.getUser(user.getId()));
             bc.setCenters(officeService.get(user.getOffice()));
         }

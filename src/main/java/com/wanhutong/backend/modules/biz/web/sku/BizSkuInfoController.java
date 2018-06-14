@@ -8,10 +8,12 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizVarietyFactor;
@@ -26,7 +28,6 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.ProdTypeEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -80,6 +81,8 @@ public class BizSkuInfoController extends BaseController {
 	private BizInventorySkuService bizInventorySkuService;
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
+	@Autowired
+	private BizOrderHeaderDao bizOrderHeaderDao;
 
 
 
@@ -108,12 +111,18 @@ public class BizSkuInfoController extends BaseController {
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<BizSkuInfo> page = bizSkuInfoService.findPage(new Page<BizSkuInfo>(request, response), bizSkuInfo); 
+		Page<BizSkuInfo> page = bizSkuInfoService.findPage(new Page<BizSkuInfo>(request, response), bizSkuInfo);
+		BizOrderHeader bizOrderHeader = new BizOrderHeader();
+		for(int i=0;i<page.getList().size();i++){
+			bizOrderHeader.setSkuInfoId(page.getList().get(i));
+			List<BizOrderHeader> orderCount = bizOrderHeaderDao.findOrderCount(bizOrderHeader);
+			page.getList().get(i).setOrderCount(orderCount.size());
+		}
 		model.addAttribute("page", page);
 		model.addAttribute("prodType", bizSkuInfo.getProductInfo().getProdType());
 		return "modules/biz/sku/bizSkuInfoList";
 	}
-	
+
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "form")
 	public String form(BizSkuInfo bizSkuInfo, Model model) {
@@ -186,35 +195,40 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuListV2")
-	public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds){
-		if (skuIds != null && !"".equals(skuIds)){
-			String[] ids =StringUtils.split(skuIds, ",");
-			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
-		}
-		Map<String,Object> map =new HashMap<>();
-		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
-		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
-		List<BizVarietyFactor> varietyInfoList=bizVarietyFactorService.findList(new BizVarietyFactor());
-		Map<Integer,List<String>> factorMap=new HashMap<>();
-		for(BizVarietyFactor varietyFactor:varietyInfoList){
-			Integer key = varietyFactor.getVarietyInfo().getId();
+    public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds) {
+        if (bizSkuInfo.getName().isEmpty() && bizSkuInfo.getPartNo().isEmpty() &&
+                bizSkuInfo.getItemNo().isEmpty() && bizSkuInfo.getProductInfo().getBrandName().isEmpty()) {
+            logger.info("添加上架商品时，未输入查询条件，导致不查询商品，点击查询没反应");
+            return null;
+        }
+        if (skuIds != null && !"".equals(skuIds)) {
+            String[] ids = StringUtils.split(skuIds, ",");
+            bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
+        }
+        Map<String, Object> map = new HashMap<>();
+        bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
+        Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
+        List<BizVarietyFactor> varietyInfoList = bizVarietyFactorService.findList(new BizVarietyFactor());
+        Map<Integer, List<String>> factorMap = new HashMap<>();
+        for (BizVarietyFactor varietyFactor : varietyInfoList) {
+            Integer key = varietyFactor.getVarietyInfo().getId();
 
-			if(factorMap.containsKey(key)){
-				List<String> stringList=factorMap.get(key);
-				stringList.add((varietyFactor.getServiceFactor().toString().length()<2?"0"+varietyFactor.getServiceFactor():varietyFactor.getServiceFactor())+":["+varietyFactor.getMinQty()+"~"+varietyFactor.getMaxQty()+"]");
-				factorMap.remove(key);
-				factorMap.put(key,stringList);
-			}else {
-				List<String> lists=Lists.newArrayList();
-				lists.add((varietyFactor.getServiceFactor().toString().length()<2?"0"+varietyFactor.getServiceFactor():varietyFactor.getServiceFactor())+":["+varietyFactor.getMinQty()+"~"+varietyFactor.getMaxQty()+"]");
-				factorMap.put(key,lists);
-			}
-		}
-		map.put("skuMap",listMap);
-		map.put("serviceFactor",factorMap);
-		return map;
+            if (factorMap.containsKey(key)) {
+                List<String> stringList = factorMap.get(key);
+                stringList.add((varietyFactor.getServiceFactor().toString().length() < 2 ? "0" + varietyFactor.getServiceFactor() : varietyFactor.getServiceFactor()) + ":[" + varietyFactor.getMinQty() + "~" + varietyFactor.getMaxQty() + "]");
+                factorMap.remove(key);
+                factorMap.put(key, stringList);
+            } else {
+                List<String> lists = Lists.newArrayList();
+                lists.add((varietyFactor.getServiceFactor().toString().length() < 2 ? "0" + varietyFactor.getServiceFactor() : varietyFactor.getServiceFactor()) + ":[" + varietyFactor.getMinQty() + "~" + varietyFactor.getMaxQty() + "]");
+                factorMap.put(key, lists);
+            }
+        }
+        map.put("skuMap", listMap);
+        map.put("serviceFactor", factorMap);
+        return map;
 
-	}
+    }
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSysBySku")
@@ -262,7 +276,7 @@ public class BizSkuInfoController extends BaseController {
                     List<BizVarietyFactor> bvFactorList = bizVarietyFactorService.findList(bizVarietyFactor);
                     DecimalFormat df = new DecimalFormat("0.00");
                     for (BizVarietyFactor varietyFactor:bvFactorList) {
-                        Double salePrice = bizSkuInfo1.getBuyPrice()*(1+(float)varietyFactor.getServiceFactor()/100);
+                        Double salePrice = bizSkuInfo1.getBuyPrice()*(1+varietyFactor.getServiceFactor()/100);
                         String price = df.format(salePrice);
                         varietyFactor.setSalePrice(Double.parseDouble(price));
                     }

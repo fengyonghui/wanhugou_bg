@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.dao.order;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
@@ -12,6 +13,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -299,6 +301,20 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     /**
      *  客户专员查看 采购累计订单频次
      * */
-    List<BizOrderHeader> findUserOrderCountSecond(@Param("custId") Integer custId);
+    List<BizOrderHeader> findUserOrderCountSecond(BizChatRecord bizChatRecord);
+
+    /**
+     * 商品管理 的下单量
+     * */
+    List<BizOrderHeader> findOrderCount(BizOrderHeader bizOrderHeader);
+
+    /**
+     * 客户专员的 统计
+     * */
+    BizOrderHeader findOrderUserCount(BizOrderHeader bizOrderHeader);
+    /**
+     * 品类主管 管理 商品统计
+     * */
+    BizOrderHeader categorySkuStatistics(User user);
 
 }

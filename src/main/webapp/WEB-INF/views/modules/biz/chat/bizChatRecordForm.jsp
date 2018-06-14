@@ -24,48 +24,79 @@
 			});
 		});
 	</script>
+<script type="text/javascript">
+	function func(m){
+		$("#two").empty();
+		$.ajax({
+			type:"post",
+			url:"${ctx}/sys/user/userSelectTreeData",
+			data:"names="+m,
+			success:function(data){
+				if(data!=null){
+					$("#two").append("<option value='' class='input-medium required'> ===请选择=== </option>");
+					$.each(data,function(index,items) {
+                    	$("#two").append("<option value='"+items.id+"'>"+items.name+"</option>");
+                	});
+				}
+			}
+		});
+	}
+</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/chat/bizChatRecord/">沟通记录列表</a></li>
-		<li class="active"><a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}&office.type=${bizChatRecord.office.type}&office.parent.id=${bizChatRecord.office.parent.id}">沟通记录
+		<li><a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${bizChatRecord.office.id}&source=${bizChatRecord.source}">沟通记录列表</a></li>
+		<li class="active"><a href="${ctx}/biz/chat/bizChatRecord/form?id=${bizChatRecord.id}&office.type=6&office.parent.id=7&office.id=${bizChatRecord.office.id}&source=${bizChatRecord.source}">沟通记录
 			<shiro:hasPermission name="biz:chat:bizChatRecord:edit">${not empty bizChatRecord.id?'修改':'添加'}</shiro:hasPermission>
 			<shiro:lacksPermission name="biz:chat:bizChatRecord:edit">查看</shiro:lacksPermission></a>
 		</li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="bizChatRecord" action="${ctx}/biz/chat/bizChatRecord/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input type="hidden" name="source" value="purchaser">
 		<sys:message content="${message}"/>
 		<div class="control-group">
-			<label class="control-label">机构名称：</label>
+			<label class="control-label">经销店名称：</label>
 			<div class="controls">
-				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}" labelName="office.name" labelValue="${bizChatRecord.office.name}"
-					title="机构" url="/sys/office/queryTreeList?type=${bizChatRecord.office.type}"
+				<sys:treeselect id="office" name="office.id" value="${bizChatRecord.office.id}"  disabled="disabled"
+								labelName="office.name" labelValue="${bizChatRecord.office.name}"
+					title="经销店" url="/sys/office/queryTreeList?type=6"
 					cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-				<c:if test="${bizChatRecord.office.type==6}">
-					<button class="btn btn-primary btn-lg" data-toggle="modal"
-							onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&source=chatRecordSave';">添加新的机构</button>
-				</c:if>
-				<c:if test="${bizChatRecord.office.type==7}">
-					<button class="btn btn-primary btn-lg" data-toggle="modal"
-							onclick="window.location.href='${ctx}/sys/office/supplierForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&gysFlag=chatRecordSave';">添加新的机构</button>
-				</c:if>
-				<font color="red">没有需要的机构时，请点击按钮，不添加请点击左侧放大镜选择机构</font>
+				<%--<c:if test="${bizChatRecord.office.type==6}">--%>
+					<%--<button class="btn btn-primary btn-lg" data-toggle="modal"--%>
+							<%--onclick="window.location.href='${ctx}/sys/office/purchasersForm?parent.id=${bizChatRecord.office.parent.id}&type=${bizChatRecord.office.type}&source=chatRecordSave';">添加新的经销店</button>--%>
+				<%--</c:if>--%>
+				<%--<font color="red">需要添加新的经销店时，请点击按钮</font>--%>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">用户名称：</label>
+			<label class="control-label">品类主管或客户专员：</label>
 			<div class="controls">
-				<sys:treeselect id="user" name="user.id" value="${bizChatRecord.user.id}" labelName="user.name" labelValue="${bizChatRecord.user.name}"
-					title="用户" url="/sys/user/userSelectTreeData" cssClass="input-medium required" allowClear="true" notAllowSelectParent="true"/>
-				<span class="help-inline"><font color="red">*</font> </span>
+					<c:choose>
+						<c:when test="${fns:getUser().isAdmin()}">
+							<select id="one" onchange="func(this.value)"  name="names" class="input-medium required">
+								<option value="">&nbsp;===请选择===&nbsp;</option>
+								<option value="buyer">客户专员</option>
+								<option value="selection_of_specialist">品类主管</option>
+							</select>
+							<select id="two" class="input-medium required" name="user.id">
+								<option value="">&nbsp;===请选择===&nbsp;</option>
+							</select>
+						</c:when>
+						<c:otherwise>
+							<select id="two" class="input-medium required" name="user.id">
+								<option value="${fns:getUser().id}">${fns:getUser().name}</option>
+							</select>
+						</c:otherwise>
+					</c:choose>
+				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">沟通记录：</label>
 			<div class="controls">
-				<textarea name="chatRecord" placeholder="请输入沟通记录内容" class="required" style="width: 360px;height: 80px;"></textarea>
+				<textarea name="chatRecord" placeholder="请输入沟通记录内容" class="required" style="width: 360px;height: 80px;">${bizChatRecord.chatRecord}</textarea>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>

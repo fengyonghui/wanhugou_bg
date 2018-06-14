@@ -3,30 +3,44 @@
  */
 package com.wanhutong.backend.modules.sys.web;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
+import com.wanhutong.backend.modules.biz.service.chat.BizChatRecordService;
 import com.wanhutong.backend.modules.biz.service.cust.BizCustCreditService;
+import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.vend.BizVendInfoService;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.BuyerAdviser;
+import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.office.SysOfficeAddress;
+import com.wanhutong.backend.modules.sys.service.BuyerAdviserService;
+import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.service.office.SysOfficeAddressService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,16 +51,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.wanhutong.backend.common.config.Global;
-import com.wanhutong.backend.common.utils.StringUtils;
-import com.wanhutong.backend.common.web.BaseController;
-import com.wanhutong.backend.modules.sys.entity.Office;
-import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.service.OfficeService;
-import com.wanhutong.backend.modules.sys.utils.DictUtils;
-import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 机构Controller
@@ -70,6 +83,15 @@ public class OfficeController extends BaseController {
     private BizVarietyInfoService bizVarietyInfoService;
     @Autowired
     private BizVendInfoService bizVendInfoService;
+    @Autowired
+    private DictService dictService;
+    @Autowired
+    private BuyerAdviserService buyerAdviserService;
+    @Autowired
+    private BizChatRecordService bizChatRecordService;
+    @Autowired
+    private BizProductInfoV2Service bizProductInfoV2Service;
+
 
 
     @ModelAttribute("office")
@@ -111,10 +133,9 @@ public class OfficeController extends BaseController {
     public String purchasersList(Office office, String conn, Integer centers, Integer consultants, HttpServletRequest request, HttpServletResponse response, Model model) {
         String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
         Office customer = new Office();
-        if (office.getId() != null || office.getParentIds() != null) {
+        if (office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0) {
             customer.setParent(office);
         } else {
-//            查所有
             customer.setParentIds("%," + purchasersId + ",%");
         }
         if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
@@ -134,13 +155,6 @@ public class OfficeController extends BaseController {
             }
         }
         model.addAttribute("page", page);
-//		if(conn.equals("connIndex")){
-//			//TODO 客户专员管理页面跳转没解决：添加客户专员跳转，关联采购商跳转，修改跳转
-////			跳回客户专员管理
-//		System.out.println(centers);//必填
-//		System.out.println(consultants);//必填
-//			return "redirect:" + adminPath + "/biz/custom/bizCustomCenterConsultant/returnConnIndex?centers.id="+centers+"&consultants.id="+consultants;
-//		}
         return "modules/sys/purchasersList";
     }
 
@@ -296,18 +310,11 @@ public class OfficeController extends BaseController {
     @RequestMapping(value = "supplierTreeData")
     public List<Map<String, Object>> supplierTreeData(@RequestParam(required = false) String extId, @RequestParam(required = false) String type,
                                                       @RequestParam(required = false) Long grade, @RequestParam(required = false) Boolean isAll, HttpServletResponse response) {
-//		List<Map<String, Object>> mapList = Lists.newArrayList();
-//		String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId","");
-//		Office office = new Office();
-//		office.setParentIds("%,"+supplierId+",");
-//		List<Office> list = officeService.findList(office);
-//		Office off = officeService.get(Integer.valueOf(supplierId));
-//		list.add(off);
         List<Map<String, Object>> mapList = Lists.newArrayList();
-//        List<Office> list = officeService.filerOffice(null, "supplier", OfficeTypeEnum.VENDOR);
+        List<Office> list = officeService.filerOffice(null, "supplier", OfficeTypeEnum.VENDOR);
 
-        String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
-        List<Office> list = officeService.findVendor(supplierId);
+//        String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
+//        List<Office> list = officeService.findVendor(supplierId);
         for (int i = 0; i < list.size(); i++) {
             Office e = list.get(i);
             if ((StringUtils.isBlank(extId) || (extId != null && !extId.equals(e.getId()) && e.getParentIds().indexOf("," + extId + ",") == -1))
@@ -475,6 +482,15 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
+        if (office.getGysFlag() != null && office.getGysFlag().equals("gys_delete")) {
+            BizProductInfo bizProductInfo = new BizProductInfo();
+            bizProductInfo.setOffice(office);
+            List<BizProductInfo> productInfoList = bizProductInfoV2Service.findList(bizProductInfo);
+            if (CollectionUtils.isNotEmpty(productInfoList)) {
+                addMessage(redirectAttributes,"该供应商下有产品，请修改产品所属的供应商后再进行删除");
+                return "redirect:" + adminPath + "/sys/office/supplierListGys";
+            }
+        }
         office.setDelFlag(Office.DEL_FLAG_DELETE);
         officeService.delete(office);
         addMessage(redirectAttributes, "删除机构成功");
@@ -595,10 +611,9 @@ public class OfficeController extends BaseController {
     public String supplierListGys(Office office, HttpServletRequest request, HttpServletResponse response, Model model) {
         String supplierId = DictUtils.getDictValue("部门", "sys_office_supplierId", "");
         Office vendor = new Office();
-        if (office.getId() != null) {
+        if (office.getParent()!=null && office.getParent().getId()!=null && office.getParent().getId()!=0) {
             vendor.setParent(office);
         } else {
-//            查所有
             vendor.setParentIds("%," + supplierId + ",%");
         }
         if (office.getMoblieMoeny() != null && !office.getMoblieMoeny().getMobile().equals("")) {
@@ -653,4 +668,158 @@ public class OfficeController extends BaseController {
         addMessage(redirectAttributes, result.getRight());
         return "redirect:" + adminPath + "/sys/office/supplierListGys";
     }
+
+    /**
+     * 会员数据 导出
+     * */
+    @RequiresPermissions("sys:office:view")
+    @RequestMapping(value = "exportOffice")
+    public String exportOffice(Office office,RedirectAttributes redirectAttributes, HttpServletResponse response) {
+        String purchasersId = DictUtils.getDictValue("采购商", "sys_office_purchaserId", "");
+        Office customer = new Office();
+        if (office.getParent() != null && office.getParent().getId() != null && office.getParent().getId() != 0) {
+            customer.setParent(office);
+        } else {
+            customer.setParentIds("%," + purchasersId + ",%");
+        }
+        if (office.getMoblieMoeny() != null && StringUtils.isNotBlank(office.getMoblieMoeny().getMobile())) {
+            customer.setMoblieMoeny(office.getMoblieMoeny());
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String fileName = "会员数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+        try {
+            List<Office> meetingExprotList = officeService.findMeetingExprot(customer);
+            if (CollectionUtils.isEmpty(meetingExprotList)) {
+                if ("query".equals(office.getQueryMemberGys()) && StringUtils.isNotEmpty(office.getMoblieMoeny().getMobile())) {
+                    //列表页输入2个条件查询时
+                    Office officeUser = new Office();
+                    officeUser.setQueryMemberGys(office.getName());
+                    officeUser.setMoblieMoeny(office.getMoblieMoeny());
+                    meetingExprotList = officeService.findMeetingExprot(officeUser);
+                } else {
+                    //当点击子节点显示
+                    meetingExprotList.add(officeService.get(office.getId()));
+                }
+            }
+            ArrayList<List<String>> heads = Lists.newArrayList();
+            ArrayList<List<String>> chats = Lists.newArrayList();
+            BizChatRecord chatRecord = new BizChatRecord();
+            User userAdmin = UserUtils.getUser();
+            if (!userAdmin.isAdmin()) {
+                chatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
+            }
+            for (int i = 0; i < meetingExprotList.size(); i++) {
+                ArrayList<String> headArr = Lists.newArrayList();
+                headArr.add(meetingExprotList.get(i).getName() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getName());
+                headArr.add(meetingExprotList.get(i).getCode() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getCode());
+                if (meetingExprotList.get(i).getMoblieMoeny() != null && meetingExprotList.get(i).getMoblieMoeny().getMobile() != null) {
+                    headArr.add(meetingExprotList.get(i).getMoblieMoeny().getMobile());
+                } else {
+                    headArr.add(StringUtils.EMPTY);
+                }
+                Dict dict = new Dict();
+                dict.setDescription("机构类型");
+                dict.setType("sys_office_type");
+                String offtype = "";
+                List<Dict> dictList = dictService.findList(dict);
+                for (Dict dict1 : dictList) {
+                    if (dict1.getValue().equals(meetingExprotList.get(i).getType())) {
+                        offtype = dict1.getLabel();
+                        break;
+                    }
+                }
+                if (StringUtils.isNotEmpty(offtype)) {
+                    headArr.add(offtype);
+                } else {
+                    headArr.add(StringUtils.EMPTY);
+                }
+                Dict dictUse = new Dict();
+                dictUse.setDescription("是/否");
+                dictUse.setType("yes_no");
+                String yesNo = "";
+                List<Dict> dictUseList = dictService.findList(dictUse);
+                for (Dict dict1 : dictUseList) {
+                    if (dict1.getValue().equals(meetingExprotList.get(i).getUseable())) {
+                        yesNo = dict1.getLabel();
+                        break;
+                    }
+                }
+                if (StringUtils.isNotEmpty(yesNo)) {
+                    headArr.add(yesNo);
+                } else {
+                    headArr.add(StringUtils.EMPTY);
+                }
+                if (meetingExprotList.get(i).getPrimaryPerson() != null && meetingExprotList.get(i).getPrimaryPerson().getName() != null) {
+                    headArr.add(meetingExprotList.get(i).getPrimaryPerson().getName());
+                } else {
+                    headArr.add(StringUtils.EMPTY);
+                }
+                if (meetingExprotList.get(i).getDeputyPerson() != null && meetingExprotList.get(i).getDeputyPerson().getName() != null) {
+                    headArr.add(meetingExprotList.get(i).getDeputyPerson().getName());
+                } else {
+                    headArr.add(StringUtils.EMPTY);
+                }
+                headArr.add(meetingExprotList.get(i).getAddress() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getAddress());
+                headArr.add(meetingExprotList.get(i).getZipCode() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getZipCode());
+                headArr.add(meetingExprotList.get(i).getMaster() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getMaster());
+                headArr.add(meetingExprotList.get(i).getPhone() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getPhone());
+                headArr.add(meetingExprotList.get(i).getFax() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getFax());
+                headArr.add(meetingExprotList.get(i).getEmail() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getEmail());
+                //所属采购中心，所属客户专员
+                BuyerAdviser buyerAdviser = buyerAdviserService.get(meetingExprotList.get(i).getId());
+                if (buyerAdviser!=null && !"0".equals(buyerAdviser.getStatus())) {
+                    User user = systemService.getUser(buyerAdviser.getConsultantId());
+                    if (user!=null && StringUtils.isNotEmpty(user.getName()) && !"0".equals(user.getDelFlag())) {
+                        headArr.add(user.getCompany() == null ? StringUtils.EMPTY : (user.getCompany().getName() == null ? StringUtils.EMPTY : user.getCompany().getName()));
+                        headArr.add(user.getName());
+                    } else {
+                        headArr.add(StringUtils.EMPTY);
+                        headArr.add(StringUtils.EMPTY);
+                    }
+                } else {
+                    headArr.add(StringUtils.EMPTY);
+                    headArr.add(StringUtils.EMPTY);
+                }
+                heads.add(headArr);
+                chatRecord.setOffice(meetingExprotList.get(i));
+                List<BizChatRecord> chatList = bizChatRecordService.findList(chatRecord);
+                for (int chat = 0; chat < chatList.size(); chat++) {
+                    ArrayList<String> chatArr = Lists.newArrayList();
+                    chatArr.add(meetingExprotList.get(i).getName() == null ? StringUtils.EMPTY : meetingExprotList.get(i).getName());
+                    //客户专员或品类主管
+                    if (chatList.get(chat).getUser() != null && chatList.get(chat).getUser().getName() != null) {
+                        chatArr.add(chatList.get(chat).getUser().getName());
+                    } else {
+                        chatArr.add(StringUtils.EMPTY);
+                    }
+                    chatArr.add(chatList.get(chat).getChatRecord() == null ? StringUtils.EMPTY : chatList.get(chat).getChatRecord());
+                    if (chatList.get(chat).getCreateBy() != null && chatList.get(chat).getCreateBy().getName() != null) {
+                        chatArr.add(chatList.get(chat).getCreateBy().getName());
+                    } else {
+                        chatArr.add(StringUtils.EMPTY);
+                    }
+                    chatArr.add(String.valueOf(sdf.format(chatList.get(chat).getCreateDate())));
+                    chats.add(chatArr);
+                }
+            }
+            String[] orderArr = {"机构名称", "机构编码", "主负责人电话", "机构类型", "是否可用", "主负责人", "副负责人",
+                    "联系地址", "邮政编码", "负责人", "电话", "传真", "邮箱", "所属采购中心", "所属客户专员"};
+            String[] chatArr = {"机构名称", "品类主管或客户专员", "沟通记录", "创建人", "创建时间"};
+            ExportExcelUtils exportUtils = new ExportExcelUtils();
+            SXSSFWorkbook workbook = new SXSSFWorkbook();
+            exportUtils.exportExcel(workbook, 0, "会员数据", orderArr, heads, fileName);
+            exportUtils.exportExcel(workbook, 1, "沟通记录", chatArr, chats, fileName);
+            response.reset();
+            response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + Encodes.urlEncode(fileName));
+            workbook.write(response.getOutputStream());
+            workbook.dispose();
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            addMessage(redirectAttributes, "导出会员数据失败！失败信息：" + e.getMessage());
+        }
+        return "redirect:" + adminPath + "/sys/office/purchasersList";
+    }
+
 }

@@ -66,6 +66,16 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<select id="findNotSpecialList" resultType="BizVarietyInfo">
+		SELECT
+		<include refid="bizVarietyInfoColumns"/>
+		FROM biz_variety_info a
+		LEFT JOIN  biz_variety_attr va ON va.variety_id = a.id AND va.`status` = 1
+		WHERE
+		a.status = 1
+		AND va.id IS NULL
+	</select>
 	
 	<insert id="insert">
 		INSERT INTO biz_variety_info(

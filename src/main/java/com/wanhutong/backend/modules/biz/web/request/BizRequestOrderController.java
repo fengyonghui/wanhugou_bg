@@ -29,6 +29,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -175,10 +176,10 @@ public class BizRequestOrderController extends BaseController {
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"form", ""})
-    public String form(String source, Model model) {
+    public String form(String source, Model model, Office office) {
         List<Map> requestMap = new ArrayList<>();
        if ("gh".equals(source)) {
-            requestMap = bizOrderDetailService.findRequestTotalByVendor();
+            requestMap = bizOrderDetailService.findRequestTotalByVendorList(office);
         }
         model.addAttribute("source", source);
         model.addAttribute("map", requestMap);
@@ -262,7 +263,7 @@ public class BizRequestOrderController extends BaseController {
             }
             model.addAttribute("orderDetailMap",orderDetailMap);
         }
-
+        model.addAttribute("type","goList");
         model.addAttribute("vendorId", vendorId);
         model.addAttribute("bizPoHeader", new BizPoHeader());
 

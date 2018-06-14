@@ -5,7 +5,7 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
-import com.wanhutong.backend.common.utils.ZxingHandler;
+import com.wanhutong.backend.common.utils.QRCodeKit;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -28,12 +28,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.ContextLoader;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -51,9 +56,10 @@ public class BizRequestPayController extends BaseController {
 
     @RequestMapping(value = "genPayQRCode")
     @ResponseBody
-    public String genPayQRCode(Double payMoney,Integer reqId,Integer payMethod){
+    public Map<String,String> genPayQRCode(Double payMoney, Integer reqId, Integer payMethod){
 
         User user=UserUtils.getUser();
+        Map<String,String> reMap =new HashMap<>();
         BizRequestHeader bizRequestHeader= bizRequestHeaderService.get(reqId);
         String postUrl=DsConfig.getAlipayPostUrl();
         if(payMethod==1){
@@ -88,7 +94,7 @@ public class BizRequestPayController extends BaseController {
 
             if(payMethod==0){
                 map.put("out_trade_no",aplipayNo);
-                map.put("amount",payMoney);
+                map.put("amount",payMoney.toString());
             }
             if(payMethod==1){
                 BigDecimal bigDecimal =new BigDecimal(payMoney.toString());
@@ -167,7 +173,10 @@ public class BizRequestPayController extends BaseController {
             }
             payLogger.info("二维码地址-------------"+qrCodeUrl);
 
-            ZxingHandler.encode2(qrCodeUrl,300,300,pathFile);
+            String basePath = ContextLoader.getCurrentWebApplicationContext().getServletContext().getRealPath("/");;
+            payLogger.info("获取logo图片地址---------"+basePath);
+            BufferedImage image = QRCodeKit.createQRCodeWithLogo(qrCodeUrl,260,260, new File(basePath+"/static/images/whtLogo.png"));
+            ImageIO.write(image, "png", new File(pathFile));
 
 
         } catch (Exception e) {
@@ -183,7 +192,24 @@ public class BizRequestPayController extends BaseController {
                 }
             }
         }
-        return "/upload/" +photoName;
+        reMap.put("imgUrl","/upload/" +photoName);
+        reMap.put("payNum",bizPayRecord.getPayNum());
+        return reMap;
+    }
+
+    @RequestMapping(value = "checkCondition")
+    @ResponseBody
+    public String checkCondition(String payNum){
+        BizPayRecord bizPayRecord =new BizPayRecord();
+        bizPayRecord.setPayNum(payNum);
+        bizPayRecord.setBizStatus(1);
+         List<BizPayRecord> list= bizPayRecordService.findList(bizPayRecord);
+         if(list.size()==1){
+             return "ok";
+         }
+         return "error";
+
+
     }
 
 }

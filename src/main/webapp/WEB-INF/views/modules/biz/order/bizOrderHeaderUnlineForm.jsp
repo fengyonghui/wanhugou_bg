@@ -44,6 +44,50 @@
             });
         });
 	</script>
+	<script type="text/javascript">
+        $(function() {
+
+            //点击图片放大
+            $("#img-zoom").click(function(){
+                $('#img-modal').modal("hide");
+            });
+            $("#img-dialog").click(function(){
+                $('#img-modal').modal("hide");
+            });
+            //index-list-content为显示文章内容div的class
+            $("#credential img").each(function(i){
+                var src = $(this).attr("src");
+                $(this).click(function () {
+                    $("#img-zoom").attr("src", src);
+                    var oImg = $(this);
+                    var img = new Image();
+                    img.src = $(oImg).attr("src");
+                    var realWidth = img.width;//真实的宽度
+                    var realHeight = img.height;//真实的高度
+                    var ww = $(window).width();//当前浏览器可视宽度
+                    var hh = $(window).height();//当前浏览器可视宽度
+                    $("#img-content").css({"top":0,"left":0,"height":"auto"});
+                    $("#img-zoom").css({"height":"auto"});
+                    if((realWidth+20)>ww){
+                        $("#img-content").css({"width":"100%"});
+                        $("#img-zoom").css({"width":"99%"});
+                    }else{
+                        $("#img-content").css({"width":realWidth+20, "height":realHeight+20});
+                        $("#img-zoom").css({"width":realWidth, "height":realHeight});
+                    }
+                    if((hh-realHeight-40)>0){
+                        $("#img-content").css({"top":(hh-realHeight-40)/2});
+                    }
+                    if((ww-realWidth-20)>0){
+                        $("#img-content").css({"left":(ww-realWidth-20)/2});
+                    }
+                    //console.log("realWidth:"+realWidth+" realHeight:"+realHeight+" ww:"+ww)
+                    $('#img-modal').modal();
+                    $("#img-modal").css({"width":realWidth+20});
+                });
+            });
+        });
+	</script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -70,7 +114,7 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label">单据凭证：</label>
-			<div class="controls">
+			<div id="credential" class="controls">
 				<c:forEach items="${imgUrlList}" var="imgUrl">
 					<img src="${imgUrl}" style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
 				</c:forEach>
@@ -82,17 +126,18 @@
                 <form:input id="unlinePayMoney" readonly="true" class="input-mini" path="unlinePayMoney"/>
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label">实收金额：</label>
-			<div class="controls">
-				<form:input id="realMoney" class="input-mini" readonly="true" path="realMoney"/>
+		<%--<div class="control-group">--%>
+			<%--<label class="control-label">实收金额：</label>--%>
+			<%--<div class="controls">--%>
+				<form:hidden id="realMoney" class="input-mini" path="realMoney"/>
 				<%--<button id="confirm" disabled="disabled" type="button" class="btn btn-primary">确认</button>--%>
-			</div>
-		</div>
+			<%--</div>--%>
+		<%--</div>--%>
 		<div class="control-group">
 			<label class="control-label">流水状态：</label>
 			<div class="controls">
-				<input id="bizStatus" type="button" class="btn btn-primary" value="${fns:getDictLabel(bizOrderHeaderUnline.bizStatus, 'biz_order_unline_bizStatus', '未知状态')}"/>
+				<span style="font-size: large; font-style: initial; color: red; width: available; font-family: 楷体">${fns:getDictLabel(bizOrderHeaderUnline.bizStatus, 'biz_order_unline_bizStatus', '未知状态')}</span>
+				<%--<input id="bizStatus" type="button" class="btn btn-primary" value="${fns:getDictLabel(bizOrderHeaderUnline.bizStatus, 'biz_order_unline_bizStatus', '未知状态')}"/>--%>
 			</div>
 		</div>
 		<div class="form-actions">
@@ -105,5 +150,12 @@
 			<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
 		</div>
 </form:form>
+<div id="img-modal" class="modal fade">
+    <div id="img-dialog" class="modal-dialog" style="width: 98%; height: 98%;text-align: center;">
+        <div id="img-content" class="modal-content">
+            <img id="img-zoom" src="" style="max-height: 100%; max-width: 100%;margin:10px;">
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </body>
 </html>

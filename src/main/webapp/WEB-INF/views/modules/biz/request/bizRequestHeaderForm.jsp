@@ -8,6 +8,14 @@
 <head>
 	<title>备货清单管理</title>
 	<meta name="decorator" content="default"/>
+	<style type="text/css">
+		.help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;border-top:1px solid #FFF;width: 100%}
+		.help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
+		.help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
+		.help_step_set{background: #FFF;color: #3daae9;}
+		.help_step_set .help_step_left{width:8px;height:100px;position:absolute;left:0;top:0;}
+		.help_step_set .help_step_right{width:8px;height:100px; position:absolute;right:-8px;top:0;}
+	</style>
 	<script type="text/javascript">
         var skuInfoId="";
 		$(document).ready(function() {
@@ -315,16 +323,7 @@
 			<div class="control-group">
 				<label class="control-label">保证金比例：</label>
 				<div class="controls">
-					<a style="display: none">
-						<fmt:formatNumber type="number" var="totalMoneysss" value="${entity.totalMoney}" pattern="0.00"/>
-						<fmt:formatNumber type="number" var="recvTotalsss" value="${entity.recvTotal}" pattern="0.00"/>
-					</a>
-					<c:if test="${totalMoneysss==recvTotalsss}">
-						100%
-					</c:if>
-					<c:if test="${totalMoneysss!=recvTotalsss}">
-						<fmt:formatNumber type="percent" value="${entity.recvTotal/(entity.totalMoney-entity.recvTotal)}" maxFractionDigits="2" />
-					</c:if>
+					<fmt:formatNumber type="number" value="${entity.recvTotal*100/entity.totalMoney}" pattern="0.00" />%
 				</div>
 			</div>
 		</c:if>
@@ -385,6 +384,11 @@
 					<%--<th>商品属性</th>--%>
 					<th>价格</th>
 					<th>申报数量</th>
+
+					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
+						<th>仓库名称</th>
+						<th>库存数量</th>
+					</c:if>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
 					</c:if>
@@ -393,7 +397,6 @@
 						<c:if test="${empty bizRequestHeader.poSource}">
 							<th>已生成的采购单</th>
 							<th>采购数量</th>
-							<th>备注</th>
 						</c:if>
 					</c:if>
 					<shiro:hasPermission name="biz:request:bizRequestDetail:edit">
@@ -437,6 +440,12 @@
 								<input  type='hidden' name='lineNos' value='${reqDetail.lineNo}'/>
 								<input name='reqQtys'  value="${reqDetail.reqQty}" class="input-mini" type='text'/>
 							</td>
+
+							<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
+								<td>${reqDetail.invName}</td>
+								<td>${reqDetail.skuInvQty}</td>
+							</c:if>
+
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 								<td>${reqDetail.recvQty}</td>
 							</c:if>
@@ -446,7 +455,6 @@
 								<c:if test="${reqDetail.bizPoHeader!=null}">
 									<td><a href="${ctx}/biz/po/bizPoHeader/form?id=${reqDetail.bizPoHeader.id}">${reqDetail.bizPoHeader.orderNum}</a></td>
 									<td>${reqDetail.reqQty}</td>
-									<td>${reqDetail.bizPoHeader.remark}</td>
 								</c:if>
 							</c:if>
 
@@ -526,6 +534,37 @@
 						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${fn:length(statusList) > 0}">
+			<div class="control-group">
+				<label class="control-label">状态流程：</label>
+				<div class="controls help_wrap">
+					<div class="help_step_box fa">
+						<c:forEach items="${statusList}" var="v" varStatus="stat">
+							<c:if test="${!stat.last}" >
+								<div class="help_step_item">
+									<div class="help_step_left"></div>
+									<div class="help_step_num">${stat.index + 1}</div>
+									处理人:${v.createBy.name}<br/><br/>
+									状态:${statusMap[v.bizStatus].desc}<br/>
+									<fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									<div class="help_step_right"></div>
+								</div>
+							</c:if>
+							<c:if test="${stat.last}">
+								<div class="help_step_item help_step_set">
+									<div class="help_step_left"></div>
+									<div class="help_step_num">${stat.index + 1}</div>
+									处理人:${v.createBy.name}<br/><br/>
+									状态:${statusMap[v.bizStatus].desc}<br/>
+									<fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									<div class="help_step_right"></div>
+								</div>
+							</c:if>
+						</c:forEach>
+					</div>
 				</div>
 			</div>
 		</c:if>

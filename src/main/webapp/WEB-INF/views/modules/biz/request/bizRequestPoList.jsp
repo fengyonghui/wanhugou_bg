@@ -36,6 +36,18 @@
 			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/form?source=${source}">供货需求汇总</a></li>
 
 	</ul>
+	<form:form id="searchForm" modelAttribute="office" action="${ctx}/biz/request/bizRequestOrder/form?source=gh" method="post" class="breadcrumb form-search">
+		<ul class="ul-form">
+			<li><label>供应商名称：</label>
+				<sys:treeselect id="office" name="id" value="${office.id}" labelName="name"
+								labelValue="" notAllowSelectParent="true"
+								title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium"
+								dataMsgRequired="必填信息"/>
+			</li>
+			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+			<li class="clearfix"></li>
+		</ul>
+	</form:form>
 		<%--<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestOrder/" method="post" class="breadcrumb form-search">--%>
 			<%--<input type="hidden" name="source" value="${source}"/>--%>
 			<%--<ul class="ul-form">--%>

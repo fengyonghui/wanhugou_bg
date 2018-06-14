@@ -49,7 +49,11 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label">物流信息图：</label>
-            <img src="${imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
+			<div class="controls">
+				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
+							  maxHeight="100"/>
+			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">货值：</label>
@@ -69,10 +73,34 @@
 				<form:input path="freight" htmlEscape="false" class="input-xlarge required"/>
 			</div>
 		</div>
+		<c:if test="${userList==null}">
+			<div class="control-group">
+				<label class="control-label">发货人：</label>
+				<div class="controls">
+					<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${userList!=null}">
+			<div class="control-group">
+				<label class="control-label">发货人：</label>
+				<div class="controls">
+					<form:select about="choose" path="carrier" class="input-medium required">
+						<form:option value="" label="请选择"/>
+						<form:options items="${userList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+					</form:select>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
 		<div class="control-group">
-			<label class="control-label">承运人：</label>
+			<label class="control-label">发货时间：</label>
 			<div class="controls">
-				<form:input path="carrier" htmlEscape="false" maxlength="20" class="input-xlarge required"/>
+				<input name="sendDate" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate required"
+					   value="<fmt:formatDate value="${bizInvoice.sendDate}"  pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">

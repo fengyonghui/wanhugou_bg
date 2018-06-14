@@ -17,9 +17,12 @@
 		<result property="itemNo" column="itemNo"/>
 		<result property="delFlag" column="delFlag"/>
 		<result property="centersName" column="centersName"/>
-
+		<result property="con.name" column="con.name"/>
+		<result property="orderComment.id" column="orderComment.id"/>
+		<result property="orderComment.comments" column="orderComment.comments"/>
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
+		<result property="totalBuyPrice" column="totalBuyPrice"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -123,7 +126,9 @@
 		a.update_time AS "updateDate",
 		s.name as "centersName",
 		con.id AS "con.id",
-		con.name AS "con.name"
+		con.name AS "con.name",
+		boc.id as "orderComment.id",
+		boc.comments as "orderComment.comments"
 	</sql>
 
 	<!-- C端订单管理 -->
@@ -151,7 +156,9 @@
 		wxsu.name AS "customer.name",
 		bpi.name as "platformInfo.name",
 		su.name as "createBy.name",
-		suu.name as "updateBy.name"
+		suu.name as "updateBy.name",
+		boc.id as "orderComment.id",
+		boc.comments as "orderComment.comments"
 	</sql>
 	<sql id="cendOrderHeaderJoins">
 		left join sys_user wxsu on wxsu.id=a.cust_id
@@ -159,6 +166,7 @@
 		<!--left join sys_wx_personal_user wxpu on wxpu.id=a.create_id-->
 		left join sys_user su on a.create_id=su.id
 		left join sys_user suu on a.update_id=suu.id
+		left join biz_order_comment boc on boc.order_id=a.id
 	</sql>
 	<!-- end -->
 
@@ -174,6 +182,7 @@
     	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
 		LEFT JOIN sys_office s on s.id=ccs.center_id
 		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
+		left join biz_order_comment boc on boc.order_id=a.id
 	</sql>
 
 	<select id="get" resultType="BizOrderHeader">
@@ -260,7 +269,8 @@
 		si.id AS "orderDetailList.skuInfo.id",
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
 		si.item_no AS "orderDetailList.skuInfo.itemNo",
-		pi.vendor_name AS "orderDetailList.vendor.name"
+		pi.vendor_name AS "orderDetailList.vendor.name",
+		sum(od.buy_price*od.ord_qty) AS "totalBuyPrice"
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		<if test="statu != null and statu =='unline'">
@@ -273,13 +283,22 @@
 			<if test="dataStatus==null">
 				and a.status = #{DEL_FLAG_NORMAL}
 			</if>
-
 			<if test="orderNum != null and orderNum != ''">
 				AND a.order_num
 				LIKE
 				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="skuChickCount!=null and skuChickCount!=''">
+				AND (
+				(
+				biz_status != 45
+				AND biz_status != 35
+				AND biz_status != 0
+				)
+				OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+				)
 			</if>
 			<if test="orderType != null and orderType != ''">
 				AND a.order_type = #{orderType}
@@ -312,10 +331,10 @@
 				AND a.biz_status=#{bizStatus}
 			</if>
 			<!-- 列表时间查询 -->
-			<if test="ordrHeaderStartTime !=null and ordrHeaderStartTime !=''">
-				AND a.create_time &gt;= #{ordrHeaderStartTime}
-				<if test="orderHeaderEedTime!=null and orderHeaderEedTime!=''">
-                    AND a.create_time &lt;= #{orderHeaderEedTime}
+			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
+				AND a.create_time &gt;= #{orderCreatStartTime}
+				<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
+                    AND a.create_time &lt;= #{orderCreatEndTime}
 				</if>
 			</if>
 			<if test="orderUpdaStartTime !=null and orderUpdaStartTime !=''">
@@ -370,11 +389,24 @@
 				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
 			</if>
-			<if test="statu != null and statu =='unline'">
-				AND ohu.id is not NULL
+			<if test="statu != null and statu == 'unline'">
+				AND ohu.id IS NOT NULL
 			</if>
-
-			<if test="page != null and page.includeTestData != true">
+			<if test="statu != null and statu =='unline' and examine != null and examine == 2">
+				AND (ohu.biz_status = 0 OR ohu.biz_status = 2)
+			</if>
+			<if test="statu != null and statu =='unline' and examine != null and examine == 1">
+				AND a.id NOT IN (
+					SELECT b.id
+					FROM biz_order_header b
+					LEFT JOIN biz_order_header_unline bohu ON bohu.order_id = b.id
+					WHERE (bohu.biz_status = 0 OR bohu.biz_status = 2)
+					AND bohu.`status` = 1
+					AND b.`status` = 1
+					AND b.order_type != 4
+				)
+			</if>
+			<if test="page != null and page.includeTestData != true and skuChickCount==null">
 				AND NOT EXISTS(
 				select 1
 				from sys_test_account ta
@@ -408,7 +440,7 @@
 		od.sent_qty AS "orderDetailList.sentQty",
 		si.id AS "orderDetailList.skuInfo.id",
 		si.buy_price AS "orderDetailList.skuInfo.buyPrice",
-		si.item_no AS "orderDetailList.skuInfo.itemNo"
+		si.item_no AS "orderDetailList.skuInfo.itemNo",
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
@@ -658,13 +690,12 @@
 		office.id AS officeId,
 		office.name AS officeName,
 		(SELECT
-		sum(sku1.buy_price * detail1.ord_qty)
+		sum(detail1.buy_price * detail1.ord_qty)
 		FROM
 		biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
 		WHERE office.id = office1.id AND header1.order_type = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
@@ -764,11 +795,10 @@
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
-		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
 		WHERE us.id = us1.id AND header1.order_type = 1
 		AND NOT EXISTS(
@@ -778,7 +808,6 @@
 		and ta.object_name = 'sys_office'
 		)
 		AND header1.status = 1
-		AND sku1.status = 1
 		AND us1.status = 1
 		AND consultant1.status = 1
 		AND
@@ -840,15 +869,13 @@
 		count(1) AS orderCount,
 		us.name AS name,
 		us.id AS usId,
-		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
 		WHERE us.id = us1.id AND header1.order_type = 1
 		AND header1.status = 1
-		AND sku1.status = 1
 		AND us1.status = 1
 		AND consultant1.status = 1
 		AND date_format(header1.create_time, '%Y-%m') = date_format(oh.create_time, '%Y-%m')
@@ -912,13 +939,12 @@
 		office.id AS officeId,
 		office.name AS officeName,
 		(SELECT
-		sum(sku1.buy_price * detail1.ord_qty)
+		sum(detail1.buy_price * detail1.ord_qty)
 		FROM
 		biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
 		WHERE office.id = office1.id AND header1.order_type = 1
 		AND (<foreach collection="statusList" index="index" item="item" open="(" separator="AND" close=")">
 		biz_status != #{item.state}
@@ -1094,13 +1120,12 @@
 		office.id AS officeId,
 		office.name AS officeName,
 		(SELECT
-		sum(sku1.buy_price * detail1.ord_qty)
+		sum(detail1.buy_price * detail1.ord_qty)
 		FROM
 		biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
 		WHERE office.id = office1.id AND header1.order_type = 1
 		AND NOT EXISTS(
 		select 1
@@ -1201,11 +1226,10 @@
 		us.name AS name,
 		us.id AS usId,
 		date_format(oh.create_time, '%Y-%m-%d') AS createTime,
-		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
 		LEFT JOIN sys_user us1 ON consultant1.consultant_id = us1.id
 		WHERE us.id = us1.id AND header1.order_type = 1
 		AND NOT EXISTS(
@@ -1215,7 +1239,6 @@
 		and ta.object_name = 'sys_office'
 		)
 		AND header1.status = 1
-		AND sku1.status = 1
 		AND us1.status = 1
 		AND consultant1.status = 1
 		AND
@@ -1353,16 +1376,14 @@
 		select  count(1) as orderCount,
 		SUM(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
 		WHERE header1.order_type = 1
 		and header1.`status` = 1
 		and office1.`status` = 1
-		and sku1.`status` = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1430,16 +1451,14 @@
 		SELECT count(1) as orderCount,
 		sum(oh.total_detail + oh.total_exp + oh.freight) AS totalMoney,
 		sum(receive_total) AS receiveTotal,
-		(SELECT sum(sku1.buy_price * detail1.ord_qty)
+		(SELECT sum(detail1.buy_price * detail1.ord_qty)
 		FROM biz_order_header AS header1
 		LEFT JOIN biz_custom_center_consultant AS consultant1 ON consultant1.cust_id = header1.cust_id
 		LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
 		LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-		LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
 		WHERE header1.order_type = 1
 		and header1.`status` = 1
 		and office1.`status` = 1
-		and sku1.`status` = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1608,13 +1627,12 @@ SELECT
   count(1)                                             AS orderCount,
   sum(oh.total_detail + oh.total_exp + oh.freight)     AS accumulatedSalesMonth,
   sum(receive_total)                                   AS receiveTotal,
-  (SELECT sum(sku1.buy_price * detail1.ord_qty)
+  (SELECT sum(detail1.buy_price * detail1.ord_qty)
    FROM biz_order_header AS header1 LEFT JOIN biz_custom_center_consultant AS consultant1
        ON consultant1.cust_id = header1.cust_id
      LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
      LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-     LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
-   WHERE office1.id = so.id AND header1.order_type = 1 AND header1.`status` = 1 AND sku1.`status` = 1 AND
+   WHERE office1.id = so.id AND header1.order_type = 1 AND header1.`status` = 1 AND
          NOT EXISTS(SELECT 1
                     FROM sys_test_account ta
                     WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -1673,15 +1691,14 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
         count(1)                                             AS orderCount,
         sum(oh.total_detail + oh.total_exp + oh.freight)     AS accumulatedSalesMonth,
         sum(receive_total)                                   AS receiveTotal,
-        (SELECT sum(sku1.buy_price * detail1.ord_qty)
+        (SELECT sum(detail1.buy_price * detail1.ord_qty)
         FROM biz_order_header AS header1
         LEFT JOIN biz_custom_center_consultant AS consultant1  ON consultant1.cust_id = header1.cust_id
         LEFT JOIN sys_office AS office1 ON consultant1.center_id = office1.id
         LEFT JOIN biz_custom_center_consultant AS cc1 ON  header1.cust_id = cc1.cust_id
         LEFT JOIN sys_user AS u1 ON cc1.consultant_id = u1.id
         LEFT JOIN biz_order_detail AS detail1 ON detail1.order_id = header1.id
-        LEFT JOIN biz_sku_info AS sku1 ON sku1.id = detail1.sku_id
-        WHERE u1.id = u.id AND header1.order_type = 1 AND header1.`status` = 1 AND sku1.`status` = 1 AND
+        WHERE u1.id = u.id AND header1.order_type = 1 AND header1.`status` = 1 AND
         NOT EXISTS(SELECT 1
         FROM sys_test_account ta
         WHERE header1.cust_id = ta.object_id AND ta.object_name = 'sys_office') AND
@@ -1844,7 +1861,8 @@ FROM sys_office so, biz_custom_center_consultant cc, sys_user u, biz_order_heade
 	a.update_time AS "updateDate" ,
 	concat(cl.pcr_name, ifnull( cl.address,'')) as locationAddress,
 		GROUP_CONCAT(bod.id) AS "orderDetails",
-		pi.vendor_id AS "onlyVendor"
+		pi.vendor_id AS "onlyVendor",
+		sx.NAME AS "centersName"
 FROM
 	biz_order_header a
 	LEFT JOIN sys_office so ON a.cust_id = so.id
@@ -1860,6 +1878,10 @@ FROM
 		LEFT JOIN sys_region province ON c.province_id = province.id
 		LEFT JOIN sys_region city ON c.city_id = city.id
 		LEFT JOIN sys_region reg ON c.region_id = reg.id
+	<!-- end  -->
+	<!-- 采购中心 -->
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office sx ON sx.id = ccs.center_id
 	<!-- end  -->
 	WHERE 1=1 and a.order_type != 4
 		<if test="bizStatusStart !=null and bizStatusEnd !=null">
@@ -1989,40 +2011,366 @@ FROM
 	</select>
 
 	<!-- 客户专员查看该采购商的采购累计频次 -->
-	<select id="findUserOrderCountSecond" resultType="BizOrderHeader">
+	<select id="findUserOrderCountSecond" resultType="BizOrderHeader" parameterType="BizChatRecord">
 		SELECT
 		count(1) AS "orderCount",
 		sum(receive_total) AS "userOfficeReceiveTotal",
 		str_to_date(DATE_FORMAT(oh.create_time,'%Y-%m-%d %H:%i:%s'),'%Y-%m-%d %H:%i:%s') as "userOfficeDeta",
 		oh.id as "id",
 		oh.ship_to_addr,
-			cl.province_id as "bizLocation.province.id",
-			province.name as "bizLocation.province.name",
-			cl.city_id as "bizLocation.city.id",
-			city.name as "bizLocation.city.name",
-			cl.region_id as "bizLocation.region.id",
-			reg.name as "bizLocation.region.name",
-			cl.address as "bizLocation.address",
-		(select count(1) from biz_chat_record where office_id=#{custId}) as "officeChatRecord"
+		cl.province_id as "bizLocation.province.id",
+		province.name as "bizLocation.province.name",
+		cl.city_id as "bizLocation.city.id",
+		city.name as "bizLocation.city.name",
+		cl.region_id as "bizLocation.region.id",
+		reg.name as "bizLocation.region.name",
+		cl.address as "bizLocation.address",
+		(select count(1) from biz_chat_record as bizcr
+		LEFT JOIN sys_office so ON so.id = bizcr.office_id
+		LEFT JOIN sys_user su ON su.id = bizcr.user_id
+		where bizcr.office_id=#{office.id} and bizcr.status=1
+		and so.type=6
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bizcr.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
+		) as "officeChatRecord"
 		FROM biz_order_header AS oh
-		LEFT JOIN sys_office_address soa on soa.office_id=oh.cust_id and soa.status=1 and soa.default_status=1
-		left join common_location cl on cl.id=soa.addr_id
+		<!--LEFT JOIN sys_office_address soa on soa.office_id=oh.cust_id and soa.status=1 and soa.default_status=1
+		left join common_location cl on cl.id=soa.addr_id-->
+		left join biz_order_address cl on cl.id=oh.ship_to_addr
 		LEFT JOIN sys_region province ON cl.province_id = province.id
 		LEFT JOIN sys_region city ON cl.city_id = city.id
 		LEFT JOIN sys_region reg ON cl.region_id = reg.id
 		left join biz_chat_record bcr on bcr.office_id=oh.cust_id
-		WHERE oh.cust_id = #{custId}
+		WHERE oh.cust_id = #{office.id}
+		and oh.order_type!=4
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND oh.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		AND NOT EXISTS (
+		SELECT
+		1
+		FROM
+		sys_test_account ta
+		WHERE
+		oh.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
 		AND (
 		(
-		biz_status != 45
-		AND biz_status != 35
-		AND biz_status != 0
+		oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+		AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+		AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
 		)
-		OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
+		OR (oh.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND
+		oh.receive_total > 0)
+		)
 		and oh.status=1
 		<!--GROUP BY
 		date_format(oh.create_time, '%Y-%m')-->
 	</select>
 
+
+	<!-- 商品管理的 下单量 -->
+	<select id="findOrderCount" resultType="BizOrderHeader">
+		SELECT
+			oh.id,
+			bsi.item_no
+		FROM
+			biz_order_header oh
+		LEFT JOIN biz_order_detail bod ON bod.order_id = oh.id
+		LEFT JOIN biz_sku_info bsi ON bsi.id = bod.sku_id
+		LEFT JOIN sys_office so ON so.id = oh.cust_id
+		WHERE
+			bsi. STATUS = 1
+		AND bod. STATUS = 1
+		and bsi.id=#{skuInfoId.id}
+		AND oh.order_type != 4
+		AND NOT EXISTS (
+		SELECT
+		1
+		FROM
+		sys_test_account ta
+		WHERE
+		oh.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
+		AND (
+			(
+			oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+			AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+			AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+			)
+		OR (oh.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND oh.receive_total > 0)
+		)
+		and oh.status=1
+	</select>
+
+
+	<!-- 客户专员列表的 统计 -->
+	<select id="findOrderUserCount" resultType="BizOrderHeader" parameterType="BizChatRecord">
+		SELECT
+		(
+		select count(1) FROM biz_chat_record bcr
+		LEFT JOIN sys_user su on su.id=bcr.user_id and su.status=1
+		left join sys_office so on so.id=bcr.office_id and so.status=1
+		where
+		bcr.status=1
+		and su.id=#{con.id}
+		and so.type=6
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bcr.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
+		) as "officeChatRecord",
+		count(1) AS "orderCount",
+		sum(oh.receive_total) as "userOfficeReceiveTotal",
+		(
+		select count(1) from
+			biz_custom_center_consultant bcc,
+			sys_user su
+		WHERE
+			bcc.status=1
+		and su.id=bcc.consultant_id
+		and su.status=1
+		and su.id=#{con.id}
+		and bcc.cust_id = ANY (
+		SELECT
+		s1.id
+		FROM
+		sys_office AS s1,
+		sys_user AS u1
+		WHERE
+		s1.id = u1.company_id
+		AND NOT EXISTS (
+		SELECT
+		1
+		FROM
+		sys_test_account ta
+		WHERE
+		bcc.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
+		AND s1.type = 6
+		AND s1.STATUS = 1
+		AND u1.STATUS = 1
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(s1.create_date,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND s1.create_date &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND s1.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		)
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bcc.update_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bcc.update_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bcc.update_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		) as "officeCount"
+		FROM biz_order_header AS oh
+		LEFT JOIN biz_custom_center_consultant bcc on bcc.cust_id=oh.cust_id and bcc.status=1
+		WHERE
+		oh.status=1
+		and bcc.consultant_id=#{con.id}
+		AND oh.order_type != 4
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND oh.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		AND NOT EXISTS (
+		SELECT
+		1
+		FROM
+		sys_test_account ta
+		WHERE
+		oh.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
+		AND (
+		(
+		oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+		AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+		AND oh.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+		)
+		OR (oh.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND
+		oh.receive_total > 0)
+		)
+	</select>
+
+	<!-- 品类主管 管理 统计商品  -->
+	<select id="categorySkuStatistics" resultType="BizOrderHeader" parameterType="User">
+		SELECT
+		(select count(1) from biz_order_header aa
+		LEFT JOIN biz_order_detail bb on bb.order_id=aa.id
+		LEFT JOIN biz_sku_info cc on cc.id=bb.sku_id
+		LEFT JOIN biz_product_info dd on dd.id=cc.prod_id
+		left join biz_variety_info ff on ff.id= dd.vari_id
+		LEFT JOIN biz_variety_user_info gg on gg.variety_id=ff.id
+		LEFT JOIN sys_user hh on hh.id=gg.user_id
+		WHERE
+		aa.status=1
+		and bb.status=1
+		and cc.status=1
+		and dd.status=1
+		and hh.status=1
+		AND NOT EXISTS (
+		SELECT
+		1
+		FROM
+		sys_test_account ta
+		WHERE
+		aa.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
+		and aa.order_type !=4
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(aa.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND aa.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND aa.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		AND (
+		(
+		a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+		AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+		AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+		)
+		OR (a.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND
+		a.receive_total > 0)
+		)
+		and hh.id=#{id}
+		) as "skuCount",
+		count(a.id) as "orderCount",
+		sum(a.receive_total) as "receiveTotal",
+		(select count(1)
+		from
+		biz_sku_info qq
+		LEFT JOIN biz_product_info bpi on bpi.id=qq.prod_id
+		left join biz_variety_info bvi on bvi.id= bpi.vari_id
+		LEFT JOIN biz_variety_user_info bvui on bvui.variety_id=bvi.id
+		LEFT JOIN sys_user su on su.id=bvui.user_id
+		WHERE
+		qq.status=1
+		and bpi.status=1
+		and bvi.status=1
+		and su.status=1
+		and su.id=#{id}
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(qq.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND qq.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND qq.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		) as "opShelfCount",
+		(
+		SELECT
+		count(1)
+		FROM
+		biz_chat_record AS bizcr
+		LEFT JOIN sys_office so ON so.id = bizcr.office_id
+		LEFT JOIN sys_user su ON su.id = bizcr.user_id
+		WHERE
+		bizcr. STATUS = 1
+		and so.status=1
+		and su.status=1
+		and su.id=#{id}
+		and bizcr.create_id=#{id}
+		and so.type=6
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bizcr.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
+		) as "officeChatRecord"
+		from
+		biz_order_header a
+		LEFT JOIN biz_order_detail bod on bod.order_id=a.id and bod.status=1
+		LEFT JOIN biz_sku_info bsi on bsi.id=bod.sku_id
+		LEFT JOIN biz_product_info bpi on bpi.id=bsi.prod_id
+		LEFT JOIN sys_office so on so.id=bpi.vendor_id
+		left join biz_variety_info bvi on bvi.id= bpi.vari_id
+		LEFT JOIN biz_variety_user_info bvui on bvui.variety_id=bvi.id
+		LEFT JOIN sys_user su on su.id=bvui.user_id
+		WHERE
+		a.status=1
+		and su.id=#{id}
+		and su.status=1
+		AND a.order_type != 4
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(a.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND a.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		AND NOT EXISTS (
+		SELECT
+		1
+		FROM
+		sys_test_account ta
+		WHERE
+		a.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
+		AND (
+		(
+		a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNAPPROVE.state}
+		AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@CANCLE.state}
+		AND a.biz_status != ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@UNPAY.state}
+		)
+		OR (a.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND
+		a.receive_total > 0)
+		)
+	</select>
 
 </mapper>

@@ -5,11 +5,10 @@ import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
-import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.enums.TradeTypeEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -39,6 +38,9 @@ public class BizPayMoneyController extends BaseController {
     @Resource
     private SystemService systemService;
 
+    @Resource
+    private BizOrderStatusService bizOrderStatusService;
+
     //0支付宝支付；1微信支付
 
 
@@ -48,7 +50,7 @@ public class BizPayMoneyController extends BaseController {
         payLogger.info("请求返回参数--------------"+jsonstr);
         BizPayRecord bizPayRecord =new BizPayRecord();
         Integer reqId=0;
-        Double amount=0.0;
+        double amount=0.0;
         String params =null;
         String photoName=null;
         if(map.containsKey("attach")) {
@@ -65,10 +67,10 @@ public class BizPayMoneyController extends BaseController {
             bizPayRecord.setPayer(record.getPayer());
             bizPayRecord.setCustomer(record.getCustomer());
             String resultCode= (String) map.get("trade_status");
-            Double receiptAmount = Double.parseDouble((String) map.get("receipt_amount"));
+            Double receiptAmount = Double.parseDouble(map.get("receipt_amount").toString());
             payLogger.info("支付宝返回参数-------------"+receiptAmount);
-            amount=Double.parseDouble((String) map.get("buyer_pay_amount"));
-            bizPayRecord.setPayMoney(amount);
+            amount= Double.parseDouble(map.get("buyer_pay_amount").toString());
+            bizPayRecord.setPayMoney(Double.valueOf(amount));
             if("TRADE_SUCCESS".equalsIgnoreCase(resultCode)&& receiptAmount.equals(amount)){
                 bizPayRecord.setBizStatus(1);
             }else {
@@ -94,7 +96,7 @@ public class BizPayMoneyController extends BaseController {
 
               Map paramsMap = (Map) JSONUtils.parse(params);
               Integer centerId = (Integer) paramsMap.get("centerId");
-              amount = (Double) paramsMap.get("amount");
+              amount =  Double.parseDouble(paramsMap.get("amount").toString());
               Integer payMethod = (Integer) paramsMap.get("payMethod");
               String orderNum = (String) paramsMap.get("orderNum");
               Integer payer = (Integer) paramsMap.get("payer");
@@ -138,6 +140,7 @@ public class BizPayMoneyController extends BaseController {
         if(bizPayRecord.getBizStatus()==1 && reqId!=0){
             BizRequestHeader bizRequestHeader=bizRequestHeaderService.get(reqId);
             bizRequestHeader.setRecvTotal(bizRequestHeader.getRecvTotal()+amount);
+            Integer bizStatus = bizRequestHeader.getBizStatus();
             if((bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.UNREVIEWED.getState()) || bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.INITIAL_PAY.getState())) && bizRequestHeader.getTotalDetail().equals(bizRequestHeader.getRecvTotal())){
                 bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ALL_PAY.getState());
                 payLogger.info("更新备货清单状态-------"+ReqHeaderStatusEnum.ALL_PAY.getState());
@@ -149,6 +152,9 @@ public class BizPayMoneyController extends BaseController {
                 payLogger.info("更新状态出问题");
             }
             bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
+            if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+                bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+            }
         }
 
         String pathFile = Global.getUserfilesBaseDir()+"/upload/" +photoName ;

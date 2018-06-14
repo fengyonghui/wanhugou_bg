@@ -23,7 +23,7 @@ public class BizVarietyFactor extends DataEntity<BizVarietyFactor> {
 	
 	private static final long serialVersionUID = 1L;
 	private BizVarietyInfo varietyInfo;		// 产品分类Id
-	private Integer serviceFactor;		// 服务费系数
+	private Double serviceFactor;		// 服务费系数
 	private Integer minQty;		// 最小数量
 	private Integer maxQty;		// 最大数量
 
@@ -52,14 +52,6 @@ public class BizVarietyFactor extends DataEntity<BizVarietyFactor> {
 
 	public void setVarietyInfo(BizVarietyInfo varietyInfo) {
 		this.varietyInfo = varietyInfo;
-	}
-
-	public Integer getServiceFactor() {
-		return serviceFactor;
-	}
-
-	public void setServiceFactor(Integer serviceFactor) {
-		this.serviceFactor = serviceFactor;
 	}
 
 	public Integer getMinQty() {
@@ -124,5 +116,13 @@ public class BizVarietyFactor extends DataEntity<BizVarietyFactor> {
 
 	public void setVarietList(String varietList) {
 		this.varietList = varietList;
+	}
+
+	public Double getServiceFactor() {
+		return serviceFactor;
+	}
+
+	public void setServiceFactor(Double serviceFactor) {
+		this.serviceFactor = serviceFactor;
 	}
 }

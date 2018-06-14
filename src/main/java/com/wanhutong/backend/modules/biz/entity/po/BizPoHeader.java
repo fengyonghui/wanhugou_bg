@@ -8,14 +8,12 @@ import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -54,7 +52,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private String ordQtys;
 	private List<BizPoOrderReq>poOrderReqList;
 
-	private Map<Integer,List<BizPoOrderReq>> orderNumMap;
+	private Map<Integer,ArrayList<BizPoOrderReq>> orderNumMap;
 	private Map<String,Integer> orderSourceMap;
 
 	private int isPrew;
@@ -77,6 +75,16 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	private Date payDeadline;
 
 	private String type;    //createPo 为生成采购单的状态
+
+	/**
+	 * 起始金额
+	 */
+	private BigDecimal startPrice;
+	/**
+	 * 结束金额
+	 */
+	private BigDecimal endPrice;
+
 
 	public Integer getCurrentPaymentId() {
 		return currentPaymentId;
@@ -271,11 +279,11 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		this.str = str;
 	}
 
-	public Map<Integer, List<BizPoOrderReq>> getOrderNumMap() {
+	public Map<Integer, ArrayList<BizPoOrderReq>> getOrderNumMap() {
 		return orderNumMap;
 	}
 
-	public void setOrderNumMap(Map<Integer, List<BizPoOrderReq>> orderNumMap) {
+	public void setOrderNumMap(Map<Integer, ArrayList<BizPoOrderReq>> orderNumMap) {
 		this.orderNumMap = orderNumMap;
 	}
 
@@ -368,6 +376,22 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		this.commonProcessList = commonProcessList;
 	}
 
+	public BigDecimal getStartPrice() {
+		return startPrice;
+	}
+
+	public void setStartPrice(BigDecimal startPrice) {
+		this.startPrice = startPrice;
+	}
+
+	public BigDecimal getEndPrice() {
+		return endPrice;
+	}
+
+	public void setEndPrice(BigDecimal endPrice) {
+		this.endPrice = endPrice;
+	}
+
 	public enum BizStatus {
 		NO_PAY(0, "未支付"),
 		DOWN_PAYMENT(1, "首付款支付"),
@@ -377,6 +401,7 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 		COMPLETE(5, "已完成"),
 		PROCESS(6, "审批中"),
 		PROCESS_COMPLETE(7, "审批完成"),
+		CANCEL(10, "取消"),
 		;
 		private int status;
 		private String desc;

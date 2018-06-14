@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.process.entity;
 
 import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -35,6 +36,7 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 
 	private PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess;
 	private RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess;
+	private PaymentOrderProcessConfig.Process paymentOrderProcess;
 
 	/**
 	 * 前一个流程
@@ -148,6 +150,10 @@ public class CommonProcessEntity extends DataEntity<CommonProcessEntity> {
 
 	public PurchaseOrderProcessConfig.PurchaseOrderProcess getPurchaseOrderProcess() {
 		return ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
+	}
+
+	public PaymentOrderProcessConfig.Process getPaymentOrderProcess() {
+		return ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(type));
 	}
 
 	public RequestOrderProcessConfig.RequestOrderProcess getRequestOrderProcess() {

@@ -126,7 +126,7 @@
                         {
                             type: 'value',
                             scale: true,
-                            name: '销售额',
+                            name: '利润',
                             min:0
                         }
                     ],

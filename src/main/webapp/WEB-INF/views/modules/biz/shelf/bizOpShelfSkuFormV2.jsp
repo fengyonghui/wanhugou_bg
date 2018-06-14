@@ -8,6 +8,7 @@
 	<title>商品上架管理</title>
 	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
 	<script type="text/javascript">
+        var opShelfType="";
         $(document).ready(function() {
 
             //$("#name").focus();
@@ -47,6 +48,7 @@
                             }
                         });
                     }) ;
+                    var hasUnderPriceRole = $("#hasUnderPriceRole").val();
                     $("#tbody").find("tr").each(function (i) {
                         var minQty = $(this).find("td").find("input[name='minQtys']").val();
                         var maxQty = $(this).find("td").find("input[name='maxQtys']").val();
@@ -66,14 +68,13 @@
                                 return false;
                             }
                         }
-
                         var orgPrice = $(this).find("td").find("input[name='orgPrices']").val();
                         var salePrice = $(this).find("td").find("input[name='salePrices']").val();
-                        if(parseInt(orgPrice)>parseInt(salePrice)){
+                        if (Number(orgPrice) > Number(salePrice) && hasUnderPriceRole == 'false') {
                             alert("售价不能低于工厂价");
                             numFlag = false;
                             return false;
-						}
+                        }
                     });
                     $("#tbody").find("td").each(function () {
                         var skuId = $(this).find("input[name='skuInfoIds']").val();
@@ -179,55 +180,57 @@
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                          $("#prodInfo2").empty();
+                         if (data == '') {
+                             return false;
+                         } else {
+                             $.each(data.skuMap, function (keys, skuInfoList) {
 
+                                 var prodKeys = keys.split(",");
+                                 var prodId = prodKeys[0];
+                                 var prodUrl = prodKeys[2];
+                                 var brandName = prodKeys[6];
+                                 var varietyId = prodKeys[7];
+                                 var varietyName = prodKeys[8];
 
-                        $.each(data.skuMap,function (keys,skuInfoList) {
+                                 var flag = true;
 
-                            var prodKeys= keys.split(",");
-                            var prodId= prodKeys[0];
-                            var prodUrl= prodKeys[2];
-                            var brandName=prodKeys[6];
-                            var varietyId = prodKeys[7];
-                            var varietyName= prodKeys[8];
+                                 var tr_tds = "";
+                                 var t = 0;
 
-                            var flag=true;
+                                 var factorMap = data.serviceFactor;
+                                 var factorStr = factorMap[varietyId];
 
-                            var tr_tds="";
-                            var t=0;
+                                 //  var factorArr=$(factorStr).split(",");
+                                 var f = "";
+                                 if (factorStr != undefined) {
+                                     $.each(factorStr, function (i) {
+                                         f += factorStr[i] + "<br/>";
+                                     });
+                                 }
 
-                            var factorMap=data.serviceFactor;
-                            var factorStr=factorMap[varietyId];
+                                 $.each(skuInfoList, function (index, skuInfo) {
 
-                          //  var factorArr=$(factorStr).split(",");
-                            var f="";
-                            $.each(factorStr,function (i){
-                               f+=factorStr[i]+"<br/>";
-							});
+                                     tr_tds += "<tr class='" + prodId + "'>";
+                                     tr_tds += "<td><input type='checkbox' value='" + skuInfo.id + "' title='shelfIds'/></td>";
+                                     tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td><td>" + skuInfo.skuPropertyInfos + "</td>";
 
+                                     if (flag) {
+                                         tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + varietyName + "<br/>" + f + "</td>";
+                                         tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + brandName + "</td>";
+                                         tr_tds += "<td rowspan='" + skuInfoList.length + "'><img style='width: 160px;height: 160px' src='" + prodUrl + "' maxWidth='100' maxHeight='100'></td>"
+                                     }
 
-                            $.each(skuInfoList,function (index,skuInfo) {
+                                     tr_tds += "</tr>";
+                                     if (skuInfoList.length > 1) {
+                                         flag = false;
+                                     }
+                                 });
 
-                                tr_tds+= "<tr class='"+prodId+"'>";
-                                tr_tds+="<td><input type='checkbox' value='"+skuInfo.id+"' title='shelfIds'/></td>";
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.skuPropertyInfos+"</td>" ;
+                                 t++;
+                                 $("#prodInfo2").append(tr_tds);
 
-                                if(flag){
-                                    tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+varietyName+"<br/>"+f+"</td>";
-                                    tr_tds+="<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img style='width: 160px;height: 160px' src='"+prodUrl+"' maxWidth='100' maxHeight='100'></td>"
-                                }
-
-                                tr_tds+="</tr>";
-                                if(skuInfoList.length>1){
-                                    flag=false;
-                                }
-                            });
-
-                            t++;
-                            $("#prodInfo2").append(tr_tds);
-
-                        });
-
+                             });
+                         }
                     }
                 })
             });
@@ -264,21 +267,37 @@
                         var htmlInfo = "";
                         var pri = 10;
                         $.each(data,function(index,item) {
-                            $.each(item.bvFactorList,function(index,bvFactor){
-								htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
-									"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
-									"<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
-									"<td><input name=\"salePrices\" value=\""+bvFactor.salePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
-									"<td><input name=\"minQtys\" value=\""+bvFactor.minQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
-									"<td><input name=\"maxQtys\" value=\""+bvFactor.maxQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
-									"<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
-									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
+                            if (item.bvFactorList != undefined) {
+								$.each(item.bvFactorList,function(index,bvFactor){
+									htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
+										"<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
+										"<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
+										"<td><input name=\"salePrices\" value=\""+bvFactor.salePrice+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+										"<td><input name=\"minQtys\" value=\""+bvFactor.minQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
+										"<td><input name=\"maxQtys\" value=\""+bvFactor.maxQty+"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
+										"<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+										"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
 
-									"<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
-									"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
-									"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" onchange='changeNum(this.value,"+item.id+")' htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
-									"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
-                            });
+										"<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+										"onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
+										"<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" onchange='changeNum(this.value,"+item.id+")' htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
+										"<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+								});
+                            } else {
+                                htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
+                                    "<td><input about='shQtys"+item.id+"' name='shelfQtys' value='1000' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！'/><label style='display: none' class=\"error\"></label></td>"+
+                                    "<td><input about='orgPrices"+item.id+"' name='orgPrices' readonly='readonly' value='"+item.buyPrice+"' htmlEscape='false' maxlength='6' class='input-mini required' type='number' placeholder='必填！' /></td>"+
+                                    "<td><input name=\"salePrices\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type='number' placeholder=\"必填！\"/><label style='display: none' class=\"error\"></label></td>"+
+                                    "<td><input name=\"minQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\"/><label style='display: none'  class=\"error\"></label></td>"+
+                                    "<td><input name=\"maxQtys\" value=\"\" htmlEscape=\"false\" maxlength=\"6\" class=\"input-medium required\" type=\"number\" placeholder=\"必填！\" onchange='addOne(this,"+item.id+")'/><label style='display: none' class=\"error\"></label></td>"+
+                                    "<td><input about='shelfDate"+item.id+"' name=\"shelfTimes\" value=\""+now+"\" type=\"text\" readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate required\"" +
+                                    "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});\" placeholder=\"必填！\"/></td>"+
+
+                                    "<td><input about='unshelfTimes"+item.id+"' name=\"unshelfTimes\" type=\"text\" value='' readonly=\"readonly\" maxlength=\"20\" class=\"input-medium Wdate \"" +
+                                    "onclick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});\" placeholder=\"选填！\"/></td>" +
+                                    "<td><input about='prioritys"+item.id+"' name=\"prioritys\" value=\""+pri+"\" onchange='changeNum(this.value,"+item.id+")' htmlEscape=\"false\" maxlength=\"5\" class=\"input-medium required\" placeholder=\"必填！\" type=\"number\" /><label style='display: none' class=\"error\"></label></td>"+
+                                    "<td><a href='#' onclick='removeItem(\""+item.id+"\")'>移除</a></td></tr>";
+							}
                             pri += 10;
                         });
                         $("#tbody").append(htmlInfo);
@@ -303,12 +322,32 @@
 
             });
 
-                        $("#contentTableService").tablesMergeCell({
-                             automatic: true,
-                            // 是否根据内容来合并
-                            cols:[0,0]
-                            // rows:[0,2]
-                        });
+            $("#contentTableService").tablesMergeCell({
+                automatic: true,
+                // 是否根据内容来合并
+                cols: [0, 0]
+                // rows:[0,2]
+            });
+            <c:if test="${bizOpShelfSku.id != null}">
+            var opShelfId=$("#shelfInfoId").val();
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
+                success:function (data) {
+                    opShelfType = data.type;
+                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>'){
+                        $("#PurchaseID").css("display","block");
+
+                        $("#centerOfficeName").prop("disabled", "disabled")
+                        $("#centerOfficeButton").prop("disabled", "disabled")
+                        $("#centerOfficeButton").css("pointer-events","none");
+                    }else{
+                        $("#PurchaseID").css("display","none");
+                        $("#centerOfficeId").prop("value","0");
+                    }
+                }
+            });
+            </c:if>
 
         });
         function removeItem(obj) {
@@ -331,6 +370,27 @@
 				$(this).val(num);
             });
         }
+
+        function shelfInfoChanged() {
+            var opShelfId=$("#shelfInfoId").val();
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/shelf/bizOpShelfInfo/findColum?id="+opShelfId,
+                success:function (data) {
+                    if(data.type=='<%=BizOpShelfInfoEnum.LOCAL_STOCK.getLocal() %>'){
+                        $("#PurchaseID").css("display","block");
+                        if (opShelfType != data.type) {
+                            $("#centerOfficeName").prop("disabled", false)
+                            $("#centerOfficeButton").prop("disabled", false)
+                            $("#centerOfficeButton").css("pointer-events","auto");
+                        }
+                    }else{
+                        $("#PurchaseID").css("display","none");
+                        $("#centerOfficeId").prop("value","0");
+                    }
+                }
+            });
+		}
 	</script>
 	<script type="text/javascript">
         function selectedColum(){
@@ -398,7 +458,7 @@
 		<div class="control-group">
 			<label class="control-label">货架名称：</label>
 			<div class="controls">
-				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required">
+				<form:select id="shelfInfoId" path="opShelfInfo.id" class="input-xlarge required" onchange="shelfInfoChanged()">
 					<form:option value="">请选择</form:option>
 					<form:options items="${shelfList}" itemLabel="name" itemValue="id"/>
 				</form:select>
@@ -448,6 +508,7 @@
 				<tr>
 					<th><input id="select_all" type="checkbox" /></th>
 					<th>商品名称</th>
+					<th>出厂价(元)：</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
 					<th>商品属性</th>
@@ -520,8 +581,68 @@
 		<shiro:hasPermission name="biz:shelf:bizOpShelfSku:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</shiro:hasPermission>
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
 	</div>
-
+	<<input type="hidden" value="${hasUnderPriceRole}" id="hasUnderPriceRole">
 </form:form>
+<c:if test="${bizOpShelfSkuList.size() > 0 }">
+	<div class="control-group">
+		<div class="controls">
+			<table id="ShelfSkuTableRefer" class="table table-striped table-bordered table-condensed">
+				<thead>
+				<tr>
+					<th>商品名称：</th>
+					<th>上架数量(个)：</th>
+					<th>出厂价(元)：</th>
+					<th>销售单价(元)</th>
+					<th>最低销售数量(个)：</th>
+					<th>最高销售数量(个，9999表示不限制)：</th>
+					<th>上架时间：</th>
+					<th>下架时间：</th>
+					<th>显示次序：</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody id="tbody">
+				<c:if test="${bizOpShelfSku.id != null}">
+					<c:forEach items="${bizOpShelfSkuList}" var="bizOpShelfSku">
+						<tr>
+							<td>
+								<input name="skuInfoIds" readonly="readonly" value="${bizOpShelfSku.skuInfo.id}"
+									   class="input-medium required" type="hidden"/>${bizOpShelfSku.skuInfo.name}
+							</td>
+							<td><input name="shelfQtys" value="${bizOpShelfSku.shelfQty}" htmlEscape="false"
+									   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="orgPrices" value="${bizOpShelfSku.orgPrice}" htmlEscape="false"
+									   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="salePrices" value="${bizOpShelfSku.salePrice}" htmlEscape="false"
+									   maxlength="6" class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="minQtys" value="${bizOpShelfSku.minQty}" htmlEscape="false" maxlength="6"
+									   class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="maxQtys" value="${bizOpShelfSku.maxQty}" htmlEscape="false" maxlength="6"
+									   class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+							<td><input name="shelfTimes" type="text" readonly="readonly" maxlength="20"
+									   class="input-medium Wdate required"
+									   value="<fmt:formatDate value="${bizOpShelfSku.shelfTime}"  pattern="yyyy-MM-dd HH:mm:ss"/>"/>
+							</td>
+							<td><input name="unshelfTimes" type="text" readonly="readonly" maxlength="20"
+									   class="input-medium Wdate "
+									   value="<fmt:formatDate value="${bizOpShelfSku.unshelfTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
+							</td>
+							<td><input name="prioritys" value="${bizOpShelfSku.priority}" htmlEscape="false"
+									   maxlength="5" class="input-medium required" readonly="readonly" type="number"
+									   placeholder="必填！"/></td>
+						</tr>
+					</c:forEach>
+				</c:if>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</c:if>
 
 <form:form id="searchForm" modelAttribute="bizSkuInfo" >
 	<%--<form:hidden id="productNameCopy" path="productInfo.name"/>--%>

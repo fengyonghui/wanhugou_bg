@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.ProdTypeEnum" %>
 <html>
 <head>
 	<title>产品信息表管理</title>
@@ -30,11 +31,11 @@
                         data:"bizVarietyInfo.name="+cp+"&name="+cpName+"&prodCode="+cpPc+"&itemNo="+cpIn+"&brandName="+cpBr,
                         success:function(data){
                             if(data=="opSheSku"){
-								alert("商品上下架还有该产品，不能删除 ");
+								alert("该产品下还有商品sku在上下架存在，不能删除！ ");
 							}else if(data=="skuS"){
-								alert("商品sku还有该产品，不能删除 ");
+								alert("该产品下还有该商品sku存在，不能删除！ ");
 							}else if(data=="invSku"){
-								alert("库存盘点里还有该产品里的商品sku，不能删除 ");
+								alert("该产品里的商品sku在库存盘点里还存在，不能删除！ ");
 							}else{
                                 <%--alert("删除产品信息成功");--%>
                                 $("#messDele").css("display","block");
@@ -61,9 +62,11 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>产品品类：</label>
-				<form:input id="cp" path="bizVarietyInfo.name" htmlEscape="false" class="input-small"/>
-			</li>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+				<li><label>产品品类：</label>
+					<form:input id="cp" path="bizVarietyInfo.name" htmlEscape="false" class="input-small"/>
+				</li>
+			</c:if>
 			<li><label>产品名称：</label>
 				<form:input id="cpName" path="name" htmlEscape="false" class="input-medium"/>
 			</li>
@@ -85,6 +88,12 @@
 					   value="<fmt:formatDate value="${bizProductInfo.createDateEnd}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			</li>
+			<li><label>品类主管：</label>
+				<form:select about="choose" path="user.id" class="input-medium">
+					<form:option value="" label="请选择"/>
+					<form:options items="${usersList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+				</form:select>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -103,74 +112,116 @@
 			<tr>
 				<th>序号</th>
 				<th>产品图片</th>
-				<th>产品品类</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>产品品类</th>
+				</c:if>
 				<th>产品名称</th>
 				<th>产品代码</th>
 				<th>产品货号</th>
 				<th>品牌名称</th>
-				<th>产品描述</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>产品描述</th>
+				</c:if>
 				<th>供应商</th>
 				<th>最低售价</th>
 				<th>最高售价</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>点击量</th>
+					<th>下单量</th>
+					<th>负责人</th>
+				</c:if>
 				<th>创建时间</th>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizProductInfo" varStatus="state">
-			<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==0}">
+		<c:forEach items="${page.list}" var="productInfo" varStatus="state">
+			<c:if test="${productInfo.delFlag!=null && productInfo.delFlag==0}">
 				<tr style="text-decoration:line-through;">
 			</c:if>
-			<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==1}">
+			<c:if test="${productInfo.delFlag!=null && productInfo.delFlag==1}">
 				<tr>
 			</c:if>
 				<td>${state.index+1}</td>
-				<td><img src="${bizProductInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+				<td><img src="${productInfo.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
 				<td>
-					${bizProductInfo.bizVarietyInfo.name}
+					${productInfo.bizVarietyInfo.name}
 				</td>
-
+			</c:if>
 				<td>
 
-					<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}">
-					${bizProductInfo.name}
+					<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${productInfo.id}">
+					${productInfo.name}
 				</a></td>
 				<td>
-					${bizProductInfo.prodCode}
+					${productInfo.prodCode}
 				</td>
 				<td>
-					${bizProductInfo.itemNo}
+					${productInfo.itemNo}
 				</td>
 				<td>
-					${bizProductInfo.brandName}
+					${productInfo.brandName}
+				</td>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+				<td>
+					${productInfo.description}
+				</td>
+			</c:if>
+				<td>
+					${productInfo.office.name}
 				</td>
 				<td>
-					${bizProductInfo.description}
+					${productInfo.minPrice}
 				</td>
 				<td>
-					${bizProductInfo.office.name}
+					${productInfo.maxPrice}
+				</td>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+				<td>
+					<c:if test="${productInfo.prodVice !=0}">
+						<a href="${ctx}/biz/product/bizProdViewLog/list?productInfo.id=${productInfo.id}&prodChixkSource=prod_chickCount">
+							${productInfo.prodVice}
+						</a>
+					</c:if>
+					<c:if test="${productInfo.prodVice ==0}">
+						${productInfo.prodVice}
+					</c:if>
 				</td>
 				<td>
-					${bizProductInfo.minPrice}
+					<c:if test="${productInfo.orderCount !=0}">
+						<c:choose>
+							<c:when test="${productInfo.skuItemNo !=null}">
+								<%--<a href="${ctx}/biz/order/bizOrderHeader/list?skuChickCount=prodCick_count&itemNo=${productInfo.skuItemNo}">--%>
+										${productInfo.orderCount}
+								<%--</a>--%>
+							</c:when>
+							<c:otherwise>${productInfo.orderCount}</c:otherwise>
+						</c:choose>
+					</c:if>
+					<c:if test="${productInfo.orderCount ==0}">
+						${productInfo.orderCount}
+					</c:if>
 				</td>
 				<td>
-					${bizProductInfo.maxPrice}
+					${productInfo.user.name}
 				</td>
+			</c:if>
 				<td>
-					<fmt:formatDate value="${bizProductInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${productInfo.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:product:bizProductInfo:edit">
 					<td>
-						<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==1}">
-							<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}&prodType=${prodType}">修改</a>
+						<c:if test="${productInfo.delFlag!=null && productInfo.delFlag==1}">
+							<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${productInfo.id}&prodType=${prodType}">修改</a>
 
-							<a href="${ctx}/biz/product/bizProductInfoV2/copy?id=${bizProductInfo.id}&prodType=${prodType}">复制</a>
-							<%--<a href="${ctx}/biz/product/bizProductInfoV2/delete?id=${bizProductInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>--%>
-							<a href="#" onclick="productDelete(${bizProductInfo.id});">删除</a>
-							<%--<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizProductInfo.id}">sku商品管理</a>--%>
+							<a href="${ctx}/biz/product/bizProductInfoV2/copy?id=${productInfo.id}&prodType=${prodType}">复制</a>
+							<%--<a href="${ctx}/biz/product/bizProductInfoV2/delete?id=${productInfo.id}" onclick="return confirmx('确认要删除该产品信息表吗？', this.href)">删除</a>--%>
+							<a href="#" onclick="productDelete(${productInfo.id});">删除</a>
+							<%--<a href="${ctx}/biz/product/bizProductInfoV2/form?id=${productInfo.id}">sku商品管理</a>--%>
 						</c:if>
-						<c:if test="${bizProductInfo.delFlag!=null && bizProductInfo.delFlag==0}">
-							<a href="${ctx}/biz/product/bizProductInfoV2/recovery?id=${bizProductInfo.id}&prodType=${prodType}" onclick="return confirmx('确认要恢复该产品信息表吗？', this.href)">恢复</a>
+						<c:if test="${productInfo.delFlag!=null && productInfo.delFlag==0}">
+							<a href="${ctx}/biz/product/bizProductInfoV2/recovery?id=${productInfo.id}&prodType=${prodType}" onclick="return confirmx('确认要恢复该产品信息表吗？', this.href)">恢复</a>
 						</c:if>
 					</td></shiro:hasPermission>
 			</tr>

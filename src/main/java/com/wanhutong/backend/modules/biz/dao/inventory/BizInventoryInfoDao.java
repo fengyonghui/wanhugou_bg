@@ -17,4 +17,6 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 public interface BizInventoryInfoDao extends CrudDao<BizInventoryInfo> {
 
     StockAmountDto getStockAmountByCustId(Integer custId);
+
+    BizInventoryInfo getInventoryByCustId(Integer custId);
 }

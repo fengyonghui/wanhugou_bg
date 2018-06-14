@@ -56,6 +56,21 @@
 			</otherwise>
 		</choose>
 	</select>
+
+	<select id="findSpecificList" resultType="AttributeValueV2">
+		SELECT
+			<include refid="attributeValueColumns"/>,
+			ai.dict_type AS "attributeInfo.dict.type"
+		FROM sys_attribute_value a
+			<include refid="attributeValueJoins"/>
+		LEFT JOIN biz_variety_attr va ON va.attribute_id = ai.id
+		WHERE
+			a.status = 1
+		AND ai.status = 1
+		AND va.status = 1
+		AND a.object_name = #{objectName}
+		AND a.object_id = #{objectId}
+	</select>
 	
 	<select id="findAllList" resultType="AttributeValueV2">
 		SELECT 

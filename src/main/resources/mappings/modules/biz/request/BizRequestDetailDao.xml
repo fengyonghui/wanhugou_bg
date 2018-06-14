@@ -226,38 +226,47 @@
 	<!-- 备货清单 查看 生成采购单 -->
 	<select id="findPoRequet" resultType="BizRequestDetail">
 		SELECT
-			a.id AS "id",
-			a.header_id AS "requestHeader.id",
-			reheader.req_no AS "requestHeader.reqNo",
-			a.line_no AS "lineNo",
-			a.sku_id AS "skuInfo.id",
-			a.unit_price AS "unitPrice",
-			si.item_no AS "skuInfo.itemNo",
-			bpi.vendor_name AS "skuInfo.vendorName",
-			si.buy_price AS "skuInfo.buyPrice",
-			a.req_qty AS "reqQty",
-			a.recv_qty AS "recvQty",
-			a.send_qty AS "sendQty",
-			a.remark AS "remark",
-			a.status AS "delFlag",
-			a.create_id AS "createBy.id",
-			a.create_time AS "createDate",
-			a.u_version AS "uVersion",
-			a.update_id AS "updateBy.id",
-			a.update_time AS "updateDate",
-		ph.id AS "bizPoHeader.id",
-		ph.order_num AS "bizPoHeader.orderNum",
-		ph.remark AS "bizPoHeader.remark"
+		a.id AS "id",
+		a.header_id AS "requestHeader.id",
+		reheader.req_no AS "requestHeader.reqNo",
+		a.line_no AS "lineNo",
+		a.sku_id AS "skuInfo.id",
+		a.unit_price AS "unitPrice",
+		si.item_no AS "skuInfo.itemNo",
+		bpi.vendor_name AS "skuInfo.vendorName",
+		si.buy_price AS "skuInfo.buyPrice",
+		a.req_qty AS "reqQty",
+		a.recv_qty AS "recvQty",
+		a.send_qty AS "sendQty",
+		a.remark AS "remark",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		<if test="poheaderSource!=null and poheaderSource!=''">
+			ph.id AS "bizPoHeader.id",
+			ph.order_num AS "bizPoHeader.orderNum",
+		</if>
+		bii.name as "invName",
+		bis.stock_qty as "skuInvQty"
 		FROM biz_request_detail a
-			LEFT JOIN biz_request_header reheader ON a.header_id = reheader.id
-			LEFT JOIN biz_sku_info si on si.id= a.sku_id
-			LEFT JOIN biz_product_info bpi ON bpi.id = si.prod_id
-
-			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = reheader.id AND a.line_no = bpor.so_line_no and bpor.so_type=2
+		LEFT JOIN biz_request_header reheader ON a.header_id = reheader.id
+		LEFT JOIN biz_sku_info si on si.id= a.sku_id
+		LEFT JOIN biz_product_info bpi ON bpi.id = si.prod_id
+		<if test="poheaderSource!=null and poheaderSource!=''">
+			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = reheader.id AND a.line_no = bpor.so_line_no and
+			bpor.so_type=2
 			LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1
+		</if>
+		LEFT JOIN biz_inventory_sku bis on bis.sku_id=a.sku_id and bis.status=1
+		LEFT JOIN biz_inventory_info bii on bii.id=bis.inv_id and bii.status=1
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
-			and ph.is_prew=0
+			<if test="poheaderSource!=null and poheaderSource!=''">
+				AND ph.is_prew = 0
+			</if>
 			<if test="skuInfo != null and skuInfo.id!=null and skuInfo.id != ''">
 				AND a.sku_id = #{skuInfo.id}
 			</if>
@@ -294,6 +303,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+				GROUP BY a.id
 			</otherwise>
 		</choose>
 	</select>

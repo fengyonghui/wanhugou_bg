@@ -44,6 +44,12 @@
 			<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>
 				<form:input path="num"  htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
+			<li><span style="margin-left: 10px"><label>起始金额</label></span>
+				<form:input path="startPrice"  htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
+			<li><span style="margin-left: 10px"><label>结束金额</label></span>
+				<form:input path="endPrice"  htmlEscape="false" maxlength="20" class="input-medium"/>
+			</li>
 			<li><label>供应商</label>
 				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${bizPoHeader.vendOffice.id}" labelName="vendOffice.name"
 								labelValue="${bizPoHeader.vendOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
@@ -149,36 +155,39 @@
 				</td>
 				<shiro:hasPermission name="biz:po:bizPoHeader:view">
 					<td>
-						<shiro:hasPermission name="biz:po:bizPoHeader:createPayOrder">
-							<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null
+						<c:if test="${bizPoHeader.bizStatus != 10}">
+							<shiro:hasPermission name="biz:po:bizPoHeader:createPayOrder">
+								<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 							&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
 							}">
-								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
-							</c:if>
-						</shiro:hasPermission>
-						<shiro:hasPermission name="biz:po:bizPoHeader:startAudit">
-							<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
-								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
-							</c:if>
-						</shiro:hasPermission>
-						<shiro:hasPermission name="biz:po:bizPoHeader:audit">
-							<c:if test="${bizPoHeader.commonProcess.id != null
+									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
+								</c:if>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:po:bizPoHeader:startAudit">
+								<c:if test="${bizPoHeader.commonProcess.id == null && bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'}">
+									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=startAudit">开启审核</a>
+								</c:if>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:po:bizPoHeader:audit">
+								<c:if test="${bizPoHeader.commonProcess.id != null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '驳回'
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name != '审批完成'
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.code != payStatus
 							&& (fns:hasRole(roleSet, bizPoHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())
 							}">
-								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
-							</c:if>
-							<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
-						</shiro:hasPermission>
-						<shiro:hasPermission name="biz:po:bizPoHeader:edit">
-							<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
-						</shiro:hasPermission>
-						<shiro:hasPermission name="biz:po:bizPoHeader:view">
-						    <a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
-						</shiro:hasPermission>
+									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=audit">审核</a>
+								</c:if>
+								<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:po:bizPoHeader:edit">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
+								<a onclick="cancel(${bizPoHeader.id});">取消</a>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:po:bizPoHeader:view">
+								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
+							</shiro:hasPermission>
+						</c:if>
 					</td>
 				</shiro:hasPermission>
 			</tr>
@@ -186,5 +195,25 @@
 		</tbody>
 	</table>
 	<div class="pagination">${page}</div>
+<script type="text/javascript">
+    function cancel(id){
+        top.$.jBox.confirm("确认要取消吗？","系统提示",function(v,h,f){
+            if(v=="ok"){
+                $.ajax({
+                    url:"${ctx}/biz/po/bizPoHeader/cancel?id=" + id,
+                    type:"post",
+                    cache:false,
+                    success:function(data){
+                        alert(data);
+                        if (data=="取消采购订单成功"){
+                            window.location.href = "${ctx}/biz/po/bizPoHeader/list";
+                        }
+                    }
+                });
+            }
+        },{buttonsFocus:1});
+        top.$('.jbox-body .jbox-icon').css('top','55px');
+    }
+</script>
 </body>
 </html>

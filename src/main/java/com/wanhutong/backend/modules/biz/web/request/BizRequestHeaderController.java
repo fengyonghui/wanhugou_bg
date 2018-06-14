@@ -6,35 +6,33 @@ package com.wanhutong.backend.modules.biz.web.request;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
-import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
-import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
-import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
-import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
+import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
-import com.wanhutong.backend.modules.biz.service.product.BizProductInfoService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +50,6 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +78,11 @@ public class BizRequestHeaderController extends BaseController {
 	private BizPoHeaderService bizPoHeaderService;
 	@Autowired
 	private BizPoDetailService bizPoDetailService;
+	@Autowired
+	private BizVarietyInfoService bizVarietyInfoService;
+
+	@Autowired
+	private BizOrderStatusService bizOrderStatusService;
 
 	@ModelAttribute
 	public BizRequestHeader get(@RequestParam(required=false) Integer id) {
@@ -97,8 +99,13 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(BizRequestHeader bizRequestHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+		String dataFrom = "biz_request_bizRequestHeader";
+		bizRequestHeader.setDataFrom(dataFrom);
 		Page<BizRequestHeader> page = bizRequestHeaderService.findPage(new Page<BizRequestHeader>(request, response), bizRequestHeader);
         model.addAttribute("page", page);
+        //品类名称
+		List<BizVarietyInfo> varietyInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
+		model.addAttribute("varietyInfoList", varietyInfoList);
 		model.addAttribute("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
 		return "modules/biz/request/bizRequestHeaderList";
@@ -107,29 +114,47 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "form")
 	public String form(BizRequestHeader bizRequestHeader, Model model) {
-
-		List<BizRequestDetail> reqDetailList=Lists.newArrayList();
-		if(bizRequestHeader.getId()!=null){
-			BizRequestDetail bizRequestDetail=new BizRequestDetail();
+		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
+		if (bizRequestHeader.getId() != null) {
+			BizRequestDetail bizRequestDetail = new BizRequestDetail();
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
-			List<BizRequestDetail> requestDetailList=bizRequestDetailService.findPoRequet(bizRequestDetail);
-			for(BizRequestDetail requestDetail:requestDetailList){
-				if(requestDetail.getBizPoHeader()==null){
+			if (!bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.CLOSE.getState()) && bizRequestHeader.getBizStatus() >= ReqHeaderStatusEnum.PURCHASING.getState()) {
+				/* 查询已生成的采购单 标识*/
+				bizRequestDetail.setPoheaderSource("poHeader");
+			}
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
+			for (BizRequestDetail requestDetail : requestDetailList) {
+				if (requestDetail.getBizPoHeader() == null) {
 					bizRequestHeader.setPoSource("poHeaderSource");
 				}
-				BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
 				requestDetail.setSkuInfo(skuInfo);
 				reqDetailList.add(requestDetail);
 			}
-			if(requestDetailList.size()==0){
+			if (requestDetailList.size() == 0) {
 				bizRequestHeader.setPoSource("poHeaderSource");
 			}
 		}
 
-		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr()) ) {
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
 			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
 					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
 			model.addAttribute("requestOrderProcess", requestOrderProcess);
+		}
+
+		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
+			BizOrderStatus bizOrderStatus = new BizOrderStatus();
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizRequestHeader.getId());
+			bizOrderStatus.setOrderHeader(bizOrderHeader);
+			bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+			List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+			statusList.sort((o1, o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
+
+			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+
+			model.addAttribute("statusList", statusList);
+			model.addAttribute("statusMap", statusMap);
 		}
 
 		model.addAttribute("entity", bizRequestHeader);
@@ -209,6 +234,7 @@ public class BizRequestHeaderController extends BaseController {
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
 	@RequestMapping(value = "saveInfo")
 	public boolean saveInfo(BizRequestHeader bizRequestHeader, String checkStatus) {
+		Integer bizStatus = bizRequestHeader.getBizStatus();
 		bizRequestHeader.setBizStatus(Integer.parseInt(checkStatus));
 		boolean boo=false;
 		try {
@@ -232,6 +258,9 @@ public class BizRequestHeaderController extends BaseController {
 				}
 			}
 			bizRequestHeaderService.save(bizRequestHeader);
+			if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
+				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
+			}
 			boo=true;
 		}catch (Exception e){
 			boo=false;

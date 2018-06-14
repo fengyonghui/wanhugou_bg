@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 首页数据配置
+ * 采购单审核数据配置
  *
  * @author ma.qiang
  */

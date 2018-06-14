@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.shelf;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.RoleUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.BizOpShelfSkus;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfInfo;
@@ -18,8 +19,8 @@ import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuV2Service;
 import com.wanhutong.backend.modules.biz.service.shelf.BizShelfUserService;
 import com.wanhutong.backend.modules.biz.service.shelf.BizVarietyFactorService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
-import com.wanhutong.backend.modules.enums.BizOpShelfInfoEnum;
+import com.wanhutong.backend.modules.config.ConfigGeneral;
+import com.wanhutong.backend.modules.config.parse.SystemConfig;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -27,6 +28,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -89,12 +91,14 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
 	@RequestMapping(value = "form")
 	public String form(BizOpShelfSkus bizOpShelfSku, Model model) {
-		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null){
-            BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(bizOpShelfSku.getId());
-            model.addAttribute("bizOpShelfSku",bizOpShelfSku1);
-        }else {
-            model.addAttribute("bizOpShelfSku", bizOpShelfSku);
-        }
+		if (bizOpShelfSku != null && bizOpShelfSku.getId() != null) {
+			BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(bizOpShelfSku.getId());
+			model.addAttribute("bizOpShelfSku", bizOpShelfSku1);
+			List<BizOpShelfSku> bizOpShelfSkuList = bizOpShelfSkuV2Service.findShelfSkuList(bizOpShelfSku1);
+			model.addAttribute("bizOpShelfSkuList", bizOpShelfSkuList);
+		} else {
+			model.addAttribute("bizOpShelfSku", bizOpShelfSku);
+		}
 		model.addAttribute("varietyFactorList",bizVarietyFactorService.findList(new BizVarietyFactor()));
         model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		BizOpShelfInfo opShelfInfo=new BizOpShelfInfo();
@@ -115,6 +119,10 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 			}
 			model.addAttribute("shelfList",list);
 		}
+
+		SystemConfig systemConfig = ConfigGeneral.SYSTEM_CONFIG.get();
+		boolean hasUnderPriceRole = RoleUtils.hasRole(user, systemConfig.getPutawayUnderCostAudit());
+		model.addAttribute("hasUnderPriceRole", hasUnderPriceRole || user.isAdmin());
 
 		return "modules/biz/shelf/bizOpShelfSkuFormV2";
 	}
@@ -216,29 +224,25 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:view")
 	@ResponseBody
 	@RequestMapping(value = "findOpShelfSku")
-	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku){
-		AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
-		List<BizOpShelfSku> list=null;
-		boolean emptyName = bizOpShelfSku.getSkuInfo().getName().isEmpty();//商品名称
-		boolean emptyPart = bizOpShelfSku.getSkuInfo().getPartNo().isEmpty();//商品编码
-		boolean emptyItemNo = bizOpShelfSku.getSkuInfo().getItemNo().isEmpty();//商品货号
-		if(emptyName==true && emptyPart==true && emptyItemNo==true){
-			System.out.println("为空 不查询sku商品");
-		}else {
-			list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+	public List<BizOpShelfSku> findOpShelfSku(BizOpShelfSku bizOpShelfSku) {
+        AttributeValueV2 bizSkuPropValue = new AttributeValueV2();//sku商品属性表
+        if (bizOpShelfSku.getSkuInfo().getName().isEmpty() && bizOpShelfSku.getSkuInfo().getPartNo().isEmpty() && bizOpShelfSku.getSkuInfo().getItemNo().isEmpty()) {
+            logger.info("修改订单详情和添加、修改备货单时，需要添加商品，由于未输入查询条件，导致不查询商品，点击查询没反应");
+			return null;
 		}
-		if(list!=null){
-			for (BizOpShelfSku skuValue : list) {
-				bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
-				bizSkuPropValue.setObjectName("biz_sku_info");
-				List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
-				if(skuValueList.size()!=0){
-					skuValue.setSkuValueList(skuValueList);
-				}
-			}
-		}
-		return 	list;
-	}
+		List<BizOpShelfSku> list = bizOpShelfSkuV2Service.findList(bizOpShelfSku);
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (BizOpShelfSku skuValue : list) {
+                bizSkuPropValue.setObjectId(skuValue.getSkuInfo().getId());//sku_Id
+                bizSkuPropValue.setObjectName("biz_sku_info");
+                List<AttributeValueV2> skuValueList = attributeValueService.findList(bizSkuPropValue);
+                if (skuValueList.size() != 0) {
+                    skuValue.setSkuValueList(skuValueList);
+                }
+            }
+        }
+        return list;
+    }
 
     /**
      * 根据商品ID查询上架商品
@@ -329,6 +333,11 @@ public class BizOpShelfSkuV2Controller extends BaseController {
 		String[] skuIdArr = skuInfoIds.split(",");
 		String[] maxQtyArr = maxQtys.split(",");
 		String[] minQtyArr = minQtys.split(",");
+		if (shelfSkuId != null && !shelfSkuId.equals("")) {
+			BizOpShelfSku bizOpShelfSku1 = bizOpShelfSkuV2Service.get(shelfSkuId);
+			Integer opShelfInfoId = bizOpShelfSku1.getOpShelfInfo().getId();
+			shelfInfoIds = String.valueOf(opShelfInfoId);
+		}
 		String[] shelfs = shelfInfoIds.split(",");
 		for (int j = 0; j < shelfs.length; j++) {
 			for (int i = 0; i < skuIdArr.length; i++) {

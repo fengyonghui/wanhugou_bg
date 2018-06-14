@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.ProdTypeEnum" %>
 <html>
 <head>
 	<title>商品管理</title>
@@ -25,9 +26,9 @@
                         data:"id="+a+"&sign="+b+"&productInfo.prodType="+c,
                         success:function(data){
 							if(data=="opSheSku"){
-								alert("商品上下架还有该商品sku，不能删除 ");
+								alert("该商品sku在上下架存在，不能删除！ ");
 							}else if(data=="invSku"){
-								alert("库存盘点还有该商品sku，不能删除 ");
+								alert("该商品sku在库存盘点里存在，不能删除！ ");
 							}else{
 								$("#messDele").css("display","block");
 								<%--使用setTimeout（）方法设定定时600毫秒--%>
@@ -62,9 +63,11 @@
             <li><label>商品名称：</label>
                 <form:input path="name" htmlEscape="false" maxlength="100" class="input-medium"/>
             </li>
+			<c:if test="${prodType == ProdTypeEnum.PROD.type}">
 			<li><label>商品编码：</label>
 				<form:input path="partNo" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
+			</c:if>
 			<li><label>商品货号：</label>
 				<form:input path="itemNo" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
@@ -92,11 +95,14 @@
 				<th>商品名称</th>
 				<th>商品类型</th>
 				<th>产品名称</th>
-				<th>商品编码</th>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
+					<th>商品编码</th>
+				</c:if>
 				<th>商品货号</th>
 				<th>供应商</th>
 				<%--<th>创建人</th>--%>
 				<th>工厂价格</th>
+				<th>商品下单量</th>
 				<th>创建时间</th>
 				<th>更新人</th>
 				<%--<th>更新时间</th>--%>
@@ -121,10 +127,12 @@
 					<td><a href="${ctx}/biz/product/bizProductInfoV2/form?id=${bizSkuInfo.productInfo.id}&prodType=${prodType}">
 						${bizSkuInfo.productInfo.name}
 					</a></td>
+				<c:if test="${prodType == ProdTypeEnum.PROD.type}">
 				    <td>
 						<input name="partNo" value="${bizSkuInfo.partNo}" type="hidden"/>
 						${bizSkuInfo.partNo}
 					</td>
+				</c:if>
 					<td>
 						<input name="itemNo" value="${bizSkuInfo.itemNo}" type="hidden"/>
 							${bizSkuInfo.itemNo}
@@ -135,6 +143,21 @@
 					<td>
 						<input name="buyPrice" value="${bizSkuInfo.buyPrice}" type="hidden"/>
 						${bizSkuInfo.buyPrice}
+					</td>
+					<td>
+						<c:if test="${bizSkuInfo.orderCount !=0}">
+							<c:choose>
+								<c:when test="${bizSkuInfo.itemNo !=null}">
+									<a href="${ctx}/biz/order/bizOrderHeader/list?skuChickCount=orderCick_count&partNo=${bizSkuInfo.partNo}">
+										${bizSkuInfo.orderCount}
+									</a>
+								</c:when>
+								<c:otherwise>${bizSkuInfo.orderCount}</c:otherwise>
+							</c:choose>
+						</c:if>
+						<c:if test="${bizSkuInfo.orderCount ==0}">
+							${bizSkuInfo.orderCount}
+						</c:if>
 					</td>
 					<%--<td>--%>
 						<%--${bizSkuInfo.createBy.id}--%>

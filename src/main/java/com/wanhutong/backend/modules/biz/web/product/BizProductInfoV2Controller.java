@@ -16,7 +16,9 @@ import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.dto.SkuProd;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
+import com.wanhutong.backend.modules.biz.entity.product.BizProdViewLog;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -24,17 +26,22 @@ import com.wanhutong.backend.modules.biz.service.category.BizCategoryInfoService
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
+import com.wanhutong.backend.modules.biz.service.product.BizProdViewLogService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoForVendorService;
 import com.wanhutong.backend.modules.biz.service.product.BizProductInfoV2Service;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.enums.SkuTypeEnum;
 import com.wanhutong.backend.modules.enums.TagInfoEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeInfoV2;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeInfoV2Service;
 import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Service;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
@@ -92,6 +99,10 @@ public class BizProductInfoV2Controller extends BaseController {
     private BizOpShelfSkuService bizOpShelfSkuService;
     @Autowired
     private BizInventorySkuService bizInventorySkuService;
+    @Autowired
+    private SystemService systemService;
+    @Autowired
+    private BizProdViewLogService bizProdViewLogService;
 
     @ModelAttribute
     public BizProductInfo get(@RequestParam(required = false) Integer id) {
@@ -104,7 +115,7 @@ public class BizProductInfoV2Controller extends BaseController {
             Collections.reverse(skuInfosList);
 
             skuInfosList.forEach(o -> {
-                Map<String, List<AttributeValueV2>> attMap = Maps.newHashMap();
+                Map<String, ArrayList<AttributeValueV2>> attMap = Maps.newHashMap();
                 AttributeValueV2 attributeValueV2 = new AttributeValueV2();
                 attributeValueV2.setObjectName(BizProductInfoV2Service.SKU_TABLE);
                 attributeValueV2.setObjectId(o.getId());
@@ -130,8 +141,27 @@ public class BizProductInfoV2Controller extends BaseController {
     @RequestMapping(value = {"list", ""})
     public String list(BizProductInfo bizProductInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
         Page<BizProductInfo> page = bizProductInfoService.findPage(new Page<BizProductInfo>(request, response), bizProductInfo);
+        BizProdViewLog prodViewLog = new BizProdViewLog();
+        for(int i=0;i<page.getList().size();i++){
+            prodViewLog.setProductInfo(page.getList().get(i));
+            List<BizProdViewLog> prodView = bizProdViewLogService.findProdView(prodViewLog);
+            page.getList().get(i).setOrderCount(prodView.size());
+            if(prodView.size()!=0){
+                page.getList().get(i).setProdVice(prodView.get(0).getProdChick());
+                page.getList().get(i).setSkuItemNo(prodView.get(0).getSkuItemNo());
+            }else{
+                page.getList().get(i).setProdVice(0);
+            }
+        }
         model.addAttribute("page", page);
         model.addAttribute("prodType",bizProductInfo.getProdType());
+        //品类主管
+        Role role = new Role();
+        role.setName(RoleEnNameEnum.SELECTIONOFSPECIALIST.getState());
+        User user = new User();
+        user.setRole(role);
+        List<User> users = systemService.userSelectCompany(user);
+        model.addAttribute("usersList", users);
         return "modules/biz/product/bizProductInfoListV2";
     }
 
@@ -183,7 +213,7 @@ public class BizProductInfoV2Controller extends BaseController {
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();
         List<AttributeInfoV2> skuTagInfos = Lists.newArrayList();
-        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findList(new AttributeInfoV2());
+        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findVList();
         Dict dict = new Dict();
 
         AttributeValueV2 attributeValue = new AttributeValueV2();
@@ -348,7 +378,7 @@ public class BizProductInfoV2Controller extends BaseController {
 
         List<AttributeInfoV2> tagInfos = Lists.newArrayList();
         List<AttributeInfoV2> skuTagInfos = Lists.newArrayList();
-        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findList(new AttributeInfoV2());
+        List<AttributeInfoV2> tagInfoList = attributeInfoV2Service.findVList();
         Dict dict = new Dict();
 
         AttributeValueV2 attributeValue = new AttributeValueV2();

@@ -1,25 +1,10 @@
 package com.wanhutong.backend.common.utils.excel;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.wanhutong.backend.common.utils.Encodes;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 public class ExportExcelUtils {
 
@@ -89,7 +74,7 @@ public class ExportExcelUtils {
                 int cellIndex = 0;
                 for (String str : m) {
                     Cell cell = row.createCell(cellIndex);
-                    cell.setCellValue(str.toString());
+                    cell.setCellValue(str);
                     cellIndex++;
                 }
                 index++;

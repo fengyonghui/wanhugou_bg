@@ -22,29 +22,34 @@
                         return;
                     }
                     var tt="";
+                    var total = 0;
                     $('input:checkbox:checked').each(function(i) {
                         var t= $(this).val();
                         var detail="";
                         var num ="";
                         var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
+                        sObj.each(function (index) {
+                            total+= parseInt($(this).val());
+                        })
                         $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
                             detail+=$(this).val()+"-"+sObj[i].value+"*";
 
-                        });
+						});
                         tt+=t+"#"+detail+",";
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    $("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>")
-
-                    if(window.confirm('你确定要发货吗？')){
+                    if (tt != '') {
+                    	$("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
+                    }
+                    if(window.confirm('你确定要发货吗？') && total > 0){
                         // alert("确定");
                         form.submit();
                         return true;
                         loading('正在提交，请稍等...');
 
                     }else{
-                        //alert("取消");
+                        alert("请勾选发货内容");
                         return false;
                     }
 				},
@@ -183,7 +188,7 @@
 		<div class="control-group">
 			<label class="control-label">物流信息图：</label>
 			<div class="controls">
-				<input type="hidden" id="imgUrl" name="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
+				<form:hidden path="imgUrl" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 				<sys:ckfinder input="imgUrl" type="images" uploadPath="/logistics/info" selectMultiple="false" maxWidth="100"
 							  maxHeight="100"/>
 			</div>
@@ -215,16 +220,27 @@
 				<%--<span class="help-inline"><font color="red">*</font> </span>--%>
 			<%--</div>--%>
 		<%--</div>--%>
-		<div class="control-group">
-			<label class="control-label">发货人：</label>
-			<div class="controls">
-				<form:select about="choose" path="carrier" class="input-medium required">
-					<form:option value="" label="请选择"/>
-					<form:options items="${userList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
-				</form:select>
-				<span class="help-inline"><font color="red">*</font> </span>
+		<c:if test="${userList==null}">
+			<div class="control-group">
+				<label class="control-label">发货人：</label>
+				<div class="controls">
+					<form:input about="choose" readonly="true" path="carrier" class="input-medium required"/>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
 			</div>
-		</div>
+		</c:if>
+		<c:if test="${userList!=null}">
+			<div class="control-group">
+				<label class="control-label">发货人：</label>
+				<div class="controls">
+					<form:select about="choose" path="carrier" class="input-medium required">
+						<form:option value="" label="请选择"/>
+						<form:options items="${userList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+					</form:select>
+					<span class="help-inline"><font color="red">*</font> </span>
+				</div>
+			</div>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">发货时间：</label>
 			<div class="controls">

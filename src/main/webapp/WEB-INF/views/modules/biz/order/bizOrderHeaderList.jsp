@@ -67,19 +67,30 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-	<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
-		<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a></li>
-	</c:if>
-	<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-		<li class="active"><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}">订单信息列表</a></li>
-		<%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>--%>
-	</c:if>
+	<c:choose>
+		<c:when test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
+			<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?partNo=${bizOrderHeader.partNo}&skuChickCount=${bizOrderHeader.skuChickCount}">订单信息列表</a></li>
+		</c:when>
+		<c:otherwise>
+			<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
+				<li class="active"><a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a></li>
+			</c:if>
+			<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+				<li class="active"><a href="${ctx}/biz/order/bizOrderHeader?statu=${statu}">订单信息列表</a></li>
+				<%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit"><li><a href="${ctx}/biz/order/bizOrderHeader/form">订单信息添加</a></li></shiro:hasPermission>--%>
+			</c:if>
+		</c:otherwise>
+	</c:choose>
 </ul>
 <form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader?statu=${statu}" method="post" class="breadcrumb form-search">
 	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+	<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
+		<input type="hidden" name="skuChickCount" value="${bizOrderHeader.skuChickCount}"/>
+		<input type="hidden" name="partNo" value="${bizOrderHeader.partNo}"/>
+	</c:if>
 	<form:hidden path="consultantId"/>
 	<ul class="ul-form">
 		<li><label>订单编号：</label>
@@ -120,12 +131,12 @@
 			<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
 		</li>
 		<li><label>创建日期：</label>
-			<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-				   value="<fmt:formatDate value="${bizOrderHeader.ordrHeaderStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+			<input name="orderCreatStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${bizOrderHeader.orderCreatStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 			至
-			<input name="orderHeaderEedTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-				   value="<fmt:formatDate value="${bizOrderHeader.orderHeaderEedTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+			<input name="orderCreatEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+				   value="<fmt:formatDate value="${bizOrderHeader.orderCreatEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 				   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
 		</li>
         <li><label>客户专员：</label>
@@ -140,15 +151,29 @@
                    value="<fmt:formatDate value="${bizOrderHeader.orderUpdaEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
         </li>
+		<c:if test="${statu == 'unline'}">
+			<li><label>审核状态:</label>
+				<select name="examine" class="input-medium">
+					<option value="0">请选择</option>
+					<option value="1">审核完成</option>
+					<option value="2">未审核完成</option>
+				</select>
+			</li>
+		</c:if>
 		<li><label>测试数据</label>
 			<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
 		</li>
 		<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 		<li class="btns"><input id="buttonExport" class="btn btn-primary" type="button" value="导出"/></li>
+		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
+			<li class="btns"><input class="btn" type="button" value="返回商品信息管理" onclick="location.href='${ctx}/biz/sku/bizSkuInfo?productInfo.prodType=1'"/></li>
+		</c:if>
+		<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'prodCick_count'}">
+			<li class="btns"><input class="btn" type="button" value="返回产品信息管理" onclick="location.href='${ctx}/biz/product/bizProductInfoV2?prodType=1'"/></li>
+		</c:if>
 		<c:if test="${bizOrderHeader.flag=='check_pending'}">
 			<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
 		</c:if>
-
 		<li class="clearfix"></li>
 	</ul>
 </form:form>
@@ -171,6 +196,7 @@
 		<th>发票状态</th>
 		<th>业务状态</th>
 		<th>订单来源</th>
+		<th>备&nbsp;&nbsp;注</th>
 		<th>创建人</th>
 		<th>创建时间</th>
 		<th>更新时间</th>
@@ -229,12 +255,15 @@
 					<a style="display: none">
 					<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 					</a>
-			<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && total != orderHeader.receiveTotal}">
+				<c:if test="${total > orderHeader.receiveTotal && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45}">
 					<font color="#FF0000">(有尾款)</font>
 				</c:if>
 			</td>
 			<td>
 					${orderHeader.platformInfo.name}
+			</td>
+			<td>
+					${orderHeader.orderComment.comments}
 			</td>
 			<td>
 					${orderHeader.createBy.name}
@@ -262,6 +291,7 @@
 								审核失败
 								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
 							</c:if></a>
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">详情</a>
 						<c:if test="${orderHeader.bizStatus!=0 && orderHeader.bizStatus!=5 && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=15 && orderHeader.bizStatus!=45}">
 							${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知状态')}
 						</c:if>
@@ -289,6 +319,7 @@
 				</c:if >
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 					<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=detail">详情</a>
 						<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
 					</c:if>
 				</shiro:hasPermission>

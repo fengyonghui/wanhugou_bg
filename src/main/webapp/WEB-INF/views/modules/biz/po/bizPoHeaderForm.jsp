@@ -6,7 +6,7 @@
     <script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
     <meta name="decorator" content="default"/>
     <style type="text/css">
-        .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;height:200px;border-top:1px solid #FFF;width: 100%}
+        .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;border-top:1px solid #FFF;width: 100%}
         .help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
         .help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
         .help_step_set{background: #FFF;color: #3daae9;}
@@ -380,7 +380,7 @@
                 </div>
             </div>
             <div class="control-group prewTimeTotal">
-                <label class="control-label">本次申请付款时间：</label>
+                <label class="control-label">最后付款时间：</label>
                 <div class="controls">
                     <input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
                            class="input-medium Wdate required"
@@ -411,7 +411,7 @@
                 </label>
 
                 <div class="controls">
-                    <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" id="payImg"/>
+                    <input class="btn" type="file" name="productImg" onchange="submitPic('payImg', true)" value="上传图片" multiple="multiple" id="payImg"/>
                 </div>
                 <div id="payImgDiv">
                     <img src="${bizPoHeader.bizPoPaymentOrder.img}" customInput="payImgImg" style='width: 100px' onclick="$(this).remove();">
@@ -435,6 +435,7 @@
     </c:if>
     <c:if test="${fn:length(bizPoHeader.commonProcessList) > 0}">
     <div class="control-group">
+        <label class="control-label">审批流程：</label>
         <div class="controls help_wrap">
             <div class="help_step_box fa">
                 <c:forEach items="${bizPoHeader.commonProcessList}" var="v" varStatus="stat">
@@ -816,7 +817,7 @@
         var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
         var img = "";
         for (var i = 0; i < mainImg.length; i ++) {
-            img += $(mainImg[i]).attr("src");
+            img += $(mainImg[i]).attr("src") + ",";
         }
 
         if ($String.isNullOrBlank(payTotal)) {

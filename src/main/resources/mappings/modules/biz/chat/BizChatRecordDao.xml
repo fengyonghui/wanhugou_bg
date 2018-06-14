@@ -47,6 +47,24 @@
 			<if test="user != null and user.id != null and user.id != ''">
 				AND a.user_id = #{user.id}
 			</if>
+			<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+				AND a.create_time &lt;= #{ordrHeaderStartTime}
+			</if>
+			<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+				AND a.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+			</if>
+			<if test="office != null and office.type != null and office.type != ''">
+				AND so.type = #{office.type}
+			</if>
+			<if test="user != null and user.name != null and user.name != ''">
+				AND su.name like
+				<if test="dbName == 'oracle'">'%'||#{user.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{user.name},'%')</if>
+			</if>
+			<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+				${sqlMap.chat}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

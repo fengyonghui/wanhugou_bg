@@ -3,15 +3,6 @@
  */
 package com.wanhutong.backend.modules.sys.entity;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
@@ -21,6 +12,14 @@ import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
 import com.wanhutong.backend.common.utils.Collections3;
 import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.common.utils.excel.fieldtype.RoleListType;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 用户Entity
@@ -67,9 +66,17 @@ public class User extends DataEntity<User> {
 	private Integer ccStatus;
 
 	/**
-	 * 会员搜索查看 采购商的下单相关信息
+	 * 会员搜索查看 采购商的下单相关信息，品类主管的商品统计
 	 * */
 	private BizOrderHeader userOrder;
+	private String ordrHeaderStartTime;//日期查询
+	private String orderHeaderEedTime;//日期查询
+	private BizVarietyInfo varietyInfoId;
+
+	/**
+	 * 用户作为主负责人所属的供应商
+	 */
+	private Office vendor;
 
 	public String getConn() {
 		return conn;
@@ -357,7 +364,7 @@ public class User extends DataEntity<User> {
 	}
 	
 	public static boolean isAdmin(Integer id){
-		return id != null && (1==id || 16==id);
+		return id != null && (1==id);
 	}
 
 	public Integer getConsultantId() {
@@ -398,5 +405,37 @@ public class User extends DataEntity<User> {
 
 	public void setUserOrder(BizOrderHeader userOrder) {
 		this.userOrder = userOrder;
+	}
+
+	public Office getVendor() {
+		return vendor;
+	}
+
+	public void setVendor(Office vendor) {
+		this.vendor = vendor;
+	}
+
+	public BizVarietyInfo getVarietyInfoId() {
+		return varietyInfoId;
+	}
+
+	public void setVarietyInfoId(BizVarietyInfo varietyInfoId) {
+		this.varietyInfoId = varietyInfoId;
+	}
+
+	public String getOrdrHeaderStartTime() {
+		return ordrHeaderStartTime;
+	}
+
+	public void setOrdrHeaderStartTime(String ordrHeaderStartTime) {
+		this.ordrHeaderStartTime = ordrHeaderStartTime;
+	}
+
+	public String getOrderHeaderEedTime() {
+		return orderHeaderEedTime;
+	}
+
+	public void setOrderHeaderEedTime(String orderHeaderEedTime) {
+		this.orderHeaderEedTime = orderHeaderEedTime;
 	}
 }

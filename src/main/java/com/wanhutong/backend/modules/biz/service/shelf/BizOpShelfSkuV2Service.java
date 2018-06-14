@@ -110,4 +110,7 @@ public class BizOpShelfSkuV2Service extends CrudService<BizOpShelfSkuV2Dao, BizO
         }
 	}
 
+	public List<BizOpShelfSku> findShelfSkuList(BizOpShelfSku bizOpShelfSku) {
+		return bizOpShelfSkuV2Dao.findShelfSkuList(bizOpShelfSku);
+	}
 }

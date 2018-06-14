@@ -24,6 +24,7 @@ import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
@@ -33,15 +34,13 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
@@ -63,7 +62,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 采购订单表Controller
@@ -101,6 +106,8 @@ public class BizPoHeaderController extends BaseController {
     private DictService dictService;
     @Autowired
     private CommonProcessService commonProcessService;
+    @Autowired
+    private BizOrderStatusService bizOrderStatusService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
 
@@ -137,7 +144,7 @@ public class BizPoHeaderController extends BaseController {
 //			List<Map<String,Integer>> poOrderReqs= Lists.newArrayList();
             BizOrderDetail bizOrderDetail = new BizOrderDetail();
             BizRequestDetail bizRequestDetail = new BizRequestDetail();
-            Map<Integer, List<BizPoOrderReq>> map = new HashMap<>();
+            Map<Integer, ArrayList<BizPoOrderReq>> map = new HashMap<>();
             Map<String, Integer> mapSource = new HashMap<>();
             for (BizPoOrderReq poOrderReq : poOrderReqList) {
                 if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())) {
@@ -158,7 +165,7 @@ public class BizPoHeaderController extends BaseController {
                         BizOrderDetail orderDetail = bizOrderDetailList.get(0);
                         Integer key = orderDetail.getSkuInfo().getId();
                         if (map.containsKey(key)) {
-                            List<BizPoOrderReq> bizPoOrderReqList = map.get(key);
+                            ArrayList<BizPoOrderReq> bizPoOrderReqList = map.get(key);
 
                             map.remove(key);
 
@@ -167,7 +174,7 @@ public class BizPoHeaderController extends BaseController {
                             bizPoOrderReqList.add(poOrderReq);
                             map.put(orderDetail.getSkuInfo().getId(), bizPoOrderReqList);
                         } else {
-                            List<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
+                            ArrayList<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
                             String orderNumStr = bizOrderHeader.getOrderNum();
                             poOrderReq.setOrderNumStr(orderNumStr);
                             bizPoOrderReqList.add(poOrderReq);
@@ -194,7 +201,7 @@ public class BizPoHeaderController extends BaseController {
                         Integer key = requestDetail.getSkuInfo().getId();
                         if (map.containsKey(key)) {
 
-                            List<BizPoOrderReq> bizPoOrderReqList = map.get(key);
+                            ArrayList<BizPoOrderReq> bizPoOrderReqList = map.get(key);
                             map.remove(key);
                             poOrderReq.setOrderNumStr(bizRequestHeader.getReqNo());
                             bizPoOrderReqList.add(poOrderReq);
@@ -203,7 +210,7 @@ public class BizPoHeaderController extends BaseController {
                         } else {
                             String orderNumStr = bizRequestHeader.getReqNo();
                             poOrderReq.setOrderNumStr(orderNumStr);
-                            List<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
+                            ArrayList<BizPoOrderReq> bizPoOrderReqList = Lists.newArrayList();
                             bizPoOrderReqList.add(poOrderReq);
                             map.put(requestDetail.getSkuInfo().getId(), bizPoOrderReqList);
                         }
@@ -229,8 +236,15 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user = UserUtils.getUser();
+        List<Role> roleList = user.getRoleList();
+        Role role = new Role();
+        role.setEnname(RoleEnNameEnum.SUPPLY_CHAIN.getState());
+        if (roleList.contains(role)) {
+            bizPoHeader.setVendOffice(user.getCompany());
+        }
+
         Page<BizPoHeader> page = bizPoHeaderService.findPage(new Page<BizPoHeader>(request, response), bizPoHeader);
-        List<Role> roleList = UserUtils.getUser().getRoleList();
         Set<String> roleSet = Sets.newHashSet();
         Set<String> roleEnNameSet = Sets.newHashSet();
         for (Role r : roleList) {
@@ -306,7 +320,14 @@ public class BizPoHeaderController extends BaseController {
     @RequestMapping(value = "audit")
     @ResponseBody
     public String audit(int id, String currentType, int auditType, String description) {
-        return bizPoHeaderService.audit(id, currentType, auditType, description);
+        return bizPoHeaderService.auditPo(id, currentType, auditType, description);
+    }
+
+    @RequiresPermissions("biz:po:bizpopaymentorder:bizPoPaymentOrder:audit")
+    @RequestMapping(value = "auditPay")
+    @ResponseBody
+    public String auditPay(int id, String currentType, int auditType, String description, BigDecimal money) {
+        return bizPoHeaderService.auditPay(id, currentType, auditType, description, money);
     }
 
 
@@ -336,7 +357,11 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeader.setOrderNum(poNo);
         bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
         bizPoHeader.setIsPrew("prew".equals(prewStatus) ? 1 : 0);
+        Integer id = bizPoHeader.getId();
         bizPoHeaderService.save(bizPoHeader);
+        if (id == null) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
         if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
             poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deOfifceId, bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
             bizPoHeader.setOrderNum(poNo);
@@ -418,10 +443,6 @@ public class BizPoHeaderController extends BaseController {
                             poDetail.setPoHeader(poHeader);
                         }
                     }
-                    CommonProcessEntity processEntity = new CommonProcessEntity();
-                    processEntity.setObjectId(poHeader.getId().toString());
-                    processEntity.setObjectName("biz_po_payment_order");
-                    List<CommonProcessEntity> processEntityList = commonProcessService.findList(processEntity);
                     for (BizPoDetail poDetail:poDetailList) {
                         List<String> headerListData = new ArrayList();
                         //采购单遍历
@@ -442,19 +463,22 @@ public class BizPoHeaderController extends BaseController {
                         Dict dict = new Dict();
                         dict.setType("biz_po_status");
                         List<Dict> dictList = dictService.findList(dict);
+                        String str = "";
                         for (Dict bizDict : dictList) {
                             if (bizDict.getValue().equals(String.valueOf(poHeader.getBizStatus()))) {
                                 //业务状态
-                                headerListData.add(String.valueOf(bizDict.getLabel()));
+                                str = bizDict.getLabel();
+//                                headerListData.add(String.valueOf(bizDict.getLabel()));
                                 break;
                             }
                         }
+                        headerListData.add(str);
 //                    //采购单来源
 //                    headerListData.add(String.valueOf());
                         //审核状态
-                        if (processEntityList != null && !processEntityList.isEmpty()) {
-                            CommonProcessEntity entity = processEntityList.get(processEntityList.size()-1);
-                            headerListData.add(entity.getPurchaseOrderProcess().getName()==null?"当前无审批流程":entity.getPurchaseOrderProcess().getName());
+                        CommonProcessEntity commonProcessEntity = commonProcessService.get(poHeader.getProcessId());
+                        if (commonProcessEntity != null) {
+                            headerListData.add(commonProcessEntity.getPurchaseOrderProcess().getName()==null?"当前无审批流程":commonProcessEntity.getPurchaseOrderProcess().getName());
                         }else {
                             headerListData.add("当前无审批流程");
                         }
@@ -528,11 +552,20 @@ public class BizPoHeaderController extends BaseController {
             workbook.dispose();
             return null;
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("可能没有采购单详情",e);
             addMessage(redirectAttributes, "导出采购单数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/po/bizPoHeader/list";
 
     }
 
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "cancel")
+    @ResponseBody
+    public String cancel(int id, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        bizPoHeaderService.updateBizStatus(id, BizPoHeader.BizStatus.CANCEL);
+        bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), id);
+        return "取消采购订单成功";
+    }
 }

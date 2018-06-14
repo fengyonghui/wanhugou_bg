@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.entity.request;
 
 import com.google.common.collect.Lists;
+import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -16,7 +17,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.validation.constraints.NotNull;
-import com.wanhutong.backend.modules.sys.entity.User;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -42,6 +42,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 备货清单查看 已生成的采购单
 	 * */
 	private String poSource;
+	/**
+	 * 备货清单的 备货商品数量
+	 * */
+	private Integer ordCount;
 
 	private String skuIds;
 	private String reqDetailIds;
@@ -69,6 +73,11 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * */
 	private String remarkReject;
 
+	/**
+	 * 品类 id
+	 * */
+	private BizVarietyInfo varietyInfo;
+
 	private List<BizRequestDetail> requestDetailList;
 
 	private List<BizPoDetail> poDetailList;
@@ -86,6 +95,8 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	private String recvQtys;
 
 	private CommonProcessEntity commonProcess;
+
+	private String dataFrom; //数据属于哪个页面
 
 	public BizRequestHeader() {
 		super();
@@ -400,5 +411,29 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setPoSource(String poSource) {
 		this.poSource = poSource;
+	}
+
+	public String getDataFrom() {
+		return dataFrom;
+	}
+
+	public void setDataFrom(String dataFrom) {
+		this.dataFrom = dataFrom;
+	}
+
+	public BizVarietyInfo getVarietyInfo() {
+		return varietyInfo;
+	}
+
+	public void setVarietyInfo(BizVarietyInfo varietyInfo) {
+		this.varietyInfo = varietyInfo;
+	}
+
+	public Integer getOrdCount() {
+		return ordCount;
+	}
+
+	public void setOrdCount(Integer ordCount) {
+		this.ordCount = ordCount;
 	}
 }

@@ -8,8 +8,14 @@
 <head>
     <title>订单信息管理</title>
     <meta name="decorator" content="default"/>
-    <%--<script type="text/javascript" src="D:\IDEA_BatisJect\wanhugou_bg\src\main\webapp\static\ckeditor\_source\core\keyboard.js">
-    </script>&lt;%&ndash;用于键盘Bcackspace回退BUG问题&ndash;%&gt;--%>
+    <style type="text/css">
+        .help_step_box{background: rgba(255, 255, 255, 0.45);overflow:hidden;border-top:1px solid #FFF;width: 100%}
+        .help_step_item{margin-right: 30px;width:200px;border:1px #3daae9 solid;float:left;height:150px;padding:0 25px 0 45px;cursor:pointer;position:relative;font-size:14px;font-weight:bold;}
+        .help_step_num{width:19px;height:120px;line-height:100px;position:absolute;text-align:center;top:18px;left:10px;font-size:16px;font-weight:bold;color: #239df5;}
+        .help_step_set{background: #FFF;color: #3daae9;}
+        .help_step_set .help_step_left{width:8px;height:100px;position:absolute;left:0;top:0;}
+        .help_step_set .help_step_right{width:8px;height:100px; position:absolute;right:-8px;top:0;}
+    </style>
     <script type="text/javascript">
         <%--用于页面按下键盘Backspace键回退页面的问题--%>
         <%--处理键盘事件 禁止后退键（Backspace）密码或单行、多行文本框除外   --%>
@@ -42,7 +48,6 @@
         document.onkeypress=banBackSpace;
         <%--禁止后退键 作用于IE、Chrome--%>
         document.onkeydown=banBackSpace;
-
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -61,11 +66,13 @@
                         url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
                         data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
                         success:function (data) {
-                            if (data == "error") {
+                            if (data == "serviceCharge") {
                                 alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
-                            } else if (data == "first"){
-                                alert("首单优惠不能低于出厂价，请修改调整金额");
-                            }else {
+                            } else if (data == "orderLoss") {
+                                alert("优惠后订单金额不能低于出厂价，请修改调整金额");
+                            } else if (data == "orderLowest") {
+                                alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
+                            } else {
                                 loading('正在提交，请稍等...');
                                 form.submit();
                             }
@@ -248,29 +255,6 @@
         }
     </script>
     <script type="text/javascript">
-        <%--function btnOrder(){--%>
-            <%--var button=$("#btnOrderButton").disabled=true;--%>
-            <%--var buttonText=$("#payMentOne").val();--%>
-            <%--if(buttonText==""){--%>
-                <%--alert("内容不能为空");--%>
-                <%--button=$("#btnOrderButton").disabled=false;--%>
-                <%--return false;--%>
-            <%--}--%>
-            <%--$.ajax({--%>
-                <%--type:"post",--%>
-                <%--url:"${ctx}/biz/order/bizOrderHeader/saveOrderHeader?payMentOne="+$("#payMentOne").val()+"&tobePaid=${entity.tobePaid}",--%>
-                <%--data:{id:$("#id").val()},--%>
-                <%--success:function(data){--%>
-                    <%--if(data=="ok"){--%>
-                        <%--alert("支付成功！");--%>
-                        <%--window.location.href="${ctx}/biz/order/bizOrderHeader/";--%>
-                    <%--}else{--%>
-                        <%--alert(" 余额不足，支付失败！");--%>
-                        <%--window.location.reload();--%>
-                    <%--}--%>
-                <%--}--%>
-            <%--});--%>
-        <%--}--%>
         function updateMoney() {
             if(confirm("确定修改价钱吗？")){
                 var totalExp=$("#totalExp").val();
@@ -318,6 +302,7 @@
                             window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
                         }else{
                             alert(" 发货失败 ");
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
                         }
                     }
                 });
@@ -333,6 +318,7 @@
                             window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
                         }else{
                             alert(" 发货失败 ");
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}";
                         }
                     }
                 });
@@ -392,8 +378,7 @@
     <div class="control-group">
         <label class="control-label">订单编号：</label>
         <div class="controls">
-            <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30"
-                        class="input-xlarge"/>
+            <form:input path="orderNum" disabled="true" placeholder="由系统自动生成" htmlEscape="false" maxlength="30" class="input-xlarge"/>
         </div>
     </div>
     <div class="control-group">
@@ -405,12 +390,10 @@
                                 notAllowSelectParent="true"
                                 title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge"
                                 allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息"/>
-                <c:if test="${entity.orderDetails eq 'details'}">
                     <c:if test="${orderCenter.centers !=null }">
                         该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
                         客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
                     </c:if>
-                </c:if>
             </c:if>
             <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                 <sys:treeselect id="office" name="customer.id" value="${entity2.customer.id}" labelName="customer.name"
@@ -418,6 +401,10 @@
                                 notAllowSelectParent="true"
                                 title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-xlarge required"
                                 allowClear="${office.currentUser.admin}" onchange="clickBut();" dataMsgRequired="必填信息"/>
+                    <c:if test="${orderCenter.centers !=null }">
+                        该经销店的采购中心： <font color="#04B404">${orderCenter.centers.name}</font>，
+                        客户专员：<font color="#04B404">${orderCenter.consultants.name}(${orderCenter.consultants.mobile})</font>
+                    </c:if>
                 <span class="help-inline"><font color="red">*</font></span>
             </c:if>
         </div>
@@ -469,30 +456,6 @@
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
-    <c:if test="${not empty entity.orderDetails}">
-        <c:if test="${fns:getUser().isAdmin()==false}">
-            <div class="control-group">
-                <label class="control-label">发票状态：</label>
-                <div class="controls">
-                    <form:select path="invStatus" class="input-xlarge" disabled="true">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_order_invStatus')}" itemLabel="label"
-                                      itemValue="value"
-                                      htmlEscape="false"/></form:select>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">业务状态：</label>
-                <div class="controls">
-                    <form:select path="bizStatus" class="input-xlarge" disabled="true">
-                        <form:option value="" label="请选择"/>
-                        <form:options items="${fns:getDictList('biz_order_status')}" itemLabel="label" itemValue="value"
-                                      htmlEscape="false"/></form:select>
-                </div>
-            </div>
-        </c:if>
-    </c:if>
-    <c:if test="${fns:getUser().isAdmin()}">
         <div class="control-group">
             <label class="control-label">发票状态：</label>
             <div class="controls">
@@ -529,7 +492,6 @@
                 </c:if>
             </div>
         </div>
-    </c:if>
     <div class="control-group">
         <label class="control-label">收货人：</label>
         <div class="controls">
@@ -612,41 +574,35 @@
             <span class="help-inline"><font color="red">*</font></span>
         </div>
     </div>
-    <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-        <div class="control-group" id="add3">
-            <label class="control-label">详细地址；</label>
-            <div class="controls">
-                <input type="text" id="address" name="bizLocation.address" htmlEscape="false" readOnly="true"
-                       class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font> </span>
-            </div>
+    <div class="control-group" id="add3">
+        <label class="control-label">详细地址；</label>
+        <div class="controls">
+                <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+                    <input type="text" id="address" name="bizLocation.address" htmlEscape="false" readOnly="true"
+                           class="input-xlarge required"/>
+                </c:if>
+                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                    <input type="text" id="address" name="bizLocation.address" htmlEscape="false" class="input-xlarge required"/>
+                    <span class="help-inline"><font color="red">*</font> </span>
+                </c:if>
         </div>
-    </c:if>
-    <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-        <div class="control-group" id="add3">
-            <label class="control-label">详细地址；</label>
-            <div class="controls">
-                <input type="text" id="address" name="bizLocation.address" htmlEscape="false"
-                       class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font> </span>
-            </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">备&nbsp;注；</label>
+        <div class="controls">
+            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
+                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>
+            </c:if>
+            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>
+            </c:if>
         </div>
-    </c:if>
-    <%--<c:if test="${entity.orderNoEditable eq 'editable' && empty bizOrderHeader.flag && empty entity.orderDetails}">--%>
-        <%--<div class="form-actions">--%>
-            <%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit">--%>
-                <%--<input type="text" id="payMentOne" placeholder="请输入支付金额">--%>
-                <%--<input class="btn btn-primary" id="btnOrderButton" onclick="btnOrder();" type="button" value="支付"/>--%>
-                <%--待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>--%>
-            <%--</shiro:hasPermission>--%>
-            <%--<span class="help-inline"></span>--%>
-        <%--</div>--%>
-    <%--</c:if>--%>
-    <c:if test="${not empty entity.orderDetails}">
+    </div>
+
         <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
             <label class="control-label">进展信息：</label>
-            <div class="controls">
+            <div class="controls" style="width: 100%;">
                 <div id="payment" style="display:none;width: 29%;float: left;">
                     <div style="float: left;padding-top: 16px;">
                         <button id="payment0" type="button" class="btn btn-arrow-left">未支付</button>
@@ -823,6 +779,37 @@
             </div>
         </div>
         </c:if>
+        <c:if test="${fn:length(statusList) > 0}">
+            <div class="control-group">
+                <label class="control-label">状态流程：</label>
+                <div class="controls help_wrap">
+                    <div class="help_step_box fa">
+                        <c:forEach items="${statusList}" var="v" varStatus="stat">
+                            <c:if test="${!stat.last}" >
+                                <div class="help_step_item">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    处理人:${v.createBy.name}<br/><br/>
+                                    状态:${statusMap[v.bizStatus].desc}<br/>
+                                    <fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                            <c:if test="${stat.last}">
+                                <div class="help_step_item help_step_set">
+                                    <div class="help_step_left"></div>
+                                    <div class="help_step_num">${stat.index + 1}</div>
+                                    处理人:${v.createBy.name}<br/><br/>
+                                    状态:${statusMap[v.bizStatus].desc}<br/>
+                                    <fmt:formatDate value="${v.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <div class="help_step_right"></div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
+        </c:if>
         <c:if test="${statu != '' && statu =='unline'}">
             <div class="control-group">
                 <label class="control-label">支付信息:</label>
@@ -850,6 +837,45 @@
                 </div>
             </div>
         </c:if>
+    <c:if test="${entity.orderType == DefaultPropEnum.PURSEHANGER.propValue}">
+    <div class="control-group">
+        <label class="control-label">付款约定：</label>
+        <div class="controls">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <th>付款时间</th>
+                    <th>金额</th>
+                </thead>
+                <tbody>
+                    <c:forEach items="${appointedTimeList}" var="appointedTime">
+                        <tr>
+                            <td><fmt:formatDate value="${appointedTime.appointedDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                            <td>${appointedTime.appointedMoney}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <div class="control-group">
+            <div class="controls">
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                    甲方(经销店):${entity2.customer.name}<br>
+                负责人:${custUser.name}<br>
+                联系电话:${custUser.mobile}
+                </div>
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                乙方(供应商):${vendUser.vendor.name}<br>
+                负责人:${vendUser.name}<br>
+                联系电话:${vendUser.mobile}
+                </div>
+                <div style="float:left;color: red;font-size: medium;margin-right: 50px">
+                丙方(万户通):万户通总公司<br>
+                负责人:${orderCenter.consultants.name}<br>
+                联系电话:${orderCenter.consultants.mobile}
+                </div>
+            </div>
+        </div>
     </c:if>
     <c:choose>
         <c:when test="${bizOrderHeader.flag=='check_pending'}">
@@ -868,59 +894,48 @@
                             <option value="-1">—— 市 ——</option>
                         </c:if>
                     </select>
-                    <select id="jhregion" class="input-medium" name="bizLocation.region.id" disabled="disabled"
-                            style="width:150px;text-align: center;">
+                    <select id="jhregion" class="input-medium" name="bizLocation.region.id" disabled="disabled" style="width:150px;text-align: center;">
                         <c:if test="${bizOrderHeader.id ==null}">
                             <option value="-1">—— 区 ——</option>
                         </c:if>
                     </select>
-                    <span class="help-inline"><font color="red">*</font> </span>
                 </div>
             </div>
             <div class="control-group" id="jhadd2" style="display:none">
                 <label class="control-label">交货地址:</label>
                 <div class="controls">
                     <input id="addJhAddressHref" type="button" value="新增地址" htmlEscape="false"
-                           class="input-xlarge required"/>
+                           class="input-xlarge"/>
                     <label class="error" id="addError" style="display:none;">必填信息</label>
-                    <span class="help-inline"><font color="red">*</font></span>
                 </div>
             </div>
             <div class="control-group" id="jhadd3">
                 <label class="control-label">详细地址:</label>
                 <div class="controls">
                     <input type="text" id="jhaddress" name="bizLocation.address" htmlEscape="false"
-                           class="input-xlarge required"/>
-                    <span class="help-inline"><font color="red">*</font></span>
+                           class="input-xlarge"/>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label">交货时间:</label>
                 <div class="controls">
                     <input id="appointedDate" name="bizLocation.appointedTime" type="text" readonly="readonly"
-                           maxlength="20" class="input-xlarge Wdate required"
-                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});" placeholder="必填！"/>
-                    <span class="help-inline"><font color="red">*</font></span>
+                           maxlength="20" class="input-xlarge Wdate"
+                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
                 </div>
             </div>
         </c:when>
         <c:otherwise>
             <div class="form-actions">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                    <shiro:hasPermission name="biz:order:bizOrderHeader:edit"><input id="btnSubmit"
-                                                                                     class="btn btn-primary"
-                                                                                     type="submit"
-                                                                                     value="保存"/>&nbsp;</shiro:hasPermission>
+                    <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+                        <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
+                    </shiro:hasPermission>
                 </c:if>
-                <%--<c:if test="${not empty entity.orderDetails}">--%>
-                    <%--待支付费用为:<font color="red"><fmt:formatNumber type="number" value="${entity.tobePaid}" pattern="0.00"/></font>--%>
-                <%--</c:if>--%>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
-
         </c:otherwise>
     </c:choose>
-
 </form:form>
 
 <%--详情列表--%>
@@ -935,6 +950,7 @@
         <th>商品名称</th>
         <th>商品编号</th>
         <th>商品货号</th>
+        <th>已生成的采购单</th>
         <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
             <th>商品出厂价</th>
         </c:if>
@@ -944,7 +960,7 @@
         <th>采购数量</th>
         <th>总 额</th>
         <th>已发货数量</th>
-        <c:if test="${bizOrderHeader.bizStatus>15 && bizOrderHeader.bizStatus!=45}">
+        <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
             <th>发货方</th>
         </c:if>
         <c:if test="${bizOrderHeader.flag=='check_pending'}">
@@ -992,6 +1008,9 @@
             <td>
                 ${bizOrderDetail.skuInfo.itemNo}
             </td>
+            <td>
+                <a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>
+            </td>
             <c:if test="${entity.orderDetails eq 'details' || entity.orderNoEditable eq 'editable' || bizOrderHeader.flag eq 'check_pending'}">
                 <td>
                         ${bizOrderDetail.buyPrice}
@@ -1017,7 +1036,7 @@
             <td>
                     ${bizOrderDetail.sentQty}
             </td>
-            <c:if test="${bizOrderHeader.bizStatus>15 && bizOrderHeader.bizStatus!=45}">
+            <c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
                 <td>
                     ${bizOrderDetail.suplyis.name}
                 </td>
@@ -1093,7 +1112,6 @@
         </shiro:hasPermission>
     </div>
 </c:if>
-
 
 </body>
 </html>

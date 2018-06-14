@@ -37,6 +37,7 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -199,9 +201,11 @@ public class BizInventorySkuController extends BaseController {
             for (BizSkuInfo sku : list) {
                 List<BizSkuPropValue> skuPropValueList = sku.getSkuPropValueList();
                 StringBuffer skuPropName = new StringBuffer();
-                for (BizSkuPropValue skuPropValue : skuPropValueList) {
-                    skuPropName.append("-");
-                    skuPropName.append(skuPropValue.getPropValue());
+                if (CollectionUtils.isNotEmpty(skuPropValueList)) {
+                    for (BizSkuPropValue skuPropValue : skuPropValueList) {
+                        skuPropName.append("-");
+                        skuPropName.append(skuPropValue.getPropValue());
+                    }
                 }
                 String propNames = "";
                 if (skuPropName.toString().length() > 1) {
@@ -409,6 +413,15 @@ public class BizInventorySkuController extends BaseController {
                     } else {
                         rowData.add("");
                     }
+                    if (tory.getSkuInfo().getBuyPrice() != null && tory.getStockQty() != null) {
+                        BigDecimal buyPrice = new BigDecimal(tory.getSkuInfo().getBuyPrice());
+                        BigDecimal stockQty = new BigDecimal(tory.getStockQty());
+                        //商品总值
+                        BigDecimal totalValue = buyPrice.multiply(stockQty).setScale(1, BigDecimal.ROUND_HALF_UP);
+                        rowData.add(String.valueOf(totalValue));
+                    } else {
+                        rowData.add("");
+                    }
                     if (tory.getSkuInfo().getVendorName() != null) {
                         //供应商
                         rowData.add(String.valueOf(tory.getSkuInfo().getVendorName()));
@@ -416,6 +429,7 @@ public class BizInventorySkuController extends BaseController {
                         rowData.add("");
                     }
                 } else {
+                    rowData.add("");
                     rowData.add("");
                     rowData.add("");
                     rowData.add("");
@@ -439,7 +453,7 @@ public class BizInventorySkuController extends BaseController {
                 rowData.add(String.valueOf(sdf.format(tory.getUpdateDate())));
                 data.add(rowData);
             });
-            String[] toryHeads = {"库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "供应商", "库存数量", "销售订单数量", "调入数量",
+            String[] toryHeads = {"库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "商品总值", "供应商", "库存数量", "销售订单数量", "调入数量",
                     "调出数量", "创建人", "创建时间", "更新人", "更新时间"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();

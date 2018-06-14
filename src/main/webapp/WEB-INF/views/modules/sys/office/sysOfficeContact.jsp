@@ -28,11 +28,25 @@
 				<form:input path="name" htmlEscape="false" maxlength="11" class="input-medium"/>
                 <%--<input id="id" type="hidden" name="id" value="${id}"/>--%>
 			</li>
+			<li class="clearfix"></li>
 			<li><label>联系人电话：</label>
 				<form:input path="mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>会员名称：</label>
 				<form:input path="company.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
+			<li><label>采购中心：</label>
+				<form:input path="cent.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
+			<li class="clearfix"></li>
+			<li><label>日&nbsp;&nbsp;期：</label>
+				<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${ordrHeaderStartTime}" pattern="yyyy-MM-dd"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
+				至
+				<input name="orderHeaderEedTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${orderHeaderEedTime}" pattern="yyyy-MM-dd"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:true});"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -44,14 +58,14 @@
 			<tr>
 				<td>序号</td>
 				<th>会员名称</th>
+				<th>负责人</th>
 				<th>联系人姓名</th>
 				<th>联系人电话</th>
 				<th>客户专员</th>
 				<th>采购中心</th>
 				<th>客户专员电话</th>
-				<th>负责人</th>
 				<th>详细地址</th>
-				<th>累计订单采购频次</th>
+				<th>订单采购频次</th>
 				<th>累计采购金额</th>
 				<th>首次下单时间</th>
 				<th>沟通次数</th>
@@ -63,6 +77,11 @@
 				<td>${state.index+1}</td>
 				<td><a href="${ctx}/sys/office/form?id=${user.company.id}&source=contact_ck">
 						${user.company.name}</a>
+				</td>
+				<td>
+					<c:if test="${user.user.name!=null}">
+						${user.company.primaryPerson.name}
+					</c:if>
 				</td>
 				<td><a href="${ctx}/sys/user/form?id=${user.id}&conn=contact_ck">
 						${user.name}</a>
@@ -82,11 +101,6 @@
 				<td>
 					<c:if test="${user.user.name!=null}">
 						${user.user.mobile}
-					</c:if>
-				</td>
-				<td>
-					<c:if test="${user.user.name!=null}">
-						${user.company.primaryPerson.name}
 					</c:if>
 				</td>
 				<td>
@@ -111,7 +125,7 @@
 					</c:if>
 				</td>
 				<td>
-					<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${user.company.id}&office.parent.id=7&office.type=6">
+					<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${user.company.id}&office.parent.id=7&office.type=6&source=purchaser">
 						${user.userOrder.officeChatRecord}
 					</a>
 				</td>

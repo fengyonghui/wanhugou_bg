@@ -86,6 +86,19 @@ public class Office extends TreeEntity<Office> {
 	 */
 	private String province;
 
+	/**
+	 * 供应商
+	 */
+	private User user;
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	public String getLevel() {
 		return level;
 	}

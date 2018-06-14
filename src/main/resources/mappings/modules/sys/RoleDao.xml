@@ -90,7 +90,7 @@
 		SELECT
 			<include refid="roleColumns"/>
 		FROM sys_role a
-		JOIN sys_office o ON o.id = a.office_id
+		LEFT JOIN sys_office o ON o.id = a.office_id
 		WHERE a.enname = #{enname} AND a.status = #{DEL_FLAG_NORMAL}
 	</select>
 	

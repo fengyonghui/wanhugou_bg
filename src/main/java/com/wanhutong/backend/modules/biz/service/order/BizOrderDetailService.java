@@ -113,7 +113,7 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                             bizCustSkuService.save(bizCustSku);
                         }
                         detailnew.setUnitPrice(new BigDecimal(nowPriceArr[i].trim()).doubleValue());//单价
-                        detailnew.setBuyPrice(sku.getBuyPrice());
+                        detailnew.setBuyPrice(detailnew.getUnitPrice());
                         detailnew.setOrdQty(ordQty);//采购数量
                         detailnew.setSentQty(0);//发货数量默认0
                         detailnew.setSuplyis(new Office());
@@ -158,7 +158,6 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
                         detailnew.setSuplyis(opShelfSku.getCenterOffice());//采购中心
                     }else{
                         Office officeCenter=new Office();
-                        System.out.println("栏目不是本地备货 给默认值 0 ");
                         detailnew.setSuplyis(officeCenter);//采购中心
                     }
                 }
@@ -241,5 +240,15 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
 
     public List<BizOrderDetail> findPoHeader(BizOrderDetail bizOrderDetail) {
         return dao.findPoHeader(bizOrderDetail);
+    }
+
+    /**
+     * 获取待供货需求汇总列表
+     *
+     * @param office
+     * @return
+     */
+    public List<Map> findRequestTotalByVendorList(Office office) {
+        return bizOrderDetailDao.findRequestTotalByVendorList(office);
     }
 }

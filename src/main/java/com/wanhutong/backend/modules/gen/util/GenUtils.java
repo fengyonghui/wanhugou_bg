@@ -358,7 +358,7 @@ public class GenUtils {
 			return "文件已存在："+fileName+"<br/>";
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			GenConfig config = getConfig();
@@ -368,5 +368,5 @@ public class GenUtils {
 			e.printStackTrace();
 		}
 	}
-	
+
 }
