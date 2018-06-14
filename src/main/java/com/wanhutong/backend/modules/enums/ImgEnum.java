@@ -39,7 +39,10 @@ public enum ImgEnum{
      * 采购单支付凭证
      */
     BIZ_PO_HEADER_PAY_OFFLINE((byte)61,"采购单支付凭证","biz_po_header_pay_offline"),
-
+    /**
+     * 拍照下单的商品信息图
+     */
+    ORDER_SKU_PHOTO((byte)28,"订单商品信息图","biz_order_header"),
     ;
 
     private int code;

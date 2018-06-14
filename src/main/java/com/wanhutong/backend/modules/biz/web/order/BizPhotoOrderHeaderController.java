@@ -6,8 +6,10 @@ package com.wanhutong.backend.modules.biz.web.order;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.*;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.enums.*;
@@ -52,6 +54,8 @@ public class BizPhotoOrderHeaderController extends BaseController {
     private BizOrderStatusService bizOrderStatusService;
     @Autowired
     private BizOrderAppointedTimeService bizOrderAppointedTimeService;
+    @Autowired
+    private CommonImgService commonImgService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -124,23 +128,20 @@ public class BizPhotoOrderHeaderController extends BaseController {
                     }
                 }
             }
-            //代采和拍照订单
-            if (bizOrderHeaderTwo.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
-                //经销店
-                Office office = officeService.get(bizOrderHeader.getCustomer().getId());
-                if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
-                    User user = systemService.getUser(office.getPrimaryPerson().getId());
-                    model.addAttribute("custUser", user);
-                }
-                //供应商
-                User vendUser = bizPhotoOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
-                model.addAttribute("vendUser", vendUser);
-                BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
-                bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
-                List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
-                if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
-                    model.addAttribute("appointedTimeList", appointedTimeList);
-                }
+            //经销店
+            Office office = officeService.get(bizOrderHeader.getCustomer().getId());
+            if (office != null && office.getPrimaryPerson() != null && office.getPrimaryPerson().getId() != null) {
+                User user = systemService.getUser(office.getPrimaryPerson().getId());
+                model.addAttribute("custUser", user);
+            }
+            //供应商
+            User vendUser = bizPhotoOrderHeaderService.findVendUser(bizOrderHeader.getId(), OfficeTypeEnum.VENDOR.getType());
+            model.addAttribute("vendUser", vendUser);
+            BizOrderAppointedTime bizOrderAppointedTime = new BizOrderAppointedTime();
+            bizOrderAppointedTime.setOrderHeader(bizOrderHeader);
+            List<BizOrderAppointedTime> appointedTimeList = bizOrderAppointedTimeService.findList(bizOrderAppointedTime);
+            if (appointedTimeList != null && !appointedTimeList.isEmpty()) {
+                model.addAttribute("appointedTimeList", appointedTimeList);
             }
 //        boolean flag = false;
 //        User user = UserUtils.getUser();
@@ -158,7 +159,11 @@ public class BizPhotoOrderHeaderController extends BaseController {
         if (CollectionUtils.isNotEmpty(unlineList)) {
             model.addAttribute("unlineList", unlineList);
         }
-
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(bizOrderHeader.getId());
+        commonImg.setObjectName(ImgEnum.ORDER_SKU_PHOTO.getTableName());
+        commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
+        List<CommonImg> commonImgList = commonImgService.findList(commonImg);
         BizOrderStatus bizOrderStatus = new BizOrderStatus();
         bizOrderStatus.setOrderHeader(bizOrderHeader);
         bizOrderStatus.setOrderType(BizOrderStatus.OrderType.ORDER.getType());
@@ -166,7 +171,9 @@ public class BizPhotoOrderHeaderController extends BaseController {
         statusList.sort(Comparator.comparing(BizOrderStatus::getCreateDate).thenComparing(BizOrderStatus::getId));
 
         Map<Integer, OrderHeaderBizStatusEnum> statusMap = OrderHeaderBizStatusEnum.getStatusMap();
-
+        if (CollectionUtils.isNotEmpty(commonImgList)) {
+            model.addAttribute("imgUrlList",commonImgList);
+        }
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("entity", bizOrderHeader);
         model.addAttribute("statusList", statusList);
