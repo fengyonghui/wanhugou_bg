@@ -15,6 +15,7 @@ import com.wanhutong.backend.common.utils.excel.fieldtype.RoleListType;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
@@ -462,10 +463,12 @@ public class User extends DataEntity<User> {
 
 	public void setVarIdList(List<String> varIdList) {
 		varityList = Lists.newArrayList();
-		for (String roleId : varIdList) {
-			BizVarietyInfo bizVarietyInfo = new BizVarietyInfo();
-			bizVarietyInfo.setId(Integer.valueOf(roleId));
-			varityList.add(bizVarietyInfo);
+		if(CollectionUtils.isNotEmpty(varIdList)){
+			for (String roleId : varIdList) {
+				BizVarietyInfo bizVarietyInfo = new BizVarietyInfo();
+				bizVarietyInfo.setId(Integer.valueOf(roleId));
+				varityList.add(bizVarietyInfo);
+			}
 		}
 	}
 }
