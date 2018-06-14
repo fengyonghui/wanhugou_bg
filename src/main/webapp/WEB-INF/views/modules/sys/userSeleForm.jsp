@@ -124,6 +124,7 @@
 				<form:option label="请选择" value=""/>
 				<form:options items="${varietyList}" itemLabel="name" itemValue="id"/>
 			</form:select>
+			<form:checkboxes id="varietyInfo" path="varIdList" items="${varcts}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 			<span class="help-inline"><font color="red">*</font>不选择此项，代表不添加分类与品类主管关联</span>
 		</div>
 	</div>
