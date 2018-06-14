@@ -46,6 +46,10 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 	 * 备货清单的 备货商品数量
 	 * */
 	private Integer ordCount;
+	/**
+	 * 查看已经有的商品总库存数及标识符
+	 * */
+	private String invenSource;
 
 	private String skuIds;
 	private String reqDetailIds;
@@ -435,5 +439,13 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setOrdCount(Integer ordCount) {
 		this.ordCount = ordCount;
+	}
+
+	public String getInvenSource() {
+		return invenSource;
+	}
+
+	public void setInvenSource(String invenSource) {
+		this.invenSource = invenSource;
 	}
 }
