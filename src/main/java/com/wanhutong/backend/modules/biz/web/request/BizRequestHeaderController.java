@@ -11,12 +11,14 @@ import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizInventorySkuService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
@@ -26,13 +28,14 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import com.wanhutong.backend.modules.enums.OrderTypeEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +83,8 @@ public class BizRequestHeaderController extends BaseController {
 	private BizPoDetailService bizPoDetailService;
 	@Autowired
 	private BizVarietyInfoService bizVarietyInfoService;
-
+	@Autowired
+	private BizInventorySkuService bizInventorySkuService;
 	@Autowired
 	private BizOrderStatusService bizOrderStatusService;
 
@@ -123,7 +127,14 @@ public class BizRequestHeaderController extends BaseController {
 				bizRequestDetail.setPoheaderSource("poHeader");
 			}
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
+			BizInventorySku bizInventorySku = new BizInventorySku();
 			for (BizRequestDetail requestDetail : requestDetailList) {
+				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
+				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
+				if (CollectionUtils.isNotEmpty(list)) {
+					bizRequestHeader.setInvenSource("inventorySku");
+					requestDetail.setInvenSkuOrd(list.size());
+				}
 				if (requestDetail.getBizPoHeader() == null) {
 					bizRequestHeader.setPoSource("poHeaderSource");
 				}
@@ -156,6 +167,19 @@ public class BizRequestHeaderController extends BaseController {
 			model.addAttribute("statusList", statusList);
 			model.addAttribute("statusMap", statusMap);
 		}
+
+		User userAdmin = UserUtils.getUser();
+		//渠道部角色
+		List<Role> roleList = userAdmin.getRoleList();
+		String roleName = null;
+		if (CollectionUtils.isNotEmpty(roleList)) {
+			for (Role role : roleList) {
+				if (role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState())) {
+					roleName = "channeOk";
+				}
+			}
+		}
+		model.addAttribute("roleChanne", roleName);
 
 		model.addAttribute("entity", bizRequestHeader);
 		model.addAttribute("reqDetailList", reqDetailList);

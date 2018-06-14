@@ -388,6 +388,12 @@
 					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
 						<th>仓库名称</th>
 						<th>库存数量</th>
+						<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
+							<c:if test="${not empty bizRequestHeader.invenSource && bizRequestHeader.invenSource eq 'inventorySku'}">
+								<th>商品总库存数量</th>
+							</c:if>
+						</c:if>
+
 					</c:if>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
@@ -444,6 +450,14 @@
 							<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
 								<td>${reqDetail.invName}</td>
 								<td>${reqDetail.skuInvQty}</td>
+								<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
+									<c:if test="${not empty bizRequestHeader.invenSource && bizRequestHeader.invenSource eq 'inventorySku'}">
+										<td>
+											<a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=">
+												${reqDetail.invenSkuOrd}</a>
+										</td>
+									</c:if>
+								</c:if>
 							</c:if>
 
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">

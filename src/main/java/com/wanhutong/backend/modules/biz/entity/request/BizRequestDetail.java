@@ -50,6 +50,10 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 * 查询已生成的采购单
 	 * */
 	private String poheaderSource;
+	/**
+	 * 查看商品的总库存数量
+	 * */
+	private Integer invenSkuOrd;
 
 	public BizRequestDetail() {
 		super();
@@ -211,5 +215,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setPoheaderSource(String poheaderSource) {
 		this.poheaderSource = poheaderSource;
+	}
+
+	public Integer getInvenSkuOrd() {
+		return invenSkuOrd;
+	}
+
+	public void setInvenSkuOrd(Integer invenSkuOrd) {
+		this.invenSkuOrd = invenSkuOrd;
 	}
 }

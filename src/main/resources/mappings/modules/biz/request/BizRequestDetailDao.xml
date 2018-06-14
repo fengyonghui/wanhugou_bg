@@ -262,6 +262,7 @@
 		</if>
 		LEFT JOIN biz_inventory_sku bis on bis.sku_id=a.sku_id and bis.status=1
 		LEFT JOIN biz_inventory_info bii on bii.id=bis.inv_id and bii.status=1
+		and bii.cust_id=reheader.from_id
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="poheaderSource!=null and poheaderSource!=''">
