@@ -51,6 +51,9 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="zt" type="hidden" name="zt" value="${zt}"/>
 		<input id="invInfo.id" type="hidden" name="invInfo.id" value="${bizInventorySku.invInfo.id}"/>
+		<c:if test="${not empty bizInventorySku.reqSource && bizInventorySku.reqSource eq 'request_Inv'}">
+			<input type="hidden" name="skuInfo.id" value="${bizInventorySku.skuInfo.id}">
+		</c:if>
 		<ul class="ul-form">
 			<li><label>商品名称：</label>
 				<form:input path="skuInfo.name" htmlEscape="false" class="input-medium"/>
@@ -86,6 +89,9 @@
 			</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
             <li class="btns"><input id="toryExport" class="btn btn-primary" type="button" value="导出"/></li>
+			<c:if test="${not empty bizInventorySku.reqSource && bizInventorySku.reqSource eq 'request_Inv'}">
+				<li class="btns"><input id="btnCancel" class="btn" type="button" value="返 回" onclick="javascript:history.go(-1);"/></li>
+			</c:if>
 			<li class="clearfix"></li>
 		</ul>
 

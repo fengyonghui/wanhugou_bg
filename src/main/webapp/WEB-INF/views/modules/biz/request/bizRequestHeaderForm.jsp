@@ -453,7 +453,7 @@
 								<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
 									<c:if test="${not empty bizRequestHeader.invenSource && bizRequestHeader.invenSource eq 'inventorySku'}">
 										<td>
-											<a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=">
+											<a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=request_Inv">
 												${reqDetail.invenSkuOrd}</a>
 										</td>
 									</c:if>
