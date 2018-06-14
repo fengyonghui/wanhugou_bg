@@ -132,6 +132,7 @@ public class BizRequestHeaderController extends BaseController {
 				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
 				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
 				if (CollectionUtils.isNotEmpty(list)) {
+					//已有的库存数量
 					bizRequestHeader.setInvenSource("inventorySku");
 					requestDetail.setInvenSkuOrd(list.size());
 				}
@@ -174,7 +175,7 @@ public class BizRequestHeaderController extends BaseController {
 		String roleName = null;
 		if (CollectionUtils.isNotEmpty(roleList)) {
 			for (Role role : roleList) {
-				if (role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState())) {
+				if (role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState()) || userAdmin.isAdmin() ) {
 					roleName = "channeOk";
 				}
 			}

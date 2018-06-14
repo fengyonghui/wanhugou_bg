@@ -389,9 +389,7 @@
 						<th>仓库名称</th>
 						<th>库存数量</th>
 						<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
-							<c:if test="${not empty bizRequestHeader.invenSource && bizRequestHeader.invenSource eq 'inventorySku'}">
-								<th>商品总库存数量</th>
-							</c:if>
+							<th>商品总库存数量</th>
 						</c:if>
 
 					</c:if>
@@ -451,12 +449,10 @@
 								<td>${reqDetail.invName}</td>
 								<td>${reqDetail.skuInvQty}</td>
 								<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
-									<c:if test="${not empty bizRequestHeader.invenSource && bizRequestHeader.invenSource eq 'inventorySku'}">
-										<td>
-											<a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=request_Inv">
-												${reqDetail.invenSkuOrd}</a>
-										</td>
-									</c:if>
+									<td>
+										<a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=request_Inv">
+											${reqDetail.invenSkuOrd}</a>
+									</td>
 								</c:if>
 							</c:if>
 
