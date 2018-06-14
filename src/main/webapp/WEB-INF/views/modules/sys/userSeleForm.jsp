@@ -130,7 +130,7 @@
 	<div class="control-group">
 		<label class="control-label">分类名称：</label>
 		<div class="controls">
-			<form:checkboxes path="varIdList" items="${varietyList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+			<form:checkboxes id="" path="varIdList" items="${varietyList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
 			<span class="help-inline">不选择此项，代表不添加分类与品类主管关联</span>
 		</div>
 	</div>

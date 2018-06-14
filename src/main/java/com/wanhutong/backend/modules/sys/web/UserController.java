@@ -848,17 +848,19 @@ public class UserController extends BaseController {
 		if (flag != null && StringUtils.isNotEmpty(flag)) {
 			model.addAttribute("flag", flag);
 		}
-		BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
-		bizVarietyUserInfo.setUser(user);
-		//页面已勾选的多选框 品类
-		String supplierExpressids = "";
-		List<BizVarietyUserInfo> list = bizVarietyUserInfoService.findList(bizVarietyUserInfo);
-		if (CollectionUtils.isNotEmpty(list)) {
-			for (BizVarietyUserInfo varietyUserInfo : list) {
-				supplierExpressids += varietyUserInfo.getVarietyInfo().getId() + ",";
+		if(user.getId()!=null){
+			BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
+			bizVarietyUserInfo.setUser(user);
+			//页面已勾选的多选框 品类
+			String supplierExpressids = "";
+			List<BizVarietyUserInfo> list = bizVarietyUserInfoService.findList(bizVarietyUserInfo);
+			if (CollectionUtils.isNotEmpty(list)) {
+				for (BizVarietyUserInfo varietyUserInfo : list) {
+					supplierExpressids += varietyUserInfo.getVarietyInfo().getId() + ",";
+				}
 			}
+			model.addAttribute("supplierExpressids", supplierExpressids);
 		}
-		model.addAttribute("supplierExpressids", supplierExpressids);
 		model.addAttribute("user", user);
 		model.addAttribute("allRoles", systemService.findAllRole());
 		List<BizVarietyInfo> varietyFactorList = bizVarietyInfoService.findList(new BizVarietyInfo());
