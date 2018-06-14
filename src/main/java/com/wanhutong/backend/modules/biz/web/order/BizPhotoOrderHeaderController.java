@@ -37,7 +37,7 @@ import java.util.*;
 public class BizPhotoOrderHeaderController extends BaseController {
 
     @Autowired
-    private BizOrderHeaderService bizPhotoOrderHeaderService;
+    private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
     @Autowired
     private BizOrderDetailService bizOrderDetailService;
     @Autowired

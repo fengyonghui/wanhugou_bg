@@ -5,7 +5,11 @@ package com.wanhutong.backend.modules.biz.service.order;
 
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.dao.order.BizPhotoOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.*;
+import com.wanhutong.backend.modules.sys.dao.UserDao;
+import com.wanhutong.backend.modules.sys.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +26,10 @@ public class BizPhotoOrderHeaderService extends CrudService<BizOrderHeaderDao, B
 
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
+    @Autowired
+    private BizPhotoOrderHeaderDao bizPhotoOrderHeaderDao;
+    @Autowired
+    private UserDao userDao;
 
     public BizOrderHeader get(Integer id) {
         return super.get(id);
@@ -37,9 +45,12 @@ public class BizPhotoOrderHeaderService extends CrudService<BizOrderHeaderDao, B
         super.delete(bizOrderHeader);
     }
 
-    @Transactional(readOnly = false)
-    public void updateMoney(BizOrderHeader bizOrderHeader) {
-        bizOrderHeaderDao.updateMoney(bizOrderHeader);
+    /**
+     * 查询供应商主负责人
+     * @return
+     */
+    public User findVendUser(Integer orderId, String vendType) {
+        return userDao.findVendUser(orderId,vendType);
     }
 
 }
