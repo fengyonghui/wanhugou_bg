@@ -566,7 +566,7 @@ public class BizOrderHeaderController extends BaseController {
                 Page<BizOrderHeader> bizOrderHeaderPage = bizOrderHeaderService.cendfindPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
                 pageList = bizOrderHeaderPage.getList();
             } else {
-                pageList = bizOrderHeaderService.findList(bizOrderHeader);
+                pageList = bizOrderHeaderService.findListExport(bizOrderHeader);
             }
             List<List<String>> data = new ArrayList<List<String>>();
             List<List<String>> detailData = new ArrayList<List<String>>();
