@@ -23,6 +23,7 @@
 	<form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/contact" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<sys:tableSort id="orderBy" name="orderBy" value="${page.orderBy}" callback="page();"/>
 		<ul class="ul-form">
 			<li><label>联系人姓名：</label>
 				<form:input path="name" htmlEscape="false" maxlength="11" class="input-medium"/>

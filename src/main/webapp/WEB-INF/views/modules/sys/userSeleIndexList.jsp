@@ -90,8 +90,9 @@
 				</c:if>
 			</td>
 			<shiro:hasPermission name="sys:user:edit"><td>
-					<a href="${ctx}/sys/user/userSeleForm?id=${bizUser.id}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}&conn=selectIndex">修改</a>
-					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&conn=selectIndex" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+				<a href="${ctx}/biz/variety/bizVarietyUserInfo/list?user.id=${bizUser.id}">品类详情</a>
+				<a href="${ctx}/sys/user/userSeleForm?id=${bizUser.id}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}&conn=selectIndex">修改</a>
+				<a href="${ctx}/sys/user/delete?id=${bizUser.id}&conn=selectIndex" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
 			</td></shiro:hasPermission>
 		</tr>
 	</c:forEach>
