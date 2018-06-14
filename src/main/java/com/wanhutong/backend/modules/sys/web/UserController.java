@@ -22,6 +22,7 @@ import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
 import com.wanhutong.backend.modules.biz.service.variety.BizVarietyUserInfoService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import com.wanhutong.backend.common.thread.ThreadPoolManager;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
@@ -826,37 +827,43 @@ public class UserController extends BaseController {
     @RequiresPermissions("sys:user:view")
     @RequestMapping(value = "userSeleForm")
     public String userSeleForm(User user, Model model,String flag) {
-        if (user.getOffice()==null || user.getOffice().getId()==null){
+		if (user.getOffice() == null || user.getOffice().getId() == null) {
 			String purchasersId = DictUtils.getDictValue("采销部", "office_suppl", "");
 			Office office = officeService.get(Integer.parseInt(purchasersId));
 			user.setCompany(office);
 			user.setOffice(office);
-//			user.setCompany(UserUtils.getUser().getCompany());
-//            user.setOffice(UserUtils.getUser().getOffice());
-        }else{
-            Office off = new Office();
-            off.setParentIds("%"+user.getOffice().getId()+",");
-            List<Office> list = officeService.findList(off);
-            Office office = officeService.get(user.getOffice().getId());
-            if(list == null || list.isEmpty()){
-                user.setCompany(office);
-                user.setOffice(office);
-            }else{
-                user.setCompany(user.getCompany());
-                user.setOffice(user.getOffice());
-            }
-        }
-        if (flag != null && !"".equals(flag)){
-            model.addAttribute("flag",flag);
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("allRoles", systemService.findAllRole());
+		} else {
+			Office off = new Office();
+			off.setParentIds("%" + user.getOffice().getId() + ",");
+			List<Office> list = officeService.findList(off);
+			Office office = officeService.get(user.getOffice().getId());
+			if (list == null || list.isEmpty()) {
+				user.setCompany(office);
+				user.setOffice(office);
+			} else {
+				user.setCompany(user.getCompany());
+				user.setOffice(user.getOffice());
+			}
+		}
+		if (flag != null && StringUtils.isNotEmpty(flag)) {
+			model.addAttribute("flag", flag);
+		}
+		BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
+		bizVarietyUserInfo.setUser(user);
+		//页面已勾选的多选框 品类
+		String supplierExpressids = "";
+		List<BizVarietyUserInfo> list = bizVarietyUserInfoService.findList(bizVarietyUserInfo);
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (BizVarietyUserInfo varietyUserInfo : list) {
+				supplierExpressids += varietyUserInfo.getVarietyInfo().getId() + ",";
+			}
+		}
+		model.addAttribute("supplierExpressids", supplierExpressids);
+		model.addAttribute("user", user);
+		model.addAttribute("allRoles", systemService.findAllRole());
 		List<BizVarietyInfo> varietyFactorList = bizVarietyInfoService.findList(new BizVarietyInfo());
 		model.addAttribute("varietyList", varietyFactorList);
-		if(user.getId()!=null){
-
-		}
-        return "modules/sys/userSeleForm";
+		return "modules/sys/userSeleForm";
     }
 
     /**
@@ -865,7 +872,7 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:edit")
 	@RequestMapping(value = "userInfosave")
 	public String userInfosave(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
-		if(Global.isDemoMode()){
+		if (Global.isDemoMode()) {
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/sys/user/list?repage";
 		}
@@ -876,38 +883,50 @@ public class UserController extends BaseController {
 		if (StringUtils.isNotBlank(user.getNewPassword())) {
 			user.setPassword(SystemService.entryptPassword(user.getNewPassword()));
 		}
-		if (!beanValidator(model, user)){
-			return form(user, model,null);
+		if (!beanValidator(model, user)) {
+			return form(user, model, null);
 		}
-		if (!"true".equals(checkLoginName(user.getOldLoginName(), user.getLoginName()))){
+		if (!"true".equals(checkLoginName(user.getOldLoginName(), user.getLoginName()))) {
 			addMessage(model, "保存用户'" + user.getLoginName() + "'失败，登录名已存在");
-			return form(user, model,null);
+			return form(user, model, null);
 		}
 		// 角色数据有效性验证，过滤不在授权内的角色
 		List<Role> roleList = Lists.newArrayList();
 		List<Integer> roleIdList = user.getRoleIdList();
-		for (Role r : systemService.findAllRole()){
-			if (roleIdList.contains(r.getId())){
+		for (Role r : systemService.findAllRole()) {
+			if (roleIdList.contains(r.getId())) {
 				roleList.add(r);
 			}
 		}
 		user.setRoleList(roleList);
 		// 保存用户信息
 		systemService.saveUser(user);
-		if(user.getVarietyInfoId()!=null && user.getVarietyInfoId().getId()!=null){
+		if (CollectionUtils.isNotEmpty(user.getVarityList())) {
 			BizVarietyUserInfo bizVarietyUserInfo = new BizVarietyUserInfo();
 			bizVarietyUserInfo.setUser(user);
-			bizVarietyUserInfo.setVarietyInfo(user.getVarietyInfoId());
-			bizVarietyUserInfoService.save(bizVarietyUserInfo);
+			List<BizVarietyUserInfo> list = bizVarietyUserInfoService.findList(bizVarietyUserInfo);
+			if (CollectionUtils.isNotEmpty(list)) {
+				for (BizVarietyUserInfo varietyUserInfo : list) {
+					bizVarietyUserInfoService.delete(varietyUserInfo);
+				}
+			}
+			List<BizVarietyInfo> varInfoList = bizVarietyInfoService.findList(new BizVarietyInfo());
+			List<Integer> varIdList = user.getVarIdList();
+			for (BizVarietyInfo r : varInfoList) {
+				if (varIdList.contains(r.getId())) {
+					bizVarietyUserInfo.setVarietyInfo(r);
+					bizVarietyUserInfoService.save(bizVarietyUserInfo);
+				}
+			}
 		}
 		// 清除当前用户缓存
-		if (user.getLoginName().equals(UserUtils.getUser().getLoginName())){
+		if (user.getLoginName().equals(UserUtils.getUser().getLoginName())) {
 			UserUtils.clearCache();
-		}else {
+		} else {
 			UserUtils.clearCache(user);
 		}
 		addMessage(redirectAttributes, "保存品类主管'" + user.getLoginName() + "'成功");
-		return "redirect:" + adminPath + "/sys/user/seleIndexList?conn="+user.getConn();
+		return "redirect:" + adminPath + "/sys/user/seleIndexList?conn=" + user.getConn();
 	}
 
 

@@ -14,6 +14,7 @@ import com.wanhutong.backend.common.utils.excel.annotation.ExcelField;
 import com.wanhutong.backend.common.utils.excel.fieldtype.RoleListType;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.variety.BizVarietyUserInfo;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
@@ -59,7 +60,10 @@ public class User extends DataEntity<User> {
 	 * 用户列表标识符
 	 * */
 	private String userFlag;
-
+	/**
+	 * 用于品类主管页面选择的品类
+	 * */
+	private List<BizVarietyInfo> varityList = Lists.newArrayList();
 
 	private Integer consultantId;
 	private Integer centerId;
@@ -437,5 +441,31 @@ public class User extends DataEntity<User> {
 
 	public void setOrderHeaderEedTime(String orderHeaderEedTime) {
 		this.orderHeaderEedTime = orderHeaderEedTime;
+	}
+
+	public List<BizVarietyInfo> getVarityList() {
+		return varityList;
+	}
+
+	public void setVarityList(List<BizVarietyInfo> varityList) {
+		this.varityList = varityList;
+	}
+
+	@JsonIgnore
+	public List<Integer> getVarIdList() {
+		List<Integer> varIdList = Lists.newArrayList();
+		for (BizVarietyInfo var : varityList) {
+			varIdList.add(var.getId());
+		}
+		return varIdList;
+	}
+
+	public void setVarIdList(List<String> varIdList) {
+		varityList = Lists.newArrayList();
+		for (String roleId : varIdList) {
+			BizVarietyInfo bizVarietyInfo = new BizVarietyInfo();
+			bizVarietyInfo.setId(Integer.valueOf(roleId));
+			varityList.add(bizVarietyInfo);
+		}
 	}
 }

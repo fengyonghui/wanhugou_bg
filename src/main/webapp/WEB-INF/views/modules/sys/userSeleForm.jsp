@@ -7,6 +7,16 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			var boxObj = $("input:checkbox[name='varIdList']"); //获取所有的复选框值 品类名称
+    		var expresslist = '${supplierExpressids}'; //用el表达式获取在控制层存放的复选框的值为字符串类型
+			var express = expresslist.split(',');
+			 $.each(express, function(index, expressId){
+			   boxObj.each(function () {
+					if($(this).val() == expressId) {
+					   $(this).attr("checked",true);
+					}
+				});
+			});
 			$("#no").focus();
 			$("#inputForm").validate({
 				rules: {
@@ -120,12 +130,8 @@
 	<div class="control-group">
 		<label class="control-label">分类名称：</label>
 		<div class="controls">
-			<form:select id="varietyInfo" path="varietyInfoId.id" class="input-medium">
-				<form:option label="请选择" value=""/>
-				<form:options items="${varietyList}" itemLabel="name" itemValue="id"/>
-			</form:select>
-			<form:checkboxes id="varietyInfo" path="varIdList" items="${varcts}" itemLabel="name" itemValue="id" htmlEscape="false"/>
-			<span class="help-inline"><font color="red">*</font>不选择此项，代表不添加分类与品类主管关联</span>
+			<form:checkboxes path="varIdList" items="${varietyList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+			<span class="help-inline">不选择此项，代表不添加分类与品类主管关联</span>
 		</div>
 	</div>
 	<div class="control-group">
