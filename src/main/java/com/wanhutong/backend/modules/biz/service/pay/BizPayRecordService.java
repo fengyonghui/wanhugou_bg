@@ -66,7 +66,7 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 		return dao.getReceiveData(startDate, endDate, centerType);
 	}
 
-	public List<BizUserStatisticsDto> getSingleReceiveData(String startDate, String endDate, String officeId) {
+	public List<BizOrderStatisticsDto> getSingleReceiveData(String startDate, String endDate, String officeId) {
 		return dao.getSingleReceiveData(startDate, endDate, officeId);
 	}
 }

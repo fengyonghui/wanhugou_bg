@@ -280,31 +280,7 @@ public class BizStatisticsPlatformService {
     }
 
     public Map<String, Object> singleReceiveData(String startDate, String endDate, String officeId) {
-        List<BizUserStatisticsDto> dataList = bizPayRecordService.getSingleReceiveData(startDate, endDate + " 23:59:59", officeId);
-
-        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
-            return ImmutableMap.of("ret", false);
-        }
-        List<String> nameList = Lists.newArrayList();
-
-        List<Object> seriesDataList = Lists.newArrayList();
-        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
-        dataList.forEach(o -> {
-            seriesDataList.add(o.getCount());
-            nameList.add(o.getName());
-        });
-        echartsSeriesDto.setName("用户量");
-        echartsSeriesDto.setData(seriesDataList);
-
-        Map<String, Object> paramMap = Maps.newHashMap();
-        paramMap.put("seriesList", echartsSeriesDto);
-        paramMap.put("nameList", nameList);
-        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
-        return paramMap;
-    }
-
-    public Map<String, Object> singleUserRegisterData(String startDate, String endDate, String officeId) {
-        List<BizOrderStatisticsDto> dataList = officeDao.singleUserRegisterData(startDate, endDate + " 23:59:59", officeId);
+        List<BizOrderStatisticsDto> dataList = bizPayRecordService.getSingleReceiveData(startDate, endDate + " 23:59:59", officeId);
 
         Set<String> officeNameSet = Sets.newHashSet();
         Map<String, Object> dataMap = Maps.newHashMap();
@@ -312,6 +288,45 @@ public class BizStatisticsPlatformService {
         dataList.forEach(o -> {
             officeNameSet.add(o.getOfficeName());
             dataMap.put(o.getOfficeName(), o.getReceiveTotal());
+        });
+        officeNameSet.removeAll(Collections.singleton(null));
+
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        if (dataMap.size() > 0) {
+            List<Object> resultDataList = Lists.newArrayList();
+            officeNameSet.forEach(o -> {
+                resultDataList.add(dataMap.get(o));
+            });
+            echartsSeriesDto.setData(resultDataList);
+
+            EchartsSeriesDto.ItemStyle itemStyle = new EchartsSeriesDto.ItemStyle();
+            EchartsSeriesDto.Normal normal = new EchartsSeriesDto.Normal();
+            EchartsSeriesDto.Label label = new EchartsSeriesDto.Label();
+            label.setShow(true);
+            label.setTextStyle(
+                    "fontWeight:'bolder'," +
+                            "fontSize : '12'," +
+                            "position : 'top'," +
+                            "fontFamily : '微软雅黑'");
+            normal.setLabel(label);
+            itemStyle.setNormal(normal);
+            echartsSeriesDto.setItemStyle(itemStyle);
+        }
+        resultMap.put("echartsSeriesDto", echartsSeriesDto);
+        resultMap.put("officeNameSet", officeNameSet);
+        resultMap.put("ret", CollectionUtils.isNotEmpty(dataList));
+        return resultMap;
+    }
+
+    public Map<String, Object> singleUserRegisterData(String startDate, String endDate, String officeId) {
+        List<BizUserStatisticsDto> dataList = officeDao.singleUserRegisterData(startDate, endDate + " 23:59:59", officeId);
+
+        Set<String> officeNameSet = Sets.newHashSet();
+        Map<String, Object> dataMap = Maps.newHashMap();
+        Map<String, Object> resultMap = Maps.newHashMap();
+        dataList.forEach(o -> {
+            officeNameSet.add(o.getName());
+            dataMap.put(o.getName(), o.getCount());
         });
         officeNameSet.removeAll(Collections.singleton(null));
 

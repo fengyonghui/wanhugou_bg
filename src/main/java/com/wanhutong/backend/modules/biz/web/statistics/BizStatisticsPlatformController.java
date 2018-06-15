@@ -891,10 +891,23 @@ public class BizStatisticsPlatformController extends BaseController {
         return JSONObject.fromObject(bizStatisticsPlatformService.singleReceiveData(startDate, endDate, officeId)).toString();
     }
 
-    @RequiresPermissions("biz:statistics:receive:view")
+    @RequiresPermissions("biz:statistics:singleUser:view")
     @RequestMapping(value = {"singleUserRegisterData"})
     @ResponseBody
     public String singleUserRegisterData(String startDate, String endDate, String officeId) {
-        return JSONObject.fromObject(bizStatisticsPlatformService.singleReceiveData(startDate, endDate, officeId)).toString();
+        return JSONObject.fromObject(bizStatisticsPlatformService.singleUserRegisterData(startDate, endDate, officeId)).toString();
+    }
+
+    /**
+     * 用户相关统计数据
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:singleUser:view")
+    @RequestMapping(value = {"singleUser", ""})
+    public String singleUser(HttpServletRequest request) {
+        request.setAttribute("purchasingList", officeService.findListByTypeList(Lists.newArrayList("8", "10", "11")));
+        return "modules/biz/statistics/bizStatisticsUserBySingle";
     }
 }
