@@ -400,14 +400,14 @@
 				AND ohu.id IS NOT NULL
 			</if>
 			<if test="statu != null and statu =='unline' and examine != null and examine == 2">
-				AND (ohu.biz_status = 0 OR ohu.biz_status = 2)
+				AND ohu.biz_status = 0
 			</if>
 			<if test="statu != null and statu =='unline' and examine != null and examine == 1">
 				AND a.id NOT IN (
 					SELECT b.id
 					FROM biz_order_header b
 					LEFT JOIN biz_order_header_unline bohu ON bohu.order_id = b.id
-					WHERE (bohu.biz_status = 0 OR bohu.biz_status = 2)
+					WHERE bohu.biz_status = 0
 					AND bohu.`status` = 1
 					AND b.`status` = 1
 					AND b.order_type != 4
