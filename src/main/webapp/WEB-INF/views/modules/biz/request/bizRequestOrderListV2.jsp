@@ -296,7 +296,7 @@
 								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
 							</c:if>
 							<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
-								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.id}&vendorId=${orderHeader.onlyVendor}">采购</a>
+								<a href="${ctx}/biz/request/bizRequestOrder/goListForPhotoOrder?reqIds=&ordIds=${orderHeader.id}&vendorId=${orderHeader.onlyVendor}">采购</a>
 							</c:if>
 						</shiro:hasPermission>
 					</td>

@@ -186,6 +186,7 @@
 				<th>已到货数量</th>
 				<th>备注</th>
 				<th>业务状态</th>
+				<th>审核状态</th>
 				<th>下单时间</th>
 				<th>品类名称</th>
 				<th>申请人</th>
@@ -218,7 +219,7 @@
 				<td>
 					<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<td>${requestHeader.ordCount}</td>
+				<td>${requestHeader.reqQtys}</td>
 				<td id="total_${requestHeader.id}">${requestHeader.totalMoney}</td>
 					<input type="hidden" id="rev_${requestHeader.id}" value="${requestHeader.recvTotal}">
 				<td>${requestHeader.recvTotal}</td>
@@ -230,13 +231,10 @@
 					${requestHeader.remark}
 				</td>
 				<td>
-					<c:if test="${requestHeader.bizStatus==ReqHeaderStatusEnum.UNREVIEWED.state}">
-						${requestHeader.commonProcess.requestOrderProcess.name}
-					</c:if>
-					<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.UNREVIEWED.state}">
 						${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
-					</c:if>
+
 				</td>
+				<td>   ${requestHeader.commonProcess.requestOrderProcess.name}</td>
 				<td>
 					<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
