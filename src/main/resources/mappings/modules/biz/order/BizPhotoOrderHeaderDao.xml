@@ -369,6 +369,7 @@
 		a.order_num AS "orderNum",
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
+		a.seller_id as "sellers.id",
 		a.total_detail AS "totalDetail",
 		a.receive_total as "receiveTotal",
 		a.total_exp AS "totalExp",
@@ -384,8 +385,7 @@
 		a.update_time AS "updateDate",
 		vend.name AS "name"
 		FROM biz_order_header a
-		LEFT JOIN biz_purchaser_vendor pv ON pv.purchaser_id = a.cust_id
-		LEFT JOIN sys_office vend ON vend.id = pv.vendor_id
+		LEFT JOIN sys_office vend ON vend.id = a.seller_id
 		WHERE
 			a.status = 1
 			AND a.order_type !=4
