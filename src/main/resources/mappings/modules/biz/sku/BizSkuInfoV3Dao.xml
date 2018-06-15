@@ -469,7 +469,7 @@
 		LEFT JOIN sys_office purchaser ON purchaser.id = bpv.purchaser_id
 		WHERE purchaser.id = #{purchaser.id}
 		<if test="name != null and name != ''">
-			AND a.name LEFT
+			AND a.name LIKE
 			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
