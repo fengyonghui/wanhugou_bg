@@ -378,6 +378,7 @@
 				<tr>
 					<th>产品图片</th>
 					<th>品牌名称</th>
+					<th>供应商</th>
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
@@ -418,6 +419,8 @@
 						<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
 							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
+							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
+									${reqDetail.skuInfo.productInfo.office.name}</a></td>
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
