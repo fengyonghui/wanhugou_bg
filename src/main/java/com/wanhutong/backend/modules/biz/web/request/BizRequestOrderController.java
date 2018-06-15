@@ -271,6 +271,14 @@ public class BizRequestOrderController extends BaseController {
     }
 
 
+    @RequestMapping(value = "goListForPhotoOrder")
+    public String goListForPhotoOrder(HttpServletRequest request, String ordIds) {
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(ordIds));
+        System.out.println(bizOrderHeader);
+
+        return "modules/biz/po/bizPoHeaderFormForPhotoOrder";
+    }
+
 
     private Map<Integer, List<BizSkuInfo>> getSkuInfoData(Map<Integer, List<BizSkuInfo>> map, Integer key, BizSkuInfo bizSkuInfo) {
         // BizSkuInfo bizSkuInfo= bizSkuInfoService.findListProd(bizSkuInfoService.get(key));
