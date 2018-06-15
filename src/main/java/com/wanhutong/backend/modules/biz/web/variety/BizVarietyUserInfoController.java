@@ -97,7 +97,10 @@ public class BizVarietyUserInfoController extends BaseController {
 	public String delete(BizVarietyUserInfo bizVarietyUserInfo, RedirectAttributes redirectAttributes) {
 		bizVarietyUserInfoService.delete(bizVarietyUserInfo);
 		addMessage(redirectAttributes, "删除品类与用户 关联成功");
-		return "redirect:"+Global.getAdminPath()+"/biz/variety/bizVarietyUserInfo/?repage";
+		if (bizVarietyUserInfo.getUser() != null && bizVarietyUserInfo.getUser().getId() != null) {
+			return "redirect:" + Global.getAdminPath() + "/biz/variety/bizVarietyUserInfo/list?user.id=" + bizVarietyUserInfo.getUser().getId();
+		}
+		return "redirect:" + Global.getAdminPath() + "/biz/variety/bizVarietyUserInfo/?repage";
 	}
 
 }

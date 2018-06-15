@@ -378,6 +378,7 @@
 				<tr>
 					<th>产品图片</th>
 					<th>品牌名称</th>
+					<th>供应商</th>
 					<th>商品名称</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
@@ -388,6 +389,10 @@
 					<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
 						<th>仓库名称</th>
 						<th>库存数量</th>
+						<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
+							<th>商品总库存数量</th>
+						</c:if>
+
 					</c:if>
 					<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">
 						<th>已收货数量</th>
@@ -414,6 +419,8 @@
 						<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
 							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
+							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
+									${reqDetail.skuInfo.productInfo.office.name}</a></td>
 							<td>${reqDetail.skuInfo.name}</td>
 							<td>${reqDetail.skuInfo.partNo}</td>
 							<td>${reqDetail.skuInfo.itemNo}</td>
@@ -444,6 +451,12 @@
 							<c:if test="${entity.str=='detail' && entity.bizStatus >= ReqHeaderStatusEnum.UNREVIEWED.state}">
 								<td>${reqDetail.invName}</td>
 								<td>${reqDetail.skuInvQty}</td>
+								<c:if test="${not empty roleChanne && roleChanne eq 'channeOk'}">
+									<td>
+										<a href="${ctx}/biz/inventory/bizInventorySku?skuInfo.id=${reqDetail.skuInfo.id}&reqSource=request_Inv">
+											${reqDetail.invenSkuOrd}</a>
+									</td>
+								</c:if>
 							</c:if>
 
 							<c:if test="${entity.str=='detail' && entity.bizStatus>=ReqHeaderStatusEnum.PURCHASING.state}">

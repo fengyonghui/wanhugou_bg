@@ -33,6 +33,10 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 //	private String sOrdQty;
 
 	private Long inventoryAgeDay;
+	/**
+	 * 备货清单进入查询库存 标识
+	 * */
+	private String reqSource;
 
 	private String inventoryAgeDate;
 
@@ -143,4 +147,11 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 		return date.toString();
 	}
 
+	public String getReqSource() {
+		return reqSource;
+	}
+
+	public void setReqSource(String reqSource) {
+		this.reqSource = reqSource;
+	}
 }

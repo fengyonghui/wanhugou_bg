@@ -262,12 +262,12 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 					phone.append(u.getMobile()).append(",");
 				}
 			}
-//		if (StringUtils.isNotBlank(phone.toString())) {
-//			AliyunSmsClient.getInstance().sendSMS(
-//					SmsTemplateCode.PENDING_AUDIT.getCode(),
-//					phone.toString(),
-//					ImmutableMap.of("order","备货清单"));
-//		}
+		if (StringUtils.isNotBlank(phone.toString())) {
+			AliyunSmsClient.getInstance().sendSMS(
+					SmsTemplateCode.PENDING_AUDIT.getCode(),
+					phone.toString(),
+					ImmutableMap.of("order","备货清单"));
+		}
 
 
 		return commonProcessEntity.getId();

@@ -69,16 +69,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
-//        boolean flag=false;
         boolean oflag = false;
-        /*if(user.getRoleList()!=null){
-            for(Role role:user.getRoleList()){
-                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
-                    flag=true;
-                    break;
-                }
-            }
-        }*/
         if (UserUtils.getOfficeList() != null){
             for (Office office:UserUtils.getOfficeList()){
                 if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
@@ -90,7 +81,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             return super.findList(bizOrderHeader);
         }else {
             if(oflag){
-
+           //     bizOrderHeader.setConsultantId(user.getId());
             }else {
                 bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
@@ -457,5 +448,39 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         return userDao.findVendUser(orderId,vendType);
     }
 
+
+    /**
+     * 导出
+     * */
+    public List<BizOrderHeader> findListExport(BizOrderHeader bizOrderHeader) {
+        User user = UserUtils.getUser();
+        if (user.isAdmin()) {
+            bizOrderHeader.setDataStatus("filter");
+            return super.findList(bizOrderHeader);
+        } else {
+            boolean flag = false;
+            boolean roleFlag = false;
+            if (user.getRoleList() != null) {
+                for (Role role : user.getRoleList()) {
+                    if (RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())) {
+                        flag = true;
+                    }
+                    if (RoleEnNameEnum.BUYER.getState().equals(role.getEnname())) {
+                        roleFlag = true;
+                    }
+                }
+            }
+            if (flag) {
+                bizOrderHeader.setCenterId(user.getOffice().getId());
+            } else {
+                if (roleFlag) {
+                    bizOrderHeader.setConsultantId(user.getId());
+                } else {
+                    bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+                }
+            }
+            return super.findList(bizOrderHeader);
+        }
+    }
 
 }

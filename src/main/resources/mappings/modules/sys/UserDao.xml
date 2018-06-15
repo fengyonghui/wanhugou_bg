@@ -336,12 +336,6 @@
 		<if test="company != null and company.type != null">
 			and cust.type = #{company.type}
 		</if>
-		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
-			AND u.create_date &lt;= #{ordrHeaderStartTime}
-		</if>
-		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
-			AND u.create_date BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
-		</if>
 		<if test="cent != null and cent.name != null and cent.name !=''">
 			AND cent.name LIKE
 			<if test="dbName == 'oracle'">'%'||#{cent.name}||'%'</if>
@@ -384,6 +378,13 @@
 		<!--<if test="sqlMap != null and sqlMap.us != null and sqlMap.us != ''">-->
 		${sqlMap.us}
 		<!--</if>-->
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
 	</select>
 	<!-- 插入用户 -->
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
