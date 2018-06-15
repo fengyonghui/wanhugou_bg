@@ -151,6 +151,7 @@
 				<c:if test="${bizUser.delFlag==1}">
 					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
 					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+					<a href="${ctx}/sys/userCode/genUserQRCode?id=${bizUser.id}">生成二维码</a>
 				</c:if>
 				<c:if test="${bizUser.delFlag==0}">
 					<a href="${ctx}/sys/user/recovery?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">恢复</a>
