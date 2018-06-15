@@ -383,9 +383,11 @@
 		a.create_time AS "createDate",
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate",
-		vend.name AS "name"
+		vend.name AS "name",
+        boc.comments AS "orderComment.comments"
 		FROM biz_order_header a
 		LEFT JOIN sys_office vend ON vend.id = a.seller_id
+        LEFT JOIN biz_order_comment boc ON boc.order_id = a.id
 		WHERE
 			a.status = 1
 			AND a.order_type !=4

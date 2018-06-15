@@ -51,7 +51,7 @@ import java.util.List;
 /**
  * 发货单Controller
  * @author 张腾飞
- * @version 2018-03-05
+ * @version 2018-06-15
  */
 @Controller
 @RequestMapping(value = "${adminPath}/biz/inventory/bizDeliverGoods")
@@ -130,11 +130,7 @@ public class BizDeliverGoodsController extends BaseController {
             model.addAttribute("userList",null);
         }
 		model.addAttribute("bizOrderHeader",new BizOrderHeader());
-		if(bizInvoice.getShip() != null && bizInvoice.getShip()==1 ){
-			model.addAttribute("bizRequestHeader",new BizRequestHeader());
-		    return "modules/biz/inventory/bizInvoiceRequestForm";
-        }
-		return "modules/biz/inventory/bizInvoiceForm";
+		return "modules/biz/inventory/bizDeliverGoodsForm";
 	}
 
     /**
@@ -183,7 +179,7 @@ public class BizDeliverGoodsController extends BaseController {
         model.addAttribute("source",source);
         model.addAttribute("orderHeaderList",orderHeaderList);
         model.addAttribute("bizInvoice", bizInvoice);
-        return "modules/biz/inventory/bizInvoiceDeForm";
+        return "modules/biz/inventory/bizDeliverGoodsDeForm";
     }
 
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
