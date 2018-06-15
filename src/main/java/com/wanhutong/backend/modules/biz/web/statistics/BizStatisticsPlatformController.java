@@ -890,4 +890,11 @@ public class BizStatisticsPlatformController extends BaseController {
     public String singleReceiveData(String startDate, String endDate, String officeId) {
         return JSONObject.fromObject(bizStatisticsPlatformService.singleReceiveData(startDate, endDate, officeId)).toString();
     }
+
+    @RequiresPermissions("biz:statistics:receive:view")
+    @RequestMapping(value = {"singleUserRegisterData"})
+    @ResponseBody
+    public String singleUserRegisterData(String startDate, String endDate, String officeId) {
+        return JSONObject.fromObject(bizStatisticsPlatformService.singleReceiveData(startDate, endDate, officeId)).toString();
+    }
 }

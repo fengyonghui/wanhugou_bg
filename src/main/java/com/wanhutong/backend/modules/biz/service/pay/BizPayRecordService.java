@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.service.pay;
 import java.util.List;
 
 import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
@@ -65,7 +66,7 @@ public class BizPayRecordService extends CrudService<BizPayRecordDao, BizPayReco
 		return dao.getReceiveData(startDate, endDate, centerType);
 	}
 
-	public List<BizOrderStatisticsDto> getSingleReceiveData(String startDate, String endDate, String officeId) {
+	public List<BizUserStatisticsDto> getSingleReceiveData(String startDate, String endDate, String officeId) {
 		return dao.getSingleReceiveData(startDate, endDate, officeId);
 	}
 }

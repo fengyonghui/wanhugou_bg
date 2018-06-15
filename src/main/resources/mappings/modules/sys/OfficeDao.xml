@@ -403,4 +403,14 @@
   		WHERE ccc.center_id = #{officeId} AND a.type = 6
 	</select>
 
+	<select id="findCustomByOfficeId" resultType="BizUserStatisticsDto">
+		select su.name AS "name", count(*) AS "count", su.create_date AS "createDate"
+		from sys_office so, biz_custom_center_consultant ccc, sys_user su
+		where so.create_date BETWEEN ${startDate} and ${endDate}
+		and ccc.cust_id = so.id
+		and ccc.consultant_id = su.id
+		and ccc.center_id = ${officeId}
+		group by su.id;
+	</select>
+
 </mapper>

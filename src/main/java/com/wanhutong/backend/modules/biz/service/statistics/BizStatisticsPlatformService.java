@@ -1,6 +1,7 @@
 package com.wanhutong.backend.modules.biz.service.statistics;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -16,6 +17,7 @@ import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -278,7 +280,31 @@ public class BizStatisticsPlatformService {
     }
 
     public Map<String, Object> singleReceiveData(String startDate, String endDate, String officeId) {
-        List<BizOrderStatisticsDto> dataList = bizPayRecordService.getSingleReceiveData(startDate, endDate + " 23:59:59", officeId);
+        List<BizUserStatisticsDto> dataList = bizPayRecordService.getSingleReceiveData(startDate, endDate + " 23:59:59", officeId);
+
+        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
+            return ImmutableMap.of("ret", false);
+        }
+        List<String> nameList = Lists.newArrayList();
+
+        List<Object> seriesDataList = Lists.newArrayList();
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        dataList.forEach(o -> {
+            seriesDataList.add(o.getCount());
+            nameList.add(o.getName());
+        });
+        echartsSeriesDto.setName("用户量");
+        echartsSeriesDto.setData(seriesDataList);
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("seriesList", echartsSeriesDto);
+        paramMap.put("nameList", nameList);
+        paramMap.put("ret", CollectionUtils.isNotEmpty(seriesDataList));
+        return paramMap;
+    }
+
+    public Map<String, Object> singleUserRegisterData(String startDate, String endDate, String officeId) {
+        List<BizOrderStatisticsDto> dataList = officeDao.singleUserRegisterData(startDate, endDate + " 23:59:59", officeId);
 
         Set<String> officeNameSet = Sets.newHashSet();
         Map<String, Object> dataMap = Maps.newHashMap();
