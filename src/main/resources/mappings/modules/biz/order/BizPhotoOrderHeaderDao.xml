@@ -363,6 +363,49 @@
 		ORDER BY updateDate DESC
 	</select>
 
+	<select id="findDeliverGoodsOrderList" resultType="BizOrderHeader">
+		SELECT
+		a.id AS "id",
+		a.order_num AS "orderNum",
+		a.order_type AS "orderType",
+		a.cust_id AS "customer.id",
+		a.total_detail AS "totalDetail",
+		a.receive_total as "receiveTotal",
+		a.total_exp AS "totalExp",
+		a.freight AS "freight",
+		a.inv_status AS "invStatus",
+		a.biz_status AS "bizStatus",
+		a.biz_type as "bizType",
+		a.plateform_id AS "platformInfo.id",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		vend.name AS "name"
+		FROM biz_order_header a
+		LEFT JOIN biz_purchaser_vendor pv ON pv.purchaser_id = a.cust_id
+		LEFT JOIN sys_office vend ON vend.id = pv.vendor_id
+		WHERE
+			a.status = 1
+			AND a.order_type !=4
+		<if test="orderNum != null and orderNum != ''">
+			AND a.order_num LIKE
+			<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+		</if>
+		<if test="orderType != null and orderType != ''">
+			AND a.order_type = #{orderType}
+		</if>
+		<if test="name != null and name != ''">
+			AND vend.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		</if>
+	</select>
+
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO biz_order_header(
 		id,

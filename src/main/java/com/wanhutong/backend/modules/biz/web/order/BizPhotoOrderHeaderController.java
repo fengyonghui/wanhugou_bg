@@ -355,4 +355,10 @@ public class BizPhotoOrderHeaderController extends BaseController {
         }
         return flag;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "findOrder")
+    public List<BizOrderHeader> findOrder(BizOrderHeader bizOrderHeader) {
+        return bizPhotoOrderHeaderService.findDeliverGoodsOrderList(bizOrderHeader);
+    }
 }

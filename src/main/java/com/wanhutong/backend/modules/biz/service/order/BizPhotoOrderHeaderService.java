@@ -7,6 +7,7 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizPhotoOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.order.*;
+import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
 import com.wanhutong.backend.modules.sys.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购 4:微商订单 5:代采订单 6:拍照下单)Service
@@ -24,8 +26,6 @@ import javax.annotation.Resource;
 @Transactional(readOnly = true)
 public class BizPhotoOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrderHeader> {
 
-    @Resource
-    private BizOrderHeaderDao bizOrderHeaderDao;
     @Autowired
     private BizPhotoOrderHeaderDao bizPhotoOrderHeaderDao;
     @Autowired
@@ -51,6 +51,16 @@ public class BizPhotoOrderHeaderService extends CrudService<BizOrderHeaderDao, B
      */
     public User findVendUser(Integer orderId, String vendType) {
         return userDao.findVendUser(orderId,vendType);
+    }
+
+    /**
+     * 拍照下单发货查询订单
+     * @param bizOrderHeader
+     * @return
+     */
+    public List<BizOrderHeader> findDeliverGoodsOrderList(BizOrderHeader  bizOrderHeader){
+        bizOrderHeader.setOrderType(BizOrderTypeEnum.PHOTO_ORDER.getState());
+        return bizPhotoOrderHeaderDao.findDeliverGoodsOrderList(bizOrderHeader);
     }
 
 }
