@@ -67,7 +67,7 @@
                 }
                 salesVolumeChart.setOption({
                     title: {
-                        text: '用户量统计(月)',
+                        text: '用户量统计',
                         textStyle:{
                             fontSize: 16,
                             fontWeight: 'bolder',
@@ -112,7 +112,7 @@
                     //     left: '10%'
                     // },
                     xAxis: {
-                        data: msg.nameList,
+                        data: msg.officeNameSet,
                         axisPointer: {
                             type: 'shadow'
                         },
@@ -132,7 +132,7 @@
                             min:0
                         }
                     ],
-                    series: msg.seriesList
+                    series: msg.echartsSeriesDto
                 });
                 salesVolumeChart.hideLoading();
                 setInterval( function (args) {
