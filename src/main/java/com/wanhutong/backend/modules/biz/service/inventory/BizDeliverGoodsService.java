@@ -17,7 +17,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizPhotoOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
@@ -63,7 +63,7 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
 	@Autowired
     private BizPoOrderReqService bizPoOrderReqService;
 	@Autowired
-    private BizOrderHeaderService bizOrderHeaderService;
+    private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
 	@Autowired
     private BizPoHeaderService bizPoHeaderService;
 	@Autowired
@@ -123,7 +123,7 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
         if(StringUtils.isNotBlank(orderHeaders)) {
             String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
-                BizOrderHeader orderHeader = bizOrderHeaderService.get(Integer.parseInt(orders[a]));
+                BizOrderHeader orderHeader = bizPhotoOrderHeaderService.get(Integer.parseInt(orders[a]));
                 //加入中间表关联关系
                 BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
                 bizDetailInvoice.setInvoice(bizInvoice);
@@ -146,7 +146,7 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
                     }
                     //修改订单状态为已发货（20）
                     orderHeader.setBizStatus(OrderHeaderBizStatusEnum.SEND.getState());
-                    bizOrderHeaderService.saveOrderHeader(orderHeader);
+                    bizPhotoOrderHeaderService.saveOrderHeader(orderHeader);
                     //生成供货记录
                     BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
                     bsgr.setCustomer(office);
