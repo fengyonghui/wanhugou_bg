@@ -205,6 +205,7 @@
 		AND por.so_id = rd.header_id
 		AND por.so_type = 2
 		and ph.id=por.po_id and is_prew=0
+		and ph.status=1
 		)
 		AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE rh.from_id = ta.object_id AND ta.object_name = 'sys_office' )
 		) rd
@@ -259,6 +260,7 @@
 		AND por.so_id = od.order_id
 		AND por.so_type = 1
 		and ph.id=por.po_id and is_prew=0
+		and ph.status=1
 		)
 		AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE oh.cust_id = ta.object_id AND ta.object_name = 'sys_office' )
 		) od
@@ -590,6 +592,7 @@ GROUP BY
 			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.order_id
 		LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1 and ph.is_prew=0
 		<where>
+			a.status=1
 			AND a.line_no = bpor.so_line_no
 			and bpor.so_type=1
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
