@@ -6,10 +6,18 @@ package com.wanhutong.backend.modules.biz.web.inventory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +34,9 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 仓库信息表Controller
@@ -108,6 +119,35 @@ public class BizInventoryInfoController extends BaseController {
             bizInventoryInfo.setCustomer(cent);
         }
         return bizInventoryInfo;
+	}
+
+	/**
+	 * 库存管理 查询仓库名称
+	 * */
+	@RequiresPermissions("biz:inventory:bizInventorySku:view")
+	@ResponseBody
+	@RequestMapping(value = "warehouseData")
+	public List<Map<String, Object>> warehouseData() {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		User user = UserUtils.getUser();
+		BizInventoryInfo inventoryInfo = new BizInventoryInfo();
+		List<BizInventoryInfo> list = null;
+		if (user.isAdmin()) {
+			list = bizInventoryInfoService.findList(inventoryInfo);
+		} else {
+			inventoryInfo.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
+			list = bizInventoryInfoService.findList(inventoryInfo);
+		}
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (int i = 0; i < list.size(); i++) {
+				BizInventoryInfo e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("name", e.getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
 	}
 
 }
