@@ -17,8 +17,6 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-				   // var fTd= $("#prodInfo").find("td").length;
-				   // alert(fTd)
 				   if($("#prodInfo").find("td").length==0){
 				       alert("请先选择待发货订单,然后点击确定。");
 					   return;
@@ -28,41 +26,9 @@
                     var total = 0;
                     $('input:checkbox:checked').each(function(i) {
                         var t= $(this).val();
-                        var detail="";
-                        var num ="";
-                        var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
-                        var iObj=$("#prodInfo").find("select[title='invInfoId']");
-                        sObj.each(function (index) {
-                            total+= parseInt($(this).val());
-                        })
-						if(iObj.length!=0){
-                            iObj.each(function (index) {
-                                if ($(this).val() != ''){
-                                    flag = true;
-                                }
-                            });
-                            $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-
-                                detail+=$(this).val()+"-"+sObj[i].value+"-"+iObj[i].value+"*";
-
-                            });
-						}else {
-                            flag = true;
-                            $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-                                detail+=$(this).val()+"-"+sObj[i].value+"*";
-
-                            });
-						}
-
-                        tt+=t+"#"+detail+",";
-
+                        $(t).find("input[name='orderHeaders']").removeAttr("style");
                     });
-                    tt=tt.substring(0,tt.length-1);
-                    if (tt != '') {
-                        $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
-					}
                     if(window.confirm('你确定要发货吗？')){
-						// var orderHeaders = $("input[name='orderHeaders']").val();
 						form.submit();
 						loading('正在提交，请稍等...');
                     }else{
@@ -94,16 +60,9 @@
                         if ($("#id").val() == '') {
                             $("#prodInfo2").empty();
                         }
-
-                        if(bizStatus==0){
-                            var selecttd="<select class='input-mini' title='invInfoId'><option value=''>请选择</option>";
-                            $.each(data.inventoryInfoList,function (index,inventory) {
-                                selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
-                            });
-                        }
                         var tr_tds="";
                         var bizName ="";
-                        $.each(data.bizOrderHeaderList, function (index,orderHeader) {
+                        $.each(data, function (index,orderHeader) {
                             if(orderHeader.bizStatus==15){
                                 bizName="供货中"
                             }
@@ -116,37 +75,13 @@
 							}else if(orderHeader.bizStatus==20){
                                 bizName="已发货"
 							}
-
-							var flag= true;
-							var deId = "";
-							var  num = "";
-                            $.each(orderHeader.orderDetailList,function (index,detail) {
-
-                                tr_tds+="<tr class='tr_"+orderHeader.id+"'>";
-
-                                if(flag){
-                                    tr_tds+="<td rowspan='"+orderHeader.orderDetailList.length+"'><input type='checkbox' value='"+orderHeader.id+"' /></td>";
-
-                                    tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.orderNum+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
-                                }
-                                 tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
-                                if(bizStatus==0) {
-                                    tr_tds += "<td>" + selecttd + "</td>"
-                                }
-                                tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
-                                if(detail.ordQty==detail.sentQty){
-                                    tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
-                                }else {
-                                    tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='"+(detail.ordQty-detail.sentQty)+"'></td>";
-                                }
-
-                                tr_tds+="</tr>";
-                                if(orderHeader.orderDetailList.length>1){
-                                    flag=false;
-                                }
-                            });
-
+                            tr_tds += "<tr class='tr_"+orderHeader.id+"'>";
+                            tr_tds +=   "<td><input type='checkbox' value='"+orderHeader.id+"' /><input name='orderHeaders' value='"+orderHeader.id+"' type='hidden' style='display: none'/></td>";
+                            tr_tds +=   "<td>"+orderHeader.orderNum+"</td>";
+                            tr_tds +=   "<td>"+orderHeader.customer.name+"</td>";
+                            tr_tds +=   "<td>"+bizName+"</td>";
+                            tr_tds +=   "<td>"+orderHeader.name+"</td>";
+                            tr_tds +=  "</tr>";
                         });
                         $("#prodInfo2").append(tr_tds);
                     }
@@ -156,23 +91,14 @@
             $("#ensureData").click(function () {
 				$('input:checkbox:checked').each(function(i) {
 				   var t= $(this).val();
-				   var ttp= $(this).parent().parent().parent();
-				   var trt= ttp.find($(".tr_"+t))
-					$("#prodInfo").append(trt);
+				   var ttp= $(this).parent();
+					$("#prodInfo").append(ttp);
 				});
                 $("#select_all").removeAttr("checked");
 
 			});
 
             });
-		function checkNum(ordQty,sentQty, sendQty) {
-			if (parseInt(sendQty.value)+parseInt(sentQty) > parseInt(ordQty)){
-			    alert("发货数量大于需求数量，请修改");
-			    $(sendQty).val(0);
-			}
-        }
-
-
 	</script>
 </head>
 <body>
