@@ -333,7 +333,7 @@
                     alert("请上传退款凭证！");
                 } else {
                     $("#photos").val(mainImgStr);
-                    /*$("#receiveTotal").val("0");*/
+                    $("#receiveTotal").val("0");
                     $("#bizStatus").val("<%=OrderHeaderBizStatusEnum.REFUNDED.getState()%>");
                     loading('正在提交，请稍等...');
                     inputForm.submit();
