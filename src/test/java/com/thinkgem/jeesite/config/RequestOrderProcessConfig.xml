@@ -18,7 +18,7 @@
     </process>
 
     <process>
-        <name>审核通过</name>
+        <name>审核完成</name>
         <code>3</code>
         <roleEnNameEnum></roleEnNameEnum>
         <passCode>0</passCode>
