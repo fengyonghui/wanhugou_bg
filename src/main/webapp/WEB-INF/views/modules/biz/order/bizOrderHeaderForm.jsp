@@ -3,7 +3,14 @@
 <%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
-
+<%
+    Integer refund = OrderHeaderBizStatusEnum.REFUND.getState();
+    Integer refunding = OrderHeaderBizStatusEnum.REFUNDING.getState();
+    Integer refunded = OrderHeaderBizStatusEnum.REFUNDED.getState();
+    request.setAttribute("refund", refund);
+    request.setAttribute("refunding", refunding);
+    request.setAttribute("refunded", refunded);
+%>
 <html>
 <head>
     <title>订单信息管理</title>
@@ -332,12 +339,12 @@
 
                 $.ajax({
                     type: "post",
-                    url: "${ctx}/biz/order/bizOrderHeader/saveInfo",
+                    url: "${ctx}/biz/order/bizOrderHeader/saveInfo?statuPath=${statuPath}",
                     data: {checkStatus: obj, id: hid},
                     success: function (data) {
                         if (data) {
                             alert(val + "成功！");
-                            window.location.href = "${ctx}/biz/order/bizOrderHeader";
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader?statu=${statuPath}";
 
                         }
                     }
@@ -507,7 +514,7 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save?statuPath=${statuPath}" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
@@ -1103,7 +1110,9 @@
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
                 <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                    <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
+                    <c:if test='${entity.bizStatus==refund}'>
+                        <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
+                    </c:if>
                 </shiro:hasPermission>
                     <%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
             </div>

@@ -153,7 +153,7 @@ public class BizOrderHeaderController extends BaseController {
 
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "form")
-    public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails) {
+    public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails, HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
         List<BizOrderDetail> ordDetailList = Lists.newArrayList();
         Map<Integer, String> orderNumMap = new HashMap<Integer, String>();
@@ -280,6 +280,9 @@ public class BizOrderHeaderController extends BaseController {
 
         Map<Integer, OrderHeaderBizStatusEnum> statusMap = OrderHeaderBizStatusEnum.getStatusMap();
 
+        String statuPath = request.getParameter("statu");
+        model.addAttribute("statuPath", statuPath);
+
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("entity", bizOrderHeader);
         model.addAttribute("ordDetailList", ordDetailList);
@@ -315,28 +318,29 @@ public class BizOrderHeaderController extends BaseController {
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "save")
-    public String save(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+    public String save(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         if (!beanValidator(model, bizOrderHeader)) {
-            return form(bizOrderHeader, model, null, null);
+            return form(bizOrderHeader, model, null, null, request, response);
         }
         if (bizOrderHeader.getPlatformInfo() == null) {
             //后台默认保存为 系统后台订单
             bizOrderHeader.getPlatformInfo().setId(6);
         }
+        String statuPath = request.getParameter("statuPath");
         bizOrderHeaderService.save(bizOrderHeader);
         addMessage(redirectAttributes, "保存订单信息成功");
         if (bizOrderHeader.getClientModify() != null && "client_modify".equals(bizOrderHeader.getClientModify())) {
 //			保存跳回客户专员
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?statu=" + statuPath;
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:doRefund")
     @RequestMapping(value = "saveRefund")
-    public String saveRefund(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+    public String saveRefund(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         if (!beanValidator(model, bizOrderHeader)) {
-            return form(bizOrderHeader, model, null, null);
+            return form(bizOrderHeader, model, null, null, request, response);
         }
         Double receiveTotal = (-1) * (bizOrderHeaderService.get(bizOrderHeader.getId()).getReceiveTotal());
         bizOrderHeaderService.save(bizOrderHeader);
