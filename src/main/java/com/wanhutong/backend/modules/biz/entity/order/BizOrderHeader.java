@@ -120,8 +120,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer skuCount;//商品销售量
     private Integer officeCount;//新增经销店数
 
-    private CommonProcessEntity commonProcess;
-
     private String photos; //产品图片
     private String imgPhotosSorts;		//主图顺序
 
@@ -638,14 +636,6 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setExamine(Integer examine) {
         this.examine = examine;
-    }
-
-    public CommonProcessEntity getCommonProcess() {
-        return commonProcess;
-    }
-
-    public void setCommonProcess(CommonProcessEntity commonProcess) {
-        this.commonProcess = commonProcess;
     }
 
     public String getPhotos() {

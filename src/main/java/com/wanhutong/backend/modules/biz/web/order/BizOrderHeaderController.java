@@ -148,20 +148,6 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("page", page);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
 
-        /*User user = UserUtils.getUser();
-        List<Role> roleList = user.getRoleList();
-
-        Set<String> roleSet = Sets.newHashSet();
-        for (Role r : roleList) {
-            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
-            if (parse != null) {
-                roleSet.add(parse.name());
-            }
-        }
-
-        model.addAttribute("user", user);
-        model.addAttribute("roleSet", roleSet);*/
-
         return "modules/biz/order/bizOrderHeaderList";
     }
 
@@ -1100,15 +1086,6 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "saveInfo")
     public boolean saveInfo(BizOrderHeader bizOrderHeader, String checkStatus, Integer id) {
-//        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
-//        PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.getProcessMap().get(Integer.valueOf(3));
-//        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-//        commonProcessEntity.setObjectId(bizOrderHeader.getId().toString());
-//        commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-//        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-//        commonProcessService.save(commonProcessEntity);
-//        bizOrderHeader.setCommonProcess(commonProcessEntity);
-
         bizOrderHeader = bizOrderHeaderService.get(id);
         bizOrderHeader.setBizStatus(Integer.parseInt(checkStatus));
         boolean boo = false;
