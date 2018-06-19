@@ -30,6 +30,10 @@ public class DsConfig {
     public static String getAlipayPostUrl(){return getConfig().getString("alipayPostUrl");}
 
 
+    public static String getUserGenCode(){
+        return getConfig().getString("userGenCode");
+    }
+
 
 
 
