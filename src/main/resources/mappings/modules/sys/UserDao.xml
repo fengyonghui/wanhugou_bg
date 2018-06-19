@@ -342,6 +342,12 @@
 			<if test="dbName == 'mssql'">'%'+#{cent.name}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{cent.name}, '%')</if>
 		</if>
+		<if test="user != null and user.name != null and user.name !=''">
+			AND us.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{user.name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{user.name}, '%')</if>
+		</if>
 		<if test="phone != null and phone !=''">
 			AND u.phone LIKE
 			<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
