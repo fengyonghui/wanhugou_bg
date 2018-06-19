@@ -11,6 +11,8 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
@@ -18,17 +20,22 @@ import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.biz.web.po.BizPoHeaderController;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.service.DictService;
+import com.wanhutong.backend.modules.sys.service.OfficeService;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +65,10 @@ public class BizRequestOrderController extends BaseController {
     @Autowired
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired
+    private OfficeService officeService;
+    @Autowired
+    private BizOrderAddressService bizOrderAddressService;
+    @Autowired
     private BizOrderDetailService bizOrderDetailService;
     @Autowired
     private BizRequestDetailService bizRequestDetailService;
@@ -65,9 +76,10 @@ public class BizRequestOrderController extends BaseController {
     private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private BizPoOrderReqService bizPoOrderReqService;
-
     @Autowired
     private DictService dictService;
+    @Autowired
+    private CommonImgService commonImgService;
 
 
        @RequiresPermissions("biz:request:selecting:supplier:view")
@@ -270,10 +282,36 @@ public class BizRequestOrderController extends BaseController {
 
 
     @RequestMapping(value = "goListForPhotoOrder")
-    public String goListForPhotoOrder(HttpServletRequest request, String ordIds) {
-        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(Integer.valueOf(ordIds));
-        System.out.println(bizOrderHeader);
+    public String goListForPhotoOrder(HttpServletRequest request, Integer ordIds) {
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(ordIds);
+        BizOrderAddress bizOrderAddress = bizOrderAddressService.getOrderAddrByOrderId(ordIds);
 
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(ordIds);
+        commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
+        commonImg.setObjectName("biz_order_header");
+        List<CommonImg> imgList = commonImgService.findList(commonImg);
+
+        Office vendor = officeService.get(bizOrderHeader.getSellersId());
+
+        CommonImg compactImg = new CommonImg();
+        compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
+        compactImg.setObjectId(vendor.getId());
+        compactImg.setObjectName(BizPoHeaderController.VEND_IMG_TABLE_NAME);
+        List<CommonImg> compactImgList = commonImgService.findList(compactImg);
+        request.setAttribute("compactImgList", compactImgList);
+
+        CommonImg identityCardImg = new CommonImg();
+        identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
+        identityCardImg.setObjectId(vendor.getId());
+        identityCardImg.setObjectName(BizPoHeaderController.VEND_IMG_TABLE_NAME);
+        List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
+        request.setAttribute("identityCardImgList", identityCardImgList);
+
+        request.setAttribute("imgList", imgList);
+        request.setAttribute("vendor", vendor);
+        request.setAttribute("bizOrderHeader", bizOrderHeader);
+        request.setAttribute("bizOrderAddress", bizOrderAddress);
         return "modules/biz/po/bizPoHeaderFormForPhotoOrder";
     }
 

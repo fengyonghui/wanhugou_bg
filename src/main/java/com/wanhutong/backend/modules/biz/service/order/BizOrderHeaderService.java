@@ -63,10 +63,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         return bizOrderHeaderDao.findListFirstOrder(bizOrderHeader);
     }
 
+    @Override
     public BizOrderHeader get(Integer id) {
         return super.get(id);
     }
 
+    @Override
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         boolean oflag = false;
@@ -89,6 +91,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
     }
 
+    @Override
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
@@ -152,6 +155,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false)
+    @Override
     public void save(BizOrderHeader bizOrderHeader) {
         if (bizOrderHeader.getBizType() == null) {
             bizOrderHeader.setBizType(1);
@@ -237,6 +241,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false)
+    @Override
     public void delete(BizOrderHeader bizOrderHeader) {
         super.delete(bizOrderHeader);
     }

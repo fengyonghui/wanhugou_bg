@@ -47,6 +47,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      *  ｝
      * */
     private Office sellers;
+    private Integer sellersId;
     /**
      * 订单备注
      * */
@@ -628,6 +629,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public Integer getExamine() {
         return examine;
+    }
+
+    public Integer getSellersId() {
+        return sellersId;
+    }
+
+    public void setSellersId(Integer sellersId) {
+        this.sellersId = sellersId;
     }
 
     public void setExamine(Integer examine) {

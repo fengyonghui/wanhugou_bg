@@ -23,6 +23,7 @@
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
 		<result property="totalBuyPrice" column="totalBuyPrice"/>
+		<result property="sellersId" column="sellersId"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -97,6 +98,7 @@
 		so.name as "customer.name",
 		so.phone AS "customer.phone",
 		a.seller_id as "sellers.id",
+		a.seller_id as "sellersId",
 		c.receiver as "bizLocation.receiver",
 		c.phone as "bizLocation.phone",
 		c.province_id as "bizLocation.province.id",
@@ -138,6 +140,7 @@
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
 		a.seller_id as "sellers.id",
+		a.seller_id as "sellersId",
 		a.total_detail AS "totalDetail",
 		a.receive_total as "receiveTotal",
 		a.total_exp AS "totalExp",
