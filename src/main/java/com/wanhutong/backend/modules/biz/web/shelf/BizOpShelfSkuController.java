@@ -313,5 +313,23 @@ public class BizOpShelfSkuController extends BaseController {
 		model.addAttribute("bizSkuInfo", new BizSkuInfo());
 		return "modules/biz/shelf/bizOpShelfSkuCendForm";
 	}
+
+	/**
+	 * 删除不刷新
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
+	@RequestMapping(value = "deleteShelfSku")
+	public String deleteShelfSku(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
+		String shelfSku="Error";
+		try {
+			bizOpShelfSkuService.delete(bizOpShelfSku);
+			shelfSku="OK";
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return shelfSku;
+	}
+
 }
 

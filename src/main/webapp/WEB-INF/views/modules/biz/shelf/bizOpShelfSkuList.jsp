@@ -16,6 +16,29 @@
         	return false;
         }
 	</script>
+	<script type="text/javascript">
+        function skuInfoDelete(a,b){
+            top.$.jBox.confirm("确认要删除该上架商品吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/shelf/bizOpShelfSku/deleteShelfSku",
+                        data:"id="+a+"&shelfSign="+b,
+                        success:function(data){
+							if(data=="OK"){
+								$("#messDele").css("display","block");
+								<%--使用setTimeout（）方法设定定时600毫秒--%>
+								setTimeout(function(){
+                                    window.location.reload();
+                                },600);
+							}
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+            top.$('.jbox-body .jbox-icon').css('top','55px');
+        }
+    </script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -82,6 +105,12 @@
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
+	<div class="alert alert-warning" style="display: none" id="messDele">
+		<a href="#" class="close" data-dismiss="alert">
+			&times;
+		</a>
+		删除商品上架成功
+	</div>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -187,7 +216,8 @@
 							<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
 						</c:otherwise>
 					</c:choose>
-					<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
+					<%--<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>--%>
+					<a href="javascript:void(0);" onclick="skuInfoDelete(${bizOpShelfSku.id},'0');">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
