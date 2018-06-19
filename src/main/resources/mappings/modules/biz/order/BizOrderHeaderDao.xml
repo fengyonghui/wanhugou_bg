@@ -300,6 +300,9 @@
 		<if test="statu != null and statu =='unline'">
 			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
 		</if>
+		<if test="statu != null and statu =='refund'">
+			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		</if>
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
 		<include refid="bizOrderHeaderJoins"/>
@@ -415,6 +418,9 @@
 			</if>
 			<if test="statu != null and statu == 'unline'">
 				AND ohu.id IS NOT NULL
+			</if>
+			<if test="statu != null and statu == 'refund'">
+				AND ohu.order_type = 1
 			</if>
 			<if test="statu != null and statu =='unline' and examine != null and examine == 2">
 				AND (ohu.biz_status = 0 OR ohu.biz_status = 2)

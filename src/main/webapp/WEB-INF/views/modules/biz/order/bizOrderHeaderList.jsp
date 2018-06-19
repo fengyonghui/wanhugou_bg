@@ -1,6 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%
+	Integer refund = OrderHeaderBizStatusEnum.REFUND.getState();
+	Integer refunding = OrderHeaderBizStatusEnum.REFUNDING.getState();
+	Integer refunded = OrderHeaderBizStatusEnum.REFUNDED.getState();
+	request.setAttribute("refund", refund);
+	request.setAttribute("refunding", refunding);
+	request.setAttribute("refunded", refunded);
+%>
 <html>
 <head>
 	<title>订单信息管理</title>
@@ -334,17 +342,24 @@
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 
 						</c:if>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
 						<!-- 退款增加 -->
-						<c:if test='${orderHeader.bizStatus==50 && (orderHeader.createBy.id==user.id || fns:getUser().isAdmin())}'>
-							<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>
+						<c:if test='${orderHeader.bizStatus==refund}'>
+							<%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">申请退款</a>
 						</c:if>
-						<c:if test="${orderHeader.bizStatus==55 && (orderHeader.createBy.id==user.id )}">
+						<c:if test="${orderHeader.bizStatus==refunding}">
 							退款中
 						</c:if>
-						<c:if test="${orderHeader.bizStatus==55 && (fns:hasRole(roleSet, orderHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
-							<a href="${ctx}/biz/order/bizOrderHeader/refund?id=${orderHeader.id}">同意退款</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:order:bizOrderHeader:doRefund">
+						<c:if test="${orderHeader.bizStatus==refunding }">
+							<a href="${ctx}/biz/order/bizOrderHeader/refund?id=${orderHeader.id}">线下退款</a>
 						</c:if>
-						<c:if test="${orderHeader.bizStatus==60 && (fns:hasRole(roleSet, orderHeader.commonProcess.purchaseOrderProcess.roleEnNameEnum) || fns:getUser().isAdmin())}">
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:order:bizOrderHeader:view">
+						<c:if test="${orderHeader.bizStatus==refunded }">
 							退款完成
 						</c:if>
 					</shiro:hasPermission>

@@ -326,6 +326,28 @@
         }
     </script>
 
+    <script type="text/javascript">
+        function checkInfo(obj, val, hid) {
+            if (confirm("您确认同意该订单退款申请吗？")) {
+
+                $.ajax({
+                    type: "post",
+                    url: "${ctx}/biz/order/bizOrderHeader/saveInfo",
+                    data: {checkStatus: obj, id: hid},
+                    success: function (data) {
+                        if (data) {
+                            alert(val + "成功！");
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader";
+
+                        }
+                    }
+                })
+
+            }
+
+        }
+    </script>
+
     <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
     <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
     <script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
@@ -490,6 +512,7 @@
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
+    <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
@@ -717,31 +740,33 @@
             </c:if>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">退货凭证:
-            <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
-            <p style="opacity: 0.5;">图片建议比例为1:1</p>
-            <p style="opacity: 0.5;">点击图片删除</p>
-            <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
-        </label>
-        <div class="controls">
-            <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
+    <c:if test="${photosMap != null && photosMap.size()>0 }">
+        <div class="control-group">
+            <label class="control-label">退货凭证:
+                <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
+                <p style="opacity: 0.5;">图片建议比例为1:1</p>
+                <p style="opacity: 0.5;">点击图片删除</p>
+                <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
+            </label>
+            <div class="controls">
+                <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
+            </div>
+            <div id="prodMainImgDiv">
+                <table>
+                    <tr id="prodMainImgImg">
+                        <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                            <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,'#mainImg'+${status.index});"></td>
+                        </c:forEach>
+                    </tr>
+                    <tr id="imgPhotosSorts">
+                        <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                            <td><input id="mainImg${status.index}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
+                        </c:forEach>
+                    </tr>
+                </table>
+            </div>
         </div>
-        <div id="prodMainImgDiv">
-            <table>
-                <tr id="prodMainImgImg">
-                    <c:forEach items="${photosMap}" var="photo" varStatus="status">
-                        <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,'#mainImg'+${status.index});"></td>
-                    </c:forEach>
-                </tr>
-                <tr id="imgPhotosSorts">
-                    <c:forEach items="${photosMap}" var="photo" varStatus="status">
-                        <td><input id="mainImg${status.index}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
-                    </c:forEach>
-                </tr>
-            </table>
-        </div>
-    </div>
+    </c:if>
 
         <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
@@ -1077,6 +1102,10 @@
                     </shiro:hasPermission>
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
+                <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+                    <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
+                </shiro:hasPermission>
+                    <%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
             </div>
         </c:otherwise>
     </c:choose>

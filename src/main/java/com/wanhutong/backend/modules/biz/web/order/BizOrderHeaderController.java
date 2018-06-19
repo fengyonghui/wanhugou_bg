@@ -148,7 +148,7 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("page", page);
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
 
-        User user = UserUtils.getUser();
+        /*User user = UserUtils.getUser();
         List<Role> roleList = user.getRoleList();
 
         Set<String> roleSet = Sets.newHashSet();
@@ -160,7 +160,7 @@ public class BizOrderHeaderController extends BaseController {
         }
 
         model.addAttribute("user", user);
-        model.addAttribute("roleSet", roleSet);
+        model.addAttribute("roleSet", roleSet);*/
 
         return "modules/biz/order/bizOrderHeaderList";
     }
@@ -309,11 +309,7 @@ public class BizOrderHeaderController extends BaseController {
         commonImg.setObjectName("biz_order_header");
         if (bizOrderHeader.getId() != null) {
             List<CommonImg> imgList = commonImgService.findList(commonImg);
-            /*commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
-            List<CommonImg> itemImgList = commonImgService.findList(commonImg);*/
             String photos = "";
-            /*String photoDetails = "";
-            String photoLists = "";*/
             Map<String, Integer> photosMap = new LinkedHashMap<>();
 
             for (CommonImg img : imgList) {
@@ -323,15 +319,6 @@ public class BizOrderHeaderController extends BaseController {
             if (StringUtils.isNotBlank(photos)) {
                 bizOrderHeader.setPhotos(photos);
             }
-            /*if (!"".equals(photoDetails)) {
-                bizOrderHeader.setPhotoDetails(photoDetails);
-            }
-            for (CommonImg img : itemImgList) {
-                photoLists += "|" + img.getImgServer() + img.getImgPath();
-            }
-            if (!"".equals(photoLists)) {
-                bizOrderHeader.setPhotoLists(photoLists);
-            }*/
             if (imgList != null && !imgList.isEmpty()) {
                 model.addAttribute("photosMap", photosMap);
             }
@@ -357,6 +344,43 @@ public class BizOrderHeaderController extends BaseController {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
+    }
+
+    @RequiresPermissions("biz:order:bizOrderHeader:doRefund")
+    @RequestMapping(value = "saveRefund")
+    public String saveRefund(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
+        if (!beanValidator(model, bizOrderHeader)) {
+            return form(bizOrderHeader, model, null, null);
+        }
+        Double receiveTotal = (-1) * (bizOrderHeaderService.get(bizOrderHeader.getId()).getReceiveTotal());
+        bizOrderHeaderService.save(bizOrderHeader);
+
+        User user = UserUtils.getUser();
+        BizPayRecord bizPayRecord = new BizPayRecord();
+        // 支付编号 *同订单号*
+        bizPayRecord.setPayNum(bizOrderHeader.getOrderNum());
+        // 订单编号
+        bizPayRecord.setOrderNum(bizOrderHeader.getOrderNum());
+        // 支付人
+        bizPayRecord.setPayer(user.getId());
+        // 客户ID
+        bizPayRecord.setCustomer(bizOrderHeader.getCustomer());
+        // 支付到账户
+        bizPayRecord.setToAccount("1");
+        // 交易类型：充值、提现、支付
+        bizPayRecord.setRecordType(TradeTypeEnum.REFUND_PAY_TYPE.getCode());
+        bizPayRecord.setRecordTypeName(TradeTypeEnum.REFUND_PAY_TYPE.getTradeNoType());
+        // 支付类型：wx(微信) alipay(支付宝)
+        bizPayRecord.setPayType(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE.getCode());
+        bizPayRecord.setPayTypeName(OutTradeNoTypeEnum.OFFLINE_PAY_TYPE.getMessage());
+        bizPayRecord.setPayMoney(receiveTotal);
+        bizPayRecord.setBizStatus(1);
+        bizPayRecord.setCreateBy(user);
+        bizPayRecord.setUpdateBy(user);
+        bizPayRecordService.save(bizPayRecord);
+
+        addMessage(redirectAttributes, "保存订单信息成功");
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?statu=refund";
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
@@ -1075,16 +1099,17 @@ public class BizOrderHeaderController extends BaseController {
     @ResponseBody
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "saveInfo")
-    public boolean saveInfo(BizOrderHeader bizOrderHeader, String checkStatus) {
-        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
-        PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.getProcessMap().get(Integer.valueOf(3));
-        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
-        commonProcessEntity.setObjectId(bizOrderHeader.getId().toString());
-        commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
-        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
-        commonProcessService.save(commonProcessEntity);
-        bizOrderHeader.setCommonProcess(commonProcessEntity);
+    public boolean saveInfo(BizOrderHeader bizOrderHeader, String checkStatus, Integer id) {
+//        PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
+//        PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = purchaseOrderProcessConfig.getProcessMap().get(Integer.valueOf(3));
+//        CommonProcessEntity commonProcessEntity = new CommonProcessEntity();
+//        commonProcessEntity.setObjectId(bizOrderHeader.getId().toString());
+//        commonProcessEntity.setObjectName(BizOrderHeaderService.DATABASE_TABLE_NAME);
+//        commonProcessEntity.setType(String.valueOf(purchaseOrderProcess.getCode()));
+//        commonProcessService.save(commonProcessEntity);
+//        bizOrderHeader.setCommonProcess(commonProcessEntity);
 
+        bizOrderHeader = bizOrderHeaderService.get(id);
         bizOrderHeader.setBizStatus(Integer.parseInt(checkStatus));
         boolean boo = false;
         try {

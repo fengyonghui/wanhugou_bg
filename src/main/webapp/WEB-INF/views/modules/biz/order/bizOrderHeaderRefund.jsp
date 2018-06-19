@@ -99,7 +99,7 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/saveRefund?type=refund" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
@@ -185,7 +185,7 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label">退货凭证:
+        <label class="control-label">退款凭证:
             <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
             <p style="opacity: 0.5;">图片建议比例为1:1</p>
             <p style="opacity: 0.5;">点击图片删除</p>
@@ -214,7 +214,7 @@
     <form:input path="receiveTotal" id="receiveTotal" cssStyle="display: none"/>
     <div class="form-actions">
         <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-            <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+            <shiro:hasPermission name="biz:order:bizOrderHeader:doRefund">
                 <input id="btnSubmit" class="btn btn-primary" type="button" value="保存" onclick="return submitCustomForm()"/>&nbsp;
             </shiro:hasPermission>
         </c:if>
@@ -324,18 +324,22 @@
                 }
             });
             if (bb) {
-                loading('正在提交，请稍等...');
                 var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
                 var mainImgStr = "";
                 for (var i = 0; i < mainImg.length; i ++) {
                     mainImgStr += ($(mainImg[i]).attr("src") + "|");
                 }
-                $("#photos").val(mainImgStr);
-                $("#receiveTotal").val("");
-                $("#bizStatus").val("<%=OrderHeaderBizStatusEnum.REFUNDED.getState()%>");
-                inputForm.submit();
+                if(mainImgStr == null || mainImgStr == ""){
+                    alert("请上传退款凭证！");
+                } else {
+                    $("#photos").val(mainImgStr);
+                    /*$("#receiveTotal").val("0");*/
+                    $("#bizStatus").val("<%=OrderHeaderBizStatusEnum.REFUNDED.getState()%>");
+                    loading('正在提交，请稍等...');
+                    inputForm.submit();
+                }
             } else {
-                alert("退货凭证图片序号不能为空");
+                alert("退款凭证图片序号不能为空");
             }
         }
 

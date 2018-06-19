@@ -123,10 +123,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private CommonProcessEntity commonProcess;
 
     private String photos; //产品图片
-    private String photoDetails;
-    //private String imgUrl;   //图片地址
     private String imgPhotosSorts;		//主图顺序
-    private String imgDetailSorts;      //列表图顺序
 
     public String getLocationAddress() {
         return locationAddress;
@@ -659,35 +656,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         this.photos = photos;
     }
 
-    public String getPhotoDetails() {
-        return photoDetails;
-    }
-
-    public void setPhotoDetails(String photoDetails) {
-        this.photoDetails = photoDetails;
-    }
-
-//    public String getImgUrl() {
-//        return imgUrl;
-//    }
-//
-//    public void setImgUrl(String imgUrl) {
-//        this.imgUrl = imgUrl;
-//    }
-
     public String getImgPhotosSorts() {
         return imgPhotosSorts;
     }
 
     public void setImgPhotosSorts(String imgPhotosSorts) {
         this.imgPhotosSorts = imgPhotosSorts;
-    }
-
-    public String getImgDetailSorts() {
-        return imgDetailSorts;
-    }
-
-    public void setImgDetailSorts(String imgDetailSorts) {
-        this.imgDetailSorts = imgDetailSorts;
     }
 }
