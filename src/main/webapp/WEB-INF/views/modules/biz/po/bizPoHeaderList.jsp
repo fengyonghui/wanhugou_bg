@@ -182,7 +182,7 @@
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:edit">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
-								<a onclick="cancel(${bizPoHeader.id});">取消</a>
+								<a href="javascript:void(0);" onclick="cancel(${bizPoHeader.id});">取消</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:view">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
@@ -206,7 +206,10 @@
                     success:function(data){
                         alert(data);
                         if (data=="取消采购订单成功"){
-                            window.location.href = "${ctx}/biz/po/bizPoHeader/list";
+							<%--使用setTimeout（）方法设定定时600毫秒--%>
+							setTimeout(function(){
+								window.location.reload();
+							},600);
                         }
                     }
                 });
