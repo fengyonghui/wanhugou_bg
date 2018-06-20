@@ -214,8 +214,13 @@
 							${orderHeader.orderNum}</a>
 				</c:if>
 				<c:if test="${empty bizOrderHeader.flag}">
+					<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+						<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">${orderHeader.orderNum}</a>
+					</c:if>
+					<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
 					<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">
 							${orderHeader.orderNum}</a>
+					</c:if>
 				</c:if>
 			</td>
 			<td>
