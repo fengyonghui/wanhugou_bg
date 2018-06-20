@@ -321,14 +321,54 @@ public class BizOpShelfSkuController extends BaseController {
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
 	@RequestMapping(value = "deleteShelfSku")
 	public String deleteShelfSku(BizOpShelfSku bizOpShelfSku, RedirectAttributes redirectAttributes) {
-		String shelfSku="Error";
+		String shelfSku = "Error";
 		try {
 			bizOpShelfSkuService.delete(bizOpShelfSku);
-			shelfSku="OK";
-		}catch (Exception e){
+			shelfSku = "OK";
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return shelfSku;
+	}
+
+	/**
+	 * 下降不刷新
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
+	@RequestMapping(value = "dateTimeLower")
+	public String dateTimeLower(BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
+		String Lower = "Error";
+		try {
+			Date day = new Date();
+			bizOpShelfSku.setUnshelfTime(day);
+			bizOpShelfSkuService.updateDateTime(bizOpShelfSku);
+			Lower = "OK";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Lower;
+	}
+
+	/**
+	 * 上架不刷新
+	 * */
+	@ResponseBody
+	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
+	@RequestMapping(value = "shelvesLower")
+	public String shelvesLower(BizOpShelfSku bizOpShelfSku, Model model, RedirectAttributes redirectAttributes) {
+		String sheLve = "Error";
+		try {
+			User user = UserUtils.getUser();
+			bizOpShelfSku.setShelfUser(user);
+			bizOpShelfSku.setShelfTime(new Date());
+			bizOpShelfSku.setUnshelfTime(null);
+			bizOpShelfSkuService.updateShelves(bizOpShelfSku);
+			sheLve = "OK";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sheLve;
 	}
 
 }

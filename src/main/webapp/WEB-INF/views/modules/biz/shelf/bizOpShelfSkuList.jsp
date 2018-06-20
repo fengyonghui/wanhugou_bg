@@ -17,6 +17,7 @@
         }
 	</script>
 	<script type="text/javascript">
+	<%--删除--%>
         function skuInfoDelete(a,b){
             top.$.jBox.confirm("确认要删除该上架商品吗？","系统提示",function(v,h,f){
                 if(v=="ok"){
@@ -27,6 +28,50 @@
                         success:function(data){
 							if(data=="OK"){
 								$("#messDele").css("display","block");
+								<%--使用setTimeout（）方法设定定时600毫秒--%>
+								setTimeout(function(){
+                                    window.location.reload();
+                                },600);
+							}
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+            top.$('.jbox-body .jbox-icon').css('top','55px');
+        }
+        <%--下架--%>
+        function dateTime(a){
+            top.$.jBox.confirm("确认要下架该商品吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/shelf/bizOpShelfSku/dateTimeLower",
+                        data:"id="+a,
+                        success:function(data){
+							if(data=="OK"){
+								$("#messDeleLower").css("display","block");
+								<%--使用setTimeout（）方法设定定时600毫秒--%>
+								setTimeout(function(){
+                                    window.location.reload();
+                                },600);
+							}
+                        }
+                    });
+                }
+            },{buttonsFocus:1});
+            top.$('.jbox-body .jbox-icon').css('top','55px');
+        }
+        <%--上架--%>
+        function shelv(a){
+            top.$.jBox.confirm("确认要上架该商品吗？","系统提示",function(v,h,f){
+                if(v=="ok"){
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/shelf/bizOpShelfSku/shelvesLower",
+                        data:"id="+a,
+                        success:function(data){
+							if(data=="OK"){
+								$("#messLves").css("display","block");
 								<%--使用setTimeout（）方法设定定时600毫秒--%>
 								setTimeout(function(){
                                     window.location.reload();
@@ -105,11 +150,23 @@
 		</ul>
 	</form:form>
 	<sys:message content="${message}"/>
-	<div class="alert alert-warning" style="display: none" id="messDele">
+	<div class="alert alert-warning" style="display: none;" id="messDele">
 		<a href="#" class="close" data-dismiss="alert">
 			&times;
 		</a>
 		删除商品上架成功
+	</div>
+	<div class="alert alert-warning" style="display: none;" id="messDeleLower">
+		<a href="#" class="close" data-dismiss="alert">
+			&times;
+		</a>
+		商品下架成功
+	</div>
+	<div class="alert alert-success hide" style="display: none;" id="messLves">
+		<a href="#" class="close" data-dismiss="alert">
+			&times;
+		</a>
+		商品上架成功
 	</div>
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
@@ -210,13 +267,12 @@
 					<a href="${ctx}/biz/shelf/bizOpShelfSku/form?id=${bizOpShelfSku.id}">修改</a>
 					<c:choose>
 						<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
-						    <a href="${ctx}/biz/shelf/bizOpShelfSku/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
+							<a href="javascript:void(0);" onclick="shelv(${bizOpShelfSku.id});">上架</a>
 						</c:when>
 						<c:otherwise>
-							<a href="${ctx}/biz/shelf/bizOpShelfSku/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
+							<a href="javascript:void(0);" onclick="dateTime(${bizOpShelfSku.id});">下架</a>
 						</c:otherwise>
 					</c:choose>
-					<%--<a href="${ctx}/biz/shelf/bizOpShelfSku/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>--%>
 					<a href="javascript:void(0);" onclick="skuInfoDelete(${bizOpShelfSku.id},'0');">删除</a>
 				</td></shiro:hasPermission>
 			</tr>
