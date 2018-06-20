@@ -5,11 +5,7 @@
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <%
     Integer refund = OrderHeaderBizStatusEnum.REFUND.getState();
-    Integer refunding = OrderHeaderBizStatusEnum.REFUNDING.getState();
-    Integer refunded = OrderHeaderBizStatusEnum.REFUNDED.getState();
     request.setAttribute("refund", refund);
-    request.setAttribute("refunding", refunding);
-    request.setAttribute("refunded", refunded);
 %>
 <html>
 <head>
