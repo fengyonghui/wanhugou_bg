@@ -378,6 +378,7 @@ public class BizPoHeaderController extends BaseController {
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")
     @RequestMapping(value = "saveForPhotoOrder")
+    @ResponseBody
     public String saveForPhotoOrder(HttpServletRequest request,
                                     Integer orderHeaderId,
                                     int deliveryStatus,
@@ -417,8 +418,7 @@ public class BizPoHeaderController extends BaseController {
         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
         bizOrderHeaderService.save(bizOrderHeader);
 
-        addMessage(redirectAttributes, "生成采购订单成功");
-        return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/form/?id=" + bizPoHeader.getId();
+        return "操作成功";
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")

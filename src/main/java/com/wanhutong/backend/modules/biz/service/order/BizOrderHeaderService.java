@@ -331,6 +331,43 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             return page;
         }
     }
+    /**
+     * 订单发货分页
+     * */
+    public Page<BizOrderHeader> pageFindListForPhotoOrder(Page<BizOrderHeader> page,BizOrderHeader bizOrderHeader) {
+        User user= UserUtils.getUser();
+//        boolean flag=false;
+        boolean oflag = false;
+        /*if(user.getRoleList()!=null){
+            for(Role role:user.getRoleList()){
+                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+                    flag=true;
+                    break;
+                }
+            }
+        }*/
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
+                }
+            }
+        }
+        if(user.isAdmin()){
+            bizOrderHeader.setPage(page);
+            page.setList(dao.headerFindListForPhotoOrder(bizOrderHeader));
+            return page;
+        }else {
+            if(oflag){
+
+            }else {
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            }
+            bizOrderHeader.setPage(page);
+            page.setList(dao.headerFindListForPhotoOrder(bizOrderHeader));
+            return page;
+        }
+    }
 
     /**
      * C端订单列表

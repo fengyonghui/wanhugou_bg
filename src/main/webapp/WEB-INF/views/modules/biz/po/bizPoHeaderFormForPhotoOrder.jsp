@@ -150,7 +150,20 @@
                 deliveryStatus = (radio[i].value)
             }
         }
-        window.location.href = "${ctx}/biz/po/bizPoHeader/saveForPhotoOrder?orderHeaderId=" + id + "&deliveryStatus=" + deliveryStatus + "&lastPayDate=" + lastPayDate;
+
+        $.ajax({
+            type:"post",
+            url:"${ctx}/biz/po/bizPoHeader/saveForPhotoOrder",
+            data: {"orderHeaderId": id, "deliveryStatus": deliveryStatus, "lastPayDate": lastPayDate},
+            success:function (data) {
+                alert(data);
+                if(data == "操作成功"){
+                    window.location.href="${ctx}/biz/po/bizPoHeader";
+
+                }
+            }
+        });
+
     }
 
 </script>

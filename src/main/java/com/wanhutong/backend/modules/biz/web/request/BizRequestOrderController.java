@@ -171,6 +171,21 @@ public class BizRequestOrderController extends BaseController {
         return "modules/biz/request/bizRequestOrderListV2";
     }
 
+    @RequiresPermissions("biz:request:selecting:supplier:view")
+    @RequestMapping(value = {"listForPhotoOrder", ""})
+    public String listForPhotoOrder(String source, Model model, BizOrderHeader bizOrderHeader,HttpServletRequest request,HttpServletResponse response) {
+        bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+        bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());
+        Page<BizOrderHeader> orderHeaderPage = bizOrderHeaderService.pageFindListForPhotoOrder(new Page<BizOrderHeader>(request, response), bizOrderHeader);
+        //20180427 分页
+        model.addAttribute("page", orderHeaderPage);
+        //判断
+        model.addAttribute("orderHeaderPage", orderHeaderPage.getList());
+
+        model.addAttribute("source", source);
+        return "modules/biz/request/bizRequestOrderListForPhotoOrder";
+    }
+
 
     /**
      * 分页
@@ -284,7 +299,7 @@ public class BizRequestOrderController extends BaseController {
     @RequestMapping(value = "goListForPhotoOrder")
     public String goListForPhotoOrder(HttpServletRequest request, Integer ordIds) {
         BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(ordIds);
-        BizOrderAddress bizOrderAddress = bizOrderAddressService.getOrderAddrByOrderId(ordIds);
+        BizOrderAddress bizOrderAddress = bizOrderAddressService.get(bizOrderHeader.getBizLocation().getId());
 
         CommonImg commonImg = new CommonImg();
         commonImg.setObjectId(ordIds);
