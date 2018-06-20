@@ -51,54 +51,68 @@
 				<td>序号</td>
 				<th>客户端</th>
 				<th>商品货架</th>
-				<th>经销店名称</th>
-				<th>经销店电话</th>
+				<c:choose>
+					<c:when test="${bizShopCart.custType == 2 || fn:contains(bizShopCart.skuShelfinfo.opShelfInfo.name,'微')}">
+						<th>用户名称</th>
+					</c:when>
+					<c:otherwise>
+						<th>经销店名称</th>
+						<th>经销店电话</th>
+					</c:otherwise>
+				</c:choose>
                 <th>sku名称</th>
 				<th>sku数量</th>
 				<th>创建人</th>
 				<th>创建时间</th>
-				<th>更新时间</th>
+				<th>更新时间-${bizShopCart.custType}--${bizShopCart.skuShelfinfo.opShelfInfo.name}</th>
 				<shiro:hasPermission name="biz:shop:bizShopCart:edit"><th>操作</th></shiro:hasPermission>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="bizShopCart" varStatus="state">
+		<c:forEach items="${page.list}" var="shopCart" varStatus="state">
 			<tr>
 				<td>${state.index+1}</td>
 				<td>
-					${fns:getDictLabel(bizShopCart.custType, 'biz_shop_cartType', '未知状态')}
+					${fns:getDictLabel(shopCart.custType, 'biz_shop_cartType', '未知状态')}
 				</td>
 				<td>
-					${bizShopCart.skuShelfinfo.opShelfInfo.name}
+					${shopCart.skuShelfinfo.opShelfInfo.name}
                 </td>
-				<td>
-					${bizShopCart.office.name}
-				</td>
-				<td>
-						${bizShopCart.user.mobile}
-				</td>
+				<c:choose>
+					<c:when test="${bizShopCart.custType == 2 || fn:contains(bizShopCart.skuShelfinfo.opShelfInfo.name,'微')}">
+						<td>${shopCart.office.name}</td>
+						<c:if test="${bizShopCart.custType ==null && !fn:contains(bizShopCart.skuShelfinfo.opShelfInfo.name,'微')}">
+							<td></td>
+						</c:if>
+					</c:when>
+					<c:otherwise>
+						<td>${shopCart.office.name}</td>
+						<td>${shopCart.user.mobile}</td>
+					</c:otherwise>
+				</c:choose>
+
                 <td>
-                    ${bizShopCart.skuShelfinfo.skuInfo.name}
+                    ${shopCart.skuShelfinfo.skuInfo.name}
                 </td>
 				<td>
-					${bizShopCart.skuQty}
+					${shopCart.skuQty}
 				</td>
 				<td>
-					${bizShopCart.createBy.name}
+					${shopCart.createBy.name}
 				</td>
 				<td>
-					<fmt:formatDate value="${bizShopCart.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${shopCart.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
-					<fmt:formatDate value="${bizShopCart.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${shopCart.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:shop:bizShopCart:edit"><td>
     				<%--<a href="${ctx}/biz/shop/bizShopCart/form?id=${bizShopCart.id}">修改</a>--%>
-					<c:if test="${bizShopCart.delFlag!=null && bizShopCart.delFlag==1}">
-						<a href="${ctx}/biz/shop/bizShopCart/delete?id=${bizShopCart.id}" onclick="return confirmx('确认要删除该购物车吗？', this.href)">删除</a>
+					<c:if test="${shopCart.delFlag!=null && shopCart.delFlag==1}">
+						<a href="${ctx}/biz/shop/bizShopCart/delete?id=${shopCart.id}" onclick="return confirmx('确认要删除该购物车吗？', this.href)">删除</a>
 					</c:if>
-						<c:if test="${bizShopCart.delFlag!=null && bizShopCart.delFlag==0}">
-							<a href="${ctx}/biz/shop/bizShopCart/recovery?id=${bizShopCart.id}" onclick="return confirmx('确认要恢复该购物车吗？', this.href)">恢复</a>
+						<c:if test="${shopCart.delFlag!=null && shopCart.delFlag==0}">
+							<a href="${ctx}/biz/shop/bizShopCart/recovery?id=${shopCart.id}" onclick="return confirmx('确认要恢复该购物车吗？', this.href)">恢复</a>
 						</c:if>
 				</td></shiro:hasPermission>
 			</tr>
