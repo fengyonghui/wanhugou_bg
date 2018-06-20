@@ -341,6 +341,7 @@ public class BizPoHeaderController extends BaseController {
 
         model.addAttribute("roleSet", roleSet);
         model.addAttribute("bizPoHeader", bizPoHeader);
+        model.addAttribute("bizOrderHeader", bizOrderHeader);
         model.addAttribute("type", type);
         model.addAttribute("prewStatus", prewStatus);
         return "modules/biz/po/bizPoHeaderForm";
