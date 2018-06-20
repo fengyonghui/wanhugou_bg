@@ -1241,11 +1241,7 @@ public class BizOrderHeaderController extends BaseController {
         commonImg.setObjectName("biz_order_header");
         if (bizOrderHeader.getId() != null) {
             List<CommonImg> imgList = commonImgService.findList(commonImg);
-            /*commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
-            List<CommonImg> itemImgList = commonImgService.findList(commonImg);*/
             String photos = "";
-            /*String photoDetails = "";
-            String photoLists = "";*/
             Map<String, Integer> photosMap = new LinkedHashMap<>();
 
             for (CommonImg img : imgList) {
@@ -1255,15 +1251,6 @@ public class BizOrderHeaderController extends BaseController {
             if (StringUtils.isNotBlank(photos)) {
                 bizOrderHeader.setPhotos(photos);
             }
-            /*if (!"".equals(photoDetails)) {
-                bizOrderHeader.setPhotoDetails(photoDetails);
-            }
-            for (CommonImg img : itemImgList) {
-                photoLists += "|" + img.getImgServer() + img.getImgPath();
-            }
-            if (!"".equals(photoLists)) {
-                bizOrderHeader.setPhotoLists(photoLists);
-            }*/
             if (imgList != null && !imgList.isEmpty()) {
                 model.addAttribute("photosMap", photosMap);
             }
