@@ -72,6 +72,9 @@
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
 			</if>
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id = #{user.id}
+			</if>
 			<if test="user != null and user.name != null and user.name != ''">
 				AND su.name LIKE
 				<if test="dbName == 'oracle'">'%'||#{user.name}||'%'</if>
