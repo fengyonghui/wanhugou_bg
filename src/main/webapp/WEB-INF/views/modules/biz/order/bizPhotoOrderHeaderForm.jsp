@@ -306,50 +306,50 @@
             }
         }
     </script>
-    <script type="text/javascript">
-        $(function() {
+    <%--<script type="text/javascript">--%>
+        <%--$(function() {--%>
 
-            //点击图片放大
-            $("#img-zoom").click(function(){
-                $('#img-modal').modal("hide");
-            });
-            $("#img-dialog").click(function(){
-                $('#img-modal').modal("hide");
-            });
-            //index-list-content为显示文章内容div的class
-            $("#orderSkuPhoto img").each(function(i){
-                var src = $(this).attr("src");
-                $(this).click(function () {
-                    $("#img-zoom").attr("src", src);
-                    var oImg = $(this);
-                    var img = new Image();
-                    img.src = $(oImg).attr("src");
-                    var realWidth = img.width;//真实的宽度
-                    var realHeight = img.height;//真实的高度
-                    var ww = $(window).width();//当前浏览器可视宽度
-                    var hh = $(window).height();//当前浏览器可视宽度
-                    $("#img-content").css({"top":0,"left":0,"height":"auto"});
-                    $("#img-zoom").css({"height":"auto"});
-                    if((realWidth+20)>ww){
-                        $("#img-content").css({"width":"100%"});
-                        $("#img-zoom").css({"width":"99%"});
-                    }else{
-                        $("#img-content").css({"width":realWidth+20, "height":realHeight+20});
-                        $("#img-zoom").css({"width":realWidth, "height":realHeight});
-                    }
-                    if((hh-realHeight-40)>0){
-                        $("#img-content").css({"top":(hh-realHeight-40)/2});
-                    }
-                    if((ww-realWidth-20)>0){
-                        $("#img-content").css({"left":(ww-realWidth-20)/2});
-                    }
-                    //console.log("realWidth:"+realWidth+" realHeight:"+realHeight+" ww:"+ww)
-                    $('#img-modal').modal();
-                    $("#img-modal").css({"width":realWidth+20});
-                });
-            });
-        });
-    </script>
+            <%--//点击图片放大--%>
+            <%--$("#img-zoom").click(function(){--%>
+                <%--$('#img-modal').modal("hide");--%>
+            <%--});--%>
+            <%--$("#img-dialog").click(function(){--%>
+                <%--$('#img-modal').modal("hide");--%>
+            <%--});--%>
+            <%--//index-list-content为显示文章内容div的class--%>
+            <%--$("#orderSkuPhoto img").each(function(i){--%>
+                <%--var src = $(this).attr("src");--%>
+                <%--$(this).click(function () {--%>
+                    <%--$("#img-zoom").attr("src", src);--%>
+                    <%--var oImg = $(this);--%>
+                    <%--var img = new Image();--%>
+                    <%--img.src = $(oImg).attr("src");--%>
+                    <%--var realWidth = img.width;//真实的宽度--%>
+                    <%--var realHeight = img.height;//真实的高度--%>
+                    <%--var ww = $(window).width();//当前浏览器可视宽度--%>
+                    <%--var hh = $(window).height();//当前浏览器可视宽度--%>
+                    <%--$("#img-content").css({"top":0,"left":0,"height":"auto"});--%>
+                    <%--$("#img-zoom").css({"height":"auto"});--%>
+                    <%--if((realWidth+20)>ww){--%>
+                        <%--$("#img-content").css({"width":"100%"});--%>
+                        <%--$("#img-zoom").css({"width":"99%"});--%>
+                    <%--}else{--%>
+                        <%--$("#img-content").css({"width":realWidth+20, "height":realHeight+20});--%>
+                        <%--$("#img-zoom").css({"width":realWidth, "height":realHeight});--%>
+                    <%--}--%>
+                    <%--if((hh-realHeight-40)>0){--%>
+                        <%--$("#img-content").css({"top":(hh-realHeight-40)/2});--%>
+                    <%--}--%>
+                    <%--if((ww-realWidth-20)>0){--%>
+                        <%--$("#img-content").css({"left":(ww-realWidth-20)/2});--%>
+                    <%--}--%>
+                    <%--//console.log("realWidth:"+realWidth+" realHeight:"+realHeight+" ww:"+ww)--%>
+                    <%--$('#img-modal').modal();--%>
+                    <%--$("#img-modal").css({"width":realWidth+20});--%>
+                <%--});--%>
+            <%--});--%>
+        <%--});--%>
+    <%--</script>--%>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -539,7 +539,8 @@
         <label class="control-label">商品信息图：</label>
         <div id="orderSkuPhoto" class="controls">
             <c:forEach items="${imgUrlList}" var="imgUrl">
-                <img src="${imgUrl.imgServer}${imgUrl.imgPath}" style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/>
+                <a href="${imgUrl.imgServer}${imgUrl.imgPath}" target="view_window">
+                <img src="${imgUrl.imgServer}${imgUrl.imgPath}" style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></a>
             </c:forEach>
         </div>
     </div>
@@ -877,19 +878,24 @@
                         <%--<input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;--%>
                     <%--</shiro:hasPermission>--%>
                 <%--</c:if>--%>
+                <c:if test="${empty entity.orderNoEditable && bizOrderHeader.flag != 'check_pending'}">
+                    <c:if test="${bizOrderHeader.id!=null}">
+                        <input onclick="window.print();" type="button" class="btn btn-primary" value="打印订单" style="background:#F78181;"/>
+                    </c:if>
+                </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
             </div>
         </c:otherwise>
     </c:choose>
 </form:form>
 
-<c:if test="${empty entity.orderNoEditable && bizOrderHeader.flag != 'check_pending'}">
-<div class="form-actions">
-        <c:if test="${bizOrderHeader.id!=null}">
-            <input onclick="window.print();" type="button" class="btn btn-primary" value="打印订单" style="background:#F78181;"/>
-        </c:if>
-</div>
-</c:if>
+<%--<c:if test="${empty entity.orderNoEditable && bizOrderHeader.flag != 'check_pending'}">--%>
+<%--<div class="form-actions">--%>
+        <%--<c:if test="${bizOrderHeader.id!=null}">--%>
+            <%--<input onclick="window.print();" type="button" class="btn btn-primary" value="打印订单" style="background:#F78181;"/>--%>
+        <%--</c:if>--%>
+<%--</div>--%>
+<%--</c:if>--%>
 <c:if test="${bizOrderHeader.flag=='check_pending'}">
     <div class="form-actions">
         <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
@@ -900,12 +906,12 @@
         </shiro:hasPermission>
     </div>
 </c:if>
-<div id="img-modal" class="modal fade">
-    <div id="img-dialog" class="modal-dialog" style="width: 98%; height: 98%;text-align: center;">
-        <div id="img-content" class="modal-content">
-            <img id="img-zoom" src="" style="max-height: 100%; max-width: 100%;margin:10px;">
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+<%--<div id="img-modal" class="modal fade">--%>
+    <%--<div id="img-dialog" class="modal-dialog" style="width: 98%; height: 98%;text-align: center;">--%>
+        <%--<div id="img-content" class="modal-content">--%>
+            <%--<img id="img-zoom" src="" style="max-height: 100%; max-width: 100%;margin:10px;">--%>
+        <%--</div><!-- /.modal-content -->--%>
+    <%--</div><!-- /.modal-dialog -->--%>
+<%--</div><!-- /.modal -->--%>
 </body>
 </html>

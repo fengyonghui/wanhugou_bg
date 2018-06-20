@@ -77,7 +77,7 @@
 							}
                             tr_tds += "<tr class='tr_"+orderHeader.id+"'>";
                             tr_tds +=   "<td><input type='checkbox' value='"+orderHeader.id+"'/><input name='orderHeaders' value='"+orderHeader.id+"' type='hidden' style='display: none'/></td>";
-                            tr_tds +=   "<td>"+orderHeader.orderNum+"</td>";
+                            tr_tds +=   "<td><a href='${ctx}/biz/order/bizPhotoOrderHeader/form?id="+orderHeader.id+"&orderDetails=details'>"+orderHeader.orderNum+"</a></td>";
                             tr_tds +=   "<td>"+orderHeader.customer.name+"</td>";
                             tr_tds +=   "<td>"+bizName+"</td>";
                             tr_tds +=   "<td>"+orderHeader.name+"</td>";

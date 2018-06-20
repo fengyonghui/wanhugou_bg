@@ -9,27 +9,30 @@ import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizCategoryInfo;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
+import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
-import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
-import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
-import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
-import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.*;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
@@ -37,6 +40,7 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -86,6 +90,10 @@ public class BizRequestAllController {
     private BizOrderAddressService bizOrderAddressService;
     @Autowired
     private DictService dictService;
+    @Autowired
+    private CommonImgService commonImgService;
+    @Autowired
+    private BizPoHeaderService bizPoHeaderService;
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
     @RequestMapping(value = {"list", ""})
@@ -279,6 +287,22 @@ public class BizRequestAllController {
             bizOrderDetail.setOrderHeader(bizOrderHeader);
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findPoHeader(bizOrderDetail);
             orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+            if (orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
+                CommonImg commonImg = new CommonImg();
+                commonImg.setObjectId(orderHeader.getId());
+                commonImg.setObjectName(ImgEnum.ORDER_SKU_PHOTO.getTableName());
+                commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
+                List<CommonImg> commonImgList = commonImgService.findList(commonImg);
+                if (CollectionUtils.isNotEmpty(commonImgList)) {
+                    model.addAttribute("commonImgList",commonImgList);
+                }
+                BizPoHeader bizPoHeader = new BizPoHeader();
+                bizPoHeader.setNum(orderHeader.getOrderNum());
+                List<BizPoHeader> poHeaderList = bizPoHeaderService.findList(bizPoHeader);
+                if (CollectionUtils.isNotEmpty(poHeaderList)) {
+                    model.addAttribute("poHeader", poHeaderList.get(0));
+                }
+            }
             for (BizOrderDetail orderDetail : orderDetailList) {
                 if(orderDetail.getPoHeader()==null){
                     orderHeader.setPoSource("poHeaderSource");
