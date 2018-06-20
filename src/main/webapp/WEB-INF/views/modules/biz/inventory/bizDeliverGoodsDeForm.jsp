@@ -6,7 +6,6 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-            alert(${orderHeaderList})
 
             });
 
@@ -129,28 +128,24 @@
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
-					<c:if test="${orderHeaderList!=null && orderHeaderList.size()>0}">
-						<c:forEach items="${orderHeaderList}" var="orderHeader">
-                            <c:set var="flag" value="true"></c:set>
-                                <c:forEach items="${orderHeader.orderDetailList}" var="orderDetail" varStatus="index">
-                                    <tr>
-                                        <c:if test="${flag}">
-                                            <td rowspan="${fn:length(orderHeader.orderDetailList)}">${orderHeader.orderNum}</td>
-                                            <td rowspan="${fn:length(orderHeader.orderDetailList)}">${orderHeader.customer.name}</td>
-                                            <td rowspan="${fn:length(orderHeader.orderDetailList)}">${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>
-                                        </c:if>
-                                        <td>${orderDetail.skuName}</td>
-                                        <td>${orderDetail.skuInfo.itemNo}</td>
-                                        <td>${orderDetail.ordQty}</td>
-                                        <td>${orderDetail.sentQty}</td>
-                                    </tr>
-                                    <c:if test="${fn:length(orderHeader.orderDetailList)>1}">
-                                        <c:set var="flag" value="false"></c:set>
-                                    </c:if>
-                                </c:forEach>
-
-						</c:forEach>
-					</c:if>
+					<%--<c:if test="${orderHeaderList!=null && orderHeaderList.size()>0}">--%>
+						<%--<c:forEach items="${orderHeaderList}" var="orderHeader">--%>
+							<%--<tr>--%>
+								<%--<td><a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details">${orderHeader.orderNum}</a></td>--%>
+								<%--<td>${orderHeader.customer.name}</td>--%>
+								<%--<td>${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>--%>
+								<%--<td>${orderHeader.sellers.name}</td>--%>
+							<%--</tr>--%>
+						<%--</c:forEach>--%>
+					<%--</c:if>--%>
+					<c:forEach items="${photoOrderList}" var="orderHeader">
+						<tr>
+							<td><a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details">${orderHeader.orderNum}</a></td>
+							<td>${orderHeader.customer.name}</td>
+							<td>${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>
+							<td>${orderHeader.sellers.name}</td>
+						</tr>
+					</c:forEach>
 					</tbody>
 				</table>
 			</div>

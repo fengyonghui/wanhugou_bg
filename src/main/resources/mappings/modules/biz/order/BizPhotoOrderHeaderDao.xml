@@ -369,6 +369,7 @@
 		a.order_num AS "orderNum",
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
+		cust.name AS "customer.name",
 		a.seller_id as "sellers.id",
 		a.total_detail AS "totalDetail",
 		a.receive_total as "receiveTotal",
@@ -386,11 +387,13 @@
 		vend.name AS "name",
         boc.comments AS "orderComment.comments"
 		FROM biz_order_header a
+		LEFT JOIN sys_office cust ON cust.id = a.cust_id
 		LEFT JOIN sys_office vend ON vend.id = a.seller_id
         LEFT JOIN biz_order_comment boc ON boc.order_id = a.id
 		WHERE
 			a.status = 1
 			AND a.order_type !=4
+		AND a.biz_status BETWEEN 17 AND 19
 		<if test="orderNum != null and orderNum != ''">
 			AND a.order_num LIKE
 			<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
@@ -406,6 +409,24 @@
 			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 		</if>
+	</select>
+
+	<select id="findPhotoOrderList" resultType="BizOrderHeader">
+		SELECT
+			oh.id AS "id",
+			oh.order_num AS "orderNum",
+			cust.name AS "customer.name",
+			oh.biz_status AS "bizStatus",
+			vend.name AS "sellers.name"
+		FROM biz_order_header oh
+		LEFT JOIN sys_office cust ON cust.id = oh.cust_id
+		LEFT JOIN sys_office vend ON vend.id = oh.seller_id
+		LEFT JOIN biz_detail_invoice di ON di.order_header_id = oh.id
+		LEFT JOIN biz_invoice bi ON bi.id = di.invoice_id
+		WHERE
+		oh.status = 1
+		AND oh.order_type = 6
+		AND bi.id = #{invoiceId}
 	</select>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">

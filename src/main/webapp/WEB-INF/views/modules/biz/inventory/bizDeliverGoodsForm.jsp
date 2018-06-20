@@ -76,7 +76,7 @@
                                 bizName="已发货"
 							}
                             tr_tds += "<tr class='tr_"+orderHeader.id+"'>";
-                            tr_tds +=   "<td><input type='checkbox' value='"+orderHeader.id+"' /><input name='orderHeaders' value='"+orderHeader.id+"' type='hidden' style='display: none'/></td>";
+                            tr_tds +=   "<td><input type='checkbox' value='"+orderHeader.id+"'/><input name='orderHeaders' value='"+orderHeader.id+"' type='hidden' style='display: none'/></td>";
                             tr_tds +=   "<td>"+orderHeader.orderNum+"</td>";
                             tr_tds +=   "<td>"+orderHeader.customer.name+"</td>";
                             tr_tds +=   "<td>"+bizName+"</td>";
@@ -89,13 +89,17 @@
 		});
             <%--点击确定时获取订单详情--%>
             $("#ensureData").click(function () {
+
+                alert(1);
 				$('input:checkbox:checked').each(function(i) {
 				   var t= $(this).val();
-				   var ttp= $(this).parent();
+				   var ttp= $(this).parent().parent();
+				   alert($(ttp).html());
 					$("#prodInfo").append(ttp);
 				});
+				alert(2);
+                $("#prodInfo2").empty();
                 $("#select_all").removeAttr("checked");
-
 			});
 
             });

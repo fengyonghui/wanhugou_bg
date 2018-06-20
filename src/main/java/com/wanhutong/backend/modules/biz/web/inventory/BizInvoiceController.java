@@ -18,14 +18,17 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.inventory.BizDeliverGoodsService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizDetailInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizPhotoOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
+import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -33,6 +36,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +81,8 @@ public class BizInvoiceController extends BaseController {
     private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private DictService dictService;
+    @Autowired
+    private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
 
     private static final String DEF_EN_NAME = "shipper";
 
@@ -180,26 +186,27 @@ public class BizInvoiceController extends BaseController {
     @RequestMapping(value = "invoiceOrderDetail")
     public String invoiceOrderDetail(BizInvoice bizInvoice,String source, Model model) {
 
+        BizLogistics bizLogistics = new BizLogistics();
+        List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
         List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
-        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
+//        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
+        boolean photoFlag = false;
         if (DetailInvoiceList != null && !DetailInvoiceList.isEmpty()){
             for (BizDetailInvoice detailInvoice:DetailInvoiceList) {
                 BizOrderHeader bizorderHeader = detailInvoice.getOrderHeader();
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(bizorderHeader.getId());
-                BizOrderDetail bizOrderDetail = new BizOrderDetail();
-                bizOrderDetail.setOrderHeader(orderHeader);
-                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-                if (orderDetailList != null && !orderDetailList.isEmpty()){
-                    for (BizOrderDetail orderDetail:orderDetailList) {
-                        BizSkuInfo sku = bizSkuInfoService.get(orderDetail.getSkuInfo());
-                        BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
-                        orderDetail.setSkuInfo(skuInfo);
-                    }
-                    orderHeader.setOrderDetailList(orderDetailList);
+                if (!orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
+                    List<BizOrderDetail> orderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
+                    model.addAttribute("orderDetailList",orderDetailList);
+                    break;
+                } else {
+                    photoFlag = true;
+                    List<BizOrderHeader> photoOrderList = bizPhotoOrderHeaderService.findPhotoOrderList(bizInvoice.getId());
+                    model.addAttribute("photoOrderList",photoOrderList);
+                    break;
                 }
-                orderHeaderList.add(orderHeader);
             }
         }
 
@@ -224,13 +231,16 @@ public class BizInvoiceController extends BaseController {
         }else {
             model.addAttribute("userList",null);
         }
-        BizLogistics bizLogistics = new BizLogistics();
-        List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
+
         model.addAttribute("logisticsList",logisticsList);
         model.addAttribute("source",source);
-        model.addAttribute("orderHeaderList",orderHeaderList);
+//        model.addAttribute("orderHeaderList",orderHeaderList);
         model.addAttribute("bizInvoice", bizInvoice);
-        return "modules/biz/inventory/bizInvoiceDeForm";
+        if (photoFlag) {
+            return "modules/biz/inventory/bizDeliverGoodsDeForm";
+        } else {
+            return "modules/biz/inventory/bizInvoiceDeForm";
+        }
     }
 
     /**
@@ -334,7 +344,7 @@ public class BizInvoiceController extends BaseController {
             //2商品
             List<List<String>> detailData = new ArrayList<List<String>>();
             for (BizInvoice invoice : list) {
-                List<String> headData = new ArrayList();
+                List<String> headData = new ArrayList<>();
                 headData.add(String.valueOf(invoice.getSendNumber()));
                 if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
                     headData.add(String.valueOf(invoice.getLogistics().getName()));
@@ -346,10 +356,10 @@ public class BizInvoiceController extends BaseController {
                 headData.add(String.valueOf(invoice.getValuePrice()==null?"":invoice.getValuePrice()));
 
                 double price=0.0;
-                if(invoice.getFreight()!=null && invoice.getValuePrice()!=null){
+                if(invoice.getFreight()!=null && invoice.getValuePrice()!=null && invoice.getValuePrice()!=0){
                     price=invoice.getFreight()*100/invoice.getValuePrice();
                 }//运费/货值
-                BigDecimal   b   =   new   BigDecimal(price);
+                BigDecimal b = new BigDecimal(price);
                 double   f1   =   b.setScale(0,   BigDecimal.ROUND_HALF_UP).doubleValue();
                 headData.add(String.valueOf(f1+"%"));
                 headData.add(String.valueOf(invoice.getCarrier()==null?"":invoice.getCarrier()));
@@ -376,15 +386,13 @@ public class BizInvoiceController extends BaseController {
                             //备货单发货信息
                             List<BizRequestDetail> requestDetailList =null;
                             BizRequestHeader requestHeader = bizRequestHeaderService.get(detailInvoice.getRequestHeader().getId());
-                            if(detailInvoice.getRequestHeader()!=null && detailInvoice.getRequestHeader().getId()!=null){
-                                if(requestHeader!=null){
-                                    BizRequestDetail bizRequestDetail = new BizRequestDetail();
-                                    bizRequestDetail.setRequestHeader(requestHeader);
-                                    requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
-                                }
+                            if(detailInvoice.getRequestHeader()!=null && requestHeader!=null){
+                                BizRequestDetail bizRequestDetail = new BizRequestDetail();
+                                bizRequestDetail.setRequestHeader(requestHeader);
+                                requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
                             }
-                            if (requestHeader != null && requestDetailList.size() != 0) {
-                                List<String> detaData = new ArrayList();
+                            if (requestHeader != null && CollectionUtils.isNotEmpty(requestDetailList)) {
+                                List<String> detaData = new ArrayList<>();
                                 for (BizRequestDetail requeDetail : requestDetailList) {
                                     requeDetail.setRequestHeader(requestHeader);
                                     BizSkuInfo skuInfo = bizSkuInfoService.get(requeDetail.getSkuInfo());
@@ -396,26 +404,24 @@ public class BizInvoiceController extends BaseController {
                                     } else {
                                         detaData.add("");
                                     }
-                                    if(requestHeader!=null){
-                                        detaData.add(String.valueOf(requestHeader.getReqNo()==null?"":requestHeader.getReqNo()));
-                                        if(requestHeader.getFromOffice()!=null && requestHeader.getFromOffice().getName()!=null){
-                                            detaData.add(String.valueOf(requestHeader.getFromOffice().getName()));
-                                        }
-                                        Dict detadict = new Dict();
-                                        detadict.setDescription("备货单业务状态");
-                                        detadict.setType("biz_req_status");
-                                        List<Dict> detadictList = dictService.findList(detadict);
-                                        if (detadictList.size() != 0) {
-                                            for (Dict di : detadictList) {
-                                                if (di.getValue().equals(String.valueOf(requestHeader.getBizStatus()))) {
-                                                    //业务状态
-                                                    detaData.add(String.valueOf(di.getLabel()));
-                                                    break;
-                                                }
+                                    detaData.add(String.valueOf(requestHeader.getReqNo()==null?"":requestHeader.getReqNo()));
+                                    if(requestHeader.getFromOffice()!=null && requestHeader.getFromOffice().getName()!=null){
+                                        detaData.add(String.valueOf(requestHeader.getFromOffice().getName()));
+                                    }
+                                    Dict detadict = new Dict();
+                                    detadict.setDescription("备货单业务状态");
+                                    detadict.setType("biz_req_status");
+                                    List<Dict> detadictList = dictService.findList(detadict);
+                                    if (detadictList.size() != 0) {
+                                        for (Dict di : detadictList) {
+                                            if (di.getValue().equals(String.valueOf(requestHeader.getBizStatus()))) {
+                                                //业务状态
+                                                detaData.add(String.valueOf(di.getLabel()));
+                                                break;
                                             }
-                                        } else {
-                                            detaData.add("");
                                         }
+                                    } else {
+                                        detaData.add("");
                                     }
                                     if(requeDetail.getSkuInfo()!=null){
                                         if(requeDetail.getSkuInfo()!=null && requeDetail.getSkuInfo().getName()!=null){
@@ -436,13 +442,27 @@ public class BizInvoiceController extends BaseController {
                             BizOrderDetail bizOrderDetail = new BizOrderDetail();
                             List<BizOrderDetail> orderDetailList = null;
                             BizOrderHeader orderHeader = bizOrderHeaderService.get(detailInvoice.getOrderHeader().getId());
-                            if (orderHeader != null) {
+                            if (orderHeader != null && !orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
                                 bizOrderDetail.setOrderHeader(orderHeader);
                                 orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
                             }
+                            if (orderHeader != null && orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
+                                List<String> detaData = new ArrayList<>();
+                                detaData.add(String.valueOf(invoice.getSendNumber() == null ? "" : invoice.getSendNumber()));
+                                detaData.add((invoice.getLogistics() != null && invoice.getLogistics().getName() != null)?String.valueOf(invoice.getLogistics().getName()):"");
+                                detaData.add(orderHeader.getOrderNum()==null?"":orderHeader.getOrderNum());
+                                detaData.add((orderHeader.getCustomer() != null && orderHeader.getCustomer().getName() != null)?String.valueOf(orderHeader.getCustomer().getName()):"");
+                                detaData.add(getDict(orderHeader.getBizStatus(),"业务状态","biz_order_status"));
+                                detaData.add("");
+                                detaData.add("");
+                                detaData.add("");
+                                detaData.add("");
+                                detaData.add("");
+                                detailData.add(detaData);
+                            }
                             if (orderDetailList != null && orderDetailList.size() != 0) {
                                 for (BizOrderDetail orderDetail : orderDetailList) {
-                                    List<String> detaData = new ArrayList();
+                                    List<String> detaData = new ArrayList<>();
                                     BizSkuInfo sku = bizSkuInfoService.get(orderDetail.getSkuInfo());
                                     BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
                                     orderDetail.setSkuInfo(skuInfo);
@@ -452,39 +472,12 @@ public class BizInvoiceController extends BaseController {
                                     } else {
                                         detaData.add("");
                                     }
-                                    if (orderHeader != null) {
-                                        detaData.add(String.valueOf(orderDetail.getOrderHeader().getOrderNum()));
-                                        if (orderHeader.getCustomer() != null && orderHeader.getCustomer().getName() != null) {
-                                            detaData.add(String.valueOf(orderHeader.getCustomer().getName()));
-                                        } else {
-                                            detaData.add("");
-                                        }
-                                    } else {
-                                        detaData.add("");
-                                        detaData.add("");
-                                    }
-                                    Dict detadict = new Dict();
-                                    detadict.setDescription("业务状态");
-                                    detadict.setType("biz_order_status");
-                                    List<Dict> detadictList = dictService.findList(detadict);
-                                    if (detadictList.size() != 0) {
-                                        for (Dict di : detadictList) {
-                                            if (di.getValue().equals(String.valueOf(orderHeader.getBizStatus()))) {
-                                                //业务状态
-                                                detaData.add(String.valueOf(di.getLabel()));
-                                                break;
-                                            }
-                                        }
-                                    } else {
-                                        detaData.add("");
-                                    }
+                                    detaData.add(String.valueOf(orderDetail.getOrderHeader().getOrderNum()));
+                                    detaData.add((orderHeader.getCustomer() != null && orderHeader.getCustomer().getName() != null)?String.valueOf(orderHeader.getCustomer().getName()):"");
+                                    detaData.add(getDict(orderHeader.getBizStatus(),"业务状态","biz_order_status"));
                                     detaData.add(String.valueOf(orderDetail.getSkuName() == null ? "" : orderDetail.getSkuName()));
                                     detaData.add(String.valueOf(orderDetail.getPartNo() == null ? "" : orderDetail.getPartNo()));
-                                    if (orderDetail != null && orderDetail.getSkuInfo() != null && orderDetail.getSkuInfo().getSkuPropertyInfos() != null) {
-                                        detaData.add(String.valueOf(orderDetail.getSkuInfo().getSkuPropertyInfos()));
-                                    } else {
-                                        detaData.add("");
-                                    }
+                                    detaData.add((orderDetail.getSkuInfo() != null && orderDetail.getSkuInfo().getSkuPropertyInfos() != null)?String.valueOf(orderDetail.getSkuInfo().getSkuPropertyInfos()):"");
                                     detaData.add(String.valueOf(orderDetail.getOrdQty() == null ? "" : orderDetail.getOrdQty()));
                                     detaData.add(String.valueOf(orderDetail.getSentQty() == null ? "" : orderDetail.getSentQty()));
                                     detailData.add(detaData);
@@ -530,5 +523,29 @@ public class BizInvoiceController extends BaseController {
             addMessage(redirectAttributes, "导出发货信息数据失败！失败信息：" + e.getMessage());
         }
         return "modules/biz/inventory/bizInvoiceList";
+    }
+
+    /**
+     * 导出获取订单状态名称
+     * @param bizStatus
+     * @return
+     */
+    public String getDict(Integer bizStatus,String description,String type) {
+        if (bizStatus != null) {
+            return "";
+        }
+        Dict detadict = new Dict();
+        detadict.setDescription(description);
+        detadict.setType(type);
+        List<Dict> detadictList = dictService.findList(detadict);
+        if (detadictList.size() != 0) {
+            for (Dict di : detadictList) {
+                if (di.getValue().equals(String.valueOf(bizStatus))) {
+                    //业务状态
+                    return String.valueOf(di.getLabel());
+                }
+            }
+        }
+        return "";
     }
 }

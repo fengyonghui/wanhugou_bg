@@ -6,7 +6,6 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-            alert(${orderHeaderList})
 
             });
 
@@ -132,28 +131,44 @@
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
-					<c:if test="${orderHeaderList!=null && orderHeaderList.size()>0}">
-						<c:forEach items="${orderHeaderList}" var="orderHeader">
-                            <c:set var="flag" value="true"></c:set>
-                                <c:forEach items="${orderHeader.orderDetailList}" var="orderDetail" varStatus="index">
-                                    <tr>
-                                        <c:if test="${flag}">
-                                            <td rowspan="${fn:length(orderHeader.orderDetailList)}">${orderHeader.orderNum}</td>
-                                            <td rowspan="${fn:length(orderHeader.orderDetailList)}">${orderHeader.customer.name}</td>
-                                            <td rowspan="${fn:length(orderHeader.orderDetailList)}">${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>
-                                        </c:if>
-                                        <td>${orderDetail.skuName}</td>
-                                        <td>${orderDetail.skuInfo.itemNo}</td>
-                                        <td>${orderDetail.ordQty}</td>
-                                        <td>${orderDetail.sentQty}</td>
-                                    </tr>
-                                    <c:if test="${fn:length(orderHeader.orderDetailList)>1}">
-                                        <c:set var="flag" value="false"></c:set>
-                                    </c:if>
-                                </c:forEach>
-
+						<%--<c:if test="${orderHeaderList!=null && orderHeaderList.size()>0}">--%>
+							<%--<c:forEach items="${orderHeaderList}" var="orderHeader">--%>
+                            	<%--<c:set var="flag" value="true"></c:set>--%>
+                                <%--<c:forEach items="${orderHeader.orderDetailList}" var="orderDetail" varStatus="index">--%>
+                                    <%--<tr>--%>
+                                        <%--<c:if test="${flag}">--%>
+                                            <%--<td rowspan="${fn:length(orderHeader.orderDetailList)}">${orderHeader.orderNum}</td>--%>
+                                            <%--<td rowspan="${fn:length(orderHeader.orderDetailList)}">${orderHeader.customer.name}</td>--%>
+                                            <%--<td rowspan="${fn:length(orderHeader.orderDetailList)}">${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>--%>
+                                        <%--</c:if>--%>
+                                        <%--<td>${orderDetail.skuName}</td>--%>
+                                        <%--<td>${orderDetail.skuInfo.itemNo}</td>--%>
+                                        <%--<td>${orderDetail.ordQty}</td>--%>
+                                        <%--<td>${orderDetail.sentQty}</td>--%>
+                                    <%--</tr>--%>
+                                    <%--<c:if test="${fn:length(orderHeader.orderDetailList)>1}">--%>
+                                        <%--<c:set var="flag" value="false"></c:set>--%>
+                                    <%--</c:if>--%>
+                                <%--</c:forEach>--%>
+							<%--</c:forEach>--%>
+						<%--</c:if>--%>
+						<c:set var="flag" value="true"></c:set>
+						<c:forEach items="${orderDetailList}" var="orderDetail">
+							<tr>
+								<c:if test="${flag}">
+									<td rowspan="${fn:length(orderDetailList)}">${orderDetail.orderHeader.orderNum}</td>
+									<td rowspan="${fn:length(orderDetailList)}">${orderDetail.cust.name}</td>
+									<td rowspan="${fn:length(orderDetailList)}">${fns:getDictLabel(orderDetail.orderHeader.bizStatus,"biz_order_status",'' )}</td>
+								</c:if>
+									<td>${orderDetail.skuInfo.name}</td>
+									<td>${orderDetail.skuInfo.itemNo}</td>
+									<td>${orderDetail.ordQty}</td>
+									<td>${orderDetail.sentQty}</td>
+							</tr>
+							<c:if test="${fn:length(orderDetailList)>1}">
+							<c:set var="flag" value="false"></c:set>
+							</c:if>
 						</c:forEach>
-					</c:if>
 					</tbody>
 				</table>
 			</div>

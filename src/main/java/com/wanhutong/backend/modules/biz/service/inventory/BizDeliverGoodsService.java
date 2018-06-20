@@ -3,12 +3,16 @@
  */
 package com.wanhutong.backend.modules.biz.service.inventory;
 
+import com.google.common.collect.ImmutableMap;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
+import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
+import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.inventory.BizDeliverGoodsDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.inventory.*;
@@ -21,6 +25,8 @@ import com.wanhutong.backend.modules.biz.service.order.BizPhotoOrderHeaderServic
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
+import com.wanhutong.backend.modules.config.parse.EmailConfig;
+import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -36,6 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -88,7 +96,7 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
 	    return super.findPage(page, bizInvoice);
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
 	public void save(BizInvoice bizInvoice) {
 	    //修改发货单
 	    if (bizInvoice.getId() != null){
@@ -148,13 +156,30 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
                     orderHeader.setBizStatus(OrderHeaderBizStatusEnum.SEND.getState());
                     bizPhotoOrderHeaderService.saveOrderHeader(orderHeader);
                     //生成供货记录
-                    BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
-                    bsgr.setCustomer(office);
-                    bsgr.setOrderNum(orderHeader.getOrderNum());
-                    bsgr.setBizOrderHeader(orderHeader);
-                    bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
-                    bsgr.setSendDate(bizInvoice.getSendDate());
-                    bizSendGoodsRecordService.save(bsgr);
+                    try {
+                        BizSendGoodsRecord bsgr = new BizSendGoodsRecord();
+                        bsgr.setCustomer(office);
+                        bsgr.setOrderNum(orderHeader.getOrderNum());
+                        bsgr.setBizOrderHeader(orderHeader);
+                        bsgr.setBizStatus(SendGoodsRecordBizStatusEnum.VENDOR.getState());
+                        bsgr.setSendDate(bizInvoice.getSendDate());
+                        bizSendGoodsRecordService.save(bsgr);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        logger.error("[Exception]拍照下单生成供货记录异常[orderNum:{}]",orderHeader.getOrderNum(),e);
+                        EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.SEND_GOODS_RECORD_EXCEPTION.name());
+                        AliyunMailClient.getInstance().sendTxt("zhangtengfei_cn@163.com", "拍照下单生成供货记录异常",
+                                String.format(orderHeader.getOrderNum(),
+                                        orderHeader.getId(),
+                                        orderHeader.getOrderNum(),
+                                        LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+                                ));
+                        String exceptionName = e.toString();
+                        exceptionName = exceptionName.substring(exceptionName.lastIndexOf(".") + 1, exceptionName.length());
+                        PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.SEND_GOODS_RECORD_EXCEPTION.name());
+                        AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone == null ? "18515060437" : phone.getNumber(),
+                                ImmutableMap.of("type", exceptionName, "service", "拍照下单供货记录"));
+                    }
                 }
 
                 /*用于 订单状态表 保存状态*/

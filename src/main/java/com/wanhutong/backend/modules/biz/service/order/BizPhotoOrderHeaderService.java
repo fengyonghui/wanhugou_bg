@@ -63,4 +63,11 @@ public class BizPhotoOrderHeaderService extends CrudService<BizOrderHeaderDao, B
         return bizPhotoOrderHeaderDao.findDeliverGoodsOrderList(bizOrderHeader);
     }
 
+    /**
+     * 根据发货单ID查询拍照下单
+     */
+    public List<BizOrderHeader> findPhotoOrderList(Integer invoiceId){
+        return bizPhotoOrderHeaderDao.findPhotoOrderList(invoiceId);
+    }
+
 }

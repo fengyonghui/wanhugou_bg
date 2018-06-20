@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.order;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface BizPhotoOrderHeaderDao extends CrudDao<BizOrderHeader> {
     void updateMoney(BizOrderHeader bizOrderHeader);
 
     List<BizOrderHeader> findDeliverGoodsOrderList(BizOrderHeader bizOrderHeader);
+
+    List<BizOrderHeader> findPhotoOrderList(@Param("invoiceId") Integer invoiceId);
 }

@@ -367,7 +367,7 @@ public class BizOrderHeaderController extends BaseController {
             bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.STOCKING.getState());
 
         }
-
+        bizOrderHeader.setSendGoodsStatus(1);
         List<BizOrderHeader> list = bizOrderHeaderService.findList(bizOrderHeader);
         Map<String, Object> map = new HashMap<String, Object>();
         List<BizOrderHeader> bizOrderHeaderList = Lists.newArrayList();
@@ -574,8 +574,13 @@ public class BizOrderHeaderController extends BaseController {
                 bizPayRecord.setOrderNum(order.getOrderNum());
                 List<BizPayRecord> payList = bizPayRecordService.findList(bizPayRecord);
                 order.setBizLocation(bizOrderAddressService.get(order.getBizLocation().getId()));
-                orderDetail.setOrderHeader(order);
-                List<BizOrderDetail> list = bizOrderDetailService.findList(orderDetail);
+                List<BizOrderDetail> list = new ArrayList<>();
+                if (!order.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
+                    orderDetail.setOrderHeader(order);
+                    list = bizOrderDetailService.findList(orderDetail);
+                } else {
+                    order.setTotalBuyPrice(order.getTotalDetail());
+                }
                 if (CollectionUtils.isEmpty(payList)) {
                     if (CollectionUtils.isNotEmpty(list)) {
                         Double dou = 0.0;
@@ -711,7 +716,8 @@ public class BizOrderHeaderController extends BaseController {
                     data.add(rowData);
                 }
                 if (CollectionUtils.isNotEmpty(payList)) {
-                    payList.forEach(p -> {
+
+                    for(BizPayRecord p:payList) {
                         Double douSum = 0.0;
                         if (CollectionUtils.isNotEmpty(list)) {
                             for (BizOrderDetail d : list) {
@@ -857,7 +863,7 @@ public class BizOrderHeaderController extends BaseController {
                             rowData.add(String.valueOf(sdf.format(p.getCreateDate())));
                         }
                         data.add(rowData);
-                    });
+                    }
                 }
             }
             String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心","所属客户专员", "商品总价", "商品工厂总价", "调整金额", "运费",
