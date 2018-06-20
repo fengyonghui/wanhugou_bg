@@ -69,19 +69,6 @@ public class BizPhotoOrderHeaderController extends BaseController {
         return entity;
     }
 
-//    @RequiresPermissions("biz:order:bizOrderHeader:view")
-//    @RequestMapping(value = {"list", ""})
-//    public String list(BizOrderHeader bizOrderHeader, HttpServletRequest request, HttpServletResponse response, Model model) {
-//        if (bizOrderHeader.getSkuChickCount() != null) {
-//            //商品下单量标识
-//            bizOrderHeader.setSkuChickCount(bizOrderHeader.getSkuChickCount());
-//        }
-//        Page<BizOrderHeader> page = bizPhotoOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
-//        model.addAttribute("page", page);
-//        model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
-//
-//        return "modules/biz/order/bizOrderHeaderList";
-//    }
 
     @RequiresPermissions("biz:order:bizOrderHeader:view")
     @RequestMapping(value = "form")
@@ -199,30 +186,6 @@ public class BizPhotoOrderHeaderController extends BaseController {
         }
         return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
     }
-
-//    @RequiresPermissions("biz:order:bizOrderHeader:edit")
-//    @RequestMapping(value = "delete")
-//    public String delete(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
-//        bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_DELETE);
-//        bizPhotoOrderHeaderService.delete(bizOrderHeader);
-//        addMessage(redirectAttributes, "删除订单信息成功");
-//        if (bizOrderHeader.getFlag() != null && "cendDelete".equals(bizOrderHeader.getFlag())) {
-//            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
-//        }
-//        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
-//    }
-
-//    @RequiresPermissions("biz:order:bizOrderHeader:edit")
-//    @RequestMapping(value = "recovery")
-//    public String recovery(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes) {
-//        bizOrderHeader.setDelFlag(BizOrderHeader.DEL_FLAG_NORMAL);
-//        bizPhotoOrderHeaderService.delete(bizOrderHeader);
-//        addMessage(redirectAttributes, "恢复订单信息成功");
-//        if (bizOrderHeader.getFlag() != null && "cendRecover".equals(bizOrderHeader.getFlag())) {
-//            return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
-//        }
-//        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
-//    }
 
 
     /**

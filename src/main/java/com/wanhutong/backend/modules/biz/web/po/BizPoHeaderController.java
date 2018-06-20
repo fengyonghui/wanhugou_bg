@@ -10,6 +10,7 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -36,7 +37,12 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -46,6 +52,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -312,8 +319,27 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        model.addAttribute("roleSet", roleSet);
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        bizPoOrderReq.setPoHeader(bizPoHeader);
+        List<BizPoOrderReq> bizPoOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+        if (CollectionUtils.isNotEmpty(bizPoOrderReqs)) {
+            bizPoOrderReq = bizPoOrderReqs.get(0);
+        }
+        BizOrderHeader bizOrderHeader = null;
+        if (bizPoOrderReq != null) {
+            bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getSoId());
+        }
 
+        if (bizOrderHeader != null && 6 == bizOrderHeader.getOrderType()) {
+            CommonImg commonImg = new CommonImg();
+            commonImg.setObjectId(bizOrderHeader.getId());
+            commonImg.setObjectName(ImgEnum.ORDER_SKU_PHOTO.getTableName());
+            commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
+            List<CommonImg> photoOrderImgList = commonImgService.findList(commonImg);
+            model.addAttribute("photoOrderImgList", photoOrderImgList);
+        }
+
+        model.addAttribute("roleSet", roleSet);
         model.addAttribute("bizPoHeader", bizPoHeader);
         model.addAttribute("type", type);
         model.addAttribute("prewStatus", prewStatus);
@@ -408,6 +434,16 @@ public class BizPoHeaderController extends BaseController {
             bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
         }
 
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        bizPoOrderReq.setId(null);
+        bizPoOrderReq.setPoHeader(bizPoHeader);
+        bizPoOrderReq.setPoLineNo(0);
+        bizPoOrderReq.setOrderHeader(bizOrderHeader);
+        bizPoOrderReq.setRequestHeader(null);
+        bizPoOrderReq.setSoLineNo(0);
+        bizPoOrderReq.setSoQty(0);
+        bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
+        bizPoOrderReqService.save(bizPoOrderReq);
 
         if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
             poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deliveryStatus == 0 ? customer.getId() : vendor.getId(), bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());

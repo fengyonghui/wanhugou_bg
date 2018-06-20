@@ -348,10 +348,19 @@
                     </c:forEach>
                 </div>
             </div>
-
+        <c:if test="${fn:length(photoOrderImgList) > 0}">
+            <div class="control-group">
+                <label class="control-label">是否同时提交支付申请：</label>
+                <div class="controls">
+                    <c:forEach items="${photoOrderImgList}" var="v">
+                        <a target="_blank" href="${v.imgServer}${v.imgPath}"><img style="width: 100px" src="${v.imgServer}${v.imgPath}"></a>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:if>
         <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
             <div class="control-group">
-                <label class="control-label">申请金额：</label>
+                <label class="control-label">申请金额：${bizPoHeader}</label>
                 <div class="controls">
                     <input id="payTotal" name="planPay" type="text"
                            <c:if test="${type == 'audit' || type == 'pay'}">readonly</c:if>
@@ -392,7 +401,10 @@
             <div class="control-group prewTimeTotal">
                 <label class="control-label">申请金额：</label>
                 <div class="controls">
-                    <input name="prewPayTotal" id="prewPayTotal" type="text"  maxlength="20" placeholder="必填！"/>
+                    <input name="prewPayTotal" id="prewPayTotal" type="text"
+                           value="${bizPoHeader.bizPoPaymentOrder.id != null ?
+                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)}"
+                           maxlength="20" placeholder="必填！"/>
                 </div>
             </div>
         </c:if>
@@ -492,6 +504,7 @@
                 &nbsp;</shiro:hasPermission>
         </div>
     </c:if>
+    <c:if test="${bizPoHeader.poDetailList != null || reqDetailMap != null || orderDetailMap != null}" >
     <table id="contentTable" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
@@ -622,7 +635,7 @@
         </c:if>
         </tbody>
     </table>
-
+    </c:if>
 
     <div class="form-actions">
         <shiro:hasPermission name="biz:po:bizPoHeader:edit">
