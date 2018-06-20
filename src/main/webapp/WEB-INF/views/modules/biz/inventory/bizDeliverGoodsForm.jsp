@@ -89,17 +89,14 @@
 		});
             <%--点击确定时获取订单详情--%>
             $("#ensureData").click(function () {
-
-                alert(1);
+                $("#select_all").removeAttr("checked");
 				$('input:checkbox:checked').each(function(i) {
 				   var t= $(this).val();
 				   var ttp= $(this).parent().parent();
-				   alert($(ttp).html());
 					$("#prodInfo").append(ttp);
 				});
-				alert(2);
                 $("#prodInfo2").empty();
-                $("#select_all").removeAttr("checked");
+
 			});
 
             });
