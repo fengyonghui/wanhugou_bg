@@ -101,6 +101,16 @@
 			<li><label>发货单号：</label>
 				<form:input path="sendNumber" htmlEscape="false" maxlength="30" class="input-medium"/>
 			</li>
+			<c:if test="${bizInvoice.ship==0}">
+				<li><label>订单号：</label>
+					<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
+				</li>
+			</c:if>
+			<c:if test="${bizInvoice.ship==1}">
+				<li><label>备货单号：</label>
+					<form:input path="reqNo" htmlEscape="false" maxlength="30" class="input-medium"/>
+				</li>
+			</c:if>
 			<li><label>物流商：</label>
 				<form:input path="logistics.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
