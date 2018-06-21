@@ -213,7 +213,7 @@
 			<label class="control-label">备注：</label>
 			<div class="controls">
 
-				<textarea  class="input-xlarge " readonly="readonly">${entity.remark}</textarea>
+				<textarea  class="input-xlarge " readonly="readonly">${bizOrderHeader.orderComment.comments}</textarea>
 			</div>
 		</div>
 
