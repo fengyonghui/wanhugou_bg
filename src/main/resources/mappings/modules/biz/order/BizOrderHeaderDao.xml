@@ -869,7 +869,7 @@
 		<if test="usId != null and usId != 0">
 			AND us.id = #{usId}
 		</if>
-		GROUP BY us.`name`
+		GROUP BY us.`id`
 	</select>
 
 	<select id="getSingleUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
@@ -1086,7 +1086,7 @@
 		<if test="usId != null and usId != 0">
 			AND us.id = #{usId}
 		</if>
-		GROUP BY us.`name`
+		GROUP BY us.`id`
 	</select>
 
 	<select id="getSingleUserSaleStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
@@ -1262,7 +1262,7 @@
 	</foreach>
 		OR (header1.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		AND header1.create_time BETWEEN #{startDate} AND  #{endDate}
-		GROUP BY us1.name)   AS buyPrice
+		GROUP BY us1.id)   AS buyPrice
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
@@ -1287,7 +1287,7 @@
 		<if test="usId != null and usId != 0">
 			AND us.id = #{usId}
 		</if>
-		GROUP BY us.`name`
+		GROUP BY us.`id`
 	</select>
 
 	<select id="getSingleUserSaleStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
@@ -1593,7 +1593,7 @@
 		<if test="purchasingId != null and purchasingId != 0">
 			AND us.office_id = #{purchasingId}
 		</if>
-		GROUP BY us.`name`
+		GROUP BY us.`id`
 	</select>
 
 	<select id="getSkuStatisticDataBetween" resultType="java.lang.Integer">
