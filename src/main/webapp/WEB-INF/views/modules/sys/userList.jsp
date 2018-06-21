@@ -5,6 +5,7 @@
 <head>
 	<title>用户管理</title>
 	<meta name="decorator" content="default"/>
+	<script src="${ctxStatic}/bootstrap/printThis.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#btnExport").click(function(){
@@ -20,6 +21,11 @@
 				$.jBox($("#importBox").html(), {title:"导入数据", buttons:{"关闭":true}, 
 					bottomText:"导入文件不能超过5M，仅允许导入“xls”或“xlsx”格式文件！"});
 			});
+
+            $('#myModal').on('hide.bs.modal', function () {
+                window.location.href="${ctx}/sys/user";
+
+            });
 		});
 		function page(n,s){
 			if(n) $("#pageNo").val(n);
@@ -28,9 +34,41 @@
 			$("#searchForm").submit();
 	    	return false;
 	    }
+
+
+	    function genUserCode(id) {
+            $.ajax({
+                type:"get",
+                url:"${ctx}/sys/userCode/genUserQRCode?id="+id,
+                success:function (data) {
+                    var aa="<img src='"+data+"'/>";
+
+                     $("#userImg").html(aa);
+				}
+            });
+
+        }
+
+        /**
+         * 打印局部div
+         * @param printpage 局部div的ID
+         */
+        function printdiv(printpage) {
+            $("#userImg").printThis({
+                debug: false,
+                importCSS: false,
+                importStyle: false,
+                printContainer: true,
+                pageTitle: "二维码",
+                removeInline: false,
+                printDelay: 333,
+                header: null,
+                formValues: false
+            });
+        }
 	</script>
 </head>
-<body>
+<body id="body">
 <div id="importBox" class="hide">
 	<form id="importForm" action="${ctx}/sys/user/import" method="post" enctype="multipart/form-data"
 		  class="form-search" style="padding-left:20px;text-align:center;" onsubmit="loading('正在导入，请稍等...');"><br/>
@@ -151,6 +189,8 @@
 				<c:if test="${bizUser.delFlag==1}">
 					<a href="${ctx}/sys/user/form?id=${bizUser.id}&conn=${user.conn}&company.id=${bizUser.company.id}&office.id=${bizUser.office.id}">修改</a>
 					<a href="${ctx}/sys/user/delete?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">删除</a>
+					<%--<a  data-toggle="modal" data-target="#exampleModal" onclick="genUserCode(${bizUser.id})">生成二维码</a>--%>
+					<a data-toggle="modal" onclick="genUserCode(${bizUser.id})" data-id="${requestHeader.id}" data-target="#myModal">生成二维码</a>
 				</c:if>
 				<c:if test="${bizUser.delFlag==0}">
 					<a href="${ctx}/sys/user/recovery?id=${bizUser.id}&company.id=${user.company.id}&conn=${user.conn}" onclick="return confirmx('确认要删除该用户吗？', this.href)">恢复</a>
@@ -244,5 +284,25 @@
 	</tbody>
 </table>
 <div class="pagination">${page}</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">用户二维码</h4>
+			</div>
+			<div class="modal-body">
+				二维码：<div style="margin-top: 14px" id="userImg"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button type="button"  onclick="printdiv('myModal');" class="btn btn-primary">打印</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
 </body>
 </html>
