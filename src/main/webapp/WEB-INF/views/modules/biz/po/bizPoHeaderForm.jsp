@@ -398,7 +398,7 @@
                            placeholder="必填！"/>
                 </div>
             </div>
-            <div class="control-group prewTimeTotal">
+            <div class="control-group prewTimeTotal" style="display: none;">
                 <label class="control-label">申请金额：</label>
                 <div class="controls">
                     <input name="prewPayTotal" id="prewPayTotal" type="text"
