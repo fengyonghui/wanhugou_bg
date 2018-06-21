@@ -71,8 +71,8 @@
 					<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
 				</li>
 				<li><label>供应商</label>
-					<sys:treeselect id="vendorId" name="vendorId" value="${bizRequestHeader.vendorId}" labelName="vendorId"
-									labelValue="${bizRequestHeader.vendorName}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
+					<sys:treeselect id="vendorId" name="vendorId" value="" labelName="vendorId"
+									labelValue="" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 									title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-medium" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>
@@ -108,8 +108,8 @@
 					<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 				</li>
 				<li><label>供应商</label>
-					<sys:treeselect id="vendorId" name="vendorId" value="${bizOrderHeader.vendorId}" labelName="vendorId"
-									labelValue="${bizOrderHeader.vendorName}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
+					<sys:treeselect id="vendorId" name="vendorId" value="" labelName="vendorId"
+									labelValue="" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
 									title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-medium" dataMsgRequired="必填信息">
 					</sys:treeselect>
 				</li>
