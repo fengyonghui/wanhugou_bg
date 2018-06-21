@@ -35,6 +35,8 @@ public enum ImgEnum{
     VEND_IDENTITY_CARD((byte)51,"供应商身份证", "biz_vend_info"),
     /**线下支付凭证*/
     UNlINE_PAYMENT_VOUCHER((byte)27,"线下支付凭证","biz_order_header_unline"),
+    /**线下退款凭证*/
+    UNlINE_REFUND_VOUCHER((byte)27,"线下退款凭证","biz_order_header"),
     /**
      * 采购单支付凭证
      */

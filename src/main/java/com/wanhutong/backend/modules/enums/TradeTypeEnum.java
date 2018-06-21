@@ -10,7 +10,8 @@ public enum TradeTypeEnum {
     RECHARGEING_TYPE(5,"充值中"),
     WITHDRAWALSing_TYPE(6, "提现中"),
     ORDER_PAY_TYPE(7,"订单支付"),
-    REQUEST_PAY_TYPE(10,"备货订单支付");
+    REQUEST_PAY_TYPE(10,"备货订单支付"),
+    REFUND_PAY_TYPE(11,"线下退款");
 
     private Integer code;
     private String tradeNoType;

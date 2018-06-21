@@ -121,6 +121,9 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer skuCount;//商品销售量
     private Integer officeCount;//新增经销店数
 
+    private String photos; //产品图片
+    private String imgPhotosSorts;		//主图顺序
+
     private Integer vendorId; //根据供应商Id搜索
     private Integer vendorName; //根据供应商Id搜索
 
@@ -653,6 +656,22 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSendGoodsStatus(Integer sendGoodsStatus) {
         this.sendGoodsStatus = sendGoodsStatus;
+    }
+
+    public String getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(String photos) {
+        this.photos = photos;
+    }
+
+    public String getImgPhotosSorts() {
+        return imgPhotosSorts;
+    }
+
+    public void setImgPhotosSorts(String imgPhotosSorts) {
+        this.imgPhotosSorts = imgPhotosSorts;
     }
 
     public Integer getVendorId() {

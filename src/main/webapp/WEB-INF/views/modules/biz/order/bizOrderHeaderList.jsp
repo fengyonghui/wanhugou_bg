@@ -2,6 +2,14 @@
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.BizOrderTypeEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%
+	Integer refund = OrderHeaderBizStatusEnum.REFUND.getState();
+	Integer refunding = OrderHeaderBizStatusEnum.REFUNDING.getState();
+	Integer refunded = OrderHeaderBizStatusEnum.REFUNDED.getState();
+	request.setAttribute("refund", refund);
+	request.setAttribute("refunding", refunding);
+	request.setAttribute("refunded", refunded);
+%>
 <html>
 <head>
 	<title>订单信息管理</title>
@@ -63,6 +71,27 @@
         }
         function testData(checkbox) {
             $("#includeTestData").val(checkbox.checked);
+        }
+	</script>
+	<script type="text/javascript">
+        function checkInfo(obj, val, hid) {
+            if (confirm("您确认同意该订单退款申请吗？")) {
+
+                $.ajax({
+                    type: "post",
+                    url: "${ctx}/biz/order/bizOrderHeader/saveInfo",
+                    data: {checkStatus: obj, id: hid},
+                    success: function (data) {
+                        if (data) {
+                            alert(val + "成功！");
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader";
+
+                        }
+                    }
+                })
+
+            }
+
         }
 	</script>
 </head>
@@ -275,7 +304,7 @@
 					<a style="display: none">
 					<fmt:formatNumber type="number" var="total" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 					</a>
-				<c:if test="${total > orderHeader.receiveTotal && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45}">
+				<c:if test="${total > orderHeader.receiveTotal && orderHeader.bizStatus!=10 && orderHeader.bizStatus!=35 && orderHeader.bizStatus!=40 && orderHeader.bizStatus!=45 && orderHeader.bizStatus!=60}">
 					<font color="#FF0000">(有尾款)</font>
 				</c:if>
 			</td>
@@ -348,11 +377,31 @@
 						</c:if>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 						<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}">修改</a>
+						    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&statu=${statu}">修改</a>
 						</c:if>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 
+						</c:if>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
+						<!-- 退款增加 -->
+						<c:if test='${orderHeader.bizStatus==refund}'>
+							<%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">申请退款</a>
+						</c:if>
+						<c:if test="${orderHeader.bizStatus==refunding}">
+							退款中
+						</c:if>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:order:bizOrderHeader:doRefund">
+						<c:if test="${orderHeader.bizStatus==refunding }">
+							<a href="${ctx}/biz/order/bizOrderHeader/refund?id=${orderHeader.id}">线下退款</a>
+						</c:if>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="biz:order:bizOrderHeader:view">
+						<c:if test="${orderHeader.bizStatus==refunded }">
+							退款完成
 						</c:if>
 					</shiro:hasPermission>
 					</c:otherwise>
