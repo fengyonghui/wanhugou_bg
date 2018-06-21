@@ -278,9 +278,6 @@
 			od.status=1
 		and od.order_id=a.id
 		GROUP BY a.id ) as "totalBuyPrice"
-		<if test="vendorId !=null and vendorId != ''">
-			,sv.name AS "vendorName"
-		</if>
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		<if test="statu != null and statu =='unline'">
