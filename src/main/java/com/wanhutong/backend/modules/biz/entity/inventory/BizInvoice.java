@@ -43,6 +43,9 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String ordDetails;		//发货订单详情ID
 	private String trackingNumber;		//物流单号
 
+	private String orderNum; //订单号
+	private String reqNo; //订单号
+
 	public BizInvoice() {
 		super();
 	}
@@ -206,5 +209,21 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setTrackingNumber(String trackingNumber) {
 		this.trackingNumber = trackingNumber;
+	}
+
+	public String getOrderNum() {
+		return orderNum;
+	}
+
+	public void setOrderNum(String orderNum) {
+		this.orderNum = orderNum;
+	}
+
+	public String getReqNo() {
+		return reqNo;
+	}
+
+	public void setReqNo(String reqNo) {
+		this.reqNo = reqNo;
 	}
 }

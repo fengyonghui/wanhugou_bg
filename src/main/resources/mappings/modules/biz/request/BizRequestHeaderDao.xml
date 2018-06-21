@@ -67,6 +67,11 @@
 		<include refid="bizRequestHeaderJoins"/>
 		LEFT JOIN biz_sku_info bsi on brd.sku_id = bsi.id
 		LEFT JOIN biz_product_info pi ON bsi.prod_id = pi.id
+		<!-- 供应商id -->
+		<if test="vendorId !=null and vendorId != ''">
+			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
+		</if>
+		<!-- end  -->
 		LEFT JOIN biz_variety_info bvi on bvi.id=pi.vari_id and bvi.status=1
 		<where>
 			1=1
@@ -116,6 +121,9 @@
 
 			<if test="sqlMap != null and sqlMap.request != null and sqlMap.request != ''">
 				${sqlMap.request}
+			</if>
+			<if test="vendorId !=null and vendorId != ''">
+				AND  sv.id = ${vendorId}
 			</if>
 			GROUP BY a.id
 		</where>
