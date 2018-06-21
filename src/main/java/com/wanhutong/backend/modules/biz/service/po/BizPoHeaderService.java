@@ -35,6 +35,7 @@ import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.SystemService;
@@ -263,6 +264,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectOrder.entrySet()) {
             BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(entry.getKey());
             bizOrderDetail.setOrderHeader(bizOrderHeader);
+            bizOrderDetail.setSuplyis(new Office(0));
             List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
             if (orderDetailList.size() == entry.getValue().size()) {
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
@@ -281,11 +283,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             } else if (orderDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setOrderHeader(bizOrderHeader);
                 bizPoOrderReq.setRequestHeader(null);
-                bizPoOrderReq.setPoHeader(null);
+               // bizPoOrderReq.setPoHeader(null);
                 bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
                 List<BizPoOrderReq> poOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+                bizPoOrderReq.setIsPrew(0);
+                bizPoOrderReq.setPoHeader(null);
+                List<BizPoOrderReq> poOrderReqNotPrew = bizPoOrderReqService.findList(bizPoOrderReq);
+                int commonPoOrderSize=poOrderReqNotPrew==null?0:poOrderReqNotPrew.size();
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
-                    if (poOrderReqs.size() == orderDetailList.size()) {
+                    if (poOrderReqs.size()+commonPoOrderSize  == orderDetailList.size()) {
                         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
                         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 
@@ -328,11 +334,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             } else if (requestDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setRequestHeader(bizRequestHeader);
                 bizPoOrderReq.setOrderHeader(null);
-                bizPoOrderReq.setPoHeader(null);
+              //  bizPoOrderReq.setPoHeader(null);
                 bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType()));
                 List<BizPoOrderReq> poOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+                bizPoOrderReq.setIsPrew(0);
+                bizPoOrderReq.setPoHeader(null);
+                List<BizPoOrderReq> poOrderReqNotPrew = bizPoOrderReqService.findList(bizPoOrderReq);
+                int commonPoOrderSize=poOrderReqNotPrew==null?0:poOrderReqNotPrew.size();
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
-                    if (poOrderReqs.size() == requestDetailList.size()) {
+                    if (poOrderReqs.size()+commonPoOrderSize == requestDetailList.size()) {
                         bizRequestHeader.setBizStatus(ReqHeaderStatusEnum.ACCOMPLISH_PURCHASE.getState());
                         bizRequestHeaderService.saveRequestHeader(bizRequestHeader);
                     } else {
