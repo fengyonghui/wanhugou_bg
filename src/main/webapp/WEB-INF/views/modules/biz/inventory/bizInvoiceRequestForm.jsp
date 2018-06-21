@@ -39,15 +39,13 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    if (tt != '') {
-                    	$("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
-                    }
                     if(window.confirm('你确定要发货吗？') && total > 0){
                         // alert("确定");
+                        if (tt != '') {
+                            $("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
+                        }
                         form.submit();
-                        return true;
                         loading('正在提交，请稍等...');
-
                     }else{
                         alert("请勾选发货内容");
                         return false;

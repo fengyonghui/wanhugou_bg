@@ -178,7 +178,7 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
                         exceptionName = exceptionName.substring(exceptionName.lastIndexOf(".") + 1, exceptionName.length());
                         PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.SEND_GOODS_RECORD_EXCEPTION.name());
                         AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone == null ? "18515060437" : phone.getNumber(),
-                                ImmutableMap.of("type", exceptionName, "service", "拍照下单供货记录"));
+                                ImmutableMap.of("type", "Exception", "service", "拍照下单供货记录"));
                     }
                 }
 

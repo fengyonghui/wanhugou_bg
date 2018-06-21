@@ -58,10 +58,10 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    if (tt != '') {
-                        $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
-					}
                     if(window.confirm('你确定要发货吗？') && flag && total > 0){
+                        if (tt != '') {
+                            $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
+                        }
 						var orderHeaders = $("input[name='orderHeaders']").val();
 						if(${bizInvoice.bizStatus == 0}){
 							$.ajax({
