@@ -66,7 +66,7 @@
     <div class="control-group">
         <label class="control-label">供应商卡号：</label>
         <div class="controls">
-            <input type="text" readonly="readonly" value="${vendOffice.cardNumber}" htmlEscape="false" maxlength="30"
+            <input type="text" readonly="readonly" value="${vendor.bizVendInfo.cardNumber}" htmlEscape="false" maxlength="30"
                         class="input-xlarge "/>
         </div>
     </div>
@@ -74,14 +74,14 @@
     <div class="control-group">
         <label class="control-label">供应商收款人：</label>
         <div class="controls">
-            <input type="text" readonly="readonly" value="${vendOffice.payee}" htmlEscape="false" maxlength="30"
+            <input type="text" readonly="readonly" value="${vendor.bizVendInfo.payee}" htmlEscape="false" maxlength="30"
                    class="input-xlarge "/>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">供应商开户行：</label>
         <div class="controls">
-            <input type="text" readonly="readonly" value="${vendOffice.bankName}" htmlEscape="false" maxlength="30"
+            <input type="text" readonly="readonly" value="${vendor.bizVendInfo.bankName}" htmlEscape="false" maxlength="30"
                    class="input-xlarge "/>
         </div>
     </div>
