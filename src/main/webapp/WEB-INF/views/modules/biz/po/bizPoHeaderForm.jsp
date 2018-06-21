@@ -384,11 +384,11 @@
             <div class="control-group">
                 <label class="control-label">是否同时提交支付申请：</label>
                 <div class="controls">
-                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" checked/>是
-                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);"/>否
+                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);" checked/>否
+                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是
                 </div>
             </div>
-            <div class="control-group prewTimeTotal">
+            <div class="control-group prewTimeTotal" style="display: none;">
                 <label class="control-label">最后付款时间：</label>
                 <div class="controls">
                     <input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
