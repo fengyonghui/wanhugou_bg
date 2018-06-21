@@ -87,10 +87,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         return bizOrderHeaderDao.findListFirstOrder(bizOrderHeader);
     }
 
+    @Override
     public BizOrderHeader get(Integer id) {
         return super.get(id);
     }
 
+    @Override
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         boolean oflag = false;
@@ -113,6 +115,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
     }
 
+    @Override
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
@@ -176,6 +179,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false)
+    @Override
     public void save(BizOrderHeader bizOrderHeader) {
         if (bizOrderHeader.getBizType() == null) {
             bizOrderHeader.setBizType(1);
@@ -268,6 +272,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false)
+    @Override
     public void delete(BizOrderHeader bizOrderHeader) {
         super.delete(bizOrderHeader);
     }
@@ -354,6 +359,43 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }
             bizOrderHeader.setPage(page);
             page.setList(dao.headerFindList(bizOrderHeader));
+            return page;
+        }
+    }
+    /**
+     * 订单发货分页
+     * */
+    public Page<BizOrderHeader> pageFindListForPhotoOrder(Page<BizOrderHeader> page,BizOrderHeader bizOrderHeader) {
+        User user= UserUtils.getUser();
+//        boolean flag=false;
+        boolean oflag = false;
+        /*if(user.getRoleList()!=null){
+            for(Role role:user.getRoleList()){
+                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+                    flag=true;
+                    break;
+                }
+            }
+        }*/
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
+                }
+            }
+        }
+        if(user.isAdmin()){
+            bizOrderHeader.setPage(page);
+            page.setList(dao.headerFindListForPhotoOrder(bizOrderHeader));
+            return page;
+        }else {
+            if(oflag){
+
+            }else {
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            }
+            bizOrderHeader.setPage(page);
+            page.setList(dao.headerFindListForPhotoOrder(bizOrderHeader));
             return page;
         }
     }

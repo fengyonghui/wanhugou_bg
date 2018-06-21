@@ -66,6 +66,8 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
     private String suplyIds;
     private Office vendor;      //供应商
     private User primary;       //供应商主联系人
+
+    private Office cust;    //采购商
     /**
      * C端订单详情保存
      * */
@@ -402,5 +404,13 @@ public class BizOrderDetail extends DataEntity<BizOrderDetail> {
 
     public void setPoHeader(BizPoHeader poHeader) {
         this.poHeader = poHeader;
+    }
+
+    public Office getCust() {
+        return cust;
+    }
+
+    public void setCust(Office cust) {
+        this.cust = cust;
     }
 }

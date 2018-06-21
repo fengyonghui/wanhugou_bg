@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizPhotoOrderHeaderDao">
+
+	<resultMap id="orderHeaderResult" type="BizOrderHeader">
+		<id property="id" column="id"/>
+		<result property="orderNum" column="orderNum"/>
+		<result property="orderType" column="orderType"/>
+		<result property="totalDetail" column="totalDetail"/>
+		<result property="receiveTotal" column="receiveTotal"/>
+		<result property="totalExp" column="totalExp"/>
+
+		<result property="freight" column="freight"/>
+		<result property="invStatus" column="invStatus"/>
+		<result property="bizStatus" column="bizStatus"/>
+		<result property="bizType" column="bizType"/>
+		<result property="itemNo" column="itemNo"/>
+		<result property="delFlag" column="delFlag"/>
+		<result property="centersName" column="centersName"/>
+		<result property="con.name" column="con.name"/>
+		<result property="orderComment.id" column="orderComment.id"/>
+		<result property="orderComment.comments" column="orderComment.comments"/>
+		<result property="createDate" column="createDate"/>
+		<result property="updateDate" column="updateDate"/>
+
+		<association property="customer" javaType="Office" column="customer.id">
+			<id property="id" column="customer.id"/>
+			<result property="name" column="customer.name"/>
+			<result property="phone" column="customer.phone"/>
+		</association>
+		<association property="sellers" javaType="Office" column="sellers.id">
+			<id property="id" column="sellers.id"/>
+			<result property="name" column="sellers.name"/>
+		</association>
+
+		<association property="bizLocation" javaType="BizOrderAddress" column="bizLocation.id">
+			<id property="id" column="bizLocation.id"/>
+			<result property="receiver" column="bizLocation.receiver"/>
+			<result property="phone" column="bizLocation.phone"/>
+			<result property="address" column="bizLocation.address"/>
+			<association property="province" javaType="SysRegion" column="province.id">
+				<id property="id" column="province.id"/>
+				<result property="name" column="province.name"/>
+			</association>
+			<association property="city" javaType="SysRegion" column="city.id">
+				<id property="id" column="city.id"/>
+				<result property="name" column="city.name"/>
+			</association>
+			<association property="region" javaType="SysRegion" column="region.id">
+				<id property="id" column="region.id"/>
+				<result property="name" column="region.name"/>
+			</association>
+		</association>
+
+		<association property="platformInfo" javaType="BizPlatformInfo" column="platformInfo.id">
+			<id property="id" column="platformInfo.id"/>
+			<result property="name" column="platformInfo.name"/>
+		</association>
+
+		<association property="createBy" javaType="User" column="createBy.id">
+			<id property="id" column="createBy.id"/>
+			<id property="name" column="createBy.name"/>
+		</association>
+		<association property="updateBy" javaType="User" column="updateBy.id">
+			<id property="id" column="updateBy.id"/>
+			<id property="name" column="updateBy.name"/>
+		</association>
+	</resultMap>
+
+
+	<sql id="bizOrderHeaderColumns">
+		a.id AS "id",
+		a.order_num AS "orderNum",
+		a.order_type AS "orderType",
+		a.cust_id AS "customer.id",
+		so.name as "customer.name",
+		so.phone AS "customer.phone",
+		a.seller_id as "sellers.id",
+		c.receiver as "bizLocation.receiver",
+		c.phone as "bizLocation.phone",
+		c.province_id as "bizLocation.province.id",
+		province.name as "bizLocation.province.name",
+		c.city_id as "bizLocation.city.id",
+		city.name as "bizLocation.city.name",
+		c.region_id as "bizLocation.region.id",
+		reg.name as "bizLocation.region.name",
+		c.address as "bizLocation.address",
+		a.total_detail AS "totalDetail",
+		a.receive_total as "receiveTotal",
+		a.total_exp AS "totalExp",
+		a.freight AS "freight",
+		a.inv_status AS "invStatus",
+		a.biz_status AS "bizStatus",
+		a.biz_type as "bizType",
+		a.plateform_id AS "platformInfo.id",
+		bpi.name as "platformInfo.name",
+		a.ship_to_addr AS "bizLocation.id",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		su.name as "createBy.name",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		us.name as "updateBy.name",
+		a.update_time AS "updateDate",
+		s.name as "centersName",
+		con.id AS "con.id",
+		con.name AS "con.name",
+		boc.id as "orderComment.id",
+		boc.comments as "orderComment.comments"
+	</sql>
+
+
+	<sql id="bizOrderHeaderJoins">
+		left join sys_office as so on a.cust_id=so.id
+		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
+        LEFT JOIN sys_region province ON c.province_id = province.id
+        LEFT JOIN sys_region city ON c.city_id = city.id
+        LEFT JOIN sys_region reg ON c.region_id = reg.id
+		left join sys_user su on a.create_id=su.id
+		left join sys_user us on a.update_id=us.id
+		left join biz_cms_platform_info bpi on a.plateform_id=bpi.id
+    	LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office s on s.id=ccs.center_id
+		LEFT JOIN sys_user con ON con.id = ccs.consultant_id
+		left join biz_order_comment boc on boc.order_id=a.id
+	</sql>
+
+	<select id="get" resultType="BizOrderHeader">
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>
+		FROM biz_order_header a
+		<include refid="bizOrderHeaderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultMap="orderHeaderResult">
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>
+		FROM biz_order_header a
+		<if test="statu != null and statu =='unline'">
+			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		</if>
+		<include refid="bizOrderHeaderJoins"/>
+		<where> 1=1 and a.order_type !=4
+			<if test="dataStatus==null">
+				and a.status = #{DEL_FLAG_NORMAL}
+			</if>
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="skuChickCount!=null and skuChickCount!=''">
+				AND (
+				(
+				biz_status != 45
+				AND biz_status != 35
+				AND biz_status != 0
+				)
+				OR (biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0)
+				)
+			</if>
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
+			<if test="customer != null and customer.id != null and customer.id!=''">
+				AND a.cust_id = #{customer.id}
+			</if>
+			<if test="centersName != null and centersName!=''">
+				AND s.name like
+				<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+			</if>
+			<if test="customer != null and customer.phone != null and customer.phone!=''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
+			</if>
+			<if test="receiveTotal != null and receiveTotal != ''">
+				AND a.receive_total = #{receiveTotal}
+			</if>
+			<if test="bizStatus !=null">
+				AND a.biz_status=#{bizStatus}
+			</if>
+			<!-- 列表时间查询 -->
+			<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
+				AND a.create_time &gt;= #{orderCreatStartTime}
+				<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
+                    AND a.create_time &lt;= #{orderCreatEndTime}
+				</if>
+			</if>
+			<if test="orderUpdaStartTime !=null and orderUpdaStartTime !=''">
+				AND a.update_time &gt;= #{orderUpdaStartTime}
+				<if test="orderUpdaEndTime!=null and orderUpdaEndTime!=''">
+                    AND a.update_time &lt;= #{orderUpdaEndTime}
+				</if>
+			</if>
+			<!-- end -->
+			<if test="bizType !=null and bizType!=''">
+				AND a.biz_type=#{bizType}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="invStatus !=null and invStatus!=''">
+				AND a.inv_status=#{invStatus}
+			</if>
+			<if test="consultantId!=null">
+				and ccs.consultant_id = #{consultantId}
+			</if>
+
+			<if test="centerId!=null">
+				and ccs.center_id = #{centerId}
+			</if>
+
+			<if test="con !=null and con.name != null and con.name !=''">
+				and con.name
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{con.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
+			</if>
+			<if test="statu != null and statu == 'unline'">
+				AND ohu.id IS NOT NULL
+			</if>
+			<if test="statu != null and statu =='unline' and examine != null and examine == 2">
+				AND (ohu.biz_status = 0 OR ohu.biz_status = 2)
+			</if>
+			<if test="statu != null and statu =='unline' and examine != null and examine == 1">
+				AND a.id NOT IN (
+					SELECT b.id
+					FROM biz_order_header b
+					LEFT JOIN biz_order_header_unline bohu ON bohu.order_id = b.id
+					WHERE (bohu.biz_status = 0 OR bohu.biz_status = 2)
+					AND bohu.`status` = 1
+					AND b.`status` = 1
+					AND b.order_type != 4
+				)
+			</if>
+			<if test="page != null and page.includeTestData != true and skuChickCount==null">
+				AND NOT EXISTS(
+				select 1
+				from sys_test_account ta
+				where a.cust_id = ta.object_id
+				and ta.object_name = 'sys_office'
+				)
+			</if>
+
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				GROUP  BY a.id
+			</otherwise>
+		</choose>
+		ORDER BY updateDate DESC
+	</select>
+
+	<select id="findCount" resultType="Integer">
+		SELECT count(1) from
+		(SELECT
+		<include refid="bizOrderHeaderColumns"/>
+		FROM biz_order_header a
+		<include refid="bizOrderHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderNum != null and orderNum != ''">
+				AND a.order_num
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+			</if>
+			<if test="centersName != null and centersName!=''">
+				AND s.name like
+				<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+			</if>
+			<if test="orderType != null and orderType != ''">
+				AND a.order_type = #{orderType}
+			</if>
+			<if test="customer != null and customer.id != null and customer.id!=''">
+				AND a.cust_id = #{customer.id}
+			</if>
+			<if test="customer != null and customer.phone != null and customer.phone!=''">
+				AND su.mobile LIKE
+				<if test="dbName == 'oracle'">'%'||#{customer.phone}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{customer.phone}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{customer.phone},'%')</if>
+			</if>
+			<if test="receiveTotal != null and receiveTotal != ''">
+				AND a.receive_total = #{receiveTotal}
+			</if>
+			<if test="bizStatus !=null">
+				AND a.biz_status=#{bizStatus}
+			</if>
+			<if test="bizType !=null and bizType!=''">
+				AND a.biz_type=#{bizType}
+			</if>
+			<if test="bizStatusStart !=null and bizStatusEnd !=null">
+				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+			</if>
+			<if test="invStatus !=null and invStatus!=''">
+				AND a.inv_status=#{invStatus}
+			</if>
+			<if test="consultantId!=null">
+				and ccs.consultant_id = #{consultantId}
+			</if>
+
+			<if test="centerId!=null">
+				and ccs.center_id = #{centerId}
+			</if>
+
+			<if test="con !=null and con.name != null and con.name !=''">
+				and con.name
+				LIKE
+				<if test="dbName == 'oracle'">'%'||#{con.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{con.name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{con.name},'%')</if>
+			</if>
+
+			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
+				${sqlMap.order}
+			</if>
+		</where>
+
+
+
+		GROUP  BY a.id
+		) tmp_count
+
+
+
+
+	</select>
+
+	<select id="findAllList" resultType="BizOrderHeader">
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>
+		FROM biz_order_header a
+		<include refid="bizOrderHeaderJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		ORDER BY updateDate DESC
+	</select>
+
+	<select id="findDeliverGoodsOrderList" resultType="BizOrderHeader">
+		SELECT
+		a.id AS "id",
+		a.order_num AS "orderNum",
+		a.order_type AS "orderType",
+		a.cust_id AS "customer.id",
+		cust.name AS "customer.name",
+		a.seller_id as "sellers.id",
+		a.total_detail AS "totalDetail",
+		a.receive_total as "receiveTotal",
+		a.total_exp AS "totalExp",
+		a.freight AS "freight",
+		a.inv_status AS "invStatus",
+		a.biz_status AS "bizStatus",
+		a.biz_type as "bizType",
+		a.plateform_id AS "platformInfo.id",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		vend.name AS "name",
+        boc.comments AS "orderComment.comments"
+		FROM biz_order_header a
+		LEFT JOIN sys_office cust ON cust.id = a.cust_id
+		LEFT JOIN sys_office vend ON vend.id = a.seller_id
+        LEFT JOIN biz_order_comment boc ON boc.order_id = a.id
+		WHERE
+			a.status = 1
+			AND a.order_type !=4
+		AND a.biz_status BETWEEN 17 AND 19
+		<if test="orderNum != null and orderNum != ''">
+			AND a.order_num LIKE
+			<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+		</if>
+		<if test="orderType != null and orderType != ''">
+			AND a.order_type = #{orderType}
+		</if>
+		<if test="name != null and name != ''">
+			AND vend.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+		</if>
+	</select>
+
+	<select id="findPhotoOrderList" resultType="BizOrderHeader">
+		SELECT
+			oh.id AS "id",
+			oh.order_num AS "orderNum",
+			cust.name AS "customer.name",
+			oh.biz_status AS "bizStatus",
+			vend.name AS "sellers.name"
+		FROM biz_order_header oh
+		LEFT JOIN sys_office cust ON cust.id = oh.cust_id
+		LEFT JOIN sys_office vend ON vend.id = oh.seller_id
+		LEFT JOIN biz_detail_invoice di ON di.order_header_id = oh.id
+		LEFT JOIN biz_invoice bi ON bi.id = di.invoice_id
+		WHERE
+		oh.status = 1
+		AND oh.order_type = 6
+		AND bi.id = #{invoiceId}
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO biz_order_header(
+		id,
+		order_num,
+		order_type,
+		cust_id,
+		<if test="sellers!=null and sellers.id!=null and sellers.id!=''">
+			seller_id,
+		</if>
+		total_detail,
+		<if test="receiveTotal !=null and receiveTotal !=''">
+			receive_total,
+		</if>
+		total_exp,
+		freight,
+		<if test="invStatus !=null and invStatus !=''">
+			inv_status,
+		</if>
+		<if test="bizStatus !=null and bizStatus !=''">
+			biz_status,
+		</if>
+		biz_type,
+		plateform_id,
+		ship_to_addr,
+		status,
+		create_id,
+		create_time,
+		u_version,
+		update_id,
+		update_time
+		) VALUES (
+		#{id},
+		#{orderNum},
+		#{orderType},
+		#{customer.id},
+		<if test="sellers!=null and sellers.id!=null and sellers.id!=''">
+			#{sellers.id},
+		</if>
+		#{totalDetail},
+		<if test="receiveTotal !=null and receiveTotal !=''">
+			#{receiveTotal},
+		</if>
+		#{totalExp},
+		#{freight},
+		<if test="invStatus !=null and invStatus !=''">
+			#{invStatus},
+		</if>
+		<if test="bizStatus !=null and bizStatus !=''">
+			#{bizStatus},
+		</if>
+		#{bizType},
+		#{platformInfo.id},
+		#{bizLocation.id},
+		#{delFlag},
+		#{createBy.id},
+		#{createDate},
+		#{uVersion},
+		#{updateBy.id},
+		#{updateDate}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE biz_order_header SET
+		order_num = #{orderNum},
+		order_type = #{orderType},
+		cust_id = #{customer.id},
+		<if test="sellers!=null and sellers.id!=null and sellers.id!=''">
+		seller_id = #{sellers.id},
+		</if>
+		total_detail = #{totalDetail},
+		<if test="receiveTotal !=null and receiveTotal !=''">
+			receive_total = #{receiveTotal},
+		</if>
+		total_exp = #{totalExp},
+		freight = #{freight},
+		inv_status = #{invStatus},
+		biz_status = #{bizStatus},
+		biz_type = #{bizType},
+		plateform_id = #{platformInfo.id},
+		ship_to_addr = #{bizLocation.id},
+		u_version = #{uVersion},
+		update_id = #{updateBy.id},
+		update_time = #{updateDate}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE biz_order_header SET 
+			status = #{delFlag}
+		WHERE id = #{id}
+	</update>
+
+	<select id="findUnlineOrder" resultType="BizOrderHeader">
+		SELECT
+		a.id AS "id",
+		a.order_num AS "orderNum",
+		a.order_type AS "orderType",
+		a.cust_id AS "customer.id",
+		a.total_detail AS "totalDetail",
+		a.receive_total as "receiveTotal",
+		a.total_exp AS "totalExp",
+		a.freight AS "freight",
+		a.update_id AS "updateBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.update_time AS "updateDate",
+		a.biz_type as "bizType",
+		a.inv_status AS "invStatus",
+		a.plateform_id AS "platformInfo.id",
+		a.biz_status AS "bizStatus",
+		so.name as "custName",
+		s.name as "centersName"
+		FROM biz_order_header a
+		LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		LEFT JOIN sys_office so on so.id = a.cust_id
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office s on s.id=ccs.center_id
+		WHERE a.status = 1
+		AND ohu.id is not NULL
+		<if test="page !=null and page.orderBy != null and page.orderBy != ''">
+			ORDER BY ${page.orderBy}
+		</if>
+	</select>
+</mapper>

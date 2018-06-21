@@ -17,8 +17,6 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-				   // var fTd= $("#prodInfo").find("td").length;
-				   // alert(fTd)
 				   if($("#prodInfo").find("td").length==0){
 				       alert("请先选择待发货订单,然后点击确定。");
 					   return;
@@ -28,63 +26,12 @@
                     var total = 0;
                     $('input:checkbox:checked').each(function(i) {
                         var t= $(this).val();
-                        var detail="";
-                        var num ="";
-                        var sObj= $("#prodInfo").find("input[title='sent_"+t+"']");
-                        var iObj=$("#prodInfo").find("select[title='invInfoId']");
-                        sObj.each(function (index) {
-                            total+= parseInt($(this).val());
-                        })
-						if(iObj.length!=0){
-                            iObj.each(function (index) {
-                                if ($(this).val() != ''){
-                                    flag = true;
-                                }
-                            });
-                            $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-
-                                detail+=$(this).val()+"-"+sObj[i].value+"-"+iObj[i].value+"*";
-
-                            });
-						}else {
-                            flag = true;
-                            $("#prodInfo").find("input[title='details_"+t+"']").each(function (i) {
-                                detail+=$(this).val()+"-"+sObj[i].value+"*";
-
-                            });
-						}
-
-                        tt+=t+"#"+detail+",";
-
+                        $(t).find("input[name='orderHeaders']").removeAttr("style");
                     });
-                    tt=tt.substring(0,tt.length-1);
-                    if(window.confirm('你确定要发货吗？') && flag && total > 0){
-                        if (tt != '') {
-                            $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
-                        }
-						var orderHeaders = $("input[name='orderHeaders']").val();
-						if(${bizInvoice.bizStatus == 0}){
-							$.ajax({
-								type:"post",
-								url:"${ctx}/biz/inventory/bizInventorySku/findInvSku?orderHeaders="+encodeURIComponent(orderHeaders),
-								success:(function (data) {
-									if (data == "true"){
-										form.submit();
-										return true;
-										loading('正在提交，请稍等...');
-									}else {
-										alert("库存不足！");
-										return false;
-									}
-								})
-							})
-                        }else {
-                            form.submit();
-                            return true;
-                            loading('正在提交，请稍等...');
-                        }
+                    if(window.confirm('你确定要发货吗？')){
+						form.submit();
+						loading('正在提交，请稍等...');
                     }else{
-                        alert("请勾选发货内容");
                         return false;
                     }
 				},
@@ -102,31 +49,20 @@
             $("#searchData").click(function () {
                 var orderNum=$("#orderNum").val();
                 $("#orderNumCopy").val(orderNum);
-                var skuItemNo=$("#skuItemNo").val();
-                $("#skuItemNoCopy").val(skuItemNo);
-                var skuCode =$("#skuCode").val();
-                $("#skuCodeCopy").val(skuCode);
                 var bizStatus= $("#bizStatus").val();
                 var name =$("#name").val();
                 $("#nameCopy").val(name);
                 $.ajax({
                     type:"post",
-                    url:"${ctx}/biz/order/bizOrderHeader/findByOrder?flag="+bizStatus,
+                    url:"${ctx}/biz/order/bizPhotoOrderHeader/findOrder?flag="+bizStatus,
                     data:$('#searchForm').serialize(),
                     success:function (data) {
                         if ($("#id").val() == '') {
                             $("#prodInfo2").empty();
                         }
-
-                        if(bizStatus==0){
-                            var selecttd="<select class='input-mini' title='invInfoId'><option value=''>请选择</option>";
-                            $.each(data.inventoryInfoList,function (index,inventory) {
-                                selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
-                            });
-                        }
                         var tr_tds="";
                         var bizName ="";
-                        $.each(data.bizOrderHeaderList, function (index,orderHeader) {
+                        $.each(data, function (index,orderHeader) {
                             if(orderHeader.bizStatus==15){
                                 bizName="供货中"
                             }
@@ -139,37 +75,13 @@
 							}else if(orderHeader.bizStatus==20){
                                 bizName="已发货"
 							}
-
-							var flag= true;
-							var deId = "";
-							var  num = "";
-                            $.each(orderHeader.orderDetailList,function (index,detail) {
-
-                                tr_tds+="<tr class='tr_"+orderHeader.id+"'>";
-
-                                if(flag){
-                                    tr_tds+="<td rowspan='"+orderHeader.orderDetailList.length+"'><input type='checkbox' value='"+orderHeader.id+"' /></td>";
-
-                                    tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.orderNum+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
-                                }
-                                 tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
-                                tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
-                                if(bizStatus==0) {
-                                    tr_tds += "<td>" + selecttd + "</td>"
-                                }
-                                tr_tds+= "<td>"+detail.ordQty+"</td><td>"+detail.sentQty+"</td>";
-                                if(detail.ordQty==detail.sentQty){
-                                    tr_tds+="<td><input  type='text' readonly='readonly' title='sent_"+orderHeader.id+"' name='' value='0'></td>";
-                                }else {
-                                    tr_tds+="<td><input  type='text'  title='sent_"+orderHeader.id+"' name='' onchange='checkNum("+detail.ordQty+","+detail.sentQty+",this)' value='"+(detail.ordQty-detail.sentQty)+"'></td>";
-                                }
-
-                                tr_tds+="</tr>";
-                                if(orderHeader.orderDetailList.length>1){
-                                    flag=false;
-                                }
-                            });
-
+                            tr_tds += "<tr class='tr_"+orderHeader.id+"'>";
+                            tr_tds +=   "<td><input type='checkbox' value='"+orderHeader.id+"'/><input name='orderHeaders' value='"+orderHeader.id+"' type='hidden' style='display: none'/></td>";
+                            tr_tds +=   "<td><a href='${ctx}/biz/order/bizPhotoOrderHeader/form?id="+orderHeader.id+"&orderDetails=details'>"+orderHeader.orderNum+"</a></td>";
+                            tr_tds +=   "<td>"+orderHeader.customer.name+"</td>";
+                            tr_tds +=   "<td>"+bizName+"</td>";
+                            tr_tds +=   "<td>"+orderHeader.name+"</td>";
+                            tr_tds +=  "</tr>";
                         });
                         $("#prodInfo2").append(tr_tds);
                     }
@@ -177,33 +89,25 @@
 		});
             <%--点击确定时获取订单详情--%>
             $("#ensureData").click(function () {
+                $("#select_all").removeAttr("checked");
 				$('input:checkbox:checked').each(function(i) {
 				   var t= $(this).val();
-				   var ttp= $(this).parent().parent().parent();
-				   var trt= ttp.find($(".tr_"+t))
-					$("#prodInfo").append(trt);
+				   var ttp= $(this).parent().parent();
+					$("#prodInfo").append(ttp);
 				});
-                $("#select_all").removeAttr("checked");
+                $("#prodInfo2").empty();
 
 			});
 
             });
-		function checkNum(ordQty,sentQty, sendQty) {
-			if (parseInt(sendQty.value)+parseInt(sentQty) > parseInt(ordQty)){
-			    alert("发货数量大于需求数量，请修改");
-			    $(sendQty).val(0);
-			}
-        }
-
-
 	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
-		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}&ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单<shiro:hasPermission name="biz:inventory:bizInvoice:edit">${not empty bizInvoice.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInvoice:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/biz/inventory/bizDeliverGoods?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
+		<li class="active"><a href="${ctx}/biz/inventory/bizDeliverGoods/form?id=${bizInvoice.id}&ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单<shiro:hasPermission name="biz:inventory:bizInvoice:edit">${not empty bizInvoice.id?'修改':'添加'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInvoice:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizDeliverGoods/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
 		<form:hidden path="ship"/>
@@ -242,13 +146,6 @@
 							  maxHeight="100"/>
 			</div>
 		</div>
-		<%--<div class="control-group">
-			<label class="control-label">货值：</label>
-			<div class="controls">
-				<input id="valuePrice" name="valuePrice"  htmlEscape="false" value="" class="input-xlarge required"/>
-				<span class="help-inline"><font color="red">*</font> </span>
-			</div>
-		</div>--%>
 		<div class="control-group">
 			<label class="control-label">操作费：</label>
 			<div class="controls">
@@ -313,12 +210,6 @@
 					<li><label>订单编号：</label>
 						<input id="orderNum" onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false" maxlength="50" class="input-medium"/>
 					</li>
-					<li><label>商品货号：</label>
-						<input id="skuItemNo"  onkeydown='if(event.keyCode==13) return false;'   htmlEscape="false"  class="input-medium"/>
-					</li>
-					<li><label>商品编码：</label>
-						<input id="skuCode"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
-					</li>
 					<li><label>供应商：</label>
 						<input id="name"  onkeydown='if(event.keyCode==13) return false;'  htmlEscape="false"  class="input-medium"/>
 					</li>
@@ -339,18 +230,7 @@
 						<th>订单编号</th>
 						<th>经销店名称</th>
 						<th>业务状态</th>
-						<th>商品名称</th>
 						<th>供应商</th>
-						<th>商品货号</th>
-						<th>商品编码</th>
-						<th>商品属性</th>
-						<c:if test="${bizInvoice.bizStatus==0}">
-							<th>选择仓库</th>
-						</c:if>
-						<th>采购数量</th>
-						<th>已发货数量</th>
-						<th>发货数量</th>
-
 					</tr>
 					</thead>
 					<tbody id="prodInfo2">
@@ -368,17 +248,7 @@
 						<th>订单编号</th>
 						<th>经销店名称</th>
 						<th>业务状态</th>
-						<th>商品名称</th>
 						<th>供应商</th>
-						<th>商品货号</th>
-						<th>商品编码</th>
-						<th>商品属性</th>
-						<c:if test="${bizInvoice.bizStatus==0}">
-							<th>选择仓库</th>
-						</c:if>
-						<th>采购数量</th>
-						<th>已发货数量</th>
-						<th>发货数量</th>
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
@@ -402,8 +272,6 @@
 
 	<form:form id="searchForm" modelAttribute="bizOrderHeader">
 		<form:hidden id="orderNumCopy" path="orderNum"/>
-		<form:hidden id="skuItemNoCopy" path="itemNo"/>
-		<form:hidden id="skuCodeCopy" path="partNo"/>
 		<form:hidden id="nameCopy" path="name"/>
 
 	</form:form>

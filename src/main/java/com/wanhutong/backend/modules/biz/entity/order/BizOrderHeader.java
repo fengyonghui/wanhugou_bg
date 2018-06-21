@@ -11,7 +11,6 @@ import com.wanhutong.backend.modules.biz.entity.paltform.BizPlatformInfo;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
-import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 
@@ -39,6 +38,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer bizType;        //订单运营类型: 1专营订单 2非专营订单
     private BizPlatformInfo platformInfo;        // 订单来源； biz_platform_info.id
     private BizOrderAddress bizLocation;        // 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
+    private Integer sendGoodsStatus;     //区分非拍照下单发货
     /**
      * 卖方ID
      *  if(order_type == 4)｛
@@ -48,6 +48,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      *  ｝
      * */
     private Office sellers;
+    private Integer sellersId;
     /**
      * 订单备注
      * */
@@ -634,8 +635,24 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         return examine;
     }
 
+    public Integer getSellersId() {
+        return sellersId;
+    }
+
+    public void setSellersId(Integer sellersId) {
+        this.sellersId = sellersId;
+    }
+
     public void setExamine(Integer examine) {
         this.examine = examine;
+    }
+
+    public Integer getSendGoodsStatus() {
+        return sendGoodsStatus;
+    }
+
+    public void setSendGoodsStatus(Integer sendGoodsStatus) {
+        this.sendGoodsStatus = sendGoodsStatus;
     }
 
     public String getPhotos() {
