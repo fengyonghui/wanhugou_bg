@@ -278,6 +278,9 @@
 			od.status=1
 		and od.order_id=a.id
 		GROUP BY a.id ) as "totalBuyPrice"
+		<if test="vendorId !=null and vendorId != ''">
+			,sv.name AS "vendorName"
+		</if>
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		<if test="statu != null and statu =='unline'">
@@ -285,6 +288,11 @@
 		</if>
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
+		<!-- 供应商id -->
+		<if test="vendorId !=null and vendorId != ''">
+			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
+		</if>
+		<!-- end  -->
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1 and a.order_type !=4
 			<if test="dataStatus==null">
@@ -424,6 +432,9 @@
 
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
+			</if>
+			<if test="vendorId !=null and vendorId != ''">
+				AND  sv.id = ${vendorId}
 			</if>
 		</where>
 		<choose>

@@ -110,7 +110,7 @@
                 ${sqlMap.bizInvoice}
             </if>
 		</where>
-		GROUP BY sendNumber
+		GROUP BY a.id
 		ORDER BY a.send_time DESC
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

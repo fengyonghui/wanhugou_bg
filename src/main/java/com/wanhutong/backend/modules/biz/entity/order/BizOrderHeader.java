@@ -119,6 +119,9 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer skuCount;//商品销售量
     private Integer officeCount;//新增经销店数
 
+    private Integer vendorId; //根据供应商Id搜索
+    private Integer vendorName; //根据供应商Id搜索
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -632,5 +635,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setExamine(Integer examine) {
         this.examine = examine;
+    }
+
+    public Integer getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(Integer vendorId) {
+        this.vendorId = vendorId;
+    }
+
+    public Integer getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(Integer vendorName) {
+        this.vendorName = vendorName;
     }
 }
