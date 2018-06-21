@@ -251,4 +251,8 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
     public List<Map> findRequestTotalByVendorList(Office office) {
         return bizOrderDetailDao.findRequestTotalByVendorList(office);
     }
+
+    public List<BizOrderDetail> findOrderDetailList(Integer invoiceId) {
+        return bizOrderDetailDao.findOrderDetailList(invoiceId);
+    }
 }
