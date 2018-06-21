@@ -14,6 +14,7 @@ import lombok.Getter;
 
 public enum OutTradeNoTypeEnum {
 
+    //   支付类型：wx(1微信) alipay(2支付宝) 3平台付款 4平台退款，10（平台微信支付），15（平台支付宝支付）
     /**
      * 充值流水号类型
      */

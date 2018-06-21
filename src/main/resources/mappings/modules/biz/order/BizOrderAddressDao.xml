@@ -217,4 +217,14 @@
 			AND a.type = #{type}
 		</if>
 	</select>
+
+	<!--根据订单ID取订单收货地址-->
+	<select id="getOrderAddrByOrderId" resultType="BizOrderAddress">
+		SELECT
+		<include refid="bizOrderAddressColumns"/>
+		FROM biz_order_address a
+		<include refid="bizOrderAddressJoins"/>
+		WHERE
+			a.order_id = #{orderId} AND a.type = 1
+	</select>
 </mapper>
