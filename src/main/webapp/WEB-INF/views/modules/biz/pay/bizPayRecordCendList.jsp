@@ -41,7 +41,8 @@
 				<form:input path="payNum" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>业务单号：</label>
-				<form:input path="outTradeNo" htmlEscape="false" placeholder="微信/支付宝 支付业务单号" maxlength="50" class="input-medium"/>
+				<form:input path="outTradeNo" htmlEscape="false" placeholder="微信/支付宝 支付业务单号"
+							maxlength="50" class="input-medium" onmouseover="this.title=this.placeholder"/>
 			</li>
 			<li><label>收支金额：</label>
 				<form:input path="payMoney" htmlEscape="false" class="input-medium"/>
