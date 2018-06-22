@@ -55,50 +55,7 @@
 			<li class="active"><a href="${ctx}/biz/request/bizRequestOrder/listV2?source=${source}">销售清单列表</a></li>
 		</c:if>
 	</ul>
-	<c:if test="${requestHeaderPage!=null}">
-		<form:form id="searchForm" modelAttribute="bizRequestHeader" action="${ctx}/biz/request/bizRequestOrder/listV2" method="post" class="breadcrumb form-search">
-			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-
-			<input type="hidden" name="source" value="${source}"/>
-			<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
-			<ul class="ul-form">
-				<li><label>备货单号：</label>
-					<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
-				</li>
-				<li><label>采购中心：</label>
-					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
-									labelValue="${entity.fromOffice.name}" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
-									title="采购中心"  url="/sys/office/queryTreeList?type=8" cssClass="input-medium required" dataMsgRequired="必填信息">
-					</sys:treeselect>
-				</li>
-				<%--<li><span><label>期望收货时间：</label></span>--%>
-					<%--<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"--%>
-						   <%--value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
-						   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>--%>
-					<%--<input name="recvEta" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"--%>
-						   <%--value="<fmt:formatDate value="${bizRequestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>"--%>
-						   <%--onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>--%>
-				<%--</li>--%>
-				<li><label>业务状态：</label>
-					<form:select path="bizStatus" class="input-medium">
-						<form:option value="" label="请选择"/>
-						<form:options items="${fns:getDictList('biz_req_status')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-					</form:select>
-				</li>
-
-				<li><label>测试数据</label>
-					<form:checkbox path="page.includeTestData" htmlEscape="false" maxlength="100" class="input-medium" onclick="testData(this)"/>
-				</li>
-
-				<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
-				<li class="btns"><input id="requesthExport" class="btn btn-primary" type="button" value="导出"/></li>
-				<li class="clearfix"></li>
-			</ul>
-		</form:form>
-	</c:if>
-	<c:if test="${orderHeaderPage!=null}">
-		<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/listV2" method="post" class="breadcrumb form-search">
+		<form:form id="searchForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/request/bizRequestOrder/listForPhotoOrder" method="post" class="breadcrumb form-search">
 			<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 			<input type="hidden" name="source" value="${source}"/>
@@ -108,11 +65,6 @@
 				<li><label>订单编号：</label>
 					<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
 				</li>
-					<%--<li><label>订单类型：</label>--%>
-					<%--<form:select path="orderType" class="input-medium required">--%>
-					<%--<form:option value="" label="请选择"/>--%>
-					<%--<form:options items="${fns:getDictList('biz_order_type')}" itemLabel="label" itemValue="value"--%>
-					<%--htmlEscape="false"/></form:select></li>--%>
 				<li><label>经销店名称：</label>
 					<c:if test="${bizOrderHeader.flag eq 'check_pending'}">
 						<sys:treeselect id="office" name="customer.id" value="${bizOrderHeader.customer.id}"  labelName="customer.name"
@@ -145,79 +97,7 @@
 			</ul>
 		</form:form>
 
-	</c:if>
 	<sys:message content="${message}"/>
-	<c:if test="${requestHeaderPage!=null}">
-		<table id="contentTable" class="table table-striped table-bordered table-condensed">
-		<thead>
-			<tr>
-				<th>序号</th>
-				<%--<c:if test="${source=='gh'}">--%>
-				<%--<th><input id="select_all" type="checkbox" /></th>--%>
-				<%--</c:if>--%>
-				<th>备货单号</th>
-				<th>采购中心</th>
-				<th>期望收货时间</th>
-				<th>备货商品数量</th>
-				<th>已到货数量</th>
-				<th>备注</th>
-				<th>业务状态</th>
-				<th>申请人</th>
-				<th>创建时间</th>
-				<th>更新时间</th>
-				<shiro:hasAnyPermissions name="biz:request:bizRequestHeader:edit,biz:request:bizRequestHeader:view"><th>操作</th></shiro:hasAnyPermissions>
-			</tr>
-		</thead>
-		<tbody>
-		<%--<form id="myForm" action="${ctx}/biz/request/bizRequestAll/genSkuOrder">--%>
-
-			<c:forEach items="${page.list}" var="requestHeader" varStatus="state">
-				<tr>
-					<td>
-						${state.index+1}
-					</td>
-					<%--<c:if test="${source=='gh'}">--%>
-					<%--<td><input name="reqIds" title="orderIds" type="checkbox" value="${requestHeader.id}" /></td>--%>
-					<%--</c:if>--%>
-					<td><a href="${ctx}/biz/request/bizRequestAll/form?id=${requestHeader.id}&source=${source}">
-						${requestHeader.reqNo}
-					</a></td>
-						<td>${requestHeader.fromOffice.name}</td>
-					<td>
-						<fmt:formatDate value="${requestHeader.recvEta}" pattern="yyyy-MM-dd HH:mm:ss"/>
-					</td>
-						<td>${requestHeader.reqQtys}</td>
-						<td>${requestHeader.recvQtys}</td>
-						<td>
-								${requestHeader.remark}
-						</td>
-					<td>
-						${fns:getDictLabel(requestHeader.bizStatus, 'biz_req_status', '未知类型')}
-					</td>
-					<td>
-						${requestHeader.createBy.name}
-					</td>
-					<td>
-						<fmt:formatDate value="${requestHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-					</td>
-					<td>
-						<fmt:formatDate value="${requestHeader.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-					</td>
-						<td>
-							<shiro:hasPermission name="biz:request:bizRequestHeader:view">
-								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
-							</shiro:hasPermission>
-							<shiro:hasPermission name="biz:request:selecting:supplier:edit">
-									<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">采购</a>
-							</shiro:hasPermission>
-						</td>
-				</tr>
-			</c:forEach>
-
-		<%--</form>--%>
-		</tbody>
-	</table>
-	</c:if>
 	<c:if test="${orderHeaderPage!=null}">
 		<table id="contentTable" class="table table-striped table-bordered table-condensed">
 			<thead>

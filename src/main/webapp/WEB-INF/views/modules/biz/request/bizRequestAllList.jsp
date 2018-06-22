@@ -167,7 +167,9 @@
 				<c:if test="${ship eq 'xs'}">
 					<th>收货地址</th>
 				</c:if>
-				<th>备注</th>
+				<c:if test="${ship eq 'bh'}">
+					<th>备注</th>
+				</c:if>
 				<th>业务状态</th>
 				<th>更新人</th>
 				<th>创建时间</th>
@@ -260,9 +262,9 @@
 							${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
 						</td>
 					</c:if>
-					<td>
-							<%--${orderHeader.remark}--%>
-					</td>
+					<%--<td>--%>
+							<%--&lt;%&ndash;${orderHeader.remark}&ndash;%&gt;--%>
+					<%--</td>--%>
 					<td>
 							${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知类型')}
 					</td>

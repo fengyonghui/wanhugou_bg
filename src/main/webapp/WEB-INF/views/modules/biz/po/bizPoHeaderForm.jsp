@@ -348,7 +348,16 @@
                     </c:forEach>
                 </div>
             </div>
-
+        <c:if test="${fn:length(photoOrderImgList) > 0}">
+            <div class="control-group">
+                <label class="control-label">订单图片：</label>
+                <div class="controls">
+                    <c:forEach items="${photoOrderImgList}" var="v">
+                        <a target="_blank" href="${v.imgServer}${v.imgPath}"><img style="width: 100px" src="${v.imgServer}${v.imgPath}"></a>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:if>
         <c:if test="${bizPoHeader.bizPoPaymentOrder.id != null || type == 'createPay'}">
             <div class="control-group">
                 <label class="control-label">申请金额：</label>
@@ -375,11 +384,11 @@
             <div class="control-group">
                 <label class="control-label">是否同时提交支付申请：</label>
                 <div class="controls">
-                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" checked/>是
-                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);"/>否
+                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioFalse" type="radio" onclick="showTimeTotal(false);" checked/>否
+                    <input name="meanwhilePayOrder" id="meanwhilePayOrderRadioTrue" type="radio" onclick="showTimeTotal(true);" />是
                 </div>
             </div>
-            <div class="control-group prewTimeTotal">
+            <div class="control-group prewTimeTotal" style="display: none;">
                 <label class="control-label">最后付款时间：</label>
                 <div class="controls">
                     <input name="prewPayDeadline" id="prewPayDeadline" type="text" readonly="readonly" maxlength="20"
@@ -389,10 +398,13 @@
                            placeholder="必填！"/>
                 </div>
             </div>
-            <div class="control-group prewTimeTotal">
+            <div class="control-group prewTimeTotal" style="display: none;">
                 <label class="control-label">申请金额：</label>
                 <div class="controls">
-                    <input name="prewPayTotal" id="prewPayTotal" type="text"  maxlength="20" placeholder="必填！"/>
+                    <input name="prewPayTotal" id="prewPayTotal" type="text"
+                           value="${bizPoHeader.bizPoPaymentOrder.id != null ?
+                           bizPoHeader.bizPoPaymentOrder.total : (bizPoHeader.totalDetail+bizPoHeader.totalExp+bizPoHeader.freight-bizPoHeader.payTotal)}"
+                           maxlength="20" placeholder="必填！"/>
                 </div>
             </div>
         </c:if>
@@ -492,6 +504,7 @@
                 &nbsp;</shiro:hasPermission>
         </div>
     </c:if>
+    <c:if test="${bizOrderHeader.orderType != 6}" >
     <table id="contentTable" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
@@ -622,7 +635,7 @@
         </c:if>
         </tbody>
     </table>
-
+    </c:if>
 
     <div class="form-actions">
         <shiro:hasPermission name="biz:po:bizPoHeader:edit">

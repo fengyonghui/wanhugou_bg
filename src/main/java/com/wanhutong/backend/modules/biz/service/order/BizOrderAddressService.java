@@ -100,4 +100,14 @@ public class BizOrderAddressService extends CrudService<BizOrderAddressDao, BizO
 		}
 		return regionStack;
 	}
+
+	/**
+	 * 根据订单ID取订单收货地址
+	 * @param orderId 订单ID
+	 * @return 订单收货地址实体
+	 */
+	public BizOrderAddress getOrderAddrByOrderId(Integer orderId) {
+		 return bizOrderAddressDao.getOrderAddrByOrderId(orderId);
+
+	}
 }

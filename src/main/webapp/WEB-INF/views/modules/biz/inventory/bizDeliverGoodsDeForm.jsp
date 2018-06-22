@@ -15,9 +15,9 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
-		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单<shiro:hasPermission name="biz:inventory:bizInvoice:edit">${not empty bizInvoice.id?'详情':'详情'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInvoice:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="${ctx}/biz/inventory/bizDeliverGoods/invoiceOrderDetail?id=${bizInvoice.id}&ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单<shiro:hasPermission name="biz:inventory:bizInvoice:edit">${not empty bizInvoice.id?'详情':'详情'}</shiro:hasPermission><shiro:lacksPermission name="biz:inventory:bizInvoice:edit">查看</shiro:lacksPermission></a></li>
 	</ul><br/>
-	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizInvoice/save?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="bizInvoice" action="${ctx}/biz/inventory/bizDeliverGoods/save?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>
 		<c:if test="${bizInvoice.id != null && bizInvoice.id != ''}">
@@ -124,51 +124,28 @@
 						<th>订单编号</th>
 						<th>经销店名称</th>
 						<th>业务状态</th>
-						<th>商品名称</th>
-						<th>商品货号</th>
-						<th>采购数量</th>
-						<th>已发货数量</th>
+						<th>供应商</th>
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
-						<%--<c:if test="${orderHeaderList!=null && orderHeaderList.size()>0}">--%>
-							<%--<c:forEach items="${orderHeaderList}" var="orderHeader">--%>
-                            	<%--<c:set var="flag" value="true"></c:set>--%>
-                                <%--<c:forEach items="${orderHeader.orderDetailList}" var="orderDetail" varStatus="index">--%>
-                                    <%--<tr>--%>
-                                        <%--<c:if test="${flag}">--%>
-                                            <%--<td rowspan="${fn:length(orderHeader.orderDetailList)}">${orderHeader.orderNum}</td>--%>
-                                            <%--<td rowspan="${fn:length(orderHeader.orderDetailList)}">${orderHeader.customer.name}</td>--%>
-                                            <%--<td rowspan="${fn:length(orderHeader.orderDetailList)}">${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>--%>
-                                        <%--</c:if>--%>
-                                        <%--<td>${orderDetail.skuName}</td>--%>
-                                        <%--<td>${orderDetail.skuInfo.itemNo}</td>--%>
-                                        <%--<td>${orderDetail.ordQty}</td>--%>
-                                        <%--<td>${orderDetail.sentQty}</td>--%>
-                                    <%--</tr>--%>
-                                    <%--<c:if test="${fn:length(orderHeader.orderDetailList)>1}">--%>
-                                        <%--<c:set var="flag" value="false"></c:set>--%>
-                                    <%--</c:if>--%>
-                                <%--</c:forEach>--%>
-							<%--</c:forEach>--%>
-						<%--</c:if>--%>
-						<c:set var="flag" value="true"></c:set>
-						<c:forEach items="${orderDetailList}" var="orderDetail">
-							<tr>
-								<c:if test="${flag}">
-									<td rowspan="${fn:length(orderDetailList)}">${orderDetail.orderHeader.orderNum}</td>
-									<td rowspan="${fn:length(orderDetailList)}">${orderDetail.cust.name}</td>
-									<td rowspan="${fn:length(orderDetailList)}">${fns:getDictLabel(orderDetail.orderHeader.bizStatus,"biz_order_status",'' )}</td>
-								</c:if>
-									<td>${orderDetail.skuInfo.name}</td>
-									<td>${orderDetail.skuInfo.itemNo}</td>
-									<td>${orderDetail.ordQty}</td>
-									<td>${orderDetail.sentQty}</td>
-							</tr>
-							<c:if test="${fn:length(orderDetailList)>1}">
-							<c:set var="flag" value="false"></c:set>
-							</c:if>
-						</c:forEach>
+					<%--<c:if test="${orderHeaderList!=null && orderHeaderList.size()>0}">--%>
+						<%--<c:forEach items="${orderHeaderList}" var="orderHeader">--%>
+							<%--<tr>--%>
+								<%--<td><a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details">${orderHeader.orderNum}</a></td>--%>
+								<%--<td>${orderHeader.customer.name}</td>--%>
+								<%--<td>${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>--%>
+								<%--<td>${orderHeader.sellers.name}</td>--%>
+							<%--</tr>--%>
+						<%--</c:forEach>--%>
+					<%--</c:if>--%>
+					<c:forEach items="${photoOrderList}" var="orderHeader">
+						<tr>
+							<td><a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&orderDetails=details">${orderHeader.orderNum}</a></td>
+							<td>${orderHeader.customer.name}</td>
+							<td>${fns:getDictLabel(orderHeader.bizStatus,"biz_order_status",'' )}</td>
+							<td>${orderHeader.sellers.name}</td>
+						</tr>
+					</c:forEach>
 					</tbody>
 				</table>
 			</div>

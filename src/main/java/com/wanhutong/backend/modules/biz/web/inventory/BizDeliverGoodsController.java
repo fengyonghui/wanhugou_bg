@@ -18,17 +18,14 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.service.inventory.BizDeliverGoodsService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizDetailInvoiceService;
-import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizDeliverGoodsService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.order.BizPhotoOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
-import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
 import com.wanhutong.backend.modules.sys.entity.Role;
@@ -36,7 +33,6 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,14 +51,14 @@ import java.util.List;
 /**
  * 发货单Controller
  * @author 张腾飞
- * @version 2018-03-05
+ * @version 2018-06-15
  */
 @Controller
-@RequestMapping(value = "${adminPath}/biz/inventory/bizInvoice")
-public class BizInvoiceController extends BaseController {
+@RequestMapping(value = "${adminPath}/biz/inventory/bizDeliverGoods")
+public class BizDeliverGoodsController extends BaseController {
 
 	@Autowired
-	private BizInvoiceService bizInvoiceService;
+	private BizDeliverGoodsService bizDeliverGoodsService;
 	@Autowired
 	private BizLogisticsService bizLogisticsService;
 	@Autowired
@@ -81,8 +77,6 @@ public class BizInvoiceController extends BaseController {
     private BizSkuInfoV2Service bizSkuInfoService;
     @Autowired
     private DictService dictService;
-    @Autowired
-    private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
 
     private static final String DEF_EN_NAME = "shipper";
 
@@ -91,7 +85,7 @@ public class BizInvoiceController extends BaseController {
 	public BizInvoice get(@RequestParam(required=false) Integer id) {
 		BizInvoice entity = null;
 		if (id!=null){
-			entity = bizInvoiceService.get(id);
+			entity = bizDeliverGoodsService.get(id);
 		}
 		if (entity == null){
 			entity = new BizInvoice();
@@ -102,35 +96,9 @@ public class BizInvoiceController extends BaseController {
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = {"list", ""})
     public String list(BizInvoice bizInvoice, HttpServletRequest request, HttpServletResponse response, Model model) {
-//	    bizInvoice.setBizStatus(Integer.parseInt(bizStatu));
-//	    bizInvoice.setShip(Integer.parseInt(ship));
-        Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
+        Page<BizInvoice> page = bizDeliverGoodsService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
         model.addAttribute("page", page);
-//		model.addAttribute("ship",ship);
-//		model.addAttribute("bizStatu",bizStatu);
         return "modules/biz/inventory/bizInvoiceList";
-    }
-
-	@ResponseBody
-	@RequiresPermissions("biz:inventory:bizInvoice:view")
-    @RequestMapping(value = "findOrderDetail")
-    public List<BizOrderDetail> findOrderDetail(Integer id){
-        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(id);
-        BizOrderDetail bizOrderDetail = new BizOrderDetail();
-        bizOrderDetail.setOrderHeader(bizOrderHeader);
-        List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-        return orderDetailList;
-    }
-
-    @ResponseBody
-    @RequiresPermissions("biz:inventory:bizInvoice:view")
-    @RequestMapping(value = "findRequestDetail")
-    public List<BizRequestDetail> findRequestDetail(Integer id){
-        BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(id);
-        BizRequestDetail bizRequestDetail = new BizRequestDetail();
-        bizRequestDetail.setRequestHeader(bizRequestHeader);
-        List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
-        return requestDetailList;
     }
 
 	@RequiresPermissions("biz:inventory:bizInvoice:view")
@@ -148,16 +116,9 @@ public class BizInvoiceController extends BaseController {
             }
         }
         model.addAttribute("logisticsList",logisticsList);
-//        List<BizOrderHeader> orderList = bizOrderHeaderService.findList(new BizOrderHeader());
-//        List<BizRequestHeader> requestList = bizRequestHeaderService.findList(new BizRequestHeader());
-//        List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(new BizInventoryInfo());
-//        model.addAttribute("invInfoList",invInfoList);
-//        model.addAttribute("orderList",orderList);
-//        model.addAttribute("requestList",requestList);
         if (StringUtils.isBlank(bizInvoice.getCarrier())) {
             bizInvoice.setCarrier(user.getName());
         }
-
 		model.addAttribute("bizInvoice", bizInvoice);
         if (flag && bizInvoice.getBizStatus()==1) {
             List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
@@ -169,15 +130,11 @@ public class BizInvoiceController extends BaseController {
             model.addAttribute("userList",null);
         }
 		model.addAttribute("bizOrderHeader",new BizOrderHeader());
-		if(bizInvoice.getShip() != null && bizInvoice.getShip()==1 ){
-			model.addAttribute("bizRequestHeader",new BizRequestHeader());
-		    return "modules/biz/inventory/bizInvoiceRequestForm";
-        }
-		return "modules/biz/inventory/bizInvoiceForm";
+		return "modules/biz/inventory/bizDeliverGoodsForm";
 	}
 
     /**
-     * 订单所属发货单详情
+     * 订单所属发货单详情和修改页面跳转
      * @param bizInvoice
      * @param model
      * @return
@@ -186,27 +143,15 @@ public class BizInvoiceController extends BaseController {
     @RequestMapping(value = "invoiceOrderDetail")
     public String invoiceOrderDetail(BizInvoice bizInvoice,String source, Model model) {
 
-        BizLogistics bizLogistics = new BizLogistics();
-        List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
         List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
-//        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
-        boolean photoFlag = false;
+        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
         if (DetailInvoiceList != null && !DetailInvoiceList.isEmpty()){
             for (BizDetailInvoice detailInvoice:DetailInvoiceList) {
                 BizOrderHeader bizorderHeader = detailInvoice.getOrderHeader();
                 BizOrderHeader orderHeader = bizOrderHeaderService.get(bizorderHeader.getId());
-                if (!orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
-                    List<BizOrderDetail> orderDetailList = bizOrderDetailService.findOrderDetailList(bizInvoice.getId());
-                    model.addAttribute("orderDetailList",orderDetailList);
-                    break;
-                } else {
-                    photoFlag = true;
-                    List<BizOrderHeader> photoOrderList = bizPhotoOrderHeaderService.findPhotoOrderList(bizInvoice.getId());
-                    model.addAttribute("photoOrderList",photoOrderList);
-                    break;
-                }
+                orderHeaderList.add(orderHeader);
             }
         }
 
@@ -219,74 +164,6 @@ public class BizInvoiceController extends BaseController {
                 break;
             }
         }
-//        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
-//            bizInvoice.setCarrier(user.getName());
-//        }
-        if (flag && bizInvoice.getBizStatus()==1) {
-            List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
-            model.addAttribute("userList", userList);
-        }else if (flag && bizInvoice.getBizStatus()==0) {
-            List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.WAREHOUSESPECIALIST.getState());
-            model.addAttribute("userList", userList);
-        }else {
-            model.addAttribute("userList",null);
-        }
-
-        model.addAttribute("logisticsList",logisticsList);
-        model.addAttribute("source",source);
-//        model.addAttribute("orderHeaderList",orderHeaderList);
-        model.addAttribute("bizInvoice", bizInvoice);
-        if (photoFlag) {
-            return "modules/biz/inventory/bizDeliverGoodsDeForm";
-        } else {
-            return "modules/biz/inventory/bizInvoiceDeForm";
-        }
-    }
-
-    /**
-     * 备货单所属发货单详情
-     * @param bizInvoice
-     * @param model
-     * @return
-     */
-    @RequiresPermissions("biz:inventory:bizInvoice:view")
-    @RequestMapping(value = "invoiceRequestDetail")
-    public String invoiceRequestDetail(BizInvoice bizInvoice,String source, Model model) {
-
-        BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
-        bizDetailInvoice.setInvoice(bizInvoice);
-        List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
-        List<BizRequestHeader> requestHeaderList = new ArrayList<>();
-        if (DetailInvoiceList != null && !DetailInvoiceList.isEmpty()){
-            for (BizDetailInvoice detailInvoice:DetailInvoiceList) {
-                BizRequestHeader bizRequestHeader = detailInvoice.getRequestHeader();
-                BizRequestHeader requestHeader = bizRequestHeaderService.get(bizRequestHeader.getId());
-                BizRequestDetail bizRequestDetail = new BizRequestDetail();
-                bizRequestDetail.setRequestHeader(requestHeader);
-                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
-                if (requestDetailList != null && !requestDetailList.isEmpty()){
-                    for (BizRequestDetail requestDetail:requestDetailList) {
-                        BizSkuInfo skuInfo = bizSkuInfoService.get(requestDetail.getSkuInfo());
-                        BizSkuInfo sku = bizSkuInfoService.findListProd(skuInfo);
-                        requestDetail.setSkuInfo(sku);
-                    }
-                    requestHeader.setRequestDetailList(requestDetailList);
-                }
-                requestHeaderList.add(requestHeader);
-            }
-        }
-        User user = UserUtils.getUser();
-        List<Role> roleList = user.getRoleList();
-        boolean flag = false;
-        for (Role role:roleList) {
-            if (role.getEnname().equals(RoleEnNameEnum.DEPT.getState())) {
-                flag = true;
-                break;
-            }
-        }
-//        if (StringUtils.isBlank(bizInvoice.getCarrier())) {
-//            bizInvoice.setCarrier(user.getName());
-//        }
         if (flag && bizInvoice.getBizStatus()==1) {
             List<User> userList = systemService.findUserByRoleEnName(DEF_EN_NAME);
             model.addAttribute("userList", userList);
@@ -300,9 +177,9 @@ public class BizInvoiceController extends BaseController {
         List<BizLogistics> logisticsList = bizLogisticsService.findList(bizLogistics);
         model.addAttribute("logisticsList",logisticsList);
         model.addAttribute("source",source);
-        model.addAttribute("requestHeaderList",requestHeaderList);
+        model.addAttribute("orderHeaderList",orderHeaderList);
         model.addAttribute("bizInvoice", bizInvoice);
-        return "modules/biz/inventory/bizInvoiceReqDeForm";
+        return "modules/biz/inventory/bizDeliverGoodsDeForm";
     }
 
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
@@ -311,7 +188,7 @@ public class BizInvoiceController extends BaseController {
 		if (!beanValidator(model, bizInvoice)){
 			return form(bizInvoice, model);
 		}
-		bizInvoiceService.save(bizInvoice);
+		bizDeliverGoodsService.save(bizInvoice);
 		addMessage(redirectAttributes, "保存发货单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage&bizStatus="+bizInvoice.getBizStatus()+"&ship="+bizInvoice.getShip();
 	}
@@ -319,7 +196,7 @@ public class BizInvoiceController extends BaseController {
 	@RequiresPermissions("biz:inventory:bizInvoice:edit")
 	@RequestMapping(value = "delete")
 	public String delete(BizInvoice bizInvoice, RedirectAttributes redirectAttributes) {
-		bizInvoiceService.delete(bizInvoice);
+		bizDeliverGoodsService.delete(bizInvoice);
 		addMessage(redirectAttributes, "删除发货单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/inventory/bizInvoice/?repage";
 	}
@@ -338,13 +215,13 @@ public class BizInvoiceController extends BaseController {
             }else {
                 fileName = "订发货信息数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             }
-            List<BizInvoice> list = bizInvoiceService.findList(bizInvoice);
+            List<BizInvoice> list = bizDeliverGoodsService.findList(bizInvoice);
             //1订单
             List<List<String>> data = new ArrayList<List<String>>();
             //2商品
             List<List<String>> detailData = new ArrayList<List<String>>();
             for (BizInvoice invoice : list) {
-                List<String> headData = new ArrayList<>();
+                List<String> headData = new ArrayList();
                 headData.add(String.valueOf(invoice.getSendNumber()));
                 if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
                     headData.add(String.valueOf(invoice.getLogistics().getName()));
@@ -356,10 +233,10 @@ public class BizInvoiceController extends BaseController {
                 headData.add(String.valueOf(invoice.getValuePrice()==null?"":invoice.getValuePrice()));
 
                 double price=0.0;
-                if(invoice.getFreight()!=null && invoice.getValuePrice()!=null && invoice.getValuePrice()!=0){
+                if(invoice.getFreight()!=null && invoice.getValuePrice()!=null){
                     price=invoice.getFreight()*100/invoice.getValuePrice();
                 }//运费/货值
-                BigDecimal b = new BigDecimal(price);
+                BigDecimal   b   =   new   BigDecimal(price);
                 double   f1   =   b.setScale(0,   BigDecimal.ROUND_HALF_UP).doubleValue();
                 headData.add(String.valueOf(f1+"%"));
                 headData.add(String.valueOf(invoice.getCarrier()==null?"":invoice.getCarrier()));
@@ -386,13 +263,15 @@ public class BizInvoiceController extends BaseController {
                             //备货单发货信息
                             List<BizRequestDetail> requestDetailList =null;
                             BizRequestHeader requestHeader = bizRequestHeaderService.get(detailInvoice.getRequestHeader().getId());
-                            if(detailInvoice.getRequestHeader()!=null && requestHeader!=null){
-                                BizRequestDetail bizRequestDetail = new BizRequestDetail();
-                                bizRequestDetail.setRequestHeader(requestHeader);
-                                requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+                            if(detailInvoice.getRequestHeader()!=null && detailInvoice.getRequestHeader().getId()!=null){
+                                if(requestHeader!=null){
+                                    BizRequestDetail bizRequestDetail = new BizRequestDetail();
+                                    bizRequestDetail.setRequestHeader(requestHeader);
+                                    requestDetailList = bizRequestDetailService.findList(bizRequestDetail);
+                                }
                             }
-                            if (requestHeader != null && CollectionUtils.isNotEmpty(requestDetailList)) {
-                                List<String> detaData = new ArrayList<>();
+                            if (requestHeader != null && requestDetailList.size() != 0) {
+                                List<String> detaData = new ArrayList();
                                 for (BizRequestDetail requeDetail : requestDetailList) {
                                     requeDetail.setRequestHeader(requestHeader);
                                     BizSkuInfo skuInfo = bizSkuInfoService.get(requeDetail.getSkuInfo());
@@ -404,24 +283,26 @@ public class BizInvoiceController extends BaseController {
                                     } else {
                                         detaData.add("");
                                     }
-                                    detaData.add(String.valueOf(requestHeader.getReqNo()==null?"":requestHeader.getReqNo()));
-                                    if(requestHeader.getFromOffice()!=null && requestHeader.getFromOffice().getName()!=null){
-                                        detaData.add(String.valueOf(requestHeader.getFromOffice().getName()));
-                                    }
-                                    Dict detadict = new Dict();
-                                    detadict.setDescription("备货单业务状态");
-                                    detadict.setType("biz_req_status");
-                                    List<Dict> detadictList = dictService.findList(detadict);
-                                    if (detadictList.size() != 0) {
-                                        for (Dict di : detadictList) {
-                                            if (di.getValue().equals(String.valueOf(requestHeader.getBizStatus()))) {
-                                                //业务状态
-                                                detaData.add(String.valueOf(di.getLabel()));
-                                                break;
-                                            }
+                                    if(requestHeader!=null){
+                                        detaData.add(String.valueOf(requestHeader.getReqNo()==null?"":requestHeader.getReqNo()));
+                                        if(requestHeader.getFromOffice()!=null && requestHeader.getFromOffice().getName()!=null){
+                                            detaData.add(String.valueOf(requestHeader.getFromOffice().getName()));
                                         }
-                                    } else {
-                                        detaData.add("");
+                                        Dict detadict = new Dict();
+                                        detadict.setDescription("备货单业务状态");
+                                        detadict.setType("biz_req_status");
+                                        List<Dict> detadictList = dictService.findList(detadict);
+                                        if (detadictList.size() != 0) {
+                                            for (Dict di : detadictList) {
+                                                if (di.getValue().equals(String.valueOf(requestHeader.getBizStatus()))) {
+                                                    //业务状态
+                                                    detaData.add(String.valueOf(di.getLabel()));
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            detaData.add("");
+                                        }
                                     }
                                     if(requeDetail.getSkuInfo()!=null){
                                         if(requeDetail.getSkuInfo()!=null && requeDetail.getSkuInfo().getName()!=null){
@@ -442,27 +323,13 @@ public class BizInvoiceController extends BaseController {
                             BizOrderDetail bizOrderDetail = new BizOrderDetail();
                             List<BizOrderDetail> orderDetailList = null;
                             BizOrderHeader orderHeader = bizOrderHeaderService.get(detailInvoice.getOrderHeader().getId());
-                            if (orderHeader != null && !orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
+                            if (orderHeader != null) {
                                 bizOrderDetail.setOrderHeader(orderHeader);
                                 orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
                             }
-                            if (orderHeader != null && orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())) {
-                                List<String> detaData = new ArrayList<>();
-                                detaData.add(String.valueOf(invoice.getSendNumber() == null ? "" : invoice.getSendNumber()));
-                                detaData.add((invoice.getLogistics() != null && invoice.getLogistics().getName() != null)?String.valueOf(invoice.getLogistics().getName()):"");
-                                detaData.add(orderHeader.getOrderNum()==null?"":orderHeader.getOrderNum());
-                                detaData.add((orderHeader.getCustomer() != null && orderHeader.getCustomer().getName() != null)?String.valueOf(orderHeader.getCustomer().getName()):"");
-                                detaData.add(getDict(orderHeader.getBizStatus(),"业务状态","biz_order_status"));
-                                detaData.add("");
-                                detaData.add("");
-                                detaData.add("");
-                                detaData.add("");
-                                detaData.add("");
-                                detailData.add(detaData);
-                            }
                             if (orderDetailList != null && orderDetailList.size() != 0) {
                                 for (BizOrderDetail orderDetail : orderDetailList) {
-                                    List<String> detaData = new ArrayList<>();
+                                    List<String> detaData = new ArrayList();
                                     BizSkuInfo sku = bizSkuInfoService.get(orderDetail.getSkuInfo());
                                     BizSkuInfo skuInfo = bizSkuInfoService.findListProd(sku);
                                     orderDetail.setSkuInfo(skuInfo);
@@ -472,12 +339,39 @@ public class BizInvoiceController extends BaseController {
                                     } else {
                                         detaData.add("");
                                     }
-                                    detaData.add(String.valueOf(orderDetail.getOrderHeader().getOrderNum()));
-                                    detaData.add((orderHeader.getCustomer() != null && orderHeader.getCustomer().getName() != null)?String.valueOf(orderHeader.getCustomer().getName()):"");
-                                    detaData.add(getDict(orderHeader.getBizStatus(),"业务状态","biz_order_status"));
+                                    if (orderHeader != null) {
+                                        detaData.add(String.valueOf(orderDetail.getOrderHeader().getOrderNum()));
+                                        if (orderHeader.getCustomer() != null && orderHeader.getCustomer().getName() != null) {
+                                            detaData.add(String.valueOf(orderHeader.getCustomer().getName()));
+                                        } else {
+                                            detaData.add("");
+                                        }
+                                    } else {
+                                        detaData.add("");
+                                        detaData.add("");
+                                    }
+                                    Dict detadict = new Dict();
+                                    detadict.setDescription("业务状态");
+                                    detadict.setType("biz_order_status");
+                                    List<Dict> detadictList = dictService.findList(detadict);
+                                    if (detadictList.size() != 0) {
+                                        for (Dict di : detadictList) {
+                                            if (di.getValue().equals(String.valueOf(orderHeader.getBizStatus()))) {
+                                                //业务状态
+                                                detaData.add(String.valueOf(di.getLabel()));
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        detaData.add("");
+                                    }
                                     detaData.add(String.valueOf(orderDetail.getSkuName() == null ? "" : orderDetail.getSkuName()));
                                     detaData.add(String.valueOf(orderDetail.getPartNo() == null ? "" : orderDetail.getPartNo()));
-                                    detaData.add((orderDetail.getSkuInfo() != null && orderDetail.getSkuInfo().getSkuPropertyInfos() != null)?String.valueOf(orderDetail.getSkuInfo().getSkuPropertyInfos()):"");
+                                    if (orderDetail != null && orderDetail.getSkuInfo() != null && orderDetail.getSkuInfo().getSkuPropertyInfos() != null) {
+                                        detaData.add(String.valueOf(orderDetail.getSkuInfo().getSkuPropertyInfos()));
+                                    } else {
+                                        detaData.add("");
+                                    }
                                     detaData.add(String.valueOf(orderDetail.getOrdQty() == null ? "" : orderDetail.getOrdQty()));
                                     detaData.add(String.valueOf(orderDetail.getSentQty() == null ? "" : orderDetail.getSentQty()));
                                     detailData.add(detaData);
@@ -523,29 +417,5 @@ public class BizInvoiceController extends BaseController {
             addMessage(redirectAttributes, "导出发货信息数据失败！失败信息：" + e.getMessage());
         }
         return "modules/biz/inventory/bizInvoiceList";
-    }
-
-    /**
-     * 导出获取订单状态名称
-     * @param bizStatus
-     * @return
-     */
-    public String getDict(Integer bizStatus,String description,String type) {
-        if (bizStatus != null) {
-            return "";
-        }
-        Dict detadict = new Dict();
-        detadict.setDescription(description);
-        detadict.setType(type);
-        List<Dict> detadictList = dictService.findList(detadict);
-        if (detadictList.size() != 0) {
-            for (Dict di : detadictList) {
-                if (di.getValue().equals(String.valueOf(bizStatus))) {
-                    //业务状态
-                    return String.valueOf(di.getLabel());
-                }
-            }
-        }
-        return "";
     }
 }

@@ -3,17 +3,22 @@
  */
 package com.wanhutong.backend.modules.biz.service.order;
 
+import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
+import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.order.*;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
@@ -22,15 +27,23 @@ import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.SysRegion;
 import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Service
@@ -41,6 +54,10 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrderHeader> {
 
+    /**
+     * 默认表名
+     */
+    public static final String DATABASE_TABLE_NAME = "biz_order_header";
     @Autowired
     private BizOrderAddressService bizOrderAddressService;
     @Autowired
@@ -58,15 +75,24 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     @Autowired
     private BizOrderCommentService bizOrderCommentService;
 
+    @Resource
+    private CommonImgService commonImgService;
+
+    public static final String ORDER_TABLE = "biz_order_header";
+
+    protected Logger log = LoggerFactory.getLogger(getClass());//日志
+
     public List<BizOrderHeader> findListFirstOrder(BizOrderHeader bizOrderHeader) {
         //查询状态 status=0 和 1的所有信息
         return bizOrderHeaderDao.findListFirstOrder(bizOrderHeader);
     }
 
+    @Override
     public BizOrderHeader get(Integer id) {
         return super.get(id);
     }
 
+    @Override
     public List<BizOrderHeader> findList(BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         boolean oflag = false;
@@ -89,6 +115,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
     }
 
+    @Override
     public Page<BizOrderHeader> findPage(Page<BizOrderHeader> page, BizOrderHeader bizOrderHeader) {
         User user= UserUtils.getUser();
         if(user.isAdmin()){
@@ -152,6 +179,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false)
+    @Override
     public void save(BizOrderHeader bizOrderHeader) {
         if (bizOrderHeader.getBizType() == null) {
             bizOrderHeader.setBizType(1);
@@ -190,6 +218,11 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             bizOrderHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
         }
         bizOrderHeader.setBizStatus(bizOrderHeader.getBizStatus());
+        if (bizOrderHeader.getReceiveTotal() == null) {
+            bizOrderHeader.setReceiveTotal(0.0);
+        } else {
+            bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal());
+        }
         super.save(bizOrderHeader);
 
         if (bizOrderHeader.getOrderComment() != null && StringUtils.isNotBlank(bizOrderHeader.getOrderComment().getComments())) {
@@ -226,6 +259,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             super.save(bizOrderHeader);
         }
 
+        saveCommonImg(bizOrderHeader);
+
         bizLocation.setId(bizOrderHeader.getBizLocation().getId());
         bizLocation.setOrderHeaderID(bizOrderHeader);
         bizOrderAddressService.save(bizLocation);
@@ -237,6 +272,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     }
 
     @Transactional(readOnly = false)
+    @Override
     public void delete(BizOrderHeader bizOrderHeader) {
         super.delete(bizOrderHeader);
     }
@@ -323,6 +359,43 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }
             bizOrderHeader.setPage(page);
             page.setList(dao.headerFindList(bizOrderHeader));
+            return page;
+        }
+    }
+    /**
+     * 订单发货分页
+     * */
+    public Page<BizOrderHeader> pageFindListForPhotoOrder(Page<BizOrderHeader> page,BizOrderHeader bizOrderHeader) {
+        User user= UserUtils.getUser();
+//        boolean flag=false;
+        boolean oflag = false;
+        /*if(user.getRoleList()!=null){
+            for(Role role:user.getRoleList()){
+                if(RoleEnNameEnum.P_CENTER_MANAGER.getState().equals(role.getEnname())){
+                    flag=true;
+                    break;
+                }
+            }
+        }*/
+        if (UserUtils.getOfficeList() != null){
+            for (Office office:UserUtils.getOfficeList()){
+                if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())){
+                    oflag = true;
+                }
+            }
+        }
+        if(user.isAdmin()){
+            bizOrderHeader.setPage(page);
+            page.setList(dao.headerFindListForPhotoOrder(bizOrderHeader));
+            return page;
+        }else {
+            if(oflag){
+
+            }else {
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
+            }
+            bizOrderHeader.setPage(page);
+            page.setList(dao.headerFindListForPhotoOrder(bizOrderHeader));
             return page;
         }
     }
@@ -448,6 +521,112 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         return userDao.findVendUser(orderId,vendType);
     }
 
+    private List<CommonImg> getImgList(Integer imgType, Integer prodId) {
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(prodId);
+        commonImg.setObjectName("biz_order_header");
+        commonImg.setImgType(imgType);
+        return commonImgService.findList(commonImg);
+    }
+
+    //保存上传凭证
+    @Transactional(readOnly = false)
+    public void saveCommonImg(BizOrderHeader bizOrderHeader) {
+        String photos = null;
+        try {
+            photos = StringUtils.isNotBlank(bizOrderHeader.getPhotos()) ? URLDecoder.decode(bizOrderHeader.getPhotos(), "utf-8") : StringUtils.EMPTY;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            log.error("主图转换编码异常." + e.getMessage(), e);
+        }
+        String imgPhotosSorts = bizOrderHeader.getImgPhotosSorts();
+        String[] photosSort = StringUtils.split(imgPhotosSorts, ",");
+
+        if (photos != null) {
+            String[] photoArr = photos.split("\\|");
+            saveProdImg(ImgEnum.UNlINE_REFUND_VOUCHER.getCode(), bizOrderHeader, photoArr);
+        }
+
+        //设置主图和图片次序
+        List<CommonImg> commonImgs = getImgList(ImgEnum.UNlINE_REFUND_VOUCHER.getCode(), bizOrderHeader.getId());
+        for (int i = 0; i < commonImgs.size(); i++) {
+            CommonImg commonImg = commonImgs.get(i);
+            if (photosSort != null && photosSort.length > 0) {
+                commonImg.setImgSort(Integer.parseInt(photosSort[i]));
+            }
+            commonImgService.save(commonImg);
+        }
+
+    }
+
+    public void saveProdImg(Integer imgType, BizOrderHeader bizOrderHeader, String[] photoArr) {
+        if (bizOrderHeader.getId() == null) {
+            log.error("Can't save product image without product ID!");
+            return;
+        }
+
+        List<CommonImg> commonImgs = getImgList(imgType, bizOrderHeader.getId());
+
+        Set<String> existSet = new LinkedHashSet<>();
+        for (CommonImg commonImg1 : commonImgs) {
+            existSet.add(commonImg1.getImgServer() + commonImg1.getImgPath());
+        }
+        Set<String> newSet = new LinkedHashSet<>(Arrays.asList(photoArr));
+
+        Set<String> result = new LinkedHashSet<>();
+        //差集，结果做删除操作
+        result.clear();
+        result.addAll(existSet);
+        result.removeAll(newSet);
+        for (String url : result) {
+            for (CommonImg commonImg1 : commonImgs) {
+                if (url.equals(commonImg1.getImgServer() + commonImg1.getImgPath())) {
+                    commonImg1.setDelFlag("0");
+                    commonImgService.delete(commonImg1);
+                }
+            }
+        }
+        //差集，结果做插入操作
+        result.clear();
+        result.addAll(newSet);
+        result.removeAll(existSet);
+
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(bizOrderHeader.getId());
+        commonImg.setObjectName(ORDER_TABLE);
+        commonImg.setImgType(imgType);
+        commonImg.setImgSort(20);
+
+        List<CommonImg> oldImgList = null;
+        if (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType) {
+            CommonImg oldCommonImg = new CommonImg();
+            oldCommonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
+            oldCommonImg.setObjectId(bizOrderHeader.getId());
+            oldCommonImg.setObjectName(ORDER_TABLE);
+            oldImgList = commonImgService.findList(oldCommonImg);
+        }
+
+        for (String name : result) {
+            if (StringUtils.isNotBlank(name) || (CollectionUtils.isEmpty(oldImgList) && (ImgEnum.LIST_PRODUCT_TYPE.getCode() == imgType))) {
+                commonImg.setId(null);
+                commonImg.setImgPath(name.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
+                commonImg.setImgServer(name.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
+                commonImgService.save(commonImg);
+                continue;
+            }
+
+            if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer()) || name.contains(DsConfig.getOldImgServer())) {
+                continue;
+            }
+            String pathFile = Global.getUserfilesBaseDir() + name;
+            String ossPath = AliOssClientUtil.uploadFile(pathFile, ImgEnum.LIST_PRODUCT_TYPE.getCode() != imgType);
+
+            commonImg.setId(null);
+            commonImg.setImgPath("/" + ossPath);
+            commonImg.setImgServer(DsConfig.getImgServer());
+            commonImgService.save(commonImg);
+        }
+    }
 
     /**
      * 导出
