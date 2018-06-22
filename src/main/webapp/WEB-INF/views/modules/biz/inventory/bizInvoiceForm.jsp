@@ -119,7 +119,7 @@
                         }
 
                         if(bizStatus==0){
-                            var selecttd="<select class='input-mini' title='invInfoId'><option value=''>请选择</option>";
+                            var selecttd="<select class='input-mini' title='invInfoId'><option value='"+data.inventoryInfoList[0].id+"'>"+data.inventoryInfoList[0].name+"</option>";
                             $.each(data.inventoryInfoList,function (index,inventory) {
                                 selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
                             });
