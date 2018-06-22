@@ -35,12 +35,15 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
 			<li><label>订单编号：</label>
+				<form:input path="orderNum" htmlEscape="false" maxlength="50" class="input-medium"/>
+			</li>
+			<li><label>业务凭证号：</label>
 				<form:input path="payNum" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
-			<li><label>业务流水号：</label>
+			<li><label>业务单号：</label>
 				<form:input path="outTradeNo" htmlEscape="false" maxlength="50" class="input-medium"/>
 			</li>
-			<li><label>支付金额：</label>
+			<li><label>收支金额：</label>
 				<form:input path="payMoney" htmlEscape="false" class="input-medium"/>
 			</li>
 			<li><label>客户名称：</label>
@@ -53,21 +56,15 @@
 							  htmlEscape="false"/>
 				</form:select>
 			</li>
-			<%--<li><label>支付账号：</label>--%>
-				<%--<form:input path="account" htmlEscape="false" maxlength="50" class="input-medium"/>--%>
-			<%--</li>--%>
-			<%--<li><label>支付到账户：</label>--%>
-				<%--<form:input path="toAccount" htmlEscape="false" maxlength="50" class="input-medium"/>--%>
-			<%--</li>--%>
-				<li><label>支付时间：</label>
-					<input name="trandStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-						   value="<fmt:formatDate value="${bizPayRecord.trandStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-					至
-					<input name="trandEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
-						   value="<fmt:formatDate value="${bizPayRecord.trandEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-						   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
-				</li>
+			<li><label>支付时间：</label>
+				<input name="trandStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizPayRecord.trandStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+				至
+				<input name="trandEndTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
+					   value="<fmt:formatDate value="${bizPayRecord.trandEndTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+					   onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+			</li>
 			<li><label>交易类型：</label>
 				<form:select path="recordType" class="input-medium">
 					<form:option value="" label="请选择"/>
@@ -89,7 +86,7 @@
 				<form:input path="customer.moblieMoeny.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>采购中心：</label>
-				<form:input path="custConsultant.centers.name" htmlEscape="false" maxlength="50" class="input-medium"/>
+				<form:input path="custConsultant.centers.name" htmlEscape="false" placeholder="性质" maxlength="50" class="input-medium"/>
 			</li>
 			<li><label>支付账号：</label>
 				<form:input path="account" htmlEscape="false" maxlength="50" class="input-medium"/>
@@ -104,8 +101,9 @@
 		<thead>
 			<tr>
 				<th>订单编号</th>
-				<th>业务流水号</th>
-				<th>支付金额</th>
+				<th>业务凭证号</th>
+				<th>业务单号</th>
+				<th>收支金额</th>
 				<th>支付人</th>
 				<th>客户名称</th>
 				<th>采购中心</th>
@@ -122,6 +120,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizPayRecord">
 			<tr>
+				<td>
+					${bizPayRecord.orderNum}
+				</td>
 				<td>
 					${bizPayRecord.payNum}
 				</td>
