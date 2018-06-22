@@ -135,7 +135,7 @@ public class BizRequestOrderController extends BaseController {
 
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
-    @RequestMapping(value = {"listV2", ""})
+    @RequestMapping(value = {"listV2"})
     public String listV2(String source, Model model, BizRequestHeader bizRequestHeader, BizOrderHeader bizOrderHeader,HttpServletRequest request,HttpServletResponse response) {
         //备货清单供货
         if ("bhgh".equals(source)) {
