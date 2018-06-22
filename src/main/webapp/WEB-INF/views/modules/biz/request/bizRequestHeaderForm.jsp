@@ -89,7 +89,9 @@
 
                                     "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
 								}
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                //tr_tds+= "<td><a href="+ "'${ctx}/sys/office/supplierForm?id=" + skuInfo.productInfo.office.id + "&gysFlag=onlySelect'>"+ skuInfo.productInfo.office.name + "</a></td>";
+                                tr_tds+= "<td>"+ skuInfo.productInfo.office.name + "</td>";
+                                tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
@@ -497,7 +499,7 @@
 							<%--<th>产品名称</th>--%>
 							<%--<th>产品分类</th>--%>
 						<th>品牌名称</th>
-							<%--<th>供应商</th>--%>
+						<th>供应商</th>
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品货号</th>
