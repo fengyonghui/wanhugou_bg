@@ -345,7 +345,13 @@
 								</c:if>
 							</c:if></a>
 							<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
-							审核成功
+								<c:choose>
+								<c:when test="${fns:getUser().isAdmin()}">
+									<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">
+										审核成功</a>
+								</c:when>
+								<c:otherwise>审核成功</c:otherwise>
+								</c:choose>
 							</c:if>
 							<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
 								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">详情</a>
