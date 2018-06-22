@@ -87,7 +87,7 @@
 		<li class="active"><a href="${ctx}/biz/inventory/bizInvoice?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单列表</a></li>
 		<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
 			<li><a href="${ctx}/biz/inventory/bizInvoice/form?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">发货单添加</a></li>
-			<c:if test="${bizInvoice.ship==0}">
+			<c:if test="${bizInvoice.ship==0 && bizInvoice.bizStatus==1}">
 				<li><a href="${ctx}/biz/inventory/bizDeliverGoods/form?ship=${bizInvoice.ship}&bizStatus=${bizInvoice.bizStatus}">拍照下单发货单添加</a></li>
 			</c:if>
 		</shiro:hasPermission>

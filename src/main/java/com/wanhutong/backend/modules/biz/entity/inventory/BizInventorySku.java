@@ -30,6 +30,10 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 	private Office customer;        // 所属采购中心
 	private Office cust;        // 专属库存的客户id； sys_office.id &amp; type = 'customer'
 	private List invInfoList;		//仓库集合
+
+	private Integer outWarehouse;		//出库量
+	private Integer sendGoodsNum;		//供货量
+	private Integer inWarehouse;		//入库量
 //	private String sOrdQty;
 
 	private Long inventoryAgeDay;
@@ -153,5 +157,29 @@ public class BizInventorySku extends DataEntity<BizInventorySku> {
 
 	public void setReqSource(String reqSource) {
 		this.reqSource = reqSource;
+	}
+
+	public Integer getOutWarehouse() {
+		return outWarehouse;
+	}
+
+	public void setOutWarehouse(Integer outWarehouse) {
+		this.outWarehouse = outWarehouse;
+	}
+
+	public Integer getSendGoodsNum() {
+		return sendGoodsNum;
+	}
+
+	public void setSendGoodsNum(Integer sendGoodsNum) {
+		this.sendGoodsNum = sendGoodsNum;
+	}
+
+	public Integer getInWarehouse() {
+		return inWarehouse;
+	}
+
+	public void setInWarehouse(Integer inWarehouse) {
+		this.inWarehouse = inWarehouse;
 	}
 }
