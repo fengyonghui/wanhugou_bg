@@ -1106,11 +1106,13 @@
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
                 <%--<c:if test="${empty entity.orderDetails}">--%>
-                <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                    <c:if test='${entity.bizStatus==refund}'>
-                        <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
-                    </c:if>
-                </shiro:hasPermission>
+                <c:if test="${(empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails) || (refundSkip eq 'refundSkip')}">
+                    <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+                        <c:if test='${entity.bizStatus==refund}'>
+                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
+                        </c:if>
+                    </shiro:hasPermission>
+                </c:if>
                     <%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
             </div>
         </c:otherwise>
