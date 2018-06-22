@@ -636,4 +636,29 @@ GROUP BY
 		order by a.line_no ASC
 	</select>
 
+	<select id="findOrderDetailList" resultType="BizOrderDetail">
+		SELECT
+			oh.id AS "orderHeader.id",
+			oh.order_num AS "orderHeader.orderNum",
+			cust.name AS "cust.name",
+			oh.biz_status AS "orderHeader.bizStatus",
+			si.name AS "skuInfo.name",
+			si.item_no AS "skuInfo.itemNo",
+			od.ord_qty AS "ordQty",
+			od.sent_qty AS "sentQty"
+		FROM biz_order_detail od
+		LEFT JOIN biz_sku_info si ON si.id = od.sku_id
+		LEFT JOIN biz_order_header oh ON oh.id = od.order_id
+		LEFT JOIN sys_office cust ON cust.id = oh.cust_id
+		LEFT JOIN biz_detail_invoice di ON di.order_header_id = oh.id
+		LEFT JOIN biz_invoice bi ON bi.id = di.invoice_id
+		WHERE
+		od.status = 1
+		AND oh.status = 1
+		AND oh.order_type != 4
+		AND bi.id = #{invoiceId}
+
+
+	</select>
+
 </mapper>

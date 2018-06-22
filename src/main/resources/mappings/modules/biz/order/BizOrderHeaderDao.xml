@@ -23,6 +23,7 @@
 		<result property="createDate" column="createDate"/>
 		<result property="updateDate" column="updateDate"/>
 		<result property="totalBuyPrice" column="totalBuyPrice"/>
+		<result property="sellersId" column="sellersId"/>
 
 		<association property="customer" javaType="Office" column="customer.id">
 			<id property="id" column="customer.id"/>
@@ -97,6 +98,8 @@
 		so.name as "customer.name",
 		so.phone AS "customer.phone",
 		a.seller_id as "sellers.id",
+		vend.name AS "sellers.name",
+		a.seller_id as "sellersId",
 		c.receiver as "bizLocation.receiver",
 		c.phone as "bizLocation.phone",
 		c.province_id as "bizLocation.province.id",
@@ -138,6 +141,7 @@
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
 		a.seller_id as "sellers.id",
+		a.seller_id as "sellersId",
 		a.total_detail AS "totalDetail",
 		a.receive_total as "receiveTotal",
 		a.total_exp AS "totalExp",
@@ -172,6 +176,7 @@
 
 	<sql id="bizOrderHeaderJoins">
 		left join sys_office as so on a.cust_id=so.id
+		LEFT JOIN sys_office vend ON vend.id = a.seller_id
 		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
         LEFT JOIN sys_region province ON c.province_id = province.id
         LEFT JOIN sys_region city ON c.city_id = city.id
@@ -283,8 +288,16 @@
 		<if test="statu != null and statu =='unline'">
 			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
 		</if>
+		<if test="statu != null and statu =='refund'">
+			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+		</if>
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
+		<!-- 供应商id -->
+		<if test="vendorId !=null and vendorId != ''">
+			LEFT JOIN sys_office sv ON sv.id = pi.vendor_id
+		</if>
+		<!-- end  -->
 		<include refid="bizOrderHeaderJoins"/>
 		<where> 1=1 and a.order_type !=4
 			<if test="dataStatus==null">
@@ -354,6 +367,9 @@
 			<if test="bizType !=null and bizType!=''">
 				AND a.biz_type=#{bizType}
 			</if>
+			<if test="sendGoodsStatus != null and sendGoodsStatus == 1">
+				AND a.order_type != 6
+			</if>
 			<if test="bizStatusStart !=null and bizStatusEnd !=null">
 				AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
 			</if>
@@ -399,6 +415,9 @@
 			<if test="statu != null and statu == 'unline'">
 				AND ohu.id IS NOT NULL
 			</if>
+			<if test="statu != null and statu == 'refund'">
+				AND ohu.order_type = 1
+			</if>
 			<if test="statu != null and statu =='unline' and examine != null and examine == 2">
 				AND ohu.biz_status = 0
 			</if>
@@ -424,6 +443,9 @@
 
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
+			</if>
+			<if test="vendorId !=null and vendorId != ''">
+				AND  sv.id = ${vendorId}
 			</if>
 		</where>
 		<choose>
@@ -630,9 +652,7 @@
 		seller_id = #{sellers.id},
 		</if>
 		total_detail = #{totalDetail},
-		<if test="receiveTotal !=null and receiveTotal !=''">
-			receive_total = #{receiveTotal},
-		</if>
+		receive_total = #{receiveTotal},
 		total_exp = #{totalExp},
 		freight = #{freight},
 		inv_status = #{invStatus},
@@ -861,7 +881,7 @@
 		<if test="usId != null and usId != 0">
 			AND us.id = #{usId}
 		</if>
-		GROUP BY us.`name`
+		GROUP BY us.`id`
 	</select>
 
 	<select id="getSingleUserSaleStatisticData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
@@ -1078,7 +1098,7 @@
 		<if test="usId != null and usId != 0">
 			AND us.id = #{usId}
 		</if>
-		GROUP BY us.`name`
+		GROUP BY us.`id`
 	</select>
 
 	<select id="getSingleUserSaleStatisticDataDay" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
@@ -1254,7 +1274,7 @@
 	</foreach>
 		OR (header1.biz_status = ${@com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum@DELETE.state} AND receive_total > 0))
 		AND header1.create_time BETWEEN #{startDate} AND  #{endDate}
-		GROUP BY us1.name)   AS buyPrice
+		GROUP BY us1.id)   AS buyPrice
 		FROM biz_order_header oh
 		LEFT JOIN	sys_office off ON off.id = oh.cust_id
 		LEFT JOIN biz_custom_center_consultant ccc ON ccc.cust_id = off.id
@@ -1279,7 +1299,7 @@
 		<if test="usId != null and usId != 0">
 			AND us.id = #{usId}
 		</if>
-		GROUP BY us.`name`
+		GROUP BY us.`id`
 	</select>
 
 	<select id="getSingleUserSaleStatisticDataBetween" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto">
@@ -1585,7 +1605,7 @@
 		<if test="purchasingId != null and purchasingId != 0">
 			AND us.office_id = #{purchasingId}
 		</if>
-		GROUP BY us.`name`
+		GROUP BY us.`id`
 	</select>
 
 	<select id="getSkuStatisticDataBetween" resultType="java.lang.Integer">
@@ -1912,6 +1932,87 @@ FROM
 		GROUP BY id
   		HAVING  count(1) = 1
 	)
+		<if test="orderType != null and orderType != ''">
+			AND a.order_type = #{orderType}
+		</if>
+		<if test="orderNum != null and orderNum != ''">
+			AND a.order_num LIKE
+			<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
+		</if>
+		<if test="customer != null and customer.id != null and customer.id!=''">
+			AND a.cust_id LIKE
+			<if test="dbName == 'oracle'">'%'||#{customer.id}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{customer.id}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{customer.id},'%')</if>
+		</if>
+        <if test="page != null and page.includeTestData != true">
+	        AND NOT EXISTS ( SELECT 1 FROM sys_test_account ta WHERE a.cust_id = ta.object_id AND ta.object_name = 'sys_office' )
+        </if>
+	GROUP by a.id
+    ORDER BY
+	    a.update_time DESC
+	</select>
+
+
+	<select id="headerFindListForPhotoOrder" resultType="BizOrderHeader">
+		SELECT
+	a.id AS "id",
+	a.order_num AS "orderNum",
+	a.order_type AS "orderType",
+	a.cust_id AS "customer.id",
+	so.NAME AS "customer.name",
+	a.total_detail AS "totalDetail",
+	a.receive_total AS "receiveTotal",
+	a.total_exp AS "totalExp",
+	a.freight AS "freight",
+	a.inv_status AS "invStatus",
+	a.biz_status AS "bizStatus",
+	a.biz_type AS "bizType",
+	a.plateform_id AS "platformInfo.id",
+	bpi.NAME AS "platformInfo.name",
+	a.ship_to_addr AS "bizLocation.id",
+		c.province_id as "bizLocation.province.id",
+		province.name as "bizLocation.province.name",
+		c.city_id as "bizLocation.city.id",
+		city.name as "bizLocation.city.name",
+		c.region_id as "bizLocation.region.id",
+		reg.name as "bizLocation.region.name",
+		c.address as "bizLocation.address",
+	a.STATUS AS "delFlag",
+	a.create_id AS "createBy.id",
+	su.NAME AS "createBy.name",
+	a.create_time AS "createDate",
+	a.u_version AS "uVersion",
+	a.update_id AS "updateBy.id",
+	us.NAME AS "updateBy.name",
+	a.update_time AS "updateDate" ,
+	concat(cl.pcr_name, ifnull( cl.address,'')) as locationAddress,
+		sx.NAME AS "centersName"
+FROM
+	biz_order_header a
+	LEFT JOIN sys_office so ON a.cust_id = so.id
+	LEFT JOIN sys_user su ON a.create_id = su.id
+	LEFT JOIN sys_user us ON a.update_id = us.id
+	LEFT JOIN biz_cms_platform_info bpi ON a.plateform_id = bpi.id
+	LEFT JOIN common_location cl on a.ship_to_addr = cl.id
+	<!-- 订单地址 -->
+		LEFT JOIN biz_order_address c ON c.id = a.ship_to_addr
+		LEFT JOIN sys_region province ON c.province_id = province.id
+		LEFT JOIN sys_region city ON c.city_id = city.id
+		LEFT JOIN sys_region reg ON c.region_id = reg.id
+	<!-- end  -->
+	<!-- 采购中心 -->
+		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id=a.cust_id
+		LEFT JOIN sys_office sx ON sx.id = ccs.center_id
+	<!-- end  -->
+	WHERE 1=1 and a.order_type != 4
+		and a.order_type = 6
+		<if test="bizStatusStart !=null and bizStatusEnd !=null">
+			AND a.biz_status BETWEEN #{bizStatusStart} and #{bizStatusEnd}
+		</if>
+	  AND a.STATUS =#{DEL_FLAG_NORMAL}
 		<if test="orderType != null and orderType != ''">
 			AND a.order_type = #{orderType}
 		</if>

@@ -181,8 +181,10 @@
 								<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:edit">
-								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
-								<a href="javascript:void(0);" onclick="cancel(${bizPoHeader.id});">取消</a>
+								<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == null || bizPoHeader.commonProcess.purchaseOrderProcess.name == '驳回'}">
+									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
+								</c:if>
+								<a onclick="cancel(${bizPoHeader.id});">取消</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:view">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizInvoiceDao">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.inventory.BizDeliverGoodsDao">
     
 	<sql id="bizInvoiceColumns">
 		a.id AS "id",
@@ -43,21 +43,8 @@
 	<select id="findList" resultType="BizInvoice">
 		SELECT 
 			<include refid="bizInvoiceColumns"/>
-		<if test="ship != null and ship == 0">
-			,bo.order_num AS "orderNum"
-		</if>
-		<if test="ship != null and ship == 1">
-			,br.req_no AS "reqNo"
-		</if>
 		FROM biz_invoice a
 		<include refid="bizInvoiceJoins"/>
-		LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id
-		<if test="ship != null and ship == 0">
-			LEFT JOIN biz_order_header bo ON bo.id = bi.order_header_id
-		</if>
-		<if test="ship != null and ship == 1">
-			LEFT JOIN biz_request_header br ON br.id = bi.request_header_id
-		</if>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="sendNumber != null and sendNumber != ''">
@@ -65,22 +52,6 @@
 				<if test="dbName == 'oracle'">'%'||#{sendNumber}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{sendNumber}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{sendNumber},'%')</if>
-			</if>
-			<if test="ship != null and ship == 0">
-				<if test="orderNum != null and orderNum != ''">
-					AND bo.order_num LIKE
-					<if test="dbName == 'oracle'">'%'||#{orderNum}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
-					<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
-				</if>
-			</if>
-			<if test="ship != null and ship == 1">
-				<if test="reqNo != null and reqNo != ''">
-					AND br.req_no LIKE
-					<if test="dbName == 'oracle'">'%'||#{reqNo}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{reqNo}+'%'</if>
-					<if test="dbName == 'mysql'">concat('%',#{reqNo},'%')</if>
-				</if>
 			</if>
 			<if test="logistics != null and logistics.id != null and logistics.id != ''">
 				AND a.logistics_id = #{logistics.id}
@@ -110,7 +81,6 @@
                 ${sqlMap.bizInvoice}
             </if>
 		</where>
-		GROUP BY a.id
 		ORDER BY a.send_time DESC
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
