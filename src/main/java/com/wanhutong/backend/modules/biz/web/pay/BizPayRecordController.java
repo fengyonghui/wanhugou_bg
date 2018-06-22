@@ -180,7 +180,7 @@ public class BizPayRecordController extends BaseController {
 				rowData.add(String.valueOf(sdf.format(pay.getUpdateDate())));
 				data.add(rowData);
 			});
-			String[] payHeads = {"订单编号", "业务凭证号", "支付业务单号", "收支金额", "支付人", "客户名称", "采购中心(性质)", "联系电话", "支付账号",
+			String[] payHeads = {"订单编号", "业务凭证号", "微信/支付宝 业务单号", "收支金额", "支付人", "客户名称", "采购中心(性质)", "联系电话", "支付账号",
 					"支付到账户", "交易类型名称", "支付类型名称", "交易作用/原因", "创建人", "创建时间", "更新时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
