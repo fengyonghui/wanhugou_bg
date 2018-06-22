@@ -283,6 +283,9 @@ public class BizOrderHeaderController extends BaseController {
         String statuPath = request.getParameter("statu");
         model.addAttribute("statuPath", statuPath);
 
+        String refundSkip = request.getParameter("refundSkip");
+        model.addAttribute("refundSkip", refundSkip);
+
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
         model.addAttribute("entity", bizOrderHeader);
         model.addAttribute("ordDetailList", ordDetailList);
