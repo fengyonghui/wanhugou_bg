@@ -54,9 +54,7 @@
 					if(v=="ok"){
 						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport");
 						$("#searchForm").submit();
-						<%--$("#buttonExport").attr("disabled",true);--%>
 						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/");
-						<%--$("#buttonExport").removeAttr("disabled");--%>
 					}
 				},{buttonsFocus:1});
 				top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -342,9 +340,9 @@
 							</c:if>
 							<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.UNAPPROVE.state}">
 								审核失败
-							<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
-								<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
-							</c:if>
+								<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+									<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&clientModify=client_modify&consultantId=${bizOrderHeader.consultantId}">修改</a>
+								</c:if>
 							</c:if></a>
 							<c:if test="${orderHeader.bizStatus==OrderHeaderBizStatusEnum.SUPPLYING.state}">
 							审核成功
@@ -361,11 +359,6 @@
 						</shiro:hasPermission>
 					</c:when>
 				<c:otherwise>
-						<%--<c:if test="${orderHeader.bizStatus!=10 && orderHeader.bizStatus!=40}">--%>
-							<%--<c:if test="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight != orderHeader.receiveTotal}">--%>
-								<%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderNoEditable=editable">待支付</a>--%>
-							<%--</c:if>--%>
-						<%--</c:if>--%>
 						<c:if test="${statu == 'unline'}">
 							<a href="${ctx}/biz/order/bizOrderHeaderUnline?orderHeader.id=${orderHeader.id}">支付流水</a>
 						</c:if>
@@ -381,7 +374,6 @@
 						</c:if>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
-
 						</c:if>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
