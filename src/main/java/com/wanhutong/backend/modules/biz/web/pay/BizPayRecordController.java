@@ -123,67 +123,65 @@ public class BizPayRecordController extends BaseController {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			String fileName = "交易记录数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			List<BizPayRecord> PayList =null;
-			if(payExportCend!=null && payExportCend.equals(a)){
+			List<BizPayRecord> PayList = null;
+			if (payExportCend != null && payExportCend.equals(a)) {
 				//C端
 				bizPayRecord.setListPayQuery("CqueryPay");
 				PayList = bizPayRecordService.findList(bizPayRecord);
-			}else {
+			} else {
 				PayList = bizPayRecordService.findList(bizPayRecord);
 			}
 			List<List<String>> data = new ArrayList<List<String>>();
-			PayList.forEach(pay->{
+			PayList.forEach(pay -> {
 				ArrayList<String> rowData = Lists.newArrayList();
 				//订单编号
-				rowData.add(String.valueOf(pay.getOrderNum()==null?"":pay.getOrderNum()));
-				//支付编号
-				rowData.add(String.valueOf(pay.getPayNum()==null?"":pay.getPayNum()));
+				rowData.add(pay.getOrderNum() == null ? StringUtils.EMPTY : pay.getOrderNum());
+				//业务凭证号
+				rowData.add(pay.getPayNum() == null ? StringUtils.EMPTY : pay.getPayNum());
 				//业务流水号
-				rowData.add(String.valueOf(pay.getOutTradeNo()==null?"":pay.getOutTradeNo()));
+				rowData.add(pay.getOutTradeNo() == null ? StringUtils.EMPTY : pay.getOutTradeNo());
 				//支付金额
-				rowData.add(String.valueOf(pay.getPayMoney()==null?"":pay.getPayMoney()));
+				rowData.add(pay.getPayMoney() == null ? StringUtils.EMPTY : String.valueOf(pay.getPayMoney()));
 				//支付人
-				rowData.add(String.valueOf(pay.getCreateBy().getName()));
+				rowData.add(pay.getCreateBy().getName());
 				//客户名称
-				if(pay.getCustomer()!=null && pay.getCustomer().getName()!=null){
-					rowData.add(String.valueOf(pay.getCustomer().getName()));
-				}else{
-					rowData.add(String.valueOf(""));
+				if (pay.getCustomer() != null && pay.getCustomer().getName() != null) {
+					rowData.add(pay.getCustomer().getName());
+				} else {
+					rowData.add(StringUtils.EMPTY);
 				}
 				//采购中心
-				if(pay.getCustConsultant()!=null && pay.getCustConsultant().getCenters()!=null && pay.getCustConsultant().getCenters().getName()!=null){
+				if (pay.getCustConsultant() != null && pay.getCustConsultant().getCenters() != null && pay.getCustConsultant().getCenters().getName() != null) {
 					rowData.add(String.valueOf(pay.getCustConsultant().getCenters().getName()));
-				}else {
-					rowData.add(String.valueOf(""));
+				} else {
+					rowData.add(StringUtils.EMPTY);
 				}
 				//联系电话
-				if(pay.getCustomer()!=null && pay.getCustomer().getMoblieMoeny()!=null &&  pay.getCustomer().getMoblieMoeny().getMobile()!=null){
+				if (pay.getCustomer() != null && pay.getCustomer().getMoblieMoeny() != null && pay.getCustomer().getMoblieMoeny().getMobile() != null) {
 					rowData.add(String.valueOf(pay.getCustomer().getMoblieMoeny().getMobile()));
-				}else{
-					rowData.add(String.valueOf(""));
+				} else {
+					rowData.add(StringUtils.EMPTY);
 				}
 //				支付账号
-				rowData.add(String.valueOf(pay.getAccount()==null?"":pay.getAccount()));
+				rowData.add(pay.getAccount() == null ? StringUtils.EMPTY : pay.getAccount());
 				//支付到账户
-				rowData.add(String.valueOf(pay.getToAccount()==null?"":pay.getToAccount()));
+				rowData.add(pay.getToAccount() == null ? StringUtils.EMPTY : pay.getToAccount());
 				//交易类型名称
-				rowData.add(String.valueOf(pay.getRecordTypeName()==null?"":pay.getRecordTypeName()));
+				rowData.add(pay.getRecordTypeName() == null ? StringUtils.EMPTY : pay.getRecordTypeName());
 				//支付类型名称
-				rowData.add(String.valueOf(pay.getPayTypeName()==null?"":pay.getPayTypeName()));
+				rowData.add(pay.getPayTypeName() == null ? StringUtils.EMPTY : pay.getPayTypeName());
 				//交易作用/原因
-				rowData.add(String.valueOf(pay.getTradeReason()==null?"":pay.getTradeReason()));
+				rowData.add(pay.getTradeReason() == null ? StringUtils.EMPTY : pay.getTradeReason());
 				//创建人
-				rowData.add(String.valueOf(pay.getCreateBy().getName()));
+				rowData.add(pay.getCreateBy().getName());
 				//创建时间
 				rowData.add(String.valueOf(sdf.format(pay.getCreateDate())));
-				//更新人
-				rowData.add(String.valueOf(pay.getUpdateBy().getName()));
 				//更新时间
 				rowData.add(String.valueOf(sdf.format(pay.getUpdateDate())));
 				data.add(rowData);
 			});
-			String[] payHeads = {"订单编号","支付编号", "业务流水号", "支付金额", "支付人", "客户名称", "采购中心", "联系电话", "支付账号",
-					"支付到账户", "交易类型名称", "支付类型名称", "交易作用/原因", "创建人", "创建时间", "更新人", "更新时间"};
+			String[] payHeads = {"订单编号", "业务凭证号", "微信/支付宝 支付业务单号", "收支金额", "支付人", "客户名称", "采购中心(性质)", "联系电话", "支付账号",
+					"支付到账户", "交易类型名称", "支付类型名称", "交易作用/原因", "创建人", "创建时间", "更新时间"};
 			ExportExcelUtils eeu = new ExportExcelUtils();
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
 			eeu.exportExcel(workbook, 0, "交易记录数据", payHeads, data, fileName);
