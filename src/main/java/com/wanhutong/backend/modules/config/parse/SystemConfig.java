@@ -6,12 +6,15 @@ package com.wanhutong.backend.modules.config.parse;
  */
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.converters.basic.DateConverter;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,6 +56,26 @@ public class SystemConfig extends ConfigGeneral {
     @XStreamImplicit(itemFieldName = "putawayUnderCostAudit")
     private List<String> putawayUnderCostAudit;
 
+    //=====================================临时活动 start====================================
+    /**
+     * 可以设置低于成本20%的货架
+     *
+     */
+    @XStreamAlias("activityShelfId")
+    private Integer activityShelfId;
+
+    /**
+     * 可以设置低于成本20%的日期 在此日期以前
+     *
+     */
+    @XStreamAlias("activityDate")
+    private String activityDate;
+    //=====================================临时活动 end====================================
+
+
+
+
+
 
     @Override
     public SystemConfig parse(String content) throws Exception {
@@ -75,5 +98,13 @@ public class SystemConfig extends ConfigGeneral {
 
     public List<String> getPutawayUnderCostAudit() {
         return putawayUnderCostAudit;
+    }
+
+    public Integer getActivityShelfId() {
+        return activityShelfId;
+    }
+
+    public String getActivityDate() {
+        return activityDate;
     }
 }

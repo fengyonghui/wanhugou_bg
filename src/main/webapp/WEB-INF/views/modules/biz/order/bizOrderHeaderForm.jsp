@@ -61,6 +61,26 @@
                         $("#addError").css("display","inline-block")
                         return false;
                     }
+
+                    var bb = true;
+                    $("input[name='imgPhotosSorts']").each(function () {
+                        if ($(this).val() == '') {
+                            bb = false;
+                            return;
+                        }
+                    });
+                    if (bb) {
+                        var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
+                        var mainImgStr = "";
+                        for (var i = 0; i < mainImg.length; i++) {
+                            mainImgStr += ($(mainImg[i]).attr("src") + "|");
+                        }
+                        $("#photos").val(mainImgStr);
+                    } else {
+                        alert("退货凭证图片序号不能为空");
+                        return false;
+                    }
+
                     var orderId = $("#id").val();
                     var totalExp = $("#totalExp").val();
                     var totalDetail = $("#totalDetail").val();
@@ -75,7 +95,7 @@
                                 alert("优惠后订单金额不能低于出厂价，请修改调整金额");
                             } else if (data == "orderLowest") {
                                 alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
-                            } else {
+                            } else if (data == "ok") {
                                 loading('正在提交，请稍等...');
                                 form.submit();
                             }
@@ -446,27 +466,6 @@
             $(that).parent().parent().remove();
         }
 
-        function submitCustomForm() {
-            var bb = true;
-            $("input[name='imgPhotosSorts']").each(function () {
-                if ($(this).val() == '') {
-                    bb = false;
-                    return;
-                }
-            });
-            if (bb) {
-                loading('正在提交，请稍等...');
-                var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
-                var mainImgStr = "";
-                for (var i = 0; i < mainImg.length; i++) {
-                    mainImgStr += ($(mainImg[i]).attr("src") + "|");
-                }
-                $("#photos").val(mainImgStr);
-                inputForm.submit();
-            } else {
-                alert("退货凭证图片序号不能为空");
-            }
-        }
     </script>
 </head>
 <body>
@@ -1101,7 +1100,7 @@
             <div class="form-actions">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                        <input id="btnSubmit" class="btn btn-primary" type="button" value="保存" onclick="return submitCustomForm()"/>&nbsp;
+                        <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
                     </shiro:hasPermission>
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>

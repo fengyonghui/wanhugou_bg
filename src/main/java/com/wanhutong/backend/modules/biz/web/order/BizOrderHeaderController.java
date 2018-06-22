@@ -5,35 +5,57 @@ package com.wanhutong.backend.modules.biz.web.order;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
-import com.wanhutong.backend.common.utils.*;
+import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.RoleUtils;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.order.*;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderAppointedTime;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
-import com.wanhutong.backend.modules.biz.service.order.*;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderAppointedTimeService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
-import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.config.parse.SystemConfig;
-import com.wanhutong.backend.modules.enums.*;
-import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
+import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.DefaultPropEnum;
+import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OutTradeNoTypeEnum;
+import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
+import com.wanhutong.backend.modules.enums.TradeTypeEnum;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
-import com.wanhutong.backend.modules.sys.entity.*;
+import com.wanhutong.backend.modules.sys.entity.DefaultProp;
+import com.wanhutong.backend.modules.sys.entity.Dict;
+import com.wanhutong.backend.modules.sys.entity.Office;
+import com.wanhutong.backend.modules.sys.entity.Role;
+import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DefaultPropService;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
@@ -44,10 +66,16 @@ import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -58,8 +86,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 订单管理(1: 普通订单 ; 2:帐期采购 3:配资采购)Controller
@@ -70,6 +106,9 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/order/bizOrderHeader")
 public class BizOrderHeaderController extends BaseController {
+
+    protected Logger LOGGER = LoggerFactory.getLogger(BizOrderHeaderController.class);
+
 
     private static final Integer IMGTYPE = 37;
     @Autowired
@@ -1047,6 +1086,9 @@ public class BizOrderHeaderController extends BaseController {
             return flag;
         }
 
+        SystemConfig systemConfig = ConfigGeneral.SYSTEM_CONFIG.get();
+
+        boolean allActivityShlef = true;
         BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
         BizOrderDetail orderDetail = new BizOrderDetail();
         orderDetail.setOrderHeader(orderHeader);
@@ -1055,8 +1097,21 @@ public class BizOrderHeaderController extends BaseController {
         if (orderDetailList != null && !orderDetailList.isEmpty()) {
             for (BizOrderDetail bizOrderDetail : orderDetailList) {
                 totalBuyPrice = totalBuyPrice.add(BigDecimal.valueOf(bizOrderDetail.getBuyPrice()).multiply(BigDecimal.valueOf(bizOrderDetail.getOrdQty())));
+                if (!StringUtils.equals(String.valueOf(systemConfig.getActivityShelfId()), String.valueOf(bizOrderDetail.getShelfInfo().getOpShelfInfo().getId()))) {
+                    allActivityShlef = false;
+                }
             }
         }
+
+        String activityDate = systemConfig.getActivityDate();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date parse = null;
+        try {
+            parse = simpleDateFormat.parse(activityDate);
+        } catch (ParseException e) {
+            LOGGER.error("order edit checkTotalExp error", e);
+        }
+
 
         if (orderHeader == null || orderHeader.getCustomer() == null || orderHeader.getCustomer().getId() == null) {
             return flag;
@@ -1066,20 +1121,26 @@ public class BizOrderHeaderController extends BaseController {
         header.setCustomer(orderHeader.getCustomer());
 
         User user = UserUtils.getUser();
-        SystemConfig systemConfig = ConfigGeneral.SYSTEM_CONFIG.get();
+
+        BigDecimal resultPrice = totalDetail.subtract(totalExp);
+
+        if (parse != null && (System.currentTimeMillis() < parse.getTime()) && allActivityShlef) {
+            if (resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.8))) < 0) {
+                return "orderLowest";
+            }
+            return flag;
+        }
 
         List<String> serviceChargeAudit = systemConfig.getServiceChargeAudit();
         List<String> orderLossAudit = systemConfig.getOrderLossAudit();
         List<String> orderLowestAudit = systemConfig.getOrderLowestAudit();
 
         boolean serviceChargeStatus = RoleUtils.hasRole(user, serviceChargeAudit);
-
         if (!serviceChargeStatus && totalExp.compareTo(totalDetail.subtract(totalBuyPrice).multiply(BigDecimal.valueOf(0.5))) > 0) {
             return "serviceCharge";
         }
 
         boolean orderLossStatus = RoleUtils.hasRole(user, orderLossAudit);
-        BigDecimal resultPrice = totalDetail.subtract(totalExp);
         if (!orderLossStatus && resultPrice.compareTo(totalBuyPrice) < 0) {
             return "orderLoss";
         }
