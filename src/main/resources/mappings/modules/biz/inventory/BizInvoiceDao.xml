@@ -267,21 +267,23 @@
 		WHERE id = #{id}
 	</update>
 
-	<select id="findBizOrderHeader" resultType="BizInvoice">
+	<select id="findBizOrderHeader" resultType="BizOrderDetail">
 		SELECT
-		<include refid="bizInvoiceColumns"/>
-		FROM biz_invoice a
-		<include refid="bizInvoiceJoins"/>
-		<where>
-			a.status = #{DEL_FLAG_NORMAL}
-		</where>
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-			</otherwise>
-		</choose>
+			od.*
+ 		FROM biz_invoice a
+		LEFT JOIN biz_detail_invoice di ON di.invoice_id = a.id
+		LEFT JOIN biz_order_header oh ON oh.id = di.order_header_id
+		LEFT JOIN biz_order_detail od ON od.order_id = oh.id
+		LEFT JOIN biz_sku_info si ON si.id = od.sku_id
+		LEFT JOIN biz_product_info bpi on bpi.id=si.prod_id
+		LEFT JOIN sys_office so on so.id=bpi.vendor_id
+		where
+			a.status = 1
+			AND a.biz_status = 1
+			AND a.ship = 0
+  			AND od.status != 0
+			AND a.tracking_number=#{trackingNumber}
+			GROUP BY od.id
 	</select>
 	
 </mapper>

@@ -563,6 +563,8 @@ public class BizInvoiceController extends BaseController {
     @RequestMapping(value = "logisticsOrderDetail")
     public String logisticsOrderDetail(BizInvoice bizInvoice,String source, Model model) {
 
-        return "modules/biz/inventory/bizInvoiceDeForm";
+        List<BizOrderDetail> orderDetailList = bizInvoiceService.findBizOrderHeader(bizInvoice);
+        model.addAttribute("orderDetailList", orderDetailList);
+        return "modules/biz/inventory/bizInvoiceLogisticsDeForm";
     }
 }

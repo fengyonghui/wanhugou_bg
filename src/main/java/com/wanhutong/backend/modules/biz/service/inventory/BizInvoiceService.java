@@ -604,5 +604,10 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	public void delete(BizInvoice bizInvoice) {
 		super.delete(bizInvoice);
 	}
+
+    @Transactional(readOnly = false)
+    public List<BizOrderDetail> findBizOrderHeader(BizInvoice bizInvoice) {
+        return bizInvoiceDao.findBizOrderHeader(bizInvoice);
+    }
 	
 }
