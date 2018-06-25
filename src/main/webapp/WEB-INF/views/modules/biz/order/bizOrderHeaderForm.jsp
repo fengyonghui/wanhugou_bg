@@ -282,18 +282,37 @@
     <script type="text/javascript">
         function updateMoney() {
             if(confirm("确定修改价钱吗？")){
-                var totalExp=$("#totalExp").val();
+
+                var orderId = $("#id").val();
+                var totalExp = $("#totalExp").val();
+                var totalDetail = $("#totalDetail").val();
                 $.ajax({
                     type:"post",
-                    url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
-                    data:{orderId:$("#id").val(),money:totalExp},
-                    <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
-                    success:function(flag){
-                        if(flag=="ok"){
-                            alert(" 修改成功 ");
-
-                        }else{
-                            alert(" 修改失败 ");
+                    url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
+                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+                    success:function (data) {
+                        if (data == "serviceCharge") {
+                            alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
+                        } else if (data == "orderLoss") {
+                            alert("优惠后订单金额不能低于出厂价，请修改调整金额");
+                        } else if (data == "orderLowest") {
+                            alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
+                        } else if (data == "orderLowest8") {
+                            alert("优惠后订单金额不能低于出厂价的80%，请修改调整金额");
+                        } else if (data == "ok") {
+                            $.ajax({
+                                type:"post",
+                                url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
+                                data:{orderId:$("#id").val(),money:totalExp},
+                                <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
+                                success:function(flag){
+                                    if(flag=="ok"){
+                                        alert(" 修改成功 ");
+                                    }else{
+                                        alert(" 修改失败 ");
+                                    }
+                                }
+                            });
                         }
                     }
                 });
