@@ -46,6 +46,11 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String orderNum; //订单号
 	private String reqNo; //订单号
 
+	/**
+	 * 物流单页面标志
+	 * */
+	private String targetPage;
+
 	public BizInvoice() {
 		super();
 	}
@@ -225,5 +230,13 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setReqNo(String reqNo) {
 		this.reqNo = reqNo;
+	}
+
+	public String getTargetPage() {
+		return targetPage;
+	}
+
+	public void setTargetPage(String targetPage) {
+		this.targetPage = targetPage;
 	}
 }

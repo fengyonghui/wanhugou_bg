@@ -60,6 +60,12 @@
 				<if test="dbName == 'mssql'">'%'+#{sendNumber}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{sendNumber},'%')</if>
 			</if>
+			<if test="trackingNumber != null and trackingNumber != ''">
+				AND a.tracking_number LIKE
+				<if test="dbName == 'oracle'">'%'||#{trackingNumber}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{trackingNumber}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{trackingNumber},'%')</if>
+			</if>
 			<if test="ship != null and ship == 0">
 				<if test="orderNum != null and orderNum != ''">
 					AND bo.order_num LIKE
@@ -104,7 +110,15 @@
                 ${sqlMap.bizInvoice}
             </if>
 		</where>
-		GROUP BY a.id
+		<choose>
+			<when test="targetPage != null and targetPage =='logistics'">
+				AND (a.tracking_number !=null OR  a.tracking_number != '')
+				GROUP BY a.tracking_number
+			</when>
+			<otherwise>
+				GROUP BY a.id
+			</otherwise>
+		</choose>
 		ORDER BY a.send_time DESC
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -252,5 +266,22 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<select id="findBizOrderHeader" resultType="BizInvoice">
+		SELECT
+		<include refid="bizInvoiceColumns"/>
+		FROM biz_invoice a
+		<include refid="bizInvoiceJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
 	
 </mapper>

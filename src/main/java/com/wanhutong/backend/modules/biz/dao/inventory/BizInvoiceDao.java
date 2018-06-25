@@ -14,5 +14,8 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
  */
 @MyBatisDao
 public interface BizInvoiceDao extends CrudDao<BizInvoice> {
-	
+    /**
+     * 客户专员的 统计
+     * */
+    void findBizOrderHeader(BizInvoice bizInvoice);
 }

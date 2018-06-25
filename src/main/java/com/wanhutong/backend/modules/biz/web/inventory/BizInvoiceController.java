@@ -108,6 +108,10 @@ public class BizInvoiceController extends BaseController {
         model.addAttribute("page", page);
 //		model.addAttribute("ship",ship);
 //		model.addAttribute("bizStatu",bizStatu);
+        String targetPage = bizInvoice.getTargetPage();
+        if (targetPage != null && "logistics".equals(targetPage) ) {
+            return "modules/biz/inventory/bizInvoiceLogisticsList";
+        }
         return "modules/biz/inventory/bizInvoiceList";
     }
 
@@ -547,5 +551,18 @@ public class BizInvoiceController extends BaseController {
             }
         }
         return "";
+    }
+
+    /**
+     * 订单所属发货单详情
+     * @param bizInvoice
+     * @param model
+     * @return
+     */
+    @RequiresPermissions("biz:inventory:bizInvoice:view")
+    @RequestMapping(value = "logisticsOrderDetail")
+    public String logisticsOrderDetail(BizInvoice bizInvoice,String source, Model model) {
+
+        return "modules/biz/inventory/bizInvoiceDeForm";
     }
 }
