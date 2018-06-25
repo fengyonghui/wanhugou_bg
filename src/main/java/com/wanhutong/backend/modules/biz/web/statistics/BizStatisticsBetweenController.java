@@ -1343,6 +1343,7 @@ public class BizStatisticsBetweenController extends BaseController {
         request.setAttribute("dataList", bizProductStatisticsDtos);
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("startDate", startDate);
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("endDate", endDate);
         return "modules/biz/statistics/bizStatisticsSingleUserProfitBetweenTable";
     }
@@ -1359,6 +1360,7 @@ public class BizStatisticsBetweenController extends BaseController {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userSaleStatisticData(startDate, endDate, purchasingId);
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("startDate", startDate);
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("endDate", endDate);
         request.setAttribute("dataList", bizProductStatisticsDtos);
         return "modules/biz/statistics/bizStatisticsUserSaleBetweenTable";
