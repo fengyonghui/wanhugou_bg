@@ -95,6 +95,8 @@
                                 alert("优惠后订单金额不能低于出厂价，请修改调整金额");
                             } else if (data == "orderLowest") {
                                 alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
+                            } else if (data == "orderLowest8") {
+                                alert("优惠后订单金额不能低于出厂价的80%，请修改调整金额");
                             } else if (data == "ok") {
                                 loading('正在提交，请稍等...');
                                 form.submit();

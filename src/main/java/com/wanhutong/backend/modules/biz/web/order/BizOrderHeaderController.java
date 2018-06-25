@@ -1076,7 +1076,7 @@ public class BizOrderHeaderController extends BaseController {
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "checkTotalExp")
     public String checkTotalExp(BizOrderHeader bizOrderHeader) {
-        String flag = "ok";
+        String flag = "ok".intern();
         BigDecimal totalDetail = BigDecimal.valueOf(bizOrderHeader.getTotalDetail() == null ? 0 : bizOrderHeader.getTotalDetail());
         BigDecimal freight = BigDecimal.valueOf(bizOrderHeader.getFreight() == null ? 0 : bizOrderHeader.getFreight());
         BigDecimal totalExp = BigDecimal.valueOf(bizOrderHeader.getTotalExp() == null ? 0 : -bizOrderHeader.getTotalExp());
@@ -1129,7 +1129,7 @@ public class BizOrderHeaderController extends BaseController {
 
         if (parse != null && (System.currentTimeMillis() < parse.getTime()) && allActivityShlef) {
             if (resultPrice.compareTo(totalBuyPrice.multiply(BigDecimal.valueOf(0.8))) < 0) {
-                return "orderLowest";
+                return "orderLowest8";
             }
             return flag;
         }
