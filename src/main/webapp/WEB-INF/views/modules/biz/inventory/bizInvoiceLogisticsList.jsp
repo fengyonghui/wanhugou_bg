@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>发货单管理</title>
+	<title>物流单列表</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -145,7 +145,7 @@
 		<c:forEach items="${page.list}" var="bizInvoice" varStatus="state">
 			<tr>
 				<td>${state.index+1}</td>
-				<td><a href="${ctx}/biz/inventory/bizInvoice/logisticsOrderDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.trackingNumber}</a></td>
+				<td><a href="${ctx}/biz/inventory/bizInvoice/logisticsOrderDetail?id=${bizInvoice.id}&source=xq&targetPage=logistics">${bizInvoice.trackingNumber}</a></td>
 				<%--<td><a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.sendNumber}</a></td>--%>
 				<td>${bizInvoice.logistics.name}</td>
 				<td>${bizInvoice.freight}</td>
@@ -164,7 +164,7 @@
 				</td>
 				<td><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				<td>
-					<a href="${ctx}/biz/inventory/bizInvoice/logisticsOrderDetail?id=${bizInvoice.id}&source=xq">物流单详情</a>
+					<a href="${ctx}/biz/inventory/bizInvoice/logisticsOrderDetail?id=${bizInvoice.id}&source=xq&targetPage=logistics">物流单详情</a>
 				</td>
 			</tr>
 		</c:forEach>
