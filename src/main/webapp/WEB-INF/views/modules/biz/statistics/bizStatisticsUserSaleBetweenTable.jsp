@@ -7,8 +7,16 @@
 </head>
 <body>
 <div style="height: 50px">
-    <input name="startDate" id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
-    <input name="endDate" id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input  id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <input name="endDate" id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
+    <label>
+        <select class="input-medium" id="purchasingId">
+            <option value="0" label="全部"></option>
+            <c:forEach items="${purchasingList}" var="v">
+                <option value="${v.id}" label="${v.name}">${v.name}</option>
+            </c:forEach>
+        </select>
+    </label>
     <input id="search" class="btn btn-primary" type="button" onclick="initData()" value="查询"/>
 
 </div>
@@ -40,9 +48,12 @@
 <script type="application/javascript" src="/static/common/base.js"></script>
 <script type="application/javascript">
     function initData() {
-        var startDate = $("startDate").val();
-        var endDate = $("endDate").val();
-        window.location.href="${adminPath}/biz/statistics/userSaleDataTable?startDate=" + startDate + "&endDate=" + endDate;
+        var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
+        var purchasingIdEle = $("#purchasingId");
+        var purchasingId = purchasingIdEle.find("option:selected").val();
+
+        window.location.href="${adminPath}/biz/statistics/between/userSaleDataTable?startDate=" + startDate + "&endDate=" + endDate + "&purchasingId=" + purchasingId;
     }
 </script>
 </body>

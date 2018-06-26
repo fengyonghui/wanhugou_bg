@@ -119,6 +119,7 @@
 				<td>序号</td>
 				<th>库存类型</th>
 				<th>仓库名称</th>
+				<th>采购中心</th>
 				<th style="width: 15%">商品名称</th>
 				<th>出厂价</th>
 				<th>商品总值</th>
@@ -132,6 +133,9 @@
 				<th>库存数量</th>
 				<c:if test="${zt eq '1' || zt eq '2'}">
 					<th>销售订单数量</th>
+					<th>出库量</th>
+					<th>入库量</th>
+					<th>供货部供货量</th>
 					<th>调入数量</th>
 					<th>调出数量</th>
 					<shiro:hasAnyPermissions name="biz:inventory:inventoryAge:view">
@@ -158,6 +162,9 @@
 				</a></td>
 				<td>
 					${bizInventorySku.invInfo.name}
+				</td>
+				<td>
+					${bizInventorySku.customer.name}
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.name}
@@ -192,6 +199,9 @@
 					<td>
 						${bizInventorySku.stockOrdQty}
 					</td>
+					<td>${bizInventorySku.outWarehouse}</td>
+					<td>${bizInventorySku.inWarehouse}</td>
+					<td>${bizInventorySku.sendGoodsNum}</td>
 					<td>
 						${bizInventorySku.transInQty}
 					</td>

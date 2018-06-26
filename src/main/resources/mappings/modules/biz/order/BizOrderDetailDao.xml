@@ -11,6 +11,7 @@
 		a.p_line_no AS "pLineNo",
 		a.sku_shelf_id as "shelfInfo.id",
 		si.name as "shelfInfo.opShelfInfo.name",
+		si.id as "shelfInfo.opShelfInfo.id",
 		a.sku_id AS "skuInfo.id",
 		bsi.name as "skuInfo.name",
 		a.buy_price as "buyPrice",

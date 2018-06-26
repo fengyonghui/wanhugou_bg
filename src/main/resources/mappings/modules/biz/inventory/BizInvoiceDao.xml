@@ -43,12 +43,6 @@
 	<select id="findList" resultType="BizInvoice">
 		SELECT 
 			<include refid="bizInvoiceColumns"/>
-		<if test="ship != null and ship == 0">
-			,bo.order_num AS "orderNum"
-		</if>
-		<if test="ship != null and ship == 1">
-			,br.req_no AS "reqNo"
-		</if>
 		FROM biz_invoice a
 		<include refid="bizInvoiceJoins"/>
 		LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id

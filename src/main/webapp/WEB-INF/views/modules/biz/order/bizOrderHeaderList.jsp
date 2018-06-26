@@ -386,7 +386,7 @@
 						<!-- 退款增加 -->
 						<c:if test='${orderHeader.bizStatus==refund}'>
 							<%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}">申请退款</a>
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&refundSkip=refundSkip">申请退款</a>
 						</c:if>
 						<c:if test="${orderHeader.bizStatus==refunding}">
 							退款中

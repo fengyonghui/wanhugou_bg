@@ -61,6 +61,26 @@
                         $("#addError").css("display","inline-block")
                         return false;
                     }
+
+                    var bb = true;
+                    $("input[name='imgPhotosSorts']").each(function () {
+                        if ($(this).val() == '') {
+                            bb = false;
+                            return;
+                        }
+                    });
+                    if (bb) {
+                        var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
+                        var mainImgStr = "";
+                        for (var i = 0; i < mainImg.length; i++) {
+                            mainImgStr += ($(mainImg[i]).attr("src") + "|");
+                        }
+                        $("#photos").val(mainImgStr);
+                    } else {
+                        alert("退货凭证图片序号不能为空");
+                        return false;
+                    }
+
                     var orderId = $("#id").val();
                     var totalExp = $("#totalExp").val();
                     var totalDetail = $("#totalDetail").val();
@@ -75,7 +95,9 @@
                                 alert("优惠后订单金额不能低于出厂价，请修改调整金额");
                             } else if (data == "orderLowest") {
                                 alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
-                            } else {
+                            } else if (data == "orderLowest8") {
+                                alert("优惠后订单金额不能低于出厂价的80%，请修改调整金额");
+                            } else if (data == "ok") {
                                 loading('正在提交，请稍等...');
                                 form.submit();
                             }
@@ -260,18 +282,37 @@
     <script type="text/javascript">
         function updateMoney() {
             if(confirm("确定修改价钱吗？")){
-                var totalExp=$("#totalExp").val();
+
+                var orderId = $("#id").val();
+                var totalExp = $("#totalExp").val();
+                var totalDetail = $("#totalDetail").val();
                 $.ajax({
                     type:"post",
-                    url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
-                    data:{orderId:$("#id").val(),money:totalExp},
-                    <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
-                    success:function(flag){
-                        if(flag=="ok"){
-                            alert(" 修改成功 ");
-
-                        }else{
-                            alert(" 修改失败 ");
+                    url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
+                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+                    success:function (data) {
+                        if (data == "serviceCharge") {
+                            alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
+                        } else if (data == "orderLoss") {
+                            alert("优惠后订单金额不能低于出厂价，请修改调整金额");
+                        } else if (data == "orderLowest") {
+                            alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
+                        } else if (data == "orderLowest8") {
+                            alert("优惠后订单金额不能低于出厂价的80%，请修改调整金额");
+                        } else if (data == "ok") {
+                            $.ajax({
+                                type:"post",
+                                url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
+                                data:{orderId:$("#id").val(),money:totalExp},
+                                <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
+                                success:function(flag){
+                                    if(flag=="ok"){
+                                        alert(" 修改成功 ");
+                                    }else{
+                                        alert(" 修改失败 ");
+                                    }
+                                }
+                            });
                         }
                     }
                 });
@@ -446,27 +487,6 @@
             $(that).parent().parent().remove();
         }
 
-        function submitCustomForm() {
-            var bb = true;
-            $("input[name='imgPhotosSorts']").each(function () {
-                if ($(this).val() == '') {
-                    bb = false;
-                    return;
-                }
-            });
-            if (bb) {
-                loading('正在提交，请稍等...');
-                var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
-                var mainImgStr = "";
-                for (var i = 0; i < mainImg.length; i++) {
-                    mainImgStr += ($(mainImg[i]).attr("src") + "|");
-                }
-                $("#photos").val(mainImgStr);
-                inputForm.submit();
-            } else {
-                alert("退货凭证图片序号不能为空");
-            }
-        }
     </script>
 </head>
 <body>
@@ -1101,16 +1121,18 @@
             <div class="form-actions">
                 <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                        <input id="btnSubmit" class="btn btn-primary" type="button" value="保存" onclick="return submitCustomForm()"/>&nbsp;
+                        <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
                     </shiro:hasPermission>
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
                 <%--<c:if test="${empty entity.orderDetails}">--%>
-                <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                    <c:if test='${entity.bizStatus==refund}'>
-                        <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
-                    </c:if>
-                </shiro:hasPermission>
+                <c:if test="${(empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails) || (refundSkip eq 'refundSkip')}">
+                    <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+                        <c:if test='${entity.bizStatus==refund}'>
+                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
+                        </c:if>
+                    </shiro:hasPermission>
+                </c:if>
                     <%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
             </div>
         </c:otherwise>
