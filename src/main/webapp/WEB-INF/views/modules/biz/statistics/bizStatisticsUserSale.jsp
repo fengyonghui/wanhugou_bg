@@ -8,8 +8,7 @@
 </head>
 <body>
 <div>
-    <input name="applyDate" id="applyDate" value="${month}" onchange="initChart()"
-           onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <input name="applyDate" id="applyDate" value="${month}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
     <label>
         <select class="input-medium" id="purchasingId">
             <option value="0" label="全部"></option>

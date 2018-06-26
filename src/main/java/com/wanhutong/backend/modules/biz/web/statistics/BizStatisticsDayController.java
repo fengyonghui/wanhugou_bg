@@ -842,6 +842,7 @@ public class BizStatisticsDayController extends BaseController {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("day", day);
         request.setAttribute("dataList", bizProductStatisticsDtos);
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         return "modules/biz/statistics/bizStatisticsUserSaleDayTable";
     }
 

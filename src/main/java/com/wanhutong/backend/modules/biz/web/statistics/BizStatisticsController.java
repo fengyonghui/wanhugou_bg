@@ -179,6 +179,7 @@ public class BizStatisticsController extends BaseController {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsService.userSaleStatisticData(month, purchasingId);
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("month", month);
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("dataList", bizProductStatisticsDtos);
         return "modules/biz/statistics/bizStatisticsUserSaleTable";
     }
@@ -1390,6 +1391,7 @@ public class BizStatisticsController extends BaseController {
         request.setAttribute("dataList", bizProductStatisticsDtos);
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("month", month);
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         return "modules/biz/statistics/bizStatisticsSingleUserProfitTable";
     }
 }
