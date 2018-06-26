@@ -126,7 +126,7 @@
 			<tr>
 				<td>序号</td>
 				<th>物流单号</th>
-				<th>发货号</th>
+				<%--<th>发货号</th>--%>
 				<th>物流商</th>
 				<th>运费</th>
 				<th>操作费</th>
@@ -145,8 +145,8 @@
 		<c:forEach items="${page.list}" var="bizInvoice" varStatus="state">
 			<tr>
 				<td>${state.index+1}</td>
-				<td>${bizInvoice.trackingNumber}</td>
-				<td><a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.sendNumber}</a></td>
+				<td><a href="${ctx}/biz/inventory/bizInvoice/logisticsOrderDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.trackingNumber}</a></td>
+				<%--<td><a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&source=xq">${bizInvoice.sendNumber}</a></td>--%>
 				<td>${bizInvoice.logistics.name}</td>
 				<td>${bizInvoice.freight}</td>
 				<td>${bizInvoice.operation}</td>
@@ -164,18 +164,8 @@
 				</td>
 				<td><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
 				<td>
-					<%--<c:if test="${bizInvoice.ship==0}">--%>
-						<%--<shiro:hasPermission name="biz:inventory:bizInvoice:edit">--%>
-							<%--<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}">修改</a>--%>
-						<%--</shiro:hasPermission>--%>
-						<%--<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizInvoice.id}&source=xq">发货单详情</a>--%>
-					<%--</c:if>--%>
 					<a href="${ctx}/biz/inventory/bizInvoice/logisticsOrderDetail?id=${bizInvoice.id}&source=xq">物流单详情</a>
 				</td>
-				<%--<shiro:hasPermission name="biz:inventory:bizInvoice:edit"><td>
-    				<a href="${ctx}/biz/inventory/bizInvoice/form?id=${bizInvoice.id}">修改</a>
-					<a href="${ctx}/biz/inventory/bizInvoice/delete?id=${bizInvoice.id}" onclick="return confirmx('确认要删除该发货单吗？', this.href)">删除</a>
-				<td><td></shiro:hasPermission>--%>
 			</tr>
 		</c:forEach>
 		</tbody>

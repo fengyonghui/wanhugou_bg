@@ -125,6 +125,14 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private String imgPhotosSorts;		//主图顺序
 
     private Integer vendorId; //根据供应商Id搜索
+    /**
+     * 发货单Id
+     * */
+    private String sendId;
+    /**
+     * 发货单号
+     * */
+    private String sendNum;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -679,5 +687,21 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setVendorId(Integer vendorId) {
         this.vendorId = vendorId;
+    }
+
+    public String getSendId() {
+        return sendId;
+    }
+
+    public void setSendId(String sendId) {
+        this.sendId = sendId;
+    }
+
+    public String getSendNum() {
+        return sendNum;
+    }
+
+    public void setSendNum(String sendNum) {
+        this.sendNum = sendNum;
     }
 }

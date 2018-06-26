@@ -554,15 +554,14 @@ public class BizInvoiceController extends BaseController {
     }
 
     /**
-     * 订单所属发货单详情
+     * 物流单信息详情
      * @param bizInvoice
      * @param model
      * @return
      */
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = "logisticsOrderDetail")
-    public String logisticsOrderDetail(BizInvoice bizInvoice,String source, Model model) {
-
+    public String logisticsOrderDetail(BizInvoice bizInvoice, Model model) {
         List<BizOrderDetail> orderDetailList = bizInvoiceService.findBizOrderHeader(bizInvoice);
         model.addAttribute("orderDetailList", orderDetailList);
         return "modules/biz/inventory/bizInvoiceLogisticsDeForm";

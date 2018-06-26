@@ -269,21 +269,39 @@
 
 	<select id="findBizOrderHeader" resultType="BizOrderDetail">
 		SELECT
-			od.*
- 		FROM biz_invoice a
-		LEFT JOIN biz_detail_invoice di ON di.invoice_id = a.id
-		LEFT JOIN biz_order_header oh ON oh.id = di.order_header_id
-		LEFT JOIN biz_order_detail od ON od.order_id = oh.id
-		LEFT JOIN biz_sku_info si ON si.id = od.sku_id
-		LEFT JOIN biz_product_info bpi on bpi.id=si.prod_id
-		LEFT JOIN sys_office so on so.id=bpi.vendor_id
-		where
-			a.status = 1
-			AND a.biz_status = 1
-			AND a.ship = 0
-  			AND od.status != 0
-			AND a.tracking_number=#{trackingNumber}
-			GROUP BY od.id
+			oh.order_num AS "orderHeader.orderNum",
+			od.sku_name AS "skuName",
+			od.part_no AS "partNo",
+			od.buy_price AS "buyPrice",
+			od.unit_price AS "unitPrice",
+			od.ord_qty AS "ordQty",
+			od.sent_qty AS "sentQty",
+			od.create_time AS "createDate",
+			soo.name AS "suplyis.name",
+			si.item_no AS "skuInfo.itemNo",
+			so.name AS "so.name",
+			oh.id AS "orderHeader.id",
+			bi.id AS "orderHeader.sendId",
+			bi.send_number AS "orderHeader.sendNum"
+		FROM biz_order_header oh
+			LEFT JOIN biz_order_detail od ON oh.id = od.order_id
+			LEFT JOIN sys_office soo ON soo.id = od.suply_id
+			LEFT JOIN biz_sku_info si ON si.id = od.sku_id
+			LEFT JOIN biz_product_info bpi ON bpi.id = si.prod_id
+			LEFT JOIN sys_office so ON so.id = bpi.vendor_id
+			LEFT JOIN biz_detail_invoice di ON di.order_header_id = oh.id
+			LEFT JOIN biz_invoice bi ON bi.id = di.invoice_id
+		WHERE
+			(bi.status = 1
+			AND bi.biz_status = 1
+			AND bi.ship = 0
+			AND od.status != 0
+			AND bi.tracking_number = #{trackingNumber})
+		  or (oh.status = 1
+			AND oh.order_type = 6
+			AND bi.tracking_number = #{trackingNumber})
+		GROUP BY oh.order_num ,bi.send_number
+		ORDER BY oh.order_num
 	</select>
 	
 </mapper>

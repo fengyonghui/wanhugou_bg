@@ -1,3 +1,5 @@
+<%@ page import="com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader" %>
+<%@ page import="com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
@@ -182,13 +184,15 @@
 		<table id="contentTable" class="table table-striped table-bordered table-condensed">
 			<thead>
 			<tr>
-				<th>详情行号</th>
+				<%--<th>行号</th>--%>
+				<th>发货号</th>
+				<th>订单编号</th>
 				<th>商品名称</th>
 				<th>商品编号</th>
-				<%--<th>商品货号</th>--%>
+				<th>商品货号</th>
 				<%--<th>已生成的采购单</th>--%>
 				<th>商品出厂价</th>
-				<%--<th>供应商</th>--%>
+				<th>供应商</th>
 				<%--<th>供应商电话</th>--%>
 				<th>商品单价</th>
 				<th>采购数量</th>
@@ -197,14 +201,20 @@
 				<c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
 					<th>发货方</th>
 				</c:if>
-				<%--<th>创建时间</th>--%>
+				<th>创建时间</th>
 			</tr>
 			</thead>
 			<tbody>
 			<c:forEach items="${orderDetailList}" var="bizOrderDetail">
 				<tr>
-					<td>
+					<%--<td>
 							${bizOrderDetail.lineNo}
+					</td>--%>
+					<td>
+						<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizOrderDetail.orderHeader.sendId}&source=xq">${bizOrderDetail.orderHeader.sendNum}</a>
+					</td>
+					<td>
+						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderDetail.orderHeader.id}&orderDetails=details">${bizOrderDetail.orderHeader.orderNum}</a>
 					</td>
 					<td>
 							${bizOrderDetail.skuName}
@@ -212,18 +222,18 @@
 					<td>
 							${bizOrderDetail.partNo}
 					</td>
-					<%--<td>
+					<td>
 							${bizOrderDetail.skuInfo.itemNo}
-					</td>--%>
+					</td>
 					<%--<td>
 						<a href="${ctx}/biz/po/bizPoHeader/form?id=${detailIdMap.get(bizOrderDetail.getLineNo())}">${orderNumMap.get(bizOrderDetail.getLineNo())}</a>
 					</td>--%>
 					<td>
 							${bizOrderDetail.buyPrice}
 					</td>
-					<%--<td>
+					<td>
 							${bizOrderDetail.vendor.name}
-					</td>--%>
+					</td>
 					<%--<td>
 							${bizOrderDetail.primary.mobile}
 					</td>--%>
@@ -246,9 +256,9 @@
 								${bizOrderDetail.suplyis.name}
 						</td>
 					</c:if>
-					<%--<td>
+					<td>
 						<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-					</td>--%>
+					</td>
 
 				</tr>
 			</c:forEach>
