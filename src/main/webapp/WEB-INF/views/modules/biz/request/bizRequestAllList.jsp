@@ -4,7 +4,8 @@
 <html>
 <head>
 	<title>备货清单管理</title>
-	<meta name="decorator" content="default"/>
+	<%--<meta name="decorator"/>--%>
+	<meta http-equiv="refresh" content="5" data-url="#"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
             $('#select_all').live('click',function(){

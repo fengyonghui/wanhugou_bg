@@ -126,7 +126,7 @@ public class BizOrderHeaderUnlineController extends BaseController {
         bizOrderHeaderUnline.setBizStatus(BIZSTATUSONE);
         bizOrderHeaderUnlineService.save(bizOrderHeaderUnline);
         bizOrderHeader.setReceiveTotal(bizOrderHeader.getReceiveTotal()+bizOrderHeaderUnline.getRealMoney().doubleValue());
-        bizOrderHeaderService.save(bizOrderHeader);
+//        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
         if (bizOrderHeader.getBizStatus() == OrderHeaderBizStatusEnum.UNPAY.getState().intValue()) {
             if (bizOrderHeader.getTotalDetail().compareTo(bizOrderHeader.getReceiveTotal())==0) {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
@@ -139,7 +139,7 @@ public class BizOrderHeaderUnlineController extends BaseController {
                 bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ALL_PAY.getState());
             }
         }
-        bizOrderHeaderService.save(bizOrderHeader);
+        bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
 
         try {
 			User user = UserUtils.getUser();
@@ -212,7 +212,7 @@ public class BizOrderHeaderUnlineController extends BaseController {
 
 			BizOrderHeaderUnline orderHeaderUnline = bizOrderHeaderUnlineService.get(id);
 			orderHeaderUnline.setBizStatus(BIZSTATUSTWO);
-            bizOrderHeaderUnlineService.save(orderHeaderUnline);
+            bizOrderHeaderUnlineService.saveOrderOffline(orderHeaderUnline);
         return "ok";
     }
 

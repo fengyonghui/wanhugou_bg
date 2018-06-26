@@ -112,18 +112,18 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
             bizDeliverGoodsDao.update(invoice);
             //保存图片
             saveCommonImg(bizInvoice);
-            return;
+        } else {
+            // 取出当前用户所在机构，
+            User user = UserUtils.getUser();
+            Office company = officeService.get(user.getCompany().getId());
+            //采购商或采购中心
+            bizInvoice.setSendNumber("");
+            super.save(bizInvoice);
+            bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE, company.getId(), 0, bizInvoice.getId()));
+            super.save(bizInvoice);
+            //保存图片
+            saveCommonImg(bizInvoice);
         }
-        // 取出当前用户所在机构，
-        User user = UserUtils.getUser();
-        Office company = officeService.get(user.getCompany().getId());
-        //采购商或采购中心
-        bizInvoice.setSendNumber("");
-        super.save(bizInvoice);
-        bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,bizInvoice.getId()));
-        super.save(bizInvoice);
-        //保存图片
-        saveCommonImg(bizInvoice);
         //获取订单ID
         String orderHeaders = bizInvoice.getOrderHeaders();
         //货值
@@ -190,8 +190,13 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
                     bizOrderStatusService.save(orderStatus);
                 }
             }
-            bizInvoice.setValuePrice(valuePrice);
-            super.save(bizInvoice);
+            if (bizInvoice.getId() == null) {
+                bizInvoice.setValuePrice(valuePrice);
+                super.save(bizInvoice);
+            } else {
+                bizInvoice.setValuePrice(bizInvoice.getValuePrice() + valuePrice);
+                super.save(bizInvoice);
+            }
         }
 	}
 

@@ -118,6 +118,9 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	
 	@Transactional(readOnly = false)
 	public void save(BizInvoice bizInvoice) {
+        boolean flagRequest = true;        //备货单完成状态
+        boolean flagOrder = true;        //销售单完成状态
+        boolean flagPo = true;     //采购单完成状态
 	    //修改发货单
 	    if (bizInvoice.getId() != null){
             BizInvoice invoice = bizInvoiceDao.get(bizInvoice.getId());
@@ -132,22 +135,19 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
             bizInvoiceDao.update(invoice);
             //保存图片
             saveCommonImg(bizInvoice);
-            return;
-        }
-        boolean flagRequest = true;		//备货单完成状态
-        boolean flagOrder = true;		//销售单完成状态
-        boolean flagPo = true;     //采购单完成状态
-        // 取出当前用户所在机构，
-        User user = UserUtils.getUser();
-        Office company = officeService.get(user.getCompany().getId());
-        //采购商或采购中心
+        } else {
+            // 取出当前用户所在机构，
+            User user = UserUtils.getUser();
+            Office company = officeService.get(user.getCompany().getId());
+            //采购商或采购中心
 //        Office office = officeService.get(bizSendGoodsRecord.getCustomer().getId());
-        bizInvoice.setSendNumber("");
-        super.save(bizInvoice);
-        bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE,company.getId(),0,bizInvoice.getId()));
-        super.save(bizInvoice);
-        //保存图片
-        saveCommonImg(bizInvoice);
+            bizInvoice.setSendNumber("");
+            super.save(bizInvoice);
+            bizInvoice.setSendNumber(GenerateOrderUtils.getSendNumber(OrderTypeEnum.SE, company.getId(), 0, bizInvoice.getId()));
+            super.save(bizInvoice);
+            //保存图片
+            saveCommonImg(bizInvoice);
+        }
         //获取订单ID
         String orderHeaders = bizInvoice.getOrderHeaders();
         //获取备货单ID
@@ -374,8 +374,13 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
             }
-            bizInvoice.setValuePrice(valuePrice);
-            super.save(bizInvoice);
+            if (bizInvoice.getId() == null) {
+                bizInvoice.setValuePrice(valuePrice);
+                super.save(bizInvoice);
+            } else {
+                bizInvoice.setValuePrice(bizInvoice.getValuePrice() + valuePrice);
+                super.save(bizInvoice);
+            }
         }
 
 
@@ -505,8 +510,13 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     }
                 }
             }
-            bizInvoice.setValuePrice(valuePrice);
-            super.save(bizInvoice);
+            if (bizInvoice.getId() == null) {
+                bizInvoice.setValuePrice(valuePrice);
+                super.save(bizInvoice);
+            } else {
+                bizInvoice.setValuePrice(bizInvoice.getValuePrice() + valuePrice);
+                super.save(bizInvoice);
+            }
         }
 	}
 
