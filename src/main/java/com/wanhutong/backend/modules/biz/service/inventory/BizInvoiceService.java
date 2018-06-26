@@ -40,6 +40,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -292,11 +293,21 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                 }
 
                 /*用于 订单状态表 保存状态*/
-                if(orderHeader!=null && orderHeader.getId()!=null || orderHeader.getBizStatus()!=null){
+                if (orderHeader.getId() != null || orderHeader.getBizStatus() != null) {
                     BizOrderStatus orderStatus = new BizOrderStatus();
                     orderStatus.setOrderHeader(orderHeader);
                     orderStatus.setBizStatus(orderHeader.getBizStatus());
-                    bizOrderStatusService.save(orderStatus);
+                    List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
+                    if (CollectionUtils.isNotEmpty(list)) {
+                        for (BizOrderStatus bizOrderStatus : list) {
+                            if (!bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
+                                bizOrderStatusService.save(orderStatus);
+                                break;
+                            }
+                        }
+                    } else {
+                        bizOrderStatusService.save(orderStatus);
+                    }
                 }
 
                 BizOrderDetail ordDetail = new BizOrderDetail();
@@ -331,11 +342,21 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         }
                     }
                     /*用于 订单状态表 保存状态*/
-                    if(orderHeader!=null && orderHeader.getId()!=null || orderHeader.getBizStatus()!=null){
+                    if (orderHeader.getId() != null || orderHeader.getBizStatus() != null) {
                         BizOrderStatus orderStatus = new BizOrderStatus();
                         orderStatus.setOrderHeader(orderHeader);
                         orderStatus.setBizStatus(orderHeader.getBizStatus());
-                        bizOrderStatusService.save(orderStatus);
+                        List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
+                        if (CollectionUtils.isNotEmpty(list)) {
+                            for (BizOrderStatus bizOrderStatus : list) {
+                                if (!bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
+                                    bizOrderStatusService.save(orderStatus);
+                                    break;
+                                }
+                            }
+                        } else {
+                            bizOrderStatusService.save(orderStatus);
+                        }
                     }
                 }
 
