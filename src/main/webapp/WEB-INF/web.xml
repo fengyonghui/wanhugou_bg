@@ -48,6 +48,15 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	<filter>
+		<filter-name>ParamTrimFilter</filter-name>
+		<filter-class>com.wanhutong.backend.common.filter.ParamTrimFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>ParamTrimFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 	<!-- PageCache, cache .html suffix.
 	<filter>
 		<filter-name>PageCacheFilter</filter-name>
