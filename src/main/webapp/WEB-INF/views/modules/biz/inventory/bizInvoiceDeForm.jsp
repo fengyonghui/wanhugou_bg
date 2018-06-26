@@ -4,10 +4,16 @@
 <head>
 	<title>发货单管理</title>
 	<meta name="decorator" content="default"/>
+	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-
+            $("#contentTable").tablesMergeCell({
+                // automatic: true
+                // 是否根据内容来合并
+                cols:[0,1,2]
+                // rows:[0,2]
             });
+        });
 
 
 	</script>
@@ -155,15 +161,13 @@
 						<c:set var="flag" value="true"></c:set>
 						<c:forEach items="${orderDetailList}" var="orderDetail">
 							<tr>
-								<c:if test="${flag}">
-									<td rowspan="${fn:length(orderDetailList)}">${orderDetail.orderHeader.orderNum}</td>
-									<td rowspan="${fn:length(orderDetailList)}">${orderDetail.cust.name}</td>
-									<td rowspan="${fn:length(orderDetailList)}">${fns:getDictLabel(orderDetail.orderHeader.bizStatus,"biz_order_status",'' )}</td>
-								</c:if>
-									<td>${orderDetail.skuInfo.name}</td>
-									<td>${orderDetail.skuInfo.itemNo}</td>
-									<td>${orderDetail.ordQty}</td>
-									<td>${orderDetail.sentQty}</td>
+								<td>${orderDetail.orderHeader.orderNum}</td>
+								<td>${orderDetail.cust.name}</td>
+								<td>${fns:getDictLabel(orderDetail.orderHeader.bizStatus,"biz_order_status",'' )}</td>
+								<td>${orderDetail.skuInfo.name}</td>
+								<td>${orderDetail.skuInfo.itemNo}</td>
+								<td>${orderDetail.ordQty}</td>
+								<td>${orderDetail.sentQty}</td>
 							</tr>
 							<c:if test="${fn:length(orderDetailList)>1}">
 							<c:set var="flag" value="false"></c:set>
