@@ -476,7 +476,7 @@
         <div class="controls">
             <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
             <span class="help-inline"><font color="red">*</font></span>
-            <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
+            <c:if test="${bizOrderHeader.flag=='check_pending'}">
                 <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
             </c:if>
         </div>
