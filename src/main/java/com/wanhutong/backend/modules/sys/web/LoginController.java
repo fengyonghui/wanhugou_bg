@@ -46,7 +46,7 @@ public class LoginController extends BaseController{
 	 * 管理登录
 	 */
 	@RequestMapping(value = "${adminPath}/login", method = RequestMethod.GET)
-	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String login(HttpServletRequest request, HttpServletResponse response, Model model, String version) {
 		Principal principal = UserUtils.getPrincipal();
 
 		model.addAttribute("productName", getProductName());
@@ -76,6 +76,9 @@ public class LoginController extends BaseController{
 //		view += "jar:file:/D:/GitHub/jeesite/src/main/webapp/WEB-INF/lib/jeesite.jar!";
 //		view += "/"+getClass().getName().replaceAll("\\.", "/").replace(getClass().getSimpleName(), "")+"view/sysLogin";
 //		view += ".jsp";
+		if ("h5".equalsIgnoreCase(version)) {
+			return "modules/sys/mobile/login";
+		}
 		return "modules/sys/sysLogin";
 	}
 
@@ -83,7 +86,7 @@ public class LoginController extends BaseController{
 	 * 登录失败，真正登录的POST请求由Filter完成
 	 */
 	@RequestMapping(value = "${adminPath}/login", method = RequestMethod.POST)
-	public String loginFail(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String loginFail(HttpServletRequest request, HttpServletResponse response, Model model, String version) {
 		Principal principal = UserUtils.getPrincipal();
 
 		model.addAttribute("productName", getProductName());
