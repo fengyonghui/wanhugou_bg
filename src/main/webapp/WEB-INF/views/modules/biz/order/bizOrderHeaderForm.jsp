@@ -585,18 +585,16 @@
             <span class="help-inline">自动计算</span>
         </div>
     </div>
-    <%--<c:if test="${entity.totalDetail != entity.receiveTotal}">--%>
-        <div class="control-group">
-            <label class="control-label">调整金额：</label>
-            <div class="controls">
-                    <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
-                    <span class="help-inline"><font color="red">*</font></span>
-                <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
-                    <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
-                </c:if>
-            </div>
+    <div class="control-group">
+        <label class="control-label">调整金额：</label>
+        <div class="controls">
+                <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font></span>
+            <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
+                <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
+            </c:if>
         </div>
-    <%--</c:if>--%>
+    </div>
     <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">
