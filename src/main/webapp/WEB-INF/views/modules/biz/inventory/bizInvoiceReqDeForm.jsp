@@ -4,6 +4,7 @@
 <head>
 	<title>发货单管理</title>
 	<meta name="decorator" content="default"/>
+	<script type="text/javascript" src="${ctxStatic}/tablesMergeCell/tablesMergeCell.js"></script>
 	<script type="text/javascript">
         $(document).ready(function() {
             $('#select_all').live('click',function(){
@@ -354,11 +355,9 @@
                             <c:set var="flag" value="true"></c:set>
                                 <c:forEach items="${requestHeader.requestDetailList}" var="requestDetail" varStatus="index">
 									<tr>
-										<c:if test="${flag}">
-											<td rowspan="${fn:length(requestHeader.requestDetailList)}"><a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestDetail.requestHeader.id}&str=detail">${requestHeader.reqNo}</a></td>
-											<td rowspan="${fn:length(requestHeader.requestDetailList)}">${requestHeader.fromOffice.name}</td>
-											<td rowspan="${fn:length(requestHeader.requestDetailList)}">${fns:getDictLabel(requestHeader.bizStatus,"biz_req_status",'' )}</td>
-										</c:if>
+										<td>${requestHeader.reqNo}</td>
+										<td>${requestHeader.fromOffice.name}</td>
+										<td>${fns:getDictLabel(requestHeader.bizStatus,"biz_req_status",'' )}</td>
 										<td>${requestDetail.skuInfo.name}</td>
 										<td>${requestDetail.skuInfo.partNo}</td>
 										<td>${requestDetail.skuInfo.skuPropertyInfos}</td>

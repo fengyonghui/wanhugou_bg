@@ -274,7 +274,14 @@ usingNamespace("Base")["Mask"] =  {
         if ($String.isNullOrBlank(content)) {
             content = "";
         }
-        var logo=$("<div class='loGo' style='width:200px;height: 200px;position:fixed;margin:auto;left:0;right:0;top:0;bottom:0;'><img src='/static/images/load.gif'><p>"+content+"</p></div>");
+        var str = "<div class=\"loading-mask\" style='opacity: 0.4; position:absolute; left:0; top:0; width:100%; height:100%; z-index:20000; background-color:#ededed;'></div>" +
+            "    <div class=\"loading\" style='position:absolute; left:45%; top:40%;padding:2px; z-index:20001; height:auto;'>" +
+            "    <div class=\"loGo\" style='background:#ededed;color:#444;font:bold 20px tahoma,arial,helvetica;padding:10px;margin:0;height:auto;'>" +
+            "    <img style='height: auto;max-width: 100%;vertical-align: middle;border: 0; width: 100px;' src='/static/images/load.gif'>" +
+            "    <p>" + content + "</p >" +
+            "    </div>" +
+            "    </div>";
+        var logo=$(str);
         $("body").append(logo);
     },
     RemoveLogo: function(){

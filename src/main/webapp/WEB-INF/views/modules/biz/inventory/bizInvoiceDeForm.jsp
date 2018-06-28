@@ -433,15 +433,13 @@
 						<c:set var="flag" value="true"></c:set>
 						<c:forEach items="${orderDetailList}" var="orderDetail">
 							<tr>
-								<%--<c:if test="${flag}">--%>
-									<td rowspan=""><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderDetail.orderHeader.id}&orderDetails=details">${orderDetail.orderHeader.orderNum}</a></td>
-									<td rowspan="">${orderDetail.cust.name}</td>
-									<td rowspan="">${fns:getDictLabel(orderDetail.orderHeader.bizStatus,"biz_order_status",'' )}</td>
-								<%--</c:if>--%>
-									<td>${orderDetail.skuInfo.name}</td>
-									<td>${orderDetail.skuInfo.itemNo}</td>
-									<td>${orderDetail.ordQty}</td>
-									<td>${orderDetail.sentQty}</td>
+                                <td rowspan=""><a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderDetail.orderHeader.id}&orderDetails=details">${orderDetail.orderHeader.orderNum}</a></td>
+                                <td rowspan="">${orderDetail.cust.name}</td>
+                                <td rowspan="">${fns:getDictLabel(orderDetail.orderHeader.bizStatus,"biz_order_status",'' )}</td>
+                                <td>${orderDetail.skuInfo.name}</td>
+                                <td>${orderDetail.skuInfo.itemNo}</td>
+                                <td>${orderDetail.ordQty}</td>
+                                <td>${orderDetail.sentQty}</td>
 							</tr>
 							<c:if test="${fn:length(orderDetailList)>1}">
 							<c:set var="flag" value="false"></c:set>
@@ -471,7 +469,6 @@
 		<input type="hidden" id="skuItemNoCopy" name="itemNo" value="${bizOrderHeader.itemNo}"/>
 		<input type="hidden" id="skuCodeCopy" name="partNo" value="${bizOrderHeader.partNo}"/>
 		<input type="hidden" id="nameCopy" name="name" value="${bizOrderHeader.name}"/>
-
 	</form:form>
 </body>
 </html>
