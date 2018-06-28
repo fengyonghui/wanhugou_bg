@@ -671,7 +671,7 @@ public class BizOrderHeaderController extends BaseController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             List<BizOrderHeader> pageList = null;
-            if (cendExportbs!=null && "cend_listPage".equals(cendExportbs)) {
+            if (cendExportbs != null && "cend_listPage".equals(cendExportbs)) {
                 //C端导出
                 bizOrderHeader.setDataStatus("filter");
                 Page<BizOrderHeader> bizOrderHeaderPage = bizOrderHeaderService.cendfindPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
@@ -799,7 +799,7 @@ public class BizOrderHeaderController extends BaseController {
                     if (order.getTotalBuyPrice() != null) {
                         buy = order.getTotalBuyPrice();
                     }
-                    rowData.add(order.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())?"0.00":String.valueOf(df.format(total + exp + fre - buy)));
+                    rowData.add(order.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState()) ? "0.00" : String.valueOf(df.format(total + exp + fre - buy)));
                     Dict dictInv = new Dict();
                     dictInv.setDescription("发票状态");
                     dictInv.setType("biz_order_invStatus");
@@ -828,7 +828,7 @@ public class BizOrderHeaderController extends BaseController {
                 }
                 if (CollectionUtils.isNotEmpty(payList)) {
 
-                    for(BizPayRecord p:payList) {
+                    for (BizPayRecord p : payList) {
                         Double douSum = 0.0;
                         if (CollectionUtils.isNotEmpty(list)) {
                             for (BizOrderDetail d : list) {
@@ -934,7 +934,7 @@ public class BizOrderHeaderController extends BaseController {
                         if (order.getTotalBuyPrice() != null) {
                             buy = order.getTotalBuyPrice();
                         }
-                        rowData.add(order.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())?"0.00":String.valueOf(df.format(total + exp + Fre - buy)));
+                        rowData.add(order.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState()) ? "0.00" : String.valueOf(df.format(total + exp + Fre - buy)));
                         Dict dictInv = new Dict();
                         dictInv.setDescription("发票状态");
                         dictInv.setType("biz_order_invStatus");
@@ -977,7 +977,7 @@ public class BizOrderHeaderController extends BaseController {
                     }
                 }
             }
-            String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心","所属客户专员", "商品总价", "商品工厂总价", "调整金额", "运费",
+            String[] headers = {"订单编号", "订单类型", "经销店名称/电话", "所属采购中心", "所属客户专员", "商品总价", "商品工厂总价", "调整金额", "运费",
                     "应付金额", "已收货款", "尾款信息", "服务费", "发票状态", "业务状态", "创建时间", "支付类型名称", "支付编号", "业务流水号", "支付账号", "交易类型名称", "支付金额", "交易时间"};
             String[] details = {"订单编号", "商品名称", "商品编码", "供应商", "商品单价", "商品工厂价", "采购数量", "商品总价"};
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
@@ -1096,7 +1096,7 @@ public class BizOrderHeaderController extends BaseController {
 
         boolean allActivityShlef = true;
         BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
-        if (orderHeader != null && orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())
+        if (orderHeader != null && BizOrderTypeEnum.PHOTO_ORDER.getState().equals(orderHeader.getOrderType())
                 && totalExp.compareTo(totalDetail.multiply(photoOrderRatio)) > 0) {
             return "photoOrder";
         }

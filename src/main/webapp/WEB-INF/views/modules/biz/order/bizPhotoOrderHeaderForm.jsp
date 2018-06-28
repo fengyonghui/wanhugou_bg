@@ -53,6 +53,10 @@
     <script type="text/javascript">
         $(document).ready(function() {
             //$("#name").focus();
+            var bizStatus = $("#bizStatus").val();
+            if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
+                $("#totalExp").attr("disabled","disabled");
+            }
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if($("#address").val()==''){
@@ -423,6 +427,7 @@
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
+    <input type="hidden" id="orderType" value="${orderType}"/>
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -466,18 +471,16 @@
             <input name="totalDetail" value="${entity.totalDetail}" htmlEscape="false" type="hidden"/>
         </div>
     </div>
-    <c:if test="${entity.totalDetail != entity.receiveTotal}">
-        <div class="control-group">
-            <label class="control-label">调整金额：</label>
-            <div class="controls">
-                <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
-                <span class="help-inline"><font color="red">*</font></span>
-                <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
-                    <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
-                </c:if>
-            </div>
+    <div class="control-group">
+        <label class="control-label">调整金额：</label>
+        <div class="controls">
+            <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
+            <span class="help-inline"><font color="red">*</font></span>
+            <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
+                <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
+            </c:if>
         </div>
-    </c:if>
+    </div>
     <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">

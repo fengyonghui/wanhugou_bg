@@ -55,6 +55,10 @@
     <script type="text/javascript">
         $(document).ready(function() {
             //$("#name").focus();
+            var bizStatus = $("#bizStatus").val();
+            if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
+                $("#totalExp").attr("disabled","disabled");
+            }
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if($("#address").val()==''){
@@ -80,7 +84,6 @@
                         alert("退货凭证图片序号不能为空");
                         return false;
                     }
-
                     var orderId = $("#id").val();
                     var totalExp = $("#totalExp").val();
                     var totalDetail = $("#totalDetail").val();
@@ -582,7 +585,7 @@
             <span class="help-inline">自动计算</span>
         </div>
     </div>
-    <c:if test="${entity.totalDetail != entity.receiveTotal}">
+    <%--<c:if test="${entity.totalDetail != entity.receiveTotal}">--%>
         <div class="control-group">
             <label class="control-label">调整金额：</label>
             <div class="controls">
@@ -593,7 +596,7 @@
                 </c:if>
             </div>
         </div>
-    </c:if>
+    <%--</c:if>--%>
     <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">
