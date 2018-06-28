@@ -1091,8 +1091,16 @@ public class BizOrderHeaderController extends BaseController {
 
         SystemConfig systemConfig = ConfigGeneral.SYSTEM_CONFIG.get();
 
+        BigDecimal photoOrderRatio = systemConfig.getPhotoOrderRatio();
+
+
         boolean allActivityShlef = true;
         BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeader.getId());
+        if (orderHeader != null && orderHeader.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState())
+                && totalExp.compareTo(totalDetail.multiply(photoOrderRatio)) > 0) {
+            return "photoOrder";
+        }
+
         BizOrderDetail orderDetail = new BizOrderDetail();
         orderDetail.setOrderHeader(orderHeader);
         List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(orderDetail);
