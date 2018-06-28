@@ -799,7 +799,7 @@ public class BizOrderHeaderController extends BaseController {
                     if (order.getTotalBuyPrice() != null) {
                         buy = order.getTotalBuyPrice();
                     }
-                    rowData.add(order.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState()) ? "0.00" : String.valueOf(df.format(total + exp + fre - buy)));
+                    rowData.add(BizOrderTypeEnum.PHOTO_ORDER.getState().equals(order.getOrderType()) ? "0.00" : String.valueOf(df.format(total + exp + fre - buy)));
                     Dict dictInv = new Dict();
                     dictInv.setDescription("发票状态");
                     dictInv.setType("biz_order_invStatus");
@@ -934,7 +934,7 @@ public class BizOrderHeaderController extends BaseController {
                         if (order.getTotalBuyPrice() != null) {
                             buy = order.getTotalBuyPrice();
                         }
-                        rowData.add(order.getOrderType().equals(BizOrderTypeEnum.PHOTO_ORDER.getState()) ? "0.00" : String.valueOf(df.format(total + exp + Fre - buy)));
+                        rowData.add(BizOrderTypeEnum.PHOTO_ORDER.getState().equals(order.getOrderType()) ? "0.00" : String.valueOf(df.format(total + exp + Fre - buy)));
                         Dict dictInv = new Dict();
                         dictInv.setDescription("发票状态");
                         dictInv.setType("biz_order_invStatus");
