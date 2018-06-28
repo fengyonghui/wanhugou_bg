@@ -5,7 +5,7 @@
 <head>
 	<title>备货清单管理</title>
 	<%--<meta name="decorator"/>--%>
-	<meta http-equiv="refresh" content="5" data-url="#"/>
+	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
             $('#select_all').live('click',function(){
@@ -50,6 +50,14 @@
 			$("#searchForm").submit();
         	return false;
         }
+	</script>
+
+	<script language="JavaScript">
+        function myrefresh()
+        {
+            window.location.reload();
+        }
+        setTimeout('myrefresh()',180000); //指定3分钟刷新一次
 	</script>
 </head>
 <body>

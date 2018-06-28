@@ -4,4 +4,12 @@
         <name>OFFLINE_PAY_RECORD_EXCEPTION</name>
         <number>18612378866,18515060437</number>
     </phone>
+    <phone>
+        <name>SEND_GOODS_RECORD_EXCEPTION</name>
+        <number>17703313909</number>
+    </phone>
+    <phone>
+        <name>DELIVER_EXCEPTION</name>
+        <number>17703313909</number>
+    </phone>
 </PhoneConfig>

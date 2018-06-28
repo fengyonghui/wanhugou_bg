@@ -456,6 +456,7 @@ public class BizPoHeaderController extends BaseController {
         bizOrderHeaderService.save(bizOrderHeader);
 
         bizPoHeaderService.sendSmsForDeliver(bizOrderHeader.getOrderNum(),"");
+        bizPoHeaderService.sendMailForDeliver(bizOrderHeader.getOrderNum(),"");
 
         return "操作成功";
     }

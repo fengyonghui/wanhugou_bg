@@ -318,8 +318,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     }
                 }
             }
-            //发货短信提醒
-            sendSmsForDeliver(bizOrderHeader.getOrderNum(),"");
+            if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
+                //发货短信提醒
+                sendSmsForDeliver(bizOrderHeader.getOrderNum(), "");
+                //发货邮件提醒
+                sendMailForDeliver(bizOrderHeader.getOrderNum(), "");
+            }
         }
         for (Map.Entry<Integer, List<BizPoOrderReq>> entry : collectReq.entrySet()) {
             BizRequestHeader bizRequestHeader = bizRequestHeaderService.get(entry.getKey());
@@ -354,8 +358,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             if (bizStatus == null || !bizStatus.equals(bizRequestHeader.getBizStatus())) {
                 bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizRequestHeader.getId());
             }
-            //发货短信提醒
-            sendSmsForDeliver("",bizRequestHeader.getReqNo());
+            if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
+                //发货短信提醒
+                sendSmsForDeliver("", bizRequestHeader.getReqNo());
+                //发货邮件提醒
+                sendMailForDeliver("", bizRequestHeader.getReqNo());
+            }
         }
 
     }
@@ -851,26 +859,79 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         }
     }
 
+    /**
+     * 发货短信提醒
+     * @param orderNum
+     * @param reqNum
+     */
     public void sendSmsForDeliver(String orderNum,String reqNum) {
         try {
             List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.SHIPPER.getState());
-            if (CollectionUtils.isNotEmpty(userList)) {
-                StringBuilder phones = new StringBuilder();
-                for (User user:userList) {
+            if (CollectionUtils.isEmpty(userList)) {
+                return;
+            }
+            StringBuilder phones = new StringBuilder();
+            for (User user:userList) {
+                if (!user.getMobile().isEmpty()) {
                     phones.append(user.getMobile()).append(",");
                 }
-                if (StringUtils.isNotBlank(orderNum)) {
+            }
+            if (StringUtils.isNotBlank(orderNum)) {
 //                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(),phones.toString(),ImmutableMap.of("order","订单"));
-                    AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
-                }
-                if (StringUtils.isNotBlank(reqNum)) {
+                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
+            }
+            if (StringUtils.isNotBlank(reqNum)) {
 //                    AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(),phones.toString(),ImmutableMap.of("order","备货单"));
-                    AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
-                }
+                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
+            }
+
+        } catch (Exception e) {
+            if (StringUtils.isNotBlank(orderNum)) {
+                logger.error("[Exception]发货的短信提醒异常[orderNum:{}]", orderNum, e);
+            }
+            if (StringUtils.isNotBlank(reqNum)) {
+                logger.error("[Exception]发货的短信提醒异常[reqNum:{}]", reqNum, e);
+            }
+        }
+    }
+
+    /**
+     * 发货邮件提醒
+     * @param orderNum
+     * @param reqNum
+     */
+    public void sendMailForDeliver(String orderNum,String reqNum) {
+        try {
+            List<User> userList = systemService.findUserByRoleEnName(RoleEnNameEnum.SHIPPER.getState());
+            if (CollectionUtils.isEmpty(userList)) {
+                return;
+            }
+            StringBuilder emails = new StringBuilder();
+//        for (User user:userList) {
+//            if (!user.getEmail().isEmpty()) {
+//                emails.append(user.getEmail()).append(",");
+//            }
+//        }
+            emails.append("zhangtengfei_cn@163.com,").append("785461218@qq.com");
+            if (StringUtils.isNotBlank(orderNum) && StringUtils.isNotBlank(emails.toString())) {
+                AliyunMailClient.getInstance().sendTxt(
+                        emails.toString(),
+                        "又到了发货时间",
+                        "您有新的订单需要发货，请尽快登陆后台系统处理，订单号："+orderNum);
+            }
+            if (StringUtils.isNotBlank(reqNum) && StringUtils.isNotBlank(emails.toString())) {
+                AliyunMailClient.getInstance().sendTxt(
+                        emails.toString(),
+                        "又到了发货时间",
+                        "您有新的备货单需要发货，请尽快登陆后台系统处理，备货单号："+reqNum);
             }
         } catch (Exception e) {
-            logger.error("[Exception]发货的短信提醒异常[orderNum:{}]",orderNum ,e);
-            logger.error("[Exception]发货的短信提醒异常[reqNum:{}]",reqNum ,e);
+            if (StringUtils.isNotBlank(orderNum)) {
+                logger.error("[Exception]发货的邮件提醒异常[orderNum:{}]", orderNum, e);
+            }
+            if (StringUtils.isNotBlank(reqNum)) {
+                logger.error("[Exception]发货的邮件提醒异常[reqNum:{}]", reqNum, e);
+            }
         }
     }
 }
