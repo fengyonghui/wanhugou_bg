@@ -278,7 +278,7 @@ usingNamespace("Base")["Mask"] =  {
             "    <div class=\"loading\" style='position:absolute; left:45%; top:40%;padding:2px; z-index:20001; height:auto;'>" +
             "    <div class=\"loGo\" style='background:#ededed;color:#444;font:bold 20px tahoma,arial,helvetica;padding:10px;margin:0;height:auto;'>" +
             "    <img style='height: auto;max-width: 100%;vertical-align: middle;border: 0; width: 100px;' src='/static/images/load.gif'>" +
-            "    <p>正在加载</p >" +
+            "    <p>" + content + "</p >" +
             "    </div>" +
             "    </div>";
         var logo=$(str);
