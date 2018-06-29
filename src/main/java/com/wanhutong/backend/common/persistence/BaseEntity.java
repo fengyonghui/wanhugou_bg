@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,6 +38,8 @@ public abstract class BaseEntity<T> implements Serializable {
 	/**
 	 * 当前用户
 	 */
+	@JsonIgnore
+	@JsonIgnoreProperties
 	protected User currentUser;
 	
 	/**
@@ -75,6 +78,7 @@ public abstract class BaseEntity<T> implements Serializable {
 	
 	@JsonIgnore
 	@XmlTransient
+	@JsonIgnoreProperties
 	public User getCurrentUser() {
 		if(currentUser == null){
 			currentUser = UserUtils.getUser();

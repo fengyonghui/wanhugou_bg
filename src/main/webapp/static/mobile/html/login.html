@@ -163,20 +163,5 @@
 <script src="../js/component/zepto.min.js"></script>
 <script src="../js/component/GHutils.js"></script>
 <script src="../js/custom/usermgmt-login.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        var sessionid = '${not empty fns:getPrincipal() ? fns:getPrincipal().sessionid : ""}';
-
-        if (sessionid != '') {
-            var targetHash = location.hash;
-            if (targetHash == '#login_section') {
-                //J.showToast('你已经登录！', 'success');
-                J.Router.goTo('#index_section?index');
-            }
-        } else {
-            $('#login_article').addClass('active');
-        }
-    });
-</script>
 </body>
 </html>

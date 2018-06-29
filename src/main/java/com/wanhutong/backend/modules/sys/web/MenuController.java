@@ -6,8 +6,12 @@ package com.wanhutong.backend.modules.sys.web;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.ImmutableMap;
+import com.wanhutong.backend.common.utils.JsonUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,6 +60,37 @@ public class MenuController extends BaseController {
 		Menu.sortList(list, sourcelist, Menu.getRootId(), true);
         model.addAttribute("list", list);
 		return "modules/sys/menuList";
+	}
+
+	/**
+	 * 移动端菜单列表接口
+	 * @param model
+	 * @param parentId
+	 * @return
+	 */
+	@RequiresPermissions("sys:menu:view")
+	@RequestMapping(value = {"listData"})
+	@ResponseBody
+	public String listData(HttpServletRequest request, @RequestParam(value = "parentId", required = false, defaultValue = "1")Integer parentId) {
+		List<Menu> list = Lists.newArrayList();
+		List<Menu> sourcelist = systemService.findAllMenu();
+		if (parentId != null) {
+			sourcelist.removeIf(o -> !o.getParentId().equals(parentId));
+		}
+		Menu.sortList(list, sourcelist, Menu.getRootId(), true);
+		List<Map<String, Object>> result = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			list.forEach(o -> {
+				result.add(ImmutableMap.of(
+						"name", o.getName(),
+						"id", o.getId(),
+						"isShow", o.getIsShow(),
+						"url", o.getHref() == null ? StringUtils.EMPTY : o.getHref(),
+						"", o.getTarget()
+				));
+			});
+		}
+		return JsonUtil.generateData(result, request.getParameter("callback"));
 	}
 
 	@RequiresPermissions("sys:menu:view")
