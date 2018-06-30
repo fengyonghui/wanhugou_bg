@@ -31,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PaymentOrderProcessConfig;
+import com.wanhutong.backend.modules.config.parse.PhoneConfig;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.*;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
@@ -892,6 +893,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             if (StringUtils.isNotBlank(reqNum)) {
                 logger.error("[Exception]发货的短信提醒异常[reqNum:{}]", reqNum, e);
             }
+            PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.DELIVER_EXCEPTION.name());
+            AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone.getNumber(),ImmutableMap.of("type","Exception","service","发货短信提醒"));
+            EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
+            AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(),email.getSubject(),
+                    String.format(email.getBody(),
+                                  "BizPoheaderService:882,886",
+                                  e.toString(),
+                                  "发货短信提醒异常",
+                                  LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
         }
     }
 
@@ -932,6 +942,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             if (StringUtils.isNotBlank(reqNum)) {
                 logger.error("[Exception]发货的邮件提醒异常[reqNum:{}]", reqNum, e);
             }
+            PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.DELIVER_EXCEPTION.name());
+            AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone.getNumber(),ImmutableMap.of("type","Exception","service","发货邮件提醒"));
+            EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
+            AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(),email.getSubject(),
+                    String.format(email.getBody(),
+                            "BizPoheaderService:927,933",
+                            e.toString(),
+                            "发货邮件提醒异常",
+                            LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
         }
     }
 }
