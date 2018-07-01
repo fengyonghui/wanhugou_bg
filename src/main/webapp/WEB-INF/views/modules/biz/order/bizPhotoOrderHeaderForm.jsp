@@ -53,12 +53,32 @@
     <script type="text/javascript">
         $(document).ready(function() {
             //$("#name").focus();
+            var bizStatus = $("#bizStatus").val();
+            if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
+                $("#totalExp").attr("disabled","disabled");
+            }
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if($("#address").val()==''){
                         $("#addError").css("display","inline-block")
                         return false;
                     }
+                    var orderId = $("#id").val();
+                    var totalExp = $("#totalExp").val();
+                    var totalDetail = $("#totalDetail").val();
+                    $.ajax({
+                        type:"post",
+                        url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
+                        data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+                        success:function (data) {
+                            if (data == "photoOrder") {
+                                alert("拍照订单优惠后，应付金额不能低于原价的90%，请修改调整金额");
+                            } else if (data == "ok") {
+                                loading('正在提交，请稍等...');
+                                form.submit();
+                            }
+                        }
+                    });
                 },
                 errorContainer: "#messageBox",
                 errorPlacement: function(error, element) {
@@ -238,18 +258,31 @@
     <script type="text/javascript">
         function updateMoney() {
             if(confirm("确定修改价钱吗？")){
-                var totalExp=$("#totalExp").val();
+                var orderId = $("#id").val();
+                var totalExp = $("#totalExp").val();
+                var totalDetail = $("#totalDetail").val();
                 $.ajax({
                     type:"post",
-                    url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
-                    data:{orderId:$("#id").val(),money:totalExp},
-                    <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
-                    success:function(flag){
-                        if(flag=="ok"){
-                            alert(" 修改成功 ");
+                    url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
+                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+                    success:function (data) {
+                        if (data == "photoOrder") {
+                            alert("拍照订单优惠后，应付金额不能低于原价的90%，请修改调整金额");
+                        } else if (data == "ok") {
+                            $.ajax({
+                                type:"post",
+                                url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
+                                data:{orderId:$("#id").val(),money:totalExp},
+                                <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
+                                success:function(flag){
+                                    if(flag=="ok"){
+                                        alert(" 修改成功 ");
 
-                        }else{
-                            alert(" 修改失败 ");
+                                    }else{
+                                        alert(" 修改失败 ");
+                                    }
+                                }
+                            });
                         }
                     }
                 });
@@ -394,6 +427,7 @@
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
+    <input type="hidden" id="orderType" value="${orderType}"/>
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -435,6 +469,16 @@
         <div class="controls">
             <form:input path="totalDetail" htmlEscape="false" placeholder="0.0" readOnly="true" class="input-xlarge"/>
             <input name="totalDetail" value="${entity.totalDetail}" htmlEscape="false" type="hidden"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">调整金额：</label>
+        <div class="controls">
+            <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
+            <span class="help-inline"><font color="red">*</font></span>
+            <c:if test="${bizOrderHeader.flag=='check_pending'}">
+                <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
+            </c:if>
         </div>
     </div>
     <div class="control-group">
@@ -873,11 +917,11 @@
         </c:when>
         <c:otherwise>
             <div class="form-actions">
-                <%--<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">--%>
-                    <%--<shiro:hasPermission name="biz:order:bizOrderHeader:edit">--%>
-                        <%--<input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;--%>
-                    <%--</shiro:hasPermission>--%>
-                <%--</c:if>--%>
+                <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
+                    <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+                        <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
+                    </shiro:hasPermission>
+                </c:if>
                 <c:if test="${empty entity.orderNoEditable && bizOrderHeader.flag != 'check_pending'}">
                     <c:if test="${bizOrderHeader.id!=null}">
                         <input onclick="window.print();" type="button" class="btn btn-primary" value="打印订单" style="background:#F78181;"/>
