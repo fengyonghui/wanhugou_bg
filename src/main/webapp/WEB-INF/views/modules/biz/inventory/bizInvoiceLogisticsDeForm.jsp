@@ -47,7 +47,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<c:forEach items="${orderDetailList}" var="bizOrderDetail">
+			<c:forEach items="${logisticsDetailList}" var="bizOrderDetail">
 				<tr>
 					<td>
 						<a href="${ctx}/biz/inventory/bizInvoice/invoiceOrderDetail?id=${bizOrderDetail.orderHeader.sendId}&source=xq">${bizOrderDetail.orderHeader.sendNum}</a>

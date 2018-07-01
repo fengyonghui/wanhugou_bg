@@ -43,14 +43,23 @@
 	<select id="findList" resultType="BizInvoice">
 		SELECT 
 			<include refid="bizInvoiceColumns"/>
+			<if test="targetPage != null and targetPage =='logistics'">
+				, sum(a.freight) AS logisticsFreight
+				, sum(a.operation) as logisticsOperation
+				, sum(a.value_price) as logisticsValuePrice
+			</if>
 		FROM biz_invoice a
 		<include refid="bizInvoiceJoins"/>
-		LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id
-		<if test="ship != null and ship == 0">
-			LEFT JOIN biz_order_header bo ON bo.id = bi.order_header_id
+		<if test="targetPage == null or targetPage ==''">
+			LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id
 		</if>
-		<if test="ship != null and ship == 1">
-			LEFT JOIN biz_request_header br ON br.id = bi.request_header_id
+		<if test="targetPage == null or targetPage ==''">
+			<if test="ship != null and ship == 0 ">
+				LEFT JOIN biz_order_header bo ON bo.id = bi.order_header_id
+			</if>
+			<if test="ship != null and ship == 1">
+				LEFT JOIN biz_request_header br ON br.id = bi.request_header_id
+			</if>
 		</if>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -267,7 +276,7 @@
 		WHERE id = #{id}
 	</update>
 
-	<select id="findBizOrderHeader" resultType="BizOrderDetail">
+	<select id="findLogisticsDetail" resultType="BizOrderDetail">
 		SELECT
 			oh.order_num AS "orderHeader.orderNum",
 			od.sku_name AS "skuName",

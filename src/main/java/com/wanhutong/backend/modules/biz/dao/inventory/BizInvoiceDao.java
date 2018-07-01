@@ -21,5 +21,5 @@ public interface BizInvoiceDao extends CrudDao<BizInvoice> {
     /**
      * 客户专员的 统计
      * */
-    List<BizOrderDetail> findBizOrderHeader(BizInvoice bizInvoice);
+    List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice);
 }
