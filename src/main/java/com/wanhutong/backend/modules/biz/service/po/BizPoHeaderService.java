@@ -893,7 +893,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             if (StringUtils.isNotBlank(reqNum)) {
                 logger.error("[Exception]发货的短信提醒异常[reqNum:{}]", reqNum, e);
             }
-            PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.DELIVER_EXCEPTION.name());
+            PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.OFFLINE_PAY_RECORD_EXCEPTION.name());
             AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone.getNumber(),ImmutableMap.of("type","Exception","service","发货短信提醒"));
             EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
             AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(),email.getSubject(),
@@ -942,7 +942,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             if (StringUtils.isNotBlank(reqNum)) {
                 logger.error("[Exception]发货的邮件提醒异常[reqNum:{}]", reqNum, e);
             }
-            PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.DELIVER_EXCEPTION.name());
+            PhoneConfig.Phone phone = PhoneConfig.getPhone(PhoneConfig.PhoneType.OFFLINE_PAY_RECORD_EXCEPTION.name());
             AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.EXCEPTION_WARN.getCode(), phone.getNumber(),ImmutableMap.of("type","Exception","service","发货邮件提醒"));
             EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.COMMON_EXCEPTION.name());
             AliyunMailClient.getInstance().sendTxt(email.getReceiveAddress(),email.getSubject(),
