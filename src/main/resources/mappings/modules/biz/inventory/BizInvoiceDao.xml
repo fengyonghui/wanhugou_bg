@@ -290,6 +290,7 @@
 			si.item_no AS "skuInfo.itemNo",
 			so.name AS "so.name",
 			oh.id AS "orderHeader.id",
+			oh.biz_status AS "orderHeader.bizStatus",
 			bi.id AS "orderHeader.sendId",
 			bi.send_number AS "orderHeader.sendNum"
 		FROM biz_order_header oh

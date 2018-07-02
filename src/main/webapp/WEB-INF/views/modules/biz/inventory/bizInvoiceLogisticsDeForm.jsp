@@ -38,11 +38,13 @@
 				<%--<th>供应商电话</th>--%>
 				<th>商品单价</th>
 				<th>采购数量</th>
-				<th>总 额</th>
-				<th>已发货数量</th>
-				<c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
-					<th>发货方</th>
+				<c:if test="${bizOrderDetail.unitPrice !=null && bizOrderDetail.ordQty !=null}">
+					<th>总 额</th>
 				</c:if>
+				<th>已发货数量</th>
+				<%--<c:if test="${bizOrderDetail.orderHeader.bizStatus>=15 && bizOrderDetail.orderHeader.bizStatus!=45}">
+					<th>发货方</th>
+				</c:if>--%>
 				<th>创建时间</th>
 			</tr>
 			</thead>
@@ -90,11 +92,11 @@
 					<td>
 							${bizOrderDetail.sentQty}
 					</td>
-					<c:if test="${bizOrderHeader.bizStatus>=15 && bizOrderHeader.bizStatus!=45}">
+					<%--<c:if test="${bizOrderDetail.orderHeader.bizStatus>=15 && bizOrderDetail.orderHeader.bizStatus!=45}">
 						<td>
 								${bizOrderDetail.suplyis.name}
 						</td>
-					</c:if>
+					</c:if>--%>
 					<td>
 						<fmt:formatDate value="${bizOrderDetail.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 					</td>

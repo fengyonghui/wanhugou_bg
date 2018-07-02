@@ -91,7 +91,7 @@
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<input id="ship" name="ship" type="hidden" value="${bizInvoice.ship}"/>
 		<input id="bizStatus" name="bizStatus" type="hidden" value="${bizInvoice.bizStatus}"/>
-		<input id="targetPage" name="targetPage" type="hidden" value="${bizInvoice.targetPage}"/>
+		<%--<input id="targetPage" name="targetPage" type="hidden" value="${bizInvoice.targetPage}"/>--%>
 		<ul class="ul-form">
 			<li><label>发货单号：</label>
 				<form:input path="sendNumber" htmlEscape="false" maxlength="30" class="input-medium"/>
