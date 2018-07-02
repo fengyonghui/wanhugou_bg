@@ -562,8 +562,8 @@ public class BizInvoiceController extends BaseController {
     @RequiresPermissions("biz:inventory:bizInvoice:view")
     @RequestMapping(value = "logisticsOrderDetail")
     public String logisticsOrderDetail(BizInvoice bizInvoice, Model model) {
-        List<BizOrderDetail> orderDetailList = bizInvoiceService.findBizOrderHeader(bizInvoice);
-        model.addAttribute("orderDetailList", orderDetailList);
+        List<BizOrderDetail> logisticsDetailList = bizInvoiceService.findLogisticsDetail(bizInvoice);
+        model.addAttribute("logisticsDetailList", logisticsDetailList);
         return "modules/biz/inventory/bizInvoiceLogisticsDeForm";
     }
 }

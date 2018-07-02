@@ -606,8 +606,8 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
 	}
 
     @Transactional(readOnly = false)
-    public List<BizOrderDetail> findBizOrderHeader(BizInvoice bizInvoice) {
-        return bizInvoiceDao.findBizOrderHeader(bizInvoice);
+    public List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice) {
+        return bizInvoiceDao.findLogisticsDetail(bizInvoice);
     }
 	
 }
