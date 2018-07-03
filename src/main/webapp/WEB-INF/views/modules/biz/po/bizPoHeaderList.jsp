@@ -39,16 +39,16 @@
         <input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
         <ul class="ul-form">
 			<li><label>采购单号</label>
-				<form:input path="orderNum" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 			<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>
-				<form:input path="num"  htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="num"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 			<li><span style="margin-left: 10px"><label>起始金额</label></span>
-				<form:input path="startPrice"  htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="startPrice"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 			<li><span style="margin-left: 10px"><label>结束金额</label></span>
-				<form:input path="endPrice"  htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="endPrice"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 			<li><label>供应商</label>
 				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${bizPoHeader.vendOffice.id}" labelName="vendOffice.name"
