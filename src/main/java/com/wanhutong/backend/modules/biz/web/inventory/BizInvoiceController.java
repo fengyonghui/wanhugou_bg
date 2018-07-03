@@ -106,6 +106,7 @@ public class BizInvoiceController extends BaseController {
 //	    bizInvoice.setShip(Integer.parseInt(ship));
         Page<BizInvoice> page = bizInvoiceService.findPage(new Page<BizInvoice>(request, response), bizInvoice);
         model.addAttribute("page", page);
+        model.addAttribute("targetPage", bizInvoice.getTargetPage() == null ? "" : bizInvoice.getTargetPage());
 //		model.addAttribute("ship",ship);
 //		model.addAttribute("bizStatu",bizStatu);
         String targetPage = bizInvoice.getTargetPage();
