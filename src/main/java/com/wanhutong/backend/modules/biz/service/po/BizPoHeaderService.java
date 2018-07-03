@@ -535,8 +535,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         commonProcessService.save(nextProcessEntity);
         this.updateProcessId(id, nextProcessEntity.getId());
 
+        BizPoHeader bizPoHeader = this.get(id);
         if (nextProcess.getCode() == purchaseOrderProcessConfig.getPayProcessId()) {
-            BizPoHeader bizPoHeader = this.get(id);
             Byte bizStatus = bizPoHeader.getBizStatus();
             this.updateBizStatus(id, BizPoHeader.BizStatus.PROCESS_COMPLETE);
             if (bizStatus == null || !bizStatus.equals(bizPoHeader.getBizStatus())) {
@@ -557,9 +557,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
             if (StringUtils.isNotBlank(phone.toString())) {
                 AliyunSmsClient.getInstance().sendSMS(
-                        SmsTemplateCode.PENDING_AUDIT.getCode(),
+                        SmsTemplateCode.PENDING_AUDIT_1.getCode(),
                         phone.toString(),
-                        ImmutableMap.of("order","采购单"));
+                        ImmutableMap.of("order","采购单", "orderNum", bizPoHeader.getOrderNum()));
             }
         } catch (Exception e) {
             LOGGER.error("[exception]PO审批短信提醒发送异常[poHeaderId:{}]", id, e);
@@ -604,6 +604,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public String auditPay(int id, String currentType, int auditType, String description, BigDecimal money) {
         BizPoPaymentOrder bizPoPaymentOrder = bizPoPaymentOrderService.get(id);
+        BizPoHeader bizPoHeader = this.get(bizPoPaymentOrder.getPoHeaderId());
         CommonProcessEntity cureentProcessEntity = bizPoPaymentOrder.getCommonProcess();
         if (cureentProcessEntity == null) {
             return "操作失败,当前订单无审核状态!";
@@ -694,9 +695,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
                 if (StringUtils.isNotBlank(phone.toString())) {
                     AliyunSmsClient.getInstance().sendSMS(
-                            SmsTemplateCode.PENDING_AUDIT.getCode(),
+                            SmsTemplateCode.PENDING_AUDIT_1.getCode(),
                             phone.toString(),
-                            ImmutableMap.of("order","采购单支付"));
+                            ImmutableMap.of("order","采购单支付", "orderNum", bizPoHeader.getOrderNum()));
                 }
             }
         } catch (Exception e) {

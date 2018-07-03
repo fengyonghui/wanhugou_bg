@@ -262,11 +262,12 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 					phone.append(u.getMobile()).append(",");
 				}
 			}
+
 		if (StringUtils.isNotBlank(phone.toString())) {
 			AliyunSmsClient.getInstance().sendSMS(
-					SmsTemplateCode.PENDING_AUDIT.getCode(),
+					SmsTemplateCode.PENDING_AUDIT_1.getCode(),
 					phone.toString(),
-					ImmutableMap.of("order","备货清单"));
+					ImmutableMap.of("order","备货清单", "orderNum", bizRequestHeader.getReqNo()));
 		}
 
 
@@ -478,9 +479,9 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 		}
 		if (StringUtils.isNotBlank(phone.toString())) {
 			AliyunSmsClient.getInstance().sendSMS(
-					SmsTemplateCode.PENDING_AUDIT.getCode(),
+					SmsTemplateCode.PENDING_AUDIT_1.getCode(),
 					phone.toString(),
-					ImmutableMap.of("order","备货清单"));
+					ImmutableMap.of("order","备货清单", "orderNum", bizRequestHeader.getReqNo()));
 		}
 
 
