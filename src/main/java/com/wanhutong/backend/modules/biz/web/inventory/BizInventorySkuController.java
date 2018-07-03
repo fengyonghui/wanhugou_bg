@@ -391,28 +391,22 @@ public class BizInventorySkuController extends BaseController {
                 }
             }
             List<BizInventorySku> invList;
-            if (user.isAdmin()) {
-                invList = bizInventorySkuService.findList(bizInventorySku);
-            } else {
+            if (!user.isAdmin()) {
                 if (flag) {
                     Office company = systemService.getUser(user.getId()).getCompany();
                     //根据采购中心取出仓库
                     BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
                     bizInventoryInfo.setCustomer(company);
                     bizInventorySku.setInvInfo(bizInventoryInfo);
-                } else {
-                    if (oflag) {
-
-                    } else {
-                        bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
-                    }
+                } else if (!oflag) {
+                    bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
                 }
-                invList = bizInventorySkuService.findList(bizInventorySku);
             }
+            invList = bizInventorySkuService.findList(bizInventorySku);
             //1库存盘点信息
             List<List<String>> data = new ArrayList<List<String>>();
             invList.forEach(tory -> {
-                List<String> rowData = new ArrayList();
+                List<String> rowData = new ArrayList<>();
                 Dict dict = new Dict();
                 dict.setDescription("库存中SKU类型");
                 dict.setType("inv_type");
@@ -476,11 +470,11 @@ public class BizInventorySkuController extends BaseController {
                 //销售订单数量
                 rowData.add(String.valueOf(tory.getStockOrdQty()));
                 //出库量
-                rowData.add(tory.getOutWarehouse()==null?"":String.valueOf(tory.getOutWarehouse()));
+                rowData.add(tory.getOutWarehouse() == null ? "" : String.valueOf(tory.getOutWarehouse()));
                 //入库量
-                rowData.add(tory.getInWarehouse()==null?"":String.valueOf(tory.getInWarehouse()));
+                rowData.add(tory.getInWarehouse() == null ? "" : String.valueOf(tory.getInWarehouse()));
                 //供货量
-                rowData.add(tory.getSendGoodsNum()==null?"":String.valueOf(tory.getSendGoodsNum()));
+                rowData.add(tory.getSendGoodsNum() == null ? "" : String.valueOf(tory.getSendGoodsNum()));
                 //调入数量
                 rowData.add(String.valueOf(tory.getTransInQty()));
                 //调出数量
@@ -495,7 +489,7 @@ public class BizInventorySkuController extends BaseController {
                 rowData.add(String.valueOf(sdf.format(tory.getUpdateDate())));
                 data.add(rowData);
             });
-            String[] toryHeads = {"库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "商品总值", "供应商", "库存数量", "销售订单数量","出库量","入库量","供货量", "调入数量",
+            String[] toryHeads = {"库存类型", "仓库名称", "商品名称", "商品编号", "商品货号", "商品总值", "供应商", "库存数量", "销售订单数量", "出库量", "入库量", "供货量", "调入数量",
                     "调出数量", "创建人", "创建时间", "更新人", "更新时间"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
