@@ -160,6 +160,7 @@
 								<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 							&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
+							&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp)
 							}">
 									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 								</c:if>
