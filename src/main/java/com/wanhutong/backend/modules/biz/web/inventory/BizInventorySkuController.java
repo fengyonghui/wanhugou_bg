@@ -387,6 +387,7 @@ public class BizInventorySkuController extends BaseController {
                 for (Office office : UserUtils.getOfficeList()) {
                     if (OfficeTypeEnum.SUPPLYCENTER.getType().equals(office.getType())) {
                         oflag = true;
+                        break;
                     }
                 }
             }
@@ -398,7 +399,8 @@ public class BizInventorySkuController extends BaseController {
                     BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
                     bizInventoryInfo.setCustomer(company);
                     bizInventorySku.setInvInfo(bizInventoryInfo);
-                } else if (!oflag) {
+                }
+                if (!oflag && !flag) {
                     bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
                 }
             }
