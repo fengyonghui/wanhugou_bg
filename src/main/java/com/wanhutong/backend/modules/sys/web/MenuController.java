@@ -82,11 +82,11 @@ public class MenuController extends BaseController {
 		if (CollectionUtils.isNotEmpty(list)) {
 			list.forEach(o -> {
 				result.add(ImmutableMap.of(
-						"name", o.getName(),
-						"id", o.getId(),
-						"isShow", o.getIsShow(),
+						"name", o.getName()  == null ? StringUtils.EMPTY : o.getName(),
+						"id", o.getId() == null ? StringUtils.EMPTY : o.getId(),
+						"isShow", o.getIsShow() == null ? StringUtils.EMPTY : o.getIsShow() ,
 						"url", o.getHref() == null ? StringUtils.EMPTY : o.getHref(),
-						"", o.getTarget()
+						"target", o.getTarget()  == null ? StringUtils.EMPTY : o.getTarget()
 				));
 			});
 		}
