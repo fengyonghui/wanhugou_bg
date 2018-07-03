@@ -607,4 +607,14 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
         super.delete(bizInvoice);
     }
 
+    /**
+     * 物流单信息详情
+     * @param bizInvoice
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice) {
+        return bizInvoiceDao.findLogisticsDetail(bizInvoice);
+    }
+
 }
