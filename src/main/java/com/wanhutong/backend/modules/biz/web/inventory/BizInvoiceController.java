@@ -339,7 +339,9 @@ public class BizInvoiceController extends BaseController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName =null;
             Boolean pageFlag = false;
-            if (StringUtils.isBlank(bizInvoice.getTargetPage())){
+            String targetPage = request.getParameter("targetPage");
+            bizInvoice.setTargetPage(targetPage);
+            if (StringUtils.isBlank(targetPage)){
                 pageFlag = true;
             }
             if(bizInvoice.getBizStatus()!=null && bizInvoice.getBizStatus().equals(1) && bizInvoice.getShip()!=null && bizInvoice.getShip().equals(1)) {
