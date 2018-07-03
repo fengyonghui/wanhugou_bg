@@ -15,6 +15,10 @@ public enum SmsTemplateCode {
      * 流程待审批
      */
     PENDING_AUDIT("SMS_136389818", "您有新的${order}待审批,请及时登录系统后台处理", "order:%s", "阿里云"),
+    /**
+     * 流程待审批2
+     */
+    PENDING_AUDIT_1("SMS_138068474", "您有新的${order}待审批,请及时登录系统后台处理.单号${orderNum}", "order:%s,orderNum:%s", "阿里云"),
 
     UNKNOWN("0", "未知", "未知", "未知"),;
 
