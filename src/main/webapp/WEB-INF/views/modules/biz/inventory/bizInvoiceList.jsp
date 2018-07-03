@@ -37,50 +37,6 @@
         	return false;
         }
 	</script>
-	<script type="text/javascript">
-        $(function() {
-
-            //点击图片放大
-            $("#img-zoom").click(function(){
-                $('#img-modal').modal("hide");
-            });
-            $("#img-dialog").click(function(){
-                $('#img-modal').modal("hide");
-            });
-            //index-list-content为显示文章内容div的class
-            $("#contentTable img").each(function(i){
-                var src = $(this).attr("src");
-                $(this).click(function () {
-                    $("#img-zoom").attr("src", src);
-                    var oImg = $(this);
-                    var img = new Image();
-                    img.src = $(oImg).attr("src");
-                    var realWidth = img.width;//真实的宽度
-                    var realHeight = img.height;//真实的高度
-                    var ww = $(window).width();//当前浏览器可视宽度
-                    var hh = $(window).height();//当前浏览器可视宽度
-                    $("#img-content").css({"top":0,"left":0,"height":"auto"});
-                    $("#img-zoom").css({"height":"auto"});
-                    if((realWidth+20)>ww){
-                        $("#img-content").css({"width":"100%"});
-                        $("#img-zoom").css({"width":"99%"});
-                    }else{
-                        $("#img-content").css({"width":realWidth+20, "height":realHeight+20});
-                        $("#img-zoom").css({"width":realWidth, "height":realHeight});
-                    }
-                    if((hh-realHeight-40)>0){
-                        $("#img-content").css({"top":(hh-realHeight-40)/2});
-                    }
-                    if((ww-realWidth-20)>0){
-                        $("#img-content").css({"left":(ww-realWidth-20)/2});
-                    }
-                    //console.log("realWidth:"+realWidth+" realHeight:"+realHeight+" ww:"+ww)
-                    $('#img-modal').modal();
-                    $("#img-modal").css({"width":realWidth+20});
-                });
-            });
-        });
-	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -169,7 +125,7 @@
 				<td>
 					<fmt:formatDate value="${bizInvoice.sendDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<td><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></td>
+				<td><a href="${bizInvoice.imgUrl}" target="view_window"><img src="${bizInvoice.imgUrl}"style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></a></td>
 				<td>
 					<c:if test="${bizInvoice.ship==0}">
 						<shiro:hasPermission name="biz:inventory:bizInvoice:edit">
@@ -196,12 +152,5 @@
 		</tbody>
 	</table>
 	<div class="pagination">${page}</div>
-	<div id="img-modal" class="modal fade">
-		<div id="img-dialog" class="modal-dialog" style="width: 98%; height: 98%;text-align: center;">
-			<div id="img-content" class="modal-content">
-				<img id="img-zoom" src="" style="max-height: 100%; max-width: 100%;margin:10px;">
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
 </body>
 </html>
