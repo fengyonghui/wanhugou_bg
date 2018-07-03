@@ -74,10 +74,8 @@ public class MenuController extends BaseController {
 	public String listData(HttpServletRequest request, @RequestParam(value = "parentId", required = false, defaultValue = "1")Integer parentId) {
 		List<Menu> list = Lists.newArrayList();
 		List<Menu> sourcelist = systemService.findAllMenu();
-		if (parentId != null) {
-			sourcelist.removeIf(o -> !o.getParentId().equals(parentId));
-		}
-		Menu.sortList(list, sourcelist, Menu.getRootId(), true);
+
+		Menu.sortList(list, sourcelist, parentId, false);
 		List<Map<String, Object>> result = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(list)) {
 			list.forEach(o -> {
