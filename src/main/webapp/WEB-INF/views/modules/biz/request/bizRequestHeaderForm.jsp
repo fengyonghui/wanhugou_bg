@@ -85,7 +85,7 @@
                                 skuInfoId+=","+skuInfo.id;
                                 tr_tds+= "<tr class='"+prodId+"'>";
 								if(flag){
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"'></td>" +
+                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"' width='100' height='100' ></td>" +
 
                                     "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
 								}
@@ -419,7 +419,7 @@
 				<c:if test="${reqDetailList!=null}">
 					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
 						<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
-							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
+							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}" width="100" height="100" /></td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
 									${reqDetail.skuInfo.productInfo.office.name}</a></td>
