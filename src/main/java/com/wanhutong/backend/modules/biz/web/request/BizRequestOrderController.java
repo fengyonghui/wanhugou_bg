@@ -172,7 +172,7 @@ public class BizRequestOrderController extends BaseController {
     }
 
     @RequiresPermissions("biz:request:selecting:supplier:view")
-    @RequestMapping(value = {"listForPhotoOrder", ""})
+    @RequestMapping(value = "listForPhotoOrder")
     public String listForPhotoOrder(String source, Model model, BizOrderHeader bizOrderHeader,HttpServletRequest request,HttpServletResponse response) {
         bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
         bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.PURCHASING.getState());

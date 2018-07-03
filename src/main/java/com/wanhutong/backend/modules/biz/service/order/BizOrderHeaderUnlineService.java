@@ -77,7 +77,7 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 	}
 
 	@Transactional(readOnly = false)
-	public void saveOffLineOrder(BizOrderHeaderUnline bizOrderHeaderUnline) {
+	public void saveOrderOffline(BizOrderHeaderUnline bizOrderHeaderUnline) {
 		super.save(bizOrderHeaderUnline);
 	}
 

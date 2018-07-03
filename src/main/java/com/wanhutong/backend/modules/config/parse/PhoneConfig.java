@@ -65,6 +65,10 @@ public class PhoneConfig extends ConfigGeneral {
         /**
          * 生成供货记录异常
          */
-        SEND_GOODS_RECORD_EXCEPTION
+        SEND_GOODS_RECORD_EXCEPTION,
+        /**
+         * 发货提醒异常
+         */
+        DELIVER_EXCEPTION
     }
 }
