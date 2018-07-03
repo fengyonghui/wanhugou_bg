@@ -879,12 +879,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 }
             }
             if (StringUtils.isNotBlank(orderNum)) {
-//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(),phones.toString(),ImmutableMap.of("order","订单"));
-                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
+                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(),phones.toString(),ImmutableMap.of("order","订单"));
+//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "订单","number",orderNum.substring(3)));
             }
             if (StringUtils.isNotBlank(reqNum)) {
-//                    AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(),phones.toString(),ImmutableMap.of("order","备货单"));
-                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
+                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(),phones.toString(),ImmutableMap.of("order","备货单"));
+//                AliyunSmsClient.getInstance().sendSMS(SmsTemplateCode.ORDER_DELIVER.getCode(), "17703313909", ImmutableMap.of("order", "备货单","number",reqNum.substring(3)));
             }
 
         } catch (Exception e) {
@@ -918,12 +918,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 return;
             }
             StringBuilder emails = new StringBuilder();
-//        for (User user:userList) {
-//            if (!user.getEmail().isEmpty()) {
-//                emails.append(user.getEmail()).append(",");
-//            }
-//        }
-            emails.append("zhangtengfei_cn@163.com,").append("785461218@qq.com");
+        for (User user:userList) {
+            if (!user.getEmail().isEmpty()) {
+                emails.append(user.getEmail()).append(",");
+            }
+        }
+//            emails.append("zhangtengfei_cn@163.com,").append("785461218@qq.com");
             if (StringUtils.isNotBlank(orderNum) && StringUtils.isNotBlank(emails.toString())) {
                 AliyunMailClient.getInstance().sendTxt(
                         emails.toString(),
