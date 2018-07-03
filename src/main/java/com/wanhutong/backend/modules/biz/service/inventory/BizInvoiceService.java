@@ -614,5 +614,5 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
     public List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice) {
         return bizInvoiceDao.findLogisticsDetail(bizInvoice);
     }
-	
+
 }

@@ -455,6 +455,9 @@ public class BizPoHeaderController extends BaseController {
         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
         bizOrderHeaderService.save(bizOrderHeader);
 
+        bizPoHeaderService.sendSmsForDeliver(bizOrderHeader.getOrderNum(),"");
+        bizPoHeaderService.sendMailForDeliver(bizOrderHeader.getOrderNum(),"");
+
         return "操作成功";
     }
 
