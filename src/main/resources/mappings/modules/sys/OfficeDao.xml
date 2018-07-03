@@ -152,7 +152,7 @@
 		<if test="type != null and type != ''">
 			AND so.type = #{type}
 		</if>
-		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1)
+		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1 and ccc.center_id != 3500)
 		)
 		) UNION ALL
 		SELECT
@@ -164,7 +164,7 @@
 		<if test="type != null and type != ''">
 			AND so.type = #{type}
 		</if>
-		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1)
+		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1 and ccc.center_id != 3500)
 
 	</select>
 
