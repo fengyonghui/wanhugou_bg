@@ -354,28 +354,28 @@ public class BizInvoiceController extends BaseController {
             List<List<String>> detailData = new ArrayList<List<String>>();
             for (BizInvoice invoice : list) {
                 List<String> headData = new ArrayList<>();
-                if (pageFlag){
+                if (pageFlag) {
                     headData.add(String.valueOf(invoice.getSendNumber()));
 
-                    if(invoice.getLogistics()!=null && invoice.getLogistics().getName()!=null){
+                    if (invoice.getLogistics() != null && invoice.getLogistics().getName() != null) {
                         headData.add(String.valueOf(invoice.getLogistics().getName()));
-                    }else{
+                    } else {
                         headData.add("");
                     }
 
-                    headData.add(String.valueOf(invoice.getFreight()==null?"":invoice.getFreight()));
-                    headData.add(String.valueOf(invoice.getOperation()==null?"":invoice.getOperation()));
-                    headData.add(String.valueOf(invoice.getValuePrice()==null?"":invoice.getValuePrice()));
+                    headData.add(String.valueOf(invoice.getFreight() == null ? "" : invoice.getFreight()));
+                    headData.add(String.valueOf(invoice.getOperation() == null ? "" : invoice.getOperation()));
+                    headData.add(String.valueOf(invoice.getValuePrice() == null ? "" : invoice.getValuePrice()));
 
-                    double price=0.0;
-                    if(invoice.getFreight()!=null && invoice.getValuePrice()!=null && invoice.getValuePrice()!=0){
-                        price=invoice.getFreight()*100/invoice.getValuePrice();
+                    double price = 0.0;
+                    if (invoice.getFreight() != null && invoice.getValuePrice() != null && invoice.getValuePrice() != 0) {
+                        price = invoice.getFreight() * 100 / invoice.getValuePrice();
                     }//运费/货值
                     BigDecimal b = new BigDecimal(price);
-                    double   f1   =   b.setScale(0,   BigDecimal.ROUND_HALF_UP).doubleValue();
-                    headData.add(String.valueOf(f1+"%"));
+                    double f1 = b.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
+                    headData.add(String.valueOf(f1 + "%"));
 
-                    headData.add(String.valueOf(invoice.getCarrier()==null?"":invoice.getCarrier()));
+                    headData.add(String.valueOf(invoice.getCarrier() == null ? "" : invoice.getCarrier()));
 
                     Dict dict = new Dict();
                     dict.setDescription("物流结算方式");
@@ -391,17 +391,17 @@ public class BizInvoiceController extends BaseController {
                     headData.add(String.valueOf(sdf.format(invoice.getSendDate())));
                 } else {
                     headData.add(String.valueOf(invoice.getTrackingNumber()));
-                    headData.add(String.valueOf(invoice.getLogisticsFreight()==null?"":invoice.getLogisticsFreight()));
-                    headData.add(String.valueOf(invoice.getLogisticsOperation()==null?"":invoice.getLogisticsOperation()));
-                    headData.add(String.valueOf(invoice.getLogisticsValuePrice()==null?"":invoice.getLogisticsValuePrice()));
+                    headData.add(String.valueOf(invoice.getLogisticsFreight() == null ? "" : invoice.getLogisticsFreight()));
+                    headData.add(String.valueOf(invoice.getLogisticsOperation() == null ? "" : invoice.getLogisticsOperation()));
+                    headData.add(String.valueOf(invoice.getLogisticsValuePrice() == null ? "" : invoice.getLogisticsValuePrice()));
 
-                    double price=0.0;
-                    if(invoice.getLogisticsFreight()!=null && invoice.getLogisticsValuePrice()!=null && invoice.getLogisticsValuePrice()!=0){
-                        price=invoice.getLogisticsFreight()*100/invoice.getLogisticsValuePrice();
+                    double price = 0.0;
+                    if (invoice.getLogisticsFreight() != null && invoice.getLogisticsValuePrice() != null && invoice.getLogisticsValuePrice() != 0) {
+                        price = invoice.getLogisticsFreight() * 100 / invoice.getLogisticsValuePrice();
                     }//运费/货值
                     BigDecimal b = new BigDecimal(price);
-                    double   f1   =   b.setScale(0,   BigDecimal.ROUND_HALF_UP).doubleValue();
-                    headData.add(String.valueOf(f1+"%"));
+                    double f1 = b.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
+                    headData.add(String.valueOf(f1 + "%"));
                 }
                 data.add(headData);
 
@@ -588,18 +588,18 @@ public class BizInvoiceController extends BaseController {
             }
             OrderHeaderExportExcelUtils eeu = new OrderHeaderExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
-            String[] headers = {"发货号", "物流商", "运费", "操作费", "货值","运费/货值", "发货人", "物流结算方式", "发货时间"};
-            if(bizInvoice.getBizStatus()!=null && bizInvoice.getBizStatus().equals(1) && bizInvoice.getShip()!=null && bizInvoice.getShip().equals(1)){
+            String[] headers = {"发货号", "物流商", "运费", "操作费", "货值", "运费/货值", "发货人", "物流结算方式", "发货时间"};
+            if (bizInvoice.getBizStatus() != null && bizInvoice.getBizStatus().equals(1) && bizInvoice.getShip() != null && bizInvoice.getShip().equals(1)) {
                 String[] details = {"发货号", "物流商", "备货单编号", "采购中心", "业务状态", "商品名称", "商品编码", "商品属性", "采购数量", "已发货数量"};
                 eeu.exportExcel(workbook, 0, "发货数据", headers, data, fileName);
                 eeu.exportExcel(workbook, 1, "已发货详情", details, detailData, fileName);
-            }else if(bizInvoice.getBizStatus()!=null && bizInvoice.getBizStatus().equals(1) && bizInvoice.getShip()!=null && bizInvoice.getShip().equals(0)){
-                if (pageFlag){
+            } else if (bizInvoice.getBizStatus() != null && bizInvoice.getBizStatus().equals(1) && bizInvoice.getShip() != null && bizInvoice.getShip().equals(0)) {
+                if (pageFlag) {
                     String[] details = {"发货号", "物流商", "订单编号", "经销店名称", "业务状态", "商品名称", "商品编码", "商品属性", "采购数量", "已发货数量"};
                     eeu.exportExcel(workbook, 0, "发货数据", headers, data, fileName);
                     eeu.exportExcel(workbook, 1, "已发货详情", details, detailData, fileName);
                 } else {
-                    String[] headersLogistics = {"物流单号", "运费", "操作费", "货值","运费/货值"};
+                    String[] headersLogistics = {"物流单号", "运费", "操作费", "货值", "运费/货值"};
                     String[] details = {"发货号", "订单编号", "商品名称", "商品编号", "商品货号", "商品出厂价", "供应商", "商品单价", "采购数量", "总 额", "已发货数量", "发货方", "创建时间"};
                     eeu.exportExcel(workbook, 0, "物流单数据", headersLogistics, data, fileName);
                     eeu.exportExcel(workbook, 1, "物流单详情", details, detailData, fileName);

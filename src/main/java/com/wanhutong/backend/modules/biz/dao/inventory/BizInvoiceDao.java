@@ -19,7 +19,9 @@ import java.util.List;
 @MyBatisDao
 public interface BizInvoiceDao extends CrudDao<BizInvoice> {
     /**
-     * 客户专员的 统计
-     * */
+     * 物流单信息详情
+     * @param bizInvoice
+     * @return
+     */
     List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice);
 }
