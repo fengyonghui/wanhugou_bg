@@ -51,6 +51,7 @@ import java.util.Set;
 
 /**
  * 发货单Service
+ *
  * @author 张腾飞
  * @version 2018-06-15
  */
@@ -58,48 +59,50 @@ import java.util.Set;
 @Transactional(readOnly = true)
 public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizInvoice> {
 
-	@Autowired
-	private BizSendGoodsRecordService bizSendGoodsRecordService;
-	@Autowired
+    @Autowired
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
+    @Autowired
     private CommonImgService commonImgService;
-	@Autowired
+    @Autowired
     private BizDetailInvoiceService bizDetailInvoiceService;
-	@Autowired
+    @Autowired
     private OfficeService officeService;
-	@Autowired
+    @Autowired
     private BizDeliverGoodsDao bizDeliverGoodsDao;
-	@Autowired
+    @Autowired
     private BizPoOrderReqService bizPoOrderReqService;
-	@Autowired
+    @Autowired
     private BizPhotoOrderHeaderService bizPhotoOrderHeaderService;
-	@Autowired
+    @Autowired
     private BizPoHeaderService bizPoHeaderService;
-	@Autowired
+    @Autowired
     private BizOrderStatusService bizOrderStatusService;
 
     protected Logger log = LoggerFactory.getLogger(getClass());//日志
 
     @Override
-	public BizInvoice get(Integer id) {
-		return super.get(id);
-	}
+    public BizInvoice get(Integer id) {
+        return super.get(id);
+    }
+
     @Override
-	public List<BizInvoice> findList(BizInvoice bizInvoice) {
-		return super.findList(bizInvoice);
-	}
+    public List<BizInvoice> findList(BizInvoice bizInvoice) {
+        return super.findList(bizInvoice);
+    }
+
     @Override
-	public Page<BizInvoice> findPage(Page<BizInvoice> page, BizInvoice bizInvoice) {
-		User user=UserUtils.getUser();
-		if(user.isAdmin()){
+    public Page<BizInvoice> findPage(Page<BizInvoice> page, BizInvoice bizInvoice) {
+        User user = UserUtils.getUser();
+        if (user.isAdmin()) {
             return super.findPage(page, bizInvoice);
         }
-	    return super.findPage(page, bizInvoice);
-	}
-	
-	@Transactional(readOnly = false,rollbackFor = Exception.class)
-	public void save(BizInvoice bizInvoice) {
-	    //修改发货单
-	    if (bizInvoice.getId() != null){
+        return super.findPage(page, bizInvoice);
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public void save(BizInvoice bizInvoice) {
+        //修改发货单
+        if (bizInvoice.getId() != null) {
             BizInvoice invoice = bizDeliverGoodsDao.get(bizInvoice.getId());
             invoice.setTrackingNumber(bizInvoice.getTrackingNumber());
             invoice.setLogistics(bizInvoice.getLogistics());
@@ -128,7 +131,7 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
         String orderHeaders = bizInvoice.getOrderHeaders();
         //货值
         Double valuePrice = 0.0;
-        if(StringUtils.isNotBlank(orderHeaders)) {
+        if (StringUtils.isNotBlank(orderHeaders)) {
             String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
                 BizOrderHeader orderHeader = bizPhotoOrderHeaderService.get(Integer.parseInt(orders[a]));
@@ -166,7 +169,7 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
                         bizSendGoodsRecordService.save(bsgr);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        logger.error("[Exception]拍照下单生成供货记录异常[orderNum:{}]",orderHeader.getOrderNum(),e);
+                        logger.error("[Exception]拍照下单生成供货记录异常[orderNum:{}]", orderHeader.getOrderNum(), e);
                         EmailConfig.Email email = EmailConfig.getEmail(EmailConfig.EmailType.SEND_GOODS_RECORD_EXCEPTION.name());
                         AliyunMailClient.getInstance().sendTxt("zhangtengfei_cn@163.com", "拍照下单生成供货记录异常",
                                 String.format(orderHeader.getOrderNum(),
@@ -190,18 +193,14 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
                     bizOrderStatusService.save(orderStatus);
                 }
             }
-            if (bizInvoice.getId() == null) {
-                bizInvoice.setValuePrice(valuePrice);
-                super.save(bizInvoice);
-            } else {
-                bizInvoice.setValuePrice(bizInvoice.getValuePrice() + valuePrice);
-                super.save(bizInvoice);
-            }
+            bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
+            super.save(bizInvoice);
         }
-	}
+    }
 
     /**
      * 保存物流信息图片
+     *
      * @param bizInvoice
      */
     @Transactional(readOnly = false)
@@ -283,16 +282,16 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
             String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
 
             commonImg.setId(null);
-            commonImg.setImgPath("/"+ossPath);
+            commonImg.setImgPath("/" + ossPath);
             commonImg.setImgServer(DsConfig.getImgServer());
             commonImgService.save(commonImg);
         }
     }
-	
-	@Transactional(readOnly = false)
+
+    @Transactional(readOnly = false)
     @Override
-	public void delete(BizInvoice bizInvoice) {
-		super.delete(bizInvoice);
-	}
-	
+    public void delete(BizInvoice bizInvoice) {
+        super.delete(bizInvoice);
+    }
+
 }
