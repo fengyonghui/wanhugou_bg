@@ -117,6 +117,7 @@
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
+	<input type="hidden" name="statu" value="${statu}"/>
 	<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
 		<input type="hidden" name="skuChickCount" value="${bizOrderHeader.skuChickCount}"/>
 		<input type="hidden" name="partNo" value="${bizOrderHeader.partNo}"/>

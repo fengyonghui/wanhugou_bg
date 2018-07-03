@@ -49,6 +49,14 @@
         	return false;
         }
 	</script>
+
+	<script language="JavaScript">
+        function myrefresh()
+        {
+            window.location.reload();
+        }
+        setTimeout('myrefresh()',180000); //指定3分钟刷新一次
+	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
