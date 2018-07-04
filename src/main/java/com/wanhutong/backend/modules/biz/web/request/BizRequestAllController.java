@@ -235,7 +235,6 @@ public class BizRequestAllController {
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             BizLogistics bizLogistics = new BizLogistics();
             User user = UserUtils.getUser();
-//            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
             if (user.isAdmin()) {
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
                 model.addAttribute("invInfoList", invInfoList);
@@ -331,23 +330,12 @@ public class BizRequestAllController {
         }
         if (source != null && "sh".equals(source)) {
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
-            User user = UserUtils.getUser();
-            if (user.isAdmin()) {
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
-                model.addAttribute("invInfoList", invInfoList);
-            } else {
-                Office company = systemService.getUser(user.getId()).getCompany();
-                BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
-                bizInventoryInfo1.setCustomer(company);
-                List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo1);
-                model.addAttribute("invInfoList", invInfoList);
-            }
+            bizInventoryInfo.setReqHeader(new BizRequestHeader(id));
+            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
+            model.addAttribute("invInfoList", invInfoList);
             return "modules/biz/request/bizRequestKcForm";
         }
-        // if(source!=null && "gh".equals(source)){
         return "modules/biz/request/bizRequestHeaderGhForm";
-        //  }
-
     }
 
     /**

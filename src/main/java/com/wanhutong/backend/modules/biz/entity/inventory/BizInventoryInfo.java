@@ -3,13 +3,10 @@
  */
 package com.wanhutong.backend.modules.biz.entity.inventory;
 
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.common.entity.location.CommonLocation;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import org.hibernate.validator.constraints.Length;
-import com.wanhutong.backend.modules.sys.entity.User;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
 
@@ -25,6 +22,11 @@ public class BizInventoryInfo extends DataEntity<BizInventoryInfo> {
 	private String description;		// 仓库描述
 	private CommonLocation bizLocation;		// common_location.id
 	private Office customer;	//采购中心ID，sys_office.id
+    /**
+     * 用于备货单收货
+     */
+    private BizRequestHeader reqHeader;
+
 	public CommonLocation getBizLocation() {
 		return bizLocation;
 	}
@@ -65,5 +67,13 @@ public class BizInventoryInfo extends DataEntity<BizInventoryInfo> {
 
 	public void setCustomer(Office customer) {
 		this.customer = customer;
+	}
+
+	public BizRequestHeader getReqHeader() {
+		return reqHeader;
+	}
+
+	public void setReqHeader(BizRequestHeader reqHeader) {
+		this.reqHeader = reqHeader;
 	}
 }
