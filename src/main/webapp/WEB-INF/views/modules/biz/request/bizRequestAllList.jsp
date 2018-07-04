@@ -4,6 +4,7 @@
 <html>
 <head>
 	<title>备货清单管理</title>
+	<%--<meta name="decorator"/>--%>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -49,6 +50,14 @@
 			$("#searchForm").submit();
         	return false;
         }
+	</script>
+
+	<script language="JavaScript">
+        function myrefresh()
+        {
+            window.location.reload();
+        }
+        setTimeout('myrefresh()',180000); //指定3分钟刷新一次
 	</script>
 </head>
 <body>

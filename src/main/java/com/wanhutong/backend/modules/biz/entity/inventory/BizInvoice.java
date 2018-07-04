@@ -46,6 +46,25 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 	private String orderNum; //订单号
 	private String reqNo; //订单号
 
+	/**
+	 * 物流单页面标志
+	 * */
+	private String targetPage;
+
+	/**
+	 * 同一物流单号下总运费
+	 * */
+	private Double logisticsFreight;
+	/**
+	 * 同一物流单号下总操作费
+	 * */
+	private Double logisticsOperation;
+	/**
+	 * 同一物流单号下总货值
+	 * */
+	private Double logisticsValuePrice;
+
+
 	public BizInvoice() {
 		super();
 	}
@@ -225,5 +244,37 @@ public class BizInvoice extends DataEntity<BizInvoice> {
 
 	public void setReqNo(String reqNo) {
 		this.reqNo = reqNo;
+	}
+
+	public String getTargetPage() {
+		return targetPage;
+	}
+
+	public void setTargetPage(String targetPage) {
+		this.targetPage = targetPage;
+	}
+
+	public Double getLogisticsFreight() {
+		return logisticsFreight;
+	}
+
+	public void setLogisticsFreight(Double logisticsFreight) {
+		this.logisticsFreight = logisticsFreight;
+	}
+
+	public Double getLogisticsOperation() {
+		return logisticsOperation;
+	}
+
+	public void setLogisticsOperation(Double logisticsOperation) {
+		this.logisticsOperation = logisticsOperation;
+	}
+
+	public Double getLogisticsValuePrice() {
+		return logisticsValuePrice;
+	}
+
+	public void setLogisticsValuePrice(Double logisticsValuePrice) {
+		this.logisticsValuePrice = logisticsValuePrice;
 	}
 }

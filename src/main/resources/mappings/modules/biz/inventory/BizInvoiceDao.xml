@@ -43,14 +43,23 @@
 	<select id="findList" resultType="BizInvoice">
 		SELECT 
 			<include refid="bizInvoiceColumns"/>
+			<if test="targetPage != null and targetPage =='logistics'">
+				, sum(a.freight) AS logisticsFreight
+				, sum(a.operation) as logisticsOperation
+				, sum(a.value_price) as logisticsValuePrice
+			</if>
 		FROM biz_invoice a
 		<include refid="bizInvoiceJoins"/>
-		LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id
-		<if test="ship != null and ship == 0">
-			LEFT JOIN biz_order_header bo ON bo.id = bi.order_header_id
+		<if test="targetPage == null or targetPage ==''">
+			LEFT JOIN biz_detail_invoice bi ON bi.invoice_id = a.id
 		</if>
-		<if test="ship != null and ship == 1">
-			LEFT JOIN biz_request_header br ON br.id = bi.request_header_id
+		<if test="targetPage == null or targetPage ==''">
+			<if test="ship != null and ship == 0 ">
+				LEFT JOIN biz_order_header bo ON bo.id = bi.order_header_id
+			</if>
+			<if test="ship != null and ship == 1">
+				LEFT JOIN biz_request_header br ON br.id = bi.request_header_id
+			</if>
 		</if>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
@@ -59,6 +68,12 @@
 				<if test="dbName == 'oracle'">'%'||#{sendNumber}||'%'</if>
 				<if test="dbName == 'mssql'">'%'+#{sendNumber}+'%'</if>
 				<if test="dbName == 'mysql'">concat('%',#{sendNumber},'%')</if>
+			</if>
+			<if test="trackingNumber != null and trackingNumber != ''">
+				AND a.tracking_number LIKE
+				<if test="dbName == 'oracle'">'%'||#{trackingNumber}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{trackingNumber}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{trackingNumber},'%')</if>
 			</if>
 			<if test="ship != null and ship == 0">
 				<if test="orderNum != null and orderNum != ''">
@@ -104,7 +119,15 @@
                 ${sqlMap.bizInvoice}
             </if>
 		</where>
-		GROUP BY a.id
+		<choose>
+			<when test="targetPage != null and targetPage =='logistics'">
+				AND (a.tracking_number !=null OR  a.tracking_number != '')
+				GROUP BY a.tracking_number
+			</when>
+			<otherwise>
+				GROUP BY a.id
+			</otherwise>
+		</choose>
 		ORDER BY a.send_time DESC
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -252,5 +275,43 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<select id="findLogisticsDetail" resultType="BizOrderDetail">
+		SELECT
+			oh.order_num AS "orderHeader.orderNum",
+			od.sku_name AS "skuName",
+			od.part_no AS "partNo",
+			od.buy_price AS "buyPrice",
+			od.unit_price AS "unitPrice",
+			od.ord_qty AS "ordQty",
+			od.sent_qty AS "sentQty",
+			od.create_time AS "createDate",
+			soo.name AS "suplyis.name",
+			si.item_no AS "skuInfo.itemNo",
+			so.name AS "so.name",
+			oh.id AS "orderHeader.id",
+			oh.biz_status AS "orderHeader.bizStatus",
+			bi.id AS "orderHeader.sendId",
+			bi.send_number AS "orderHeader.sendNum"
+		FROM biz_order_header oh
+			LEFT JOIN biz_order_detail od ON oh.id = od.order_id
+			LEFT JOIN sys_office soo ON soo.id = od.suply_id
+			LEFT JOIN biz_sku_info si ON si.id = od.sku_id
+			LEFT JOIN biz_product_info bpi ON bpi.id = si.prod_id
+			LEFT JOIN sys_office so ON so.id = bpi.vendor_id
+			LEFT JOIN biz_detail_invoice di ON di.order_header_id = oh.id
+			LEFT JOIN biz_invoice bi ON bi.id = di.invoice_id
+		WHERE
+			(bi.status = 1
+			AND bi.biz_status = 1
+			AND bi.ship = 0
+			AND od.status != 0
+			AND bi.tracking_number = #{trackingNumber})
+		  or (oh.status = 1
+			AND oh.order_type = 6
+			AND bi.tracking_number = #{trackingNumber})
+		GROUP BY oh.order_num ,bi.send_number
+		ORDER BY oh.order_num
+	</select>
 	
 </mapper>

@@ -14,6 +14,7 @@ import com.wanhutong.backend.modules.config.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +72,12 @@ public class SystemConfig extends ConfigGeneral {
     @XStreamAlias("activityDate")
     private String activityDate;
     //=====================================临时活动 end====================================
-
+    /**
+     * 拍照订单的服务费系数
+     *
+     */
+    @XStreamAlias("photoOrderRatio")
+    private BigDecimal photoOrderRatio;
 
 
 
@@ -106,5 +112,9 @@ public class SystemConfig extends ConfigGeneral {
 
     public String getActivityDate() {
         return activityDate;
+    }
+
+    public BigDecimal getPhotoOrderRatio() {
+        return photoOrderRatio;
     }
 }
