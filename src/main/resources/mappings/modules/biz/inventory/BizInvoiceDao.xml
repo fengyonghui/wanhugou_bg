@@ -125,12 +125,12 @@
 		</where>
 		<choose>
 			<when test="targetPage != null and targetPage =='logistics'">
+				AND (a.tracking_number !=null OR  a.tracking_number != '')
 				<choose>
 					<when test="orderNum != null and orderNum != ''">
 						GROUP BY a.id
 					</when>
 					<otherwise>
-						AND (a.tracking_number !=null OR  a.tracking_number != '')
 						GROUP BY a.tracking_number
 					</otherwise>
 				</choose>
