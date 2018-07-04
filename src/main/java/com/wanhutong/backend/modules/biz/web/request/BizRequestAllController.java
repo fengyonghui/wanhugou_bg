@@ -235,7 +235,6 @@ public class BizRequestAllController {
             BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
             BizLogistics bizLogistics = new BizLogistics();
             User user = UserUtils.getUser();
-//            List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
             if (user.isAdmin()) {
                 List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(bizInventoryInfo);
                 model.addAttribute("invInfoList", invInfoList);
@@ -336,10 +335,7 @@ public class BizRequestAllController {
             model.addAttribute("invInfoList", invInfoList);
             return "modules/biz/request/bizRequestKcForm";
         }
-        // if(source!=null && "gh".equals(source)){
         return "modules/biz/request/bizRequestHeaderGhForm";
-        //  }
-
     }
 
     /**

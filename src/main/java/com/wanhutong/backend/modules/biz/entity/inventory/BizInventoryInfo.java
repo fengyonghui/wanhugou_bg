@@ -22,7 +22,11 @@ public class BizInventoryInfo extends DataEntity<BizInventoryInfo> {
 	private String description;		// 仓库描述
 	private CommonLocation bizLocation;		// common_location.id
 	private Office customer;	//采购中心ID，sys_office.id
-	private BizRequestHeader reqHeader;		//用于备货单收货
+    /**
+     * 用于备货单收货
+     */
+	private BizRequestHeader reqHeader;
+
 	public CommonLocation getBizLocation() {
 		return bizLocation;
 	}

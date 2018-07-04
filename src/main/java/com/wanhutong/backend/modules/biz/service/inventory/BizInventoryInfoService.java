@@ -7,9 +7,7 @@ import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.modules.common.service.location.CommonLocationService;
-import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
-import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,23 +29,13 @@ public class BizInventoryInfoService extends CrudService<BizInventoryInfoDao, Bi
 
 	@Autowired
 	private CommonLocationService commonLocationService;
-	@Autowired
-	private SystemService systemService;
 
 	public BizInventoryInfo get(Integer id) {
 		return super.get(id);
 	}
 	
 	public List<BizInventoryInfo> findList(BizInventoryInfo bizInventoryInfo) {
-//		User user =UserUtils.getUser();
-//		if (user.isAdmin()) {
-//			return super.findList(bizInventoryInfo);
-//		} else {
-//			bizInventoryInfo.getSqlMap().put("inventory", BaseService.dataScopeFilter(user, "o", "su"));
-//			return super.findList(bizInventoryInfo);
-//		}
-		List<BizInventoryInfo>  invInfoList = super.findList(bizInventoryInfo);
-		return invInfoList;
+        return super.findList(bizInventoryInfo);
 	}
 	
 	public Page<BizInventoryInfo> findPage(Page<BizInventoryInfo> page, BizInventoryInfo bizInventoryInfo) {
