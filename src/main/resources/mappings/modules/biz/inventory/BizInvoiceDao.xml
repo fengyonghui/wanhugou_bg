@@ -39,15 +39,15 @@
 		<include refid="bizInvoiceJoins"/>
 		WHERE a.id = #{id}
 	</select>
-	
+
 	<select id="findList" resultType="BizInvoice">
-		SELECT 
-			<include refid="bizInvoiceColumns"/>
-			<if test="targetPage != null and targetPage =='logistics'">
-				, sum(a.freight) AS logisticsFreight
-				, sum(a.operation) as logisticsOperation
-				, sum(a.value_price) as logisticsValuePrice
-			</if>
+		SELECT
+		<include refid="bizInvoiceColumns"/>
+		<if test="targetPage != null and targetPage =='logistics'">
+			, sum(a.freight) AS logisticsFreight
+			, sum(a.operation) as logisticsOperation
+			, sum(a.value_price) as logisticsValuePrice
+		</if>
 		FROM biz_invoice a
 		<include refid="bizInvoiceJoins"/>
 		<if test="targetPage == null or targetPage ==''">
@@ -111,21 +111,21 @@
 				<if test="dbName == 'mysql'">concat('%',#{logistics.name},'%')</if>
 			</if>
 			<if test="carrier != null and carrier != ''">
-				AND a.carrier LIKE 
-					<if test="dbName == 'oracle'">'%'||#{carrier}||'%'</if>
-					<if test="dbName == 'mssql'">'%'+#{carrier}+'%'</if>
-					<if test="dbName == 'mysql'">concat('%',#{carrier},'%')</if>
+				AND a.carrier LIKE
+				<if test="dbName == 'oracle'">'%'||#{carrier}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{carrier}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{carrier},'%')</if>
 			</if>
 			<if test="settlementStatus != null and settlementStatus != ''">
 				AND a.settlement_status = #{settlementStatus}
 			</if>
-            <if test="sqlMap != null and sqlMap.bizInvoice != null and sqlMap.bizInvoice != ''">
-                ${sqlMap.bizInvoice}
-            </if>
+			<if test="sqlMap != null and sqlMap.bizInvoice != null and sqlMap.bizInvoice != ''">
+				${sqlMap.bizInvoice}
+			</if>
 		</where>
 		<choose>
 			<when test="targetPage != null and targetPage =='logistics'">
-				AND (a.tracking_number !=null OR  a.tracking_number != '')
+				AND (a.tracking_number !=null OR a.tracking_number != '')
 				<choose>
 					<when test="orderNum != null and orderNum != ''">
 						GROUP BY a.id
