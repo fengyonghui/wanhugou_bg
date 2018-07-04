@@ -46,17 +46,7 @@ public class BizInventoryInfoService extends CrudService<BizInventoryInfoDao, Bi
 //			bizInventoryInfo.getSqlMap().put("inventory", BaseService.dataScopeFilter(user, "o", "su"));
 //			return super.findList(bizInventoryInfo);
 //		}
-		List<BizInventoryInfo> invInfoList=null;
-		User user = UserUtils.getUser();
-		if (user.isAdmin()){
-			 invInfoList = super.findList(bizInventoryInfo);
-		}else {
-			Office company = systemService.getUser(user.getId()).getCompany();
-			BizInventoryInfo bizInventoryInfo1 = new BizInventoryInfo();
-			bizInventoryInfo1.setCustomer(company);
-			 invInfoList = super.findList(bizInventoryInfo1);
-
-		}
+		List<BizInventoryInfo>  invInfoList = super.findList(bizInventoryInfo);
 		return invInfoList;
 	}
 	
