@@ -52,10 +52,10 @@
 			$("#buttonExport").click(function(){
 				top.$.jBox.confirm("确认要导出订单数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport");
+						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport?statu=${statu}");
 						$("#searchForm").submit();
 						<%--$("#buttonExport").attr("disabled",true);--%>
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/");
+						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader?statu=${statu}");
 						<%--$("#buttonExport").removeAttr("disabled");--%>
 					}
 				},{buttonsFocus:1});
@@ -117,7 +117,6 @@
 	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	<input id="orderNum" name="bizOrderHeader.orderNum" type="hidden" value="${bizOrderHeader.orderNum}"/>
 	<input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
-	<input type="hidden" name="statu" value="${statu}"/>
 	<c:if test="${not empty bizOrderHeader.skuChickCount && bizOrderHeader.skuChickCount eq 'orderCick_count'}">
 		<input type="hidden" name="skuChickCount" value="${bizOrderHeader.skuChickCount}"/>
 		<input type="hidden" name="partNo" value="${bizOrderHeader.partNo}"/>
