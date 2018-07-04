@@ -55,6 +55,8 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -479,15 +481,23 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "audit")
     @ResponseBody
-    public String audit(int id, String currentType, int auditType, String description) {
-        return bizPoHeaderService.auditPo(id, currentType, auditType, description);
+    public String audit(HttpServletRequest request, int id, String currentType, int auditType, String description) {
+        Pair<Boolean, String> result = bizPoHeaderService.auditPo(id, currentType, auditType, description);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
     }
 
     @RequiresPermissions("biz:po:bizpopaymentorder:bizPoPaymentOrder:audit")
     @RequestMapping(value = "auditPay")
     @ResponseBody
-    public String auditPay(int id, String currentType, int auditType, String description, BigDecimal money) {
-        return bizPoHeaderService.auditPay(id, currentType, auditType, description, money);
+    public String auditPay(HttpServletRequest request, int id, String currentType, int auditType, String description, BigDecimal money) {
+        Pair<Boolean, String> result = bizPoHeaderService.auditPay(id, currentType, auditType, description, money);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
     }
 
 

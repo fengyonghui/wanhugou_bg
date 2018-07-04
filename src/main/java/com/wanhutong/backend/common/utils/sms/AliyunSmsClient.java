@@ -91,7 +91,7 @@ public class AliyunSmsClient {
      * @param paramsMap    短信模板中的变量；数字需要转换为字符串；个人用户每个变量长度必须小于15个字符。例如:短信模板为：“接受短信验证码${no}
      *                     ”,此参数传递{“no”:”123456”}，用户将接收到[短信签名]接受短信验证码123456
      */
-    public Future<Boolean> sendSMS(String signName, String templateCode, String recNum, Map<String, String> paramsMap) {
+    private Future<Boolean> sendSMS(String signName, String templateCode, String recNum, Map<String, String> paramsMap) {
 		return ThreadPoolManager.getDefaultThreadPool().submit(new Callable<Boolean>() {
 			@Override
 			public Boolean call() {
