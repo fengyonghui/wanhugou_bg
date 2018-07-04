@@ -25,7 +25,7 @@ public class BizInventoryInfo extends DataEntity<BizInventoryInfo> {
     /**
      * 用于备货单收货
      */
-	private BizRequestHeader reqHeader;
+    private BizRequestHeader reqHeader;
 
 	public CommonLocation getBizLocation() {
 		return bizLocation;
