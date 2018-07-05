@@ -595,6 +595,10 @@
                 var tagFormHtml = "<input name='tagStr' type='hidden' value='$value'/>";
                 var testSelect2 = $("#test-select-2");
                 var tagSelected = testSelect2.parent().children(".tree-multiselect").children(".selected").children("div");
+                if (tagSelected.length <= 0) {
+                    alert("请选择标签！");
+                    return;
+                }
                 tagSelected.each(function () {
                     inputForm.append(tagFormHtml.replace("$value", $(this).attr("data-value")));
                 });
