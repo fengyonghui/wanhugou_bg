@@ -13,7 +13,6 @@ import com.wanhutong.backend.modules.biz.entity.shelf.BizOpShelfSku;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.shelf.BizOpShelfSkuService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
-import com.wanhutong.backend.modules.biz.service.sku.BizSkuViewLogService;
 import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.entity.attribute.AttributeValueV2;
@@ -21,6 +20,8 @@ import com.wanhutong.backend.modules.sys.service.attribute.AttributeValueV2Servi
 import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,14 +45,13 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/biz/shelf/bizOpShelfSku")
 public class BizOpShelfSkuController extends BaseController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BizOpShelfSkuController.class);
 	@Autowired
 	private BizOpShelfSkuService bizOpShelfSkuService;
 	@Autowired
 	private BizSkuInfoV2Service bizSkuInfoService;
 	@Autowired
 	private AttributeValueV2Service attributeValueService;
-	@Autowired
-	private BizSkuViewLogService bizSkuViewLogService;
 
 	
 	@ModelAttribute
@@ -327,7 +327,7 @@ public class BizOpShelfSkuController extends BaseController {
 			shelfSku = "OK";
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("删除上架商品失败",e);
+			LOGGER.error("删除上架商品失败,bizOpShelfSkuId{}",bizOpShelfSku.getId(),e);
 		}
 		return shelfSku;
 	}
@@ -347,7 +347,7 @@ public class BizOpShelfSkuController extends BaseController {
 			Lower = "OK";
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("下架失败",e);
+			LOGGER.error("商品下架失败，bizOpshelfSkuId{}",bizOpShelfSku.getId(),e);
 		}
 		return Lower;
 	}
@@ -369,7 +369,7 @@ public class BizOpShelfSkuController extends BaseController {
 			sheLve = "OK";
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("上架失败",e);
+			LOGGER.error("商品重新上架失败，bizOpshelfSkuId{}",bizOpShelfSku.getId(),e);
 		}
 		return sheLve;
 	}
