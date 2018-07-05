@@ -907,7 +907,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             }
             StringBuilder phones = new StringBuilder();
             for (User user : userList) {
-                if (!user.getMobile().isEmpty()) {
+                if (StringUtils.isNotBlank(user.getMobile())) {
                     phones.append(user.getMobile()).append(",");
                 }
             }
@@ -953,7 +953,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             }
             StringBuilder emails = new StringBuilder();
             for (User user : userList) {
-                if (!user.getEmail().isEmpty()) {
+                if (StringUtils.isNotBlank(user.getEmail())) {
                     emails.append(user.getEmail()).append(",");
                 }
             }

@@ -217,15 +217,6 @@ public class BizOrderDetailService extends CrudService<BizOrderDetailDao, BizOrd
 
     @Transactional(readOnly = false)
     public void delete(BizOrderDetail bizOrderDetail) {
-        //删除执行库存表相应的加减数量
-        BizInventorySku bizInventorySku = new BizInventorySku();
-        bizInventorySku.setSkuInfo(bizOrderDetail.getSkuInfo());
-        List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
-        for (BizInventorySku inventorySku : list) {
-            Integer stockOrdQty = inventorySku.getStockOrdQty();
-            inventorySku.setStockOrdQty(--stockOrdQty);//减去相应的销售订单数量
-            bizInventorySkuService.save(inventorySku);
-        }
         super.delete(bizOrderDetail);
     }
 
