@@ -93,6 +93,8 @@ import java.util.Set;
 @RequestMapping(value = "${adminPath}/biz/po/bizPoHeader")
 public class BizPoHeaderController extends BaseController {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
+
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
@@ -124,7 +126,6 @@ public class BizPoHeaderController extends BaseController {
     @Autowired
     private BizOrderAddressService bizOrderAddressService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
 

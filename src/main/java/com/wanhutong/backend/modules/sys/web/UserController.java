@@ -169,7 +169,7 @@ public class UserController extends BaseController {
 				bizOrderHeader.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
 			}
 			if (orderHeaderEedTime != null) {
-				bizOrderHeader.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+				bizOrderHeader.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
 			}
 			if (!userAdmin.isAdmin()) {
 				bizOrderHeader.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
@@ -646,7 +646,7 @@ public class UserController extends BaseController {
 			ordUser.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
 		}
 		if (orderHeaderEedTime != null) {
-			ordUser.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+			ordUser.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
 		}
 		if (!userAdmin.isAdmin()) {
 			ordUser.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
@@ -681,7 +681,7 @@ public class UserController extends BaseController {
 			user.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
 		}
 		if (orderHeaderEedTime != null) {
-			user.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+			user.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
 		}
 		Page<User> page = systemService.contact(new Page<User>(request, response), user);
 		User userAdmin = UserUtils.getUser();
@@ -690,7 +690,7 @@ public class UserController extends BaseController {
 			bizChatRecord.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
 		}
 		if (orderHeaderEedTime != null) {
-			bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+			bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
 		}
 		if (!userAdmin.isAdmin()) {
 			bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));

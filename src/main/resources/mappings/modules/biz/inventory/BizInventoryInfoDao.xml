@@ -46,6 +46,7 @@
 			<include refid="bizInventoryInfoColumns"/>
 		FROM biz_inventory_info a
 		<include refid="bizInventoryInfoJoins"/>
+		LEFT JOIN biz_request_header rh ON rh.from_id = a.cust_id
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="name != null and name != ''">
@@ -57,8 +58,8 @@
 			<if test="bizLocation != null and bizLocation.id != null and bizLocation.id !=''">
 				AND a.location_id = #{bizLocation.id}
 			</if>
-			<if test="customer != null and customer.id != null and customer.id != ''">
-				AND a.cust_id = #{customer.id}
+			<if test="reqHeader != null and reqHeader.id != null">
+				AND rh.id = #{reqHeader.id}
 			</if>
 			<if test="sqlMap != null and sqlMap.inventory != null and sqlMap.inventory != ''">
 				${sqlMap.inventory}
@@ -70,6 +71,7 @@
 				<if test="dbName == 'mysql'">concat('%',#{customer.name},'%')</if>
 			</if>-->
 		</where>
+		GROUP BY a.id
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
