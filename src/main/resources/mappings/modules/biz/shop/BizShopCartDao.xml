@@ -8,7 +8,14 @@
 		a.sku_shelf_id AS "skuShelfinfo.id",
 		osi.name as "skuShelfinfo.opShelfInfo.name",
 		a.office_id AS "office.id",
-		so.name AS "office.name",
+		(
+		CASE a.cust_type
+		WHEN 1 THEN
+		 so. NAME
+		WHEN 2 THEN
+		su.name
+		END
+		)as "office.name",
 		a.user_id AS "user.id",
 		bsi.name AS  "skuShelfinfo.skuInfo.name",
 		su.name AS "user.name",
@@ -57,13 +64,16 @@
 				AND a.id = #{id}
 			</if>
 			<if test="skuShelfinfo != null and skuShelfinfo.opShelfInfo.name != null and skuShelfinfo.opShelfInfo.name != ''">
-				AND osi.name = #{skuShelfinfo.opShelfInfo.name}
+				AND osi.name like
+				<if test="dbName == 'oracle'">'%'||#{skuShelfinfo.opShelfInfo.name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{skuShelfinfo.opShelfInfo.name}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{skuShelfinfo.opShelfInfo.name}, '%')</if>
 			</if>
-            <!--<if test="skuShelfinfo != null and skuShelfinfo.id != null and skuShelfinfo.id != ''">
-                AND oss.id = #{bizShopCart.skuShelfinfo.id}
-            </if>-->
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.office_id = #{office.id}
+			</if>
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id = #{user.id}
 			</if>
 			<if test="user != null and user.name != null and user.name != ''">
 				AND su.name LIKE
@@ -71,7 +81,7 @@
 				<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{user.name}, '%')</if>
 			</if>
-            <if test="user != null and user != ''">
+            <if test="user != null and user.mobile !=null and user.mobile != ''">
                 AND su.mobile LIKE
                 <if test="dbName == 'oracle'">'%'||#{user.mobile}||'%'</if>
                 <if test="dbName == 'mssql'">'%'+#{user.mobile}+'%'</if>

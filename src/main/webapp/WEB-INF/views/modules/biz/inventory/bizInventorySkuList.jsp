@@ -75,8 +75,10 @@
 				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
 			</li>
 			<li><label>仓库名称：</label>
-				<form:input path="invInfo.name" htmlEscape="false"  class="input-medium"/>
-				<input id="invInfo.id" type="hidden" name="invInfo.id" value="${invInfo.id}"/>
+				<sys:treeselect id="invInfo" name="invInfo.id" value="${bizInventorySku.invInfo.id}" labelName="invInfo.name"
+								labelValue="${bizInventorySku.invInfo.name}" notAllowSelectParent="true"
+								title="仓库"  url="/biz/inventory/bizInventoryInfo/warehouseData"
+								cssClass="input-medium" allowClear="true"/>
 			</li>
 			<li><label style="width: 90px;">库龄时长(天)：</label>
 				<form:input path="inventoryAgeDay" htmlEscape="false"  class="input-medium"/>
