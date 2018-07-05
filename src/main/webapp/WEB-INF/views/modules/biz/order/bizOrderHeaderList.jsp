@@ -52,9 +52,9 @@
 			$("#buttonExport").click(function(){
 				top.$.jBox.confirm("确认要导出订单数据吗？","系统提示",function(v,h,f){
 					if(v=="ok"){
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport");
+						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/orderHeaderExport?statu=${statu}");
 						$("#searchForm").submit();
-						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader/");
+						$("#searchForm").attr("action","${ctx}/biz/order/bizOrderHeader?statu=${statu}");
 					}
 				},{buttonsFocus:1});
 				top.$('.jbox-body .jbox-icon').css('top','55px');
@@ -292,7 +292,12 @@
 				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight}" pattern="0.00"/>
 			</font></td>
 			<td>
-				<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
+				<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+					0.00
+				</c:if>
+				<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+					<fmt:formatNumber type="number" value="${orderHeader.totalDetail+orderHeader.totalExp+orderHeader.freight-orderHeader.totalBuyPrice}" pattern="0.00"/>
+				</c:if>
 			</td>
 			<td>
 					${fns:getDictLabel(orderHeader.invStatus, 'biz_order_invStatus', '未知状态')}
@@ -377,6 +382,9 @@
 					<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 						<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
 						    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&statu=${statu}">修改</a>
+						</c:if>
+						<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+							<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&statu=${statu}">修改</a>
 						</c:if>
 						<c:if test="${fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>

@@ -28,6 +28,28 @@
 			$("#searchForm").submit();
         	return false;
         }
+        function UpShelf(shelfSkuId) {
+            if (window.confirm('确认要上架该商品吗？')) {
+                $.ajax({
+					type:"post",
+					url:"${ctx}/biz/shelf/bizOpShelfSkuV2/shelvesSave?id="+shelfSkuId,
+					success:function (data) {
+						window.location.reload();
+                    }
+				});
+			}
+        }
+        function DownShelf(shelfSkuId) {
+			if (window.confirm('确认要下架该商品吗？')) {
+			    $.ajax({
+					type:"post",
+					url:"${ctx}/biz/shelf/bizOpShelfSkuV2/dateTimeSave?id="+shelfSkuId,
+					success:function (data) {
+						window.location.reload();
+                    }
+				});
+			}
+        }
 	</script>
 </head>
 <body>
@@ -191,10 +213,10 @@
 						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/form?id=${bizOpShelfSku.id}">修改</a>
 						<c:choose>
 							<c:when test="${bizOpShelfSku.udshelf eq '上架'}">
-								<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/shelvesSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要上架该商品吗？', this.href)">上架</a>
+								<a href="#" onclick="UpShelf(${bizOpShelfSku.id})">上架</a>
 							</c:when>
 							<c:otherwise>
-								<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/dateTimeSave?id=${bizOpShelfSku.id}" onclick="return confirm('确认要下架该商品吗？', this.href)">下架</a>
+								<a href="#" onclick="DownShelf(${bizOpShelfSku.id})">下架</a>
 							</c:otherwise>
 						</c:choose>
 						<a href="${ctx}/biz/shelf/bizOpShelfSkuV2/delete?id=${bizOpShelfSku.id}&shelfSign=0" onclick="return confirmx('确认要删除该上架商品吗？', this.href)">删除</a>
