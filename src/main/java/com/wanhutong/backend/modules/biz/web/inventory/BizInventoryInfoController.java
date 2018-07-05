@@ -131,13 +131,10 @@ public class BizInventoryInfoController extends BaseController {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		User user = UserUtils.getUser();
 		BizInventoryInfo inventoryInfo = new BizInventoryInfo();
-		List<BizInventoryInfo> list = null;
-		if (user.isAdmin()) {
-			list = bizInventoryInfoService.findList(inventoryInfo);
-		} else {
+		if (!user.isAdmin()) {
 			inventoryInfo.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
-			list = bizInventoryInfoService.findList(inventoryInfo);
 		}
+		List<BizInventoryInfo> list = bizInventoryInfoService.findList(inventoryInfo);
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (int i = 0; i < list.size(); i++) {
 				BizInventoryInfo e = list.get(i);

@@ -327,12 +327,13 @@ public class BizOpShelfSkuController extends BaseController {
 			shelfSku = "OK";
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("删除上架商品失败",e);
 		}
 		return shelfSku;
 	}
 
 	/**
-	 * 下降不刷新
+	 * 下架不刷新
 	 * */
 	@ResponseBody
 	@RequiresPermissions("biz:shelf:bizOpShelfSku:edit")
@@ -346,6 +347,7 @@ public class BizOpShelfSkuController extends BaseController {
 			Lower = "OK";
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("下架失败",e);
 		}
 		return Lower;
 	}
@@ -367,6 +369,7 @@ public class BizOpShelfSkuController extends BaseController {
 			sheLve = "OK";
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("上架失败",e);
 		}
 		return sheLve;
 	}
