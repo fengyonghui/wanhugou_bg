@@ -326,7 +326,6 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSkuService.delete(bizOpShelfSku);
 			shelfSku = "OK";
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.error("删除上架商品失败,bizOpShelfSkuId{}",bizOpShelfSku.getId(),e);
 		}
 		return shelfSku;
@@ -346,7 +345,6 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSkuService.updateDateTime(bizOpShelfSku);
 			Lower = "OK";
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.error("商品下架失败，bizOpshelfSkuId{}",bizOpShelfSku.getId(),e);
 		}
 		return Lower;
@@ -368,7 +366,6 @@ public class BizOpShelfSkuController extends BaseController {
 			bizOpShelfSkuService.updateShelves(bizOpShelfSku);
 			sheLve = "OK";
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.error("商品重新上架失败，bizOpshelfSkuId{}",bizOpShelfSku.getId(),e);
 		}
 		return sheLve;
