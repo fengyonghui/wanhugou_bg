@@ -315,7 +315,8 @@ public class BizPoHeaderController extends BaseController {
                         ImmutableMap.of(
                                 "id", o.getId(),
                                 "orderNum", o.getOrderNum(),
-                                "vendOffice", o.getVendOffice().getName()
+                                "vendOffice", o.getVendOffice().getName(),
+                                "processId", o.getProcessId()
                         )
                 );
             });
