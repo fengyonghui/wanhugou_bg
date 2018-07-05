@@ -14,20 +14,35 @@
 		},
 		pageInit: function() {
 			var _this = this;
-	
+		_this.getData()
 		},
 		getData: function() {
 			var _this = this;
-			console.log(this.userInfo.wy)
-			//运营管理
-			$("#purchase").off().on("tap", function() {
-					GHUTILS.OPENPAGE({
-						url: "../html/purchase.html",
-						extras: {
-								actionUrl:'FFFF'
-							}
-					})
-			});
+			//var dataList = _this.moniData()
+
+            $.ajax({
+                type: "GET",
+                url: "/a/biz/po/bizPoHeader/listData4Mobile",
+                data: {parentId:1},
+                dataType: "json",
+                success: function(res){
+					console.log(res)
+                    var htmlList = '';
+                    $.each(res.data, function(i, item) {
+                        console.log(item)
+                        htmlList += '<li class="mui-table-view-cell mui-col-xs-4  text-align-center app_pl0 app_border_rb app_prot0"  idData="'+item.id +'" url="'+item.url +'">' +
+                            '<div>' +
+                            '<div class="app_icon_myt0 app_color_myt0 app_pt10 app_f30"></div>' +
+                            '<div class="app_mt10">' + item.name + '</div>' +
+                            '<div class="app_cgray app_mb20"><span>&nbsp;</span></div>' +
+                            '</div>' +
+                            '</li>'
+                    });
+                    $('#htmlMenu').html(htmlList)
+                }
+            });
+		_this.herfHTtml()
+
 		},
 	}
 	$(function() {

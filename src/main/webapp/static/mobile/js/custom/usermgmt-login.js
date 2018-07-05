@@ -40,7 +40,7 @@ mui.init();
 				$(document).off('keyup')
 			})
 		},
-		doLogin: function(mobile, password) {
+		doLogin: function(username, password) {
             alert(1);
 			var _this = this;
 			$(_this.tips).html("&nbsp;");
@@ -65,7 +65,7 @@ mui.init();
 //			GHUTILS.LOAD({
 //				url: GHUTILS.API.USER.doLogin,
 //				data: {
-//					userAcc: mobile,
+//					userAcc: username,
 //					userPwd: password,
 //				},
 //				type: "post",

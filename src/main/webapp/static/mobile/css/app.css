@@ -82,7 +82,7 @@ input, select, textarea{font-size: 16px;}
 
 .app_icon_scan:before{content: '\e926'}
 
-.mui-icon-back:before, .mui-icon-left-nav:before { content: '\e904';}
+/*.mui-icon-back:before, .mui-icon-left-nav:before { content: '\e904';}*/
 .app_icon_home:before{content: '\e911'}
 .app_icon_tn:before{content: '\e917'}
 .app_icon_t0:before{content: '\e927'}
@@ -497,8 +497,8 @@ input[type=time],
 input[type=url],
 input[type=week],
 select, textarea{height: auto;padding:14px 15px;}
-.mui-input-group .mui-input-row{height: auto;background-color: #374761;border-radius: 5px;}
-.mui-input-row label{padding:12px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 33%;}
+.mui-input-group .mui-input-row{height: auto;background-color: #fff;border-radius: 5px;}
+.mui-input-row label{padding:14px 15px;padding-left: 20px;padding-right: 10px;line-height:21px;width: 33%;}
 .mui-input-row label~input, .mui-input-row label~select, .mui-input-row label~textarea{width:67%}
 
 .mui-input-row label~select{padding-left: 0;padding-top: 6px;}
@@ -541,7 +541,7 @@ select, textarea{height: auto;padding:14px 15px;}
 .account-t0-detail .chart_height{min-height:330px;}
 .account-t0-detail .app_gray{background-color: gray !important;color: #fff !important;}
 /*==消除符号==*/
-.mui-input-row .mui-input-clear~.mui-icon-clear{right: .5em;color: #ccc;width: 30px;height: 30px;font-size: 16px;line-height: 2;top:7px}
+.mui-input-row .mui-input-clear~.mui-icon-clear{right: .5em;color: #ccc;width: 30px;height: 30px;font-size: 16px;line-height: 2;top:9px}
 .mui-table-view-cell.noborder:after{height: 0}
 .mui-grid-view.mui-grid-9 .mui-table-view-cell.noborder{border: none;}
 
@@ -640,7 +640,7 @@ select, textarea{height: auto;padding:14px 15px;}
 html,body{}
 body{font-size: 15px;color:#3b3b3b;}
 .mui-content{
-	background-color:#f0f0f0;
+	background-color:#fff;
 }
 
 
@@ -1380,3 +1380,22 @@ border-right: 1px solid #fff;border-top: 1px solid #fff;}
 .app_dialog_ticket_list .app_coupon_num_box{height: 120px;}
 .app_dialog_list_box .app_lines{border-bottom: 1px solid #C7C7CC;height: 0px;width: 100%;text-align: center;margin: 20px auto;font-size: 14px;color: #C7C7CC;}
 .app_dialog_list_box .app_lines span{background: #fff;padding: 0 15px;position: relative;top:-7px}
+
+
+
+/*自定义覆盖样式!*/
+.app_bgcolor {background-color: #374761;box-shadow: none;}
+.app_content_bgc_login {background-color: #374761;}
+.app_content_bgc_phs {background-color: #FFFFFF;}
+.app_font_cl {color: #3d79f2;}
+.app_nav_text_center {text-align: center;line-height: 44px;}
+.app_li_text_linhg {line-height: 30px;}
+.app_text_center {text-align: center;}
+.app_text_indt10 {text-indent: 10px;}
+.app_text_indt15 {text-indent: 15px;}
+.app_text_alg_r {text-align: right;}
+.app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;}
+.labelLf {padding: 14px 14px;line-height: 21px;width: 33%;float:left;}
+.labelri {width: 67%;float: right;padding: 14px 15px;height: auto;line-height: 21px;font-size: 16px;text-align: center;}
+.labelPto {width:50%}
+.labelRdo {}

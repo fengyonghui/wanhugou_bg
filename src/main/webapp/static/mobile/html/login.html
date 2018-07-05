@@ -7,14 +7,13 @@
     <title>登录</title>
     <link href="../css/mui.min.css" rel="stylesheet"/>
     <link href="../css/app.css" rel="stylesheet"/>
-    <style type="text/css">/** app.css ==> app-001 **/</style>
     <style type="text/css">
         html, body {
             height: 100%;
         }
 
         .mui-input-row input.app_login_input {
-            padding: 36px 0px;
+            padding: 28px 15px 10px;
         }
 
         #app-forgetpwd {
@@ -100,7 +99,7 @@
         }
 
         .mui-input-row label.login-icon {
-            padding: 23px 15px;
+            padding: 25px 15px 10px;
         }
 
         .app_bgcolor {
@@ -117,6 +116,9 @@
         .mui-input-group div.mui-input-row {
             height: 60px;
         }
+        .mui-bar-nav~.mui-content.app_content_bgc_login {background-color: #374761;}
+        input:-webkit-autofill, {-webkit-box-shadow: 0 0 0 1000px white inset; }
+        .mui-content .form-signin .mui-input-row {background-color: #374761;}
     </style>
 </head>
 <body>
@@ -149,9 +151,9 @@
                 <input id="app-userPwd" type="password" class="app_login_input" value="" placeholder="请输入登录密码" name="password"
                        valid='{"required":true,"tipsbox":"#app_tips_login","msg":"密码不能为空"}' maxlength="32"/>
             </div>
+            <div class="mui-input-row"></div>
         </div>
-        <div class="app_tips_txt app_ml15 app_mt15" id="app_tips_login">&nbsp;</div>
-        <div class="app_ml25 app_mr25 app_mt30">
+        <div class="app_ml25 app_mr25">
             <button id="app-login" type="button" class="mui-btn mui-btn-primary mui-btn-block">
                 登录
             </button>

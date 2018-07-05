@@ -8,27 +8,86 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
-			this.getData(); //获取数据
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-	
+			_this.ajaxData()
+			_this.getData()
+		    
 		},
+		ajaxData: function() {
+			var _this = this;
+            $.ajax({
+                type: "GET",
+                url: "/a/sys/menu/listData",
+                data: {parentId:_this.userInfo.idData},
+                dataType: "json",
+                success: function(res){
+                    console.log(res)
+                    var htmlList = '';
+                    $.each(res.data, function(i, item) {
+                       		console.log(item)
+                       		 htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
+									'<a class="mui-navigate-right">'+ item.name + '</a>'+
+									'<div  class = "mui-collapse-content childData'+ i+'">'
+									'</div>'+
+									'</li>'
+                    });
+                	$('#menuMaget').html(htmlList)
+                }
+            });
+		},
+		
 		getData: function() {
 			var _this = this;
-			console.log(this.userInfo.wy)
-			//运营管理
-			$("#purchase").off().on("tap", function() {
-					GHUTILS.OPENPAGE({
-						url: "../html/purchase.html",
+            $('#menuMaget').on('tap','.menuBtn',function(){
+                var dataId = $(this).attr('dataId');
+                var indexNum = $(this).attr('indexNum');
+                
+                if(dataId){
+                    $.ajax({
+                        type: "GET",
+                        url: "/a/sys/menu/listData",
+                        data: {parentId:dataId},
+                        dataType: "json",
+                        success: function(res){
+                            console.log(res)
+                            var pHtmlList = '';
+                            $.each(res.data, function(i, item) {
+                                console.log(item)
+                                pHtmlList+='<p class="childMenu" purchId="'+item.id+'">'+ item.name+'</p>'
+
+                            });
+                            $(".childData"+indexNum).html(pHtmlList)
+                        }
+                    });
+				}/*else {
+                	mui.toast('没有子菜单')
+				}*/
+			})
+        _this.hrefHtml()
+        },
+
+        hrefHtml: function() {
+			var _this = this;
+			var url = $(this).attr('url');
+			var purchId = $(this).attr('purchId');
+            $('.menuBtn').on('click','.childMenu',function(){
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(purchId==132) {
+                	GHUTILS.OPENPAGE({
+						url: "../../mobile/html/purchase.html",
 						extras: {
-								actionUrl:'FFFF'
-							}
+								purchId:purchId,
+						}
 					})
-			});
+                }
+			})
 		},
+		
 	}
 	$(function() {
 
