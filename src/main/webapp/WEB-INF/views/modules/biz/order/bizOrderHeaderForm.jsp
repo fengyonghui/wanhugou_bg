@@ -687,7 +687,7 @@
         </div>
     </div>
     <div class="control-group" id="add1">
-        <label class="control-label">收货地址；</label>
+        <label class="control-label">收货地址：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <select id="province" class="input-medium" name="bizLocation.province.id" disabled="disabled"
@@ -733,7 +733,7 @@
         </div>
     </div>
     <div class="control-group" id="add2" style="display:none">
-        <label class="control-label">收货地址；</label>
+        <label class="control-label">收货地址：</label>
         <div class="controls">
             <input id="addAddressHref" type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/>
             <label class="error" id="addError" style="display:none;">必填信息</label>
@@ -741,7 +741,7 @@
         </div>
     </div>
     <div class="control-group" id="add3">
-        <label class="control-label">详细地址；</label>
+        <label class="control-label">详细地址：</label>
         <div class="controls">
                 <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                     <input type="text" id="address" name="bizLocation.address" htmlEscape="false" readOnly="true"
@@ -754,7 +754,7 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">备&nbsp;注；</label>
+        <label class="control-label">备&nbsp;注：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>

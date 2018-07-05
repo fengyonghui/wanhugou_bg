@@ -153,12 +153,6 @@ public class BizInvoiceController extends BaseController {
             }
         }
         model.addAttribute("logisticsList",logisticsList);
-//        List<BizOrderHeader> orderList = bizOrderHeaderService.findList(new BizOrderHeader());
-//        List<BizRequestHeader> requestList = bizRequestHeaderService.findList(new BizRequestHeader());
-//        List<BizInventoryInfo> invInfoList = bizInventoryInfoService.findList(new BizInventoryInfo());
-//        model.addAttribute("invInfoList",invInfoList);
-//        model.addAttribute("orderList",orderList);
-//        model.addAttribute("requestList",requestList);
         if (StringUtils.isBlank(bizInvoice.getCarrier())) {
             bizInvoice.setCarrier(user.getName());
         }
@@ -196,7 +190,6 @@ public class BizInvoiceController extends BaseController {
         BizDetailInvoice bizDetailInvoice = new BizDetailInvoice();
         bizDetailInvoice.setInvoice(bizInvoice);
         List<BizDetailInvoice> DetailInvoiceList = bizDetailInvoiceService.findList(bizDetailInvoice);
-//        List<BizOrderHeader> orderHeaderList = new ArrayList<>();
         boolean photoFlag = false;
         if (DetailInvoiceList != null && !DetailInvoiceList.isEmpty()){
             for (BizDetailInvoice detailInvoice:DetailInvoiceList) {
