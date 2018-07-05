@@ -735,9 +735,12 @@
                         },
                         type: 'get',
                         success: function (result) {
-                            alert(result);
-                            if (result == '操作成功!') {
+                            result = JSON.parse(result);
+                            if(result.ret == true || result.ret == 'true') {
+                                alert('操作成功!');
                                 window.location.href = "${ctx}/biz/po/bizPoHeader";
+                            }else {
+                                alert(result.errmsg);
                             }
                         },
                         error: function (error) {

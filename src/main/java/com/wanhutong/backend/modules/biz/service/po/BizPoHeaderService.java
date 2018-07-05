@@ -451,9 +451,9 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public String genPaymentOrder(BizPoHeader bizPoHeader) {
+    public Pair<Boolean, String> genPaymentOrder(BizPoHeader bizPoHeader) {
         if (bizPoHeader.getBizPoPaymentOrder() != null && bizPoHeader.getBizPoPaymentOrder().getId() != null && bizPoHeader.getBizPoPaymentOrder().getId() != 0) {
-            return "操作失败,该订单已经有正在申请的支付单!";
+            return Pair.of(Boolean.FALSE, "操作失败,该订单已经有正在申请的支付单!");
         }
         PaymentOrderProcessConfig paymentOrderProcessConfig = ConfigGeneral.PAYMENT_ORDER_PROCESS_CONFIG.get();
         PaymentOrderProcessConfig.Process purchaseOrderProcess = null;
@@ -479,7 +479,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
 
         bizPoHeader.setBizPoPaymentOrder(bizPoPaymentOrder);
         this.updatePaymentOrderId(bizPoHeader.getId(), bizPoPaymentOrder.getId());
-        return "操作成功!";
+        return Pair.of(Boolean.TRUE, "操作成功!");
+    }
+
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Pair<Boolean, String> genPaymentOrder(int id, BigDecimal planPay, Date deadline) {
+        BizPoHeader bizPoHeader = this.get(id);
+        bizPoHeader.setPlanPay(planPay);
+        bizPoHeader.setPayDeadline(deadline);
+        return genPaymentOrder(bizPoHeader);
     }
 
     public Pair<Boolean, String> audit(int id, String currentType, int auditType, String description, CommonProcessEntity cureentProcessEntity) {
@@ -723,12 +731,12 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @return
      */
     @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc) {
+    public Pair<Boolean, String> startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, int auditType, String desc) {
         PurchaseOrderProcessConfig purchaseOrderProcessConfig = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get();
         BizPoHeader bizPoHeader = this.get(id);
         if (bizPoHeader == null) {
             LOGGER.error("start audit error [{}]", id);
-            return "操作失败!参数错误[id]";
+            return Pair.of(Boolean.FALSE,   "操作失败!参数错误[id]");
         }
 
         if (prew) {
@@ -743,7 +751,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
         }
         this.updateProcessToInit(bizPoHeader);
         auditPo(id, String.valueOf(purchaseOrderProcessConfig.getDefaultProcessId()), auditType, desc);
-        return "操作成功!";
+        return Pair.of(Boolean.TRUE,   "操作成功!");
     }
 
     /**

@@ -508,7 +508,7 @@ public class BizPoHeaderController extends BaseController {
                        BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes,
                        String prewStatus, String type, String version) {
         if ("audit".equalsIgnoreCase(type)) {
-            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader);
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
             return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
         }
@@ -612,7 +612,7 @@ public class BizPoHeaderController extends BaseController {
     @RequestMapping(value = "savePoHeader")
     public String savePoHeader(BizPoHeader bizPoHeader, Model model, RedirectAttributes redirectAttributes, String prewStatus, String type) {
         if ("createPay".equalsIgnoreCase(type)) {
-            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader);
+            String msg = bizPoHeaderService.genPaymentOrder(bizPoHeader).getRight();
             addMessage(redirectAttributes, msg);
             return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
         }
@@ -625,6 +625,17 @@ public class BizPoHeaderController extends BaseController {
 
         addMessage(redirectAttributes, "保存采购订单成功");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/?repage";
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "createPay4Mobile")
+    @ResponseBody
+    public String createPay4Mobile(HttpServletRequest request, int id, BigDecimal planPay, Date deadline) {
+        Pair<Boolean, String> result = bizPoHeaderService.genPaymentOrder(id, planPay, deadline);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")
@@ -645,8 +656,12 @@ public class BizPoHeaderController extends BaseController {
     @RequiresPermissions("biz:po:bizPoHeader:audit")
     @RequestMapping(value = "startAudit")
     @ResponseBody
-    public String startAudit(int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
-        return bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+    public String startAudit(HttpServletRequest request, int id, Boolean prew, BigDecimal prewPayTotal, Date prewPayDeadline, @RequestParam(defaultValue = "1") Integer auditType, String desc) {
+        Pair<Boolean, String> result = bizPoHeaderService.startAudit(id, prew, prewPayTotal, prewPayDeadline, auditType, desc);
+        if (result.getLeft()) {
+            return JsonUtil.generateData(result, request.getParameter("callback"));
+        }
+        return JsonUtil.generateErrorData(HttpStatus.SC_INTERNAL_SERVER_ERROR, result.getRight(), request.getParameter("callback"));
     }
 
     /**
