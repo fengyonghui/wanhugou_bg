@@ -55,6 +55,7 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -315,9 +316,9 @@ public class BizPoHeaderController extends BaseController {
                 resultList.add(
                         ImmutableMap.of(
                                 "id", o.getId(),
-                                "orderNum", o.getOrderNum(),
-                                "vendOffice", o.getVendOffice().getName(),
-                                "processId", o.getProcessId()
+                                "orderNum", o.getOrderNum() == null ? StringUtils.EMPTY : o.getOrderNum(),
+                                "vendOffice", o.getVendOffice().getName() == null ? StringUtils.EMPTY : o.getVendOffice().getName(),
+                                "processId", o.getProcessId() == null ? StringUtils.EMPTY : o.getProcessId()
                         )
                 );
             });
