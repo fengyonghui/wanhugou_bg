@@ -10,7 +10,6 @@ import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
-import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
@@ -89,6 +88,8 @@ import java.util.Set;
 @RequestMapping(value = "${adminPath}/biz/po/bizPoHeader")
 public class BizPoHeaderController extends BaseController {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
+
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
@@ -120,7 +121,6 @@ public class BizPoHeaderController extends BaseController {
     @Autowired
     private BizOrderAddressService bizOrderAddressService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
 
