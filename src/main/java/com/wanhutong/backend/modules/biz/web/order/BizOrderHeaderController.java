@@ -462,7 +462,8 @@ public class BizOrderHeaderController extends BaseController {
             vendCenterId= Integer.parseInt(defaultProps.get(0).getPropValue());
         }
         if (StringUtils.isNotBlank(flag) && "0".equals(flag)) {
-            bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+            bizOrderHeader.setBizStatusStart(OrderHeaderBizStatusEnum.SUPPLYING.getState());
+            bizOrderHeader.setBizStatusEnd(OrderHeaderBizStatusEnum.APPROVE.getState());
             List<Role>roleList= user.getRoleList();
             Role role=new Role();
             role.setEnname(RoleEnNameEnum.DEPT.getState());

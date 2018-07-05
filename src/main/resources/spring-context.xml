@@ -124,5 +124,5 @@
 		<property name="queueSize" value="${defaultThreadPool.queueSize}" />
 		<property name="rejectDiscard" value="${defaultThreadPool.rejectDiscard}" />
 	</bean>
-	
+
 </beans>
