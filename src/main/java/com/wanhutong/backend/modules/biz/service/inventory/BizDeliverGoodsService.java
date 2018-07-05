@@ -190,8 +190,23 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
                     BizOrderStatus orderStatus = new BizOrderStatus();
                     orderStatus.setOrderHeader(orderHeader);
                     orderStatus.setBizStatus(orderHeader.getBizStatus());
-                    bizOrderStatusService.save(orderStatus);
+                    List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
+                    if (CollectionUtils.isNotEmpty(list)) {
+                        boolean flag = true;
+                        for (BizOrderStatus bizOrderStatus : list) {
+                            if (bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            bizOrderStatusService.save(orderStatus);
+                        }
+                    } else {
+                        bizOrderStatusService.save(orderStatus);
+                    }
                 }
+
             }
             bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
             super.save(bizInvoice);
