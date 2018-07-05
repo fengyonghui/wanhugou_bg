@@ -161,8 +161,7 @@ public class BizRequestHeaderController extends BaseController {
 			bizOrderStatus.setOrderHeader(bizOrderHeader);
 			bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
 			List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
-			//statusList.sort((o1, o2) -> o1.getCreateDate().compareTo(o2.getCreateDate()));
-			statusList.sort((o1, o2) -> o1.getuVersion().compareTo(o2.getuVersion()));
+			statusList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
 
 			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
 
