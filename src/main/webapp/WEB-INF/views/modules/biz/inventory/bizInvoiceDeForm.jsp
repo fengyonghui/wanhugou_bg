@@ -18,12 +18,6 @@
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
-                    // var fTd= $("#prodInfo").find("td").length;
-                    // alert(fTd)
-                    if($("#prodInfo").find("td").length==0){
-                        alert("请先选择待发货订单,然后点击确定。");
-                        return;
-                    }
                     var tt="";
                     var flag = false;
                     var total = 0;
@@ -59,7 +53,7 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    if(window.confirm('你确定要发货吗？') && flag && total > 0){
+                    if(window.confirm('你确定要发货吗？')){
                         if (tt != '') {
                             $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
                         }
@@ -283,7 +277,7 @@
 			<div class="controls">
 				<form:select about="choose" path="carrier" class="input-medium required">
 					<form:option value="" label="请选择"/>
-					<form:options items="${userList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+					<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>
 				</form:select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
