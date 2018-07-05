@@ -539,7 +539,7 @@
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
-    <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
+    <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
