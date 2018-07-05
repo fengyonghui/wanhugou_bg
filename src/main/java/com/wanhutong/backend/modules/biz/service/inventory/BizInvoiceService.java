@@ -302,11 +302,15 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                     orderStatus.setBizStatus(orderHeader.getBizStatus());
                     List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
                     if (CollectionUtils.isNotEmpty(list)) {
+                        boolean flag = true;
                         for (BizOrderStatus bizOrderStatus : list) {
-                            if (!bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
-                                bizOrderStatusService.save(orderStatus);
+                            if (bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
+                                flag = false;
                                 break;
                             }
+                        }
+                        if (flag) {
+                            bizOrderStatusService.save(orderStatus);
                         }
                     } else {
                         bizOrderStatusService.save(orderStatus);
@@ -351,11 +355,15 @@ public class BizInvoiceService extends CrudService<BizInvoiceDao, BizInvoice> {
                         orderStatus.setBizStatus(orderHeader.getBizStatus());
                         List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
                         if (CollectionUtils.isNotEmpty(list)) {
+                            boolean flag = true;
                             for (BizOrderStatus bizOrderStatus : list) {
-                                if (!bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
-                                    bizOrderStatusService.save(orderStatus);
+                                if (bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
+                                    flag = false;
                                     break;
                                 }
+                            }
+                            if (flag) {
+                                bizOrderStatusService.save(orderStatus);
                             }
                         } else {
                             bizOrderStatusService.save(orderStatus);
