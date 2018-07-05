@@ -753,15 +753,26 @@
                 </c:if>
         </div>
     </div>
-    <div class="control-group">
+    <div id="box" class="control-group" style="word-break:break-all;overflow:hidden; cursor:pointer">
         <label class="control-label">备&nbsp;注：</label>
         <div class="controls">
-            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>
-            </c:if>
-            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>
-            </c:if>
+            <%--<c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">--%>
+                <%--<form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>--%>
+            <%--</c:if>--%>
+            <%--<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">--%>
+                <%--<form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>--%>
+            <%--</c:if>--%>
+                <div class="box">dwefeafagesgaegergergergergergergergergegerger<br>
+                    姓名&nbsp;&nbsp;2018-07-05 15:51:21</div>
+                <div class="box">dwefeafagesgaegergergergergergergergergegerger<br>
+                    姓名&nbsp;&nbsp;2018-07-05 15:51:21</div>
+                <div class="box">dwefeafagesgaegergergergergergergergergegerger<br>
+                    姓名&nbsp;&nbsp;2018-07-05 15:51:21</div>
+            <%--<textarea value="dwefeafagesgaegergergergergergergergergegerger" htmlEscape="false" maxlength="200" class="input-xlarge"/>--%>
+            <%--<textarea value="dwefeafagesgaegergergergergergergergergegerger" htmlEscape="false" maxlength="200" class="input-xlarge"/>--%>
+            <c:forEach items="${commentList}" var="comment">
+                <div class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;${comment.createDate}</div>
+            </c:forEach>
         </div>
     </div>
     <c:if test="${photosMap != null && photosMap.size()>0 }">
@@ -1314,6 +1325,46 @@
         </shiro:hasPermission>
     </div>
 </c:if>
+<script type="text/javascript">
+    var t = true;
+    var obj,a;
+    function openclose(openclose){
+        var h = obj.offsetHeight;
+        h += openclose*5;
+        if(h>=150){
+            clearInterval(a);
+            obj.style.height = "150px";
+            t = true;
+        }
+        else if(h<=50){
+            clearInterval(a);
+            obj.style.height = "50px";
+            t = true;
+        }
+        else obj.style.height = h + "px";
+    }
+    function getlink(){
+        obj.onclick = function(){
+            clearInterval(a);
+            if(obj.offsetHeight>=150)
+                a=setInterval("openclose(-1)",5);
+             else
+                a = setInterval("openclose(1)" , 5);
 
+        }
+    }
+    window.onload = function()
+    {
+        obj = document.getElementById("box")
+        obj.style.height = "50px";
+        getlink();
+    }
+</script>
+<style type="text/css">
+    .box{width:200px;word-break:break-all;border:1px solid red;overflow:hidden; cursor:pointer}
+</style>
+<div id="box" class="box">
+    <a href="#">点击我展开</a>
+</div>
 </body>
 </html>
