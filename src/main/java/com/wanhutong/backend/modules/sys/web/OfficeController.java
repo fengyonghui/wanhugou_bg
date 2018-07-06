@@ -16,6 +16,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.chat.BizChatRecord;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.cust.BizCustCredit;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
 import com.wanhutong.backend.modules.biz.entity.vend.BizVendInfo;
 import com.wanhutong.backend.modules.biz.service.category.BizVarietyInfoService;
@@ -433,6 +434,16 @@ public class OfficeController extends BaseController {
             return form(office, model, null, null);
         }
         officeService.save(office);
+        //保存钱包
+        String purchasersId = DictUtils.getDictValue("经销店", "sys_office_type", "");
+        if (StringUtils.isNotBlank(purchasersId) && purchasersId.equals(office.getType())) {
+            BizCustCredit bizCustCredit = new BizCustCredit();
+            bizCustCredit = new BizCustCredit();
+            bizCustCredit.setCustomer(office);
+            bizCustCredit.setLevel(StringUtils.isBlank(office.getLevel()) ? "1" : office.getLevel());
+            bizCustCreditService.save(bizCustCredit);
+        }
+
 
         if (office.getChildDeptList() != null) {
             Office childOffice = null;
