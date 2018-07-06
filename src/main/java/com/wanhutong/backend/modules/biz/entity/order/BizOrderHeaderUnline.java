@@ -29,6 +29,11 @@ public class BizOrderHeaderUnline extends DataEntity<BizOrderHeaderUnline> {
 	private Byte bizStatus;		//流水的状态 0：未审核 1：通过 2：驳回
 	private String source;		//详情或审核 detail or examine
 	private Integer orderType;
+
+	/**
+	 * 线下支付凭证
+	 */
+	private String imgUrls;
 	
 	public BizOrderHeaderUnline() {
 		super();
@@ -100,5 +105,13 @@ public class BizOrderHeaderUnline extends DataEntity<BizOrderHeaderUnline> {
 
 	public void setOrderType(Integer orderType) {
 		this.orderType = orderType;
+	}
+
+	public String getImgUrls() {
+		return imgUrls;
+	}
+
+	public void setImgUrls(String imgUrls) {
+		this.imgUrls = imgUrls;
 	}
 }
