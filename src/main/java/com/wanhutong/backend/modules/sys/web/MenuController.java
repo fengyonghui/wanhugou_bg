@@ -64,7 +64,6 @@ public class MenuController extends BaseController {
 
 	/**
 	 * 移动端菜单列表接口
-	 * @param model
 	 * @param parentId
 	 * @return
 	 */
@@ -79,13 +78,14 @@ public class MenuController extends BaseController {
 		List<Map<String, Object>> result = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(list)) {
 			list.forEach(o -> {
-				result.add(ImmutableMap.of(
-						"name", o.getName()  == null ? StringUtils.EMPTY : o.getName(),
-						"id", o.getId() == null ? StringUtils.EMPTY : o.getId(),
-						"isShow", o.getIsShow() == null ? StringUtils.EMPTY : o.getIsShow() ,
-						"url", o.getHref() == null ? StringUtils.EMPTY : o.getHref(),
-						"target", o.getTarget()  == null ? StringUtils.EMPTY : o.getTarget()
-				));
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("name", o.getName() == null ? StringUtils.EMPTY : o.getName());
+				map.put("id", o.getId() == null ? StringUtils.EMPTY : o.getId());
+				map.put("isShow", o.getIsShow() == null ? StringUtils.EMPTY : o.getIsShow());
+				map.put("url", o.getHref() == null ? StringUtils.EMPTY : o.getHref());
+				map.put("mobileUrl", o.getHref() == null ? StringUtils.EMPTY : o.getHref());
+				map.put("target", o.getTarget() == null ? StringUtils.EMPTY : o.getTarget());
+				result.add(map);
 			});
 		}
 		return JsonUtil.generateData(result, request.getParameter("callback"));
