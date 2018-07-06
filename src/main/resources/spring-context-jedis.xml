@@ -12,8 +12,17 @@
 	
 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
 		<property name="maxIdle" value="300" /> <!-- 最大能够保持idel状态的对象数  -->
-		<property name="maxTotal" value="60000" /> <!-- 最大分配的对象数 -->
+		<property name="minIdle" value="8" /> <!--设置最小空闲数-->
+		<property name="maxTotal" value="600" /> <!-- 最大分配的对象数 -->
 		<property name="testOnBorrow" value="true" /> <!-- 当调用borrow Object方法时，是否进行有效性检查 -->
+		<property name="testOnReturn" value="true" />
+		<property name="testWhileIdle" value="true" /> <!-- //Idle时进行连接扫描-->
+		<property name="MaxWaitMillis" value="10000" />
+		<property name="TimeBetweenEvictionRunsMillis" value="30000" /> <!-- 表示idle object evitor两次扫描之间要sleep的毫秒数 -->
+		<property name="NumTestsPerEvictionRun" value="10" /> <!-- idle object evitor每次扫描的最多的对象数 -->
+		<!-- 一个对象至少停留在idle状态的最短时间，然后才能被idle object evitor扫描并驱逐；这一项只有在timeBetweenEvictionRunsMillis大于0时才有意义 -->
+		<property name="MinEvictableIdleTimeMillis" value="60000" />
+
 	</bean>
 	
 	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">

@@ -278,7 +278,21 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                         BizOrderStatus orderStatus = new BizOrderStatus();
                         orderStatus.setOrderHeader(bizOrderHeader);
                         orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                        bizOrderStatusService.save(orderStatus);
+                        List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
+                        if (CollectionUtils.isNotEmpty(list)) {
+                            boolean flag = true;
+                            for (BizOrderStatus bizOrderStatus : list) {
+                                if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                            if (flag) {
+                                bizOrderStatusService.save(orderStatus);
+                            }
+                        } else {
+                            bizOrderStatusService.save(orderStatus);
+                        }
                     }
 
                 }
@@ -302,7 +316,21 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                             BizOrderStatus orderStatus = new BizOrderStatus();
                             orderStatus.setOrderHeader(bizOrderHeader);
                             orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                            bizOrderStatusService.save(orderStatus);
+                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
+                            if (CollectionUtils.isNotEmpty(list)) {
+                                boolean flag = true;
+                                for (BizOrderStatus bizOrderStatus : list) {
+                                    if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    bizOrderStatusService.save(orderStatus);
+                                }
+                            } else {
+                                bizOrderStatusService.save(orderStatus);
+                            }
                         }
 
                     } else {
@@ -314,7 +342,17 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                             BizOrderStatus orderStatus = new BizOrderStatus();
                             orderStatus.setOrderHeader(bizOrderHeader);
                             orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                            bizOrderStatusService.save(orderStatus);
+                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
+                            if (CollectionUtils.isNotEmpty(list)) {
+                                for (BizOrderStatus bizOrderStatus : list) {
+                                    if (!bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
+                                        bizOrderStatusService.save(orderStatus);
+                                        break;
+                                    }
+                                }
+                            } else {
+                                bizOrderStatusService.save(orderStatus);
+                            }
                         }
 
                     }

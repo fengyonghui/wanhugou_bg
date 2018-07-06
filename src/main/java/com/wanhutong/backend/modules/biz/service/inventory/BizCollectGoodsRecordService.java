@@ -182,13 +182,13 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			super.save(bcgr);
 
 			//修改备货单状态为：备货中（20）
-			BizRequestHeader bizRequestHeader1 = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
+			/*BizRequestHeader bizRequestHeader1 = bizRequestHeaderService.get(bizCollectGoodsRecord.getBizRequestHeader().getId());
 			Integer bizStatus = bizRequestHeader1.getBizStatus();
 			bizRequestHeader1.setBizStatus(ReqHeaderStatusEnum.STOCKING.getState());
 			bizRequestHeaderService.saveRequestHeader(bizRequestHeader1);
 			if (bizStatus == null || !bizStatus.equals(bizRequestHeader1.getBizStatus())) {
 				bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.REPERTOIRE.getDesc(), BizOrderStatusOrderTypeEnum.REPERTOIRE.getState(), bizCollectGoodsRecord.getBizRequestHeader().getId());
-			}
+			}*/
 
 			//当采购数量和(销售单供货记录的累计供货数+采购中心已收货数量)不相等时，更改采购单完成状态
 			//已采购数
