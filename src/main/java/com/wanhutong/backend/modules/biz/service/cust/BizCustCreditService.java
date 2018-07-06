@@ -73,9 +73,7 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
             custCredit.setMoney(bizCustCredit.getMoney());
             custCredit.setId(bizCustCredit.getCustomer().getId());
             super.save(custCredit);
-            if (bizCustCredit.getCustFalg() != null && bizCustCredit.getCustFalg().equals("officeCust")) {
-
-            } else {
+            if (bizCustCredit.getCustFalg() == null || !("officeCust").equals(bizCustCredit.getCustFalg())) {
                 /**
                  * 当用户钱包修改金额时创建交易记录
                  * */
@@ -100,10 +98,8 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
             if(officeCredit!=null){
                 officeCredit.setId(bizCustCredit.getCustomer().getId());
                 officeCredit.setDelFlag("1");
-                super.save(officeCredit);
-            }else{
-                super.save(bizCustCredit);
             }
+            super.save(bizCustCredit);
         }
 
     }

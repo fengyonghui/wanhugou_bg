@@ -168,7 +168,7 @@
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
 								<td>
-									<select name="invInfo.id" class="input-medium">
+									<select name="bizCollectGoodsRecordList[${reqStatus.index}].invInfo.id" class="input-medium">
 										<c:forEach items="${invInfoList}" var="invInfo">
 											<option value="${invInfo.id}"/>${invInfo.name}
 										</c:forEach>

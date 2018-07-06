@@ -394,6 +394,10 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
     //	创建采购商同时创建钱包
     @Transactional(readOnly = false)
     public void save(Office office, BizCustCredit bizCustCredit) {
+        if (office.getId() == null) {
+            super.save(office);
+            bizCustCreditService.save(new BizCustCredit(office.getId()));
+        }
         super.save(office);
         UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 
