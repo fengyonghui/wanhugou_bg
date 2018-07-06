@@ -6,7 +6,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.plan.BizOpPlanDao;
-import com.wanhutong.backend.modules.biz.entity.dto.*;
+import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.biz.entity.plan.BizOpPlan;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -286,6 +289,45 @@ public class BizStatisticsPlatformService {
         dataList.forEach(o -> {
             officeNameSet.add(o.getOfficeName());
             dataMap.put(o.getOfficeName(), o.getReceiveTotal());
+        });
+        officeNameSet.removeAll(Collections.singleton(null));
+
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        if (dataMap.size() > 0) {
+            List<Object> resultDataList = Lists.newArrayList();
+            officeNameSet.forEach(o -> {
+                resultDataList.add(dataMap.get(o));
+            });
+            echartsSeriesDto.setData(resultDataList);
+
+            EchartsSeriesDto.ItemStyle itemStyle = new EchartsSeriesDto.ItemStyle();
+            EchartsSeriesDto.Normal normal = new EchartsSeriesDto.Normal();
+            EchartsSeriesDto.Label label = new EchartsSeriesDto.Label();
+            label.setShow(true);
+            label.setTextStyle(
+                    "fontWeight:'bolder'," +
+                            "fontSize : '12'," +
+                            "position : 'top'," +
+                            "fontFamily : '微软雅黑'");
+            normal.setLabel(label);
+            itemStyle.setNormal(normal);
+            echartsSeriesDto.setItemStyle(itemStyle);
+        }
+        resultMap.put("echartsSeriesDto", echartsSeriesDto);
+        resultMap.put("officeNameSet", officeNameSet);
+        resultMap.put("ret", CollectionUtils.isNotEmpty(dataList));
+        return resultMap;
+    }
+
+    public Map<String, Object> singleUserRegisterData(String startDate, String endDate, String officeId) {
+        List<BizUserStatisticsDto> dataList = officeDao.singleUserRegisterData(startDate, endDate + " 23:59:59", officeId);
+
+        Set<String> officeNameSet = Sets.newHashSet();
+        Map<String, Object> dataMap = Maps.newHashMap();
+        Map<String, Object> resultMap = Maps.newHashMap();
+        dataList.forEach(o -> {
+            officeNameSet.add(o.getName());
+            dataMap.put(o.getName(), o.getCount());
         });
         officeNameSet.removeAll(Collections.singleton(null));
 

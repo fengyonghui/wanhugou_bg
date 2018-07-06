@@ -53,6 +53,10 @@ public enum RoleEnNameEnum {
      */
     PROVIDER_MANAGER("provider_manager", "供货中心经理"),
     /**
+     * 发货专员
+     */
+    SHIPPER("shipper", "发货专员"),
+    /**
      * 供应商
      */
     SUPPLY_CHAIN("supply-chain", "供应商"),

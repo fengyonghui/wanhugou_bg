@@ -38,6 +38,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer bizType;        //订单运营类型: 1专营订单 2非专营订单
     private BizPlatformInfo platformInfo;        // 订单来源； biz_platform_info.id
     private BizOrderAddress bizLocation;        // 订单收货地址： common_location.id 在1月22改为 biz_order_address.id
+    private Integer sendGoodsStatus;     //区分非拍照下单发货
     /**
      * 卖方ID
      *  if(order_type == 4)｛
@@ -47,6 +48,7 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      *  ｝
      * */
     private Office sellers;
+    private Integer sellersId;
     /**
      * 订单备注
      * */
@@ -118,6 +120,19 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
     private Integer opShelfCount;//新品发布量
     private Integer skuCount;//商品销售量
     private Integer officeCount;//新增经销店数
+
+    private String photos; //产品图片
+    private String imgPhotosSorts;		//主图顺序
+
+    private Integer vendorId; //根据供应商Id搜索
+    /**
+     * 发货单Id
+     * */
+    private String sendId;
+    /**
+     * 发货单号
+     * */
+    private String sendNum;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -630,7 +645,63 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
         return examine;
     }
 
+    public Integer getSellersId() {
+        return sellersId;
+    }
+
+    public void setSellersId(Integer sellersId) {
+        this.sellersId = sellersId;
+    }
+
     public void setExamine(Integer examine) {
         this.examine = examine;
+    }
+
+    public Integer getSendGoodsStatus() {
+        return sendGoodsStatus;
+    }
+
+    public void setSendGoodsStatus(Integer sendGoodsStatus) {
+        this.sendGoodsStatus = sendGoodsStatus;
+    }
+
+    public String getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(String photos) {
+        this.photos = photos;
+    }
+
+    public String getImgPhotosSorts() {
+        return imgPhotosSorts;
+    }
+
+    public void setImgPhotosSorts(String imgPhotosSorts) {
+        this.imgPhotosSorts = imgPhotosSorts;
+    }
+
+    public Integer getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(Integer vendorId) {
+        this.vendorId = vendorId;
+    }
+
+    public String getSendId() {
+        return sendId;
+    }
+
+    public void setSendId(String sendId) {
+        this.sendId = sendId;
+    }
+
+    public String getSendNum() {
+        return sendNum;
+    }
+
+    public void setSendNum(String sendNum) {
+        this.sendNum = sendNum;
     }
 }

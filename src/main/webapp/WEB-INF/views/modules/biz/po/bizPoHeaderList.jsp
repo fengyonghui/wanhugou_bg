@@ -39,16 +39,16 @@
         <input id="includeTestData" name="includeTestData" type="hidden" value="${page.includeTestData}"/>
         <ul class="ul-form">
 			<li><label>采购单号</label>
-				<form:input path="orderNum" htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="orderNum" htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 			<li><span style="margin-left: 10px"><label>订单/备货清单编号</label></span>
-				<form:input path="num"  htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="num"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 			<li><span style="margin-left: 10px"><label>起始金额</label></span>
-				<form:input path="startPrice"  htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="startPrice"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 			<li><span style="margin-left: 10px"><label>结束金额</label></span>
-				<form:input path="endPrice"  htmlEscape="false" maxlength="20" class="input-medium"/>
+				<form:input path="endPrice"  htmlEscape="false" maxlength="25" class="input-medium"/>
 			</li>
 			<li><label>供应商</label>
 				<sys:treeselect id="vendOffice" name="vendOffice.id" value="${bizPoHeader.vendOffice.id}" labelName="vendOffice.name"
@@ -160,6 +160,7 @@
 								<c:if test="${bizPoHeader.bizPoPaymentOrder.id == null
 							&& bizPoHeader.commonProcess.purchaseOrderProcess.name == '审批完成'
 							&& fns:getDictLabel(bizPoHeader.bizStatus, 'biz_po_status', '未知类型') != '全部支付'
+							&& bizPoHeader.payTotal < (bizPoHeader.totalDetail+bizPoHeader.totalExp)
 							}">
 									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&type=createPay">申请付款</a>
 								</c:if>
@@ -181,8 +182,10 @@
 								<a href="${ctx}/biz/po/bizPoPaymentOrder/list?poId=${bizPoHeader.id}">支付申请列表</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:edit">
-								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
-								<a onclick="cancel(${bizPoHeader.id});">取消</a>
+								<c:if test="${bizPoHeader.commonProcess.purchaseOrderProcess.name == null || bizPoHeader.commonProcess.purchaseOrderProcess.name == '驳回'}">
+									<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}">修改</a>
+								</c:if>
+								<a href="javascript:void(0);" onclick="cancel(${bizPoHeader.id});">取消</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:view">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
@@ -206,7 +209,10 @@
                     success:function(data){
                         alert(data);
                         if (data=="取消采购订单成功"){
-                            window.location.href = "${ctx}/biz/po/bizPoHeader/list";
+							<%--使用setTimeout（）方法设定定时600毫秒--%>
+							setTimeout(function(){
+								window.location.reload();
+							},600);
                         }
                     }
                 });

@@ -85,11 +85,13 @@
                                 skuInfoId+=","+skuInfo.id;
                                 tr_tds+= "<tr class='"+prodId+"'>";
 								if(flag){
-                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"'></td>" +
+                                    tr_tds+= "<td rowspan='"+skuInfoList.length+"'><img src='"+prodUrl+"' width='100' height='100' ></td>" +
 
                                     "<td rowspan='"+skuInfoList.length+"'>"+brandName+"</td>";
 								}
-                                tr_tds+= "<td>"+skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
+                                //tr_tds+= "<td><a href="+ "'${ctx}/sys/office/supplierForm?id=" + skuInfo.productInfo.office.id + "&gysFlag=onlySelect'>"+ skuInfo.productInfo.office.name + "</a></td>";
+                                tr_tds+= "<td>"+ skuInfo.productInfo.office.name + "</td>";
+                                tr_tds+= "<td>" + skuInfo.name+"</td><td>"+skuInfo.partNo+"</td><td>"+skuInfo.itemNo+"</td><td>"+skuInfo.buyPrice+"</td><td><input type='hidden' id='skuId_"+skuInfo.id+"' value='"+skuInfo.id+"'/><input class='input-mini' id='skuQty_"+skuInfo.id+"'   type='text'/></td>" ;
 								if(flag){
 
                                     tr_tds+= "<td id='td_"+prodId+"' rowspan='"+skuInfoList.length+"'>" +
@@ -417,7 +419,7 @@
 				<c:if test="${reqDetailList!=null}">
 					<c:forEach items="${reqDetailList}" var="reqDetail" varStatus="reqStatus">
 						<tr class="${reqDetail.skuInfo.productInfo.id}" id="${reqDetail.id}">
-							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}"/></td>
+							<td><img src="${reqDetail.skuInfo.productInfo.imgUrl}" width="100" height="100" /></td>
 							<td>${reqDetail.skuInfo.productInfo.brandName}</td>
 							<td><a href="${ctx}/sys/office/supplierForm?id=${reqDetail.skuInfo.productInfo.office.id}&gysFlag=onlySelect">
 									${reqDetail.skuInfo.productInfo.office.name}</a></td>
@@ -497,7 +499,7 @@
 							<%--<th>产品名称</th>--%>
 							<%--<th>产品分类</th>--%>
 						<th>品牌名称</th>
-							<%--<th>供应商</th>--%>
+						<th>供应商</th>
 						<th>商品名称</th>
 						<th>商品编码</th>
 						<th>商品货号</th>

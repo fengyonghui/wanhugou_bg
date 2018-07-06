@@ -3,4 +3,10 @@
     <serviceChargeAudit>CHANNEL_MANAGER</serviceChargeAudit>
     <orderLossAudit>CHANNEL_MANAGER</orderLossAudit>
     <putawayUnderCostAudit>CHANNEL_MANAGER</putawayUnderCostAudit>
+
+
+    <activityShelfId>100</activityShelfId>
+    <activityDate>2018-06-25 00:00:00</activityDate>
+
+    <photoOrderRatio>0.1</photoOrderRatio>
 </SystemConfig>

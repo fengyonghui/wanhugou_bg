@@ -13,6 +13,7 @@ import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
@@ -22,6 +23,7 @@ import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
@@ -34,7 +36,12 @@ import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
-import com.wanhutong.backend.modules.enums.*;
+import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.ImgEnum;
+import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.enums.PoOrderReqTypeEnum;
+import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.process.entity.CommonProcessEntity;
 import com.wanhutong.backend.modules.process.service.CommonProcessService;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -44,6 +51,7 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -80,6 +88,8 @@ import java.util.Set;
 @RequestMapping(value = "${adminPath}/biz/po/bizPoHeader")
 public class BizPoHeaderController extends BaseController {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
+
     @Autowired
     private BizPoHeaderService bizPoHeaderService;
     @Autowired
@@ -108,10 +118,11 @@ public class BizPoHeaderController extends BaseController {
     private CommonProcessService commonProcessService;
     @Autowired
     private BizOrderStatusService bizOrderStatusService;
+    @Autowired
+    private BizOrderAddressService bizOrderAddressService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BizPoHeaderController.class);
 
-    private static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
+    public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
 
 
     @ModelAttribute
@@ -308,9 +319,29 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        model.addAttribute("roleSet", roleSet);
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        bizPoOrderReq.setPoHeader(bizPoHeader);
+        List<BizPoOrderReq> bizPoOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
+        if (CollectionUtils.isNotEmpty(bizPoOrderReqs)) {
+            bizPoOrderReq = bizPoOrderReqs.get(0);
+        }
+        BizOrderHeader bizOrderHeader = null;
+        if (bizPoOrderReq != null) {
+            bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getSoId());
+        }
 
+        if (bizOrderHeader != null && 6 == bizOrderHeader.getOrderType()) {
+            CommonImg commonImg = new CommonImg();
+            commonImg.setObjectId(bizOrderHeader.getId());
+            commonImg.setObjectName(ImgEnum.ORDER_SKU_PHOTO.getTableName());
+            commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
+            List<CommonImg> photoOrderImgList = commonImgService.findList(commonImg);
+            model.addAttribute("photoOrderImgList", photoOrderImgList);
+        }
+
+        model.addAttribute("roleSet", roleSet);
         model.addAttribute("bizPoHeader", bizPoHeader);
+        model.addAttribute("bizOrderHeader", bizOrderHeader);
         model.addAttribute("type", type);
         model.addAttribute("prewStatus", prewStatus);
         return "modules/biz/po/bizPoHeaderForm";
@@ -370,6 +401,64 @@ public class BizPoHeaderController extends BaseController {
 
         addMessage(redirectAttributes, "prew".equals(prewStatus) ? "采购订单预览信息" : "保存采购订单成功");
         return "redirect:" + Global.getAdminPath() + "/biz/po/bizPoHeader/form/?id=" + bizPoHeader.getId() + "&prewStatus=" + prewStatus;
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "saveForPhotoOrder")
+    @ResponseBody
+    public String saveForPhotoOrder(HttpServletRequest request,
+                                    Integer orderHeaderId,
+                                    int deliveryStatus,
+                                    Date lastPayDate,
+                                    Model model, RedirectAttributes redirectAttributes, String type) {
+
+        BizOrderHeader bizOrderHeader = bizOrderHeaderService.get(orderHeaderId);
+        BizOrderAddress bizOrderAddress = bizOrderAddressService.getOrderAddrByOrderId(bizOrderHeader.getId());
+
+        Office vendor = officeService.get(bizOrderHeader.getSellersId());
+        Office customer = officeService.get(bizOrderHeader.getCustomer().getId());
+
+        BizPoHeader bizPoHeader = new BizPoHeader();
+        String poNo = "0";
+        bizPoHeader.setOrderNum(poNo);
+        bizPoHeader.setPlateformInfo(bizPlatformInfoService.get(1));
+        bizPoHeader.setVendOffice(new Office());
+        bizPoHeader.setIsPrew(0);
+        bizPoHeader.setLastPayDate(lastPayDate);
+        bizPoHeader.setVendOffice(vendor);
+
+        bizPoHeader.setTotalDetail(bizOrderHeader.getTotalDetail());
+
+        Integer id = bizPoHeader.getId();
+        bizPoHeaderService.save(bizPoHeader);
+        if (id == null) {
+            bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), bizPoHeader.getId());
+        }
+
+        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+        bizPoOrderReq.setId(null);
+        bizPoOrderReq.setPoHeader(bizPoHeader);
+        bizPoOrderReq.setPoLineNo(0);
+        bizPoOrderReq.setOrderHeader(bizOrderHeader);
+        bizPoOrderReq.setRequestHeader(null);
+        bizPoOrderReq.setSoLineNo(0);
+        bizPoOrderReq.setSoQty(0);
+        bizPoOrderReq.setSoType(Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType()));
+        bizPoOrderReqService.save(bizPoOrderReq);
+
+        if (bizPoHeader.getOrderNum() == null || "0".equals(bizPoHeader.getOrderNum())) {
+            poNo = GenerateOrderUtils.getOrderNum(OrderTypeEnum.PO, deliveryStatus == 0 ? customer.getId() : vendor.getId(), bizPoHeader.getVendOffice().getId(), bizPoHeader.getId());
+            bizPoHeader.setOrderNum(poNo);
+            bizPoHeaderService.save(bizPoHeader);
+        }
+
+        bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
+        bizOrderHeaderService.save(bizOrderHeader);
+
+        bizPoHeaderService.sendSmsForDeliver(bizOrderHeader.getOrderNum(),"");
+        bizPoHeaderService.sendMailForDeliver(bizOrderHeader.getOrderNum(),"");
+
+        return "操作成功";
     }
 
     @RequiresPermissions("biz:po:bizPoHeader:edit")

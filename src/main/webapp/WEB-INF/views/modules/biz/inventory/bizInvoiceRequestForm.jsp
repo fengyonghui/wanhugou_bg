@@ -39,15 +39,13 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    if (tt != '') {
-                    	$("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
-                    }
                     if(window.confirm('你确定要发货吗？') && total > 0){
                         // alert("确定");
+                        if (tt != '') {
+                            $("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
+                        }
                         form.submit();
-                        return true;
                         loading('正在提交，请稍等...');
-
                     }else{
                         alert("请勾选发货内容");
                         return false;
@@ -105,7 +103,7 @@
                                 if(flag){
                                     tr_tds+="<td rowspan='"+requestHeader.requestDetailList.length+"'><input type='checkbox' value='"+requestHeader.id+"' /></td>";
 
-                                    tr_tds+= "<td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.reqNo+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.fromOffice.name+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+bizName+"</td>" ;
+                                    tr_tds+= "<td rowspan='"+requestHeader.requestDetailList.length+"'><a href='${ctx}/biz/request/bizRequestHeader/form?id="+requestHeader.id+"&str=detail'>"+requestHeader.reqNo+"</a></td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+requestHeader.fromOffice.name+"</td><td rowspan='"+requestHeader.requestDetailList.length+"'>"+bizName+"</td>" ;
                                 }
                                  tr_tds+="<input title='details_"+requestHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.skuInfo.vendorName+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
@@ -235,7 +233,7 @@
 				<div class="controls">
 					<form:select about="choose" path="carrier" class="input-medium required">
 						<form:option value="" label="请选择"/>
-						<form:options items="${userList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+						<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>
 					</form:select>
 					<span class="help-inline"><font color="red">*</font> </span>
 				</div>

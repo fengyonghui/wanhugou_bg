@@ -342,6 +342,12 @@
 			<if test="dbName == 'mssql'">'%'+#{cent.name}+'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{cent.name}, '%')</if>
 		</if>
+		<if test="user != null and user.name != null and user.name !=''">
+			AND us.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{user.name}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{user.name}+'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{user.name}, '%')</if>
+		</if>
 		<if test="phone != null and phone !=''">
 			AND u.phone LIKE
 			<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>
@@ -647,10 +653,7 @@
 			vend.name AS "vendor.name"
 		from sys_user u
 		LEFT JOIN sys_office vend ON vend.primary_person = u.id
-		LEFT JOIN biz_product_info bpi ON bpi.vendor_id = vend.id
-		LEFT JOIN biz_sku_info bsi ON bsi.prod_id = bpi.id
-		LEFT JOIN biz_order_detail od ON od.sku_id = bsi.id
-		LEFT JOIN biz_order_header oh ON oh.id = od.order_id
+		LEFT JOIN biz_order_header oh ON oh.seller_id = vend.id
 		WHERE oh.id = #{orderId}
 		AND vend.type = #{vendType}
 		GROUP BY u.id

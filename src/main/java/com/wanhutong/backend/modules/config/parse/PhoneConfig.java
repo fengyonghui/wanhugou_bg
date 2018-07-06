@@ -62,5 +62,13 @@ public class PhoneConfig extends ConfigGeneral {
          * 线下支付记录异常
          */
         OFFLINE_PAY_RECORD_EXCEPTION,
+        /**
+         * 生成供货记录异常
+         */
+        SEND_GOODS_RECORD_EXCEPTION,
+        /**
+         * 发货提醒异常
+         */
+        DELIVER_EXCEPTION
     }
 }

@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.BizOrderTypeEnum" %>
 <html>
 <head>
 	<title>备货清单管理</title>
@@ -206,9 +208,7 @@
 								<a href="${ctx}/biz/request/bizRequestHeader/form?id=${requestHeader.id}&str=detail">详情</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:request:selecting:supplier:edit">
-
 									<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=${requestHeader.reqDetailIds}&ordIds=&vendorId=${requestHeader.onlyVendor}">采购</a>
-
 							</shiro:hasPermission>
 						</td>
 				</tr>
@@ -292,9 +292,12 @@
 							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details">查看详情</a>
 						</shiro:hasPermission>
 						<shiro:hasPermission name="biz:request:selecting:supplier:edit">
-
-							<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
-
+							<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
+								<a href="${ctx}/biz/request/bizRequestOrder/goList?reqIds=&ordIds=${orderHeader.orderDetails}&vendorId=${orderHeader.onlyVendor}">采购</a>
+							</c:if>
+							<c:if test="${orderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+								<a href="${ctx}/biz/request/bizRequestOrder/goListForPhotoOrder?reqIds=&ordIds=${orderHeader.id}&vendorId=${orderHeader.onlyVendor}">采购</a>
+							</c:if>
 						</shiro:hasPermission>
 					</td>
 				</tr>

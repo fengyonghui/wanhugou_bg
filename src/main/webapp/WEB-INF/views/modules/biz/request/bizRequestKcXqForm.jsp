@@ -1,4 +1,5 @@
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.BizOrderTypeEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
@@ -103,6 +104,7 @@
 		<div class="control-group">
 			<label class="control-label">订单商品：</label>
 			<div class="controls">
+				<c:if test="${bizOrderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">
 				<table id="contentTable" class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
@@ -180,6 +182,30 @@
 					</c:if>
 					</tbody>
 				</table>
+				</c:if>
+				<c:if test="${bizOrderHeader != null && bizOrderHeader.orderType == BizOrderTypeEnum.PHOTO_ORDER.state}">
+					<table id="contentTable" class="table table-striped table-bordered table-condensed">
+						<thead>
+							<th>商品信息图片</th>
+							<th>已生成的采购单</th>
+						</thead>
+						<tbody>
+							<c:if test="${not empty source && source eq 'ghs'}">
+								<td>
+									<c:forEach items="${commonImgList}" var="imgUrl">
+										<a href="${imgUrl.imgServer}${imgUrl.imgPath}" target="view_window">
+											<img src="${imgUrl.imgServer}${imgUrl.imgPath}" style="max-width:100px;max-height:100px;_height:100px;border:0;padding:3px;"/></a>
+									</c:forEach>
+								</td>
+								<td>
+									<c:if test="${poHeader!=null}">
+										<a href="${ctx}/biz/po/bizPoHeader/form?id=${poHeader.id}&str=detail">${poHeader.orderNum}</a>
+									</c:if>
+								</td>
+							</c:if>
+						</tbody>
+					</table>
+				</c:if>
 			</div>
 		</div>
 
@@ -187,7 +213,7 @@
 			<label class="control-label">备注：</label>
 			<div class="controls">
 
-				<textarea  class="input-xlarge " readonly="readonly">${entity.remark}</textarea>
+				<textarea  class="input-xlarge " readonly="readonly">${bizOrderHeader.orderComment.comments}</textarea>
 			</div>
 		</div>
 

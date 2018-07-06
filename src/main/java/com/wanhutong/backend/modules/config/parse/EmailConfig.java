@@ -88,6 +88,10 @@ public class EmailConfig extends ConfigGeneral {
         /**
          * 通用异常
          */
-        COMMON_EXCEPTION
+        COMMON_EXCEPTION,
+        /**
+         * 生成供货记录异常
+         */
+        SEND_GOODS_RECORD_EXCEPTION
     }
 }

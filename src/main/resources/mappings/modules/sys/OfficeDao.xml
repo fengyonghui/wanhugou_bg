@@ -34,6 +34,8 @@
 		dp.name AS "deputyPerson.name",
 		bvi.audit_status AS "bizVendInfo.auditStatus",
 		bvi.card_number AS "bizVendInfo.cardNumber",
+		bvi.bank_name AS "bizVendInfo.bankName",
+		bvi.payee AS "bizVendInfo.payee",
 		bvi.vend_name AS "bizVendInfo.vendName",
 		pp.mobile AS "user.mobile"
 	</sql>
@@ -150,7 +152,8 @@
 		<if test="type != null and type != ''">
 			AND so.type = #{type}
 		</if>
-		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1)
+		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1
+		and ccc.consultant_id != (SELECT prop_value FROM sys_default_prop WHERE prop_desc = '超级客户专员'))
 		)
 		) UNION ALL
 		SELECT
@@ -162,7 +165,8 @@
 		<if test="type != null and type != ''">
 			AND so.type = #{type}
 		</if>
-		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1)
+		AND NOT EXISTS ( SELECT ccc.cust_id FROM biz_custom_center_consultant ccc WHERE ccc.cust_id = so.id and ccc.status=1
+		and ccc.consultant_id != (SELECT prop_value FROM sys_default_prop WHERE prop_desc = '超级客户专员'))
 
 	</select>
 
@@ -401,6 +405,18 @@
 		FROM sys_office a
 		LEFT JOIN  biz_custom_center_consultant AS ccc ON ccc.cust_id = a.id
   		WHERE ccc.center_id = #{officeId} AND a.type = 6
+	</select>
+
+	<select id="singleUserRegisterData" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto">
+		select su.name AS "name", count(*) AS "count", su.create_date AS "createDate"
+		from sys_office so, biz_custom_center_consultant ccc, sys_user su
+		where so.create_date BETWEEN #{startDate} and #{endDate}
+		and ccc.cust_id = so.id
+		and ccc.consultant_id = su.id
+		<if test="officeId != null and officeId !='' and officeId != 0">
+			and ccc.center_id = #{officeId}
+		</if>
+		group by su.id;
 	</select>
 
 </mapper>

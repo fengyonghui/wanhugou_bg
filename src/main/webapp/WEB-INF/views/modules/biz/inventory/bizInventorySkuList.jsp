@@ -75,8 +75,10 @@
 				<form:input path="skuInfo.itemNo" htmlEscape="false"  class="input-medium"/>
 			</li>
 			<li><label>仓库名称：</label>
-				<form:input path="invInfo.name" htmlEscape="false"  class="input-medium"/>
-				<input id="invInfo.id" type="hidden" name="invInfo.id" value="${invInfo.id}"/>
+				<sys:treeselect id="invInfo" name="invInfo.id" value="${bizInventorySku.invInfo.id}" labelName="invInfo.name"
+								labelValue="${bizInventorySku.invInfo.name}" notAllowSelectParent="true"
+								title="仓库"  url="/biz/inventory/bizInventoryInfo/warehouseData"
+								cssClass="input-medium" allowClear="true"/>
 			</li>
 			<li><label style="width: 90px;">库龄时长(天)：</label>
 				<form:input path="inventoryAgeDay" htmlEscape="false"  class="input-medium"/>
@@ -117,6 +119,7 @@
 				<td>序号</td>
 				<th>库存类型</th>
 				<th>仓库名称</th>
+				<th>采购中心</th>
 				<th style="width: 15%">商品名称</th>
 				<th>出厂价</th>
 				<th>商品总值</th>
@@ -130,6 +133,9 @@
 				<th>库存数量</th>
 				<c:if test="${zt eq '1' || zt eq '2'}">
 					<th>销售订单数量</th>
+					<th>出库量</th>
+					<th>入库量</th>
+					<th>供货部供货量</th>
 					<th>调入数量</th>
 					<th>调出数量</th>
 					<shiro:hasAnyPermissions name="biz:inventory:inventoryAge:view">
@@ -156,6 +162,9 @@
 				</a></td>
 				<td>
 					${bizInventorySku.invInfo.name}
+				</td>
+				<td>
+					${bizInventorySku.customer.name}
 				</td>
 				<td>
 					${bizInventorySku.skuInfo.name}
@@ -190,6 +199,9 @@
 					<td>
 						${bizInventorySku.stockOrdQty}
 					</td>
+					<td>${bizInventorySku.outWarehouse}</td>
+					<td>${bizInventorySku.inWarehouse}</td>
+					<td>${bizInventorySku.sendGoodsNum}</td>
 					<td>
 						${bizInventorySku.transInQty}
 					</td>

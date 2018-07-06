@@ -28,6 +28,7 @@ public class BizOrderHeaderUnline extends DataEntity<BizOrderHeaderUnline> {
 	private BigDecimal realMoney;		// 实收金额
 	private Byte bizStatus;		//流水的状态 0：未审核 1：通过 2：驳回
 	private String source;		//详情或审核 detail or examine
+	private Integer orderType;
 	
 	public BizOrderHeaderUnline() {
 		super();
@@ -91,5 +92,13 @@ public class BizOrderHeaderUnline extends DataEntity<BizOrderHeaderUnline> {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
 	}
 }

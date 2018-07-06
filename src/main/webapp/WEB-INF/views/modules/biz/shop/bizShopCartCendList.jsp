@@ -24,23 +24,12 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>商品货架：</label>
-				<form:input path="skuShelfinfo.opShelfInfo.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			<li><label>用户名称：</label>
+				<sys:treeselect id="user" name="user.id" value="${bizShopCart.user.id}"  labelName="user.name"
+						labelValue="${bizShopCart.user.name}" notAllowSelectParent="true"
+						title="用户"  url="/sys/wx/sysWxPersonalUser/userTreeData" cssClass="input-medium"
+						allowClear="true"  dataMsgRequired="必填信息"/>
 			</li>
-			<li><label>经销店名称：</label>
-				<%--<sys:treeselect id="office" name="office.id" value="${bizShopCart.office.id}" labelName="office.name" labelValue="${bizShopCart.office.name}"--%>
-					<%--title="经销店" url="/sys/office/queryTreeList?type=6" cssClass="input-small" allowClear="true" notAllowSelectParent="true"/>--%>
-				<form:input path="office.name" htmlEscape="false" maxlength="60" class="input-medium"/>
-			</li>
-			<%--<li><label>经销店电话：</label>--%>
-				<%--<form:input path="user.mobile" htmlEscape="false" maxlength="11" class="input-medium"/>--%>
-			<%--</li>--%>
-			<%--<li><label>客户端：</label>--%>
-				<%--<form:select path="custType" class="input-medium">--%>
-					<%--<form:option value="" label="请选择"/>--%>
-					<%--<form:options items="${fns:getDictList('biz_shop_cartType')}" itemLabel="label" itemValue="value"--%>
-								  <%--htmlEscape="false"/></form:select>--%>
-			<%--</li>--%>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -49,10 +38,8 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<%--<th>客户端</th>--%>
 				<th>商品货架</th>
-				<th>经销店名称</th>
-				<th>经销店电话</th>
+				<th>用户名称</th>
                 <th>sku名称</th>
 				<th>sku数量</th>
 				<th>创建人</th>
@@ -64,17 +51,11 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="bizShopCart">
 			<tr>
-				<%--<td>--%>
-					<%--${fns:getDictLabel(bizShopCart.custType, 'biz_shop_cartType', '未知状态')}--%>
-				<%--</td>--%>
 				<td>
 					${bizShopCart.skuShelfinfo.opShelfInfo.name}
                 </td>
 				<td>
 					${bizShopCart.office.name}
-				</td>
-				<td>
-						${bizShopCart.user.mobile}
 				</td>
                 <td>
                     ${bizShopCart.skuShelfinfo.skuInfo.name}
@@ -92,7 +73,6 @@
 					<fmt:formatDate value="${bizShopCart.updateDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<shiro:hasPermission name="biz:shop:bizShopCart:edit"><td>
-    				<%--<a href="${ctx}/biz/shop/bizShopCart/form?id=${bizShopCart.id}">修改</a>--%>
 					<c:if test="${bizShopCart.delFlag!=null && bizShopCart.delFlag==1}">
 						<a href="${ctx}/biz/shop/bizShopCart/delete?id=${bizShopCart.id}&cendDele=cendShopDele" onclick="return confirmx('确认要删除该购物车吗？', this.href)">删除</a>
 					</c:if>

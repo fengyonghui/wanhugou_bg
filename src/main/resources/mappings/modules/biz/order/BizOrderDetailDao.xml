@@ -11,6 +11,7 @@
 		a.p_line_no AS "pLineNo",
 		a.sku_shelf_id as "shelfInfo.id",
 		si.name as "shelfInfo.opShelfInfo.name",
+		si.id as "shelfInfo.opShelfInfo.id",
 		a.sku_id AS "skuInfo.id",
 		bsi.name as "skuInfo.name",
 		a.buy_price as "buyPrice",
@@ -592,7 +593,7 @@ GROUP BY
 			LEFT JOIN biz_po_order_req bpor ON bpor.so_id = a.order_id
 		LEFT JOIN biz_po_header ph ON ph.id = bpor.po_id and ph.status=1 and ph.is_prew=0
 		<where>
-			a.staus=1
+			a.status=1
 			AND a.line_no = bpor.so_line_no
 			and bpor.so_type=1
 			<if test="orderHeader != null and orderHeader.id != null and orderHeader.id !=''">
@@ -634,6 +635,31 @@ GROUP BY
 			</otherwise>
 		</choose>
 		order by a.line_no ASC
+	</select>
+
+	<select id="findOrderDetailList" resultType="BizOrderDetail">
+		SELECT
+			oh.id AS "orderHeader.id",
+			oh.order_num AS "orderHeader.orderNum",
+			cust.name AS "cust.name",
+			oh.biz_status AS "orderHeader.bizStatus",
+			si.name AS "skuInfo.name",
+			si.item_no AS "skuInfo.itemNo",
+			od.ord_qty AS "ordQty",
+			od.sent_qty AS "sentQty"
+		FROM biz_order_detail od
+		LEFT JOIN biz_sku_info si ON si.id = od.sku_id
+		LEFT JOIN biz_order_header oh ON oh.id = od.order_id
+		LEFT JOIN sys_office cust ON cust.id = oh.cust_id
+		LEFT JOIN biz_detail_invoice di ON di.order_header_id = oh.id
+		LEFT JOIN biz_invoice bi ON bi.id = di.invoice_id
+		WHERE
+		od.status = 1
+		AND oh.status = 1
+		AND oh.order_type != 4
+		AND bi.id = #{invoiceId}
+
+
 	</select>
 
 </mapper>

@@ -73,7 +73,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"userSale", ""})
+    @RequestMapping(value = {"userSale"})
     public String userSale(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList(OfficeTypeEnum.PURCHASINGCENTER.getType()));
@@ -96,7 +96,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"userSaleData", ""})
+    @RequestMapping(value = {"userSaleData"})
     @ResponseBody
     public String userSaleData(HttpServletRequest request, String startDate, String endDate, Integer purchasingId, String usName) {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
@@ -184,7 +184,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"user", ""})
+    @RequestMapping(value = {"user"})
     public String user(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         Calendar cal = Calendar.getInstance();
@@ -205,7 +205,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"userData", ""})
+    @RequestMapping(value = {"userData"})
     @ResponseBody
     public String userData(HttpServletRequest request, String startDate, String endDate) {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
@@ -238,7 +238,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:product:view")
-    @RequestMapping(value = {"product", ""})
+    @RequestMapping(value = {"product"})
     public String product(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("varietyList", bizStatisticsBetweenService.getBizVarietyInfoList());
@@ -261,7 +261,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:product:view")
-    @RequestMapping(value = {"productData", ""})
+    @RequestMapping(value = {"productData"})
     @ResponseBody
     public String product(HttpServletRequest request, String startDate, String endDate, Integer variId, Integer dataType, Integer purchasingId) {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
@@ -306,7 +306,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:product:view")
-    @RequestMapping(value = {"productDataDownload", ""})
+    @RequestMapping(value = {"productDataDownload"})
     @ResponseBody
     public void productDataDownload(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -379,7 +379,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"order", ""})
+    @RequestMapping(value = {"order"})
     public String order(HttpServletRequest request, String startDate, String endDate) {
         request.setAttribute("adminPath", adminPath);
         Calendar cal = Calendar.getInstance();
@@ -402,7 +402,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return 订单相关统计数据
      */
     @RequiresPermissions("biz:statistics:order:view")
-    @RequestMapping(value = {"orderData", ""})
+    @RequestMapping(value = {"orderData"})
     @ResponseBody
     public String orderData(HttpServletRequest request, String startDate, String endDate, String lineChartType, String barChartType, String centerType) {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
@@ -562,7 +562,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:sku:view")
-    @RequestMapping(value = {"sku", ""})
+    @RequestMapping(value = {"sku"})
     public String sku(HttpServletRequest request) {
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("varietyList", bizStatisticsBetweenService.getBizVarietyInfoList());
@@ -585,7 +585,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:sku:view")
-    @RequestMapping(value = {"skuData", ""})
+    @RequestMapping(value = {"skuData"})
     @ResponseBody
     public String sku(HttpServletRequest request, String month, String type, Integer variId) throws ParseException {
 
@@ -799,7 +799,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"userSaleDataDownload", ""})
+    @RequestMapping(value = {"userSaleDataDownload"})
     public void userSaleDataDownload(HttpServletRequest request,
                                      HttpServletResponse response,
                                      String imgUrl,
@@ -875,7 +875,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"userDataDownload", ""})
+    @RequestMapping(value = {"userDataDownload"})
     @ResponseBody
     public void userDataDownload(HttpServletRequest request,
                                  HttpServletResponse response,
@@ -944,7 +944,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"profitDataDownload", ""})
+    @RequestMapping(value = {"profitDataDownload"})
     public void profitDataDownload(HttpServletRequest request,
                                    HttpServletResponse response,
                                    String startDate,
@@ -1066,7 +1066,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"profit", ""})
+    @RequestMapping(value = {"profit"})
     public String profit(HttpServletRequest request, HttpServletResponse response) {
         request.setAttribute("adminPath", adminPath);
         Calendar cal = Calendar.getInstance();
@@ -1088,7 +1088,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"profitData", ""})
+    @RequestMapping(value = {"profitData"})
     @ResponseBody
     public String profitData(HttpServletRequest request, HttpServletResponse response, String startDate, String endDate, String centerType) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1167,7 +1167,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"singleUserProfit", ""})
+    @RequestMapping(value = {"singleUserProfit"})
     public String singleUserProfit(HttpServletRequest request, HttpServletResponse response) {
         Calendar cal = Calendar.getInstance();
         //获取本周一的日期
@@ -1189,7 +1189,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:profit:view")
-    @RequestMapping(value = {"singleUserProfitData", ""})
+    @RequestMapping(value = {"singleUserProfitData"})
     @ResponseBody
     public String singleUserProfitData(HttpServletRequest request, HttpServletResponse response, String startDate, String endDate, String usName, Integer purchasingId) {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userSaleStatisticData(startDate, endDate, purchasingId);
@@ -1265,7 +1265,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"singleUserProfitDataDownload", ""})
+    @RequestMapping(value = {"singleUserProfitDataDownload"})
     public void singleUserProfitDataDownload(HttpServletRequest request,
                                              HttpServletResponse response,
                                              String imgUrl,
@@ -1337,12 +1337,13 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"singleUserProfitDataTable", ""})
+    @RequestMapping(value = {"singleUserProfitDataTable"})
     public String singleUserProfitDataTable(String startDate, String endDate, HttpServletResponse response, HttpServletRequest request, Integer purchasingId) {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userSaleStatisticData(startDate, endDate, purchasingId);
         request.setAttribute("dataList", bizProductStatisticsDtos);
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("startDate", startDate);
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("endDate", endDate);
         return "modules/biz/statistics/bizStatisticsSingleUserProfitBetweenTable";
     }
@@ -1354,11 +1355,12 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:userSale:view")
-    @RequestMapping(value = {"userSaleDataTable", ""})
+    @RequestMapping(value = {"userSaleDataTable"})
     public String userSaleDataTable(HttpServletRequest request, String startDate, String endDate, Integer purchasingId, String usName) {
         List<BizUserSaleStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userSaleStatisticData(startDate, endDate, purchasingId);
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("startDate", startDate);
+        request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
         request.setAttribute("endDate", endDate);
         request.setAttribute("dataList", bizProductStatisticsDtos);
         return "modules/biz/statistics/bizStatisticsUserSaleBetweenTable";
@@ -1371,7 +1373,7 @@ public class BizStatisticsBetweenController extends BaseController {
      * @return
      */
     @RequiresPermissions("biz:statistics:user:view")
-    @RequestMapping(value = {"customTable", ""})
+    @RequestMapping(value = {"customTable"})
     public String customTable(HttpServletRequest request, String startDate, String endDate) {
         List<BizUserStatisticsDto> bizProductStatisticsDtos = bizStatisticsBetweenService.userStatisticData(startDate, endDate);
         request.setAttribute("dataList", bizProductStatisticsDtos);

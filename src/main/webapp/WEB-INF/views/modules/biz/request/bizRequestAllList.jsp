@@ -4,6 +4,7 @@
 <html>
 <head>
 	<title>备货清单管理</title>
+	<%--<meta name="decorator"/>--%>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -49,6 +50,14 @@
 			$("#searchForm").submit();
         	return false;
         }
+	</script>
+
+	<script language="JavaScript">
+        function myrefresh()
+        {
+            window.location.reload();
+        }
+        setTimeout('myrefresh()',180000); //指定3分钟刷新一次
 	</script>
 </head>
 <body>
@@ -167,7 +176,9 @@
 				<c:if test="${ship eq 'xs'}">
 					<th>收货地址</th>
 				</c:if>
-				<th>备注</th>
+				<c:if test="${ship eq 'bh'}">
+					<th>备注</th>
+				</c:if>
 				<th>业务状态</th>
 				<th>更新人</th>
 				<th>创建时间</th>
@@ -260,9 +271,9 @@
 							${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
 						</td>
 					</c:if>
-					<td>
-							<%--${orderHeader.remark}--%>
-					</td>
+					<%--<td>--%>
+							<%--&lt;%&ndash;${orderHeader.remark}&ndash;%&gt;--%>
+					<%--</td>--%>
 					<td>
 							${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知类型')}
 					</td>

@@ -8,6 +8,14 @@
 <body>
 <div style="height: 50px">
     <input name="applyDate" id="applyDate" value="${month}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" required="required"/>
+    <label>
+        <select class="input-medium" id="purchasingId">
+            <option value="0" label="全部"></option>
+            <c:forEach items="${purchasingList}" var="v">
+                <option value="${v.id}" label="${v.name}">${v.name}</option>
+            </c:forEach>
+        </select>
+    </label>
     <input id="search" class="btn btn-primary" type="button" onclick="initData()" value="查询"/>
 
 </div>
@@ -40,7 +48,9 @@
 <script type="application/javascript">
     function initData() {
         var date = $("#applyDate").val();
-        window.location.href="${adminPath}/biz/statistics/userSaleDataTable?month=" + date;
+        var purchasingIdEle = $("#purchasingId");
+        var purchasingId = purchasingIdEle.find("option:selected").val();
+        window.location.href="${adminPath}/biz/statistics/userSaleDataTable?month=" + date + "&purchasingId=" + purchasingId;
     }
 </script>
 </body>

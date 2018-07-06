@@ -49,6 +49,14 @@
         	return false;
         }
 	</script>
+
+	<script language="JavaScript">
+        function myrefresh()
+        {
+            window.location.reload();
+        }
+        setTimeout('myrefresh()',180000); //指定3分钟刷新一次
+	</script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -69,6 +77,12 @@
 				<input name="bizStatu" value="${bizStatu}" type="hidden"/>
 				<li><label>备货单号：</label>
 					<form:input path="reqNo" htmlEscape="false" maxlength="20" class="input-medium"/>
+				</li>
+				<li><label>供应商</label>
+					<sys:treeselect id="vendorId" name="vendorId" value="" labelName="vendorId"
+									labelValue="" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
+									title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-medium" dataMsgRequired="必填信息">
+					</sys:treeselect>
 				</li>
 				<li><label>采购中心：</label>
 					<sys:treeselect id="fromOffice" name="fromOffice.id" value="${entity.fromOffice.id}" labelName="fromOffice.name"
@@ -100,6 +114,12 @@
 			<ul class="ul-form">
 				<li><label>订单编号：</label>
 					<form:input path="orderNum" htmlEscape="false" maxlength="30" class="input-medium"/>
+				</li>
+				<li><label>供应商</label>
+					<sys:treeselect id="vendorId" name="vendorId" value="" labelName="vendorId"
+									labelValue="" notAllowSelectRoot="true" notAllowSelectParent="true" allowClear="true"
+									title="供应商"  url="/sys/office/queryTreeList?type=7" cssClass="input-medium" dataMsgRequired="必填信息">
+					</sys:treeselect>
 				</li>
 				<li><label>订单状态：</label>
 					<form:select path="bizStatus" class="input-medium">
@@ -162,7 +182,9 @@
 				<c:if test="${ship eq 'xs'}">
 					<th>收货地址</th>
 				</c:if>
-				<th>备注</th>
+				<c:if test="${ship eq 'bh'}">
+					<th>备注</th>
+				</c:if>
 				<th>业务状态</th>
 				<th>更新人</th>
 				<th>创建时间</th>
@@ -254,9 +276,9 @@
 							${orderHeader.bizLocation.region.name}${orderHeader.bizLocation.address}
 						</td>
 					</c:if>
-					<td>
-							<%--${orderHeader.remark}--%>
-					</td>
+					<%--<td>--%>
+							<%--&lt;%&ndash;${orderHeader.remark}&ndash;%&gt;--%>
+					<%--</td>--%>
 					<td>
 							${fns:getDictLabel(orderHeader.bizStatus, 'biz_order_status', '未知类型')}
 					</td>

@@ -102,6 +102,9 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	private String dataFrom; //数据属于哪个页面
 
+	private Integer vendorId; //根据供应商Id搜索
+	private Integer vendorName; //根据供应商Id搜索
+
 	public BizRequestHeader() {
 		super();
 	}
@@ -447,5 +450,21 @@ public class BizRequestHeader extends DataEntity<BizRequestHeader> {
 
 	public void setInvenSource(String invenSource) {
 		this.invenSource = invenSource;
+	}
+
+	public Integer getVendorId() {
+		return vendorId;
+	}
+
+	public void setVendorId(Integer vendorId) {
+		this.vendorId = vendorId;
+	}
+
+	public Integer getVendorName() {
+		return vendorName;
+	}
+
+	public void setVendorName(Integer vendorName) {
+		this.vendorName = vendorName;
 	}
 }

@@ -3,7 +3,10 @@
 <%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
-
+<%
+    Integer refund = OrderHeaderBizStatusEnum.REFUND.getState();
+    request.setAttribute("refund", refund);
+%>
 <html>
 <head>
     <title>订单信息管理</title>
@@ -52,10 +55,33 @@
     <script type="text/javascript">
         $(document).ready(function() {
             //$("#name").focus();
+            var bizStatus = $("#bizStatus").val();
+            if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
+                $("#totalExp").attr("disabled","disabled");
+            }
             $("#inputForm").validate({
                 submitHandler: function(form){
                     if($("#address").val()==''){
                         $("#addError").css("display","inline-block")
+                        return false;
+                    }
+
+                    var bb = true;
+                    $("input[name='imgPhotosSorts']").each(function () {
+                        if ($(this).val() == '') {
+                            bb = false;
+                            return;
+                        }
+                    });
+                    if (bb) {
+                        var mainImg = $("#prodMainImgDiv").find("[customInput = 'prodMainImgImg']");
+                        var mainImgStr = "";
+                        for (var i = 0; i < mainImg.length; i++) {
+                            mainImgStr += ($(mainImg[i]).attr("src") + "|");
+                        }
+                        $("#photos").val(mainImgStr);
+                    } else {
+                        alert("退货凭证图片序号不能为空");
                         return false;
                     }
                     var orderId = $("#id").val();
@@ -72,7 +98,9 @@
                                 alert("优惠后订单金额不能低于出厂价，请修改调整金额");
                             } else if (data == "orderLowest") {
                                 alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
-                            } else {
+                            } else if (data == "orderLowest8") {
+                                alert("优惠后订单金额不能低于出厂价的80%，请修改调整金额");
+                            } else if (data == "ok") {
                                 loading('正在提交，请稍等...');
                                 form.submit();
                             }
@@ -257,18 +285,37 @@
     <script type="text/javascript">
         function updateMoney() {
             if(confirm("确定修改价钱吗？")){
-                var totalExp=$("#totalExp").val();
+
+                var orderId = $("#id").val();
+                var totalExp = $("#totalExp").val();
+                var totalDetail = $("#totalDetail").val();
                 $.ajax({
                     type:"post",
-                    url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
-                    data:{orderId:$("#id").val(),money:totalExp},
-                    <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
-                    success:function(flag){
-                        if(flag=="ok"){
-                            alert(" 修改成功 ");
-
-                        }else{
-                            alert(" 修改失败 ");
+                    url:"${ctx}/biz/order/bizOrderHeader/checkTotalExp",
+                    data:{id:orderId,totalExp:totalExp,totalDetail:totalDetail},
+                    success:function (data) {
+                        if (data == "serviceCharge") {
+                            alert("最多只能优惠服务费的50%，您优惠的价格已经超标！请修改调整金额");
+                        } else if (data == "orderLoss") {
+                            alert("优惠后订单金额不能低于出厂价，请修改调整金额");
+                        } else if (data == "orderLowest") {
+                            alert("优惠后订单金额不能低于出厂价的95%，请修改调整金额");
+                        } else if (data == "orderLowest8") {
+                            alert("优惠后订单金额不能低于出厂价的80%，请修改调整金额");
+                        } else if (data == "ok") {
+                            $.ajax({
+                                type:"post",
+                                url:" ${ctx}/biz/order/bizOrderHeader/saveBizOrderHeader",
+                                data:{orderId:$("#id").val(),money:totalExp},
+                                <%--"&bizLocation.receiver="+$("#bizLocation.receiver").val()+"&bizLocation.phone="+$("#bizLocation.phone").val(),--%>
+                                success:function(flag){
+                                    if(flag=="ok"){
+                                        alert(" 修改成功 ");
+                                    }else{
+                                        alert(" 修改失败 ");
+                                    }
+                                }
+                            });
                         }
                     }
                 });
@@ -325,6 +372,125 @@
             }
         }
     </script>
+
+    <script type="text/javascript">
+        function checkInfo(obj, val, hid) {
+            if (confirm("您确认同意该订单退款申请吗？")) {
+
+                $.ajax({
+                    type: "post",
+                    url: "${ctx}/biz/order/bizOrderHeader/saveInfo?statuPath=${statuPath}",
+                    data: {checkStatus: obj, id: hid},
+                    success: function (data) {
+                        if (data) {
+                            alert(val + "成功！");
+                            window.location.href = "${ctx}/biz/order/bizOrderHeader?statu=${statuPath}";
+
+                        }
+                    }
+                })
+
+            }
+
+        }
+    </script>
+
+    <script type="text/javascript" src="${ctxStatic}/jquery/jquery-1.9.1-min.js"></script>
+    <script src="${ctxStatic}/bootstrap/multiselect.min.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/tree-multiselect/dist/jquery.tree-multiselect.js"></script>
+    <script src="${ctxStatic}/jquery-select2/3.5.3/select2.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-validation/1.9/jquery.validate.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        function submitPic(id, multiple) {
+            var f = $("#" + id).val();
+            if (f == null || f == "") {
+                alert("错误提示:上传文件不能为空,请重新选择文件");
+                return false;
+            } else {
+                var extname = f.substring(f.lastIndexOf(".") + 1, f.length);
+                extname = extname.toLowerCase();//处理了大小写
+                if (extname != "jpeg" && extname != "jpg" && extname != "gif" && extname != "png") {
+                    $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+                    return false;
+                }
+            }
+            var file = document.getElementById(id).files;
+            var size = file[0].size;
+            if (size > 2097152) {
+                alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
+                return false;
+            }
+            ajaxFileUploadPic(id, multiple);
+        }
+
+        var a = 0;
+
+        function ajaxFileUploadPic(id, multiple) {
+            $.ajaxFileUpload({
+                url: '${ctx}/biz/order/bizOrderHeader/saveColorImg', //用于文件上传的服务器端请求地址
+                secureuri: false, //一般设置为false
+                fileElementId: id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+                type: 'POST',
+                dataType: 'text', //返回值类型 一般设置为json
+                success: function (data, status) {
+                    //服务器成功响应处理函数
+                    var msg = data.substring(data.indexOf("{"), data.indexOf("}") + 1);
+                    var msgJSON = JSON.parse(msg);
+                    var imgList = msgJSON.imgList;
+                    var imgDiv = $("#" + id + "Div");
+                    var imgDivHtml = "<td><img src=\"$Src\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this);\"></td>";
+                    var imgPhotosSorts = "<td id=''><input name='imgPhotosSorts' style='width: 70px' type='number'/></td>";
+                    if (imgList && imgList.length > 0 && multiple) {
+                        for (var i = 0; i < imgList.length; i++) {
+                            // imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                            if (id == "prodMainImg") {
+                                $("#imgPhotosSorts").append("<td><input id='" + "main" + i + "' name='imgPhotosSorts' value='" + a + "' style='width: 70px' type='number'/></td>");
+                                // $("#prodMainImgImg").append(imgDivHtml.replace("$Src", imgList[i]));
+                                $("#prodMainImgImg").append("<td><img src=\"" + imgList[i] + "\" customInput=\"" + id + "Img\" style='width: 100px' onclick=\"removeThis(this," + "$('#main" + i + "'));\"></td>");
+                                a += 1;
+                            }
+                        }
+                    } else if (imgList && imgList.length > 0 && !multiple) {
+                        imgDiv.empty();
+                        for (var i = 0; i < imgList.length; i++) {
+                            imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
+                        }
+                    } else {
+                        var img = $("#" + id + "Img");
+                        img.attr("src", msgJSON.fullName);
+                    }
+                },
+                error: function (data, status, e) {
+                    //服务器响应失败处理函数
+                    console.info(data);
+                    console.info(status);
+                    console.info(e);
+                    alert("上传失败");
+                }
+            });
+            return false;
+        }
+
+        function deletePic(id) {
+            var f = $("#" + id);
+            f.attr("src", "");
+        }
+
+        function removeThis(obj, item) {
+            $(obj).remove();
+            $(item).remove();
+        }
+
+        function deleteParentParentEle(that) {
+            $(that).parent().parent().remove();
+        }
+
+    </script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -367,12 +533,14 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/save?statuPath=${statuPath}" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
+    <%--<input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />--%>
+    <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
     <div class="control-group">
@@ -417,18 +585,16 @@
             <span class="help-inline">自动计算</span>
         </div>
     </div>
-    <c:if test="${entity.totalDetail != entity.receiveTotal}">
-        <div class="control-group">
-            <label class="control-label">调整金额：</label>
-            <div class="controls">
-                    <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
-                    <span class="help-inline"><font color="red">*</font></span>
-                <c:if test="${bizOrderHeader.flag=='check_pending' && bizOrderHeader.receiveTotal < (bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight)}">
-                    <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
-                </c:if>
-            </div>
+    <div class="control-group">
+        <label class="control-label">调整金额：</label>
+        <div class="controls">
+                <form:input path="totalExp" htmlEscape="false" class="input-xlarge required"/>
+                <span class="help-inline"><font color="red">*</font></span>
+            <c:if test="${bizOrderHeader.flag=='check_pending'}">
+                <a href="#" id="updateMoney"> <span class="icon-ok-circle"/></a>
+            </c:if>
         </div>
-    </c:if>
+    </div>
     <div class="control-group">
         <label class="control-label">运费：</label>
         <div class="controls">
@@ -598,6 +764,33 @@
             </c:if>
         </div>
     </div>
+    <c:if test="${photosMap != null && photosMap.size()>0 }">
+        <div class="control-group">
+            <label class="control-label">退货凭证:
+                <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
+                <p style="opacity: 0.5;">图片建议比例为1:1</p>
+                <p style="opacity: 0.5;">点击图片删除</p>
+                <p style="opacity: 0.5;color: red;">数字小的会排在前边，请不要输入重复序号</p>
+            </label>
+            <div class="controls">
+                <input class="btn" type="file" name="productImg" onchange="submitPic('prodMainImg', true)" value="上传图片" multiple="multiple" id="prodMainImg"/>
+            </div>
+            <div id="prodMainImgDiv">
+                <table>
+                    <tr id="prodMainImgImg">
+                        <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                            <td><img src="${photo.key}" customInput="prodMainImgImg" style='width: 100px' onclick="removeThis(this,'#mainImg'+${status.index});"></td>
+                        </c:forEach>
+                    </tr>
+                    <tr id="imgPhotosSorts">
+                        <c:forEach items="${photosMap}" var="photo" varStatus="status">
+                            <td><input id="mainImg${status.index}" name="imgPhotosSorts" type="number" style="width: 100px" value="${photo.value}"/></td>
+                        </c:forEach>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </c:if>
 
         <c:if test="${bizOrderHeader.bizStatus!=45 }">
         <div class="control-group">
@@ -933,6 +1126,15 @@
                     </shiro:hasPermission>
                 </c:if>
                 <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>
+                <%--<c:if test="${empty entity.orderDetails}">--%>
+                <c:if test="${(empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails) || (refundSkip eq 'refundSkip')}">
+                    <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
+                        <c:if test='${entity.bizStatus==refund}'>
+                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
+                        </c:if>
+                    </shiro:hasPermission>
+                </c:if>
+                    <%--<a href="#" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${orderHeader.id})">退款</a>--%>
             </div>
         </c:otherwise>
     </c:choose>

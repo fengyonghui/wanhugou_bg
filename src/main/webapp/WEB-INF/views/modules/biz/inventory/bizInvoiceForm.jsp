@@ -58,10 +58,10 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    if (tt != '') {
-                        $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
-					}
                     if(window.confirm('你确定要发货吗？') && flag && total > 0){
+                        if (tt != '') {
+                            $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
+                        }
 						var orderHeaders = $("input[name='orderHeaders']").val();
 						if(${bizInvoice.bizStatus == 0}){
 							$.ajax({
@@ -119,7 +119,7 @@
                         }
 
                         if(bizStatus==0){
-                            var selecttd="<select class='input-mini' title='invInfoId'><option value=''>请选择</option>";
+                            var selecttd="<select class='input-mini' title='invInfoId'><option value='"+data.inventoryInfoList[0].id+"'>"+data.inventoryInfoList[0].name+"</option>";
                             $.each(data.inventoryInfoList,function (index,inventory) {
                                 selecttd+="<option value='"+inventory.id+"'>"+inventory.name+"</option>"
                             });
@@ -150,7 +150,7 @@
                                 if(flag){
                                     tr_tds+="<td rowspan='"+orderHeader.orderDetailList.length+"'><input type='checkbox' value='"+orderHeader.id+"' /></td>";
 
-                                    tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.orderNum+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
+                                    tr_tds+= "<td rowspan='"+orderHeader.orderDetailList.length+"'><a href='${ctx}/biz/order/bizOrderHeader/form?id="+orderHeader.id+"&orderDetails=details'> "+orderHeader.orderNum+"</a></td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+orderHeader.customer.name+"</td><td rowspan='"+orderHeader.orderDetailList.length+"'>"+bizName+"</td>" ;
                                 }
                                  tr_tds+="<input title='details_"+orderHeader.id+"' name='' type='hidden' value='"+detail.id+"'>";
                                 tr_tds+= "<td>"+detail.skuInfo.name+"</td><td>"+detail.vendor.name+"</td><td>"+(detail.skuInfo.itemNo==undefined?"":detail.skuInfo.itemNo)+"</td><td>"+detail.skuInfo.partNo+"</td><td>"+detail.skuInfo.skuPropertyInfos+"</td>" ;
@@ -277,7 +277,7 @@
 				<div class="controls">
 					<form:select about="choose" path="carrier" class="input-medium required">
 						<form:option value="" label="请选择"/>
-						<form:options items="${userList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+						<form:options items="${userList}" itemLabel="name" itemValue="name" htmlEscape="false"/>
 					</form:select>
 					<span class="help-inline"><font color="red">*</font> </span>
 				</div>

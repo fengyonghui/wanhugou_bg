@@ -6,6 +6,10 @@ package com.wanhutong.backend.modules.biz.dao.inventory;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+
+import java.util.List;
 
 /**
  * 发货单DAO接口
@@ -14,5 +18,10 @@ import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
  */
 @MyBatisDao
 public interface BizInvoiceDao extends CrudDao<BizInvoice> {
-	
+    /**
+     * 物流单信息详情
+     * @param bizInvoice
+     * @return
+     */
+    List<BizOrderDetail> findLogisticsDetail(BizInvoice bizInvoice);
 }
