@@ -258,13 +258,15 @@
 	<update id="updateParentIds">
 		UPDATE sys_office SET
 			parent_id = #{parent.id},
+			update_id = #{updateBy.id},
 			parent_ids = #{parentIds}
 		WHERE id = #{id}
 	</update>
 
 	<update id="delete">
 		UPDATE sys_office SET
-		status = #{delFlag}
+		status = #{delFlag},
+		update_id = #{updateBy.id}
 		WHERE id = #{id} OR parent_ids LIKE
 		<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 		<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
