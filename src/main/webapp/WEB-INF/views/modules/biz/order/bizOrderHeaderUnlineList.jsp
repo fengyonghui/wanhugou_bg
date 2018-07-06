@@ -19,11 +19,12 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/order/bizOrderHeaderUnline/">线下支付流水列表</a></li>
-		<%--<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:edit"><li><a href="${ctx}/biz/order/bizOrderHeaderUnline/form">线下支付订单添加</a></li></shiro:hasPermission>--%>
+		<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:edit"><li><a href="${ctx}/biz/order/bizOrderHeaderUnline/offLineform?orderHeader.id=${bizOrderHeaderUnline.orderHeader.id}">线下支付订单添加</a></li></shiro:hasPermission>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOrderHeaderUnline" action="${ctx}/biz/order/bizOrderHeaderUnline/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		<input id="orderId" type="hidden" value="${bizOrderHeaderUnline.orderHeader.id}"/>
 		<ul class="ul-form">
 			<li><label>订单号：</label>
 				<form:input path="orderHeader.orderNum" htmlEscape="false" maxlength="50" class="input-medium"/>
