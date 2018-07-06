@@ -180,21 +180,17 @@
                 	html+="<option value='${item.id}'> ${item.name}</option>";
                 </c:forEach>
                 html+="</select>";
-            if (invId ==${BizInventoryEnum.CLOUDCHAMBE.statu}){
-                $("#invName1").after("<th>专属客户</th>");
-                $("#invName2").after("<th>专属客户</th>");
-                $("#invName1").removeAttr("id");
-                $("#invName2").removeAttr("id");
-                $(invInfo).parent().find("tr").each(function () {
-                    $(this).find("td").removeAttr("style");
-                });
-                $("#custId_"+skuId).html(html);
-            //    alert($("#custId_"+skuId).html());
-              //   $("#cust"+skuId).searchableSelect();
-            }
-            // else {
-            //     $(invInfo).find("td[class='custId']").html("");
-            // }
+                <!--配资暂时无用，需要时开放-->
+            <%--if (invId ==${BizInventoryEnum.CLOUDCHAMBE.statu}){--%>
+                <%--$("#invName1").after("<th>专属客户</th>");--%>
+                <%--$("#invName2").after("<th>专属客户</th>");--%>
+                <%--$("#invName1").removeAttr("id");--%>
+                <%--$("#invName2").removeAttr("id");--%>
+                <%--$(invInfo).parent().find("tr").each(function () {--%>
+                    <%--$(this).find("td").removeAttr("style");--%>
+                <%--});--%>
+                <%--$("#custId_"+skuId).html(html);--%>
+            <%--}--%>
         }
 	</script>
 </head>

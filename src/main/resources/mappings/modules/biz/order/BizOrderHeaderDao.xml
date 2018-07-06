@@ -2064,6 +2064,9 @@ FROM
 			<if test="bizStatus !=null">
 				AND a.biz_status=#{bizStatus}
 			</if>
+			<if test="customer !=null and customer.id!=null and customer.id!=''">
+				AND wxsu.id = #{customer.id}
+			</if>
 			<if test="sqlMap != null and sqlMap.order != null and sqlMap.order != ''">
 				${sqlMap.order}
 			</if>
@@ -2138,7 +2141,7 @@ FROM
 			and DATE_FORMAT(bizcr.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
-			AND bizcr.create_time &lt;= #{ordrHeaderStartTime}
+			AND bizcr.create_time &gt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND bizcr.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
@@ -2161,7 +2164,7 @@ FROM
 			and DATE_FORMAT(oh.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
 		</if>
 		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
-			AND oh.create_time &lt;= #{ordrHeaderStartTime}
+			AND oh.create_time &gt;= #{ordrHeaderStartTime}
 		</if>
 		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
 			AND oh.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}

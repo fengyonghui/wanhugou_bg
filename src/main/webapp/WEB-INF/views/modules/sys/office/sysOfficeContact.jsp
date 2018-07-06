@@ -23,23 +23,22 @@
 	<form:form id="searchForm" modelAttribute="user" action="${ctx}/sys/user/contact" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<sys:tableSort id="orderBy" name="orderBy" value="${page.orderBy}" callback="page();"/>
 		<ul class="ul-form">
-			<li><label>联系人姓名：</label>
-				<form:input path="name" htmlEscape="false" maxlength="11" class="input-medium"/>
-                <%--<input id="id" type="hidden" name="id" value="${id}"/>--%>
-			</li>
-			<li class="clearfix"></li>
-			<li><label>联系人电话：</label>
-				<form:input path="mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
-			</li>
 			<li><label>会员名称：</label>
 				<form:input path="company.name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
+			<li><label>主负责人：</label>
+				<form:input path="name" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
+			<li><label style="width: 100px;">主负责人电话：</label>
+				<form:input path="mobile" htmlEscape="false" maxlength="11" class="input-medium"/>
+			</li>
+			<li><label style="width: 110px;">客户专员姓名：</label>
+				<form:input path="user.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
 			<li><label>采购中心：</label>
 				<form:input path="cent.name" htmlEscape="false" maxlength="11" class="input-medium"/>
 			</li>
-			<li class="clearfix"></li>
 			<li><label>日&nbsp;&nbsp;期：</label>
 				<input name="ordrHeaderStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					   value="<fmt:formatDate value="${ordrHeaderStartTime}" pattern="yyyy-MM-dd"/>"
@@ -59,9 +58,8 @@
 			<tr>
 				<td>序号</td>
 				<th>会员名称</th>
-				<th>负责人</th>
-				<th>联系人姓名</th>
-				<th>联系人电话</th>
+				<th>主负责人</th>
+				<th>主负责人电话</th>
 				<th>客户专员</th>
 				<th>采购中心</th>
 				<th>客户专员电话</th>
@@ -78,11 +76,6 @@
 				<td>${state.index+1}</td>
 				<td><a href="${ctx}/sys/office/form?id=${user.company.id}&source=contact_ck">
 						${user.company.name}</a>
-				</td>
-				<td>
-					<c:if test="${user.user.name!=null}">
-						${user.company.primaryPerson.name}
-					</c:if>
 				</td>
 				<td><a href="${ctx}/sys/user/form?id=${user.id}&conn=contact_ck">
 						${user.name}</a>
