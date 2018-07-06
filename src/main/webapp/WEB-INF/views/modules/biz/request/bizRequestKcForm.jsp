@@ -33,14 +33,14 @@
             });
         });
         $("#btnSubmit").click(function () {
-            var reqQty = $("#reqQty").val();
-            var sendNum = $("#sendNum").val();
-            if (sendNum > reqQty){
-                alert("供货数太大，已超过申报数，请重新调整供货数量！");
-                return false;
-            }
-            $(".reqDetailList").find("td").find("input[title='sendNum']").each(function () {
-                console.info($(this).val())
+			var reqQty = $("#reqQty").val();
+			var sendNum = $("#sendNum").val();
+			if (sendNum > reqQty){
+			    alert("供货数太大，已超过申报数，请重新调整供货数量！");
+				return false;
+			}
+			$(".reqDetailList").find("td").find("input[title='sendNum']").each(function () {
+				console.info($(this).val())
             });
         });
 
@@ -180,51 +180,51 @@
 					</c:forEach>
 				</c:if>
 				<!-------------------------------------------------------------------------------->
-				<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
-					<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
-						<tr id="${ordDetail.id}" class="ordDetailList">
-							<td><img style="max-width: 120px" src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
-							<td>${ordDetail.skuInfo.productInfo.name}</td>
-							<td>
-								<c:forEach items="${ordDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >
-									${cate.name}
-									<c:if test="${!cateIndex.last}">
-										/
+					<c:if test="${ordDetailList!=null && ordDetailList.size()>0}">
+						<c:forEach items="${ordDetailList}" var="ordDetail" varStatus="ordStatus">
+							<tr id="${ordDetail.id}" class="ordDetailList">
+								<td><img style="max-width: 120px" src="${ordDetail.skuInfo.productInfo.imgUrl}"/></td>
+								<td>${ordDetail.skuInfo.productInfo.name}</td>
+								<td>
+									<c:forEach items="${ordDetail.skuInfo.productInfo.categoryInfoList}" var="cate" varStatus="cateIndex" >
+										${cate.name}
+										<c:if test="${!cateIndex.last}">
+											/
+										</c:if>
+
+									</c:forEach>
+								</td>
+								<td>${ordDetail.skuInfo.productInfo.prodCode}</td>
+								<td>${ordDetail.skuInfo.productInfo.brandName}</td>
+								<td>
+										${ordDetail.skuInfo.productInfo.office.name}
+										<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
+								</td>
+								<td>${ordDetail.skuInfo.name}</td>
+								<td>${ordDetail.skuInfo.partNo}</td>
+								<td>
+									<input type='hidden' name='bizCollectGoodsRecordList[${ordStatus.index}].skuInfo.id' value='${ordDetail.skuInfo.id}'/>
+									<input type='hidden' name='bizCollectGoodsRecordList[${ordStatus.index}].skuInfo.name' value='${ordDetail.skuInfo.name}'/>
+									<input id="ordQty${ordStatus.index}" name='bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.ordQty' readonly="readonly" value="${ordDetail.ordQty}" type='text'/>
+									<input name="bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.id" value="${ordDetail.id}" type="hidden"/>
+                                    <input name="bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.orderHeader.id" value="${ordDetail.orderHeader.id}" type="hidden"/>
+									<c:if test="${ordDetail.orderHeader.orderNum != null}">
+										<input name="bizCollectGoodsRecordList[${ordStatus.index}].orderNum" value="${ordDetail.orderHeader.orderNum}" type="hidden"/>
 									</c:if>
 
-								</c:forEach>
-							</td>
-							<td>${ordDetail.skuInfo.productInfo.prodCode}</td>
-							<td>${ordDetail.skuInfo.productInfo.brandName}</td>
-							<td>
-									${ordDetail.skuInfo.productInfo.office.name}
-									<%--<input name="bizSendGoodsRecord.vend.id" value="${reqDetail.skuInfo.productInfo.office.id}" type="hidden"/>--%>
-							</td>
-							<td>${ordDetail.skuInfo.name}</td>
-							<td>${ordDetail.skuInfo.partNo}</td>
-							<td>
-								<input type='hidden' name='bizCollectGoodsRecordList[${ordStatus.index}].skuInfo.id' value='${ordDetail.skuInfo.id}'/>
-								<input type='hidden' name='bizCollectGoodsRecordList[${ordStatus.index}].skuInfo.name' value='${ordDetail.skuInfo.name}'/>
-								<input id="ordQty${ordStatus.index}" name='bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.ordQty' readonly="readonly" value="${ordDetail.ordQty}" type='text'/>
-								<input name="bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.id" value="${ordDetail.id}" type="hidden"/>
-								<input name="bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.orderHeader.id" value="${ordDetail.orderHeader.id}" type="hidden"/>
-								<c:if test="${ordDetail.orderHeader.orderNum != null}">
-									<input name="bizCollectGoodsRecordList[${ordStatus.index}].orderNum" value="${ordDetail.orderHeader.orderNum}" type="hidden"/>
-								</c:if>
-
-							</td>
-							<td>
-								<input id="sentQty${ordDetail.sentQty}" name='bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.sentQty' readonly="readonly" value="${ordDetail.sentQty}" type='text'/>
-							</td>
-
-							<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
-								<td>
-									<input title="sendNum${ordStatus.index}" name="bizCollectGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
 								</td>
-							</shiro:hasPermission>
-						</tr>
-					</c:forEach>
-				</c:if>
+								<td>
+									<input id="sentQty${ordDetail.sentQty}" name='bizCollectGoodsRecordList[${ordStatus.index}].bizOrderDetail.sentQty' readonly="readonly" value="${ordDetail.sentQty}" type='text'/>
+								</td>
+
+								<shiro:hasPermission name="biz:inventory:bizInventorySku:edit">
+									<td>
+										<input title="sendNum${ordStatus.index}" name="bizCollectGoodsRecordList[${ordStatus.index}].sendNum" <c:if test="${ordDetail.ordQty==ordDetail.sentQty}">readonly="readonly"</c:if> value="0" type="text" onblur="checkout2(${ordStatus.index})"/>
+									</td>
+								</shiro:hasPermission>
+							</tr>
+						</c:forEach>
+					</c:if>
 				<!-------------------------------------------------------------------------------->
 				</tbody>
 			</table>
