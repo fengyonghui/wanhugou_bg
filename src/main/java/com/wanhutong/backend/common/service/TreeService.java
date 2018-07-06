@@ -66,6 +66,7 @@ public abstract class TreeService<D extends TreeDao<T>, T extends TreeEntity<T>>
 			if (e.getParentIds() != null && oldParentIds != null){
 				e.setParentIds(e.getParentIds().replace(oldParentIds, entity.getParentIds()));
 				preUpdateChild(entity, e);
+				e.preInsert();
 				dao.updateParentIds(e);
 			}
 		}
