@@ -19,7 +19,9 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/biz/order/bizOrderHeaderUnline/">线下支付流水列表</a></li>
-		<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:edit"><li><a href="${ctx}/biz/order/bizOrderHeaderUnline/offLineform?orderHeader.id=${bizOrderHeaderUnline.orderHeader.id}">线下支付订单添加</a></li></shiro:hasPermission>
+		<c:if test="${fns:getUser().isAdmin()}">
+			<shiro:hasPermission name="biz:order:bizOrderHeaderUnline:edit"><li><a href="${ctx}/biz/order/bizOrderHeaderUnline/offLineform?orderHeader.id=${bizOrderHeaderUnline.orderHeader.id}">线下支付订单添加</a></li></shiro:hasPermission>
+		</c:if>
 	</ul>
 	<form:form id="searchForm" modelAttribute="bizOrderHeaderUnline" action="${ctx}/biz/order/bizOrderHeaderUnline/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
