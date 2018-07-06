@@ -165,9 +165,12 @@ public class BizInventorySkuController extends BaseController {
     public String findInvSku(String orderHeaders) {
         String flag = "false";
         if (StringUtils.isNotBlank(orderHeaders)) {
-            String[] orders = orderHeaders.split(",".trim());
+            String[] orders = orderHeaders.split(",");
             for (int a = 0; a < orders.length; a++) {
-                String[] oheaders = orders[a].split("#".trim());
+                String[] oheaders = orders[a].split("#");
+                if (oheaders.length < 2) {
+                    continue;
+                }
                 String[] odNumArr = oheaders[1].split("\\*");
                 for (int i = 0; i < odNumArr.length; i++) {
                     String[] odArr = odNumArr[i].split("-");
