@@ -116,7 +116,9 @@
 					<c:if test="${off.delRemark==1}">
 						<a href="${ctx}/sys/buyerAdviser/interrelatedForm?id=${off.id}">变更客户专员</a>
 						<a href="${ctx}/sys/office/purchasersForm?id=${off.id}&source=add_prim">修改</a>
-						<a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
+						<c:if test="${fns:getUser().isAdmin()}">
+							<a href="${ctx}/sys/office/delete?id=${off.id}&source=purchListDelete" onclick="return confirmx('要删除该机构及所有子机构项吗？', this.href)">删除</a>
+						</c:if>
 						<a href="${ctx}/sys/office/purchasersForm?parent.id=${off.id}&source=add_prim">添加下级机构</a>
 						<%--<c:if test="${off.type!=null && off.type eq '6'}">--%>
 							<a href="${ctx}/biz/chat/bizChatRecord/list?office.id=${off.id}&office.parent.id=7&office.type=6&source=purchaser">沟通记录</a>
