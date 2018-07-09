@@ -93,6 +93,7 @@
 		a.order_num AS "orderNum",
 		a.order_type AS "orderType",
 		a.cust_id AS "customer.id",
+		a.consultant_id AS "consultantId",
 		so.name as "customer.name",
 		so.phone AS "customer.phone",
 		a.seller_id as "sellers.id",

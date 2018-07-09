@@ -3,13 +3,32 @@
  */
 package com.wanhutong.backend.modules.biz.service.order;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.utils.DsConfig;
+import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
+import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
+import com.wanhutong.backend.modules.biz.web.po.BizPoHeaderController;
+import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
+import com.wanhutong.backend.modules.enums.OrderTypeEnum;
+import com.wanhutong.backend.modules.sys.entity.User;
+import com.wanhutong.backend.modules.sys.service.SystemService;
+import com.wanhutong.backend.modules.sys.utils.AliOssClientUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +47,15 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderUnlineDao;
 @Transactional(readOnly = true)
 public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlineDao, BizOrderHeaderUnline> {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BizOrderHeaderUnlineService.class);
 	@Autowired
 	private BizOrderHeaderService bizOrderHeaderService;
 	@Autowired
 	private BizOrderStatusService bizOrderStatusService;
+	@Autowired
+	private SystemService systemService;
+	@Autowired
+	private CommonImgService commonImgService;
 
 	public BizOrderHeaderUnline get(Integer id) {
 		return super.get(id);
@@ -44,7 +68,11 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 	public Page<BizOrderHeaderUnline> findPage(Page<BizOrderHeaderUnline> page, BizOrderHeaderUnline bizOrderHeaderUnline) {
 		return super.findPage(page, bizOrderHeaderUnline);
 	}
-	
+
+	/**
+	 * 审核
+	 * @param bizOrderHeaderUnline
+	 */
 	@Transactional(readOnly = false)
 	public void save(BizOrderHeaderUnline bizOrderHeaderUnline) {
 		super.save(bizOrderHeaderUnline);
@@ -74,6 +102,106 @@ public class BizOrderHeaderUnlineService extends CrudService<BizOrderHeaderUnlin
 			bizOrderStatusService.save(orderStatus);
 		}
 
+	}
+
+	/**
+	 * 保存
+	 * @param bizOrderHeaderUnline
+	 */
+	@Transactional(readOnly = false)
+	public void saveOffLine(BizOrderHeaderUnline bizOrderHeaderUnline) {
+		BizOrderHeader orderHeader = bizOrderHeaderService.get(bizOrderHeaderUnline.getOrderHeader().getId());
+		bizOrderHeaderUnline.setSerialNum("0");
+		super.save(bizOrderHeaderUnline);
+		User user = systemService.getUser(orderHeader.getConsultantId());
+		String offLineorderNum = GenerateOrderUtils.getOrderNum(OrderTypeEnum.FO, orderHeader.getCustomer().getId(), user.getCompany().getId(), bizOrderHeaderUnline.getId());
+		bizOrderHeaderUnline.setSerialNum(offLineorderNum);
+		super.save(bizOrderHeaderUnline);
+		saveCommonImg(bizOrderHeaderUnline);
+	}
+
+	/**
+	 * 保存物流信息图片
+	 *
+	 * @param bizOrderHeaderUnline
+	 */
+	@Transactional(readOnly = false)
+	public void saveCommonImg(BizOrderHeaderUnline bizOrderHeaderUnline) {
+		String imgUrl = null;
+		try {
+			imgUrl = URLDecoder.decode(bizOrderHeaderUnline.getImgUrls(), "utf-8");//主图转换编码
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.error("物流信息图转换编码异常.", e);
+		}
+		if (imgUrl != null) {
+			String[] photoArr = imgUrl.split("\\|");
+			saveLogisticsImg(ImgEnum.UNlINE_PAYMENT_VOUCHER.getCode(), bizOrderHeaderUnline, photoArr);
+		}
+		List<CommonImg> commonImgs = getImgList(ImgEnum.UNlINE_PAYMENT_VOUCHER.getCode(), bizOrderHeaderUnline.getId());
+		for (int i = 0; i < commonImgs.size(); i++) {
+			CommonImg commonImg = commonImgs.get(i);
+			commonImg.setImgSort(i);
+			commonImgService.save(commonImg);
+		}
+	}
+
+	private List<CommonImg> getImgList(Integer imgType, Integer bizInvoiceId) {
+		CommonImg commonImg = new CommonImg();
+		commonImg.setObjectId(bizInvoiceId);
+		commonImg.setObjectName(ImgEnum.UNlINE_PAYMENT_VOUCHER.getTableName());
+		commonImg.setImgType(imgType);
+		return commonImgService.findList(commonImg);
+	}
+
+	public void saveLogisticsImg(Integer imgType, BizOrderHeaderUnline bizOrderHeaderUnline, String[] photoArr) {
+		if (bizOrderHeaderUnline.getId() == null) {
+			LOGGER.error("Can't save logistics image without bizOrderHeaderUnline ID!");
+			return;
+		}
+
+		List<CommonImg> commonImgs = getImgList(imgType, bizOrderHeaderUnline.getId());
+
+		Set<String> existSet = new HashSet<>();
+		for (CommonImg commonImg1 : commonImgs) {
+			existSet.add(commonImg1.getImgServer() + commonImg1.getImgPath());
+		}
+		Set<String> newSet = new HashSet<>(Arrays.asList(photoArr));
+
+		Set<String> result = new HashSet<String>();
+		//差集，结果做删除操作
+		result.clear();
+		result.addAll(existSet);
+		result.removeAll(newSet);
+		for (String url : result) {
+			for (CommonImg commonImg1 : commonImgs) {
+				if (url.equals(commonImg1.getImgServer() + commonImg1.getImgPath())) {
+					commonImg1.setDelFlag("0");
+					commonImgService.delete(commonImg1);
+				}
+			}
+		}
+		//差集，结果做插入操作
+		result.clear();
+		result.addAll(newSet);
+		result.removeAll(existSet);
+
+		CommonImg commonImg = new CommonImg();
+		commonImg.setObjectId(bizOrderHeaderUnline.getId());
+		commonImg.setObjectName(ImgEnum.UNlINE_PAYMENT_VOUCHER.getTableName());
+		commonImg.setImgType(imgType);
+		commonImg.setImgSort(40);
+		for (String name : result) {
+			if (name.trim().length() == 0 || name.contains(DsConfig.getImgServer())) {
+				continue;
+			}
+			String pathFile = Global.getUserfilesBaseDir() + name;
+			String ossPath = AliOssClientUtil.uploadFile(pathFile, true);
+
+			commonImg.setId(null);
+			commonImg.setImgPath("/" + ossPath);
+			commonImg.setImgServer(DsConfig.getImgServer());
+			commonImgService.save(commonImg);
+		}
 	}
 
 	@Transactional(readOnly = false)
