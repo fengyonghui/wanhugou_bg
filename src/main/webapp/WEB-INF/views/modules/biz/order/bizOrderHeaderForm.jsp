@@ -404,7 +404,28 @@
     <script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
     <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
-
+    <%--<script type="text/javascript">--%>
+        <%--$(document).ready(function(){--%>
+            <%--$("#flip").click(function(){--%>
+                <%--$("#remark").slideToggle("slow");--%>
+            <%--});--%>
+        <%--});--%>
+    <%--</script>--%>
+    <style type="text/css">
+        #remark,#flip,#addRemark
+        {
+            margin:0px;
+            padding:5px;
+            text-align:center;
+            background:#e5eecc;
+            border:solid 1px #c3c3c3;
+        }
+        #remark
+        {
+            height:120px;
+            /*display:none;*/
+        }
+    </style>
     <script type="text/javascript">
         function submitPic(id, multiple) {
             var f = $("#" + id).val();
@@ -490,6 +511,52 @@
             $(that).parent().parent().remove();
         }
 
+    </script>
+    <script type="text/javascript">
+        function saveRemark() {
+            var orderId = $("#id").val();
+            var remark;
+            remark=prompt("请输入你要添加的备注");
+            // alert(remark);
+            if (remark == null) {
+                return false;
+            }
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/order/bizOrderComment/addComment",
+                data:{orderId:orderId,remark:remark},
+                success:function (data) {
+                    if (data == "error") {
+                        alert("添加订单备注失败，备注可能为空");
+                    }
+                    if (data == "ok") {
+                        alert("添加订单备注成功");
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+            <%--$("#addRemark").click(function () {--%>
+                <%--var orderId = $("#id").val();--%>
+                <%--alert(orderId);--%>
+                <%--var remark;--%>
+                <%--remark=prompt("请输入你要添加的备注");--%>
+                <%--alert(remark);--%>
+                <%--$.ajax({--%>
+                    <%--type:"post",--%>
+                    <%--url:"${ctx}/biz/order/bizOrderComment/addComment",--%>
+                    <%--data:{orderId:orderId,remark:remark},--%>
+                    <%--success:function (data) {--%>
+                        <%--if (data == "error") {--%>
+                            <%--alert("添加订单备注失败，备注可能为空");--%>
+                        <%--}--%>
+                        <%--if (data == "ok") {--%>
+                            <%--alert("添加订单备注成功");--%>
+                            <%--window.reload();--%>
+                        <%--}--%>
+                    <%--}--%>
+                <%--});--%>
+            <%--});--%>
     </script>
 </head>
 <body>
@@ -753,28 +820,17 @@
                 </c:if>
         </div>
     </div>
-    <div id="box" class="control-group" style="word-break:break-all;overflow:hidden; cursor:pointer">
+    <div class="control-group">
         <label class="control-label">备&nbsp;注：</label>
-        <div class="controls">
-            <%--<c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">--%>
-                <%--<form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>--%>
-            <%--</c:if>--%>
-            <%--<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">--%>
-                <%--<form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>--%>
-            <%--</c:if>--%>
-                <div class="box">dwefeafagesgaegergergergergergergergergegerger<br>
-                    姓名&nbsp;&nbsp;2018-07-05 15:51:21</div>
-                <div class="box">dwefeafagesgaegergergergergergergergergegerger<br>
-                    姓名&nbsp;&nbsp;2018-07-05 15:51:21</div>
-                <div class="box">dwefeafagesgaegergergergergergergergergegerger<br>
-                    姓名&nbsp;&nbsp;2018-07-05 15:51:21</div>
-            <%--<textarea value="dwefeafagesgaegergergergergergergergergegerger" htmlEscape="false" maxlength="200" class="input-xlarge"/>--%>
-            <%--<textarea value="dwefeafagesgaegergergergergergergergergegerger" htmlEscape="false" maxlength="200" class="input-xlarge"/>--%>
+        <div id="remark" class="controls" style="overflow:auto; float:left;text-align: left; width: 400px;">
             <c:forEach items="${commentList}" var="comment">
-                <div class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;${comment.createDate}</div>
+                <p class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;<fmt:formatDate value="${comment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></p>
             </c:forEach>
         </div>
+        <%--<span id="flip">全部备注</span>&nbsp;&nbsp;--%>
+        <span id="addRemark" onclick="saveRemark()">增加备注</span>
     </div>
+
     <c:if test="${photosMap != null && photosMap.size()>0 }">
         <div class="control-group">
             <label class="control-label">退货凭证:
@@ -1325,46 +1381,5 @@
         </shiro:hasPermission>
     </div>
 </c:if>
-<script type="text/javascript">
-    var t = true;
-    var obj,a;
-    function openclose(openclose){
-        var h = obj.offsetHeight;
-        h += openclose*5;
-        if(h>=150){
-            clearInterval(a);
-            obj.style.height = "150px";
-            t = true;
-        }
-        else if(h<=50){
-            clearInterval(a);
-            obj.style.height = "50px";
-            t = true;
-        }
-        else obj.style.height = h + "px";
-    }
-    function getlink(){
-        obj.onclick = function(){
-            clearInterval(a);
-            if(obj.offsetHeight>=150)
-                a=setInterval("openclose(-1)",5);
-             else
-                a = setInterval("openclose(1)" , 5);
-
-        }
-    }
-    window.onload = function()
-    {
-        obj = document.getElementById("box")
-        obj.style.height = "50px";
-        getlink();
-    }
-</script>
-<style type="text/css">
-    .box{width:200px;word-break:break-all;border:1px solid red;overflow:hidden; cursor:pointer}
-</style>
-<div id="box" class="box">
-    <a href="#">点击我展开</a>
-</div>
 </body>
 </html>

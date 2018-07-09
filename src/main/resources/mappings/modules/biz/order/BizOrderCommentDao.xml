@@ -6,6 +6,7 @@
 		a.id AS "id",
 		a.order_id AS "order.id",
 		a.comments AS "comments",
+		a.comment_type AS "commentType",
 		a.create_id AS "createBy.id",
 		a.create_time AS "createDate",
 		a.u_version AS "uVersion",
@@ -72,6 +73,7 @@
 			id,
 			order_id,
 			comments,
+			comment_type,
 			create_id,
 			create_time,
 			u_version,
@@ -81,6 +83,7 @@
 			#{id},
 			#{order.id},
 			#{comments},
+			#{commentType},
 			#{createBy.id},
 			#{createDate},
 			#{uVersion},
@@ -93,6 +96,7 @@
 		UPDATE biz_order_comment SET 	
 			order_id = #{order.id},
 			comments = #{comments},
+			comment_type = #{commentType},
 			u_version = #{uVersion},
 			update_id = #{updateBy.id},
 			update_time = #{updateDate}
