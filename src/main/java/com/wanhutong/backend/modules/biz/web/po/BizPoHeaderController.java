@@ -53,6 +53,7 @@ import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
+import com.wanhutong.backend.modules.sys.utils.DictUtils;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -470,8 +471,27 @@ public class BizPoHeaderController extends BaseController {
 
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("roleSet", roleSet);
-        resultMap.put("bizPoHeader", bizPoHeader);
-        resultMap.put("bizOrderHeader", bizOrderHeader);
+
+        Map<String, Object> bizPoHeaderMap = Maps.newHashMap();
+        bizPoHeaderMap.put("id", bizPoHeader.getId());
+        bizPoHeaderMap.put("orderNumber", bizPoHeader.getOrderNum());
+        bizPoHeaderMap.put("totalDetail", bizPoHeader.getTotalDetail());
+        bizPoHeaderMap.put("total", bizPoHeader.getTotalDetail() + bizPoHeader.getTotalExp() + bizPoHeader.getFreight());
+        bizPoHeaderMap.put("lastPayDate", bizPoHeader.getLastPayDate());
+        bizPoHeaderMap.put("deliveryStatus", bizPoHeader.getDeliveryStatus());
+        bizPoHeaderMap.put("deliveryOffice", bizPoHeader.getDeliveryOffice());
+        bizPoHeaderMap.put("remark", bizPoHeader.getRemark());
+        bizPoHeaderMap.put("bizStatus", DictUtils.getDictLabel(String.valueOf(bizPoHeader.getBizStatus()), "biz_po_status", "未知类型"));
+        bizPoHeaderMap.put("vendOffice", bizPoHeader.getVendOffice());
+
+
+
+        Map<String, Object> bizOrderHeaderMap = Maps.newHashMap();
+        bizOrderHeaderMap.put("id", bizPoHeader.getId());
+        bizOrderHeaderMap.put("orderNumber", bizPoHeader.getOrderNum());
+
+        resultMap.put("bizPoHeader", bizPoHeaderMap);
+        resultMap.put("bizOrderHeader", bizOrderHeaderMap);
         resultMap.put("type", type);
         resultMap.put("prewStatus", prewStatus);
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));

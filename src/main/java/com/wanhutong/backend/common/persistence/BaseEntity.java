@@ -8,17 +8,15 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.supcan.annotation.treelist.SupTreeList;
 import com.wanhutong.backend.common.supcan.annotation.treelist.cols.SupCol;
-import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Entity支持类
@@ -39,7 +37,6 @@ public abstract class BaseEntity<T> implements Serializable {
 	 * 当前用户
 	 */
 	@JsonIgnore
-	@JsonIgnoreProperties
 	protected User currentUser;
 	
 	/**
@@ -78,14 +75,14 @@ public abstract class BaseEntity<T> implements Serializable {
 	
 	@JsonIgnore
 	@XmlTransient
-	@JsonIgnoreProperties
 	public User getCurrentUser() {
 		if(currentUser == null){
 			currentUser = UserUtils.getUser();
 		}
 		return currentUser;
 	}
-	
+
+	@JsonIgnore
 	public void setCurrentUser(User currentUser) {
 		this.currentUser = currentUser;
 	}
