@@ -470,12 +470,8 @@ public class BizPoHeaderController extends BaseController {
 
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("roleSet", roleSet);
-        resultMap.put("bizPoHeader", ImmutableMap.of(
-                "id", bizPoHeader.getId()
-        ));
-        resultMap.put("bizOrderHeader", ImmutableMap.of(
-                "id", bizOrderHeader.getId()
-        ));
+        resultMap.put("bizPoHeader", bizPoHeader);
+        resultMap.put("bizOrderHeader", bizOrderHeader);
         resultMap.put("type", type);
         resultMap.put("prewStatus", prewStatus);
         return JsonUtil.generateData(resultMap, request.getParameter("callback"));
