@@ -84,6 +84,14 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
 	 * 结束金额
 	 */
 	private BigDecimal endPrice;
+	/**
+	 * 起始付款时间
+	 */
+	private Date startPayTime;
+	/**
+	 * 结束付款时间
+	 */
+	private Date endPayTime;
 
 
 	public Integer getCurrentPaymentId() {
@@ -428,4 +436,20 @@ public class BizPoHeader extends DataEntity<BizPoHeader> {
     public void setType(String type) {
         this.type = type;
     }
+
+	public Date getStartPayTime() {
+		return startPayTime;
+	}
+
+	public void setStartPayTime(Date startPayTime) {
+		this.startPayTime = startPayTime;
+	}
+
+	public Date getEndPayTime() {
+		return endPayTime;
+	}
+
+	public void setEndPayTime(Date endPayTime) {
+		this.endPayTime = endPayTime;
+	}
 }

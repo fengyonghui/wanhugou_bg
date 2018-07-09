@@ -184,29 +184,8 @@ public class BizDeliverGoodsService extends CrudService<BizDeliverGoodsDao, BizI
                                 ImmutableMap.of("type", "Exception", "service", "拍照下单供货记录"));
                     }
                 }
-
                 /*用于 订单状态表 保存状态*/
-                if (orderHeader.getId() != null || orderHeader.getBizStatus() != null) {
-                    BizOrderStatus orderStatus = new BizOrderStatus();
-                    orderStatus.setOrderHeader(orderHeader);
-                    orderStatus.setBizStatus(orderHeader.getBizStatus());
-                    List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                    if (CollectionUtils.isNotEmpty(list)) {
-                        boolean flag = true;
-                        for (BizOrderStatus bizOrderStatus : list) {
-                            if (bizOrderStatus.getBizStatus().equals(orderHeader.getBizStatus())) {
-                                flag = false;
-                                break;
-                            }
-                        }
-                        if (flag) {
-                            bizOrderStatusService.save(orderStatus);
-                        }
-                    } else {
-                        bizOrderStatusService.save(orderStatus);
-                    }
-                }
-
+                bizOrderStatusService.saveOrderStatus(orderHeader);
             }
             bizInvoice.setValuePrice(bizInvoice.getValuePrice() == null ? 0 : bizInvoice.getValuePrice() + valuePrice);
             super.save(bizInvoice);

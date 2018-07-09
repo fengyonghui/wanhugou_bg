@@ -119,6 +119,12 @@
 			<if test="endPrice !=null and endPrice != ''">
 				AND #{endPrice} >= a.total_detail
 			</if>
+			<if test="startPayTime != null and startPayTime != ''">
+				AND payment.pay_time &gt;= #{startPayTime}
+			</if>
+			<if test="endPayTime != null and endPayTime != ''">
+				AND payment.pay_time &lt;= #{endPayTime}
+			</if>
 		</where>
 		GROUP BY a.id
 
