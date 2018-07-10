@@ -379,4 +379,17 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	public List<BizSkuInfo> findPurseSkuList(BizSkuInfo bizSkuInfo) {
 		return bizSkuInfoDao.findPurseSkuList(bizSkuInfo);
 	}
+
+	/**
+	 * 获取商品和订单的对应关系列表
+	 * @param page
+	 * @param bizSkuInfo
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public Page<BizSkuInfo> findPageForSkuInfo(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
+		bizSkuInfo.setPage(page);
+		page.setList(bizSkuInfoDao.findPageForSkuInfo(bizSkuInfo));
+		return page;
+	}
 }
