@@ -319,7 +319,7 @@ public class BizPoHeaderController extends BaseController {
                                 "id", o.getId(),
                                 "orderNum", o.getOrderNum() == null ? StringUtils.EMPTY : o.getOrderNum(),
                                 "vendOffice", o.getVendOffice().getName() == null ? StringUtils.EMPTY : o.getVendOffice().getName(),
-                                "processId", o.getProcessId() == null ? StringUtils.EMPTY : o.getProcessId()
+                                "process",  o.getCommonProcess()
                         )
                 );
             });
