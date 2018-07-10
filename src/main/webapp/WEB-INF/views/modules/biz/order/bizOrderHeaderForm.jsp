@@ -626,7 +626,6 @@
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
             </div>
         </div>
-    <c:if test="${fns:getUser().isAdmin()}">
         <div class="control-group">
             <label class="control-label">发票状态：</label>
             <div class="controls">
@@ -663,7 +662,6 @@
                 </c:if>
             </div>
         </div>
-    </c:if>
     <div class="control-group">
         <label class="control-label">收货人：</label>
         <div class="controls">
