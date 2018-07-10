@@ -826,13 +826,14 @@
     </div>
     <div class="control-group">
         <label class="control-label">备&nbsp;注：</label>
-        <div id="remark" class="controls" style="overflow:auto; float:left;text-align: left; width: 400px;">
+        <div id="remark" class="controls" style="margin-left: 16px; overflow:auto; float:left;text-align: left; width: 400px;">
             <c:forEach items="${commentList}" var="comment">
-                <p class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;<fmt:formatDate value="${comment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></p>
+                <p class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;<fmt:formatDate value="${comment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></>
             </c:forEach>
         </div>
         <%--<span id="flip">全部备注</span>&nbsp;&nbsp;--%>
-        <span id="addRemark" onclick="saveRemark()">增加备注</span>
+        <input id="addRemark" class="btn" type="button" value="增加备注"onclick="saveRemark()"/>
+        <%--<span id="addRemark" onclick="saveRemark()">增加备注</span>--%>
     </div>
 
     <c:if test="${photosMap != null && photosMap.size()>0 }">
