@@ -79,7 +79,6 @@
                             loading('正在提交，请稍等...');
                         }
                     }else{
-                        alert("请勾选发货内容");
                         return false;
                     }
                 },

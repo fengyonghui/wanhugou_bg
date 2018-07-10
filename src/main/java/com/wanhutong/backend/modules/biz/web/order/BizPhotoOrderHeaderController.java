@@ -56,6 +56,8 @@ public class BizPhotoOrderHeaderController extends BaseController {
     private BizOrderAppointedTimeService bizOrderAppointedTimeService;
     @Autowired
     private CommonImgService commonImgService;
+    @Autowired
+    private BizOrderCommentService bizOrderCommentService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -74,6 +76,10 @@ public class BizPhotoOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        BizOrderComment bizOrderComment = new BizOrderComment();
+        bizOrderComment.setOrder(bizOrderHeader);
+        List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
+        model.addAttribute("commentList",commentList);
         if (bizOrderHeader.getId() == null) {
             logger.info("该订单没有传入订单ID");
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list";
