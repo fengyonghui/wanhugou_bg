@@ -7,6 +7,7 @@ import com.wanhutong.backend.modules.biz.dao.category.BizVarietyInfoDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
+import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
@@ -34,6 +35,9 @@ public class BizStatisticsBetweenService {
 
     @Resource
     private BizOrderHeaderDao bizOrderHeaderDao;
+
+    @Resource
+    private BizPoHeaderService bizPoHeaderService;
 
     @Resource
     private BizVarietyInfoDao bizVarietyInfoDao;
@@ -185,5 +189,16 @@ public class BizStatisticsBetweenService {
     public List<BizProductStatisticsDto> skuAllStatisticData (Integer variId) {
         List<BizProductStatisticsDto> statisticsDtoList = bizOrderHeaderDao.getSkuAllStatisticData(variId);
         return statisticsDtoList;
+    }
+
+    /**
+     * 供应商供应总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate) {
+        return bizPoHeaderService.vendorProductPrice(startDate, endDate);
     }
 }

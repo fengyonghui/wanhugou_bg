@@ -1408,7 +1408,7 @@ public class BizStatisticsBetweenController extends BaseController {
     public String vendorProductPrice (HttpServletRequest request, String startDate, String endDate){
         request.setAttribute("startDate", startDate);
         request.setAttribute("endDate", endDate);
-        List<BizProductStatisticsDto> productStatisticsList = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
+        List<BizOrderStatisticsDto> productStatisticsList = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
         request.setAttribute("productStatisticsList", productStatisticsList);
         return "modules/biz/statistics/bizStatisticsVendorProductPriceBetweenTables";
     }
