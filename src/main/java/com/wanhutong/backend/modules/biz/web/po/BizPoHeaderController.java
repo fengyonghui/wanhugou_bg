@@ -483,6 +483,7 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeaderMap.put("remark", bizPoHeader.getRemark());
         bizPoHeaderMap.put("bizStatus", DictUtils.getDictLabel(String.valueOf(bizPoHeader.getBizStatus()), "biz_po_status", "未知类型"));
         bizPoHeaderMap.put("vendOffice", bizPoHeader.getVendOffice());
+        bizPoHeaderMap.put("process", bizPoHeader.getCommonProcess());
 
 
 
