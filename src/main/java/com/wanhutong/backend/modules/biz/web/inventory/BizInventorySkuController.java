@@ -164,27 +164,32 @@ public class BizInventorySkuController extends BaseController {
     @RequestMapping(value = "findInvSku")
     public String findInvSku(String orderHeaders) {
         String flag = "false";
-        if (StringUtils.isNotBlank(orderHeaders)) {
-            String[] orders = orderHeaders.split(",".trim());
-            for (int a = 0; a < orders.length; a++) {
-                String[] oheaders = orders[a].split("#".trim());
-                String[] odNumArr = oheaders[1].split("\\*");
-                for (int i = 0; i < odNumArr.length; i++) {
-                    String[] odArr = odNumArr[i].split("-");
-                    BizOrderDetail orderDetail = bizOrderDetailService.get(Integer.parseInt(odArr[0]));
-                    //商品
-                    BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
-                    BizInventoryInfo inventoryInfo = new BizInventoryInfo();
-                    if (odArr.length == 3) {
-                        inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
-                        BizInventorySku bizInventorySku = new BizInventorySku();
-                        bizInventorySku.setInvInfo(inventoryInfo);
-                        bizInventorySku.setSkuInfo(bizSkuInfo);
-                        List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
-                        if (invSkuList != null && invSkuList.size() > 0) {
-                            flag = "true";
-                        }
-                    }
+        if (StringUtils.isBlank(orderHeaders)) {
+            return flag;
+        }
+        String[] orders = orderHeaders.split(",");
+        for (int a = 0; a < orders.length; a++) {
+            String[] oheaders = orders[a].split("#");
+            if (oheaders.length < 2) {
+                continue;
+            }
+            String[] odNumArr = oheaders[1].split("\\*");
+            for (int i = 0; i < odNumArr.length; i++) {
+                String[] odArr = odNumArr[i].split("-");
+                BizOrderDetail orderDetail = bizOrderDetailService.get(Integer.parseInt(odArr[0]));
+                //商品
+                BizSkuInfo bizSkuInfo = bizSkuInfoService.get(orderDetail.getSkuInfo().getId());
+                BizInventoryInfo inventoryInfo = new BizInventoryInfo();
+                if (odArr.length != 3) {
+                    continue;
+                }
+                inventoryInfo = bizInventoryInfoService.get(Integer.parseInt(odArr[2]));
+                BizInventorySku bizInventorySku = new BizInventorySku();
+                bizInventorySku.setInvInfo(inventoryInfo);
+                bizInventorySku.setSkuInfo(bizSkuInfo);
+                List<BizInventorySku> invSkuList = bizInventorySkuService.findList(bizInventorySku);
+                if (invSkuList != null && invSkuList.size() > 0) {
+                    flag = "true";
                 }
             }
         }
