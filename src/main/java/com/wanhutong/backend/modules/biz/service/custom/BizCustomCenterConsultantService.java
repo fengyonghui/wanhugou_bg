@@ -51,7 +51,7 @@ public class BizCustomCenterConsultantService extends CrudService<BizCustomCente
 		Office customs = bizCustomCenterConsultant.getCustoms();
 		BizCustomCenterConsultant bcc = get(bizCustomCenterConsultant.getCustoms().getId());
 		if(bcc !=null){
-			if(bcc.getDelFlag().equals("1")){
+			if(("1").equals(bcc.getDelFlag())){
 				bcc.setId(bizCustomCenterConsultant.getCustoms().getId());
 				bcc.setConsultants(new User(bizCustomCenterConsultant.getConsultants().getId()));
 				bcc.setCenters(new Office(centers.getId()));
