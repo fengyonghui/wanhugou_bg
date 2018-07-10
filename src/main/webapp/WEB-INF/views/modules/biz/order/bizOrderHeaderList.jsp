@@ -366,7 +366,7 @@
 						</shiro:hasPermission>
 					</c:when>
 				<c:otherwise>
-						<c:if test="${statu == 'unline'}">
+						<c:if test="${statu == 'unline' || fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeaderUnline?orderHeader.id=${orderHeader.id}">支付流水</a>
 						</c:if>
 						<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">

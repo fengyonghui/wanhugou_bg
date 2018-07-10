@@ -49,7 +49,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	@Resource
 	private BizInventorySkuService bizInventorySkuService;
 	@Resource
-    private OfficeService officeService;
+	private OfficeService officeService;
 
 	@Resource
 	private BizOrderStatusService bizOrderStatusService;
@@ -86,9 +86,9 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	@Override
 	@Transactional(readOnly = false)
 	public void save(BizCollectGoodsRecord bizCollectGoodsRecord) {
-        User user = UserUtils.getUser();
-        officeService.get(user.getCompany().getId());
-        boolean flagRequest = true;		//备货单完成状态
+		User user = UserUtils.getUser();
+		officeService.get(user.getCompany().getId());
+		boolean flagRequest = true;		//备货单完成状态
 //		boolean flagPo = true;      //采购单完成状态
 //		int recvQtySum = 0;
 		//得到同一采购单下销售单信息
