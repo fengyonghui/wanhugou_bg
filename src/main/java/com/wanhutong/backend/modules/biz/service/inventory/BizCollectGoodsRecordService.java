@@ -49,7 +49,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	@Resource
 	private BizInventorySkuService bizInventorySkuService;
 	@Resource
-    private OfficeService officeService;
+	private OfficeService officeService;
 
 	@Resource
 	private BizOrderStatusService bizOrderStatusService;
@@ -86,9 +86,9 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 	@Override
 	@Transactional(readOnly = false)
 	public void save(BizCollectGoodsRecord bizCollectGoodsRecord) {
-        User user = UserUtils.getUser();
-        officeService.get(user.getCompany().getId());
-        boolean flagRequest = true;		//备货单完成状态
+		User user = UserUtils.getUser();
+		officeService.get(user.getCompany().getId());
+		boolean flagRequest = true;		//备货单完成状态
 //		boolean flagPo = true;      //采购单完成状态
 //		int recvQtySum = 0;
 		//得到同一采购单下销售单信息
@@ -152,7 +152,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 			//库存没有该商品，增加该商品相应库存
 			if(bizInventorySkuService.findList(bizInventorySku) == null || bizInventorySkuService.findList(bizInventorySku).size() == 0){
 				BizInventorySku bizInventorySku1 = new BizInventorySku();
-				bizInventorySku1.setInvInfo(bizCollectGoodsRecord.getInvInfo());
+				bizInventorySku1.setInvInfo(bcgr.getInvInfo());
 				bizInventorySku1.setSkuInfo(bcgr.getSkuInfo());
 				bizInventorySku1.setInvType(InvSkuTypeEnum.CONVENTIONAL.getState());
 				bizInventorySku1.setStockQty(receiveNum);
@@ -170,7 +170,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 //			if (bizInventoryInfoList != null && bizInventoryInfoList.size() > 0){
 //				bizInventoryInfo = bizInventoryInfoList.get(0);
 //			}
-			bcgr.setInvInfo(bizCollectGoodsRecord.getInvInfo());
+			bcgr.setInvInfo(bcgr.getInvInfo());
 			bcgr.setInvOldNum(invOldNum);
 			bcgr.setSkuInfo(bizSkuInfo);
 			bcgr.setVender(officeService.get(user.getCompany().getId()));
