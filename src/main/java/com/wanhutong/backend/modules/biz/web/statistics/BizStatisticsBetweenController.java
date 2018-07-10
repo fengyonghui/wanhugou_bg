@@ -1415,6 +1415,9 @@ public class BizStatisticsBetweenController extends BaseController {
         cal.add(Calendar.DAY_OF_MONTH, 6);
         request.setAttribute("endDate", endDate = simpleDateFormat.format(cal.getTime()));
         List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
+
+        result.sort((o1, o2) -> o1.getOfficeName().compareTo(o2.getOfficeName()));
+
         request.setAttribute("result", result);
         return "modules/biz/statistics/bizStatisticsVendorProductPriceBetweenTables";
     }
