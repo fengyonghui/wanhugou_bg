@@ -98,8 +98,10 @@ public class BizCustCreditService extends CrudService<BizCustCreditDao, BizCustC
             if(officeCredit!=null){
                 officeCredit.setId(bizCustCredit.getCustomer().getId());
                 officeCredit.setDelFlag("1");
+                super.save(officeCredit);
+            }else{
+                super.save(bizCustCredit);
             }
-            super.save(bizCustCredit);
         }
 
     }
