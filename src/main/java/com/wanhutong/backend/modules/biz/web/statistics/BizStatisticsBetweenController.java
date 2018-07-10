@@ -1403,13 +1403,13 @@ public class BizStatisticsBetweenController extends BaseController {
     /**
      * 供应商供货额
      */
-    @RequiresPermissions("biz:statistics:order:view")
+    @RequiresPermissions("biz:statistics:vendorProductPrice:view")
     @RequestMapping(value = "vendorProductPriceTables")
     public String vendorProductPrice (HttpServletRequest request, String startDate, String endDate){
         request.setAttribute("startDate", startDate);
         request.setAttribute("endDate", endDate);
-        List<BizOrderStatisticsDto> productStatisticsList = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
-        request.setAttribute("productStatisticsList", productStatisticsList);
+        List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
+        request.setAttribute("result", result);
         return "modules/biz/statistics/bizStatisticsVendorProductPriceBetweenTables";
     }
 }
