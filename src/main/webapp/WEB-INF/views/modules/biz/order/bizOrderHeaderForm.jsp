@@ -56,6 +56,10 @@
         $(document).ready(function() {
             //$("#name").focus();
             var bizStatus = $("#bizStatus").val();
+            if (!${fns:getUser().isAdmin()}) {
+                $("#bizStatus").attr("disabled","true");
+                $("#invStatus").attr("disabled","true");
+            }
             if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
                 $("#totalExp").attr("disabled","disabled");
             }
