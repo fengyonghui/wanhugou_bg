@@ -117,9 +117,6 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderDetailService bizOrderDetailService;
     @Autowired
     private OfficeService officeService;
-    @Resource
-    private BizOrderHeaderDao bizOrderHeaderDao;
-
     @Autowired
     private BizPayRecordService bizPayRecordService;
     @Autowired
@@ -146,8 +143,6 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderStatusService bizOrderStatusService;
     @Autowired
     private BizOrderAppointedTimeService bizOrderAppointedTimeService;
-    @Autowired
-    private CommonProcessService commonProcessService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -538,24 +533,7 @@ public class BizOrderHeaderController extends BaseController {
                     if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
                         order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
-
-                        if (order.getId() != null || order.getBizStatus() != null) {
-                            /* 订单状态插入*/
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(order);
-                            orderStatus.setBizStatus(order.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (!bizOrderStatus.getBizStatus().equals(order.getBizStatus())) {
-                                        bizOrderStatusService.save(orderStatus);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
+                        bizOrderStatusService.saveOrderStatus(order);
                         BizOrderAddress orderAddres = new BizOrderAddress();
                         orderAddres.setOrderHeaderID(order);
                         List<BizOrderAddress> list = bizOrderAddressService.findList(orderAddres);
@@ -609,23 +587,7 @@ public class BizOrderHeaderController extends BaseController {
                     } else if (objJsp.equals(OrderHeaderBizStatusEnum.UNAPPROVE.getState())) {
                         order.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
-                        if (order.getId() != null || order.getBizStatus() != null) {
-                            /* 订单状态插入*/
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(order);
-                            orderStatus.setBizStatus(order.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (!bizOrderStatus.getBizStatus().equals(order.getBizStatus())) {
-                                        bizOrderStatusService.save(orderStatus);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
+                        bizOrderStatusService.saveOrderStatus(order);
                     }
                 }
             }

@@ -31,8 +31,8 @@
 				<form:input path="name" htmlEscape="false" maxlength="20" class="input-medium"/>
 			</li>
 			<li><label>采购中心</label>
-				<sys:treeselect id="centerOffice" name="customer.id" value="" labelName="customer.name"
-								labelValue="" notAllowSelectParent="true"
+				<sys:treeselect id="centerOffice" name="customer.id" value="${bizInventoryInfo.customer.id}" labelName="customer.name"
+								labelValue="${bizInventoryInfo.customer.name}" notAllowSelectParent="true"
 								title="采购中心"  url="/sys/office/queryTreeList?type=${OfficeTypeEnum.PURCHASINGCENTER.type}&customerTypeTen=${OfficeTypeEnum.WITHCAPITAL.type}&customerTypeEleven=${OfficeTypeEnum.NETWORKSUPPLY.type}&source=officeConnIndex" extId="${centerOffice.id}"
 								cssClass="input-medium"
 								allowClear="true">

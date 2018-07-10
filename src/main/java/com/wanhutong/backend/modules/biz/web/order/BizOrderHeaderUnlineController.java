@@ -14,10 +14,12 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
 import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
+import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.config.parse.EmailConfig;
 import com.wanhutong.backend.modules.config.parse.PhoneConfig;
@@ -70,6 +72,8 @@ public class BizOrderHeaderUnlineController extends BaseController {
     private BizOrderHeaderService bizOrderHeaderService;
     @Autowired
     private BizPayRecordService bizPayRecordService;
+    @Autowired
+    private BizOrderStatusService bizOrderStatusService;
 
     @ModelAttribute
     public BizOrderHeaderUnline get(@RequestParam(required = false) Integer id) {
@@ -149,6 +153,7 @@ public class BizOrderHeaderUnlineController extends BaseController {
             }
         }
         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
+        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
 
         try {
             User user = UserUtils.getUser();
