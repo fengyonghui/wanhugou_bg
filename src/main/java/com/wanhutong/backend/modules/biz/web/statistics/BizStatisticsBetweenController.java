@@ -1388,7 +1388,7 @@ public class BizStatisticsBetweenController extends BaseController {
      */
     @RequiresPermissions("biz:statistics:order:view")
     @RequestMapping(value = "productAnalysisTables")
-    public String productAnalysisTables (HttpServletRequest request, Integer variId, Integer purchasingId, String startDate, String endDate){
+    public String productAnalysisTables (HttpServletRequest request, String startDate, String endDate){
         request.setAttribute("adminPath", adminPath);
         request.setAttribute("varietyList", bizStatisticsService.getBizVarietyInfoList());
         request.setAttribute("purchasingList", bizStatisticsService.getOfficeList("8"));
@@ -1397,5 +1397,19 @@ public class BizStatisticsBetweenController extends BaseController {
         List<BizProductStatisticsDto> productStatisticsList = bizStatisticsService.productStatisticData(startDate, 1, null);
         request.setAttribute("productStatisticsList", productStatisticsList);
         return "modules/biz/statistics/bizStatisticsProductBetweenTables";
+    }
+
+
+    /**
+     * 供应商供货额
+     */
+    @RequiresPermissions("biz:statistics:order:view")
+    @RequestMapping(value = "vendorProductPriceTables")
+    public String vendorProductPrice (HttpServletRequest request, String startDate, String endDate){
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
+        List<BizProductStatisticsDto> productStatisticsList = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
+        request.setAttribute("productStatisticsList", productStatisticsList);
+        return "modules/biz/statistics/bizStatisticsVendorProductPriceBetweenTables";
     }
 }
