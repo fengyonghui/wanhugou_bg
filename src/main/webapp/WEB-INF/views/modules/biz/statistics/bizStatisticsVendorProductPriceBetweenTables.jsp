@@ -8,7 +8,7 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li class="active"><a href="${ctx}/biz/statistics/productAnalysisTables">供应总额统计</a></li>
+    <li class="active"><a href="${ctx}/biz/statistics/between/vendorProductPriceTables">供应总额统计</a></li>
 </ul>
 <div>
     <input name="startDate" id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
@@ -20,36 +20,37 @@
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
     <thead>
     <tr>
-        <th>机构名称</th>
-        <th>型号</th>
-        <th>销售数量</th>
-        <th>销售金额</th>
-        <th>商品浏览量</th>
+        <th>供应商ID</th>
+        <th>供应商名称</th>
+        <th>供应次数</th>
+        <th>供应金额</th>
     </tr>
     </thead>
     <tbody id="proudctTable">
-    <c:forEach items="${productStatisticsList}" var="productList">
+    <c:forEach items="${result}" var="v">
         <tr>
             <td>
-                    ${productList.vendorName}
+                    ${v.officeId}
             </td>
             <td>
-                    ${productList.itemNo}
+                    ${v.officeName}
             </td>
             <td>
-                    ${productList.count}
+                    ${v.orderCount}
             </td>
             <td>
-                    ${productList.totalMoney}
-            </td>
-            <td>
-                    ${productList.clickCount}
+                    ${v.totalMoney}
             </td>
         </tr>
     </c:forEach>
     </tbody>
 </table>
+    <script type="text/javascript">
+        function initChart() {
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            window.location.href = "${ctx}/biz/statistics/between/vendorProductPriceTables?startDate=" + startDate + "&endDate=" + endDate;
+        }
+    </script>
 </body>
-
-
 </html>

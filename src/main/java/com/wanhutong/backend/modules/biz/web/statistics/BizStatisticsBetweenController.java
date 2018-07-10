@@ -1406,8 +1406,14 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:vendorProductPrice:view")
     @RequestMapping(value = "vendorProductPriceTables")
     public String vendorProductPrice (HttpServletRequest request, String startDate, String endDate){
-        request.setAttribute("startDate", startDate);
-        request.setAttribute("endDate", endDate);
+        Calendar cal = Calendar.getInstance();
+        //获取本周一的日期
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        cal.add(Calendar.DAY_OF_MONTH, -7);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        request.setAttribute("startDate", startDate = simpleDateFormat.format(cal.getTime()));
+        cal.add(Calendar.DAY_OF_MONTH, 6);
+        request.setAttribute("endDate", endDate = simpleDateFormat.format(cal.getTime()));
         List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
         request.setAttribute("result", result);
         return "modules/biz/statistics/bizStatisticsVendorProductPriceBetweenTables";

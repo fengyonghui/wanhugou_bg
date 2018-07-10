@@ -317,17 +317,17 @@
 		WHERE id = #{id}
 	</update>
 
-	<select id="vendorProductPrice">
-select
-  sum(bpd.ord_qty * bpd.unit_price) as totalMoney,
-  count(*) as orderCount,
-  so.name AS officeName,
-  so.id AS officeId
-from biz_po_header bph
-  left join biz_po_detail bpd on bpd.order_id = bph.id
-  left join sys_office so on so.id = bph.vend_id
-where bph.create_time between #{startDate} and #{endDate} and so.name is not null
-group by bph.vend_id
+	<select id="vendorProductPrice" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		select
+  		sum(bpd.ord_qty * bpd.unit_price) as totalMoney,
+  		count(*) as orderCount,
+  		so.name AS officeName,
+  		so.id AS officeId
+		from biz_po_header bph
+  		left join biz_po_detail bpd on bpd.order_id = bph.id
+  		left join sys_office so on so.id = bph.vend_id
+		where bph.create_time between #{startDate} and #{endDate} and so.name is not null
+		group by bph.vend_id
 	</select>
 
 </mapper>
