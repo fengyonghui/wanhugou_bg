@@ -63,16 +63,13 @@ public class BizInventorySkuService extends CrudService<BizInventorySkuDao, BizI
 		}
 		List<BizInventorySku> invSkuList = bizInventorySkuDao.findList(bizInventorySku);
 		BizInventorySku invSku = new BizInventorySku();
-		if (invSkuList != null && !invSkuList.isEmpty()){
+		if (invSkuList != null && !invSkuList.isEmpty() && bizInventorySku.getId() == null){
 			invSku = invSkuList.get(0);
 			invSku.setStockQty(invSku.getStockQty() + bizInventorySku.getStockQty());
 			super.save(invSku);
 		} else {
 			super.save(bizInventorySku);
 		}
-		/*if (bizInventorySku.getStockQty() == 0){
-			this.delete(bizInventorySku);
-		}*/
 	}
 
 	@Override
