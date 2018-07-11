@@ -11,6 +11,8 @@ import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
@@ -936,5 +938,28 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                             "发货邮件提醒异常",
                             LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
         }
+    }
+
+
+    /**
+     * 供应商供应总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate) {
+        return dao.vendorProductPrice(startDate, endDate + " 23:59:59");
+    }
+
+    /**
+     * 供应商供应SKU总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorSkuPrice(String startDate, String endDate, Integer officeId) {
+        return dao.vendorSkuPrice(startDate, endDate + " 23:59:59", officeId);
     }
 }
