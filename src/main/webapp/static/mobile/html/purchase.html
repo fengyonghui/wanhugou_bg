@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>采购单管理</title>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/app.css" rel="stylesheet" />
+    	<style type="text/css"></style>
+    	<style type="text/css">
+ 			.mui-content div.content_part li {padding: 0;list-style: none;height: 30px;}
+ 			.mui-input-group>p {height: 30px;line-height: 30px;text-indent: 15px;color: #000;background-color: #374761;color: #fff;font-size: 16px;}
+ 			.mui-table-view:before {background-color: #FFF;}
+ 			.listBlue>div {border-bottom: 1px solid #40ABE9;}
+ 			.mui-input-group div.mui-input-row {background-color:#fff;}
+ 			.selectStyle {margin-bottom: 0;}
+ 			.menuMarg {margin: 0 2px;border-radius:5px;}
+ 			#searchBtn {background-color: #374761;padding: 30px;}
+		</style>
+	</head>
+	<body>
+		<!-- 侧滑导航根容器 -->
+		<div class="mui-off-canvas-wrap mui-draggable mui-slide-in">
+			  <!-- 菜单容器 -->
+			<aside class="mui-off-canvas-right">
+				<div class="mui-scroll-wrapper app_content_bgc_phs">
+					<div class="mui-scroll btn_bd_no">
+					    <!-- 菜单具体展示内容 -->
+				    	<header class="mui-bar mui-bar-nav app_content_bgc_login">
+				    		<span class="closeBtn mui-icon mui-icon-closeempty mui-pull-left app_cf"></span>
+							<p class="app_cf app_nav_text_center">搜索栏</p>
+						</header>	
+						<div class="mui-content menuMarg">
+							<form class="mui-input-group app_bline">
+								<p>采购单号:</p>
+							    <div class="mui-input-row">
+							        <input type="text" class="" placeholder="请输入采购单号">
+							    </div>
+							    <p>订单/备货清单编号:</p>
+							    <div class="mui-input-row">
+							        <input type="text" class="" placeholder="请输入订单/备货清单编号">
+							    </div>
+							    <p>供应商:</p>
+							    <div class="mui-input-row">
+							        <input type="text" class="" placeholder="请输入供应商">
+							    </div>
+							    <p>审核状态：</p>
+							    <div class="mui-input-row mui-select app_text_indt15">
+							    	<select class="selectStyle" type='select-one' > 
+							    		<option>请选择</option>
+						                <option>待采购中心负责人审批</option>
+						                <option>待供货部负责人审批</option>
+						                <option>待会计审批</option>
+						                <option>待运营总监审批</option>
+						                <option>待运营总监或总经理审批</option>
+						                <option>财会待付款</option>
+						                <option>审批完成</option>
+						                <option>驳回</option>
+									</select>
+							    </div>
+							</form>
+						    <div id="searchBtn">
+						    	<button type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>	
+						    </div>
+						</div>	
+					</div>
+				</div>
+			</aside>
+			  <!-- 主页面容器 -->
+			<div class="mui-inner-wrap">
+			<!-- 主页面标题 -->
+					<header class="mui-bar mui-bar-nav">
+					    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+						<span id="search_btn" class="mui-icon mui-icon-bars mui-pull-right app_cf"></span>
+					    <p class="app_cf app_nav_text_center">采购单管理</p>
+					</header>
+				<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+				  	<div class="mui-scroll">
+				    <!-- 主界面具体展示内容 -->
+						<div class="mui-content listBlue" id="addBtn">
+							<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">
+							    <div class="mui-input-row">
+							    	<label>采购单号</label>
+							        <input type="text" class="mui-input-clear">
+							    </div>
+								<div class="mui-input-row">
+							        <label>供应商</label>
+							        <input type="text" class="mui-input-clear">
+							    </div>
+								<div class="app_font_cl content_part mui-row app_text_center">
+									<div class="mui-col-xs-4">
+										<li class="mui-table-view-cell">开启审核</li>
+									</div>
+									<div class="mui-col-xs-4">
+										<li class="mui-table-view-cell">支付申请列表</li>
+									</div>
+									<div class="mui-col-xs-4 detailBtn">
+										<li id="details" class="mui-table-view-cell">详情</li>
+									</div>
+								</div>
+						    </div>
+							<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">
+							    <div class="mui-input-row">
+							    	<label>采购单号</label>
+							        <input type="text" class="mui-input-clear">
+							    </div>
+								<div class="mui-input-row">
+							        <label>供应商</label>
+							        <input type="text" class="mui-input-clear">
+							    </div>
+								<div class="app_font_cl content_part mui-row app_text_center">
+									<div class="mui-col-xs-4">
+										<li class="mui-table-view-cell" id="inTex">开启审核</li>
+									</div>
+									<div class="mui-col-xs-4">
+										<li class="mui-table-view-cell">支付申请列表</li>
+									</div>
+									<div class="mui-col-xs-4">
+										<li id="details" class="mui-table-view-cell">详情</li>
+									</div>
+								</div>
+						    </div>
+						</div>
+					</div>
+				</div>  
+			</div>
+			<!--<div id="pageId" style="position: fixed;">
+				
+			</div>-->
+		</div>
+	<div class="clear"></div>
+	<script src="../js/component/mui.min.js"></script>
+	<script src="../js/component/zepto.min.js"></script>
+	<script src="../js/component/GHutils.js"></script>
+	<script src="../js/custom/purchase.js"></script>
+    </body>
+</html>
+
+

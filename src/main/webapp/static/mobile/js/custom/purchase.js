@@ -75,16 +75,23 @@
 							startBtn = '开启审核'
 							classBtn = 'startShenhe'
 						}
-						if(item.process){
-							var purchaseOrderProcess = item.process
-							if(purchaseOrderProcess){
-								var code = item.process.purchaseOrderProcess.code
+//						if(item.process){
+//							var purchaseOrderProcess = item.process
+//							if(purchaseOrderProcess){
+//								var code = item.process.purchaseOrderProcess.code
+//								console.log(code)
+//								if(code==7 || code==-1) {
+//									startBtn = ''
+//								}
+//							}
+//							
+//						}
+						if(item.process.purchaseOrderProcess) {
+							var code = item.process.purchaseOrderProcess.code
 								console.log(code)
 								if(code==7 || code==-1) {
 									startBtn = ''
 								}
-							}
-							
 						}
 						pHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 							'<div class="mui-input-row">' +

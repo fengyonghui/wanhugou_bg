@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>开启审核</title>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/app.css" rel="stylesheet" />
+    	<style type="text/css">
+ 			.mui-content div.content_part li {padding: 0;list-style: none;}
+			.mui-content div.ctn_li_h li {height: 30px;}
+			.mui-input-row label {padding: 14px 14px;}
+			#Date {text-indent: 30px;}
+			.app_p20 button {margin-left: 20%;background-color: #0d84f2;}
+			#searchIfrom {position: absolute;height: 300px;width: 240px;left: 50%;margin-left: -120px;top: 10%;z-index: 2;background-color: #f9f9f9;border: 1px solid #40ABE9;}
+			#searchTxt {padding: 8px 15px;}
+			.mui-input-row .mui-input-clear~.mui-icon-clear {top: 4px;}
+			.mui-bar-nav .iconRight {color: #fff;padding: 10px;}
+			.footerBtn {position: absolute;bottom: 0;width: 100%;}
+			.footerBtn button {margin-left: 17%;}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<p class="app_cf app_nav_text_center">开启审核</p>
+		</header>
+		<div class="mui-content app_content_bgc_phs">
+			<form class="mui-input-group">
+				<!--mui-backdrop 遮罩-->
+<!--				<div id="searchIfrom" class="mui-input-row">
+					<header class="mui-bar-nav">
+					    <span id="closeBtn" class="mui-icon mui-icon-closeempty mui-pull-right iconRight"></span>
+					    <p class="app_cf app_nav_text_center">请选择采购中心</p>
+					</header>
+					<div class="mui-input-row mui-search">
+					    <input id="searchTxt" type="search" class="mui-input-clear" placeholder="请输入关键字">
+					</div>
+					<div class="footerBtn">
+					    <button type="submit" class="mui-btn-blue">确定</button>
+						<button type="submit" class="mui-btn-blue">取消</button>
+					</div>
+				</div>-->
+			    <div class="mui-input-row"> 
+			        <label>采购单编号：</label>
+			        <input type="text" class="mui-input-clear" id="OrordNum" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>采购单来源：</label>
+			        <input type="text" class="mui-input-clear" id="PoordNum" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>订单总价：</label>
+			        <input type="text" class="mui-input-clear" id="Pototal" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>应付金额：</label>
+			        <input type="text" class="mui-input-clear" id="PotoDel" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>最后付款时间：</label>
+			        <input type="text" class="mui-input-clear" id="PoLastDa" disabled>
+			    </div>
+<!--			    <div class="mui-input-row">
+					<label>交货地点：</label>
+			    	<div class="labelri">
+				    	采购中心
+				        <input id="choiceSp" type="radio" name="site" />
+			        	供应商
+				        <input type="radio" checked name="site" />
+			    	</div>
+			    </div>
+			    <div class="mui-input-row" id="showDress">
+			        <label>采购中心：</label>
+			        <input id="adressBtn" type="text" class="mui-input-clear">
+			    </div>-->
+			    <div class="mui-input-row">
+			    	<label>备注：</label>
+			        <textarea id="PoRemark" name="" rows="" cols=""></textarea>
+			    </div>
+				<div class="mui-input-row">
+			        <label>订单状态：</label>
+			        <input type="text" class="mui-input-clear" id="PoDizstatus" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>供应商：</label>
+			        <input type="text" class="mui-input-clear" id="PoVenName" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>供应商卡号：</label>
+			        <input type="text" class="mui-input-clear" id="PoVenBizCard" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>供应商收款人：</label>
+			        <input type="text" class="mui-input-clear" id="PoVenBizPayee" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>供应商开户行：</label>
+			        <input type="text" class="mui-input-clear" id="PoVenBizBankname" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>供应商合同：</label>
+			        <input type="text" class="mui-input-clear" id="" disabled>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>供应商身份证：</label>
+			        <input type="text" class="mui-input-clear" id="" disabled>
+			    </div>
+<!--附加信息块 有的话显示-->
+				<div class="mui-input-row">
+					<div class="mui-input-row" id="img">
+						<label>产品图片：</label>
+				        <div class="photoList">
+				         	<img class="labelPto" src="../images/wht-logo.png"/>
+					    </div>
+					</div>
+	   			    <div class="mui-input-row priceList">
+					    <div class="mui-input-row">
+					        <label>品牌名称：</label>
+					        <input type="text" class="mui-input-clear">
+					    </div>
+					    <div class="mui-input-row">
+					        <label>商品名称：</label>
+					        <input type="text" class="mui-input-clear">
+					    </div>
+					    <div class="mui-input-row">
+					        <label>商品货号：</label>
+					        <input type="text" class="mui-input-clear">
+					    </div>
+					    <div class="mui-input-row">
+					        <label>所属单号：</label>
+					        <input type="text" class="mui-input-clear">
+					    </div>
+					    <div class="mui-input-row">
+					        <label>采购数量：</label>
+					        <input type="text" class="mui-input-clear">
+					    </div>
+					    <div class="mui-input-row">
+					        <label>已供货数量：</label>
+					        <input type="text" class="mui-input-clear">
+					    </div>
+					    <div class="mui-input-row">
+					        <label>工厂价：</label>
+					        <input type="text" class="mui-input-clear">
+					    </div>
+				    </div>
+			    </div>
+			    <div class="mui-input-row">
+					<label>是否同时提交支付申请：</label>
+			    	<div id="changeTxt" class="labelri">
+				    	否
+				        <input checked type="radio" name="apply" />
+			        	是
+				        <input id="yes" type="radio" name="apply" />
+			    	</div>
+			    </div>
+			    <div class="mui-input-row" id="showMoney">
+				    <div class="mui-input-row">
+				        <label>最后付款时间：</label>
+				        <input id="Date" type="date" name="" />
+				    </div>
+				    <div class="mui-input-row">
+				        <label>申请金额：</label>
+				        <input type="text" class="mui-input-clear" id="totalMoney" placeholder="必填！">
+				    </div>
+			    </div>
+				<div class="app_p20">
+				    <button id='checkBtn' type="submit" class="mui-btn mui-btn-blue">开启审核</button>
+					<button id='rejectBtn' type="submit" class="mui-btn mui-btn-blue">驳回</button>
+				</div>
+ 			</form>
+		</div>	
+	<div class="clear"></div>
+
+	<script src="../js/component/mui.min.js"></script>
+	<script src="../js/component/zepto.min.js"></script>
+	<script src="../js/component/GHutils.js"></script>
+	<script src="../js/custom/startCheck.js"></script>
+    </body>
+</html>
+
+
