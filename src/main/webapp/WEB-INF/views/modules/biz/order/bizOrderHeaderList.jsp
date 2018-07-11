@@ -224,7 +224,6 @@
 		<th>发票状态</th>
 		<th>业务状态</th>
 		<th>订单来源</th>
-		<th>备&nbsp;&nbsp;注</th>
 		<th>创建人</th>
 		<th>创建时间</th>
 		<th>更新时间</th>
@@ -315,9 +314,6 @@
 					${orderHeader.platformInfo.name}
 			</td>
 			<td>
-					${orderHeader.orderComment.comments}
-			</td>
-			<td>
 					${orderHeader.createBy.name}
 			</td>
 			<td>
@@ -370,7 +366,7 @@
 						</shiro:hasPermission>
 					</c:when>
 				<c:otherwise>
-						<c:if test="${statu == 'unline'}">
+						<c:if test="${statu == 'unline' || fns:getUser().isAdmin()}">
 							<a href="${ctx}/biz/order/bizOrderHeaderUnline?orderHeader.id=${orderHeader.id}">支付流水</a>
 						</c:if>
 						<c:if test="${orderHeader.orderType != BizOrderTypeEnum.PHOTO_ORDER.state}">

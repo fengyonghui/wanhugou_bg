@@ -273,29 +273,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
                     bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
                     bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-
                     /*用于 订单状态表 insert状态*/
-                    if (bizOrderHeader != null && bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
-                        BizOrderStatus orderStatus = new BizOrderStatus();
-                        orderStatus.setOrderHeader(bizOrderHeader);
-                        orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                        List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                        if (CollectionUtils.isNotEmpty(list)) {
-                            boolean flag = true;
-                            for (BizOrderStatus bizOrderStatus : list) {
-                                if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
-                                    flag = false;
-                                    break;
-                                }
-                            }
-                            if (flag) {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        } else {
-                            bizOrderStatusService.save(orderStatus);
-                        }
-                    }
-
+                    bizOrderStatusService.saveOrderStatus(bizOrderHeader);
                 }
             } else if (orderDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setOrderHeader(bizOrderHeader);
@@ -311,51 +290,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     if (poOrderReqs.size() + commonPoOrderSize == orderDetailList.size()) {
                         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
                         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-
                         /*用于 订单状态表 insert状态*/
-                        if (bizOrderHeader != null && bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(bizOrderHeader);
-                            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                boolean flag = true;
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
-                                        flag = false;
-                                        break;
-                                    }
-                                }
-                                if (flag) {
-                                    bizOrderStatusService.save(orderStatus);
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
-
+                        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
                     } else {
                         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
                         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-
                         /*用于 订单状态表 insert状态*/
-                        if (bizOrderHeader != null && bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(bizOrderHeader);
-                            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (!bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
-                                        bizOrderStatusService.save(orderStatus);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
-
+                        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
                     }
                 }
             }

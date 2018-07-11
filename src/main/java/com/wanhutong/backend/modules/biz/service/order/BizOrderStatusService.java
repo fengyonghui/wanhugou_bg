@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +73,35 @@ public class BizOrderStatusService extends CrudService<BizOrderStatusDao, BizOrd
 		Date createTime = new Date();
 		Date updateTime = createTime;
 		bizOrderStatusDao.insertAfterBizStatusChanged(bizStatusTemp, createTime, updateTime, orderTypeDesc, orderType, id);
+	}
+
+	/**
+	 * 订单状态改变时，插入订单状态表数据
+	 * @param bizOrderHeader
+	 */
+	@Transactional(readOnly = false,rollbackFor = Exception.class)
+	public void saveOrderStatus(BizOrderHeader bizOrderHeader) {
+		if (bizOrderHeader.getId() == null || bizOrderHeader.getBizStatus() == null) {
+			return;
+		}
+		BizOrderStatus orderStatus = new BizOrderStatus();
+		orderStatus.setOrderHeader(bizOrderHeader);
+		orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
+		List<BizOrderStatus> list = findList(orderStatus);
+		if (CollectionUtils.isNotEmpty(list)) {
+			boolean flag = true;
+			for (BizOrderStatus bizOrderStatus : list) {
+				if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag) {
+				save(orderStatus);
+			}
+		} else {
+			save(orderStatus);
+		}
 	}
 
 }

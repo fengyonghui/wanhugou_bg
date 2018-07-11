@@ -18,24 +18,14 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventoryInfo;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderAppointedTime;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeaderUnline;
-import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
+import com.wanhutong.backend.modules.biz.entity.order.*;
 import com.wanhutong.backend.modules.biz.entity.pay.BizPayRecord;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import com.wanhutong.backend.modules.biz.service.common.CommonImgService;
 import com.wanhutong.backend.modules.biz.service.custom.BizCustomCenterConsultantService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInventoryInfoService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderAddressService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderAppointedTimeService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderDetailService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderHeaderUnlineService;
-import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
+import com.wanhutong.backend.modules.biz.service.order.*;
 import com.wanhutong.backend.modules.biz.service.pay.BizPayRecordService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
@@ -117,9 +107,6 @@ public class BizOrderHeaderController extends BaseController {
     private BizOrderDetailService bizOrderDetailService;
     @Autowired
     private OfficeService officeService;
-    @Resource
-    private BizOrderHeaderDao bizOrderHeaderDao;
-
     @Autowired
     private BizPayRecordService bizPayRecordService;
     @Autowired
@@ -147,7 +134,7 @@ public class BizOrderHeaderController extends BaseController {
     @Autowired
     private BizOrderAppointedTimeService bizOrderAppointedTimeService;
     @Autowired
-    private CommonProcessService commonProcessService;
+    private BizOrderCommentService bizOrderCommentService;
 
     @ModelAttribute
     public BizOrderHeader get(@RequestParam(required = false) Integer id) {
@@ -194,6 +181,10 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails, HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        BizOrderComment bizOrderComment = new BizOrderComment();
+        bizOrderComment.setOrder(bizOrderHeader);
+        List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
+        model.addAttribute("commentList",commentList);
         List<BizOrderDetail> ordDetailList = Lists.newArrayList();
         Map<Integer, String> orderNumMap = new HashMap<Integer, String>();
         Map<Integer, Integer> detailIdMap = new HashMap<Integer, Integer>();
@@ -538,24 +529,7 @@ public class BizOrderHeaderController extends BaseController {
                     if (objJsp.equals(OrderHeaderBizStatusEnum.SUPPLYING.getState())) {
                         order.setBizStatus(OrderHeaderBizStatusEnum.SUPPLYING.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
-
-                        if (order.getId() != null || order.getBizStatus() != null) {
-                            /* 订单状态插入*/
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(order);
-                            orderStatus.setBizStatus(order.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (!bizOrderStatus.getBizStatus().equals(order.getBizStatus())) {
-                                        bizOrderStatusService.save(orderStatus);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
+                        bizOrderStatusService.saveOrderStatus(order);
                         BizOrderAddress orderAddres = new BizOrderAddress();
                         orderAddres.setOrderHeaderID(order);
                         List<BizOrderAddress> list = bizOrderAddressService.findList(orderAddres);
@@ -609,23 +583,7 @@ public class BizOrderHeaderController extends BaseController {
                     } else if (objJsp.equals(OrderHeaderBizStatusEnum.UNAPPROVE.getState())) {
                         order.setBizStatus(OrderHeaderBizStatusEnum.UNAPPROVE.getState());
                         bizOrderHeaderService.saveOrderHeader(order);
-                        if (order.getId() != null || order.getBizStatus() != null) {
-                            /* 订单状态插入*/
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(order);
-                            orderStatus.setBizStatus(order.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (!bizOrderStatus.getBizStatus().equals(order.getBizStatus())) {
-                                        bizOrderStatusService.save(orderStatus);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
+                        bizOrderStatusService.saveOrderStatus(order);
                     }
                 }
             }

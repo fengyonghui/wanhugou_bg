@@ -339,50 +339,67 @@
             }
         }
     </script>
-    <%--<script type="text/javascript">--%>
-        <%--$(function() {--%>
-
-            <%--//点击图片放大--%>
-            <%--$("#img-zoom").click(function(){--%>
-                <%--$('#img-modal').modal("hide");--%>
-            <%--});--%>
-            <%--$("#img-dialog").click(function(){--%>
-                <%--$('#img-modal').modal("hide");--%>
-            <%--});--%>
-            <%--//index-list-content为显示文章内容div的class--%>
-            <%--$("#orderSkuPhoto img").each(function(i){--%>
-                <%--var src = $(this).attr("src");--%>
-                <%--$(this).click(function () {--%>
-                    <%--$("#img-zoom").attr("src", src);--%>
-                    <%--var oImg = $(this);--%>
-                    <%--var img = new Image();--%>
-                    <%--img.src = $(oImg).attr("src");--%>
-                    <%--var realWidth = img.width;//真实的宽度--%>
-                    <%--var realHeight = img.height;//真实的高度--%>
-                    <%--var ww = $(window).width();//当前浏览器可视宽度--%>
-                    <%--var hh = $(window).height();//当前浏览器可视宽度--%>
-                    <%--$("#img-content").css({"top":0,"left":0,"height":"auto"});--%>
-                    <%--$("#img-zoom").css({"height":"auto"});--%>
-                    <%--if((realWidth+20)>ww){--%>
-                        <%--$("#img-content").css({"width":"100%"});--%>
-                        <%--$("#img-zoom").css({"width":"99%"});--%>
-                    <%--}else{--%>
-                        <%--$("#img-content").css({"width":realWidth+20, "height":realHeight+20});--%>
-                        <%--$("#img-zoom").css({"width":realWidth, "height":realHeight});--%>
-                    <%--}--%>
-                    <%--if((hh-realHeight-40)>0){--%>
-                        <%--$("#img-content").css({"top":(hh-realHeight-40)/2});--%>
-                    <%--}--%>
-                    <%--if((ww-realWidth-20)>0){--%>
-                        <%--$("#img-content").css({"left":(ww-realWidth-20)/2});--%>
-                    <%--}--%>
-                    <%--//console.log("realWidth:"+realWidth+" realHeight:"+realHeight+" ww:"+ww)--%>
-                    <%--$('#img-modal').modal();--%>
-                    <%--$("#img-modal").css({"width":realWidth+20});--%>
-                <%--});--%>
-            <%--});--%>
+    <style type="text/css">
+        #remark,#flip,#addRemark
+        {
+            margin:0px;
+            padding:5px;
+            text-align:center;
+            background:#e5eecc;
+            border:solid 1px #c3c3c3;
+        }
+        #remark
+        {
+            height:120px;
+            /*display:none;*/
+        }
+    </style>
+    <script type="text/javascript">
+        function saveRemark() {
+            var orderId = $("#id").val();
+            var remark;
+            remark=prompt("请输入你要添加的备注");
+            // alert(remark);
+            if (remark == null) {
+                return false;
+            }
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/order/bizOrderComment/addComment",
+                data:{orderId:orderId,remark:remark},
+                success:function (data) {
+                    if (data == "error") {
+                        alert("添加订单备注失败，备注可能为空");
+                    }
+                    if (data == "ok") {
+                        alert("添加订单备注成功");
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+        <%--$("#addRemark").click(function () {--%>
+        <%--var orderId = $("#id").val();--%>
+        <%--alert(orderId);--%>
+        <%--var remark;--%>
+        <%--remark=prompt("请输入你要添加的备注");--%>
+        <%--alert(remark);--%>
+        <%--$.ajax({--%>
+        <%--type:"post",--%>
+        <%--url:"${ctx}/biz/order/bizOrderComment/addComment",--%>
+        <%--data:{orderId:orderId,remark:remark},--%>
+        <%--success:function (data) {--%>
+        <%--if (data == "error") {--%>
+        <%--alert("添加订单备注失败，备注可能为空");--%>
+        <%--}--%>
+        <%--if (data == "ok") {--%>
+        <%--alert("添加订单备注成功");--%>
+        <%--window.reload();--%>
+        <%--}--%>
+        <%--}--%>
         <%--});--%>
-    <%--</script>--%>
+        <%--});--%>
+    </script>
 </head>
 <body>
 <ul class="nav nav-tabs">
@@ -575,9 +592,13 @@
     </div>
     <div class="control-group">
         <label class="control-label">备&nbsp;注：</label>
-        <div class="controls">
-            <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>
+        <div id="remark" class="controls" style="overflow:auto; float:left;text-align: left; width: 400px;">
+            <c:forEach items="${commentList}" var="comment">
+                <p class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;<fmt:formatDate value="${comment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></p>
+            </c:forEach>
         </div>
+            <%--<span id="flip">全部备注</span>&nbsp;&nbsp;--%>
+        <span id="addRemark" onclick="saveRemark()">增加备注</span>
     </div>
     <div class="control-group">
         <label class="control-label">商品信息图：</label>
