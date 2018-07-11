@@ -8,42 +8,61 @@
 	ACCOUNT.prototype = {
 		init: function() {
 			this.pageInit(); //页面初始化
-			this.getData(); //获取数据
+			this.getData();//获取数据
+			
 			GHUTILS.nativeUI.closeWaiting();//关闭等待状态
 			//GHUTILS.nativeUI.showWaiting()//开启
 		},
 		pageInit: function() {
 			var _this = this;
-		_this.getData()
+//			this.oneHtml();
 		},
 		getData: function() {
 			var _this = this;
 			//var dataList = _this.moniData()
 
-            $.ajax({
+			$.ajax({
                 type: "GET",
-                url: "/a/biz/po/bizPoHeader/listData4Mobile",
-                data: {parentId:1},
+                url: "/a/biz/po/bizPoHeader/form4Mobile",
+                data: {id:_this.userInfo.listId},
                 dataType: "json",
                 success: function(res){
 					console.log(res)
-                    var htmlList = '';
-                    $.each(res.data, function(i, item) {
-                        console.log(item)
-                        htmlList += '<li class="mui-table-view-cell mui-col-xs-4  text-align-center app_pl0 app_border_rb app_prot0"  idData="'+item.id +'" url="'+item.url +'">' +
-                            '<div>' +
-                            '<div class="app_icon_myt0 app_color_myt0 app_pt10 app_f30"></div>' +
-                            '<div class="app_mt10">' + item.name + '</div>' +
-                            '<div class="app_cgray app_mb20"><span>&nbsp;</span></div>' +
-                            '</div>' +
-                            '</li>'
-                    });
-                    $('#htmlMenu').html(htmlList)
+                   $('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
+                   $('#PoordNum').val(res.data.bizPoHeader.orderNumber)
+                   $('#Pototal').val(res.data.bizPoHeader.total)
+                   $('#PotoDel').val(res.data.bizPoHeader.totalDetail)
+                   $('#PoLastDa').val(res.data.bizPoHeader.lastPayDate)
+                   $('#PoRemark').val(res.data.bizPoHeader.remark)
+                   $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
+                   $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
+                   $('#PoVenBizCard').val(res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber)
+                   $('#PoVenBizPayee').val(res.data.bizPoHeader.vendOffice.bizVendInfo.payee)
+                   $('#PoVenBizBankname').val(res.data.bizPoHeader.vendOffice.bizVendInfo.bankName)
+//                   $('#ordNum').val(res.data.bizPoHeader.orderNumber)
+//                  $('#ordNum').val(res.data.bizPoHeader.orderNumber)
+                	
                 }
             });
-		_this.herfHTtml()
+//		_this.herfHTtml()
 
-		},
+		}
+//		oneHtml:function(){
+//			var _this = this;
+//			var data = _this.getData()
+//			console.log(data)
+//			$('#ordNum').val(data.bizOrderHeader.orderNumber)
+//			if(data.bizOrderHeader.orderNumber){
+//				
+//			}
+//			$.each(data.bizOrderHeader.orderNumber, function(i, item) {
+//						console.log(item.orderNumber)
+//                       var orderNumber = item.orderNumber;
+//					$('#ordNum').html(orderNumber)
+////                        htmlList += 
+//			});
+////		                    $('#htmlMenu').html(htmlList)
+//		}
 	}
 	$(function() {
 

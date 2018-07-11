@@ -118,7 +118,9 @@
         }
         .mui-bar-nav~.mui-content.app_content_bgc_login {background-color: #374761;}
         input:-webkit-autofill, {-webkit-box-shadow: 0 0 0 1000px white inset; }
-        .mui-content .form-signin .mui-input-row {background-color: #374761;}
+        .mui-content .form-signin .mui-input-row {background-color: #rgb(250, 255, 189);}
+        .mui-input-row .mui-input-clear~.mui-icon-clear {top: 20px;}
+        .app_input_group .mui-input-row span {color: #374761;}
     </style>
 </head>
 <body>
@@ -139,7 +141,7 @@
     </div>
     <form id="loginForm" class="form-signin" action="/a/login?version=mobile" method="post">
         <input id="mobileLogin" type="hidden" class="app_login_input mui-input-clear" value="true" name="mobileLogin"/>
-        <div class="mui-input-group app_input_group steps" id="app_stepOne">
+        <div class="mui-input-group app_input_group steps app_mb30" id="app_stepOne">
             <div class="mui-input-row">
                 <label class="login-icon"><span class="mui-icon mui-icon-person"></span></label>
                 <input id="app-userAcc2" type="text" class="app_login_input mui-input-clear" value="" name="username"
@@ -151,7 +153,6 @@
                 <input id="app-userPwd" type="password" class="app_login_input" value="" placeholder="请输入登录密码" name="password"
                        valid='{"required":true,"tipsbox":"#app_tips_login","msg":"密码不能为空"}' maxlength="32"/>
             </div>
-            <div class="mui-input-row"></div>
         </div>
         <div class="app_ml25 app_mr25">
             <button id="app-login" type="button" class="mui-btn mui-btn-primary mui-btn-block">

@@ -1386,7 +1386,7 @@ border-right: 1px solid #fff;border-top: 1px solid #fff;}
 /*自定义覆盖样式!*/
 .app_bgcolor {background-color: #374761;box-shadow: none;}
 .app_content_bgc_login {background-color: #374761;}
-.app_content_bgc_phs {background-color: #FFFFFF;}
+.app_content_bgc_phs {background-color: #374761;}
 .app_font_cl {color: #3d79f2;}
 .app_nav_text_center {text-align: center;line-height: 44px;}
 .app_li_text_linhg {line-height: 30px;}
@@ -1395,7 +1395,11 @@ border-right: 1px solid #fff;border-top: 1px solid #fff;}
 .app_text_indt15 {text-indent: 15px;}
 .app_text_alg_r {text-align: right;}
 .app_btn_search {padding: 5px 0;margin: 0;border-radius: 19px;}
-.labelLf {padding: 14px 14px;line-height: 21px;width: 33%;float:left;}
+.labelLf {padding: 14px 14px;line-height: 21px;width: 33%}
 .labelri {width: 67%;float: right;padding: 14px 15px;height: auto;line-height: 21px;font-size: 16px;text-align: center;}
-.labelPto {width:50%}
-.labelRdo {}
+.labelPto {width:30%}
+.labelri input {margin-right: 15px;}
+.photoList {margin-left: 33%;}
+.step_num {text-align: center;color: #007aff;}
+.step_item {border: 1px #3daae9 solid;margin: 15px 15px;}
+.step_num_txt {}

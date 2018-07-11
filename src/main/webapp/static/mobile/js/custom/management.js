@@ -72,9 +72,10 @@
 
         hrefHtml: function() {
 			var _this = this;
-			var url = $(this).attr('url');
-			var purchId = $(this).attr('purchId');
-            $('.menuBtn').on('click','.childMenu',function(){
+		
+            $('#menuMaget').on('click','.childMenu',function(){
+            	var url = $(this).attr('url');
+				var purchId = $(this).attr('purchId');
                 if(url) {
                 	mui.toast('子菜单不存在')
                 }else if(purchId==132) {
