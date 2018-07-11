@@ -30,10 +30,10 @@
     <c:forEach items="${result}" var="v">
         <tr>
             <td>
-                    ${v.officeId}
+                <a href="${ctx}/biz/statistics/between/vendorSkuPriceTables?startDate=${startDate}&endDate=${endDate}&officeId=${v.officeId}">${v.officeId}</a>
             </td>
             <td>
-                    ${v.officeName}
+                <a href="${ctx}/biz/statistics/between/vendorSkuPriceTables?startDate=${startDate}&endDate=${endDate}&officeId=${v.officeId}">${v.officeName}</a>
             </td>
             <td>
                     ${v.orderCount}

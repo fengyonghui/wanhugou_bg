@@ -1010,4 +1010,15 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate) {
         return dao.vendorProductPrice(startDate, endDate + " 23:59:59");
     }
+
+    /**
+     * 供应商供应SKU总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorSkuPrice(String startDate, String endDate, Integer officeId) {
+        return dao.vendorSkuPrice(startDate, endDate + " 23:59:59", officeId);
+    }
 }

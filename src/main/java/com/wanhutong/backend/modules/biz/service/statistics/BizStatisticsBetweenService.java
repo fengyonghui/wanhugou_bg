@@ -201,4 +201,15 @@ public class BizStatisticsBetweenService {
     public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate) {
         return bizPoHeaderService.vendorProductPrice(startDate, endDate);
     }
+
+    /**
+     * 供应商供应SKU总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorSkuPrice(String startDate, String endDate, Integer officeId) {
+        return bizPoHeaderService.vendorSkuPrice(startDate, endDate, officeId);
+    }
 }

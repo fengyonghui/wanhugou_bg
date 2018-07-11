@@ -330,4 +330,19 @@
 		group by bph.vend_id
 	</select>
 
+	<select id="vendorSkuPrice" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto">
+		select
+  			sum(bpd.ord_qty * bpd.unit_price) as totalMoney,
+  			sum(bpd.ord_qty) as orderCount,
+  			so.name AS officeName,
+  			so.id AS officeId,
+  			bpd.sku_no AS skuId,
+  			bpd.sku_name as skuName
+		from biz_po_header bph
+  			left join biz_po_detail bpd on bpd.order_id = bph.id
+  			left join sys_office so on so.id = bph.vend_id
+		where bph.create_time between #{startDate} and #{endDate} and so.name is not null and bpd.sku_no is not null and so.id= #{officeId}
+		group by bpd.sku_no
+	</select>
+
 </mapper>

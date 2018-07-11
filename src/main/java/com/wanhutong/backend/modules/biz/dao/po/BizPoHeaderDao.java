@@ -37,4 +37,13 @@ public interface BizPoHeaderDao extends CrudDao<BizPoHeader> {
      * @return
      */
     List<BizOrderStatisticsDto> vendorProductPrice(@Param("startDate")String startDate, @Param("endDate")String endDate);
+
+    /**
+     * 供应商供应SKU总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    List<BizOrderStatisticsDto> vendorSkuPrice(@Param("startDate")String startDate, @Param("endDate")String endDate, @Param("officeId")Integer officeId);
 }
