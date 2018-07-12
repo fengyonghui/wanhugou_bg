@@ -26,43 +26,122 @@
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
-					$('#payId').val(res.data.page.list[0].id)
-					$('#Pototal').val(res.data.page.list[0].total)
-					$('#payTotal').val(res.data.page.list[0].payTotal)
-					$('#PoLastDa').val(res.data.page.list[0].deadline)
-					$('#PoPayTm').val(res.data.page.list[0].payTime)
-					$('#PoStas').val(res.data.page.list[0].bizStatus)
-					$('#PoName').val(res.data.page.list[0].commonProcess.paymentOrderProcess.name)
-					$('#PoImg').val(res.data.page.list[0].imgList)
-//					var pHtmlList = '';
-//					$.each(res.data.resultList, function(i, item) {
-//						console.log(item)
-//						pHtmlList +=
-//					});
-//					$("#addBtn").html(pHtmlList)
+					var pHtmlList = '';
+					$.each(res.data.page.list, function(i, item) {
+						if(res.data.page.list=='') {
+							document.write('<h1>暂无信息</h1>')
+						}else {
+							var   bizStatus = '';
+							if(item.bizStatus==0) {
+								bizStatus='未支付'
+							}else if(item.bizStatus==1) {
+								bizStatus='已支付'
+							}
+							console.log(item)
+							var PoName = item.commonProcess.paymentOrderProcess.name
+							console.log(PoName)
+//							if(item.payTime=='') {
+//								_this.formatDateTime()
+//							}else {
+//								_this.formatDateTime(item.payTime)
+//							}
+							pHtmlList +='<div class="mui-input-row">'+
+								'<div class="mui-input-row">' +
+							        '<label>id：</label>'+
+							        '<input type="text" value="'+item.id+'" class="mui-input-clear" disabled>'+
+							    '</div>'+
+							    '<div class="mui-input-row">'+
+							        '<label>付款金额：</label>'+
+							        '<input type="text" value="'+item.total+'" class="mui-input-clear" disabled>'+
+							    '</div>'+
+							    '<div class="mui-input-row">'+
+							        '<label>实际付款金额：</label>'+
+							        '<input type="text" value="'+item.payTotal+'" class="mui-input-clear" disabled>'+
+							    '</div>'+
+							    '<div class="mui-input-row">'+
+							        '<label>最后付款时间：</label>'+
+							        '<input type="text" value="'+_this.formatDateTime(item.deadline)+'" class="mui-input-clear PoLastDa" disabled>'+
+							    '</div>'+
+							    '<div class="mui-input-row">'+ 
+							        '<label>实际付款时间：</label>'+
+							        '<input type="text" value="'+ _this.formatDateTime(item.payTime) +'" class="mui-input-clear PoPayTm" disabled>'+
+							    '</div>'+
+							    '<div class="mui-input-row">'+
+							        '<label>当前状态：</label>'+
+							        '<input type="text" value="'+ bizStatus +'" class="mui-input-clear PoStas" disabled>'+
+							    '</div>'+
+							    '<div class="mui-input-row">'+
+							        '<label>审批状态：</label>'+
+							        '<input type="text" value="'+ PoName +'" class="mui-input-clear" disabled>'+
+							    '</div>'+
+							    '<div class="mui-input-row">'+
+							        '<label>支付凭证：</label>'+
+							        '<img src="'+item.imgList.imgPath+'"/>'+
+							    '</div>'+
+							'</div>'
+						}
+						    
+					});
+					$("#addBtn").html(pHtmlList)
 				}
 			});
-//		_this.hrefHtml()
-		},
-
-//      hrefHtml: function() {
-//			var _this = this;
-//		
-//          $('#addBtn').on('tap','.detailBtn',function(){
-//          	var url = $(this).attr('url');
-//				var listId = $(this).attr('listId');
-//              if(url) {
-//              	mui.toast('子菜单不存在')
-//              }else if(listId==listId) {
-//              	GHUTILS.OPENPAGE({
-//						url: "../../mobile/html/details.html",
-//						extras: {
-//								listId:listId,
-//						}
-//					})
-//              }
-//			})
-//		}
+	},
+        formatDateTime: function(unix) {
+        	var _this = this;
+	        var now = new Date(parseInt(unix) * 1);
+	        now =  now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+	        if(now.indexOf("下午") > 0) {
+	            if (now.length == 18) {
+	                var temp1 = now.substring(0, now.indexOf("下午"));   //2014/7/6
+	                var temp2 = now.substring(now.indexOf("下午") + 2, now.length);  // 5:17:43
+	                var temp3 = temp2.substring(0, 1);    //  5
+	                var temp4 = parseInt(temp3); // 5
+	                temp4 = 12 + temp4;  // 17
+	                var temp5 = temp4 + temp2.substring(1, temp2.length); // 17:17:43
+//	                now = temp1 + temp5; // 2014/7/6 17:17:43
+//	                now = now.replace("/", "-"); //  2014-7/6 17:17:43
+	                now = now.replace("-"); //  2014-7-6 17:17:43
+	            }else {
+	                var temp1 = now.substring(0, now.indexOf("下午"));   //2014/7/6
+	                var temp2 = now.substring(now.indexOf("下午") + 2, now.length);  // 5:17:43
+	                var temp3 = temp2.substring(0, 2);    //  5
+	                if (temp3 == 12){
+	                    temp3 -= 12;
+	                }
+	                var temp4 = parseInt(temp3); // 5
+	                temp4 = 12 + temp4;  // 17
+	                var temp5 = temp4 + temp2.substring(2, temp2.length); // 17:17:43
+//	                now = temp1 + temp5; // 2014/7/6 17:17:43
+//	                now = now.replace("/", "-"); //  2014-7/6 17:17:43
+	                now = now.replace("-"); //  2014-7-6 17:17:43
+	            }
+	        }else {
+	            var temp1 = now.substring(0,now.indexOf("上午"));   //2014/7/6
+	            var temp2 = now.substring(now.indexOf("上午")+2,now.length);  // 5:17:43
+	            var temp3 = temp2.substring(0,1);    //  5
+	            var index = 1;
+	            var temp4 = parseInt(temp3); // 5
+	            if(temp4 == 0 ) {   //  00
+	                temp4 = "0"+temp4;
+	            }else if(temp4 == 1) {  // 10  11  12
+	                index = 2;
+	                var tempIndex = temp2.substring(1,2);
+	                if(tempIndex != ":") {
+	                    temp4 = temp4 + "" + tempIndex;
+	                }else { // 01
+	                    temp4 = "0"+temp4;
+	                }
+	            }else {  // 02 03 ... 09
+	                temp4 = "0"+temp4;
+	            }
+	            var temp5 = temp4 + temp2.substring(index,temp2.length); // 07:17:43
+//	            now = temp1 + temp5; // 2014/7/6 07:17:43
+//	            now = now.replace("/","-"); //  2014-7/6 07:17:43
+	            now = now.replace("-"); //  2014-7-6 07:17:43
+	        }
+	        return now;
+	    
+        }
 	}
 	$(function() {
 

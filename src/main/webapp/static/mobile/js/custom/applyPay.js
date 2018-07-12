@@ -25,14 +25,18 @@
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
-//					$('#payId').val(res.data.page.list[0].id)
-//					$('#Pototal').val(res.data.page.list[0].total)
-//					$('#payTotal').val(res.data.page.list[0].payTotal)
-//					$('#PoLastDa').val(res.data.page.list[0].deadline)
-//					$('#PoPayTm').val(res.data.page.list[0].payTime)
-//					$('#PoStas').val(res.data.page.list[0].bizStatus)
-//					$('#PoName').val(res.data.page.list[0].commonProcess.paymentOrderProcess.name)
-//					$('#PoImg').val(res.data.page.list[0].imgList)
+                   $('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
+                   $('#PoordNum').val(res.data.bizPoHeader.orderNumber)
+                   $('#Pototal').val(res.data.bizPoHeader.total)
+                   $('#PotoDel').val(res.data.bizPoHeader.totalDetail)
+                   $('#PoLastDa').val(res.data.bizPoHeader.lastPayDate)
+                   $('#PoRemark').val(res.data.bizPoHeader.remark)
+                   $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
+                   $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
+                   $('#PoVenBizCard').val(res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber)
+                   $('#PoVenBizPayee').val(res.data.bizPoHeader.vendOffice.bizVendInfo.payee)
+                   $('#PoVenBizBankname').val(res.data.bizPoHeader.vendOffice.bizVendInfo.bankName)
+//                   $('#codeId').val(res.data.bizPoHeader.process.purchaseOrderProcess.code)
 //					var pHtmlList = '';
 //					$.each(res.data.resultList, function(i, item) {
 //						console.log(item)
@@ -41,27 +45,41 @@
 //					$("#addBtn").html(pHtmlList)
 				}
 			});
-//		_this.hrefHtml()
+		_this.hrefHtml()
 		},
 
-//      hrefHtml: function() {
-//			var _this = this;
-//		
-//          $('#addBtn').on('tap','.detailBtn',function(){
-//          	var url = $(this).attr('url');
-//				var listId = $(this).attr('listId');
-//              if(url) {
-//              	mui.toast('子菜单不存在')
-//              }else if(listId==listId) {
-//              	GHUTILS.OPENPAGE({
-//						url: "../../mobile/html/details.html",
-//						extras: {
-//								listId:listId,
-//						}
-//					})
-//              }
-//			})
-//		}
+        hrefHtml: function() {
+			var _this = this;
+		
+            $('#appForm').on('tap','#applyBtn',function(){
+            	var url = $(this).attr('url');
+				var listId = $(this).attr('listId');
+				$.ajax({
+					type: "GET",
+					url: "/a/biz/po/bizPoHeader/createPay4Mobile",
+					data: {
+						id:_this.userInfo.listId,
+						planPay:$('#planPay').val(),
+//						deadline:
+					},
+					dataType: "json",
+					success: function(res) {
+						console.log(res)
+						if(res.ret==true){
+							//$('#mask').hide()
+							GHUTILS.OPENPAGE({
+							url: "../../mobile/html/purchase.html",
+							extras: {
+								key:res.key,
+								}
+							})
+						}
+						
+					}
+				});
+			})
+		}
+
 	}
 	$(function() {
 

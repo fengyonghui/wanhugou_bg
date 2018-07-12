@@ -74,7 +74,11 @@
 							if(a.index == 1) {
 								var rejectTxt = a.value;
 								console.log(rejectTxt)
-								_this.rejectData(rejectTxt,2)
+								if(a.value=='') {
+									mui.toast('驳货理由不能为空！')
+								}else {
+									_this.rejectData(rejectTxt,2)
+								}
 							} else {
 								//		            info.innerText = '你点了取消按钮';
 							}
@@ -91,9 +95,12 @@
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
 						var inText = e.value;
-					
-						var btnArray = ['否', '是'];
-						mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
+						if(e.value=='') {
+							mui.toast('通过理由不能为空！')
+							return;
+						}else {
+							var btnArray = ['否', '是'];
+							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
 							if(choice.index == 1) {
 								console.log(inText)
 								_this.ajaxData(inText,1)
@@ -101,6 +108,8 @@
 								//		            info.innerText = '你点了取消按钮';
 							}
 						})
+						}
+
 						//		            info.innerText = '你刚确认MUI是个好框架';
 					} else {
 						//		            info.innerText = 'MUI没有得到你的认可，继续加油'
@@ -139,7 +148,7 @@
 			});
 			
 		},
-		rejectData:function(inText,num) {
+		rejectData:function(rejectTxt,num) {
 			var _this = this;
 			var codeId = $(this).attr('codeId');
 			//$('#mask').show()

@@ -69,7 +69,12 @@
 							if(a.index == 1) {
 								var rejectTxt = a.value;
 								console.log(rejectTxt)
-//								_this.rejectData(rejectTxt)
+								if(a.value=='') {
+									mui.toast('驳回理由不能为空！')
+									return;
+								}else {
+//									_this.rejectData(rejectTxt)
+								}
 							} else {
 								//		            info.innerText = '你点了取消按钮';
 							}
@@ -86,16 +91,21 @@
 				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
 					if(e.index == 1) {
 						var inText = e.value;
-					
-						var btnArray = ['否', '是'];
-						mui.confirm('确认开启审核吗？', '系统提示！', btnArray, function(choice) {
-							if(choice.index == 1) {
-								console.log(inText)
-								_this.ajaxData(inText)
-							} else {
-								//		            info.innerText = '你点了取消按钮';
-							}
-						})
+						if(e.value=='') {
+							mui.toast('通过理由不能为空！')
+							return;
+						}else {
+							var btnArray = ['否', '是'];
+							mui.confirm('确认开启审核吗？', '系统提示！', btnArray, function(choice) {
+								if(choice.index == 1) {
+									console.log(inText)
+									_this.ajaxData(inText)
+								} else {
+									//		            info.innerText = '你点了取消按钮';
+								}
+							})
+						}
+
 						//		            info.innerText = '你刚确认MUI是个好框架';
 					} else {
 						//		            info.innerText = 'MUI没有得到你的认可，继续加油'
@@ -113,7 +123,7 @@
 					id:_this.userInfo.listId,
 					prew:_this.prew,
 					prewPayTotal:$('#totalMoney').val(),
-					prewPayDeadline:$('#Date').val(),
+					prewPayDeadline: _this.dataNew($('#Date').val()),
 					desc:inText
 				},
 				dataType: "json",
@@ -169,6 +179,13 @@
 			$('#closeBtn').on('tap', function() {
 				$('#searchIfrom').hide()
 			})
+		},
+		dataNew:function(str){
+			var _this = this;
+			Data = str.replace(/-/g,'/');
+			var date = new Date(Data);
+			var time = date.getTime();
+			return time
 		}
 		
 /*		searchFromShow: function() {

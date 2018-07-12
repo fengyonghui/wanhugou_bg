@@ -12,6 +12,7 @@
 			.mui-input-row label {padding: 14px 14px;}
 			#Date {text-indent: 30px;}
 			.app_p20 button {margin-left: 20%;background-color: #0d84f2;}
+			#addBtn>div {border-bottom: 2px solid #40ABE9;}
 		</style>
 	</head>
 	<body>
@@ -20,45 +21,14 @@
 			<p class="app_cf app_nav_text_center">支付申请列表</p>
 		</header>
 		<div class="mui-content app_content_bgc_phs">
-			<form class="mui-input-group">
-				<div class="mui-input-row">
-				    <div class="mui-input-row"> 
-				        <label>id：</label>
-				        <input type="text" class="mui-input-clear" id="payId">
-				    </div>
-				    <div class="mui-input-row">
-				        <label>付款金额：</label>
-				        <input type="text" class="mui-input-clear" id="Pototal">
-				    </div>
-				    <div class="mui-input-row">
-				        <label>实际付款金额：</label>
-				        <input type="text" class="mui-input-clear" id="payTotal">
-				    </div>
-				    <div class="mui-input-row">
-				        <label>最后付款时间：</label>
-				        <input type="text" class="mui-input-clear" id="PoLastDa">
-				    </div>
-				    <div class="mui-input-row"> 
-				        <label>实际付款时间：</label>
-				        <input type="text" class="mui-input-clear" id="PoPayTm"><!--payTime-->
-				    </div>
-				    <div class="mui-input-row">
-				        <label>当前状态：</label>
-				        <input type="text" class="mui-input-clear" id="PoStas"><!--list[0].bizStatus支付状态-->
-				    </div>
-				    <div class="mui-input-row">
-				        <label>审批状态：</label>
-				        <input type="text" class="mui-input-clear" id="PoName"><!--list[0].commonProcess.paymentOrderProcess.name-->
-				    </div>
-				    <div class="mui-input-row">
-				        <label>支付凭证：</label>
-				        <input type="text" class="mui-input-clear photoList" id="PoImg"><!--list[0].imgList[]-->
-				    </div>
-				</div>
+			<form id="addBtn" class="mui-input-group">
+				
 			</form>
 		</div>	
 	<div class="clear"></div>
-
+	<input type="hidden" name="bizStatus" id="bizStatus" value="" />
+	<input type="hidden" name="timeDeadline" id="timeDeadline" value="" />
+	
 	<script src="../js/component/mui.min.js"></script>
 	<script src="../js/component/zepto.min.js"></script>
 	<script src="../js/component/GHutils.js"></script>
