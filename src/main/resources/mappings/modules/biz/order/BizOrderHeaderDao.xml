@@ -1021,6 +1021,8 @@
 			and pi.vari_id = #{variId}
 		</if>
 		and oh.order_type = 1
+		and oh.status = 1
+		and ccc.status = 1
 		and ccc.cust_id = oh.cust_id
 		and oh.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
 		and si.`status` = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
@@ -1049,6 +1051,7 @@
 		SELECT s1.id
 		from sys_office AS s1, sys_user AS u1
 		where s1.id = u1.company_id
+		and c.status = 1
 		AND s1.type = 6
 		AND date_format(s1.create_date, '%Y-%m-%d') = #{day}
 		AND s1.status = ${@com.wanhutong.backend.common.persistence.BaseEntity@DEL_FLAG_NORMAL}
@@ -1079,6 +1082,8 @@
 		LEFT JOIN sys_user us ON us.id = ccc.consultant_id
 		WHERE
 		oh.order_type = 1
+		and oh.status = 1
+		and ccc.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1120,6 +1125,8 @@
 		select 1
 		from sys_test_account ta
 		where oh.cust_id = ta.object_id
+		and oh.status = 1
+		and ccc.status = 1
 		and ta.object_name = 'sys_office'
 		)
 		and	oh.`status` = 1
@@ -1173,6 +1180,8 @@
 		LEFT JOIN sys_office AS office ON consultant.center_id = office.id
 		WHERE
 		header.order_type = 1
+		and header.status = 1
+		and consultant.status = 1
 		AND NOT EXISTS(
 		select 1
 		from sys_test_account ta
@@ -1206,6 +1215,8 @@
 		select 1
 		from sys_test_account ta
 		where oh.cust_id = ta.object_id
+		and oh.status = 1
+		and ccc.status = 1
 		and ta.object_name = 'sys_office'
 		)
 		and ccc.cust_id = oh.cust_id

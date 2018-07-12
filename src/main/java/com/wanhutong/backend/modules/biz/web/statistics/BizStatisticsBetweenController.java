@@ -432,7 +432,7 @@ public class BizStatisticsBetweenController extends BaseController {
             long time2 = cal.getTimeInMillis();
             betweenDays = (time2 - time1) / (1000 * 3600 * 24);
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error("between get order data error", e);
         }
 
         Long finalBetweenDays = betweenDays;
