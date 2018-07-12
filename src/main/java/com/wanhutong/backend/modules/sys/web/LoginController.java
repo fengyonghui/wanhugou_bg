@@ -167,7 +167,7 @@ public class LoginController extends BaseController{
 				return renderString(response, principal);
 			}
 			if (request.getParameter("index") != null){
-				return "modules/sys/sysIndex";
+				return "redirect:/static/mobile/html/backstagemgmt.html";
 			}
 			return "redirect:" + adminPath + "/login";
 		}
