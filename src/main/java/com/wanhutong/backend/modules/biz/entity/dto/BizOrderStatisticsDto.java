@@ -66,6 +66,11 @@ public class BizOrderStatisticsDto {
      */
     private Integer skuId;
 
+    /**
+     * SKU ID
+     */
+    private String skuItemNo;
+
 
     public BigDecimal getUnivalence() {
         if (orderCount <= 0) {
@@ -180,5 +185,13 @@ public class BizOrderStatisticsDto {
 
     public void setSkuId(Integer skuId) {
         this.skuId = skuId;
+    }
+
+    public String getSkuItemNo() {
+        return skuItemNo;
+    }
+
+    public void setSkuItemNo(String skuItemNo) {
+        this.skuItemNo = skuItemNo;
     }
 }

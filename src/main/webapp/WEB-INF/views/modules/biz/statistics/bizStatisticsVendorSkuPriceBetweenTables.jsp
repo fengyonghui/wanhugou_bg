@@ -21,8 +21,8 @@
         <th>供应商名称</th>
         <th>供应数量</th>
         <th>供应金额</th>
-        <th>SKU ID</th>
-        <th>SKU名称</th>
+        <th>商品货号</th>
+        <th>商品名称</th>
     </tr>
     </thead>
     <tbody id="proudctTable">
