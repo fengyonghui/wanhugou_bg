@@ -41,14 +41,14 @@ mui.init();
 			})
 		},
 		doLogin: function(username, password) {
-            alert(1);
+//            alert(1);
 			var _this = this;
 			$(_this.tips).html("&nbsp;");
 			$("#app-login").addClass("app_loading");
 
             var loginForm = $("#loginForm");
             var url = loginForm.attr('action');
-            alert(url);
+ //           alert(url);
             $.post(loginForm.attr('action'), loginForm.serializeArray(), function (data) {
                 if (data && data.sessionid) {
                     sessionid = data.sessionid;
@@ -72,14 +72,14 @@ mui.init();
 //				sw: true,
 //				callback: function(result) {
 //					consle.log(result)
-//	$('#errMesg').html(result.errMesg)
-//if(result.errMesg !=0){
-	//mui.toast(result.errMesg))
-//}else{
-//		GHUTILS.OPENPAGE({
-//					url: "../html/backstagemgmt.html",
-//				})
-// }
+//					$('#errMesg').html(result.errMesg)
+//				if(result.errMesg !=0){
+//					mui.toast(result.errMesg))
+//				}else{
+//						GHUTILS.OPENPAGE({
+//									url: "../html/backstagemgmt.html",
+//								})
+// 				}
 //
 //					$("#app-login").removeClass("app_loading");
 //					if(GHUTILS.checkErrorCode(result, _this.tips)) {

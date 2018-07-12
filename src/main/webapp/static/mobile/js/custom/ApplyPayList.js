@@ -88,7 +88,8 @@
 	},
         formatDateTime: function(unix) {
         	var _this = this;
-	        var now = new Date(parseInt(unix) * 1);
+
+    		var now = new Date(parseInt(unix) * 1);
 	        now =  now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 	        if(now.indexOf("下午") > 0) {
 	            if (now.length == 18) {
@@ -140,8 +141,7 @@
 	            now = now.replace("-"); //  2014-7-6 07:17:43
 	        }
 	        return now;
-	    
-        }
+		}
 	}
 	$(function() {
 
