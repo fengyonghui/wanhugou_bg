@@ -470,6 +470,7 @@ public class BizPoHeaderController extends BaseController {
             model.addAttribute("photoOrderImgList", photoOrderImgList);
         }
 
+
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("roleSet", roleSet);
 
@@ -489,8 +490,8 @@ public class BizPoHeaderController extends BaseController {
 
 
         Map<String, Object> bizOrderHeaderMap = Maps.newHashMap();
-        bizOrderHeaderMap.put("id", bizPoHeader.getId());
-        bizOrderHeaderMap.put("orderNumber", bizPoHeader.getOrderNum());
+        bizOrderHeaderMap.put("id",bizOrderHeader == null ? StringUtils.EMPTY : bizOrderHeader.getId());
+        bizOrderHeaderMap.put("orderNumber", bizOrderHeader == null ? StringUtils.EMPTY :bizOrderHeader.getOrderNum());
 
         resultMap.put("bizPoHeader", bizPoHeaderMap);
         resultMap.put("bizOrderHeader", bizOrderHeaderMap);
