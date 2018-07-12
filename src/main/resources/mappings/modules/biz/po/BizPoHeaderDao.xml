@@ -344,6 +344,7 @@
   			so.name AS officeName,
   			so.id AS officeId,
   			bpd.sku_no AS skuId,
+  			bpd.part_no AS skuItemNo,
   			bpd.sku_name as skuName
 		from biz_po_header bph
   			left join biz_po_detail bpd on bpd.order_id = bph.id
