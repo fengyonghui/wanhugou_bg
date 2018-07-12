@@ -38,7 +38,7 @@
                     ${v.totalMoney}
             </td>
             <td>
-                    ${v.skuId}
+                    ${v.skuItemNo}
             </td>
             <td>
                     ${v.skuName}
