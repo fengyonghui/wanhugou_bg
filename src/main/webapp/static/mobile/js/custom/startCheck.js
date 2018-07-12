@@ -129,15 +129,15 @@
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
-					if(res.ret==true){
-						//$('#mask').hide()
-						GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchase.html",
-						extras: {
-							key:res.key,
-							}
-						})
-					}
+//					if(res.ret==true){
+//						//$('#mask').hide()
+//						GHUTILS.OPENPAGE({
+//						url: "../../mobile/html/purchase.html",
+//						extras: {
+//							key:res.key,
+//							}
+//						})
+//					}
 					
 				}
 			});

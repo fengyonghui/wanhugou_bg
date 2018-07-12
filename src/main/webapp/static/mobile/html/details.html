@@ -11,6 +11,7 @@
 			.mui-content div.ctn_li_h li {height: 30px;}
 			.mui-input-row label {padding: 14px 14px;}
 			#Date {text-indent: 30px;}
+			.sucessColor {color: #40ABE9;}
 		</style>
 	</head>
 	<body>
@@ -22,11 +23,11 @@
 			<form class="mui-input-group">
 			    <div class="mui-input-row"> 
 			        <label>采购单编号：</label>
-			        <input type="text" class="mui-input-clear" id="OrordNum" disabled>
+			        <input type="text" class="mui-input-clear" id="PoordNum" disabled>
 			    </div>
 			    <div class="mui-input-row">
 			        <label>采购单来源：</label>
-			        <input type="text" class="mui-input-clear" id="PoordNum" disabled>
+			        <input type="text" class="mui-input-clear" id="OrordNum" disabled>
 			    </div>
 			    <div class="mui-input-row">
 			        <label>订单总价：</label>
@@ -125,44 +126,13 @@
 <!--审批流程块 有的话显示-->
 			    <div class="mui-input-row">
 					<div class="labelLf">审批流程：</div>
-			        <ul class="">
-						<li class="step_item">
-							<div class="step_num">1</div>
-							<div class="step_num_txt">
-								<div class="mui-input-row">
-							        <label>批注：</label>
-							        <textarea name="" rows="" cols=""></textarea>
-							    </div>
-								<br />
-								<div class="mui-input-row">
-							        <label>审批人：</label>
-							        <input type="text" class="mui-input-clear">
-							    	<label>具体时间：</label>
-							        <input type="text" class="mui-input-clear">
-							    </div>
-							</div>
-						</li>
-						<li class="step_item">
-							<div class="step_num">2</div>
-							<div class="step_num_txt">
-								<div class="mui-input-row">
-	<!--字体要变成蓝色 #007aff-->		<label>当前状态：</label>
-							        <textarea name="" rows="" cols="">审批完成</textarea>
-							    </div>
-								<br />
-								<div class="mui-input-row">
-							        <label>审批人：</label>
-							        <input type="text" class="mui-input-clear">
-							    	<label>具体时间：</label>
-							        <input type="text" class="mui-input-clear">
-							    </div>
-							</div>
-						</li>
+			        <ul class="" id="addCheckMen">
 				    </ul>
 				</div>    
 			</form>
 		</div>	
 	<div class="clear"></div>
+	
 	<script src="../js/component/mui.min.js"></script>
 	<script src="../js/component/zepto.min.js"></script>
 	<script src="../js/component/GHutils.js"></script>

@@ -31,21 +31,21 @@
 				success: function(res) {
 					console.log(res)
 					
-//					console.log(codeId)
-                   $('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
-                   $('#PoordNum').val(res.data.bizPoHeader.orderNumber)
-                   $('#Pototal').val(res.data.bizPoHeader.total)
-                   $('#PotoDel').val(res.data.bizPoHeader.totalDetail)
-                   $('#PoLastDa').val(res.data.bizPoHeader.lastPayDate)
-                   $('#PoRemark').val(res.data.bizPoHeader.remark)
-                   $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
-                   $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
-                   $('#PoVenBizCard').val(res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber)
-                   $('#PoVenBizPayee').val(res.data.bizPoHeader.vendOffice.bizVendInfo.payee)
-                   $('#PoVenBizBankname').val(res.data.bizPoHeader.vendOffice.bizVendInfo.bankName)
-                   $('#codeId').val(res.data.bizPoHeader.process.purchaseOrderProcess.code)
-                   
-                   
+					$("#addCheckBtn").html(pHtmlList)
+					$('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
+					$('#PoordNum').val(res.data.bizPoHeader.orderNumber)
+					$('#Pototal').val(res.data.bizPoHeader.total)
+					$('#PotoDel').val(res.data.bizPoHeader.totalDetail)
+					$('#PoLastDa').val(res.data.bizPoHeader.lastPayDate)
+					$('#PoRemark').val(res.data.bizPoHeader.remark)
+					$('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
+					$('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
+					$('#PoVenBizCard').val(res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber)
+					$('#PoVenBizPayee').val(res.data.bizPoHeader.vendOffice.bizVendInfo.payee)
+					$('#PoVenBizBankname').val(res.data.bizPoHeader.vendOffice.bizVendInfo.bankName)
+					$('#codeId').val(res.data.bizPoHeader.process.purchaseOrderProcess.code)
+					
+					
 //                  if(res.data.bizOrderHeaderTest){
 //                 	   $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
 //	                   $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
@@ -178,6 +178,21 @@
 			});
 			
 		}
+		//			var data = _this.getData()
+//			console.log(data)
+//			$('#ordNum').val(data.bizOrderHeader.orderNumber)
+//			if(data.bizOrderHeader.orderNumber){
+//				
+//			}
+//			$.each(data.bizOrderHeader.orderNumber, function(i, item) {
+//						console.log(item.orderNumber)
+//                       var orderNumber = item.orderNumber;
+//					$('#ordNum').html(orderNumber)
+////                        htmlList += 
+//			});
+////		                    $('#htmlMenu').html(htmlList)
+//		}
+							
 		
 	}
 	$(function() {

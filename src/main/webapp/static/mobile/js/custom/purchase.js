@@ -62,7 +62,7 @@
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
-					$('#pageId').html(res.data.page.html)
+//					$('#pageId').html(res.data.page.html)
 					var pHtmlList = '';
 					$.each(res.data.resultList, function(i, item) {
 						console.log(item)

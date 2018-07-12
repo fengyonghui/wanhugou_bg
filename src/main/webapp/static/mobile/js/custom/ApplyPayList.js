@@ -85,7 +85,7 @@
 					$("#addBtn").html(pHtmlList)
 				}
 			});
-	},
+		},
         formatDateTime: function(unix) {
         	var _this = this;
 
