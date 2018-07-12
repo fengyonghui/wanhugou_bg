@@ -4,8 +4,10 @@ package com.wanhutong.backend.modules.biz.service.statistics;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wanhutong.backend.modules.biz.dao.category.BizVarietyInfoDao;
+import com.wanhutong.backend.modules.biz.dao.custom.BizCustomCenterConsultantDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
+import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
@@ -43,6 +45,9 @@ public class BizStatisticsBetweenService {
     private BizVarietyInfoDao bizVarietyInfoDao;
     @Resource
     private OfficeDao officeDao;
+
+    @Resource
+    private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
 
 
     /**
@@ -212,4 +217,17 @@ public class BizStatisticsBetweenService {
     public List<BizOrderStatisticsDto> vendorSkuPrice(String startDate, String endDate, Integer officeId) {
         return bizPoHeaderService.vendorSkuPrice(startDate, endDate, officeId);
     }
+
+    /**
+     * 客户专员关联采购商有效订单查询
+     * @param startDate 选择区间的开始时间
+     * @param endDate 选择区间的结束时间
+     * @param consultantId 客户专员Id
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public List<BizCustomCenterConsultant> customOrderList(String startDate, String endDate, Integer consultantId) {
+        return bizCustomCenterConsultantDao.customOrderList(startDate, endDate + " 23:59:59", consultantId);
+    }
+
 }
