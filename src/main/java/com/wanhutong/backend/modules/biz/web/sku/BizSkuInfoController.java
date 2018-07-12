@@ -434,4 +434,19 @@ public class BizSkuInfoController extends BaseController {
 		return sources;
 	}
 
+	/**
+	 * 获取商品和订单的对应关系列表
+	 * @param bizSkuInfo
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("biz:sku:bizSkuInfo:view")
+	@RequestMapping(value = "findPageForSkuInfo")
+	public String findPageForSkuInfo(BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Page<BizSkuInfo> page = bizSkuInfoService.findPageForSkuInfo(new Page<BizSkuInfo>(request, response), bizSkuInfo);
+		model.addAttribute("page", page);
+		return "modules/biz/sku/pageForSkuInfoList";
+	}
 }

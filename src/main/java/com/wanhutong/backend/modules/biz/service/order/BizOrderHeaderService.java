@@ -227,31 +227,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
 
         if (bizOrderHeader.getOrderComment() != null && StringUtils.isNotBlank(bizOrderHeader.getOrderComment().getComments())) {
             BizOrderComment bizOrderComment = new BizOrderComment();
-            bizOrderComment.setId(bizOrderHeader.getOrderComment().getId() == null ? null : bizOrderHeader.getOrderComment().getId());
+            bizOrderComment.setId(bizOrderHeader.getOrderComment().getId());
             bizOrderComment.setOrder(bizOrderHeader);
             bizOrderComment.setComments(bizOrderHeader.getOrderComment().getComments());
             bizOrderCommentService.save(bizOrderComment);
         }
-        if (bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
-            BizOrderStatus orderStatus = new BizOrderStatus();
-            orderStatus.setOrderHeader(bizOrderHeader);
-            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-            if (CollectionUtils.isNotEmpty(list)) {
-                boolean flag = true;
-                for (BizOrderStatus bizOrderStatus : list) {
-                    if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag) {
-                    bizOrderStatusService.save(orderStatus);
-                }
-            } else {
-                bizOrderStatusService.save(orderStatus);
-            }
-        }
+        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
         BizOrderHeader orderHeader = this.get(bizOrderHeader.getId());
         List<BizOrderDetail> orderDetailList = orderHeader.getOrderDetailList();
         if (CollectionUtils.isNotEmpty(orderDetailList)) {

@@ -21,6 +21,10 @@ public class BizOrderComment extends DataEntity<BizOrderComment> {
 	private static final long serialVersionUID = 1L;
 	private BizOrderHeader order;		// biz_order_header.id
 	private String comments;		// 订单备注
+	/**
+	 * 备注类型
+	 */
+	private Integer commentType;
 	
 	public BizOrderComment() {
 		super();
@@ -45,5 +49,13 @@ public class BizOrderComment extends DataEntity<BizOrderComment> {
 
 	public void setOrder(BizOrderHeader order) {
 		this.order = order;
+	}
+
+	public Integer getCommentType() {
+		return commentType;
+	}
+
+	public void setCommentType(Integer commentType) {
+		this.commentType = commentType;
 	}
 }

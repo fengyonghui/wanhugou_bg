@@ -56,6 +56,10 @@
         $(document).ready(function() {
             //$("#name").focus();
             var bizStatus = $("#bizStatus").val();
+            if (!${fns:getUser().isAdmin()}) {
+                $("#bizStatus").attr("disabled","true");
+                $("#invStatus").attr("disabled","true");
+            }
             if (bizStatus >= ${OrderHeaderBizStatusEnum.SUPPLYING.state}) {
                 $("#totalExp").attr("disabled","disabled");
             }
@@ -404,7 +408,28 @@
     <script src="${ctxStatic}/jquery-plugin/jquery.searchableSelect.js" type="text/javascript"></script>
     <script src="${ctxStatic}/bootstrap/2.3.1/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="${ctxStatic}/common/base.js" type="text/javascript"></script>
-
+    <%--<script type="text/javascript">--%>
+        <%--$(document).ready(function(){--%>
+            <%--$("#flip").click(function(){--%>
+                <%--$("#remark").slideToggle("slow");--%>
+            <%--});--%>
+        <%--});--%>
+    <%--</script>--%>
+    <style type="text/css">
+        #remark,#flip,#addRemark
+        {
+            margin:0px;
+            padding:5px;
+            text-align:center;
+            background:#e5eecc;
+            border:solid 1px #c3c3c3;
+        }
+        #remark
+        {
+            height:120px;
+            /*display:none;*/
+        }
+    </style>
     <script type="text/javascript">
         function submitPic(id, multiple) {
             var f = $("#" + id).val();
@@ -490,6 +515,52 @@
             $(that).parent().parent().remove();
         }
 
+    </script>
+    <script type="text/javascript">
+        function saveRemark() {
+            var orderId = $("#id").val();
+            var remark;
+            remark=prompt("请输入你要添加的备注");
+            // alert(remark);
+            if (remark == null) {
+                return false;
+            }
+            $.ajax({
+                type:"post",
+                url:"${ctx}/biz/order/bizOrderComment/addComment",
+                data:{orderId:orderId,remark:remark},
+                success:function (data) {
+                    if (data == "error") {
+                        alert("添加订单备注失败，备注可能为空");
+                    }
+                    if (data == "ok") {
+                        alert("添加订单备注成功");
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+            <%--$("#addRemark").click(function () {--%>
+                <%--var orderId = $("#id").val();--%>
+                <%--alert(orderId);--%>
+                <%--var remark;--%>
+                <%--remark=prompt("请输入你要添加的备注");--%>
+                <%--alert(remark);--%>
+                <%--$.ajax({--%>
+                    <%--type:"post",--%>
+                    <%--url:"${ctx}/biz/order/bizOrderComment/addComment",--%>
+                    <%--data:{orderId:orderId,remark:remark},--%>
+                    <%--success:function (data) {--%>
+                        <%--if (data == "error") {--%>
+                            <%--alert("添加订单备注失败，备注可能为空");--%>
+                        <%--}--%>
+                        <%--if (data == "ok") {--%>
+                            <%--alert("添加订单备注成功");--%>
+                            <%--window.reload();--%>
+                        <%--}--%>
+                    <%--}--%>
+                <%--});--%>
+            <%--});--%>
     </script>
 </head>
 <body>
@@ -687,7 +758,7 @@
         </div>
     </div>
     <div class="control-group" id="add1">
-        <label class="control-label">收货地址；</label>
+        <label class="control-label">收货地址：</label>
         <div class="controls">
             <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                 <select id="province" class="input-medium" name="bizLocation.province.id" disabled="disabled"
@@ -733,7 +804,7 @@
         </div>
     </div>
     <div class="control-group" id="add2" style="display:none">
-        <label class="control-label">收货地址；</label>
+        <label class="control-label">收货地址：</label>
         <div class="controls">
             <input id="addAddressHref" type="button" value="新增地址" htmlEscape="false" class="input-xlarge required"/>
             <label class="error" id="addError" style="display:none;">必填信息</label>
@@ -741,7 +812,7 @@
         </div>
     </div>
     <div class="control-group" id="add3">
-        <label class="control-label">详细地址；</label>
+        <label class="control-label">详细地址：</label>
         <div class="controls">
                 <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
                     <input type="text" id="address" name="bizLocation.address" htmlEscape="false" readOnly="true"
@@ -754,16 +825,17 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">备&nbsp;注；</label>
-        <div class="controls">
-            <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
-                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge" disabled="true"/>
-            </c:if>
-            <c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">
-                <form:textarea path="orderComment.comments" htmlEscape="false" maxlength="200" class="input-xlarge"/>
-            </c:if>
+        <label class="control-label">备&nbsp;注：</label>
+        <div id="remark" class="controls" style="margin-left: 16px; overflow:auto; float:left;text-align: left; width: 400px;">
+            <c:forEach items="${commentList}" var="comment">
+                <p class="box">${comment.comments}<br>${comment.createBy.name}&nbsp;&nbsp;<fmt:formatDate value="${comment.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></>
+            </c:forEach>
         </div>
+        <%--<span id="flip">全部备注</span>&nbsp;&nbsp;--%>
+        <input id="addRemark" class="btn" type="button" value="增加备注"onclick="saveRemark()"/>
+        <%--<span id="addRemark" onclick="saveRemark()">增加备注</span>--%>
     </div>
+
     <c:if test="${photosMap != null && photosMap.size()>0 }">
         <div class="control-group">
             <label class="control-label">退货凭证:
@@ -1314,6 +1386,5 @@
         </shiro:hasPermission>
     </div>
 </c:if>
-
 </body>
 </html>

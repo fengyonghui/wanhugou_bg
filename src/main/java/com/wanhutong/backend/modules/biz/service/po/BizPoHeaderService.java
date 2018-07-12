@@ -11,6 +11,8 @@ import com.wanhutong.backend.common.utils.mail.AliyunMailClient;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
+import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderStatus;
@@ -215,7 +217,10 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             poDetail.setPoHeader(bizPoHeader);
             poDetail.setSkuInfo(skuInfo);
             poDetail.setLineNo(++t);
-            poDetail.setPartNo(skuInfo.getPartNo());
+            /*
+             * 这里part no 字段保存的是 item no
+             */
+            poDetail.setPartNo(skuInfo.getItemNo());
             poDetail.setSkuName(skuInfo.getName());
             poDetail.setOrdQty(skuInfo.getReqQty());
             poDetail.setUnitPrice(skuInfo.getBuyPrice());
@@ -272,29 +277,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                 if (bizPoHeader.getType() != null && "createPo".equals(bizPoHeader.getType())) {
                     bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
                     bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-
                     /*用于 订单状态表 insert状态*/
-                    if (bizOrderHeader != null && bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
-                        BizOrderStatus orderStatus = new BizOrderStatus();
-                        orderStatus.setOrderHeader(bizOrderHeader);
-                        orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                        List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                        if (CollectionUtils.isNotEmpty(list)) {
-                            boolean flag = true;
-                            for (BizOrderStatus bizOrderStatus : list) {
-                                if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
-                                    flag = false;
-                                    break;
-                                }
-                            }
-                            if (flag) {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        } else {
-                            bizOrderStatusService.save(orderStatus);
-                        }
-                    }
-
+                    bizOrderStatusService.saveOrderStatus(bizOrderHeader);
                 }
             } else if (orderDetailList.size() > entry.getValue().size()) {
                 bizPoOrderReq.setOrderHeader(bizOrderHeader);
@@ -310,51 +294,13 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                     if (poOrderReqs.size() + commonPoOrderSize == orderDetailList.size()) {
                         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.ACCOMPLISH_PURCHASE.getState());
                         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-
                         /*用于 订单状态表 insert状态*/
-                        if (bizOrderHeader != null && bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(bizOrderHeader);
-                            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                boolean flag = true;
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
-                                        flag = false;
-                                        break;
-                                    }
-                                }
-                                if (flag) {
-                                    bizOrderStatusService.save(orderStatus);
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
-
+                        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
                     } else {
                         bizOrderHeader.setBizStatus(OrderHeaderBizStatusEnum.PURCHASING.getState());
                         bizOrderHeaderService.saveOrderHeader(bizOrderHeader);
-
                         /*用于 订单状态表 insert状态*/
-                        if (bizOrderHeader != null && bizOrderHeader.getId() != null || bizOrderHeader.getBizStatus() != null) {
-                            BizOrderStatus orderStatus = new BizOrderStatus();
-                            orderStatus.setOrderHeader(bizOrderHeader);
-                            orderStatus.setBizStatus(bizOrderHeader.getBizStatus());
-                            List<BizOrderStatus> list = bizOrderStatusService.findList(orderStatus);
-                            if (CollectionUtils.isNotEmpty(list)) {
-                                for (BizOrderStatus bizOrderStatus : list) {
-                                    if (!bizOrderStatus.getBizStatus().equals(bizOrderHeader.getBizStatus())) {
-                                        bizOrderStatusService.save(orderStatus);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                bizOrderStatusService.save(orderStatus);
-                            }
-                        }
-
+                        bizOrderStatusService.saveOrderStatus(bizOrderHeader);
                     }
                 }
             }
@@ -1004,5 +950,28 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
                             "发货邮件提醒异常",
                             LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
         }
+    }
+
+
+    /**
+     * 供应商供应总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate) {
+        return dao.vendorProductPrice(startDate, endDate + " 23:59:59");
+    }
+
+    /**
+     * 供应商供应SKU总额统计
+     *
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return
+     */
+    public List<BizOrderStatisticsDto> vendorSkuPrice(String startDate, String endDate, Integer officeId) {
+        return dao.vendorSkuPrice(startDate, endDate + " 23:59:59", officeId);
     }
 }

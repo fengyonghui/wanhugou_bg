@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.entity.sku;
 import com.wanhutong.backend.common.persistence.DataEntity;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.product.BizProdPropertyInfo;
 import com.wanhutong.backend.modules.biz.entity.product.BizProductInfo;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +72,40 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 	private Office purchaser;		//代采采购商
 	private BizOrderHeader orderHeader;
 	private Integer orderCount;
+
+	/**
+	 * 订单详情
+	 */
+	private BizOrderDetail orderDetail;
+	/**
+	 * 客户专员
+	 */
+	private String custName;
+	/**
+	 * 订单Id
+	 */
+	private String orderId;
+	/**
+	 * 订单号
+	 */
+	private String orderNum;
+	/**
+	 * 采购中心
+	 */
+	private String centersName;
+	/**
+	 * 库存详情
+	 */
+	private BizInventorySku inventorySku;
+	/**
+	 * 订单更新开始时间
+	 * */
+	private Date orderCreatStartTime;
+	/**
+	 * 订单更新结束时间
+	 * */
+	private Date orderCreatEndTime;
+
 
 
 	public BizSkuInfo() {
@@ -321,5 +358,69 @@ public class BizSkuInfo extends DataEntity<BizSkuInfo> {
 
 	public void setOrderCount(Integer orderCount) {
 		this.orderCount = orderCount;
+	}
+
+	public BizOrderDetail getOrderDetail() {
+		return orderDetail;
+	}
+
+	public void setOrderDetail(BizOrderDetail orderDetail) {
+		this.orderDetail = orderDetail;
+	}
+
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getOrderNum() {
+		return orderNum;
+	}
+
+	public void setOrderNum(String orderNum) {
+		this.orderNum = orderNum;
+	}
+
+	public String getCentersName() {
+		return centersName;
+	}
+
+	public void setCentersName(String centersName) {
+		this.centersName = centersName;
+	}
+
+	public BizInventorySku getInventorySku() {
+		return inventorySku;
+	}
+
+	public void setInventorySku(BizInventorySku inventorySku) {
+		this.inventorySku = inventorySku;
+	}
+
+	public Date getOrderCreatStartTime() {
+		return orderCreatStartTime;
+	}
+
+	public void setOrderCreatStartTime(Date orderCreatStartTime) {
+		this.orderCreatStartTime = orderCreatStartTime;
+	}
+
+	public Date getOrderCreatEndTime() {
+		return orderCreatEndTime;
+	}
+
+	public void setOrderCreatEndTime(Date orderCreatEndTime) {
+		this.orderCreatEndTime = orderCreatEndTime;
 	}
 }

@@ -321,5 +321,4 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * 品类主管 管理 商品统计
      * */
     BizOrderHeader categorySkuStatistics(User user);
-
 }
