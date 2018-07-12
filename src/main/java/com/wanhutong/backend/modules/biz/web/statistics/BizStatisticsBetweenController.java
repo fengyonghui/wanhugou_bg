@@ -1441,4 +1441,18 @@ public class BizStatisticsBetweenController extends BaseController {
         request.setAttribute("result", result);
         return "modules/biz/statistics/bizStatisticsVendorSkuPriceBetweenTables";
     }
+
+    /**
+     * 供应商供货额
+     */
+    @RequiresPermissions("biz:statistics:vendorProductPrice:view")
+    @RequestMapping(value = "skuInputOutputRecord")
+    public String skuInputOutputRecord (HttpServletRequest request, String startDate, String endDate, Integer skuId){
+        List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.skuInputOutputRecord(startDate, endDate, skuId);
+
+        result.sort((o1, o2) -> Integer.compare(o2.getOrderCount(), o1.getOrderCount()));
+
+        request.setAttribute("result", result);
+        return "modules/biz/statistics/bizStatisticsVendorSkuPriceBetweenTables";
+    }
 }
