@@ -4,18 +4,21 @@
 package com.wanhutong.backend.modules.biz.web.inventory;
 
 import com.alibaba.druid.support.json.JSONUtils;
+import com.google.gson.JsonObject;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
+import com.wanhutong.backend.modules.biz.entity.logistic.LogisticEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
@@ -39,6 +42,7 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -48,6 +52,8 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,6 +81,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/inventory/bizInvoice")
 public class BizInvoiceController extends BaseController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizInvoiceController.class);
 
 	@Autowired
 	private BizInvoiceService bizInvoiceService;
@@ -678,10 +686,16 @@ public class BizInvoiceController extends BaseController {
         return "modules/biz/logistic/logisticDetail";
     }
 
+    /**
+     * 查询运单信息
+     * @param trackingNumber
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "selectLogistic")
-    public Object selectLogistic(String trackingNumber) {
+    public String selectLogistic(String trackingNumber) {
         if (StringUtils.isBlank(trackingNumber)) {
+            JsonUtil.generateErrorData(0,"运单信息请求参数为空",null);
             return null;
         }
         String logisticUrl = DsConfig.getLogisticUrl();
@@ -695,18 +709,20 @@ public class BizInvoiceController extends BaseController {
             httpPost.setHeader("Accept", "application/json");
             CloseableHttpResponse response = httpClient.execute(httpPost);
             String result = EntityUtils.toString(response.getEntity(), "utf-8");
-            return JSONUtils.parse(result);
+            LogisticEntity parse = JsonUtil.parse(result, LogisticEntity.class);
+            return JsonUtil.generateData(parse , null);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("物流运单信息异常",e);
         } finally {
             if (httpClient != null) {
                 try {
                     httpClient.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.error("运单信息httpClient关闭异常，710",e);
                 }
             }
         }
+        JsonUtil.generateErrorData(-1,"运单信息请求失败",null);
         return null;
     }
 }

@@ -10,38 +10,45 @@
 				$.ajax({
 					type:"post",
 					url:"${ctx}/biz/inventory/bizInvoice/selectLogistic?trackingNumber="+trackingNumber,
-					success:function (logistic) {
-						if (logistic.data.logisticStatus == 1) {
-                            $("#logisticStatus").val("已发货");
-                        } else if (logistic.data.logisticStatus == 2) {
-                            $("#logisticStatus").val("运输中");
-                        } else if (logistic.data.logisticStatus == 3) {
-                            $("#logisticStatus").val("已收货");
-                        } else {
-                            $("#logisticStatus").val("未知状态");
-                        }
-						$("#shipperCode").val(logistic.data.shipperCode);
-						$("#logisticFee").val(logistic.data.logisticFee);
-						var receiverHtml = "";
-                        receiverHtml += "<td>"+logistic.data.receiver.name+"</td>";
-                        receiverHtml += "<td>"+logistic.data.receiver.tel+"</td>";
-                        receiverHtml += "<td>"+logistic.data.receiver.provinceName+logistic.data.receiver.cityName+logistic.data.receiver.expAreaName+"</td>";
-                        receiverHtml += "<td>"+logistic.data.receiver.address+"</td>";
-                        $("#receiver").append(receiverHtml);
-                        var senderHtml = "";
-                        senderHtml += "<td>"+logistic.data.sender.name+"</td>";
-                        senderHtml += "<td>"+logistic.data.sender.tel+"</td>";
-                        senderHtml += "<td>"+logistic.data.sender.provinceName+logistic.data.sender.cityName+logistic.data.sender.expAreaName+"</td>";
-                        senderHtml += "<td>"+logistic.data.sender.address+"</td>";
-                        $("#sender").append(senderHtml);
-                        var logisticInfoHtml = "";
-                        var date = new Date(+logistic.data.logisticInfo.logisticTime+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
-                        logisticInfoHtml += "<td>"+date+"</td>";
-                        logisticInfoHtml += "<td>"+logistic.data.logisticInfo.logisticDetail.logisticName+"</td>";
-                        logisticInfoHtml += "<td>"+logistic.data.logisticInfo.logisticDetail.logisticCompanyName+"</td>";
-                        logisticInfoHtml += "<td>"+logistic.data.logisticInfo.logisticDetail.mobile+"</td>";
-                        $("#logisticInfo").append(logisticInfoHtml);
-						$("#remark").text(logistic.data.remark == null ? "":logistic.data.remark);
+					success:function (logisticJson) {
+                        var logistic = JSON.parse(logisticJson);
+					    if (logistic.ret == true || logistic.ret == "true") {
+                            logistic = logistic.data;
+                            if (logistic.data.logisticStatus == 1) {
+                                $("#logisticStatus").val("已发货");
+                            } else if (logistic.data.logisticStatus == 2) {
+                                $("#logisticStatus").val("运输中");
+                            } else if (logistic.data.logisticStatus == 3) {
+                                $("#logisticStatus").val("已收货");
+                            } else {
+                                $("#logisticStatus").val("未知状态");
+                            }
+                            $("#shipperCode").val(logistic.data.shipperCode);
+                            $("#logisticFee").val(logistic.data.logisticFee);
+                            var receiverHtml = "";
+                            receiverHtml += "<td>"+logistic.data.receiver.name+"</td>";
+                            receiverHtml += "<td>"+logistic.data.receiver.tel+"</td>";
+                            receiverHtml += "<td>"+logistic.data.receiver.provinceName+logistic.data.receiver.cityName+logistic.data.receiver.expAreaName+"</td>";
+                            receiverHtml += "<td>"+logistic.data.receiver.address+"</td>";
+                            $("#receiver").append(receiverHtml);
+                            var senderHtml = "";
+                            senderHtml += "<td>"+logistic.data.sender.name+"</td>";
+                            senderHtml += "<td>"+logistic.data.sender.tel+"</td>";
+                            senderHtml += "<td>"+logistic.data.sender.provinceName+logistic.data.sender.cityName+logistic.data.sender.expAreaName+"</td>";
+                            senderHtml += "<td>"+logistic.data.sender.address+"</td>";
+                            $("#sender").append(senderHtml);
+                            var logisticInfoHtml = "";
+                            var date = new Date(+logistic.data.logisticInfo.logisticTime+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+                            logisticInfoHtml += "<td>"+date+"</td>";
+                            logisticInfoHtml += "<td>"+logistic.data.logisticInfo.logisticDetail.logisticName+"</td>";
+                            logisticInfoHtml += "<td>"+logistic.data.logisticInfo.logisticDetail.logisticCompanyName+"</td>";
+                            logisticInfoHtml += "<td>"+logistic.data.logisticInfo.logisticDetail.mobile+"</td>";
+                            $("#logisticInfo").append(logisticInfoHtml);
+                            $("#remark").text(logistic.data.remark == null ? "":logistic.data.remark);
+						}
+						else {
+					        alert(logistic.errmsg);
+						}
                     }
 				});
 			});
