@@ -334,6 +334,10 @@
   		left join biz_po_detail bpd on bpd.order_id = bph.id
   		left join sys_office so on so.id = bph.vend_id
 		where bph.create_time between #{startDate} and #{endDate} and so.name is not null
+		and bph.status = 1
+		and bpd.status = 1
+		and so.status = 1
+		and bph.is_prew = 0
 		group by bph.vend_id
 	</select>
 
@@ -350,6 +354,10 @@
   			left join biz_po_detail bpd on bpd.order_id = bph.id
   			left join sys_office so on so.id = bph.vend_id
 		where bph.create_time between #{startDate} and #{endDate} and so.name is not null and bpd.sku_no is not null and so.id= #{officeId}
+		and bph.status = 1
+		and bpd.status = 1
+		and so.status = 1
+		and bph.is_prew = 0
 		group by bpd.sku_no
 	</select>
 
