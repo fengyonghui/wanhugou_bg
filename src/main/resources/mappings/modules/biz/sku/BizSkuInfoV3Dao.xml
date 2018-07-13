@@ -556,6 +556,13 @@
 			<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 		</if>
+		<if test="centersName != null and centersName != ''">
+			AND s.name
+			LIKE
+			<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+		</if>
 		<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
 			AND boh.create_time &gt;= #{orderCreatStartTime}
 			<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
