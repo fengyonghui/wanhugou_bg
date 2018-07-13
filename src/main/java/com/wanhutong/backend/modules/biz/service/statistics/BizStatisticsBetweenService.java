@@ -9,6 +9,8 @@ import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.category.BizVarietyInfo;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
+import com.wanhutong.backend.modules.biz.service.inventory.BizCollectGoodsRecordService;
+import com.wanhutong.backend.modules.biz.service.inventory.BizSendGoodsRecordService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
 import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
@@ -49,6 +51,11 @@ public class BizStatisticsBetweenService {
     @Resource
     private BizCustomCenterConsultantDao bizCustomCenterConsultantDao;
 
+    @Resource
+    private BizCollectGoodsRecordService bizCollectGoodsRecordService;
+
+    @Resource
+    private BizSendGoodsRecordService bizSendGoodsRecordService;
 
     /**
      * 日统计请求参数日期格式
@@ -242,4 +249,18 @@ public class BizStatisticsBetweenService {
         return bizCustomCenterConsultantDao.consultantOrderList(startDate, endDate + " 23:59:59", purchasingId);
     }
 
+
+
+    /**
+     * sku出入库记录
+     *
+     * @param startDate
+     * @param endDate
+     * @param skuItemNo
+     * @return
+     */
+    public List<BizSkuInputOutputDto> skuInputOutputRecord(String startDate, String endDate, String invName, String skuItemNo) {
+
+        return bizCollectGoodsRecordService.skuInputOutputRecord(startDate, endDate, invName, skuItemNo);
+    }
 }
