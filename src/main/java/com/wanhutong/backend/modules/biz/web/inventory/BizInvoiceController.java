@@ -3,10 +3,15 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
+import com.alibaba.druid.support.json.JSONUtils;
+import com.google.gson.JsonArray;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
@@ -36,9 +41,22 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,10 +65,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 发货单Controller
@@ -60,6 +81,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/inventory/bizInvoice")
 public class BizInvoiceController extends BaseController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizInvoiceController.class);
 
 	@Autowired
 	private BizInvoiceService bizInvoiceService;
@@ -650,5 +673,50 @@ public class BizInvoiceController extends BaseController {
         List<BizOrderDetail> logisticsDetailList = bizInvoiceService.findLogisticsDetail(bizInvoice);
         model.addAttribute("logisticsDetailList", logisticsDetailList);
         return "modules/biz/inventory/bizInvoiceLogisticsDeForm";
+    }
+
+    /**
+     * 物流信息对接的详情页跳转
+     * @param trackingNumber
+     * @return
+     */
+    @RequestMapping(value = "logisticDetail")
+    public String logisticDetail(String trackingNumber,Model model) {
+        model.addAttribute("trackingNumber",trackingNumber);
+        return "modules/biz/logistic/logisticDetail";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "selectLogistic")
+    public Object selectLogistic(String trackingNumber) {
+        if (StringUtils.isBlank(trackingNumber)) {
+            return null;
+        }
+        String logisticUrl = DsConfig.getLogisticUrl();
+        LOGGER.info("物流对接URL:====", logisticUrl);
+        System.out.println(logisticUrl);
+        CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
+        try {
+            HttpPost httpPost = new HttpPost(logisticUrl);
+            JSONObject param = new JSONObject();
+            param.put("logisticCode", trackingNumber);
+            httpPost.setEntity(new StringEntity(param.toString(), Charset.forName("UTF-8")));
+            httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+            httpPost.setHeader("Accept", "application/json");
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+            String result = EntityUtils.toString(response.getEntity(), "utf-8");
+            return JSONUtils.parse(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 }
