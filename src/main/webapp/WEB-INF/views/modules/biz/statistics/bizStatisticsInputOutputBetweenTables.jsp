@@ -51,8 +51,6 @@
         var invName = $("#invName").val();
         window.location.href = "${ctx}/biz/statistics/between/skuInputOutputRecord?skuItemNo=" + skuItemNo + "&invName=" + invName;
     }
-
-
 </script>
 </body>
 </html>
