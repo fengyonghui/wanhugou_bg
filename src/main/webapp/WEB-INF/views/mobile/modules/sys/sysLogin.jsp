@@ -64,6 +64,8 @@
 <script type="text/javascript" src="${ctxStatic}/jingle/js/app/app.js"></script>
 <!--<script src="http://192.168.2.153:8080/target/target-script-min.js#anonymous"></script>-->
 <script type="text/javascript">
+	window.location.href = "/static/mobile/html/login.html";
+
 var sessionid = '${not empty fns:getPrincipal() ? fns:getPrincipal().sessionid : ""}';
 $('body').delegate('#login_section','pageinit',function(){
 	$("#loginForm").submit(function(){
