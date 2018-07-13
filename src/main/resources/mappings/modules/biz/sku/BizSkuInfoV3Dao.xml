@@ -531,6 +531,7 @@
 		AND ta.object_name = 'sys_office'
 		)
 		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id = boh.cust_id
+		LEFT JOIN sys_user su ON su.id = ccs.consultant_id
 		LEFT JOIN sys_office s ON s.id = ccs.center_id
 		LEFT JOIN biz_inventory_info i ON i.cust_id=s.id
 		LEFT JOIN biz_inventory_sku bis on bis.inv_id=i.id and bis.sku_id=bod.sku_id and bis.status=1
@@ -561,8 +562,10 @@
 				AND boh.create_time &lt;= #{orderCreatEndTime}
 			</if>
 		</if>
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
 		group by a.id,boh.order_num
-
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}

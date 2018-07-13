@@ -315,6 +315,13 @@ public class BizOrderHeaderController extends BaseController {
         model.addAttribute("refundSkip", refundSkip);
 
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
+        String drawbackStatusStr = request.getParameter("drawbackStatus");
+        if (StringUtils.isNotBlank(drawbackStatusStr)) {
+            Integer drawbackStatus = Integer.valueOf(drawbackStatusStr);
+            BizDrawBack bizDrawBack = new BizDrawBack();
+            bizDrawBack.setDrawbackStatus(drawbackStatus);
+            bizOrderHeader.setDrawBack(bizDrawBack);
+        }
         model.addAttribute("entity", bizOrderHeader);
         model.addAttribute("ordDetailList", ordDetailList);
         model.addAttribute("statusList", statusList);
@@ -347,6 +354,47 @@ public class BizOrderHeaderController extends BaseController {
         return "modules/biz/order/bizOrderHeaderForm";
     }
 
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "refundReject")
+    public boolean refundReject(BizOrderHeader bizOrderHeader, String checkStatus, Integer id) {
+        String str = checkStatus;
+        Integer idt = id;
+        bizOrderHeader = bizOrderHeaderService.get(idt);
+        BizDrawBack bizDrawBack = new BizDrawBack();
+        bizDrawBack.setDrawbackStatus(Integer.parseInt(checkStatus));
+        bizOrderHeader.setDrawBack(bizDrawBack);
+        boolean boo = false;
+        try {
+            bizOrderHeaderService.updateDrawbackStatus(bizOrderHeader);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
+    }
+
+    @ResponseBody
+    @RequiresPermissions("biz:order:bizOrderHeader:edit")
+    @RequestMapping(value = "saveDrawStatus")
+    public boolean saveDrawStatus(BizOrderHeader bizOrderHeader, String checkStatus, Integer id) {
+        bizOrderHeader = bizOrderHeaderService.get(id);
+        BizDrawBack bizDrawBack = new BizDrawBack();
+        bizDrawBack.setDrawbackStatus(Integer.parseInt(checkStatus));
+        bizOrderHeader.setDrawBack(bizDrawBack);
+        boolean boo = false;
+        try {
+            bizOrderHeaderService.updateDrawbackStatus(bizOrderHeader);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
+    }
+
+
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
     @RequestMapping(value = "save")
     public String save(BizOrderHeader bizOrderHeader, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
@@ -375,7 +423,14 @@ public class BizOrderHeaderController extends BaseController {
         }
         Double receiveTotal = (-1) * (bizOrderHeaderService.get(bizOrderHeader.getId()).getReceiveTotal());
         bizOrderHeaderService.save(bizOrderHeader);
-
+        String drawbackStatusStr = request.getParameter("drawbackStatus");
+        if (StringUtils.isNotBlank(drawbackStatusStr)) {
+            Integer drawbackStatus = Integer.valueOf(drawbackStatusStr);
+            BizDrawBack bizDrawBack = new BizDrawBack();
+            bizDrawBack.setDrawbackStatus(drawbackStatus);
+            bizOrderHeader.setDrawBack(bizDrawBack);
+        }
+        bizOrderHeaderService.updateDrawbackStatus(bizOrderHeader);
         User user = UserUtils.getUser();
         BizPayRecord bizPayRecord = new BizPayRecord();
         // 支付编号 *同订单号*
@@ -413,7 +468,7 @@ public class BizOrderHeaderController extends BaseController {
         if (bizOrderHeader.getFlag() != null && "cendDelete".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu();
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")
@@ -425,7 +480,7 @@ public class BizOrderHeaderController extends BaseController {
         if (bizOrderHeader.getFlag() != null && "cendRecover".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu();
     }
 
 
