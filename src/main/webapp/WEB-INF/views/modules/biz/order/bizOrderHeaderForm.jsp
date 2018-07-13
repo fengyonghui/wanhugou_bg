@@ -3,10 +3,6 @@
 <%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
-<%
-    Integer refund = OrderHeaderBizStatusEnum.REFUND.getState();
-    request.setAttribute("refund", refund);
-%>
 <html>
 <head>
     <title>订单信息管理</title>
@@ -383,7 +379,7 @@
 
                 $.ajax({
                     type: "post",
-                    url: "${ctx}/biz/order/bizOrderHeader/saveInfo?statuPath=${statuPath}",
+                    url: "${ctx}/biz/order/bizOrderHeader/saveDrawStatus?statuPath=${statuPath}",
                     data: {checkStatus: obj, id: hid},
                     success: function (data) {
                         if (data) {
@@ -1201,8 +1197,8 @@
                 <%--<c:if test="${empty entity.orderDetails}">--%>
                 <c:if test="${(empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails) || (refundSkip eq 'refundSkip')}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                        <c:if test='${entity.bizStatus==refund}'>
-                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('<%=OrderHeaderBizStatusEnum.REFUNDING.getState() %>','退款申请',${bizOrderHeader.id})"/>
+                        <c:if test='${entity.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUND.state}'>
+                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('${OrderHeaderBizStatusEnum.REFUNDING.state}','退款申请',${bizOrderHeader.id})"/>
                         </c:if>
                     </shiro:hasPermission>
                 </c:if>

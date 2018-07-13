@@ -230,4 +230,16 @@ public class BizStatisticsBetweenService {
         return bizCustomCenterConsultantDao.customOrderList(startDate, endDate + " 23:59:59", consultantId);
     }
 
+    /**
+     * 采购专员关联下具有有效订单的采购商的数量统计
+     * @param startDate
+     * @param endDate
+     * @param purchasingId
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public List<BizCustomCenterConsultant> consultantOrderList(String startDate, String endDate, Integer purchasingId) {
+        return bizCustomCenterConsultantDao.consultantOrderList(startDate, endDate + " 23:59:59", purchasingId);
+    }
+
 }

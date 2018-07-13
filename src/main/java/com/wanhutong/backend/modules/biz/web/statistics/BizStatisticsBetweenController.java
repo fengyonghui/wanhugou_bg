@@ -1617,4 +1617,152 @@ public class BizStatisticsBetweenController extends BaseController {
         wb.write(response.getOutputStream());
     }
 
+    /**
+     * 采购专员关联下具有有效订单的采购商的数量统计
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:consultantOrder:view")
+    @RequestMapping(value = {"consultantOrder"})
+    public String consultantOrder(HttpServletRequest request) {
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList("8"));
+        Calendar cal = Calendar.getInstance();
+        //获取本周一的日期
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        cal.add(Calendar.DAY_OF_MONTH, -7);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BizStatisticsDayService.DAY_PARAM_DATE_FORMAT);
+        request.setAttribute("startDate", simpleDateFormat.format(cal.getTime()));
+        cal.add(Calendar.DAY_OF_MONTH, 6);
+        request.setAttribute("endDate", simpleDateFormat.format(cal.getTime()));
+        return "modules/biz/statistics/bizStatisticsConsultantOrderBetween";
+    }
+
+    /**
+     * 采购专员关联下具有有效订单的采购商的数量数据统计
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:consultantOrder:view")
+    @RequestMapping(value = "consultantOrderData")
+    @ResponseBody
+    public String consultantOrderData(HttpServletRequest request, String startDate, String endDate, Integer purchasingId) {
+        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
+            return JSONObject.fromObject(ImmutableMap.of("ret", false)).toString();
+        }
+        List<BizCustomCenterConsultant> resultList = bizStatisticsBetweenService.consultantOrderList(startDate, endDate, purchasingId);
+        List<String> nameList = Lists.newArrayList();
+
+        List<Object> allList = Lists.newArrayList();
+        List<Object> seriesDataList = Lists.newArrayList();
+        EchartsSeriesDto echartsSeriesDto = new EchartsSeriesDto();
+        resultList.forEach(o -> {
+            seriesDataList.add(o.getOrderCount());
+            nameList.add(o.getConsultants().getName());
+
+            allList.add(o.getCenters().getName().concat("-").concat(o.getConsultants().getName().split("-")[0]).concat("-").concat(String.valueOf(o.getOrderCount())));
+        });
+        echartsSeriesDto.setName("采购商订单量");
+        echartsSeriesDto.setData(seriesDataList);
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        Boolean retFlag = CollectionUtils.isNotEmpty(seriesDataList);
+        if (retFlag){
+            paramMap.put("legendData", "有效订单数(" + resultList.get(0).getCenters().getName() + ")");
+        }
+        paramMap.put("seriesList", echartsSeriesDto);
+        paramMap.put("nameList", nameList);
+        paramMap.put("AllList", allList);
+        paramMap.put("ret", retFlag);
+        return JSONObject.fromObject(paramMap).toString();
+    }
+
+    /**
+     * 采购专员关联下具有有效订单的采购商的数量数据统计（表格数据）
+     */
+    @RequiresPermissions("biz:statistics:consultantOrder:view")
+    @RequestMapping(value = "consultantOrderAnalysisTables")
+    public String consultantOrderAnalysisTables (HttpServletRequest request, String startDate, String endDate, Integer purchasingId){
+        request.setAttribute("adminPath", adminPath);
+        request.setAttribute("purchasingList", bizStatisticsBetweenService.getBizPurchasingList("8"));
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
+        List<BizCustomCenterConsultant> resultList = bizStatisticsBetweenService.consultantOrderList(startDate, endDate, purchasingId);
+        request.setAttribute("resultList", resultList);
+        return "modules/biz/statistics/bizStatisticsConsultantOrderBetweenTables";
+    }
+
+    /**
+     * 采购专员关联下具有有效订单的采购商的数量统计导出
+     *
+     * @param request
+     * @return
+     */
+    @RequiresPermissions("biz:statistics:customOrder:view")
+    @RequestMapping(value = {"consultantOrderDataDownload"})
+    @ResponseBody
+    public void consultantOrderDataDownload(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        String imgUrl,
+                                        String startDate,
+                                        String endDate,
+                                        Integer purchasingId) throws IOException {
+        List<BizCustomCenterConsultant> resultList = bizStatisticsBetweenService.consultantOrderList(startDate, endDate, purchasingId);
+
+        String fileName = "具有有效订单的采购商的数量数据统计分析.xls";
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFSheet sheet = wb.createSheet();
+        sheet.autoSizeColumn(1, true);
+
+        int rowIndex = 0;
+        HSSFRow header = sheet.createRow(rowIndex);
+        rowIndex++;
+        HSSFCell hCell = header.createCell(0);
+        hCell.setCellValue("采购中心");
+        HSSFCell hCell1 = header.createCell(1);
+        hCell1.setCellValue("采购专员");
+        HSSFCell hCell2 = header.createCell(2);
+        hCell2.setCellValue("订单数量");
+
+
+        for (BizCustomCenterConsultant o : resultList) {
+            HSSFRow row = sheet.createRow(rowIndex);
+            rowIndex++;
+            HSSFCell cell = row.createCell(0);
+            cell.setCellValue(o.getCenters().getName());
+            HSSFCell cell1 = row.createCell(1);
+            cell1.setCellValue(o.getConsultants().getName());
+            HSSFCell cell2 = row.createCell(2);
+            cell2.setCellValue(o.getOrderCount());
+        }
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        BASE64Decoder decoder = new BASE64Decoder();
+
+        try {
+            String[] url = imgUrl.split(",");
+            String u = url[1];
+            //Base64解码
+            byte[] buffer = decoder.decodeBuffer(u);
+            //生成图片
+            outStream.write(buffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HSSFPatriarch patri = sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(5, 5, 5, 5,
+                (short) 1, 16, (short) 20, 45);
+        patri.createPicture(anchor, wb.addPicture(
+                outStream.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG));
+
+        response.setContentType("application/msexcel;charset=utf-8");
+        response.setHeader("content-disposition", "attachment;filename="
+                + URLEncoder.encode(fileName, "UTF-8"));
+        wb.write(response.getOutputStream());
+    }
+
 }

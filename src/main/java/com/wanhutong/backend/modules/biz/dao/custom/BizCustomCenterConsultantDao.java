@@ -28,4 +28,12 @@ public interface BizCustomCenterConsultantDao extends CrudDao<BizCustomCenterCon
      */
     List<BizCustomCenterConsultant> customOrderList(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("consultantId") Integer consultantId);
 
+    /**
+     * 采购专员关联下具有有效订单的采购商的数量统计
+     * @param startDate
+     * @param endDate
+     * @param purchasingId
+     * @return
+     */
+    List<BizCustomCenterConsultant> consultantOrderList(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("purchasingId") Integer purchasingId);
 }
