@@ -1773,9 +1773,6 @@ public class BizStatisticsBetweenController extends BaseController {
     @RequiresPermissions("biz:statistics:skuInputOutputRecord:view")
     @RequestMapping(value = "skuInputOutputRecord")
     public String skuInputOutputRecord (HttpServletRequest request, String startDate, String endDate, String invName, String skuItemNo){
-        if (StringUtils.isBlank(skuItemNo)) {
-            return "modules/biz/statistics/bizStatisticsInputOutputBetweenTables";
-        }
 
         List<BizSkuInputOutputDto> result = bizStatisticsBetweenService.skuInputOutputRecord(startDate, endDate, invName, skuItemNo);
 
