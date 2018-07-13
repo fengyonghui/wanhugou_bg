@@ -468,7 +468,7 @@ public class BizOrderHeaderController extends BaseController {
         if (bizOrderHeader.getFlag() != null && "cendDelete".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId();
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu();
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")

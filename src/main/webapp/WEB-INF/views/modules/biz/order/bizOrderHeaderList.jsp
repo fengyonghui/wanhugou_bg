@@ -393,7 +393,7 @@
 							<a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${orderHeader.id}&statu=${statu}">修改</a>
 						</c:if>
 						<c:if test="${fns:getUser().isAdmin()}">
-							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
+							<a href="${ctx}/biz/order/bizOrderHeader/delete?id=${orderHeader.id}&statu=${statu}" onclick="return confirmx('确认要删除该订单信息吗？', this.href)">删除</a>
 						</c:if>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
