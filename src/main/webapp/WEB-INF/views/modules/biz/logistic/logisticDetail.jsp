@@ -42,7 +42,6 @@
                         logisticInfoHtml += "<td>"+logistic.data.logisticInfo.logisticDetail.mobile+"</td>";
                         $("#logisticInfo").append(logisticInfoHtml);
 						$("#remark").text(logistic.data.remark == null ? "":logistic.data.remark);
-						// $("#form-actions").html('<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1);"/>');
                     }
 				});
 			});
