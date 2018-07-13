@@ -693,8 +693,6 @@ public class BizInvoiceController extends BaseController {
             return null;
         }
         String logisticUrl = DsConfig.getLogisticUrl();
-        LOGGER.info("物流对接URL:====", logisticUrl);
-        System.out.println(logisticUrl);
         CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
         try {
             HttpPost httpPost = new HttpPost(logisticUrl);
