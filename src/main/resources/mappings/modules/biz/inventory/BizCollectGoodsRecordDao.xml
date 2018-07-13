@@ -332,7 +332,43 @@
 		a.update_id AS "updateBy.id",
 		a.update_time AS "updateDate"
 		from biz_collect_goods_record a, biz_inventory_info b, biz_sku_info sku
-		where a.sku_id = #{skuId} and b.cust_id = #{centId} and a.inv_id = b.id and a.sku_id = sku.id;
+		where a.sku_id = #{skuId} and b.cust_id = #{centId} and a.inv_id = b.id and a.sku_id = sku.id
+	</select>
+
+	<select id="getSkuInputOutputRecord" resultType="com.wanhutong.backend.modules.biz.entity.dto.BizSkuInputOutputDto">
+	select
+	sum(receive_num) as countNumber,
+		bii.name as invName,
+		sku_id as skuId,
+		inv_id as invId,
+		1 as dataType,
+		bcgr.create_time AS 	createTime
+	from biz_collect_goods_record bcgr
+  	join biz_inventory_info bii on bcgr.inv_id = bii.id
+	where sku_id = (select id
+                from biz_sku_info
+                where item_no = #{skuItemNo})
+		<if test="invName != null and invName != ''">
+			AND bii.name LIKE concat('%',#{invName},'%')
+		</if>
+	group by inv_id
+	UNION
+  	select
+  	sum(send_num) as countNumber,
+		bii.name as invName,
+		sku_id as skuId,
+		inv_id as invId,
+   		0 as dataType,
+		bsgr.create_time AS 	createTime
+	from biz_send_goods_record bsgr
+  	join biz_inventory_info bii on bsgr.inv_id = bii.id
+	where sku_id = (select id
+                from biz_sku_info
+                where item_no = #{skuItemNo})
+		<if test="invName != null and invName != ''">
+			AND bii.name LIKE concat('%',#{invName},'%')
+		</if>
+	group by inv_id
 	</select>
 
 </mapper>
