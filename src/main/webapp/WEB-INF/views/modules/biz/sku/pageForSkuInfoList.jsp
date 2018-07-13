@@ -34,6 +34,9 @@
 			<li><label>订单号：</label>
 				<form:input path="orderNum" htmlEscape="false" maxlength="100" class="input-medium"/>
 			</li>
+			<li><label>采购中心：</label>
+				<form:input path="centersName" htmlEscape="false" maxlength="100" class="input-medium"/>
+			</li>
 			<li><label>创建日期：</label>
 				<input name="orderCreatStartTime" type="text" readonly="readonly" maxlength="20" class="input-medium Wdate"
 					   value="<fmt:formatDate value="${bizSkuInfo.orderCreatStartTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
