@@ -426,7 +426,7 @@
 				<shiro:hasPermission name="biz:order:bizOrderHeader:edit">
 					<c:if test="${orderHeader.delFlag!=null && orderHeader.delFlag eq '0'}">
 						<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&str=detail">详情</a>
-						<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
+						<a href="${ctx}/biz/order/bizOrderHeader/recovery?id=${orderHeader.id}&statu=${statu}" onclick="return confirmx('确认要恢复该订单信息吗？', this.href)">恢复</a>
 					</c:if>
 				</shiro:hasPermission>
 			</td></shiro:hasPermission>
