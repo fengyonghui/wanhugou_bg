@@ -34,6 +34,10 @@ public class DsConfig {
         return getConfig().getString("userGenCode");
     }
 
+    public static String getLogisticUrl() {
+        return getConfig().getString("logisticUrl");
+    }
+
 
 
 
