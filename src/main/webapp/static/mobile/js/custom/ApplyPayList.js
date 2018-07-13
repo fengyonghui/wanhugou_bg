@@ -22,7 +22,7 @@
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/po/bizPoPaymentOrder/listData4Mobile",
-				data: {poId:_this.userInfo.poId},
+				data: {poId:946},
 				dataType: "json",
 				success: function(res) {
 					console.log(res)

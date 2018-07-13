@@ -68,6 +68,8 @@
 						console.log(item)
 						var startBtn = '';
 						var classBtn = '';
+						var payBtn = '';
+						var listBtn = '';
 						if(item.process) {
 							startBtn = '审核';
 							classBtn = 'shenHe'
@@ -92,6 +94,13 @@
 								if(code==7 || code==-1) {
 									startBtn = ''
 								}
+								if(code==7) {
+									payBtn = '申请付款'
+									listBtn = 'payMon'
+								}else {
+									payBtn = '支付申请列表'
+									listBtn = 'payList'
+								}
 						}
 						pHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 							'<div class="mui-input-row">' +
@@ -106,8 +115,8 @@
 								'<div class="mui-col-xs-4 startCheckBtn">' +
 									'<li class="mui-table-view-cell '+classBtn+'"  listId="'+ item.id +'" codeId="'+ code +'">'+startBtn+'</li>' +
 								'</div>' +
-								'<div class="mui-col-xs-4 ApplyPayListBtn" poId="'+ item.id +'">' +
-									'<li class="mui-table-view-cell">支付申请列表</li>' +
+								'<div class="mui-col-xs-4 ApplyPayListBtn">' +
+									'<li class="mui-table-view-cell '+ listBtn +'" listId="'+ item.id +'" poId="'+ item.id +'">'+ payBtn +'</li>' +
 								'</div>' +
 								'<div class="mui-col-xs-4 detailBtn" listId="'+ item.id +'">' +
 									'<li class="mui-table-view-cell">详情</li>' +
@@ -123,35 +132,39 @@
 
         hrefHtml: function() {
 			var _this = this;
-		
-			$('#addBtn').on('tap','.startCheckBtn',function(){
-            	var url = $(this).attr('url');
-				var listId = $(this).attr('listId');
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(listId==listId) {
-                	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/startCheck.html",
-						extras: {
-								listId:listId,
-						}
-					})
-                }
-			}),
-            $('#addBtn').on('tap','.ApplyPayListBtn',function(){
+		/*申请付款*/
+			$('#addBtn').on('tap','.payMon',function(){
             	var url = $(this).attr('url');
 				var poId = $(this).attr('poId');
                 if(url) {
                 	mui.toast('子菜单不存在')
                 }else if(poId==poId) {
                 	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/ApplyPayList.html",
+						url: "../../mobile/html/applyPay.html",
 						extras: {
 								poId:poId,
 						}
 					})
                 }
 			}),
+		/*申请列表*/
+            $('#addBtn').on('tap','.payList',function(){
+            	var url = $(this).attr('url');
+				var listId = $(this).attr('listId');
+				var poId = $(this).attr('poId');
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(listId==listId) {
+                	GHUTILS.OPENPAGE({
+						url: "../../mobile/html/ApplyPayList.html",
+						extras: {
+								poId:poId,
+								listId:listId,
+						}
+					})
+                }
+			}),
+		/*详情*/
             $('#addBtn').on('tap','.detailBtn',function(){
             	var url = $(this).attr('url');
 				var listId = $(this).attr('listId');

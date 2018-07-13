@@ -39,7 +39,6 @@
 					_this.processHtml(res.data)              
                 }
             });
-//		_this.herfHTtml()
 
 		},
 		processHtml:function(data){
@@ -49,29 +48,42 @@
 			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
 				console.log(item)
 				console.log(i)
-				var procesSta = ''
-				var liList= item.length;
-				if(i==liList) {
-					procesSta = '当前状态:';
-				}else {
-					procesSta = '批注:';
-				}
-				pHtmlList +='<li id="procList" class="step_item">'+
+				if(i<=i-1){
+					pHtmlList +='<li id="procList" class="step_item">'+
 					'<div class="step_num">'+ item.index +' </div>'+
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row sucessColor">'+
-							'<label>'+procesSta+'</label>'+
-					        '<textarea name="" rows="" cols="">'+ item.description +'</textarea>'+
+							'<label>批注:</label>'+
+					        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
 					    '</div>'+
 						'<br />'+
 						'<div class="mui-input-row">'+
 					        '<label>审批人:</label>'+
-					        '<input type="text" value="'+ item.user.name +'" class="mui-input-clear">'+
+					        '<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
 					    	'<label>时间:</label>'+
-					        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear">'+
+					        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
 					    '</div>'+
 					'</div>'+
 				'</li>'
+				}else{
+					pHtmlList +='<li id="procList" class="step_item">'+
+					'<div class="step_num">'+ item.index +' </div>'+
+					'<div class="step_num_txt">'+
+						'<div class="mui-input-row sucessColor">'+
+							'<label>当前状态:</label>'+
+					        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
+					    '</div>'+
+						'<br />'+
+						'<div class="mui-input-row">'+
+					        '<label></label>'+
+					        '<input type="text" value="" class="mui-input-clear" disabled>'+
+					    	'<label></label>'+
+					        '<input type="text" value="" class="mui-input-clear" disabled>'+
+					    '</div>'+
+					'</div>'+
+				'</li>'
+				}
+				
 			});
 			$("#addCheckMen").html(pHtmlList)
 //			var purchaseOrderProcess = data.bizPoHeader.process.purchaseOrderProcess;

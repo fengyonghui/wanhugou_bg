@@ -99,7 +99,12 @@
 							mui.confirm('确认开启审核吗？', '系统提示！', btnArray, function(choice) {
 								if(choice.index == 1) {
 									console.log(inText)
-									_this.ajaxData(inText)
+									if(_this.prew){
+										_this.ajaxPoPayData(inText)
+									}else{
+										_this.ajaxData(inText)
+									}
+									
 								} else {
 									//		            info.innerText = '你点了取消按钮';
 								}
@@ -143,19 +148,37 @@
 			});
 			
 		},
-/*		radioShow: function() {
+		ajaxPoPayData:function(inText) {
 			var _this = this;
-			$('#showDress').hide()
-			$('input[type=radio]').on('change', function() {
-				if(this.id && this.checked) {
-					$('#showDress').show()
-					_this.prew  = true
-				} else {
-					$('#showDress').hide()
-					_this.prew  = false
+			//$('#mask').show()
+			$.ajax({
+				type: "GET",
+				url: "/a/biz/po/bizPoHeader/auditPay",
+				data: {
+					id:_this.userInfo.listId,
+					time:_this.dataNew($('#totalMoney').val()),//
+					currentType:_this.userInfo.codeId
+					money: _this.dataNew($('#Date').val()),
+					auditType:1,
+					desc:inText
+				},
+				dataType: "json",
+				success: function(res) {
+					console.log(res)
+//					if(res.ret==true){
+//						//$('#mask').hide()
+//						GHUTILS.OPENPAGE({
+//						url: "../../mobile/html/purchase.html",
+//						extras: {
+//							key:res.key,
+//							}
+//						})
+//					}
+					
 				}
-			})
-		},*/
+			});
+			
+		},
 
 		btnshow: function() {
 			var _this = this;
