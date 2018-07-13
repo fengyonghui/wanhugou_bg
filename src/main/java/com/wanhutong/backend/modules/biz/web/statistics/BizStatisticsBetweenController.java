@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.dto.*;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsBetweenService;
@@ -1445,14 +1446,20 @@ public class BizStatisticsBetweenController extends BaseController {
     /**
      * 供应商供货额
      */
-    @RequiresPermissions("biz:statistics:vendorProductPrice:view")
+    @RequiresPermissions("biz:statistics:skuInputOutputRecord:view")
     @RequestMapping(value = "skuInputOutputRecord")
-    public String skuInputOutputRecord (HttpServletRequest request, String startDate, String endDate, Integer skuId){
-        List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.skuInputOutputRecord(startDate, endDate, skuId);
+    public String skuInputOutputRecord (HttpServletRequest request, String startDate, String endDate, String invName, String skuItemNo){
+        if (StringUtils.isBlank(skuItemNo)) {
+            return "modules/biz/statistics/bizStatisticsInputOutputBetweenTables";
+        }
 
-        result.sort((o1, o2) -> Integer.compare(o2.getOrderCount(), o1.getOrderCount()));
+        List<BizSkuInputOutputDto> result = bizStatisticsBetweenService.skuInputOutputRecord(startDate, endDate, invName, skuItemNo);
 
+        result.sort((o1, o2) -> o2.getCreateTime().compareTo(o1.getCreateTime()));
+
+        request.setAttribute("invName", invName);
+        request.setAttribute("skuItemNo", skuItemNo);
         request.setAttribute("result", result);
-        return "modules/biz/statistics/bizStatisticsVendorSkuPriceBetweenTables";
+        return "modules/biz/statistics/bizStatisticsInputOutputBetweenTables";
     }
 }

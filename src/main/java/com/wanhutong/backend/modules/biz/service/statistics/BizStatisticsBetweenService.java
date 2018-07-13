@@ -229,9 +229,8 @@ public class BizStatisticsBetweenService {
      * @param skuItemNo
      * @return
      */
-    public List<BizOrderStatisticsDto> skuInputOutputRecord(String startDate, String endDate, String skuItemNo) {
+    public List<BizSkuInputOutputDto> skuInputOutputRecord(String startDate, String endDate, String invName, String skuItemNo) {
 
-//        return bizCollectGoodsRecordService.skuInputOutputRecord(startDate, endDate, skuItemNo); todo
-        return null;
+        return bizCollectGoodsRecordService.skuInputOutputRecord(startDate, endDate, invName, skuItemNo);
     }
 }
