@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.wanhutong.backend.common.service.BaseService;
+import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizSkuInputOutputDto;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInventorySku;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -256,4 +258,7 @@ public class BizCollectGoodsRecordService extends CrudService<BizCollectGoodsRec
 		return dao.collectSendFindPage(bizCollectGoodsRecord);
 	}
 
+	public List<BizSkuInputOutputDto> skuInputOutputRecord(String startDate, String endDate, String invName, String skuItemNo) {
+		return dao.getSkuInputOutputRecord(startDate, endDate, invName, skuItemNo);
+	}
 }

@@ -193,7 +193,7 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 
 		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
 		String prodCode = bizProductInfo.getProdCode();
-		int sort = Integer.valueOf(bizSkuInfo.getSort());
+		int sort = Integer.valueOf(StringUtils.isBlank(bizSkuInfo.getSort()) ? "1" : bizSkuInfo.getSort());
 		String partNo = prodCode + sort;
 
 		while (this.hasEntityByPartNo(partNo)) {
