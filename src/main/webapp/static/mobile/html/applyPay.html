@@ -11,7 +11,8 @@
 			.mui-content div.ctn_li_h li {height: 30px;}
 			.mui-input-row label {padding: 14px 14px;}
 			#Date {text-indent: 30px;}
-			#applyBtn {left: 50%;margin-left: -41px;}
+			#applyPayBtnSubmit {left: 50%;margin-left: -41px;}
+			.sucessColor {color: #40ABE9;}
 		</style>
 	</head>
 	<body>
@@ -74,7 +75,7 @@
 			        <input type="text" class="mui-input-clear" id="" disabled>
 			    </div>
 <!--附加信息块 有的话显示-->
-				<div class="mui-input-row">
+				<!--<div class="mui-input-row">
 					<div class="mui-input-row">
 						<label>产品图片：</label>
 				        <div class="photoList">
@@ -111,7 +112,7 @@
 					        <input type="text" class="mui-input-clear">
 					    </div>
 				    </div>
-			    </div>
+			    </div>-->
 			    <div class="mui-input-row">
 			        <label>申请金额：</label>
 			        <input id="planPay" type="text" class="mui-input-clear" placeholder="必填！">
@@ -119,7 +120,7 @@
 			    <div class="mui-input-row">
 				    <div class="mui-input-row">
 				        <label>本次申请付款时间：</label>
-				        <input id="Date" type="date" name="" />
+				        <input id="nowDate" type="date" name="" />
 				    </div>
 				</div>
 <!--审批流程块 有的话显示-->
@@ -127,15 +128,14 @@
 					<div class="labelLf">审批流程：</div>
 			        <ul id="addCheckMen" class="">
 				    </ul>
-				</div>    
+				</div>  
+			</form>
 				<div class="app_p20">
-				    <button id='applyBtn' type="submit" class="mui-btn mui-btn-blue">申请付款</button>
-				    <!--点击之后
-				    	如果没选时间弹出警告框
-				    出现正在提交数据，请稍后-->
+				    <!--点击之后如果没选时间弹出警告框,出现正在提交数据，请稍后-->
+				    <button id='applyPayBtnSubmit' class="mui-btn mui-btn-blue">申请付款</button>
 				</div>
- 			</form>
 		</div>	
+	<input class="purchId" id="purchId" type="hidden" />
 	<div class="clear"></div>
 
 	<script src="../js/component/mui.min.js"></script>

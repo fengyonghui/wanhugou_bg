@@ -11,7 +11,6 @@
 			this.pageInit(); //页面初始化
 //			this.radioShow()
 			this.btnshow()
-			this.searchShow()
 			GHUTILS.nativeUI.closeWaiting(); //关闭等待状态
 					//GHUTILS.nativeUI.showWaiting()//开启
 		},
@@ -73,7 +72,7 @@
 									mui.toast('驳回理由不能为空！')
 									return;
 								}else {
-//									_this.rejectData(rejectTxt)
+									_this.ajaxPoPayData(rejectTxt)
 								}
 							} else {
 								//		            info.innerText = '你点了取消按钮';
@@ -99,12 +98,7 @@
 							mui.confirm('确认开启审核吗？', '系统提示！', btnArray, function(choice) {
 								if(choice.index == 1) {
 									console.log(inText)
-									if(_this.prew){
-										_this.ajaxPoPayData(inText)
-									}else{
-										_this.ajaxData(inText)
-									}
-									
+									_this.ajaxData(inText)
 								} else {
 									//		            info.innerText = '你点了取消按钮';
 								}
@@ -128,58 +122,54 @@
 					id:_this.userInfo.listId,
 					prew:_this.prew,
 					prewPayTotal:$('#totalMoney').val(),
-					prewPayDeadline: _this.dataNew($('#Date').val()),
+					prewPayDeadline:_this.dataNew($('#lastPayDate').val()),
 					desc:inText
 				},
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
-//					if(res.ret==true){
-//						//$('#mask').hide()
-//						GHUTILS.OPENPAGE({
-//						url: "../../mobile/html/purchase.html",
-//						extras: {
-//							key:res.key,
-//							}
-//						})
-//					}
+					if(res.ret==true){
+						//$('#mask').hide()
+						GHUTILS.OPENPAGE({
+						url: "../../mobile/html/purchase.html",
+						extras: {
+							key:res.key,
+							}
+						})
+					}
 					
 				}
 			});
 			
 		},
-		ajaxPoPayData:function(inText) {
+/*驳回*/
+		ajaxPoPayData:function(rejectTxt) {
 			var _this = this;
 			//$('#mask').show()
 			$.ajax({
 				type: "GET",
-				url: "/a/biz/po/bizPoHeader/auditPay",
+				url: "/a/biz/po/bizPoHeader/startAudit",
 				data: {
 					id:_this.userInfo.listId,
-					time:_this.dataNew($('#totalMoney').val()),//
-					currentType:_this.userInfo.codeId
-					money: _this.dataNew($('#Date').val()),
-					auditType:1,
-					desc:inText
+					auditType:0,
+					desc:rejectTxt
 				},
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
-//					if(res.ret==true){
-//						//$('#mask').hide()
-//						GHUTILS.OPENPAGE({
-//						url: "../../mobile/html/purchase.html",
-//						extras: {
-//							key:res.key,
-//							}
-//						})
-//					}
+					if(res.ret==true){
+						//$('#mask').hide()
+						GHUTILS.OPENPAGE({
+						url: "../../mobile/html/purchase.html",
+						extras: {
+							key:res.key,
+							}
+						})
+					}
 					
 				}
 			});
-			
 		},
-
 		btnshow: function() {
 			var _this = this;
 			$('#showMoney').hide()
@@ -191,16 +181,6 @@
 					$('#showMoney').hide()
 					_this.prew  = false
 				}
-			})
-		},
-		searchShow: function() {
-			var _this = this;
-			$('#searchIfrom').hide()
-			$('#showDress').on('tap','#adressBtn', function() {
-				$('#searchIfrom').show()
-			})
-			$('#closeBtn').on('tap', function() {
-				$('#searchIfrom').hide()
 			})
 		},
 		dataNew:function(str){

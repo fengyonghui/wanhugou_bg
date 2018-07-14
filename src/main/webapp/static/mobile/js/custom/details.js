@@ -25,6 +25,24 @@
                 dataType: "json",
                 success: function(res){
 					console.log(res)
+					var cardNumber = res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber;
+					if(cardNumber) {
+						$('#PoVenBizCard').val(cardNumber)
+					}else {
+						$('#PoVenBizCard').val('')
+					}
+					var payee = res.data.bizPoHeader.vendOffice.bizVendInfo.payee;
+					if(payee) {
+						$('#PoVenBizPayee').val(payee)
+					}else {
+						$('#PoVenBizPayee').val('')
+					}
+					var bankName = res.data.bizPoHeader.vendOffice.bizVendInfo.bankName;
+					if(bankName) {
+						$('#PoVenBizBankname').val(bankName)
+					}else {
+						$('#PoVenBizBankname').val('')
+					}
                    $('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
                    $('#PoordNum').val(res.data.bizPoHeader.orderNumber)
                    $('#Pototal').val(res.data.bizPoHeader.total)
@@ -32,27 +50,42 @@
                    $('#PoRemark').val(res.data.bizPoHeader.remark)
                    $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
                    $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
-                   $('#PoVenBizCard').val(res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber)
-                   $('#PoVenBizPayee').val(res.data.bizPoHeader.vendOffice.bizVendInfo.payee)
-                   $('#PoVenBizBankname').val(res.data.bizPoHeader.vendOffice.bizVendInfo.bankName)
 /*最后付款时间*/ 	   $('#PoLastDa').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
 					_this.processHtml(res.data)              
                 }
             });
-
 		},
 		processHtml:function(data){
 			var _this = this;
-			console.log(data.bizPoHeader.commonProcessList)
+			console.log(data)
+			var process = data.bizPoHeader.process;
 			var pHtmlList = '';
+			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
 				console.log(item)
-				console.log(i)
-				if(i<=i-1){
+				var step = i + 1;
+				if(len-1==i){
 					pHtmlList +='<li id="procList" class="step_item">'+
-					'<div class="step_num">'+ item.index +' </div>'+
+					'<div class="step_num">'+ step +' </div>'+
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row sucessColor">'+
+							'<label>当前状态:</label>'+
+					        '<textarea name="" rows="" cols="" disabled>'+ process.purchaseOrderProcess.name +'</textarea>'+
+					    '</div>'+
+						'<br />'+
+						'<div class="mui-input-row">'+
+					        '<label></label>'+
+					        '<input type="text" value="" class="mui-input-clear" disabled>'+
+					    	'<label></label>'+
+					        '<input type="text" value="" class="mui-input-clear" disabled>'+
+					    '</div>'+
+					'</div>'+
+				'</li>'
+				}else{
+					pHtmlList +='<li id="procList" class="step_item">'+
+					'<div class="step_num">'+ step +' </div>'+
+					'<div class="step_num_txt">'+
+						'<div class="mui-input-row">'+
 							'<label>批注:</label>'+
 					        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
 					    '</div>'+
@@ -65,27 +98,10 @@
 					    '</div>'+
 					'</div>'+
 				'</li>'
-				}else{
-					pHtmlList +='<li id="procList" class="step_item">'+
-					'<div class="step_num">'+ item.index +' </div>'+
-					'<div class="step_num_txt">'+
-						'<div class="mui-input-row sucessColor">'+
-							'<label>当前状态:</label>'+
-					        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
-					    '</div>'+
-						'<br />'+
-						'<div class="mui-input-row">'+
-					        '<label></label>'+
-					        '<input type="text" value="" class="mui-input-clear" disabled>'+
-					    	'<label></label>'+
-					        '<input type="text" value="" class="mui-input-clear" disabled>'+
-					    '</div>'+
-					'</div>'+
-				'</li>'
 				}
 				
 			});
-			$("#addCheckMen").html(pHtmlList)
+			$("#addDetailMen").html(pHtmlList)
 //			var purchaseOrderProcess = data.bizPoHeader.process.purchaseOrderProcess;
 //			if(purchaseOrderProcess.code==5) {
 //				$('#streeTxt').val(purchaseOrderProcess.name)

@@ -21,37 +21,71 @@
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/po/bizPoHeader/form4Mobile",
-                data: {poId:_this.userInfo.poId},
+                data: {id:_this.userInfo.poId},
                 dataType: "json",
                 success: function(res){
-					console.log(res)
-                   $('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
-                   $('#PoordNum').val(res.data.bizPoHeader.orderNumber)
-                   $('#Pototal').val(res.data.bizPoHeader.total)
-                   $('#PotoDel').val(res.data.bizPoHeader.totalDetail)
-                   $('#PoRemark').val(res.data.bizPoHeader.remark)
-                   $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
-                   $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
-                   $('#PoVenBizCard').val(res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber)
-                   $('#PoVenBizPayee').val(res.data.bizPoHeader.vendOffice.bizVendInfo.payee)
-                   $('#PoVenBizBankname').val(res.data.bizPoHeader.vendOffice.bizVendInfo.bankName)
-/*最后付款时间*/ 	   $('#PoLastDa').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
+                	console.log(res)
+					var cardNumber = res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber;
+					if(cardNumber) {
+						$('#PoVenBizCard').val(cardNumber)
+					}else {
+						$('#PoVenBizCard').val('')
+					}
+					var payee = res.data.bizPoHeader.vendOffice.bizVendInfo.payee;
+					if(payee) {
+						$('#PoVenBizPayee').val(payee)
+					}else {
+						$('#PoVenBizPayee').val('')
+					}
+					var bankName = res.data.bizPoHeader.vendOffice.bizVendInfo.bankName;
+					if(bankName) {
+						$('#PoVenBizBankname').val(bankName)
+					}else {
+						$('#PoVenBizBankname').val('')
+					}
+                    $('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
+                    $('#PoordNum').val(res.data.bizPoHeader.orderNumber)
+                    $('#Pototal').val(res.data.bizPoHeader.total)
+                    $('#PotoDel').val(res.data.bizPoHeader.totalDetail)
+                    $('#PoRemark').val(res.data.bizPoHeader.remark)
+                    $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
+                    $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
+/*最后付款时间*/ 	    $('#PoLastDa').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
 					_this.processHtml(res.data)              
                 }
             });
-
 		},
 		processHtml:function(data){
 			var _this = this;
 			console.log(data.bizPoHeader.commonProcessList)
 			var pHtmlList = '';
+			var process = data.bizPoHeader.process;
+			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
 				console.log(item)
-				console.log(i)
-				pHtmlList +='<li id="procList" class="step_item">'+
-					'<div class="step_num">'+ item.index +' </div>'+
+				var step = i + 1;
+				if(len-1==i){
+					pHtmlList +='<li id="procList" class="step_item">'+
+					'<div class="step_num">'+ step +' </div>'+
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row sucessColor">'+
+							'<label>当前状态:</label>'+
+					        '<textarea name="" rows="" cols="" disabled>'+ process.purchaseOrderProcess.name +'</textarea>'+
+					    '</div>'+
+						'<br />'+
+						'<div class="mui-input-row">'+
+					        '<label></label>'+
+					        '<input type="text" value="" class="mui-input-clear" disabled>'+
+					    	'<label></label>'+
+					        '<input type="text" value="" class="mui-input-clear" disabled>'+
+					    '</div>'+
+					'</div>'+
+				'</li>'
+				}else{
+					pHtmlList +='<li id="procList" class="step_item">'+
+					'<div class="step_num">'+ step +' </div>'+
+					'<div class="step_num_txt">'+
+						'<div class="mui-input-row">'+
 							'<label>批注:</label>'+
 					        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
 					    '</div>'+
@@ -64,8 +98,51 @@
 					    '</div>'+
 					'</div>'+
 				'</li>'
+				}
 			});
 			$("#addCheckMen").html(pHtmlList)
+			_this.applyPay()
+		},
+		applyPay: function() {
+			var _this = this;
+			$('#applyPayBtnSubmit').on('tap',function() {
+				var url = $(this).attr('url');
+				if(!$('#nowDate').val() || !$('#planPay').val()){
+					mui.toast('金额或时间不能为空!')
+					return
+				}
+				$.ajax({
+					type: "GET",
+					url: "/a/biz/po/bizPoHeader/createPay4Mobile",
+					data: {
+						id:_this.userInfo.poId,
+						planPay:$('#planPay').val(),//流程code
+						deadline:_this.dataNew($('#nowDate').val())
+					},
+					dataType: "json",
+					success: function(res) {
+						console.log(res)
+						if(res.ret==true){
+							//$('#mask').hide()
+							GHUTILS.OPENPAGE({
+							url: "../../mobile/html/purchase.html",
+							extras: {
+								poId:_this.userInfo.poId,
+								}
+							})
+						}
+						
+					}
+				});
+				
+			})
+		},
+		dataNew:function(str){
+			var _this = this;
+			Data = str.replace(/-/g,'/');
+			var date = new Date(Data);
+			var time = date.getTime();
+			return time
 		},
 		formatDateTime: function(unix) {
         	var _this = this;

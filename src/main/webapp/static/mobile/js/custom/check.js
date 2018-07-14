@@ -30,7 +30,6 @@
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
-					
 					$('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
 					$('#PoordNum').val(res.data.bizPoHeader.orderNumber)
 					$('#Pototal').val(res.data.bizPoHeader.total)
@@ -45,7 +44,6 @@
 					$('#codeId').val(res.data.bizPoHeader.process.purchaseOrderProcess.code)
 					
 					_this.processHtml(res.data)
-					
 //                  if(res.data.bizOrderHeaderTest){
 //                 	   $('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
 //	                   $('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
@@ -64,23 +62,36 @@
 		processHtml:function(data){
 			var _this = this;
 			console.log(data.bizPoHeader.commonProcessList)
+			var process = data.bizPoHeader.process;
 			var pHtmlList = '';
+			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
 				console.log(item)
 				console.log(i)
-				var procesSta = ''
-//				var liList= i.length;
-//				console.log(liList)
-//				if(i==liList-1) {
-//					procesSta = '当前状态:';
-//				}else {
-					procesSta = '批注:';
-//				}
-				pHtmlList +='<li id="procList" class="step_item">'+
-					'<div class="step_num">'+ item.index +' </div>'+
+				var step = i + 1;
+				if(len-1==i){
+					pHtmlList +='<li id="procList" class="step_item">'+
+					'<div class="step_num">'+ step +' </div>'+
 					'<div class="step_num_txt">'+
 						'<div class="mui-input-row sucessColor">'+
-							'<label>'+procesSta+'</label>'+
+							'<label>当前状态:</label>'+
+					        '<textarea name="" rows="" cols="" disabled>'+ process.purchaseOrderProcess.name +'</textarea>'+
+					    '</div>'+
+						'<br />'+
+						'<div class="mui-input-row">'+
+					        '<label></label>'+
+					        '<input type="text" value="" class="mui-input-clear" disabled>'+
+					    	'<label></label>'+
+					        '<input type="text" value="" class="mui-input-clear" disabled>'+
+					    '</div>'+
+					'</div>'+
+				'</li>'
+				}else{
+					pHtmlList +='<li id="procList" class="step_item">'+
+					'<div class="step_num">'+ step +' </div>'+
+					'<div class="step_num_txt">'+
+						'<div class="mui-input-row">'+
+							'<label>批注:</label>'+
 					        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
 					    '</div>'+
 						'<br />'+
@@ -92,12 +103,13 @@
 					    '</div>'+
 					'</div>'+
 				'</li>'
+				}
 			});
 			$("#addCheckMen").html(pHtmlList)
 		},
 		comfirDialig: function() {
 			var _this = this;
-			var rejectBtn = document.getElementById("rejectBtn");
+//			var rejectBtn = document.getElementById("rejectBtn");
 			document.getElementById("rejectBtn").addEventListener('tap', function() {
 				var btnArray = ['否', '是'];
 				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
@@ -193,7 +205,7 @@
 					id:_this.userInfo.listId,
 					currentType:$('#codeId').val(),//流程code
 					auditType:num,
-					description:inText
+					description:rejectTxt
 				},
 				dataType: "json",
 				success: function(res) {
