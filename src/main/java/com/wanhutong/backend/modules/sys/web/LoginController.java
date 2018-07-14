@@ -77,7 +77,7 @@ public class LoginController extends BaseController{
 //		view += "jar:file:/D:/GitHub/jeesite/src/main/webapp/WEB-INF/lib/jeesite.jar!";
 //		view += "/"+getClass().getName().replaceAll("\\.", "/").replace(getClass().getSimpleName(), "")+"view/sysLogin";
 //		view += ".jsp";
-		if ("mobile".equalsIgnoreCase(version)) {
+		if ("mobile".equalsIgnoreCase(version) || WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_MOBILE_PARAM)) {
 			return "redirect:/static/mobile/html/login.html";
 		}
 		return "modules/sys/sysLogin";

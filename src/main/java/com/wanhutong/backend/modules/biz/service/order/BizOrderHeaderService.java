@@ -135,7 +135,7 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
                 }
             }
             if(flag){
-                bizOrderHeader.setCenterId(user.getOffice().getId());
+                bizOrderHeader.setCenterId(user.getCompany().getId());
             }else {
                 if (roleFlag) {
                     bizOrderHeader.setConsultantId(user.getId());
