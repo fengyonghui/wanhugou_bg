@@ -112,7 +112,7 @@ public class BizCustomCenterConsultantController extends BaseController {
                 centersCust.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
             }
             if (orderHeaderEedTime != null) {
-                centersCust.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+                centersCust.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
             }
             List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(centersCust);
 
@@ -124,7 +124,7 @@ public class BizCustomCenterConsultantController extends BaseController {
                 bizChatRecord.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
             }
             if (orderHeaderEedTime != null) {
-                bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+                bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
             }
             if (!userAdmin.isAdmin()) {
                 bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
