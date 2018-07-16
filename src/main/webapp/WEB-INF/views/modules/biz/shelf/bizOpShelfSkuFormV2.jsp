@@ -213,7 +213,8 @@
 
                                      tr_tds += "<tr class='" + prodId + "'>";
                                      tr_tds += "<td><input type='checkbox' value='" + skuInfo.id + "' title='shelfIds'/></td>";
-                                     tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td><td>" + skuInfo.skuPropertyInfos + "</td>";
+                                     tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td>" ;
+										 // "<td>" + skuInfo.skuPropertyInfos + "</td>";
 
                                      if (flag) {
                                          tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + varietyName + "<br/>" + f + "</td>";
@@ -512,7 +513,7 @@
 					<th>出厂价(元)：</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<th>商品属性</th>
+					<%--<th>商品属性</th>--%>
 					<th>分类与服务系数</th>
 					<th>品牌名称</th>
 					<th>产品图片</th>
