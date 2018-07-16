@@ -30,6 +30,24 @@
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
+					var cardNumber = res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber;
+					if(cardNumber) {
+						$('#venBizCard').val(cardNumber)
+					}else {
+						$('#venBizCard').val('')
+					}
+					var payee = res.data.bizPoHeader.vendOffice.bizVendInfo.payee;
+					if(payee) {
+						$('#venBizPayee').val(payee)
+					}else {
+						$('#venBizPayee').val('')
+					}
+					var bankName = res.data.bizPoHeader.vendOffice.bizVendInfo.bankName;
+					if(bankName) {
+						$('#venBizBankname').val(bankName)
+					}else {
+						$('#venBizBankname').val('')
+					}
 					$('#OrordNum').val(res.data.bizOrderHeader.orderNumber)
 					$('#PoordNum').val(res.data.bizPoHeader.orderNumber)
 					$('#Pototal').val(res.data.bizPoHeader.total)
@@ -38,9 +56,6 @@
 					$('#PoRemark').val(res.data.bizPoHeader.remark)
 					$('#PoDizstatus').val(res.data.bizPoHeader.bizStatus)
 					$('#PoVenName').val(res.data.bizPoHeader.vendOffice.name)
-					$('#PoVenBizCard').val(res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber)
-					$('#PoVenBizPayee').val(res.data.bizPoHeader.vendOffice.bizVendInfo.payee)
-					$('#PoVenBizBankname').val(res.data.bizPoHeader.vendOffice.bizVendInfo.bankName)
 					$('#codeId').val(res.data.bizPoHeader.process.purchaseOrderProcess.code)
 					
 					_this.processHtml(res.data)

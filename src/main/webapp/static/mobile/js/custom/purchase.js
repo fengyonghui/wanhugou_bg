@@ -84,25 +84,26 @@
 						console.log(item)
 						var startBtn = '';
 						var classBtn = '';
-						var payBtn = '';
-/*有没有申请支付单*/		if(item.currentPaymentId=='' || item.currentPaymentId==0) {
-							payBtn = '申请付款';
-						}else {
-							payBtn = ''
-						}
-						if(item.process) {
+/*有没有开启审核*/		if(item.process) {
 							startBtn = '审核';
 							classBtn = 'shenHe'
 						}else {
 							startBtn = '开启审核'
 							classBtn = 'startShenhe'
 						}
-						if(item.process.purchaseOrderProcess) {
+/*审核流程*/		        if(item.process.purchaseOrderProcess) {
 							var code = item.process.purchaseOrderProcess.code
 //							console.log(code)
 							if(code==7 || code==-1) {
 								startBtn = ''
 							}
+						}
+						var payBtn = '';
+/*有没有申请支付单*/		if(item.currentPaymentId=='' || item.currentPaymentId==0) {
+							payBtn = '申请付款';
+							
+						}else {
+							payBtn = ''
 						}
 						pHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 							'<div class="mui-input-row">' +

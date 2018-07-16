@@ -14,6 +14,7 @@
 		pageInit: function() {
 			var _this = this;
 			_this.getData()
+			_this.payComfirDialig()
 		},
 		getData: function() {
 			var _this = this;
@@ -30,7 +31,11 @@
 					var pHtmlList = '';
 					if(res.data.page.list.length>0) {
 						$.each(res.data.page.list, function(i, item) {
-//							console.log(item)
+							console.log(item)
+							$('#applyPayId').val(item.id)
+							if(item.total) {
+								$('#applyPayMoney').val(item.total)
+							}
 							var code = item.commonProcess.paymentOrderProcess.code
 							/*有没有支付单*/
 							var PoName = item.commonProcess.paymentOrderProcess.name
@@ -95,9 +100,12 @@
 								'<label>支付凭证：</label>' +
 								'<img src="' + imgPath + '"/>' +
 								'</div>' +
-								'</div>'
+								'<div class="payingCheckBtn app_p20">'+
+								    '<button type="submit" class="payCheckBtn mui-btn-blue">审核通过</button>'+
+									'<button type="submit" class="payRejectBtn mui-btn-blue">审核驳回</button>'+
+								'</div>'+
+							'</div>'
 						});
-					
 				    } else {
 				    	pHtmlList += '<div class="hintTxt mui-input-row">' + 
 		    						'<h1>暂无申请支付信息</h1>'+
@@ -106,6 +114,124 @@
 					$("#addPayListBtn").html(pHtmlList)
 				}
 			});
+		},
+		payComfirDialig: function() {
+			var _this = this;
+			$('#addPayListBtn').on('click','.payRejectBtn', function() {
+//			document.getElementById("payRejectBtn").addEventListener('click', function() {
+				var btnArray = ['否', '是'];
+				mui.confirm('确认驳回审核吗？', '系统提示！', btnArray, function(choice) {
+					if(choice.index == 1) {
+						
+						var btnArray = ['取消', '确定'];
+						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
+							if(a.index == 1) {
+								var rejectTxt = a.value;
+								console.log(rejectTxt)
+								if(a.value=='') {
+									mui.toast('驳货理由不能为空！')
+								}else {
+									_this.psyRejectData(rejectTxt,2)
+								}
+							} else {
+								//		            info.innerText = '你点了取消按钮';
+							}
+						})
+						//		            info.innerText = '你刚确认MUI是个好框架';
+					} else {
+						//		            info.innerText = 'MUI没有得到你的认可，继续加油'
+					}
+				})
+			});
+			$('#addPayListBtn').on('click','.payCheckBtn', function(e) {
+//			document.getElementById("payCheckBtn").addEventListener('click', function(e) {
+				//e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+				var btnArray = ['取消', '确定'];
+				mui.prompt('请输入通过理由：', '通过理由', '', btnArray, function(e) {
+					if(e.index == 1) {
+						var inText = e.value;
+						if(e.value=='') {
+							mui.toast('通过理由不能为空！')
+							return;
+						}else {
+							var btnArray = ['否', '是'];
+							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
+							if(choice.index == 1) {
+								console.log(inText)
+								_this.payAjaxData(inText,1)
+							} else {
+								//		            info.innerText = '你点了取消按钮';
+							}
+						})
+						}
+						//		            info.innerText = '你刚确认MUI是个好框架';
+					} else {
+						//		            info.innerText = 'MUI没有得到你的认可，继续加油'
+					}
+				})
+			});
+//			alert("操作成功")
+		},
+		payAjaxData:function(inText,num) {
+			var _this = this;
+			var codeId = $(this).attr('codeId');
+			var payId = $(this).attr('applyPayId');//得到支付单id
+			var money = $(this).attr('applyPayMoney');//得到实际付款金额
+			//$('#mask').show()
+			$.ajax({
+				type: "GET",
+				url: "/a/biz/po/bizPoHeader/auditPay",
+				data: {
+					id:_this.userInfo.payId,//支付申请订单ID
+					currentType:$('#codeId').val(),//流程code
+					auditType:num,
+					description:inText,
+					money:money//支付单创建时申请的金额
+				},
+				dataType: "json",
+				success: function(res) {
+					console.log(res)
+					if(res.ret==true){
+						//$('#mask').hide()
+						GHUTILS.OPENPAGE({
+						url: "../../mobile/html/purchase.html",
+						extras: {
+							key:res.key,
+							}
+						})
+					}
+				}
+			});
+		},
+		psyRejectData:function(rejectTxt,num) {
+			var _this = this;
+			var codeId = $(this).attr('codeId');
+			var payId = $(this).attr('applyPayId');//得到支付单id
+			//$('#mask').show()
+			$.ajax({
+				type: "GET",
+				url: "/a/biz/po/bizPoHeader/auditPay",
+				data: {
+					id:_this.userInfo.payId,
+					currentType:$('#codeId').val(),//流程code
+					auditType:num,
+					description:rejectTxt
+				},
+				dataType: "json",
+				success: function(res) {
+					console.log(res)
+					if(res.ret==true){
+						//$('#mask').hide()
+						GHUTILS.OPENPAGE({
+						url: "../../mobile/html/purchase.html",
+						extras: {
+							key:res.key,
+							}
+						})
+					}
+				}
+			});
+			
 		},
 		formatDateTime: function(unix) {
 			var _this = this;

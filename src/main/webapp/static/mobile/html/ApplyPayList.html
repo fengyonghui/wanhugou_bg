@@ -14,6 +14,7 @@
 			#processAjaxBtn {left: 50%;margin-left: -41px;background-color: #0d84f2;}
 			#addPayListBtn>div {border-bottom: 2px solid #40ABE9;}
 			.hintTxt {font-family: cursive;text-align: center;}
+			.app_p20 button {margin-left: 17%;background-color: #007aff;color: #fff;}
 		</style>
 	</head>
 	<body>
@@ -22,12 +23,14 @@
 			<p class="app_cf app_nav_text_center">支付单列表</p>
 		</header>
 		<div class="mui-content app_content_bgc_phs">
-			<form id="addPayListBtn" class="mui-input-group">
+			<div id="addPayListBtn" class="mui-input-group">
 
-			</form>
+			</div>
 		</div>	
 		<input id="code" type="hidden" />
 	<div class="clear"></div>
+	<input id="applyPayId" class="applyPayId" type="hidden" />
+	<input id="applyPayMoney" class="applyPayMoney" type="hidden" />
 	
 	<script src="../js/component/mui.min.js"></script>
 	<script src="../js/component/zepto.min.js"></script>
