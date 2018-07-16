@@ -314,15 +314,17 @@ public class BizPoHeaderController extends BaseController {
         page.setList(null);
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(o -> {
-                resultList.add(
-                        ImmutableMap.of(
-                                "id", o.getId(),
-                                "orderNum", o.getOrderNum() == null ? StringUtils.EMPTY : o.getOrderNum(),
-                                "vendOffice", o.getVendOffice().getName() == null ? StringUtils.EMPTY : o.getVendOffice().getName(),
-                                "process",  o.getCommonProcess() == null ? StringUtils.EMPTY : o.getCommonProcess(),
-                                "currentPaymentId",  o.getCurrentPaymentId() == null ? StringUtils.EMPTY : o.getCurrentPaymentId()
-                        )
-                );
+                Map<String, Object> data = Maps.newHashMap();
+                data.put("id", o.getId());
+                data.put("orderNum", o.getOrderNum() == null ? StringUtils.EMPTY : o.getOrderNum());
+                data.put("vendOffice", o.getVendOffice().getName() == null ? StringUtils.EMPTY : o.getVendOffice().getName());
+                data.put("process",  o.getCommonProcess() == null ? StringUtils.EMPTY : o.getCommonProcess());
+                data.put("currentPaymentId",  o.getCurrentPaymentId() == null ? StringUtils.EMPTY : o.getCurrentPaymentId());
+                data.put("bizStatus",  DictUtils.getDictLabel(String.valueOf(o.getBizStatus()), "biz_po_status", "未知类型"));
+                data.put("payTotal",  o.getPayTotal());
+                data.put("totalDetail",  o.getTotalDetail());
+                data.put("totalExp",  o.getTotalDetail());
+                resultList.add(data);
             });
         }
         Map<String, Object> resultMap = Maps.newHashMap();
