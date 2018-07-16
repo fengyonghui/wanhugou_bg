@@ -37,6 +37,7 @@ public abstract class BaseEntity<T> implements Serializable {
 	 * 当前用户
 	 */
 	@JsonIgnore
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	protected User currentUser;
 	
 	/**
@@ -74,6 +75,7 @@ public abstract class BaseEntity<T> implements Serializable {
 	}
 	
 	@JsonIgnore
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	@XmlTransient
 	public User getCurrentUser() {
 		if(currentUser == null){
@@ -82,12 +84,12 @@ public abstract class BaseEntity<T> implements Serializable {
 		return currentUser;
 	}
 
-	@JsonIgnore
 	public void setCurrentUser(User currentUser) {
 		this.currentUser = currentUser;
 	}
 
 	@JsonIgnore
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	@XmlTransient
 	public Page<T> getPage() {
 		if (page == null){
