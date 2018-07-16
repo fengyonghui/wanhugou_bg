@@ -178,8 +178,9 @@
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuListV2",
                     data:$('#searchForm').serialize(),
-                    success:function (data) {
+                    success:function (result) {
                          $("#prodInfo2").empty();
+                        var data = JSON.parse(result).data;
                          if (data == '') {
                              return false;
                          } else {
