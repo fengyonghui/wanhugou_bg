@@ -177,4 +177,92 @@
         </choose>
     </select>
 
+	<!-- 客户专员关联采购商有效订单查询 -->
+	<select id="customOrderList" resultType="BizCustomCenterConsultant">
+		SELECT
+		a.cust_id AS "customs.id",
+		soc.name as"customs.name",
+		soc.parent_ids AS "customs.parentIds",
+		a.center_id AS "centers.id",
+		sox.name as "centers.name",
+		a.consultant_id AS "consultants.id",
+		sug.name as "consultants.name",
+		a.create_time AS "createDate",
+		a.create_id AS "createBy.id",
+		suc.name as "createBy.name",
+		a.update_time AS "updateDate",
+		a.update_id AS "updateBy.id",
+		a.status as "delFlag",
+		suu.mobile as "consultants.mobile",
+		boh.order_num,
+		COUNT(1) AS orderCount
+		FROM biz_custom_center_consultant a
+		LEFT JOIN sys_office soc on soc.id=a.cust_id
+		LEFT JOIN sys_office sox on sox.id=a.center_id
+		LEFT JOIN sys_user suc on suc.id=a.create_id
+		LEFT JOIN sys_user sug on sug.id=a.consultant_id and sug.status=1
+		LEFT JOIN sys_user suu on suu.company_id=soc.id and suu.status=1
+		left join biz_order_header boh on boh.cust_id = a.cust_id and boh.status=1
+		<where>
+			a.status = 1
+			and  boh.order_type = 1
+			AND NOT EXISTS (
+			SELECT 1
+			FROM sys_test_account ta
+			WHERE boh.cust_id = ta.object_id
+			AND ta.object_name = 'sys_office'
+			)
+			AND ((biz_status != 45
+			AND biz_status != 35
+			AND biz_status != 0
+			AND biz_status != 40)
+			OR (biz_status = 40
+			AND receive_total > 0))
+			AND boh.create_time BETWEEN #{startDate} AND #{endDate}
+			<if test="consultantId != null and consultantId != 0">
+				AND a.consultant_id = #{consultantId}
+			</if>
+			group by a.cust_id
+		</where>
+	</select>
+
+	<!-- 客户专员关联采购商有效订单查询 -->
+	<select id="consultantOrderList" resultType="BizCustomCenterConsultant">
+		select t.*, COUNT(1) AS orderCount from
+		(
+		SELECT
+		sox.name AS "centers.name",
+		a.consultant_id AS "consultants.id",
+		sug.name AS "consultants.name"
+		FROM biz_custom_center_consultant a
+		LEFT JOIN sys_office soc on soc.id=a.cust_id
+		LEFT JOIN sys_office sox on sox.id=a.center_id
+		LEFT JOIN sys_user suc on suc.id=a.create_id
+		LEFT JOIN sys_user sug on sug.id=a.consultant_id and sug.status=1
+		LEFT JOIN sys_user suu on suu.company_id=soc.id and suu.status=1
+		left join biz_order_header boh on boh.cust_id = a.cust_id and boh.status=1
+		<where>
+			a.status = 1
+			and boh.order_type = 1
+			AND NOT EXISTS (
+			SELECT 1
+			FROM sys_test_account ta
+			WHERE boh.cust_id = ta.object_id
+			AND ta.object_name = 'sys_office'
+			)
+			AND ((biz_status != 45
+			AND biz_status != 35
+			AND biz_status != 0
+			AND biz_status != 40)
+			OR (biz_status = 40
+			AND receive_total > 0))
+			AND boh.create_time BETWEEN #{startDate} AND #{endDate}
+			<if test="purchasingId != null and purchasingId != 0">
+				AND a.center_id = #{purchasingId}
+			</if>
+			group by a.cust_id
+		</where>
+		) AS t group by t.`consultants.id`
+	</select>
+
 </mapper>

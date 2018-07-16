@@ -3,22 +3,27 @@
  */
 package com.wanhutong.backend.modules.biz.web.inventory;
 
+import com.alibaba.druid.support.json.JSONUtils;
+import com.google.gson.JsonObject;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.CloseableHttpClientUtil;
 import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.Encodes;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.OrderHeaderExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizDetailInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizInvoice;
 import com.wanhutong.backend.modules.biz.entity.inventory.BizLogistics;
+import com.wanhutong.backend.modules.biz.entity.logistic.LogisticEntity;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
-import com.wanhutong.backend.modules.biz.service.inventory.BizDeliverGoodsService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizDetailInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizInvoiceService;
 import com.wanhutong.backend.modules.biz.service.inventory.BizLogisticsService;
@@ -36,18 +41,34 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.SystemService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +81,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/inventory/bizInvoice")
 public class BizInvoiceController extends BaseController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BizInvoiceController.class);
 
 	@Autowired
 	private BizInvoiceService bizInvoiceService;
@@ -650,5 +673,56 @@ public class BizInvoiceController extends BaseController {
         List<BizOrderDetail> logisticsDetailList = bizInvoiceService.findLogisticsDetail(bizInvoice);
         model.addAttribute("logisticsDetailList", logisticsDetailList);
         return "modules/biz/inventory/bizInvoiceLogisticsDeForm";
+    }
+
+    /**
+     * 物流信息对接的详情页跳转
+     * @param trackingNumber
+     * @return
+     */
+    @RequestMapping(value = "logisticDetail")
+    public String logisticDetail(String trackingNumber,Model model) {
+        model.addAttribute("trackingNumber",trackingNumber);
+        return "modules/biz/logistic/logisticDetail";
+    }
+
+    /**
+     * 查询运单信息
+     * @param trackingNumber
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "selectLogistic")
+    public String selectLogistic(String trackingNumber) {
+        if (StringUtils.isBlank(trackingNumber)) {
+            JsonUtil.generateErrorData(0,"运单信息请求参数为空",null);
+            return null;
+        }
+        String logisticUrl = DsConfig.getLogisticUrl();
+        CloseableHttpClient httpClient = CloseableHttpClientUtil.createSSLClientDefault();
+        try {
+            HttpPost httpPost = new HttpPost(logisticUrl);
+            JSONObject param = new JSONObject();
+            param.put("logisticCode", trackingNumber);
+            httpPost.setEntity(new StringEntity(param.toString(), Charset.forName("UTF-8")));
+            httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+            httpPost.setHeader("Accept", "application/json");
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+            String result = EntityUtils.toString(response.getEntity(), "utf-8");
+            LogisticEntity parse = JsonUtil.parse(result, LogisticEntity.class);
+            return JsonUtil.generateData(parse , null);
+        } catch (Exception e) {
+            LOGGER.error("物流运单信息异常",e);
+        } finally {
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    LOGGER.error("运单信息httpClient关闭异常，710",e);
+                }
+            }
+        }
+        JsonUtil.generateErrorData(-1,"运单信息请求失败",null);
+        return null;
     }
 }

@@ -65,6 +65,10 @@
 			<id property="id" column="updateBy.id"/>
 			<id property="name" column="updateBy.name"/>
 		</association>
+		<association property="drawBack" javaType="BizDrawBack" column="drawBack.id">
+			<id property="id" column="drawBack.id"/>
+			<result property="drawbackStatus" column="drawBack.drawbackStatus"/>
+		</association>
 
 		<collection property="orderDetailList" ofType="BizOrderDetail">
 			<id property="id" column="orderDetailList.id" />
@@ -279,13 +283,16 @@
 			od.status=1
 		and od.order_id=a.id
 		GROUP BY a.id ) as "totalBuyPrice"
+		<if test="statu != null and statu =='refund'">
+			,bd.drawback_status AS "drawBack.drawbackStatus"
+		</if>
 		FROM biz_order_header a
 		LEFT JOIN biz_order_detail od ON od.order_id = a.id
 		<if test="statu != null and statu =='unline'">
 			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
 		</if>
 		<if test="statu != null and statu =='refund'">
-			LEFT JOIN biz_order_header_unline ohu on ohu.order_id = a.id
+			LEFT JOIN biz_drawback bd on bd.order_id = a.id
 		</if>
 		LEFT JOIN biz_sku_info si ON si.id=od.sku_id
 		LEFT JOIN biz_product_info pi ON pi.id = si.prod_id
@@ -412,7 +419,7 @@
 				AND ohu.id IS NOT NULL
 			</if>
 			<if test="statu != null and statu == 'refund'">
-				AND ohu.order_type = 1
+				AND (bd.drawback_status = 0 OR bd.drawback_status = 1 OR bd.drawback_status = 2 OR bd.drawback_status = 3)
 			</if>
 			<if test="statu != null and statu =='unline' and examine != null and examine == 2">
 				AND ohu.biz_status = 0
@@ -2491,5 +2498,11 @@ FROM
 		a.receive_total > 0)
 		)
 	</select>
+
+	<update id="updateDrawbackStatus">
+		UPDATE biz_drawback SET
+		drawback_status = #{drawBack.drawbackStatus}
+		WHERE order_id = #{id}
+	</update>
 
 </mapper>

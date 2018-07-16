@@ -116,6 +116,7 @@
 			1=1
 			<if test="dataStatus==null ">
 				AND a.status = #{DEL_FLAG_NORMAL}
+                AND bpi.status = #{DEL_FLAG_NORMAL}
 			</if>
 			<if test="id != null and id != ''">
 				AND a.id =#{id}
@@ -531,6 +532,7 @@
 		AND ta.object_name = 'sys_office'
 		)
 		LEFT JOIN biz_custom_center_consultant ccs ON ccs.cust_id = boh.cust_id
+		LEFT JOIN sys_user su ON su.id = ccs.consultant_id
 		LEFT JOIN sys_office s ON s.id = ccs.center_id
 		LEFT JOIN biz_inventory_info i ON i.cust_id=s.id
 		LEFT JOIN biz_inventory_sku bis on bis.inv_id=i.id and bis.sku_id=bod.sku_id and bis.status=1
@@ -555,14 +557,23 @@
 			<if test="dbName == 'mssql'">'%'+#{orderNum}+'%'</if>
 			<if test="dbName == 'mysql'">concat('%',#{orderNum},'%')</if>
 		</if>
+		<if test="centersName != null and centersName != ''">
+			AND s.name
+			LIKE
+			<if test="dbName == 'oracle'">'%'||#{centersName}||'%'</if>
+			<if test="dbName == 'mssql'">'%'+#{centersName}+'%'</if>
+			<if test="dbName == 'mysql'">concat('%',#{centersName},'%')</if>
+		</if>
 		<if test="orderCreatStartTime !=null and orderCreatStartTime !=''">
 			AND boh.create_time &gt;= #{orderCreatStartTime}
 			<if test="orderCreatEndTime!=null and orderCreatEndTime!=''">
 				AND boh.create_time &lt;= #{orderCreatEndTime}
 			</if>
 		</if>
+		<if test="sqlMap != null and sqlMap.chat != null and sqlMap.chat != ''">
+			${sqlMap.chat}
+		</if>
 		group by a.id,boh.order_num
-
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}

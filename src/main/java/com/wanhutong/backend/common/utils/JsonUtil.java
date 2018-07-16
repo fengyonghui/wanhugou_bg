@@ -68,6 +68,23 @@ public class JsonUtil {
 		return sw.toString();
 	}
 
+    /**
+     * Json to Object
+     * @param json
+     * @param c
+     * @param <T>
+     * @return
+     */
+	public static <T> T parse(String json, Class<T> c) {
+        T t = null;//String转成map
+        try {
+            t = getObjectMapperInstance().readValue(json, c);
+        } catch (IOException e) {
+            LOGGER.error("jsonutil parse json error ", e);
+        }
+        return t;
+    }
+
     public static String generatePureData(Object result) throws Exception {
         StringBuilderWriter sw = new StringBuilderWriter();
 		JsonGenerator jg = null;

@@ -139,6 +139,7 @@
 						</shiro:hasPermission>
 						<a href="${ctx}/biz/inventory/bizInvoice/invoiceRequestDetail?id=${bizInvoice.id}&source=xq">发货单详情</a>
 					</c:if>
+					<a href="${ctx}/biz/inventory/bizInvoice/logisticDetail?trackingNumber=${bizInvoice.trackingNumber}">运单信息</a>
 					<c:if test="${fns:getUser().isAdmin()}">
 						<a href="${ctx}/biz/inventory/bizInvoice/delete?id=${bizInvoice.id}" onclick="return confirmx('确认要删除该发货单吗？', this.href)">删除</a>
 					</c:if>

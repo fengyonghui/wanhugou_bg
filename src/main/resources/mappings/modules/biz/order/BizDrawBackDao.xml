@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanhutong.backend.modules.biz.dao.order.BizDrawBackDao">
+    
+	<sql id="bizDrawBackColumns">
+		a.id AS "id",
+		a.order_id AS "orderDetail.orderHeader.id",
+		a.biz_status AS "bizStatus",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.order_type AS "orderType",
+		a.status_type AS "statusType",
+		a.code AS "code",
+		a.drawback_status AS "drawbackStatus",
+		a.drawback_money AS "drawbackMoney",
+		a.apply_time AS "applyTime",
+		a.reasons AS "reasons"
+	</sql>
+	
+	<sql id="bizDrawBackJoins">
+	</sql>
+    
+	<select id="get" resultType="BizDrawBack">
+		SELECT 
+			<include refid="bizDrawBackColumns"/>
+		FROM biz_drawback a
+		<include refid="bizDrawBackJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="BizDrawBack">
+		SELECT 
+			<include refid="bizDrawBackColumns"/>
+		FROM biz_drawback a
+		<include refid="bizDrawBackJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+			<if test="orderDetail!=null and orderDetail.orderHeader!=null and orderDetail.orderHeader.id != null and orderDetail.orderHeader.id != ''">
+				AND a.order_id = #{orderDetail.orderHeader.id}
+			</if>
+			<if test="bizStatus != null and bizStatus != ''">
+				AND a.biz_status = #{bizStatus}
+			</if>
+			<if test="createDate != null and createDate != ''">
+				AND a.create_time = #{createDate}
+			</if>
+			<if test="drawbackStatus != null and drawbackStatus != ''">
+				AND a.drawback_status = #{drawbackStatus}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BizDrawBack">
+		SELECT 
+			<include refid="bizDrawBackColumns"/>
+		FROM biz_drawback a
+		<include refid="bizDrawBackJoins"/>
+		<where>
+			a.status = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO biz_drawback(
+			id,
+			order_id,
+			biz_status,
+			status,
+			create_id,
+			create_time,
+			u_version,
+			update_id,
+			update_time,
+			order_type,
+			status_type,
+			code,
+			drawback_status,
+			drawback_money,
+			apply_time,
+			reasons
+		) VALUES (
+			#{id},
+			#{orderDetail.orderHeader.id},
+			#{bizStatus},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{uVersion},
+			#{updateBy.id},
+			#{updateDate},
+			#{orderType},
+			#{statusType},
+			#{code},
+			#{drawbackStatus},
+			#{drawbackMoney},
+			#{applyTime},
+			#{reasons}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE biz_drawback SET 	
+			order_id = #{orderDetail.orderHeader.id},
+			biz_status = #{bizStatus},
+			create_time = #{createDate},
+			u_version = #{uVersion},
+			update_id = #{updateBy.id},
+			update_time = #{updateDate},
+			order_type = #{orderType},
+			status_type = #{statusType},
+			code = #{code},
+			drawback_status = #{drawbackStatus},
+			drawback_money = #{drawbackMoney},
+			apply_time = #{applyTime},
+			reasons = #{reasons}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE biz_drawback SET 
+			status = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

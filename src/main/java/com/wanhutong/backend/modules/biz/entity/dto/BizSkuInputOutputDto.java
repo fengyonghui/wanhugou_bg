@@ -34,6 +34,16 @@ public class BizSkuInputOutputDto {
     private Integer invId;
 
     /**
+     * 商品名称
+     */
+    private String skuName;
+
+    /**
+     * 商品编号
+     */
+    private String itemNo;
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -84,5 +94,21 @@ public class BizSkuInputOutputDto {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getSkuName() {
+        return skuName;
+    }
+
+    public void setSkuName(String skuName) {
+        this.skuName = skuName;
+    }
+
+    public String getItemNo() {
+        return itemNo;
+    }
+
+    public void setItemNo(String itemNo) {
+        this.itemNo = itemNo;
     }
 }

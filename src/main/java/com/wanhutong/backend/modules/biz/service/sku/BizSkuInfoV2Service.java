@@ -5,6 +5,7 @@ package com.wanhutong.backend.modules.biz.service.sku;
 
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.StringUtils;
@@ -193,7 +194,7 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 
 		BizProductInfo bizProductInfo = bizProductInfoDao.get(bizSkuInfo.getProductInfo().getId());
 		String prodCode = bizProductInfo.getProdCode();
-		int sort = Integer.valueOf(bizSkuInfo.getSort());
+		int sort = Integer.valueOf(StringUtils.isBlank(bizSkuInfo.getSort()) ? "1" : bizSkuInfo.getSort());
 		String partNo = prodCode + sort;
 
 		while (this.hasEntityByPartNo(partNo)) {
@@ -388,6 +389,8 @@ public class BizSkuInfoV2Service extends CrudService<BizSkuInfoV2Dao, BizSkuInfo
 	 */
 	@Transactional(readOnly = false)
 	public Page<BizSkuInfo> findPageForSkuInfo(Page<BizSkuInfo> page, BizSkuInfo bizSkuInfo) {
+		User user = UserUtils.getUser();
+		bizSkuInfo.getSqlMap().put("chat", BaseService.dataScopeFilter(user, "s", "su"));
 		bizSkuInfo.setPage(page);
 		page.setList(bizSkuInfoDao.findPageForSkuInfo(bizSkuInfo));
 		return page;

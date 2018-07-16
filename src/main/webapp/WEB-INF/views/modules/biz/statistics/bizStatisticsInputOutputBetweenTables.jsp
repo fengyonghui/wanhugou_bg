@@ -23,12 +23,14 @@
         <th>仓库名称</th>
         <th>数量</th>
         <th>类型</th>
+        <th>商品名称</th>
+        <th>商品编号</th>
         <th>时间</th>
     </tr>
     </thead>
     <tbody id="proudctTable">
     <c:forEach items="${result}" var="v">
-        <tr>
+        <tr style="color: ${v.dataType == 1 ? 'red' : 'green'}">
             <td>
                     ${v.invName}
             </td>
@@ -37,6 +39,12 @@
             </td>
             <td>
                     ${v.dataType == 1 ? '入库' : '出库'}
+            </td>
+            <td>
+                    ${v.skuName}
+            </td>
+            <td>
+                    ${v.itemNo}
             </td>
             <td>
                 <fmt:formatDate value="${v.createTime}" pattern="yyyy-MM-dd HH:mm:ss" dateStyle="full"/>

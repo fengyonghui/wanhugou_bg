@@ -647,4 +647,14 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         }
     }
 
+    /**
+     * 更新退款订单退款状态
+     *
+     * @param bizOrderHeader
+     */
+    @Transactional(readOnly = false)
+    public void updateDrawbackStatus(BizOrderHeader bizOrderHeader) {
+        bizOrderHeaderDao.updateDrawbackStatus(bizOrderHeader);
+    }
+
 }

@@ -39,6 +39,11 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 	private String ordrHeaderStartTime;//日期查询
 	private String orderHeaderEedTime;//日期查询
 
+	/**
+	 * 订单数量
+	 */
+	private Integer orderCount;
+
 	public BizCustomCenterConsultant() {
 		super();
 	}
@@ -117,5 +122,13 @@ public class BizCustomCenterConsultant extends DataEntity<BizCustomCenterConsult
 
 	public void setOrderHeaderEedTime(String orderHeaderEedTime) {
 		this.orderHeaderEedTime = orderHeaderEedTime;
+	}
+
+	public Integer getOrderCount() {
+		return orderCount;
+	}
+
+	public void setOrderCount(Integer orderCount) {
+		this.orderCount = orderCount;
 	}
 }
