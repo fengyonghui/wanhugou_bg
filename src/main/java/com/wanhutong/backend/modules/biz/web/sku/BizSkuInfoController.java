@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.web.sku;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
+import com.wanhutong.backend.common.utils.JsonUtil;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
@@ -182,14 +183,14 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuList")
-	public Map<String, List<BizSkuInfo>> findSkuList(BizSkuInfo bizSkuInfo, String skuIds){
+	public String findSkuList(BizSkuInfo bizSkuInfo, String skuIds){
 		if (skuIds != null && !"".equals(skuIds)){
 			String[] ids =StringUtils.split(skuIds, ",");
 			bizSkuInfo.setSkuIds(Lists.newArrayList(ids));
 		}
 		bizSkuInfo.setSkuType(SkuTypeEnum.OWN_PRODUCT.getCode());
 		Map<String, List<BizSkuInfo>> listMap = bizSkuInfoService.findListForProd(bizSkuInfo);
-		return listMap;
+		return JsonUtil.generateData(listMap, null);
 
 	}
 	@ResponseBody

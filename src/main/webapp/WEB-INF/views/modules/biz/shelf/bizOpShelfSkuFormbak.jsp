@@ -58,11 +58,12 @@
                 $.ajax({
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuList?skuIds="+ids,
-                    success:function (data) {
+                    success:function (result) {
                         $('#myModal').modal('hide');
                         if(id==''){
                             $("#prodInfo").empty();
                         }
+                        var data = JSON.parse(result).data;
                         $.each(data,function (index,skuInfo) {
                             if(id!=''){
                                 if($("#aaId").val()!=''){
