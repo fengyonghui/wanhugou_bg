@@ -182,6 +182,7 @@
 		ajaxData:function(inText,num) {
 			var _this = this;
 			var codeId = $(this).attr('codeId');
+//			console.log(codeId)
 			//$('#mask').show()
 			$.ajax({
 				type: "GET",
@@ -201,6 +202,7 @@
 						url: "../../mobile/html/purchase.html",
 						extras: {
 							key:res.key,
+							codeId:codeId,
 							}
 						})
 					}
