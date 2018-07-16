@@ -62,10 +62,11 @@
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuList",
                     data:$('#searchForm').serialize(),
-                    success:function (data) {
+                    success:function (result) {
                         if(id==''){
                             $("#prodInfo2").empty();
                         }
+                        var data = JSON.parse(result).data;
                         $.each(data,function (keys,skuInfoList) {
                             var prodKeys= keys.split(",");
                             var prodId= prodKeys[0];
