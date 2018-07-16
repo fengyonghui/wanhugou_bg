@@ -77,6 +77,7 @@
 		<include refid="bizSkuInfoJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			and bpi.status = #{DEL_FLAG_NORMAL}
 			<if test="id != null and id != ''">
 				AND a.id =#{id}
 			</if>
