@@ -2262,7 +2262,39 @@ FROM
 		</if>
 		) as "officeChatRecord",
 		count(1) AS "orderCount",
-		sum(oh.receive_total) as "userOfficeReceiveTotal",
+		(SELECT
+		sum(bp.pay_money)
+		FROM
+		biz_order_header bo
+		INNER JOIN biz_pay_record bp on bo.order_num = bp.order_num
+		LEFT JOIN biz_custom_center_consultant bcc ON bcc.cust_id = bo.cust_id AND bcc.status = 1
+		WHERE
+		bo.status = 1
+		AND bp.status = 1
+		AND bcc.consultant_id = #{con.id}
+		<if test="ordrHeaderStartTime ==null">
+			and DATE_FORMAT(bp.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+		</if>
+		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
+			AND bp.create_time &lt;= #{ordrHeaderStartTime}
+		</if>
+		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
+			AND bp.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
+		</if>
+		and bp.biz_status = 1
+		AND bo.order_type != 4
+		AND NOT EXISTS (
+		SELECT 1
+		FROM sys_test_account ta
+		WHERE bo.cust_id = ta.object_id
+		AND ta.object_name = 'sys_office'
+		)
+		AND ((bo.biz_status != 45
+		AND bo.biz_status != 35
+		AND bo.biz_status != 0)
+		OR (bo.biz_status = 40
+		AND bo.receive_total > 0))
+		) AS "userOfficeReceiveTotal",
 		(
 		select count(1) from
 			biz_custom_center_consultant bcc,
