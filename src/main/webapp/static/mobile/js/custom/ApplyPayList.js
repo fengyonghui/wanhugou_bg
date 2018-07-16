@@ -252,10 +252,11 @@
 				type: "GET",
 				url: "/a/biz/po/bizPoHeader/auditPay",
 				data: {
-					id:_this.userInfo.payId,
-					currentType:$('#codeId').val(),//流程code
+					id:$('#applyPayId').val(),//支付申请订单ID
+					currentType:$('#payCodeId').val(),//流程code
 					auditType:num,
-					description:rejectTxt
+					description:inText,
+					money:$('#applyPayMoney').val()//支付单创建时申请的金额
 				},
 				dataType: "json",
 				success: function(res) {
