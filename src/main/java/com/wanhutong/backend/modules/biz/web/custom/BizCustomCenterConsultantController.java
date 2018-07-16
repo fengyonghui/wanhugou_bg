@@ -144,7 +144,7 @@ public class BizCustomCenterConsultantController extends BaseController {
                                 bizChatRecord.setOffice(customCenterConsultant.getCustoms());
                                 orderHeaderList = bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord);
                             } catch (Exception e) {
-                                logger.error(e.getMessage());
+                                logger.error("多线程取订单列表失败", e);
                             } finally {
                                 lock.unlock();
                             }
