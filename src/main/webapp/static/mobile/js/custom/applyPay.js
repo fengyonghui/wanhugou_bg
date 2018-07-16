@@ -116,7 +116,7 @@
 					url: "/a/biz/po/bizPoHeader/createPay4Mobile",
 					data: {
 						id:_this.userInfo.poId,
-						planPay:$('#planPay').val(),//流程code
+						planPay:$('#planPay').val(),
 						deadline:_this.dataNew($('#nowDate').val())
 					},
 					dataType: "json",

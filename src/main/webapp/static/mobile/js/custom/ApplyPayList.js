@@ -33,12 +33,13 @@
 						$.each(res.data.page.list, function(i, item) {
 							console.log(item)
 							$('#applyPayId').val(item.id)
+							console.log(item.total)
 							if(item.total) {
 								$('#applyPayMoney').val(item.total)
 							}
-							var code = item.commonProcess.paymentOrderProcess.code
+							var payCodeId = item.commonProcess.paymentOrderProcess.code
+							$('#payCodeId').val(item.commonProcess.paymentOrderProcess.code)
 							/*有没有支付单*/
-							var PoName = item.commonProcess.paymentOrderProcess.name
 							var bizStatus = '';
 							if(item.bizStatus == 0) {
 								bizStatus = '未支付'
@@ -67,14 +68,51 @@
 							}else {
 								imgPath = ''
 							}
-							pHtmlList += '<div class="mui-input-row">' +
+							var PoName = item.commonProcess.paymentOrderProcess.name
+							if(PoName=='审批完成') {
+								pHtmlList += '<div class="mui-input-row">' +
 								'<div class="mui-input-row">' +
 								'<label>id：</label>' +
-								'<input id="payingId" type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
+								'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 								'<label>付款金额：</label>' +
-								'<input id="payNum" type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
+								'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>实际付款金额：</label>' +
+								'<input type="text" value="' + item.payTotal + '" class="mui-input-clear" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>最后付款时间：</label>' +
+								'<input type="text" value="' + deadlineTime + '" class="mui-input-clear PoLastDa" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>实际付款时间：</label>' +
+								'<input type="text" value="' + practicalTimeTxt + '" class="mui-input-clear PoPayTm" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>当前状态：</label>' +
+								'<input type="text" value="' + bizStatus + '" class="mui-input-clear PoStas" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>审批状态：</label>' +
+								'<input type="text" value="' + PoName + '" class="mui-input-clear" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>支付凭证：</label>' +
+								'<img src="' + imgPath + '"/>' +
+								'</div>'+
+							'</div>'	
+							}else {
+								pHtmlList += '<div class="mui-input-row">' +
+								'<div class="mui-input-row">' +
+								'<label>id：</label>' +
+								'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>付款金额：</label>' +
+								'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
 								'</div>' +
 								'<div class="mui-input-row">' +
 								'<label>实际付款金额：</label>' +
@@ -105,6 +143,7 @@
 									'<button type="submit" class="payRejectBtn mui-btn-blue">审核驳回</button>'+
 								'</div>'+
 							'</div>'
+							}
 						});
 				    } else {
 				    	pHtmlList += '<div class="hintTxt mui-input-row">' + 
@@ -174,19 +213,20 @@
 		},
 		payAjaxData:function(inText,num) {
 			var _this = this;
-			var codeId = $(this).attr('codeId');
-			var payId = $(this).attr('applyPayId');//得到支付单id
-			var money = $(this).attr('applyPayMoney');//得到实际付款金额
+			var payCodeId = $(this).attr('payCodeId');
+			var applyPayId = $(this).attr('applyPayId');//得到支付单id
+			var applyPayMoney = $(this).attr('applyPayMoney');//得到实际付款金额
+//			console.log(applyPayMoney)
 			//$('#mask').show()
 			$.ajax({
 				type: "GET",
 				url: "/a/biz/po/bizPoHeader/auditPay",
 				data: {
-					id:_this.userInfo.payId,//支付申请订单ID
-					currentType:$('#codeId').val(),//流程code
+					id:$('#applyPayId').val(),//支付申请订单ID
+					currentType:$('#payCodeId').val(),//流程code
 					auditType:num,
 					description:inText,
-					money:money//支付单创建时申请的金额
+					money:$('#applyPayMoney').val()//支付单创建时申请的金额
 				},
 				dataType: "json",
 				success: function(res) {
@@ -206,7 +246,7 @@
 		psyRejectData:function(rejectTxt,num) {
 			var _this = this;
 			var codeId = $(this).attr('codeId');
-			var payId = $(this).attr('applyPayId');//得到支付单id
+			var applyPayId = $(this).attr('applyPayId');//得到支付单id
 			//$('#mask').show()
 			$.ajax({
 				type: "GET",
