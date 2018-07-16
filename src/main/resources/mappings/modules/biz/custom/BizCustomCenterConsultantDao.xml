@@ -155,7 +155,7 @@
                 <if test="dbName == 'mssql'">'%'+#{consultants.mobile}+'%'</if>
                 <if test="dbName == 'mysql'">concat('%',#{consultants.mobile},'%')</if>
             </if>
-			<if test="orderHeaderEedTime!=null and orderHeaderEedTime==null">
+			<if test="orderHeaderEedTime!=null and ordrHeaderStartTime==null">
 				AND a.create_time &lt;= #{orderHeaderEedTime}
 			</if>
 			<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
