@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.sku;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
@@ -262,7 +263,7 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuNameListV2")
-	public List<BizSkuInfo> findSkuNameListV2(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String findSkuNameListV2(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		List<BizSkuInfo> bizSkuInfoList = new ArrayList<>();
 		if (ids != null && !"".equals(ids)){
 			String[] id = ids.split(",");
@@ -286,7 +287,7 @@ public class BizSkuInfoController extends BaseController {
 				}
 			}
 		}
-		return bizSkuInfoList;
+		return JsonUtil.generateData(bizSkuInfoList, null);
 	}
 
 	@ResponseBody

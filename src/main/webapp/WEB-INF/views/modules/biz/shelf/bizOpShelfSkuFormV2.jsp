@@ -265,10 +265,13 @@
                     type:"POST",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameListV2?ids="+skuIds,
                     dataType:"json",
-                    success:function(data){
+                    success:function(result){
+                        var data = result.data;
+                        console.info(data);
                         var htmlInfo = "";
                         var pri = 10;
                         $.each(data,function(index,item) {
+                            console.info(item)
                             if (item.bvFactorList != undefined) {
 								$.each(item.bvFactorList,function(index,bvFactor){
 									htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+

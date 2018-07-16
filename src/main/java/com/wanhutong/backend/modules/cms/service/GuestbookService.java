@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.cms.service;
 
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +21,12 @@ import com.wanhutong.backend.modules.cms.entity.Guestbook;
 @Transactional(readOnly = true)
 public class GuestbookService extends CrudService<GuestbookDao, Guestbook> {
 
+	@Override
 	public Guestbook get(Integer id) {
 		return dao.get(id);
 	}
-	
+
+	@Override
 	public Page<Guestbook> findPage(Page<Guestbook> page, Guestbook guestbook) {
 //		DetachedCriteria dc = dao.createDetachedCriteria();
 //		if (StringUtils.isNotEmpty(guestbook.getType())){
@@ -35,7 +38,7 @@ public class GuestbookService extends CrudService<GuestbookDao, Guestbook> {
 //		dc.add(Restrictions.eq(Guestbook.FIELD_DEL_FLAG, guestbook.getDelFlag()));
 //		dc.addOrder(Order.desc("createDate"));
 //		return dao.find(page, dc);
-		guestbook.getSqlMap().put("dsf", dataScopeFilter(guestbook.getCurrentUser(), "o", "u"));
+		guestbook.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "o", "u"));
 		
 		guestbook.setPage(page);
 		page.setList(dao.findList(guestbook));
