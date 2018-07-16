@@ -54,6 +54,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 客户专员管理Controller 采购商客户专营关联
@@ -79,6 +81,8 @@ public class BizCustomCenterConsultantController extends BaseController {
     private SystemService systemService;
     @Autowired
     private BizOrderHeaderDao bizOrderHeaderDao;
+
+    private Lock lock = new ReentrantLock();
 
     @RequiresPermissions("biz:custom:bizCustomCenterConsultant:view")
     @RequestMapping(value = "form")
@@ -112,7 +116,7 @@ public class BizCustomCenterConsultantController extends BaseController {
                 centersCust.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
             }
             if (orderHeaderEedTime != null) {
-                centersCust.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+                centersCust.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
             }
             List<BizCustomCenterConsultant> list = bizCustomCenterConsultantService.userFindList(centersCust);
 
@@ -124,7 +128,7 @@ public class BizCustomCenterConsultantController extends BaseController {
                 bizChatRecord.setOrdrHeaderStartTime(DateUtils.formatDate(ordrHeaderStartTime, "yyyy-MM-dd"));
             }
             if (orderHeaderEedTime != null) {
-                bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd"));
+                bizChatRecord.setOrderHeaderEedTime(DateUtils.formatDate(orderHeaderEedTime, "yyyy-MM-dd") + " 23:59:59");
             }
             if (!userAdmin.isAdmin()) {
                 bizChatRecord.getSqlMap().put("chat", BaseService.dataScopeFilter(userAdmin, "so", "su"));
@@ -134,8 +138,17 @@ public class BizCustomCenterConsultantController extends BaseController {
                     tasks.add(new Callable<Pair<BizCustomCenterConsultant, List<BizOrderHeader>>>() {
                         @Override
                         public Pair<BizCustomCenterConsultant, List<BizOrderHeader>> call() throws Exception {
-                            bizChatRecord.setOffice(customCenterConsultant.getCustoms());
-                            return Pair.of(customCenterConsultant, bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord));
+                            List<BizOrderHeader> orderHeaderList = null;
+                            try {
+                                lock.lock();
+                                bizChatRecord.setOffice(customCenterConsultant.getCustoms());
+                                orderHeaderList = bizOrderHeaderDao.findUserOrderCountSecond(bizChatRecord);
+                            } catch (Exception e) {
+                                logger.error("多线程取订单列表失败", e);
+                            } finally {
+                                lock.unlock();
+                            }
+                            return Pair.of(customCenterConsultant, orderHeaderList);
                         }
                     });
                 }
