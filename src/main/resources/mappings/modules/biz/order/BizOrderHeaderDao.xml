@@ -2283,15 +2283,6 @@ FROM
 		</if>
 		and bp.biz_status = 1
 		AND bo.order_type != 4
-		<if test="ordrHeaderStartTime ==null">
-			and DATE_FORMAT(bo.create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
-		</if>
-		<if test="ordrHeaderStartTime!=null and orderHeaderEedTime==null">
-			AND bo.create_time &lt;= #{ordrHeaderStartTime}
-		</if>
-		<if test="ordrHeaderStartTime !=null and orderHeaderEedTime!=null">
-			AND bo.create_time BETWEEN #{ordrHeaderStartTime} and #{orderHeaderEedTime}
-		</if>
 		AND NOT EXISTS (
 		SELECT 1
 		FROM sys_test_account ta
