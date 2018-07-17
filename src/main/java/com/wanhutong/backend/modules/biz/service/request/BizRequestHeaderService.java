@@ -267,7 +267,7 @@ public class BizRequestHeaderService extends CrudService<BizRequestHeaderDao, Bi
 			AliyunSmsClient.getInstance().sendSMS(
 					SmsTemplateCode.PENDING_AUDIT_1.getCode(),
 					phone.toString(),
-					ImmutableMap.of("order","备货清单", "orderNum", bizRequestHeader.getReqNo()));
+					ImmutableMap.of("order","备货清单", "orderNum", bizRequestHeader.getReqNo() == null ? StringUtils.EMPTY :bizRequestHeader.getReqNo()));
 		}
 
 
