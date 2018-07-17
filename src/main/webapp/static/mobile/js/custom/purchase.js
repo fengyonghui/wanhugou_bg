@@ -84,24 +84,23 @@
 						console.log(item)
 						var startBtn = '';
 						var classBtn = '';
+						var payBtn = '';
 /*有没有开启审核*/		if(item.process) {
-							startBtn = '审核';
+							startBtn = '审核'
 							classBtn = 'shenHe'
 						}else {
 							startBtn = '开启审核'
 							classBtn = 'startShenhe'
 						}
-/*审核流程*/		        if(item.process.purchaseOrderProcess) {
-							var code = item.process.purchaseOrderProcess.code
-//							console.log(code)
-							if(code==7 || code==-1) {
-								startBtn = ''
-							}
+						var code = item.process.purchaseOrderProcess.code;
+						var bizStatus = item.bizStatus;
+						var payment = item.currentPaymentId;
+/*审核流程*/		        if(code==7 || code==-1) {
+							startBtn = ''
 						}
-						var payBtn = '';
-/*有没有申请支付单*/		if(item.currentPaymentId=='' || item.currentPaymentId==0) {
+						var applyStatus = item.process.bizStatus;  
+/*有没有申请支付单*/		if((code==7 && applyStatus==1 && bizStatus=='部分支付') || (code==7 && payment=='')) {
 							payBtn = '申请付款';
-							
 						}else {
 							payBtn = ''
 						}
@@ -119,7 +118,7 @@
 //								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.process.createTime)+' ">' +
 //							'</div>' +
 							'<div class="app_font_cl content_part mui-row app_text_center">' +
-								'<div class="mui-col-xs-2 startCheckBtn">' +
+								'<div class="mui-col-xs-2" id="startCheckBtn" disabled="disabled">' +
 									'<li class="mui-table-view-cell '+classBtn+'"  listId="'+ item.id +'" codeId="'+ code +'">'+startBtn+'</li>' +
 								'</div>' +
 								'<div class="mui-col-xs-3 ApplyPayListBtn">' +

@@ -28,6 +28,7 @@
 				dataType: "json",
 				success: function(res) {
 					console.log(res)
+					$('#confirmPayId').val(res.data.bizPoHeader.id)
 					var pHtmlList = '';
 					if(res.data.page.list.length>0) {
 						$.each(res.data.page.list, function(i, item) {
@@ -69,7 +70,7 @@
 								imgPath = ''
 							}
 							var PoName = item.commonProcess.paymentOrderProcess.name
-							if(PoName=='审批完成') {
+							if(PoName=='审批完成' && item.bizStatus == 1) {
 								pHtmlList += '<div class="mui-input-row">' +
 								'<div class="mui-input-row">' +
 								'<label>id：</label>' +
@@ -104,6 +105,44 @@
 								'<img src="' + imgPath + '"/>' +
 								'</div>'+
 							'</div>'	
+							}else if(item.bizStatus == 0) {
+								pHtmlList += '<div class="mui-input-row">' +
+								'<div class="mui-input-row">' +
+								'<label>id：</label>' +
+								'<input type="text" value="' + item.id + '" class="mui-input-clear" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>付款金额：</label>' +
+								'<input type="text" value="' + item.total + '" class="mui-input-clear" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>实际付款金额：</label>' +
+								'<input type="text" value="' + item.payTotal + '" class="mui-input-clear" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>最后付款时间：</label>' +
+								'<input type="text" value="' + deadlineTime + '" class="mui-input-clear PoLastDa" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>实际付款时间：</label>' +
+								'<input type="text" value="' + practicalTimeTxt + '" class="mui-input-clear PoPayTm" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>当前状态：</label>' +
+								'<input type="text" value="' + bizStatus + '" class="mui-input-clear PoStas" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>审批状态：</label>' +
+								'<input type="text" value="' + PoName + '" class="mui-input-clear" disabled>' +
+								'</div>' +
+								'<div class="mui-input-row">' +
+								'<label>支付凭证：</label>' +
+								'<img src="' + imgPath + '"/>' +
+								'</div>'+
+								'<div class="app_p20" style="float:left;width:100%;">'+
+							    	'<button id="confirmPayBtn" style="width: 26%;float:none;left: 50%;margin-left: -41px;" class="mui-btn mui-btn-blue">确认付款</button>'+
+								'</div>'+
+							'</div>'
 							}else {
 								pHtmlList += '<div class="mui-input-row">' +
 								'<div class="mui-input-row">' +
@@ -153,7 +192,32 @@
 					$("#addPayListBtn").html(pHtmlList)
 				}
 			});
+			_this.hrefHtmlConfirmPay()
 		},
+		hrefHtmlConfirmPay: function() {
+			var _this = this;
+			$('#addPayListBtn').on('tap','#confirmPayBtn',function(){
+            	var url = $(this).attr('url');
+            	var poId = $(this).attr('poId');
+            	var listId = $(this).attr('listId');
+				var applyPayId = $(this).attr('applyPayId');
+				var confirmPayId =  _this.userInfo.listId;
+                if(url) {
+                	mui.toast('子菜单不存在')
+                }else if(applyPayId==applyPayId) {
+                	GHUTILS.OPENPAGE({
+						url: "../../mobile/html/confirmPayment.html",
+						extras: {
+								applyPayId:applyPayId,
+								id: _this.userInfo.listId,
+								poId:poId,
+								listId:listId,
+						}
+					})
+                }
+			})
+		},
+		            
 		payComfirDialig: function() {
 			var _this = this;
 			$('#addPayListBtn').on('click','.payRejectBtn', function() {
