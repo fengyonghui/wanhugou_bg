@@ -75,7 +75,7 @@ public class MenuController extends BaseController {
 		List<Menu> sourcelist = systemService.findAllMenu();
 
 		Menu.sortList(list, sourcelist, parentId, false);
-		list.removeIf(o -> "1".equals(o.getIsShow()));
+		list.removeIf(o -> !"1".equals(o.getIsShow()));
 		List<Map<String, Object>> result = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(list)) {
 			list.forEach(o -> {
