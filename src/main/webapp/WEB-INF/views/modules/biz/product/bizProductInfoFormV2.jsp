@@ -102,6 +102,48 @@
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
         </div>
     </div>
+
+    <div class="control-group">
+        <label class="control-label">产品banner视频:
+            <p style="opacity: 0.5;color: red;">*上传产品视频</p>
+            <p style="opacity: 0.5;color: red;">点击视频删除</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="file" onchange="submitVideo('prodBannerVideo', true)" value="上传" multiple="multiple" id="prodBannerVideo"/>
+        </div>
+        <div id="prodBannerVideoDiv">
+            <table>
+                <tr id="prodBannerVideoDivTr">
+                    <c:forEach items="${prodBannerVideoMap}" var="photo" varStatus="status">
+                        <td>
+                            <video width="300px" customInput="prodBannerVideoInput" src="${src}" autoplay="autoplay" controls="controls"></video>
+                        </td>
+                    </c:forEach>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">产品detail视频:
+            <p style="opacity: 0.5;color: red;">*上传产品视频</p>
+            <p style="opacity: 0.5;color: red;">点击视频删除</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="file" onchange="submitVideo('prodDetailVideo', true)" value="上传" multiple="multiple" id="prodDetailVideo"/>
+        </div>
+        <div id="prodDetailVideoDiv">
+            <table>
+                <tr id="prodDetailVideoDivTr">
+                    <c:forEach items="${prodDetailVideoMap}" var="photo" varStatus="status">
+                        <td>
+                            <video width="300px" customInput="prodDetailVideoInput" src="${src}" autoplay="autoplay" controls="controls"></video>
+                        </td>
+                    </c:forEach>
+                </tr>
+            </table>
+        </div>
+    </div>
+
     <div class="control-group">
         <label class="control-label">产品主图:
             <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
@@ -755,6 +797,73 @@
                 $(this).parent().parent().find("input[customInput='priceInput']").val(price);
             }
         });
+    }
+
+    function submitVideo(id, multiple){
+        var f = $("#" + id).val();
+        if(f==null||f==""){
+            alert("错误提示:上传文件不能为空,请重新选择文件");
+            return false;
+        }else{
+            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
+            extname = extname.toLowerCase();//处理了大小写
+            if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png" &&
+                extname!= "mp4"
+            ){
+                $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+                return false;
+            }
+        }
+        var file = document.getElementById(id).files;
+        var size = file[0].size;
+        if(size>10097152){
+            alert("错误提示:所选择的文件太大，文件大小最多支持10M!");
+            return false;
+        }
+        ajaxFileUploadVideo(id, multiple);
+    }
+
+    function ajaxFileUploadVideo(id, multiple) {
+        $.ajaxFileUpload({
+            url : '${ctx}/file/upload', //用于文件上传的服务器端请求地址
+            secureuri : false, //一般设置为false
+            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            type : 'POST',
+            dataType : 'text', //返回值类型 一般设置为json
+            success : function(data, status) {
+                var msg = data.substring(data.indexOf("{"), data.lastIndexOf("}")+1);
+                var msgJSON = $.parseJSON(msg);
+                console.info(msgJSON);
+                if(msgJSON.ret == "false" || !msgJSON.ret) {
+                    alert(msgJSON.errmsg);
+                    return;
+                }
+                var fileList = msgJSON.data.fileList;
+                var imgDiv = $("#" + id + "Div");
+                var imgDivHtml = "<td><video width='300px' customInput=\""+ id +"Input\" src=\"$Src\" controls=\"controls\" onclick=\"removeThis(this);\"></video></td>";
+                if (fileList && fileList.length > 0 && multiple) {
+                    for (var i = 0; i < fileList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", fileList[i]));
+                    }
+                }else if (fileList && fileList.length > 0 && !multiple) {
+                    imgDiv.empty();
+                    for (var i = 0; i < fileList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", fileList[i]));
+                    }
+                }else {
+                    var img = $("#" + id + "Input");
+                    img.attr("src", msgJSON.fullName);
+                }
+            },
+            error : function(data, status, e) {
+                //服务器响应失败处理函数
+                console.info(data);
+                console.info(status);
+                console.info(e);
+                alert("上传失败");
+            }
+        });
+        return false;
     }
 
     $(document).ready(function() {
