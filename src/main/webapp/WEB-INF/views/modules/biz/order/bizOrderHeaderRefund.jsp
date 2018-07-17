@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderDrawBackStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 
@@ -98,7 +99,7 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/saveRefund?type=refund&drawbackStatus=${OrderHeaderBizStatusEnum.REFUNDED.state}" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="bizOrderHeader" action="${ctx}/biz/order/bizOrderHeader/saveRefund?type=refund&drawbackStatus=${OrderHeaderDrawBackStatusEnum.REFUNDED.state}" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <input type="hidden" name="oneOrder" value="${entity.oneOrder}">
     <input type="hidden" id="bizOrderMark" name="orderMark" value="${bizOrderHeader.orderMark}">

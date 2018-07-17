@@ -24,12 +24,7 @@ public enum OrderHeaderBizStatusEnum {
     COMPLETE(30,"已完成"),
     CANCLE(35,"已取消"),
     DELETE(40,"已删除"),
-    UNAPPROVE(45, "审核失败"),
-
-    REFUND(0, "退款申请"),
-    REFUNDING(1, "退款中"),
-    REFUNDREJECT(2, "驳回"),
-    REFUNDED(3, "退款完成");
+    UNAPPROVE(45, "审核失败");
 
     private Integer state;
     private String desc;

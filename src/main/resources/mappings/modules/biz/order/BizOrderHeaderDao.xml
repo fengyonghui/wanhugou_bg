@@ -2520,10 +2520,31 @@ FROM
 		)
 	</select>
 
-	<update id="updateDrawbackStatus">
-		UPDATE biz_drawback SET
-		drawback_status = #{drawBack.drawbackStatus}
-		WHERE order_id = #{id}
-	</update>
+	<!-- 通过订单获取退款记录entity -->
+	<select id="findDrawBack" resultType="com.wanhutong.backend.modules.biz.entity.order.BizDrawBack" parameterType="BizOrderHeader">
+		SELECT
+		a.id AS "id",
+		a.order_id AS "orderDetail.orderHeader.id",
+		a.biz_status AS "bizStatus",
+		a.status AS "delFlag",
+		a.create_id AS "createBy.id",
+		a.create_time AS "createDate",
+		a.u_version AS "uVersion",
+		a.update_id AS "updateBy.id",
+		a.update_time AS "updateDate",
+		a.order_type AS "orderType",
+		a.status_type AS "statusType",
+		a.code AS "code",
+		a.drawback_status AS "drawbackStatus",
+		a.drawback_money AS "drawbackMoney",
+		a.apply_time AS "applyTime",
+		a.reasons AS "reasons"
+		FROM
+		biz_drawback a,
+		biz_order_header bo
+		where
+		bo.id=a.order_id
+		and bo.order_num=#{orderNum}
+	</select>
 
 </mapper>
