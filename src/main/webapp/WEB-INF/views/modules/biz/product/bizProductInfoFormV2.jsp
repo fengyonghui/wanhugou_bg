@@ -106,10 +106,11 @@
     <div class="control-group">
         <label class="control-label">产品banner视频:
             <p style="opacity: 0.5;color: red;">*上传产品视频</p>
+            <p style="opacity: 0.5;color: red;">视频比例建议16:9横版</p>
             <p style="opacity: 0.5;color: red;">点击视频删除</p>
         </label>
         <div class="controls">
-            <input class="btn" type="file" name="file" onchange="submitVideo('prodBannerVideo', true)" value="上传" multiple="multiple" id="prodBannerVideo"/>
+            <input class="btn" type="file" name="file" onchange="submitVideo('prodBannerVideo', false)" value="上传" id="prodBannerVideo"/>
         </div>
         <div id="prodBannerVideoDiv">
             <table>
@@ -127,9 +128,10 @@
         <label class="control-label">产品detail视频:
             <p style="opacity: 0.5;color: red;">*上传产品视频</p>
             <p style="opacity: 0.5;color: red;">点击视频删除</p>
+            <p style="opacity: 0.5;color: red;">视频比例建议16:9横版</p>
         </label>
         <div class="controls">
-            <input class="btn" type="file" name="file" onchange="submitVideo('prodDetailVideo', true)" value="上传" multiple="multiple" id="prodDetailVideo"/>
+            <input class="btn" type="file" name="file" onchange="submitVideo('prodDetailVideo', false)" value="上传" id="prodDetailVideo"/>
         </div>
         <div id="prodDetailVideoDiv">
             <table>
@@ -429,6 +431,8 @@
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:input path="photoDetails" id="photoDetails" cssStyle="display: none"/>
     <form:input path="imgUrl" id="imgUrl" cssStyle="display: none"/>
+    <form:input path="detailVideo" id="detailVideo" cssStyle="display: none"/>
+    <form:input path="bannerVideo" id="bannerVideo" cssStyle="display: none"/>
     <div class="form-actions">
         <shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                            type="button"
@@ -626,6 +630,20 @@
                     bannerImgStr += ($(bannerImg[i]).attr("src"));
                 }
                 $("#imgUrl").val(bannerImgStr);
+
+                var bannerVideo = $("#prodBannerVideoDiv").find("[customInput = 'prodBannerVideoInput']");
+                var bannerVideoStr = "";
+                for (var i = 0; i < bannerVideo.length; i ++) {
+                    bannerVideoStr += ($(bannerVideo[i]).attr("src"));
+                }
+                $("#bannerVideo").val(bannerVideoStr);
+
+                var detailVideo = $("#prodDetailVideoDiv").find("[customInput = 'prodDetailVideoInput']");
+                var detailVideoStr = "";
+                for (var i = 0; i < detailVideoStr.length; i ++) {
+                    detailVideoStr += ($(detailVideo[i]).attr("src"));
+                }
+                $("#bannerVideo").val(detailVideoStr);
 
                 var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
                 var detailImgStr = "";
