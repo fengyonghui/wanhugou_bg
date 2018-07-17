@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.DefaultPropEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderDrawBackStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <%@ taglib prefix="biz" tagdir="/WEB-INF/tags/biz" %>
 <html>
@@ -1197,8 +1198,8 @@
                 <%--<c:if test="${empty entity.orderDetails}">--%>
                 <c:if test="${(empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails) || (refundSkip eq 'refundSkip')}">
                     <shiro:hasPermission name="biz:order:bizOrderHeader:edit">
-                        <c:if test='${entity.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUND.state}'>
-                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('${OrderHeaderBizStatusEnum.REFUNDING.state}','退款申请',${bizOrderHeader.id})"/>
+                        <c:if test='${entity.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUND.state}'>
+                            <input id="refund" class="btn" type="button" value="同意退款" onclick="checkInfo('${OrderHeaderDrawBackStatusEnum.REFUNDING.state}','退款申请',${bizOrderHeader.id})"/>
                         </c:if>
                     </shiro:hasPermission>
                 </c:if>

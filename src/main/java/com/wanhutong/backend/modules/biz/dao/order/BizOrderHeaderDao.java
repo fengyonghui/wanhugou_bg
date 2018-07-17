@@ -11,6 +11,7 @@ import com.wanhutong.backend.modules.biz.entity.dto.BizPlatformDataOverviewDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto;
 import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.order.BizDrawBack;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.sys.entity.User;
@@ -323,9 +324,9 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
     BizOrderHeader categorySkuStatistics(User user);
 
     /**
-     * 更新退款订单退款状态
+     * 通过订单获取退款记录entity
      *
      * @param bizOrderHeader
      */
-    void updateDrawbackStatus(BizOrderHeader bizOrderHeader);
+    BizDrawBack findDrawBack(BizOrderHeader bizOrderHeader);
 }
