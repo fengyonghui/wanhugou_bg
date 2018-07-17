@@ -92,7 +92,9 @@
 							startBtn = '开启审核'
 							classBtn = 'startShenhe'
 						}
-						var code = item.process.purchaseOrderProcess.code;
+						if(item.process) {
+							var code = item.process.purchaseOrderProcess.code;
+						}
 						var bizStatus = item.bizStatus;
 						var payment = item.currentPaymentId;
 /*审核流程*/		        if(code==7 || code==-1) {

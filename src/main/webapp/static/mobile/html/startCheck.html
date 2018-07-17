@@ -18,6 +18,7 @@
 			.mui-bar-nav .iconRight {color: #fff;padding: 10px;}
 			.footerBtn {position: absolute;bottom: 0;width: 100%;}
 			.footerBtn button {margin-left: 17%;}
+			.mui-input-row font {color: red;position: absolute;right: 60px;top: 40%;}
 		</style>
 	</head>
 	<body>
@@ -43,11 +44,11 @@
 				</div>-->
 			    <div class="mui-input-row"> 
 			        <label>采购单编号：</label>
-			        <input type="text" class="mui-input-clear" id="OrordNum" disabled>
+			        <input type="text" class="mui-input-clear" id="PoordNum" disabled>
 			    </div>
 			    <div class="mui-input-row">
 			        <label>采购单来源：</label>
-			        <input type="text" class="mui-input-clear" id="PoordNum" disabled>
+			        <input type="text" class="mui-input-clear" id="OrordNum" disabled>
 			    </div>
 			    <div class="mui-input-row">
 			        <label>订单总价：</label>
@@ -158,10 +159,12 @@
 				    <div class="mui-input-row">
 				        <label>最后付款时间：</label>
 				        <input id="lastPayDate" type="date" name="" />
+				        <font>*</font>
 				    </div>
 				    <div class="mui-input-row">
 				        <label>申请金额：</label>
 				        <input type="text" class="mui-input-clear" id="totalMoney" placeholder="必填！">
+				        <font>*</font>
 				    </div>
 			    </div>
 				<div class="app_p20">

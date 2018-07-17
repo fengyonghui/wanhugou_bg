@@ -13,10 +13,10 @@
 		},
 		pageInit: function() {
 			var _this = this;
-			_this.getData()
+			_this.getData1()
 			_this.payComfirDialig()
 		},
-		getData: function() {
+		getData1: function() {
 			var _this = this;
 			var url = $(this).attr('url');
 			$.ajax({
@@ -105,7 +105,7 @@
 								'<img src="' + imgPath + '"/>' +
 								'</div>'+
 							'</div>'	
-							}else if(item.bizStatus == 0) {
+							}/*else if(item.bizStatus == 0) {
 								pHtmlList += '<div class="mui-input-row">' +
 								'<div class="mui-input-row">' +
 								'<label>id：</label>' +
@@ -143,7 +143,7 @@
 							    	'<button id="confirmPayBtn" style="width: 26%;float:none;left: 50%;margin-left: -41px;" class="mui-btn mui-btn-blue">确认付款</button>'+
 								'</div>'+
 							'</div>'
-							}else {
+							}*/else {
 								pHtmlList += '<div class="mui-input-row">' +
 								'<div class="mui-input-row">' +
 								'<label>id：</label>' +
@@ -186,37 +186,37 @@
 						});
 				    } else {
 				    	pHtmlList += '<div class="hintTxt mui-input-row">' + 
-		    						'<h1>暂无申请支付信息</h1>'+
+		    						'<p>暂无申请支付信息</p>'+
 	    						'</div>'
 				    }
 					$("#addPayListBtn").html(pHtmlList)
 				}
 			});
-			_this.hrefHtmlConfirmPay()
+//			_this.hrefHtmlConfirmPay()
 		},
-		hrefHtmlConfirmPay: function() {
-			var _this = this;
-			$('#addPayListBtn').on('tap','#confirmPayBtn',function(){
-            	var url = $(this).attr('url');
-            	var poId = $(this).attr('poId');
-            	var listId = $(this).attr('listId');
-				var applyPayId = $(this).attr('applyPayId');
-				var confirmPayId =  _this.userInfo.listId;
-                if(url) {
-                	mui.toast('子菜单不存在')
-                }else if(applyPayId==applyPayId) {
-                	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/confirmPayment.html",
-						extras: {
-								applyPayId:applyPayId,
-								id: _this.userInfo.listId,
-								poId:poId,
-								listId:listId,
-						}
-					})
-                }
-			})
-		},
+//		hrefHtmlConfirmPay: function() {
+//			var _this = this;
+//			$('#addPayListBtn').on('tap','#confirmPayBtn',function(){
+//          	var url = $(this).attr('url');
+//          	var poId = $(this).attr('poId');
+//          	var listId = $(this).attr('listId');
+//				var applyPayId = $(this).attr('applyPayId');
+//				var confirmPayId =  _this.userInfo.listId;
+//              if(url) {
+//              	mui.toast('子菜单不存在')
+//              }else if(applyPayId==applyPayId) {
+//              	GHUTILS.OPENPAGE({
+//						url: "../../mobile/html/confirmPayment.html",
+//						extras: {
+//								applyPayId:applyPayId,
+//								id: _this.userInfo.listId,
+//								poId:poId,
+//								listId:listId,
+//						}
+//					})
+//              }
+//			})
+//		},
 		            
 		payComfirDialig: function() {
 			var _this = this;
