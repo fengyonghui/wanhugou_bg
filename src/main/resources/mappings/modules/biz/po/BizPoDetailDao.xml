@@ -35,7 +35,9 @@
 	<select id="findList" resultType="BizPoDetail">
 		SELECT 
 			<include refid="bizPoDetailColumns"/>
+			,bsp.object_id AS "schedulingPlan.objectId"
 		FROM biz_po_detail a
+			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = a.id
 		<include refid="bizPoDetailJoins"/>
 		<where>
 			<if test="poHeader!=null and poHeader.id!=null and poHeader.id!=''">
@@ -140,5 +142,31 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<insert id="insertFromBizPoDetail">
+		INSERT INTO biz_scheduling_plan(
+		id,
+		object_name,
+		object_id,
+		original_num,
+		scheduling_num,
+		complete_num,
+		create_id,
+		create_time,
+		update_id,
+		update_time
+		) VALUES (
+		NULL ,
+		"biz_po_detail",
+		#{id},
+		#{ordQty},
+		#{ordQty}-#{sendQty},
+		#{sendQty},
+		#{createBy.id},
+		#{createDate},
+		#{updateBy.id},
+		#{updateDate}
+		)
+	</insert>
 	
 </mapper>

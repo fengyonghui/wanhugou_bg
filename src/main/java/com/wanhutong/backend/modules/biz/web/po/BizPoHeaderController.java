@@ -671,62 +671,7 @@ public class BizPoHeaderController extends BaseController {
             }
         }
 
-        if ("audit".equalsIgnoreCase(type) && bizPoHeader.getCommonProcess() != null) {
-            PurchaseOrderProcessConfig.PurchaseOrderProcess purchaseOrderProcess = ConfigGeneral.PURCHASE_ORDER_PROCESS_CONFIG.get().getProcessMap().get(Integer.valueOf(bizPoHeader.getCommonProcess().getType()));
-            model.addAttribute("purchaseOrderProcess", purchaseOrderProcess);
-        }
-
-        if (bizPoHeader.getVendOffice() != null && bizPoHeader.getVendOffice().getBizVendInfo() != null) {
-            CommonImg compactImg = new CommonImg();
-            compactImg.setImgType(ImgEnum.VEND_COMPACT.getCode());
-            compactImg.setObjectId(bizPoHeader.getVendOffice().getId());
-            compactImg.setObjectName(VEND_IMG_TABLE_NAME);
-            List<CommonImg> compactImgList = commonImgService.findList(compactImg);
-            model.addAttribute("compactImgList", compactImgList);
-
-            CommonImg identityCardImg = new CommonImg();
-            identityCardImg.setImgType(ImgEnum.VEND_IDENTITY_CARD.getCode());
-            identityCardImg.setObjectId(bizPoHeader.getVendOffice().getId());
-            identityCardImg.setObjectName(VEND_IMG_TABLE_NAME);
-            List<CommonImg> identityCardImgList = commonImgService.findList(identityCardImg);
-            model.addAttribute("identityCardImgList", identityCardImgList);
-
-        }
-
-        List<Role> roleList = UserUtils.getUser().getRoleList();
-        Set<String> roleSet = Sets.newHashSet();
-        for (Role r : roleList) {
-            RoleEnNameEnum parse = RoleEnNameEnum.parse(r.getEnname());
-            if (parse != null) {
-                roleSet.add(parse.name());
-            }
-        }
-
-        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-        bizPoOrderReq.setPoHeader(bizPoHeader);
-        List<BizPoOrderReq> bizPoOrderReqs = bizPoOrderReqService.findList(bizPoOrderReq);
-        if (CollectionUtils.isNotEmpty(bizPoOrderReqs)) {
-            bizPoOrderReq = bizPoOrderReqs.get(0);
-        }
-        BizOrderHeader bizOrderHeader = null;
-        if (bizPoOrderReq != null) {
-            bizOrderHeader = bizOrderHeaderService.get(bizPoOrderReq.getSoId());
-        }
-
-        if (bizOrderHeader != null && 6 == bizOrderHeader.getOrderType()) {
-            CommonImg commonImg = new CommonImg();
-            commonImg.setObjectId(bizOrderHeader.getId());
-            commonImg.setObjectName(ImgEnum.ORDER_SKU_PHOTO.getTableName());
-            commonImg.setImgType(ImgEnum.ORDER_SKU_PHOTO.getCode());
-            List<CommonImg> photoOrderImgList = commonImgService.findList(commonImg);
-            model.addAttribute("photoOrderImgList", photoOrderImgList);
-        }
-
-        model.addAttribute("roleSet", roleSet);
         model.addAttribute("bizPoHeader", bizPoHeader);
-        model.addAttribute("bizOrderHeader", bizOrderHeader);
-        model.addAttribute("type", type);
-        model.addAttribute("prewStatus", prewStatus);
-        return "modules/biz/po/bizPoHeaderForm";
+        return "modules/biz/po/bizPoHeaderScheduling";
     }
 }

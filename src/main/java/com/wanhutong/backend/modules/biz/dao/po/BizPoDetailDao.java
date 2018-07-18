@@ -14,5 +14,9 @@ import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
  */
 @MyBatisDao
 public interface BizPoDetailDao extends CrudDao<BizPoDetail> {
-	
+    /**
+     * 将bizPoDetail中数据插入排产计划表
+     * @param bizPoDetail
+     */
+    void insertFromBizPoDetail(BizPoDetail bizPoDetail);
 }

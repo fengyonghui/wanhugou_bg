@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.service.po;
 import java.util.List;
 
 import com.wanhutong.backend.modules.biz.dao.po.BizPoHeaderDao;
+import com.wanhutong.backend.modules.biz.dao.po.BizSchedulingPlanDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,9 @@ import javax.annotation.Resource;
 public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail> {
 	@Resource
 	private BizPoHeaderDao bizPoHeaderDao;
+
+	@Resource
+	private BizPoDetailDao bizPoDetailDao;
 
 	public BizPoDetail get(Integer id) {
 		return super.get(id);
@@ -62,6 +66,11 @@ public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail>
 	@Transactional(readOnly = false)
 	public void delete(BizPoDetail bizPoDetail) {
 		super.delete(bizPoDetail);
+	}
+
+	@Transactional(readOnly = false)
+	public void insertFromBizPoDetail(BizPoDetail bizPoDetail){
+		bizPoDetailDao.insertFromBizPoDetail(bizPoDetail);
 	}
 	
 }
