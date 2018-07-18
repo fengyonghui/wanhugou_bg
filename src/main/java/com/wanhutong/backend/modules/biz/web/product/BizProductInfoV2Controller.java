@@ -178,6 +178,11 @@ public class BizProductInfoV2Controller extends BaseController {
             List<CommonImg> subImgList = commonImgService.findList(commonImg);
             commonImg.setImgType(ImgEnum.LIST_PRODUCT_TYPE.getCode());
             List<CommonImg> itemImgList = commonImgService.findList(commonImg);
+            commonImg.setImgType(ImgEnum.PRODUCT_MIAN_VIDEO.getCode());
+            List<CommonImg> bannerVideoList = commonImgService.findList(commonImg);
+            commonImg.setImgType(ImgEnum.PRODUCT_DETAIL_VIDEO.getCode());
+            List<CommonImg> detailVideoList = commonImgService.findList(commonImg);
+
             String photos = "";
             String photoDetails = "";
             String photoLists = "";
@@ -208,6 +213,12 @@ public class BizProductInfoV2Controller extends BaseController {
             }
             if (imgList != null && !imgList.isEmpty()) {
                 model.addAttribute("photosMap", photosMap);
+            }
+            if (CollectionUtils.isNotEmpty(bannerVideoList)) {
+                model.addAttribute("bannerVideoList", bannerVideoList);
+            }
+            if (CollectionUtils.isNotEmpty(detailVideoList)) {
+                model.addAttribute("detailVideoList", detailVideoList);
             }
         }
 

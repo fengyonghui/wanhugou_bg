@@ -329,4 +329,11 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param bizOrderHeader
      */
     BizDrawBack findDrawBack(BizOrderHeader bizOrderHeader);
+
+    /**
+     * 通过orderNum获取订单Entity
+     *
+     * @param orderNum
+     */
+    BizOrderHeader getByOrderNum(String orderNum);
 }
