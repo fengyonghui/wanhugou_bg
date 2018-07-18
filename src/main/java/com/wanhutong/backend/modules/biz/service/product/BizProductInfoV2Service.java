@@ -162,6 +162,10 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
 
         //保存产品图片
         saveCommonImg(bizProductInfo, copy);
+        String bannerVideo = bizProductInfo.getBannerVideo();
+        String detailVideo = bizProductInfo.getDetailVideo();
+        saveVideo(bizProductInfo.getId(), bannerVideo, ImgEnum.PRODUCT_MIAN_VIDEO);
+        saveVideo(bizProductInfo.getId(), detailVideo, ImgEnum.PRODUCT_DETAIL_VIDEO);
 
         // 标签
         if(StringUtils.isNotBlank(bizProductInfo.getTagStr())) {
@@ -486,6 +490,67 @@ public class BizProductInfoV2Service extends CrudService<BizProductInfoV2Dao, Bi
             commonImg.setImgServer(DsConfig.getImgServer());
             commonImgService.save(commonImg);
         }
+    }
+
+
+    /**
+     * 保存视频
+     *
+     * @param id
+     * @param videos
+     * @param imgEnum
+     */
+    private void saveVideo(Integer id, String videos, ImgEnum imgEnum) {
+        if (StringUtils.isBlank(videos)) {
+            return;
+        }
+        String[] videoArr = videos.split(",");
+
+        List<CommonImg> commonImgs = getImgList(imgEnum.getCode(), id);
+
+        Set<String> existSet = new LinkedHashSet<>();
+        for (CommonImg c : commonImgs) {
+            existSet.add(c.getImgServer() + c.getImgPath());
+        }
+        Set<String> newSet = new LinkedHashSet<>(Arrays.asList(videoArr));
+
+        Set<String> result = new LinkedHashSet<>();
+        //差集，结果做删除操作
+        result.clear();
+        result.addAll(existSet);
+        result.removeAll(newSet);
+        for (String url : result) {
+            for (CommonImg c : commonImgs) {
+                if (url.equals(c.getImgServer() + c.getImgPath())) {
+                    c.setDelFlag("0");
+                    commonImgService.delete(c);
+                }
+            }
+        }
+
+        result.clear();
+        result.addAll(newSet);
+        result.removeAll(existSet);
+
+        CommonImg commonImg = new CommonImg();
+        commonImg.setObjectId(id);
+        commonImg.setObjectName(imgEnum.getTableName());
+        commonImg.setImgType(imgEnum.getCode());
+
+        int index = 0;
+        for (String video : result) {
+            if (StringUtils.isNotBlank(video)) {
+                commonImg.setImgSort(index);
+                commonImg.setId(null);
+                commonImg.setImgPath(video.replaceAll(DsConfig.getImgServer(), StringUtils.EMPTY).replaceAll(DsConfig.getOldImgServer(), StringUtils.EMPTY));
+                commonImg.setImgServer(video.contains(DsConfig.getOldImgServer()) ? DsConfig.getOldImgServer() : DsConfig.getImgServer());
+                commonImgService.save(commonImg);
+                continue;
+            }
+            index ++;
+        }
+
+
     }
 
     /**
