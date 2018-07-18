@@ -172,6 +172,9 @@ public class BizOrderHeaderController extends BaseController {
         }
         Page<BizOrderHeader> page = bizOrderHeaderService.findPage(new Page<BizOrderHeader>(request, response), bizOrderHeader);
         model.addAttribute("page", page);
+        if (bizOrderHeader.getSource() != null) {
+            model.addAttribute("source", bizOrderHeader.getSource());
+        }
         model.addAttribute("statu", bizOrderHeader.getStatu() == null ? "" : bizOrderHeader.getStatu());
 
         return "modules/biz/order/bizOrderHeaderList";
@@ -181,6 +184,9 @@ public class BizOrderHeaderController extends BaseController {
     @RequestMapping(value = "form")
     public String form(BizOrderHeader bizOrderHeader, Model model, String orderNoEditable, String orderDetails, HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("orderType", bizOrderHeader.getOrderType());
+        if (bizOrderHeader.getSource() != null) {
+            model.addAttribute("source", bizOrderHeader.getSource());
+        }
         BizOrderComment bizOrderComment = new BizOrderComment();
         bizOrderComment.setOrder(bizOrderHeader);
         List<BizOrderComment> commentList = bizOrderCommentService.findList(bizOrderComment);
@@ -412,7 +418,7 @@ public class BizOrderHeaderController extends BaseController {
 //			保存跳回客户专员
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=" + bizOrderHeader.getConsultantId();
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?statu=" + statuPath;
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/list?statu=" + statuPath + "&source=" + bizOrderHeader.getSource();
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:doRefund")
@@ -468,7 +474,7 @@ public class BizOrderHeaderController extends BaseController {
         if (bizOrderHeader.getFlag() != null && "cendDelete".equals(bizOrderHeader.getFlag())) {
             return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/cendList";
         }
-        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu();
+        return "redirect:" + Global.getAdminPath() + "/biz/order/bizOrderHeader/?repage&customer.id=" + bizOrderHeader.getCustomer().getId() + "&statu=" + bizOrderHeader.getStatu() + "&source=" + bizOrderHeader.getSource();
     }
 
     @RequiresPermissions("biz:order:bizOrderHeader:edit")

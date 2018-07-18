@@ -139,12 +139,12 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
             }
             if(flag){
                 bizOrderHeader.setCenterId(user.getCompany().getId());
-            }else {
-                if (roleFlag) {
-                    bizOrderHeader.setConsultantId(user.getId());
-                }else {
-                    bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
-                }
+            }else if (roleFlag) {
+                bizOrderHeader.setConsultantId(user.getId());
+            } else if (bizOrderHeader.getSource() != null && "vendor".equals(bizOrderHeader.getSource())) {
+                bizOrderHeader.getSqlMap().put("order",BaseService.dataScopeFilter(user,"vend","su"));
+            } else {
+                bizOrderHeader.getSqlMap().put("order", BaseService.dataScopeFilter(user, "s", "su"));
             }
             return super.findPage(page, bizOrderHeader);
         }

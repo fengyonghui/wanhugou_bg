@@ -405,27 +405,27 @@
 <ul class="nav nav-tabs">
     <c:if test="${bizOrderHeader.flag=='check_pending'}">
         <li>
-            <a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a>
+            <a href="${ctx}/biz/order/bizOrderHeader/list?flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息列表</a>
         </li>
     </c:if>
     <c:if test="${empty bizOrderHeader.flag}">
         <c:if test="${empty bizOrderHeader.clientModify}">
-            <li><a href="${ctx}/biz/order/bizOrderHeader/">订单信息列表</a></li>
+            <li><a href="${ctx}/biz/order/bizOrderHeader?source=${source}">订单信息列表</a></li>
         </c:if>
         <c:if test="${bizOrderHeader.clientModify eq 'client_modify'}">
-            <li><a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizOrderHeader.consultantId}">订单信息列表</a></li>
+            <li><a href="${ctx}/biz/order/bizOrderHeader/list?flag=check_pending&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息列表</a></li>
         </c:if>
     </c:if>
 
     <li class="active">
         <c:if test="${entity.orderNoEditable eq 'editable'}">
-            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=${entity.orderNoEditable}">订单信息支付</a>
+            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${bizOrderHeader.id}&orderNoEditable=${entity.orderNoEditable}&source=${source}">订单信息支付</a>
         </c:if>
         <c:if test="${entity.orderDetails eq 'details'}">
-            <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${bizOrderHeader.id}&orderDetails=${entity.orderDetails}">订单信息详情</a>
+            <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${bizOrderHeader.id}&orderDetails=${entity.orderDetails}&source=${source}">订单信息详情</a>
         </c:if>
         <c:if test="${bizOrderHeader.flag eq 'check_pending'}">
-            <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${bizOrderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}">订单信息审核</a>
+            <a href="${ctx}/biz/order/bizPhotoOrderHeader/form?id=${bizOrderHeader.id}&flag=${bizOrderHeader.flag}&consultantId=${bizOrderHeader.consultantId}&source=${source}">订单信息审核</a>
         </c:if>
         <%--<c:if test="${empty entity.orderNoEditable && empty bizOrderHeader.flag && empty entity.orderDetails}">--%>
             <%--<c:if test="${empty bizOrderHeader.clientModify}">--%>
@@ -445,6 +445,7 @@
     <input type="hidden" name="clientModify" value="${bizOrderHeader.clientModify}" />
     <input type="hidden" name="consultantId" value="${bizOrderHeader.consultantId}" />
     <input type="hidden" id="orderType" value="${orderType}"/>
+    <input type="hidden" name="source" value="${source}"/>
     <form:hidden path="platformInfo.id" value="6"/>
     <sys:message content="${message}"/>
     <div class="control-group">

@@ -139,6 +139,11 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      */
     private BizDrawBack drawBack;
 
+    /**
+     * 供应商查看订单 source = vendor
+     */
+    private String source;
+
     public String getLocationAddress() {
         return locationAddress;
     }
@@ -716,5 +721,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setDrawBack(BizDrawBack drawBack) {
         this.drawBack = drawBack;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }
