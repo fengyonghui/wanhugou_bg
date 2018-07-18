@@ -625,7 +625,7 @@
                                        type='text'/></td>
                             <td>
                                 <input readonly="readonly" type="text" name="unitPrices"
-                                       value="${orderDetail.skuInfo.buyPrice}" class="input-mini">
+                                       value="${orderDetail.buyPrice}" class="input-mini">
                             </td>
 
                         </tr>
