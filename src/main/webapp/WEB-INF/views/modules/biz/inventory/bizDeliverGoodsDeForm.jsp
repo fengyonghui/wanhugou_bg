@@ -17,10 +17,6 @@
             //$("#name").focus();
             $("#inputForm").validate({
                 submitHandler: function(form){
-                    if($("#prodInfo").find("td").length==0){
-                        alert("请先选择待发货订单,然后点击确定。");
-                        return;
-                    }
                     var tt="";
                     var flag = false;
                     var total = 0;

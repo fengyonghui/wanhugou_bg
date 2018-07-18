@@ -178,8 +178,9 @@
                     type:"post",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuListV2",
                     data:$('#searchForm').serialize(),
-                    success:function (data) {
+                    success:function (result) {
                          $("#prodInfo2").empty();
+                        var data = JSON.parse(result).data;
                          if (data == '') {
                              return false;
                          } else {
@@ -212,7 +213,8 @@
 
                                      tr_tds += "<tr class='" + prodId + "'>";
                                      tr_tds += "<td><input type='checkbox' value='" + skuInfo.id + "' title='shelfIds'/></td>";
-                                     tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td><td>" + skuInfo.skuPropertyInfos + "</td>";
+                                     tr_tds += "<td>" + skuInfo.name + "</td><td>" + skuInfo.buyPrice + "</td><td>" + skuInfo.partNo + "</td><td>" + skuInfo.itemNo + "</td>" ;
+										 // "<td>" + skuInfo.skuPropertyInfos + "</td>";
 
                                      if (flag) {
                                          tr_tds += "<td rowspan='" + skuInfoList.length + "'>" + varietyName + "<br/>" + f + "</td>";
@@ -263,10 +265,13 @@
                     type:"POST",
                     url:"${ctx}/biz/sku/bizSkuInfo/findSkuNameListV2?ids="+skuIds,
                     dataType:"json",
-                    success:function(data){
+                    success:function(result){
+                        var data = result.data;
+                        console.info(data);
                         var htmlInfo = "";
                         var pri = 10;
                         $.each(data,function(index,item) {
+                            console.info(item)
                             if (item.bvFactorList != undefined) {
 								$.each(item.bvFactorList,function(index,bvFactor){
 									htmlInfo+="<tr class='"+item.id+"'><td id='"+item.id+"'><input name='skuInfoIds' type='hidden' readonly='readonly' value='"+item.id+"'/>"+ item.name +"</td>"+
@@ -511,7 +516,7 @@
 					<th>出厂价(元)：</th>
 					<th>商品编码</th>
 					<th>商品货号</th>
-					<th>商品属性</th>
+					<%--<th>商品属性</th>--%>
 					<th>分类与服务系数</th>
 					<th>品牌名称</th>
 					<th>产品图片</th>

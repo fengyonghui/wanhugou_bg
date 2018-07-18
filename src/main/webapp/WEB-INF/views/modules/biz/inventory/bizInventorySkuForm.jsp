@@ -248,7 +248,7 @@
 						<th>商品属性</th>
 						<th>库存类型</th>
 						<th>入库数量</th>
-						<th>操作</th>
+						<%--<th>操作</th>--%>
 					</tr>
 					</thead>
 					<tbody id="prodInfo">
@@ -268,7 +268,7 @@
 						<td>${entity.skuInfo.skuPropertyInfos}</td>
 						<td>${fns:getDictLabel(entity.invType, 'inv_type', '未知状态')}</td>
 						<td><input name="stockQtys" value="${entity.stockQty}" style="width: 40px"/></td>
-							<td><a href='#' onclick="delItem('${entity.id}')">删除</a></td>
+							<%--<td><a href='#' onclick="delItem('${entity.id}')">删除</a></td>--%>
 						</tr>
 					</c:if>
 					</tbody>

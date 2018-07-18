@@ -45,6 +45,15 @@ public enum ImgEnum{
      * 拍照下单的商品信息图
      */
     ORDER_SKU_PHOTO((byte)28,"订单商品信息图","biz_order_header"),
+
+    /**
+     * 产品主页视频
+     */
+    PRODUCT_MIAN_VIDEO((byte) 71, "产品主页视频", "biz_product_info"),
+    /**
+     * 产品详情视频
+     */
+    PRODUCT_DETAIL_VIDEO((byte) 72, "产品详情视频", "biz_product_info"),
     ;
 
     private int code;

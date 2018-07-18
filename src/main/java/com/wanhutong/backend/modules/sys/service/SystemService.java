@@ -98,8 +98,8 @@ public class SystemService extends BaseService implements InitializingBean {
 	public Page<User> findUser(Page<User> page, User user) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
         boolean flag = false;
-        if(user.getCurrentUser().getRoleList()!=null) {
-            for (Role role : user.getCurrentUser().getRoleList()) {
+        if(UserUtils.getUser().getRoleList()!=null) {
+            for (Role role : UserUtils.getUser().getRoleList()) {
                 if (RoleEnNameEnum.WAREHOUSESPECIALIST.getState().equals(role.getEnname())) {
                     flag = true;
                 }
@@ -137,9 +137,9 @@ public class SystemService extends BaseService implements InitializingBean {
 		}
 
         if (flag){
-            user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "", "a"));
+            user.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "", "a"));
         }else {
-            user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+            user.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "o", "a"));
         }
 		// 设置分页参数
 		user.setPage(page);
@@ -156,7 +156,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	public List<User> findUser(User user){
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		if(user.getRole()!=null&&user.getRole().getEnname()!=null&&!user.getRole().getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState())){
-			user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+			user.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "o", "a"));
 		}
 		List<User> list = userDao.findList(user);
 		return list;
@@ -695,7 +695,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		if(userAdmin.isAdmin()){
 			users=userDao.userSelectCompany(user);
 		}else{
-//			user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+//			user.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "o", "a"));
 			users = userDao.userSelectCompany(user);
 		}
 		return users;
