@@ -822,19 +822,19 @@
         }else{
             var extname = f.substring(f.lastIndexOf(".")+1,f.length);
             extname = extname.toLowerCase();//处理了大小写
-            if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png" &&
-                extname!= "mp4"
-            ){
-                $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
-                return false;
-            }
+            // if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png" &&
+            //     extname!= "mp4"
+            // ){
+            //     $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+            //     return false;
+            // }
         }
         var file = document.getElementById(id).files;
         var size = file[0].size;
-        if(size>10097152){
-            alert("错误提示:所选择的文件太大，文件大小最多支持10M!");
-            return false;
-        }
+        // if(size>10097152){
+        //     alert("错误提示:所选择的文件太大，文件大小最多支持10M!");
+        //     return false;
+        // }
         ajaxFileUploadVideo(id, multiple);
     }
 
