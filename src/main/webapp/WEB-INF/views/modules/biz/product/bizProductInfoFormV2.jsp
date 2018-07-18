@@ -114,13 +114,11 @@
         </div>
         <div id="prodBannerVideoDiv">
             <table>
-                <tr id="prodBannerVideoDivTr">
-                    <c:forEach items="${prodBannerVideoMap}" var="photo" varStatus="status">
-                        <td>
-                            <video width="300px" customInput="prodBannerVideoInput" src="${src}" autoplay="autoplay" controls="controls"></video>
-                        </td>
+                <div id="prodBannerVideoDivTr">
+                    <c:forEach items="${bannerVideoList}" var="v" varStatus="status">
+                            <video width="300px" customInput="prodBannerVideoInput" src="${v.imgServer}${v.imgPath}" controls="controls" onclick="$(this).remove();"></video>
                     </c:forEach>
-                </tr>
+                </div>
             </table>
         </div>
     </div>
@@ -135,13 +133,11 @@
         </div>
         <div id="prodDetailVideoDiv">
             <table>
-                <tr id="prodDetailVideoDivTr">
-                    <c:forEach items="${prodDetailVideoMap}" var="photo" varStatus="status">
-                        <td>
-                            <video width="300px" customInput="prodDetailVideoInput" src="${src}" autoplay="autoplay" controls="controls"></video>
-                        </td>
+                <div id="prodDetailVideoDivTr">
+                    <c:forEach items="${detailVideoList}" var="v" varStatus="status">
+                            <video width="300px" customInput="prodDetailVideoInput" src="${v.imgServer}${v.imgPath}" controls="controls" onclick="$(this).remove();"></video>
                     </c:forEach>
-                </tr>
+                </div>
             </table>
         </div>
     </div>
@@ -640,10 +636,11 @@
 
                 var detailVideo = $("#prodDetailVideoDiv").find("[customInput = 'prodDetailVideoInput']");
                 var detailVideoStr = "";
-                for (var i = 0; i < detailVideoStr.length; i ++) {
+                for (var i = 0; i < detailVideo.length; i ++) {
                     detailVideoStr += ($(detailVideo[i]).attr("src"));
                 }
-                $("#bannerVideo").val(detailVideoStr);
+                $("#detailVideo").val(detailVideoStr);
+
 
                 var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
                 var detailImgStr = "";
@@ -868,9 +865,6 @@
                     for (var i = 0; i < fileList.length; i ++) {
                         imgDiv.append(imgDivHtml.replace("$Src", fileList[i]));
                     }
-                }else {
-                    var img = $("#" + id + "Input");
-                    img.attr("src", msgJSON.fullName);
                 }
             },
             error : function(data, status, e) {
