@@ -22,6 +22,13 @@ public interface BizRequestHeaderDao extends CrudDao<BizRequestHeader> {
 
     int findContByFromOffice(Integer fromOfficeId);
 
-    List<BizRequestHeader>findListForPoHeader(BizRequestHeader bizRequestHeader);
+    List<BizRequestHeader> findListForPoHeader(BizRequestHeader bizRequestHeader);
 
+    /**
+     * 更新状态
+     * @param id
+     * @param status
+     * @return
+     */
+    int updateREStatus(@Param("id")int id, @Param("status") Integer status);
 }
