@@ -226,7 +226,7 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             poDetail.setOrdQty(skuInfo.getReqQty());
             poDetail.setUnitPrice(skuInfo.getBuyPrice());
             bizPoDetailService.save(poDetail);
-            bizPoDetailService.insertFromBizPoDetail(poDetail);
+            //bizPoDetailService.insertFromBizPoDetail(poDetail);
             bizPoDetailService.calculateTotalOrderPrice(poDetail);
             bizPoOrderReq.setPoHeader(poDetail.getPoHeader());
             bizPoOrderReq.setPoLineNo(poDetail.getLineNo());

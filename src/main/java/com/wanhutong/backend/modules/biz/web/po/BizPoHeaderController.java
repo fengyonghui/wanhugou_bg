@@ -751,6 +751,7 @@ public class BizPoHeaderController extends BaseController {
         }
 
         model.addAttribute("bizPoHeader", bizPoHeader);
+        model.addAttribute("bizPoHeader2", bizPoHeader);
         return "modules/biz/po/bizPoHeaderScheduling";
     }
 }
