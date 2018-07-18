@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.BizOrderTypeEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.OrderHeaderDrawBackStatusEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -294,16 +295,16 @@
 			<td>
 				<c:choose>
 					<c:when test="${orderHeader.drawBack != null}">
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUND.state}">
+						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUND.state}">
 							退款申请
 						</c:if>
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUNDING.state}">
+						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDING.state}">
 							退款中
 						</c:if>
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUNDREJECT.state}">
+						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDREJECT.state}">
 							退款驳回
 						</c:if>
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUNDED.state}">
+						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDED.state}">
 							退款完成
 						</c:if>
 					</c:when>
@@ -398,25 +399,25 @@
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:refund">
 						<!-- 退款增加 -->
-						<c:if test='${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUND.state}'>
-							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&drawbackStatus=${OrderHeaderBizStatusEnum.REFUND.state}&refundSkip=refundSkip">同意退款</a>
+						<c:if test='${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUND.state}'>
+							<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderHeader.id}&orderDetails=details&statu=${statu}&drawbackStatus=${OrderHeaderDrawBackStatusEnum.REFUND.state}&refundSkip=refundSkip">同意退款</a>
 							<%--<a href="${ctx}/biz/order/bizOrderHeader/refundReject?orderId=${orderHeader.id}&statu=${statu}&drawbackStatus=${OrderHeaderBizStatusEnum.REFUNDREJECT.state}">驳回</a>--%>
-							<a href = "javascript:checkInfo('${OrderHeaderBizStatusEnum.REFUNDREJECT.state}','退款驳回','${orderHeader.id}')">驳回</a>
+							<a href = "javascript:checkInfo('${OrderHeaderDrawBackStatusEnum.REFUNDREJECT.state}','退款驳回','${orderHeader.id}')">驳回</a>
 						</c:if>
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUNDING.state}">
+						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDING.state}">
 							退款中
 						</c:if>
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUNDREJECT.state}">
+						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDREJECT.state}">
 							退款驳回
 						</c:if>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:doRefund">
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUNDING.state }">
-							<a href="${ctx}/biz/order/bizOrderHeader/refund?id=${orderHeader.id}&drawbackStatus=${OrderHeaderBizStatusEnum.REFUNDED.state}">线下退款</a>
+						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDING.state }">
+							<a href="${ctx}/biz/order/bizOrderHeader/refund?id=${orderHeader.id}&drawbackStatus=${OrderHeaderDrawBackStatusEnum.REFUNDED.state}">线下退款</a>
 						</c:if>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="biz:order:bizOrderHeader:view">
-						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderBizStatusEnum.REFUNDED.state }">
+						<c:if test="${orderHeader.drawBack.drawbackStatus==OrderHeaderDrawBackStatusEnum.REFUNDED.state }">
 							退款完成
 						</c:if>
 					</shiro:hasPermission>
