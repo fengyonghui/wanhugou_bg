@@ -6,6 +6,8 @@ package com.wanhutong.backend.modules.biz.web.po;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
+import com.wanhutong.backend.modules.biz.service.po.BizSchedulingPlanService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,9 @@ import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 采购订单信息信息Controller
  * @author liuying
@@ -33,12 +38,20 @@ public class BizPoDetailController extends BaseController {
 
 	@Autowired
 	private BizPoDetailService bizPoDetailService;
+
+	@Autowired
+	private BizSchedulingPlanService bizSchedulingPlanService;
 	
 	@ModelAttribute
 	public BizPoDetail get(@RequestParam(required=false) Integer id) {
 		BizPoDetail entity = null;
 		if (id!=null){
 			entity = bizPoDetailService.get(id);
+
+			BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+			bizSchedulingPlan.setBizPoDetail(entity);
+			List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
+			entity.setSchedulingPlanList(schedulingPlanList);
 		}
 		if (entity == null){
 			entity = new BizPoDetail();

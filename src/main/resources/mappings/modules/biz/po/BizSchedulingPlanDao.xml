@@ -27,6 +27,14 @@
 		<include refid="bizSchedulingPlanJoins"/>
 		WHERE a.id = #{id}
 	</select>
+
+	<select id="getByObjectId" resultType="BizSchedulingPlan">
+		SELECT
+		<include refid="bizSchedulingPlanColumns"/>
+		FROM biz_scheduling_plan a
+		<include refid="bizSchedulingPlanJoins"/>
+		WHERE a.object_id = #{objectId}
+	</select>
 	
 	<select id="findList" resultType="BizSchedulingPlan">
 		SELECT 
@@ -35,6 +43,9 @@
 		<include refid="bizSchedulingPlanJoins"/>
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
+			<if test="bizPoDetail!=null and bizPoDetail.id!=null and bizPoDetail.id!=''">
+				AND a.object_id = #{bizPoDetail.id}
+			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

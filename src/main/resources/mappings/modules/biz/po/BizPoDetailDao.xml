@@ -35,9 +35,7 @@
 	<select id="findList" resultType="BizPoDetail">
 		SELECT 
 			<include refid="bizPoDetailColumns"/>
-			,bsp.object_id AS "schedulingPlan.objectId"
 		FROM biz_po_detail a
-			LEFT JOIN biz_scheduling_plan bsp ON bsp.object_id = a.id
 		<include refid="bizPoDetailJoins"/>
 		<where>
 			<if test="poHeader!=null and poHeader.id!=null and poHeader.id!=''">
@@ -148,9 +146,13 @@
 		id,
 		object_name,
 		object_id,
-		original_num,
-		scheduling_num,
-		complete_num,
+		<if test="ordQty!=null and ordQty!=''">
+			original_num,
+			scheduling_num,
+		</if>
+		<if test="sendQty!=null and sendQty!=''">
+			complete_num,
+		</if>
 		create_id,
 		create_time,
 		update_id,
@@ -159,9 +161,22 @@
 		NULL ,
 		"biz_po_detail",
 		#{id},
-		#{ordQty},
-		#{ordQty}-#{sendQty},
-		#{sendQty},
+		<if test="ordQty!=null and ordQty!=''">
+			#{ordQty},
+		</if>
+		<choose>
+			<when test="sendQty=null and sendQty=''">
+				#{ordQty},
+			</when>
+			<otherwise>
+				<if test="ordQty!=null and ordQty!=''">
+					#{ordQty}-#{sendQty},
+				</if>
+			</otherwise>
+		</choose>
+		<if test="sendQty!=null and sendQty!=''">
+			#{sendQty},
+		</if>
 		#{createBy.id},
 		#{createDate},
 		#{updateBy.id},

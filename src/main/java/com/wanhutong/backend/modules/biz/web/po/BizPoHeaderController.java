@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -30,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.po.BizSchedulingPlanService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -72,6 +74,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -120,6 +123,8 @@ public class BizPoHeaderController extends BaseController {
     private BizOrderStatusService bizOrderStatusService;
     @Autowired
     private BizOrderAddressService bizOrderAddressService;
+    @Autowired
+    private BizSchedulingPlanService bizSchedulingPlanService;
 
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
@@ -146,6 +151,12 @@ public class BizPoHeaderController extends BaseController {
                 BizSkuInfo bizSkuInfo = poDetail.getSkuInfo();
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(bizSkuInfo.getId()));
                 poDetail.setSkuInfo(skuInfo);
+
+                BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+                bizSchedulingPlan.setBizPoDetail(poDetail);
+                List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
+                schedulingPlanList.sort(Comparator.comparing(BizSchedulingPlan::getUpdateDate));
+                poDetail.setSchedulingPlanList(schedulingPlanList);
                 poDetails.add(poDetail);
             }
             entity.setPoDetailList(poDetails);

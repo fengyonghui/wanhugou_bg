@@ -21,6 +21,10 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	private Integer originalNum;		// 单子原始数量
 	private Integer schedulingNum;		// 排产数量
 	private Integer completeNum;		// 已完成数量
+	/**
+	 * 采购订单表Entity
+	 */
+	private BizPoDetail bizPoDetail;
 	
 	public BizSchedulingPlan() {
 		super();
@@ -47,8 +51,7 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
 	}
-	
-	@NotNull(message="单子原始数量不能为空")
+
 	public Integer getOriginalNum() {
 		return originalNum;
 	}
@@ -56,8 +59,7 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	public void setOriginalNum(Integer originalNum) {
 		this.originalNum = originalNum;
 	}
-	
-	@NotNull(message="排产数量不能为空")
+
 	public Integer getSchedulingNum() {
 		return schedulingNum;
 	}
@@ -73,5 +75,12 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	public void setCompleteNum(Integer completeNum) {
 		this.completeNum = completeNum;
 	}
-	
+
+	public BizPoDetail getBizPoDetail() {
+		return bizPoDetail;
+	}
+
+	public void setBizPoDetail(BizPoDetail bizPoDetail) {
+		this.bizPoDetail = bizPoDetail;
+	}
 }

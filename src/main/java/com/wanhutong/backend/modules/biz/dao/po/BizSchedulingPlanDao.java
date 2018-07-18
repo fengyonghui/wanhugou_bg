@@ -14,5 +14,11 @@ import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
  */
 @MyBatisDao
 public interface BizSchedulingPlanDao extends CrudDao<BizSchedulingPlan> {
-	
+
+    /**
+     * 通过objectId获取排产计划Entity
+     * @param objectId
+     * @return
+     */
+    BizSchedulingPlan getByObjectId(String objectId);
 }

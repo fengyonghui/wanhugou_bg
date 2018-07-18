@@ -30,7 +30,6 @@
                     choose.attr('checked', false);
                 }
             });
-            //$("#name").focus();
             var str = $("#str").val();
             if (str == 'detail') {
                 $("#inputForm").find("input[type!='button']").attr("disabled", "disabled");
@@ -69,32 +68,7 @@
                     }
                 }
             });
-            var deliveryStatus = $("#deliveryStatus").val();
-
-            if (deliveryStatus == 0) {
-                $("input[name='deliveryStatus']").attr("checked", false)
-                $("#deliveryStatus0").attr("checked", true);
-            }
         });
-
-        function saveMon(type) {
-            if (type == 'createPay') {
-                var payTotal = $("#payTotal").val();
-                var payDeadline = $("#payDeadline").val();
-                if ($String.isNullOrBlank(payTotal) || Number(payTotal) <= 0) {
-                    alert("请输入申请金额!");
-                    return false;
-                }
-                if ($String.isNullOrBlank(payDeadline)) {
-                    alert("请选择本次申请付款时间!");
-                    return false;
-                }
-            }
-
-            $("#inputForm").attr("action", "${ctx}/biz/po/bizPoHeader/savePoHeader?type=" + type);
-            $("#inputForm").submit();
-        }
-
     </script>
 </head>
 <body>
@@ -152,36 +126,39 @@
         <tbody id="prodInfo">
         <c:if test="${bizPoHeader.poDetailList!=null}">
             <c:forEach items="${bizPoHeader.poDetailList}" var="poDetail">
-                <tr>
-                    <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
-                    <td>${poDetail.skuInfo.productInfo.brandName}</td>
-                    <td>${poDetail.skuInfo.name}</td>
-                        <%--<td>${poDetail.skuInfo.partNo}</td>--%>
-                    <td>${poDetail.skuInfo.itemNo}</td>
-                    <c:if test="${bizPoHeader.id!=null}">
-                        <td>
-                            <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}" var="orderNumStr"
-                                       varStatus="orderStatus">
-                            <c:if test="${orderNumStr.soType==1}">
-                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
-                                </c:if>
-                                <c:if test="${orderNumStr.soType==2}">
-                                <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+                <c:forEach items="${poDetail.schedulingPlanList}" var="schedulingPlan">
+                    <tr>
+                        <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
+                        <td>${poDetail.skuInfo.productInfo.brandName}</td>
+                        <td>${poDetail.skuInfo.name}</td>
+                        <td>${poDetail.skuInfo.itemNo}</td>
+                        <c:if test="${bizPoHeader.id!=null}">
+                            <td>
+                                <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}" var="orderNumStr"
+                                           varStatus="orderStatus">
+                                <c:if test="${orderNumStr.soType==1}">
+                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
                                     </c:if>
-                                        ${orderNumStr.orderNumStr}
-                                </a>
-                                </c:forEach>
+                                    <c:if test="${orderNumStr.soType==2}">
+                                    <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+                                        </c:if>
+                                            ${orderNumStr.orderNumStr}
+                                    </a>
+                                    </c:forEach>
 
+                            </td>
+                        </c:if>
+                        <td>${poDetail.ordQty}</td>
+                        <td>${poDetail.sendQty}</td>
+                        <td>
+
+                                <%--${schedulingPlan.schedulingNum}--%>
+                                    <%--<input name="totalDetail" value="${schedulingPlan.schedulingNum}" htmlEscape="false" type="hidden"/>--%>
+                            <form:input path="bizPoHeader.poDetailList.schedulingPlanList.schedulingPlan.schedulingNum" htmlEscape="false" class="input-xlarge required"/>
                         </td>
-                    </c:if>
-                        <%--<td>${poDetail.skuInfo.skuPropertyInfos}</td>--%>
-                    <td>${poDetail.ordQty}</td>
-                    <td>${poDetail.sendQty}</td>
-                    <td>
-                        <form:input path="${poDetail.schedulingPlan.schedulingNum}" htmlEscape="false" class="input-xlarge required"/>
-                    </td>
-                    <td>${poDetail.unitPrice}</td>
-                </tr>
+                        <td>${poDetail.unitPrice}</td>
+                    </tr>
+                </c:forEach>
             </c:forEach>
         </c:if>
         </tbody>
@@ -196,274 +173,5 @@
     </div>
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>
-<script type="text/javascript">
-    function startRejectAudit() {
-        top.$.jBox.confirm("确认驳回流程吗？","系统提示",function(v,h,f){
-            if(v=="ok"){
-                var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
-                var submit = function (v, h, f) {
-                    if ($String.isNullOrBlank(f.description)) {
-                        jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                        return false;
-                    }
-                    var id = $("#id").val();
-                    var prew = false;
-                    $.ajax({
-                        url: '${ctx}/biz/po/bizPoHeader/startAudit',
-                        contentType: 'application/json',
-                        data: {"id": id, "prew":prew,  "auditType":2, "desc": f.description},
-                        type: 'get',
-                        success: function (result) {
-                            alert(result);
-                            if(result == '操作成功!') {
-                                window.location.href = "${ctx}/biz/po/bizPoHeader";
-                            }
-                        },
-                        error: function (error) {
-                            console.info(error);
-                        }
-                    });
-                    return true;
-                };
-
-                jBox(html, {
-                    title: "请输入驳回理由:", submit: submit, loaded: function (h) {
-                    }
-                });
-            }
-        },{buttonsFocus:1});
-    }
-
-
-    function showTimeTotal(show) {
-        if (show) {
-            $(".prewTimeTotal").show();
-            return;
-        }
-        $(".prewTimeTotal").hide();
-    }
-
-    function startAudit() {
-        var prew = false;
-        var prewPayTotal = $("#prewPayTotal").val();
-        var prewPayDeadline = $("#prewPayDeadline").val();
-        if ($("#meanwhilePayOrderRadioTrue").attr("checked") == "checked") {
-            if ($String.isNullOrBlank(prewPayTotal)) {
-                alert("请输入申请金额");
-                return false;
-            }
-            if ($String.isNullOrBlank(prewPayDeadline)) {
-                alert("请选择日期");
-                return false;
-            }
-            prew = true;
-        }
-        var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-        var submit = function (v, h, f) {
-            if ($String.isNullOrBlank(f.description)) {
-                jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                return false;
-            }
-            top.$.jBox.confirm("确认开始审核流程吗？", "系统提示", function (v1, h1, f1) {
-                if (v1 == "ok") {
-                    var id = $("#id").val();
-                    $.ajax({
-                        url: '${ctx}/biz/po/bizPoHeader/startAudit',
-                        contentType: 'application/json',
-                        data: {
-                            "id": id,
-                            "prew": prew,
-                            "prewPayTotal": prewPayTotal,
-                            "prewPayDeadline": prewPayDeadline,
-                            "desc": f.description
-                        },
-                        type: 'get',
-                        success: function (result) {
-                            alert(result);
-                            if (result == '操作成功!') {
-                                window.location.href = "${ctx}/biz/po/bizPoHeader";
-                            }
-                        },
-                        error: function (error) {
-                            console.info(error);
-                        }
-                    });
-                }
-            }, {buttonsFocus: 1});
-            return true;
-        };
-
-        jBox(html, {
-            title: "请输入通过理由:", submit: submit, loaded: function (h) {
-            }
-        });
-
-
-    }
-
-    function checkPass() {
-        var html = "<div style='padding:10px;'>通过理由：<input type='text' id='description' name='description' value='' /></div>";
-        var submit = function (v, h, f) {
-            if ($String.isNullOrBlank(f.description)) {
-                jBox.tip("请输入通过理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                return false;
-            }
-            top.$.jBox.confirm("确认审核通过吗？", "系统提示", function (v1, h1, f1) {
-                if (v1 == "ok") {
-                    audit(1, f.description);
-                }
-            }, {buttonsFocus: 1});
-            return true;
-        };
-
-        jBox(html, {
-            title: "请输入通过理由:", submit: submit, loaded: function (h) {
-            }
-        });
-
-    }
-
-    function checkReject() {
-        var html = "<div style='padding:10px;'>驳回理由：<input type='text' id='description' name='description' value='' /></div>";
-        var submit = function (v, h, f) {
-            if ($String.isNullOrBlank(f.description)) {
-                jBox.tip("请输入驳回理由!", 'error', {focusId: "description"}); // 关闭设置 yourname 为焦点
-                return false;
-            }
-            top.$.jBox.confirm("确认驳回该流程吗？", "系统提示", function (v1, h1, f1) {
-                if (v1 == "ok") {
-                    audit(2, f.description);
-                }
-            }, {buttonsFocus: 1});
-            return true;
-        };
-
-        jBox(html, {
-            title: "请输入驳回理由:", submit: submit, loaded: function (h) {
-            }
-        });
-
-    }
-
-    function audit(auditType, description) {
-        var id = $("#id").val();
-        var currentType = $("#currentType").val();
-        $.ajax({
-            url: '${ctx}/biz/po/bizPoHeader/audit',
-            contentType: 'application/json',
-            data: {"id": id, "currentType": currentType, "auditType": auditType, "description": description},
-            type: 'get',
-            success: function (result) {
-                alert(result);
-                if(result == '操作成功!') {
-                    window.location.href = "${ctx}/biz/po/bizPoHeader";
-                }
-            },
-            error: function (error) {
-                console.info(error);
-            }
-        });
-    }
-
-
-    function pay() {
-        var id = $("#id").val();
-        var paymentOrderId = $("#paymentOrderId").val();
-        var payTotal = $("#truePayTotal").val();
-
-        var mainImg = $("#payImgDiv").find("[customInput = 'payImgImg']");
-        var img = "";
-        for (var i = 0; i < mainImg.length; i ++) {
-            img += $(mainImg[i]).attr("src") + ",";
-        }
-
-        if ($String.isNullOrBlank(payTotal)) {
-            alert("错误提示:请输入支付金额");
-            return false;
-        }
-        if ($String.isNullOrBlank(img)) {
-            alert("错误提示:请上传支付凭证");
-            return false;
-        }
-
-        $.ajax({
-            url: '${ctx}/biz/po/bizPoHeader/payOrder',
-            contentType: 'application/json',
-            data: {"poHeaderId": id, "paymentOrderId": paymentOrderId, "payTotal": payTotal, "img": img},
-            type: 'get',
-            success: function (result) {
-                alert(result);
-                if(result == '操作成功!') {
-                    window.location.href = "${ctx}/biz/po/bizPoHeader";
-                }
-            },
-            error: function (error) {
-                console.info(error);
-            }
-        });
-
-    }
-
-    function submitPic(id, multiple){
-        var f = $("#" + id).val();
-        if(f==null||f==""){
-            alert("错误提示:上传文件不能为空,请重新选择文件");
-            return false;
-        }else{
-            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
-            extname = extname.toLowerCase();//处理了大小写
-            if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png"){
-                $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
-                return false;
-            }
-        }
-        var file = document.getElementById(id).files;
-        var size = file[0].size;
-        if(size>2097152){
-            alert("错误提示:所选择的图片太大，图片大小最多支持2M!");
-            return false;
-        }
-        ajaxFileUploadPic(id, multiple);
-    }
-
-    function ajaxFileUploadPic(id, multiple) {
-        $.ajaxFileUpload({
-            url : '${ctx}/biz/product/bizProductInfoV2/saveColorImg', //用于文件上传的服务器端请求地址
-            secureuri : false, //一般设置为false
-            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
-            type : 'POST',
-            dataType : 'text', //返回值类型 一般设置为json
-            success : function(data, status) {
-                //服务器成功响应处理函数
-                var msg = data.substring(data.indexOf("{"), data.indexOf("}")+1);
-                var msgJSON = JSON.parse(msg);
-                var imgList = msgJSON.imgList;
-                var imgDiv = $("#" + id + "Div");
-                var imgDivHtml = "<img src=\"$Src\" customInput=\""+ id +"Img\" style='width: 100px' onclick=\"$(this).remove();\">";
-                if (imgList && imgList.length > 0 && multiple) {
-                    for (var i = 0; i < imgList.length; i ++) {
-                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                    }
-                }else if (imgList && imgList.length > 0 && !multiple) {
-                    imgDiv.empty();
-                    for (var i = 0; i < imgList.length; i ++) {
-                        imgDiv.append(imgDivHtml.replace("$Src", imgList[i]));
-                    }
-                }else {
-                    var img = $("#" + id + "Img");
-                    img.attr("src", msgJSON.fullName);
-                }
-            },
-            error : function(data, status, e) {
-                //服务器响应失败处理函数
-                console.info(data);
-                console.info(status);
-                console.info(e);
-                alert("上传失败");
-            }
-        });
-        return false;
-    }
-</script>
 </body>
 </html>

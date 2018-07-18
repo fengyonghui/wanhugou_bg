@@ -32,7 +32,7 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	private Double unitPrice;		// 商品单价
 	private Integer ordQty;		// 采购数量
 	private Integer sendQty;		//采购单供货数量
-	private BizSchedulingPlan schedulingPlan;
+	private List<BizSchedulingPlan> schedulingPlanList;
 
 
 	
@@ -118,11 +118,11 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 		this.sendQty = sendQty;
 	}
 
-	public BizSchedulingPlan getSchedulingPlan() {
-		return schedulingPlan;
+	public List<BizSchedulingPlan> getSchedulingPlanList() {
+		return schedulingPlanList;
 	}
 
-	public void setSchedulingPlan(BizSchedulingPlan schedulingPlan) {
-		this.schedulingPlan = schedulingPlan;
+	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
+		this.schedulingPlanList = schedulingPlanList;
 	}
 }
