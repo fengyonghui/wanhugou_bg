@@ -70,7 +70,8 @@
 								imgPath = ''
 							}
 							var PoName = item.commonProcess.paymentOrderProcess.name
-							if(PoName=='审批完成' && item.bizStatus == 1) {
+							if(PoName=='审批完成') {
+//								 && item.bizStatus == 1
 								pHtmlList += '<div class="mui-input-row">' +
 								'<div class="mui-input-row">' +
 								'<label>id：</label>' +
@@ -105,7 +106,7 @@
 								'<img src="' + imgPath + '"/>' +
 								'</div>'+
 							'</div>'	
-							}/*else if(item.bizStatus == 0) {
+							}/*else if(item.bizStatus == 0) {         //确认付款html
 								pHtmlList += '<div class="mui-input-row">' +
 								'<div class="mui-input-row">' +
 								'<label>id：</label>' +

@@ -1,14 +1,147 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui" charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="full-screen" content="yes">
+		<meta name="x5-fullscreen" content="true">
 		<title>采购单管理</title>
 		<link href="../css/mui.min.css" rel="stylesheet" />
 		<link href="../css/app.css" rel="stylesheet" />
-    	<style type="text/css"></style>
+		<link href="../css/drop.css" rel="stylesheet" />
     	<style type="text/css">
- 			.mui-content div.content_part li {padding: 0;list-style: none;height: 30px;}
+			* {
+				margin: 0;
+				padding: 0;
+				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+				-webkit-text-size-adjust: none;
+			}
+			html {
+				font-size: 10px;
+			}
+			body {
+				background-color: #fff;
+				/*font-size: 1.2em;*/
+			}
+			.header {
+				height: 44px;
+				line-height: 44px;
+				border-bottom: 1px solid #ccc;
+				background-color: #40ABE9;
+			}
+			.header h1 {
+				text-align: center;
+				font-size: 2rem;
+				font-weight: normal;
+			}
+			.content {
+				padding-bottom: 40px;
+				background-color: #fff;
+			}
+			.content .item {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-box-align: center;
+				box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				padding: 3.125%;
+				border-bottom: 1px solid #ddd;
+				color: #333;
+				text-decoration: none;
+				height: 100px;
+			}
+			.content .item img {
+				display: block;
+				width: 40px;
+				height: 40px;
+				border: 1px solid #ddd;
+			}
+			.content .item h3 {
+				display: block;
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				-ms-flex: 1;
+				flex: 1;
+				width: 100%;
+				max-height: 40px;
+				overflow: hidden;
+				line-height: 20px;
+				margin: 0 10px;
+				font-size: 1.2rem;
+			}
+			
+			.content .item .date {
+				display: block;
+				height: 20px;
+				line-height: 20px;
+				color: #999;
+			}
+			.opacity {
+				-webkit-animation: opacity 0.3s linear;
+				animation: opacity 0.3s linear;
+			}
+			@-webkit-keyframes opacity {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			@keyframes opacity {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			.footer {
+				position: fixed;
+				left: 0;
+				bottom: 0;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+				width: 100%;
+				height: 40px;
+			}
+			.footer a {
+				position: relative;
+				display: block;
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				-ms-flex: 1;
+				flex: 1;
+				line-height: 40px;
+				text-align: center;
+				color: #666;
+				background-color: #eee;
+				text-decoration: none;
+			}
+			.footer a:before {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 10px;
+				width: 1px;
+				height: 20px;
+				background-color: #ccc;
+			}
+			.footer a:first-child:before {
+				display: none;
+			}
+			.dropload-down{
+				display: none;
+			}
+			.mui-content div.content_part li {padding: 0;list-style: none;height: 30px;}
  			.mui-input-group>p {height: 30px;line-height: 30px;text-indent: 15px;color: #000;background-color: #374761;color: #fff;font-size: 16px;}
  			.mui-table-view:before {background-color: #FFF;}
  			.listBlue>div {border-bottom: 1px solid #40ABE9;}
@@ -18,79 +151,24 @@
  			#searchBtn {background-color: #374761;padding: 30px;}
 		</style>
 	</head>
-	<body>
-		<!-- 侧滑导航根容器 -->
-		<div class="mui-off-canvas-wrap mui-draggable mui-slide-in">
-			  <!-- 菜单容器 -->
-			<aside class="mui-off-canvas-right">
-				<div class="mui-scroll-wrapper app_content_bgc_phs">
-					<div class="mui-scroll btn_bd_no">
-					    <!-- 菜单具体展示内容 -->
-				    	<header class="mui-bar mui-bar-nav app_content_bgc_login">
-				    		<span class="closeBtn mui-icon mui-icon-closeempty mui-pull-left app_cf"></span>
-							<p class="app_cf app_nav_text_center">搜索栏</p>
-						</header>	
-						<div class="mui-content menuMarg">
-							<form class="mui-input-group app_bline">
-								<p>采购单号:</p>
-							    <div class="mui-input-row">
-							        <input type="text" class="" placeholder="请输入采购单号">
-							    </div>
-							    <p>订单/备货清单编号:</p>
-							    <div class="mui-input-row">
-							        <input type="text" class="" placeholder="请输入订单/备货清单编号">
-							    </div>
-							    <p>供应商:</p>
-							    <div class="mui-input-row">
-							        <input type="text" class="" placeholder="请输入供应商">
-							    </div>
-							    <p>审核状态：</p>
-							    <div class="mui-input-row mui-select app_text_indt15">
-							    	<select class="selectStyle" type='select-one' > 
-							    		<option>请选择</option>
-						                <option>待采购中心负责人审批</option>
-						                <option>待供货部负责人审批</option>
-						                <option>待会计审批</option>
-						                <option>待运营总监审批</option>
-						                <option>待运营总监或总经理审批</option>
-						                <option>财会待付款</option>
-						                <option>审批完成</option>
-						                <option>驳回</option>
-									</select>
-							    </div>
-							</form>
-						    <div id="searchBtn">
-						    	<button type="submit" class="app_btn_search mui-btn-blue mui-btn-block">查询</button>	
-						    </div>
-						</div>	
-					</div>
-				</div>
-			</aside>
-			  <!-- 主页面容器 -->
-			<div class="mui-inner-wrap">
-			<!-- 主页面标题 -->
-					<header class="mui-bar mui-bar-nav">
-					    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-						<span id="search_btn" class="mui-icon mui-icon-bars mui-pull-right app_cf"></span>
-					    <p class="app_cf app_nav_text_center">采购单管理</p>
-					</header>
-				<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
-				  	<div class="mui-scroll">
-				    <!-- 主界面具体展示内容 -->
-						<div class="mui-content listBlue" id="addBtn">
 
-						</div>
-					</div>
-				</div>  
+	<body>
+		<header class="header mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
+			<!--<span id="search_btn" class="mui-icon mui-icon-bars mui-pull-right app_cf"></span>-->
+		    <p class="app_cf app_nav_text_center">采购单管理</p>
+		</header>
+		<div class="content mui-content">
+			<div class="listBlue" id="addBtn">
+				
 			</div>
 		</div>
-		<input id="applyPayId" class="applyPayId" type="hidden" />
-	<div class="clear"></div>
-	<script src="../js/component/mui.min.js"></script>
-	<script src="../js/component/zepto.min.js"></script>
-	<script src="../js/component/GHutils.js"></script>
-	<script src="../js/custom/purchase.js"></script>
-    </body>
+		<script src="../js/component/zepto.min.js"></script>
+		<script src="../js/component/mui.min.js"></script>
+		<script src="../js/component/GHutils.js"></script>
+		<script src="../js/component/dropload.min.js"></script>
+		<script src="../js/custom/purchase.js"></script>
+
+	</body>
+
 </html>
-
-

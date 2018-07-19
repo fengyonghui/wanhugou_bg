@@ -123,6 +123,7 @@
 					success: function(res) {
 						console.log(res)
 						if(res.ret==true){
+							alert('操作成功!')
 							//$('#mask').hide()
 							GHUTILS.OPENPAGE({
 							url: "../../mobile/html/purchase.html",
