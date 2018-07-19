@@ -187,7 +187,8 @@
 	<select id="getsumSchedulingNum" resultType="BizPoDetail">
 		SELECT
 			a.object_id as "id",
-			sum(scheduling_num) as "sumSchedulingNum"
+			sum(scheduling_num) as "sumSchedulingNum",
+			sum(complete_num) as "sumCompleteNum"
 		FROM biz_scheduling_plan a
 		WHERE a.object_id = #{objectId}
 	</select>

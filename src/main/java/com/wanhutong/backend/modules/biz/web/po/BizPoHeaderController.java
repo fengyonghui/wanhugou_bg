@@ -161,6 +161,7 @@ public class BizPoHeaderController extends BaseController {
                 BizPoDetail poDetailTemp = bizPoDetailService.getsumSchedulingNum(poDetail.getId());
                 if (poDetailTemp != null){
                     poDetail.setSumSchedulingNum(poDetailTemp.getSumSchedulingNum());
+                    poDetail.setSumCompleteNum(poDetailTemp.getSumCompleteNum());
                 }
 
                 poDetails.add(poDetail);
@@ -743,7 +744,7 @@ public class BizPoHeaderController extends BaseController {
         return "取消采购订单成功";
     }
 
-    @RequiresPermissions("biz:po:bizPoHeader:edit")
+
     @RequestMapping(value = "scheduling")
     public String scheduling(BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
@@ -760,7 +761,7 @@ public class BizPoHeaderController extends BaseController {
         return "modules/biz/po/bizPoHeaderScheduling";
     }
 
-    @RequiresPermissions("biz:po:bizPoHeader:edit")
+
     @RequestMapping(value = "saveSchedulingPlan")
     @ResponseBody
     public boolean saveSchedulingPlan(HttpServletRequest request, Integer detailId, Integer ordQty, Integer schedulingNum, Integer completeNum) {

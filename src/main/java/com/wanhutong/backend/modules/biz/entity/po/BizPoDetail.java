@@ -39,6 +39,11 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	 */
 	private Integer sumSchedulingNum = 0;
 
+	/**
+	 * 总的已确认数量
+	 */
+	private Integer sumCompleteNum = 0;
+
 
 	
 	public BizPoDetail() {
@@ -137,5 +142,13 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 
 	public void setSumSchedulingNum(Integer sumSchedulingNum) {
 		this.sumSchedulingNum = sumSchedulingNum;
+	}
+
+	public Integer getSumCompleteNum() {
+		return sumCompleteNum;
+	}
+
+	public void setSumCompleteNum(Integer sumCompleteNum) {
+		this.sumCompleteNum = sumCompleteNum;
 	}
 }

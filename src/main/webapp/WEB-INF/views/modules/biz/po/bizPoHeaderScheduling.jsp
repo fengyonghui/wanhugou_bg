@@ -36,10 +36,6 @@
             var schedulingNum = $(eval("schedulingNum_" + index)).val();
             var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
             var standard = ordQty - sendQty - sumSchedulingNum;
-            if (parseInt(ordQty) ===  parseInt(sumSchedulingNum)){
-                alert("该商品已经排产完成！")
-                return false;
-            }
             if (parseInt(standard) <= 0 || parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard))){
                 alert("排产量数值设置不正确，请重新输入")
                 return false;
@@ -218,19 +214,20 @@
             <c:if test="${bizPoHeader.id!=null}">
                 <th>已供货数量</th>
             </c:if>
-            <c:if test="${bizPoHeader.id!=null}">
-                <th>待排产量</th>
-            </c:if>
             <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+                <c:if test="${bizPoHeader.id!=null}">
+                    <th>待排产量</th>
+                </c:if>
                 <th>排产数量</th>
             </shiro:hasPermission>
             <shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
-                <th>已完成数量</th>
+                <c:if test="${bizPoHeader.id!=null}">
+                    <th>待排确认量</th>
+                </c:if>
+                <th>确认数量</th>
             </shiro:hasPermission>
             <th>工厂价</th>
             <th>操作</th>
-
-
         </tr>
         </thead>
         <tbody id="prodInfo2">
@@ -260,6 +257,7 @@
                     <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
                     <td id="sendQty_${state.index+1}">${poDetail.sendQty}</td>
                     <td id="sumSchedulingNum_${state.index+1}" style="display:none">${poDetail.sumSchedulingNum}</td>
+                    <td id="sumCompleteNum_${state.index+1}" style="display:none">${poDetail.sumCompleteNum}</td>
                     <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
                         <td >${poDetail.ordQty - poDetail.sendQty - poDetail.sumSchedulingNum}</td>
                         <td>
@@ -268,18 +266,39 @@
                         </td>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+                        <td >${poDetail.sumSchedulingNum - poDetail.sumCompleteNum}</td>
                         <td>
-                            <input type="text" id="completeNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.sumSchedulingNum}"
+                            <input type="text" id="completeNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.sumSchedulingNum - poDetail.sumCompleteNum}"
                                    htmlEscape="false" maxlength="30" class="input-xlarge "/>
                         </td>
                     </shiro:hasPermission>
                     <td>${poDetail.unitPrice}</td>
                     <td>
                         <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
-                            <input id="btnSubmit" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${poDetail.id}')" value="保存"/>&nbsp;
+                            <c:choose>
+                                <c:when test="${poDetail.ordQty != poDetail.sumSchedulingNum}">
+                                    <input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${poDetail.id}')" value="排产保存"/>&nbsp;
+                                </c:when>
+                                <c:otherwise>
+                                    <input id="addScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="排产完成"/>&nbsp;
+                                </c:otherwise>
+                            </c:choose>
+
                         </shiro:hasPermission>
                         <shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
-                            <input id="btnSubmit" class="btn btn-primary" type="button" onclick="confirmSchedulingCheck('${state.index+1}','${poDetail.id}')" value="保存"/>&nbsp;
+                            <c:choose>
+                                <c:when test="${poDetail.sumSchedulingNum == 0}">
+                                    <input id="confirmScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="未排产"/>&nbsp;
+                                </c:when>
+                                <c:otherwise>
+                                    <c:if test="${poDetail.sumSchedulingNum != poDetail.sumCompleteNum}">
+                                        <input id="confirmScheduling" class="btn btn-primary" type="button" onclick="confirmSchedulingCheck('${state.index+1}','${poDetail.id}')" value="确认保存"/>&nbsp;
+                                    </c:if>
+                                    <c:if test="${poDetail.sumSchedulingNum == poDetail.sumCompleteNum}">
+                                        <input id="confirmScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="已全部确认"/>&nbsp;
+                                    </c:if>
+                                </c:otherwise>
+                            </c:choose>
                         </shiro:hasPermission>
                     </td>
                 </tr>
