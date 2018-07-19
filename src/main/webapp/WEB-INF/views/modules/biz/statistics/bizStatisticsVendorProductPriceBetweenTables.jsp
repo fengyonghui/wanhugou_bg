@@ -11,10 +11,13 @@
     <li class="active"><a href="${ctx}/biz/statistics/between/vendorProductPriceTables">供应总额统计</a></li>
 </ul>
 <div>
-    <input name="startDate" id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
-    <input name="endDate" id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" required="required"/>
-    <input onclick="initChart();" class="btn btn-primary" type="button" value="查询"/>
-
+    <form:form id="searchForm" modelAttribute="office" action="${ctx}/biz/statistics/between/vendorProductPriceTables" method="post" class="breadcrumb form-search">
+        <input name="startDate" id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
+        <input name="endDate" id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
+        <input name="vendName" id="vendName" value="${vendName}"/>
+        <input onclick="initChart();" class="btn btn-primary" type="button" value="查询"/>
+        <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+    </form:form>
 </div>
 <%--<input id="showChart" onclick="$Url.go2Url('${ctx}/biz/statistics/between/product')" class="btn btn-primary" type="button" value="查看图表"/>--%>
 <table id="contentTable" class="table table-striped table-bordered table-condensed">
@@ -45,11 +48,18 @@
     </c:forEach>
     </tbody>
 </table>
+<div class="pagination">${page}</div>
     <script type="text/javascript">
         function initChart() {
             var startDate = $("#startDate").val();
             var endDate = $("#endDate").val();
-            window.location.href = "${ctx}/biz/statistics/between/vendorProductPriceTables?startDate=" + startDate + "&endDate=" + endDate;
+            var vendName = $("#vendName").val();
+            window.location.href = "${ctx}/biz/statistics/between/vendorProductPriceTables?startDate=" + startDate + "&endDate=" + endDate + "&vendName=" + vendName;
+        }
+        function page(n, s) {
+            $("#pageNo").val(n);
+            $("#searchForm").submit();
+            return false;
         }
     </script>
 </body>

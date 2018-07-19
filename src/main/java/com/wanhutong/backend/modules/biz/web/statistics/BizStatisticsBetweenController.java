@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
@@ -16,17 +17,20 @@ import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import com.wanhutong.backend.modules.enums.UserRoleOfficeEnum;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import sun.misc.BASE64Decoder;
 
@@ -1414,7 +1418,11 @@ public class BizStatisticsBetweenController extends BaseController {
      */
     @RequiresPermissions("biz:statistics:vendorProductPrice:view")
     @RequestMapping(value = "vendorProductPriceTables")
-    public String vendorProductPrice (HttpServletRequest request, String startDate, String endDate){
+    public String vendorProductPrice (HttpServletResponse response, HttpServletRequest request,
+                                      String startDate, String endDate, String vendName){
+        int pageSize = 20;
+        long startTime = System.currentTimeMillis();
+
         if (StringUtils.isBlank(startDate)) {
             Calendar cal = Calendar.getInstance();
             //获取本周一的日期
@@ -1428,24 +1436,33 @@ public class BizStatisticsBetweenController extends BaseController {
 
         request.setAttribute("startDate", startDate);
         request.setAttribute("endDate", endDate);
+        request.setAttribute("vendName", vendName);
 
-        List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
+        List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate, vendName);
 
         result.sort((o1, o2) -> Integer.compare(o2.getOrderCount(), o1.getOrderCount()));
 
-        request.setAttribute("result", result);
+        Page<Office> page = new Page<>(request, response);
+        page.setPageSize(pageSize);
+        page.setCount(result.size());
+        page.initialize();
+        List<BizOrderStatisticsDto> pairs = result.subList((page.getPageNo() - 1) * pageSize, Math.min(page.getPageNo() * pageSize, result.size()));
+        request.setAttribute("result", pairs);
+        request.setAttribute("page", page);
         return "modules/biz/statistics/bizStatisticsVendorProductPriceBetweenTables";
     }
 
     /**
-     * 供应商供货额
+     * 供应商供货额 SKU
      */
     @RequiresPermissions("biz:statistics:vendorProductPrice:view")
     @RequestMapping(value = "vendorSkuPriceTables")
     public String vendorSkuPriceTables (HttpServletRequest request, String startDate, String endDate, Integer officeId){
+
         List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorSkuPrice(startDate, endDate, officeId);
 
         result.sort((o1, o2) -> Integer.compare(o2.getOrderCount(), o1.getOrderCount()));
+
 
         request.setAttribute("result", result);
         return "modules/biz/statistics/bizStatisticsVendorSkuPriceBetweenTables";
@@ -1768,19 +1785,43 @@ public class BizStatisticsBetweenController extends BaseController {
 
 
     /**
-     * 供应商供货额
+     * 出入库记录
      */
     @RequiresPermissions("biz:statistics:skuInputOutputRecord:view")
     @RequestMapping(value = "skuInputOutputRecord")
-    public String skuInputOutputRecord (HttpServletRequest request, String startDate, String endDate, String invName, String skuItemNo){
+    public String skuInputOutputRecord (HttpServletRequest request, HttpServletResponse response,
+                                        @RequestParam(value="dataType", required = false, defaultValue = "3") Integer dataType,
+                                        String startDate, String endDate, String invName, String skuItemNo){
+
+        int pageSize = 20;
+        long startTime = System.currentTimeMillis();
 
         List<BizSkuInputOutputDto> result = bizStatisticsBetweenService.skuInputOutputRecord(startDate, endDate, invName, skuItemNo);
 
+        switch (dataType) {
+            case 1:
+                result.removeIf(o -> o.getDataType() != 1);
+                break;
+            case 0:
+                result.removeIf(o -> o.getDataType() != 0);
+                break;
+            default:
+                break;
+        }
+
         result.sort((o1, o2) -> o2.getCreateTime().compareTo(o1.getCreateTime()));
 
+        Page<Office> page = new Page<>(request, response);
+        page.setPageSize(pageSize);
+        page.setCount(result.size());
+        page.initialize();
+        List<BizSkuInputOutputDto> pairs = result.subList((page.getPageNo() - 1) * pageSize, Math.min(page.getPageNo() * pageSize, result.size()));
+
+        request.setAttribute("page", page);
         request.setAttribute("invName", invName);
         request.setAttribute("skuItemNo", skuItemNo);
-        request.setAttribute("result", result);
+        request.setAttribute("dataType", dataType);
+        request.setAttribute("result", pairs);
         return "modules/biz/statistics/bizStatisticsInputOutputBetweenTables";
     }
 }
