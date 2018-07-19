@@ -127,8 +127,8 @@ public class BizPoHeaderController extends BaseController {
     @Autowired
     private BizSchedulingPlanService bizSchedulingPlanService;
 
-
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
+    public static final String SCHEDULING_PLAN_TABLE_NAME = "biz_scheduling_plan";
 
 
     @ModelAttribute
@@ -158,6 +158,11 @@ public class BizPoHeaderController extends BaseController {
                 List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
                 schedulingPlanList.sort(Comparator.comparing(BizSchedulingPlan::getUpdateDate));
                 poDetail.setSchedulingPlanList(schedulingPlanList);
+                BizPoDetail poDetailTemp = bizPoDetailService.getsumSchedulingNum(poDetail.getId());
+                if (poDetailTemp != null){
+                    poDetail.setSumSchedulingNum(poDetailTemp.getSumSchedulingNum());
+                }
+
                 poDetails.add(poDetail);
             }
             entity.setPoDetailList(poDetails);
@@ -753,5 +758,27 @@ public class BizPoHeaderController extends BaseController {
         model.addAttribute("bizPoHeader", bizPoHeader);
         model.addAttribute("bizPoHeader2", bizPoHeader);
         return "modules/biz/po/bizPoHeaderScheduling";
+    }
+
+    @RequiresPermissions("biz:po:bizPoHeader:edit")
+    @RequestMapping(value = "saveSchedulingPlan")
+    @ResponseBody
+    public boolean saveSchedulingPlan(HttpServletRequest request, Integer detailId, Integer ordQty, Integer schedulingNum, Integer completeNum) {
+
+        BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
+        schedulingPlan.setObjectName(SCHEDULING_PLAN_TABLE_NAME);
+        schedulingPlan.setObjectId(String.valueOf(detailId));
+        schedulingPlan.setOriginalNum(ordQty);
+        schedulingPlan.setSchedulingNum(schedulingNum);
+        schedulingPlan.setCompleteNum(completeNum);
+        boolean boo = false;
+        try {
+            bizSchedulingPlanService.save(schedulingPlan);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
     }
 }

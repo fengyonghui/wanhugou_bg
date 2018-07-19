@@ -72,5 +72,9 @@ public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail>
 	public void insertFromBizPoDetail(BizPoDetail bizPoDetail){
 		bizPoDetailDao.insertFromBizPoDetail(bizPoDetail);
 	}
-	
+
+	@Transactional(readOnly = false)
+	public BizPoDetail getsumSchedulingNum(Integer objectId){
+		return bizPoDetailDao.getsumSchedulingNum(objectId);
+	}
 }

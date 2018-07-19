@@ -183,5 +183,13 @@
 		#{updateDate}
 		)
 	</insert>
+
+	<select id="getsumSchedulingNum" resultType="BizPoDetail">
+		SELECT
+			a.object_id as "id",
+			sum(scheduling_num) as "sumSchedulingNum"
+		FROM biz_scheduling_plan a
+		WHERE a.object_id = #{objectId}
+	</select>
 	
 </mapper>

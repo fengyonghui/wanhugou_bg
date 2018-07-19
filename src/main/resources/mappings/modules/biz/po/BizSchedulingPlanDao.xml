@@ -79,8 +79,12 @@
 			object_name,
 			object_id,
 			original_num,
-			scheduling_num,
-			complete_num,
+			<if test="schedulingNum !=null and schedulingNum !=''">
+				scheduling_num,
+			</if>
+			<if test="completeNum !=null and completeNum !=''">
+				complete_num,
+			</if>
 			status,
 			create_id,
 			create_time,
@@ -92,13 +96,17 @@
 			#{objectName},
 			#{objectId},
 			#{originalNum},
-			#{schedulingNum},
-			#{completeNum},
+			<if test="schedulingNum !=null and schedulingNum !=''">
+				#{schedulingNum},
+			</if>
+			<if test="completeNum !=null and completeNum !=''">
+				#{completeNum},
+			</if>
 			#{delFlag},
-			#{createBy},
+			#{createBy.id},
 			#{createDate},
 			#{uVersion},
-			#{updateBy},
+			#{updateBy.id},
 			#{updateDate}
 		)
 	</insert>

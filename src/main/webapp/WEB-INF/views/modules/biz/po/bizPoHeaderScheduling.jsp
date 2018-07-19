@@ -21,74 +21,74 @@
                 cols: [0]
                 // rows:[0,2]
             });
-
-//            $('#select_all').live('click', function () {
-//                var choose = $("input[title='num']");
-//                if ($(this).attr('checked')) {
-//                    choose.attr('checked', true);
-//                } else {
-//                    choose.attr('checked', false);
-//                }
-//            });
-//            var str = $("#str").val();
-//            if (str == 'detail') {
-//                $("#inputForm").find("input[type!='button']").attr("disabled", "disabled");
-//                $("#btnSubmit").hide();
-//            }
-            $("#inputForm").validate({
-                submitHandler: function (form) {
-                    var ordQty = $("td[name='ordQty']");
-                    var sendQty = $("td[name='sendQty']");
-                    var schedulingNum = $("input[name='schedulingNum']");
-
-                    for(var i=0; i<ordQty.length; i++){
-                        alert("--")
-                        var ordQtyTemp = ordQty[i].text();
-                        var sendQtyTemp = sendQty[i].text();
-                        var schedulingNumTemp = schedulingNum[i].value;
-
-                        alert("ordQtyTemp=" + ordQtyTemp + "\r\n" + "sendQtyTemp=" + sendQtyTemp + "\r\n" + "schedulingNumTemp=" + schedulingNumTemp)
-                    }
-
-//                    alert("ordQty=" + ordQty + "\r\n" + "sendQty=" + sendQty + "\r\n" + "schedulingNum=" + schedulingNum)
-//                    if(schedulingNum > (ordQty-sendQty)){
-//                        alert("--1--")
-//                    } else {
-//                        alert("--2--")
-//                    }
-
-//                    var aa = 0;
-//                    $("input[name='orderDetailIds'][checked='checked']").each(function () {
-//                        aa += 1;
-//                    });
-//                    $("input[name='reqDetailIds'][checked='checked']").each(function () {
-//                        aa += 1;
-//                    });
-//                    if (parseInt(aa) != 0) {
-//                        loading('正在提交，请稍等...');
-//                        form.submit();
-//                    } else {
-//                        var prew = $("#prew").val();
-//                        var type = $("#type").val();
-//                        if( prew == 'prew' || type == 'createPay' || type == '') {
-//                            loading('正在提交，请稍等...');
-//                            form.submit();
-//                        }else {
-//                            alert("请选择生成采购单的详情");
-//                        }
-//                    }
-                },
-                errorContainer: "#messageBox",
-                errorPlacement: function (error, element) {
-                    $("#messageBox").text("输入有误，请先更正。");
-                    if (element.is(":checkbox") || element.is(":radio") || element.parent().is(".input-append")) {
-                        error.appendTo(element.parent().parent());
-                    } else {
-                        error.insertAfter(element);
-                    }
-                }
+            $("#contentTable2").tablesMergeCell({
+                // automatic: true
+                // 是否根据内容来合并
+                cols: [0]
+                // rows:[0,2]
             });
         });
+
+        //添加排产量check
+        function addSchedulingCheck(index, detailId) {
+            var ordQty = $(eval("ordQty_" + index)).text();
+            var sendQty = $(eval("sendQty_" + index)).text();
+            var schedulingNum = $(eval("schedulingNum_" + index)).val();
+            var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
+            var standard = ordQty - sendQty - sumSchedulingNum;
+            if (parseInt(ordQty) ===  parseInt(sumSchedulingNum)){
+                alert("该商品已经排产完成！")
+                return false;
+            }
+            if (parseInt(standard) <= 0 || parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard))){
+                alert("排产量数值设置不正确，请重新输入")
+                return false;
+            }
+            if(confirm("确定添加排产量为" + schedulingNum + "的排产吗？")){
+                $.ajax({
+                    url: '${ctx}/biz/po/bizPoHeader/saveSchedulingPlan',
+                    contentType: 'application/json',
+                    data: {"detailId": detailId, "ordQty": ordQty, "schedulingNum": schedulingNum, "completeNum": 0},
+                    type: 'get',
+                    success: function (result) {
+                        if(result == true) {
+                            window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+${bizPoHeader.id};
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        }
+
+        //确认排产量check
+        function confirmSchedulingCheck(index, detailId) {
+            var ordQty = $(eval("ordQty_" + index)).text();
+            var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
+            var completeNum = $(eval("completeNum_" + index)).val();
+
+            if (parseInt(completeNum) <=0 || parseInt(completeNum) >  parseInt(sumSchedulingNum)){
+                alert("确认排产量数据不正确，请重新输入！")
+                return false;
+            }
+            if(confirm("确认排产量为" + completeNum + "吗？")){
+                $.ajax({
+                    url: '${ctx}/biz/po/bizPoHeader/saveSchedulingPlan',
+                    contentType: 'application/json',
+                    data: {"detailId": detailId, "ordQty": ordQty, "schedulingNum": 0, "completeNum": completeNum},
+                    type: 'get',
+                    success: function (result) {
+                        if(result == true) {
+                            window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+${bizPoHeader.id};
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
+                    }
+                });
+            }
+        }
     </script>
 </head>
 <body>
@@ -101,7 +101,8 @@
     </li>
 </ul>
 <br/>
-<form:form id="inputForm" modelAttribute="bizPoHeader" action="${ctx}/biz/po/bizPoHeader/save?prewStatus=prew"
+<%--${ctx}/biz/po/bizPoHeader--%>
+<form:form id="inputForm" modelAttribute="bizPoHeader" action=""
            method="post" class="form-horizontal">
     <form:hidden path="id" id="id"/>
     <form:hidden path="bizPoPaymentOrder.id" id="paymentOrderId"/>
@@ -111,8 +112,19 @@
     <input type="hidden" name="vendOffice.id" value="${vendorId}">
     <input id="str" type="hidden" value="${bizPoHeader.str}"/>
     <input id="deliveryStatus" type="hidden" value="${bizPoHeader.deliveryStatus}"/>
+    <c:if test="${bizPoHeader.id!=null}">
+        <div class="control-group">
+            <label class="control-label">采购单编号：</label>
+            <div class="controls">
+                <form:input disabled="true" path="orderNum" htmlEscape="false" maxlength="30" class="input-xlarge "/>
+            </div>
+        </div>
+    </c:if>
+
     <c:if test="${bizOrderHeader.orderType != 6}" >
-    <label style="font-size: 17px;">排产履历：</label>
+    <div class="control-group">
+        <label class="control-label" style="font-size: 17px;color: red;">排产履历：</label>
+    </div>
     <table id="contentTable" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
@@ -135,9 +147,10 @@
             <c:if test="${bizPoHeader.id!=null}">
                 <th>排产数量</th>
             </c:if>
+            <c:if test="${bizPoHeader.id!=null}">
+                <th>已完成量</th>
+            </c:if>
             <th>工厂价</th>
-
-
         </tr>
         </thead>
         <tbody id="prodInfo">
@@ -168,8 +181,13 @@
                         <td>${poDetail.ordQty}</td>
                         <td>${poDetail.sendQty}</td>
                         <td>
-                            <input type="text" style="margin-bottom: 10px" value="${schedulingPlan.schedulingNum}"
+                            <input type="text" style="margin-bottom: 10px" readonly="readonly" value="${schedulingPlan.schedulingNum}"
                                    htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        </td>
+                        <td>
+                            <input type="text" style="margin-bottom: 10px" readonly="readonly" value="${schedulingPlan.completeNum}"
+                                   htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        </td>
                         <td>${poDetail.unitPrice}</td>
                     </tr>
                 </c:forEach>
@@ -177,8 +195,11 @@
         </c:if>
         </tbody>
     </table>
-    <label style="font-size: 17px;">本次排产：</label>
-    <table id="contentTable" class="table table-striped table-bordered table-condensed">
+        <br><br>
+    <div class="control-group">
+        <label class="control-label" style="font-size: 17px;color: red;">本次排产：</label>
+    </div>
+    <table id="contentTable2" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
             <th>产品图片</th>
@@ -197,19 +218,26 @@
             <c:if test="${bizPoHeader.id!=null}">
                 <th>已供货数量</th>
             </c:if>
-            <th>排产数量</th>
-            <c:if test="${fns:getUser().getRoleNames()}">
-                <th>已完成数量</th>
+            <c:if test="${bizPoHeader.id!=null}">
+                <th>待排产量</th>
             </c:if>
+            <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+                <th>排产数量</th>
+            </shiro:hasPermission>
+            <shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+                <th>已完成数量</th>
+            </shiro:hasPermission>
             <th>工厂价</th>
+            <th>操作</th>
 
 
         </tr>
         </thead>
         <tbody id="prodInfo2">
         <c:if test="${bizPoHeader2.poDetailList!=null}">
-            <c:forEach items="${bizPoHeader2.poDetailList}" var="poDetail">
+            <c:forEach items="${bizPoHeader2.poDetailList}" var="poDetail" varStatus="state">
                 <tr>
+                    <td style="display: none">${state.index+1}</td>
                     <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
                     <td>${poDetail.skuInfo.productInfo.brandName}</td>
                     <td>${poDetail.skuInfo.name}</td>
@@ -227,16 +255,33 @@
                                         ${orderNumStr.orderNumStr}
                                 </a>
                                 </c:forEach>
-
                         </td>
                     </c:if>
-                    <td name="ordQty">${poDetail.ordQty}</td>
-                    <td name="sendQty">${poDetail.sendQty}</td>
-                    <td>
-                        <input type="text" name="schedulingNum" style="margin-bottom: 10px" value="${poDetail.ordQty - poDetail.sendQty}"
-                            htmlEscape="false" maxlength="30" class="input-xlarge "/>
-                    </td>
+                    <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
+                    <td id="sendQty_${state.index+1}">${poDetail.sendQty}</td>
+                    <td id="sumSchedulingNum_${state.index+1}" style="display:none">${poDetail.sumSchedulingNum}</td>
+                    <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+                        <td >${poDetail.ordQty - poDetail.sendQty - poDetail.sumSchedulingNum}</td>
+                        <td>
+                            <input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.ordQty - poDetail.sendQty - poDetail.sumSchedulingNum}"
+                                   htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        </td>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+                        <td>
+                            <input type="text" id="completeNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.sumSchedulingNum}"
+                                   htmlEscape="false" maxlength="30" class="input-xlarge "/>
+                        </td>
+                    </shiro:hasPermission>
                     <td>${poDetail.unitPrice}</td>
+                    <td>
+                        <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
+                            <input id="btnSubmit" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${poDetail.id}')" value="保存"/>&nbsp;
+                        </shiro:hasPermission>
+                        <shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+                            <input id="btnSubmit" class="btn btn-primary" type="button" onclick="confirmSchedulingCheck('${state.index+1}','${poDetail.id}')" value="保存"/>&nbsp;
+                        </shiro:hasPermission>
+                    </td>
                 </tr>
             </c:forEach>
         </c:if>
@@ -247,10 +292,6 @@
 
     <div class="form-actions">
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
-        <shiro:hasPermission name="biz:po:bizPoHeader:edit">
-            <input id="btnSubmit" class="btn btn-primary" type="submit" value="保存"/>&nbsp;
-            <input id="btnSubmit" type="button" onclick="saveMon('')" class="btn btn-primary" value="保存"/>
-        </shiro:hasPermission>
     </div>
 </form:form>
 <script src="${ctxStatic}/jquery-plugin/ajaxfileupload.js" type="text/javascript"></script>

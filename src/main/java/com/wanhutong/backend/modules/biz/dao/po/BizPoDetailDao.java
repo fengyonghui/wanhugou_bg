@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.biz.dao.po;
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 采购订单信息信息DAO接口
@@ -19,4 +20,11 @@ public interface BizPoDetailDao extends CrudDao<BizPoDetail> {
      * @param bizPoDetail
      */
     void insertFromBizPoDetail(BizPoDetail bizPoDetail);
+
+    /**
+     * 获取已排产总量
+     * @param objectId
+     * @return
+     */
+    BizPoDetail getsumSchedulingNum(@Param("objectId") Integer objectId);
 }

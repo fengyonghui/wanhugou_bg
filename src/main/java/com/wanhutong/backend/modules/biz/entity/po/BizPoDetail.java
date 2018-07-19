@@ -34,6 +34,11 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	private Integer sendQty;		//采购单供货数量
 	private List<BizSchedulingPlan> schedulingPlanList;
 
+	/**
+	 * 总的已排产量
+	 */
+	private Integer sumSchedulingNum = 0;
+
 
 	
 	public BizPoDetail() {
@@ -124,5 +129,13 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 
 	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
 		this.schedulingPlanList = schedulingPlanList;
+	}
+
+	public Integer getSumSchedulingNum() {
+		return sumSchedulingNum;
+	}
+
+	public void setSumSchedulingNum(Integer sumSchedulingNum) {
+		this.sumSchedulingNum = sumSchedulingNum;
 	}
 }
