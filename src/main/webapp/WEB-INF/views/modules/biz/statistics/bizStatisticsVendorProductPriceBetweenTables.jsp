@@ -15,7 +15,8 @@
         <input name="startDate" id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
         <input name="endDate" id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
         <input name="vendName" id="vendName" value="${vendName}"/>
-        <input onclick="initChart();" class="btn btn-primary" type="button" value="查询"/>
+        <input onclick="init('query')" class="btn btn-primary" type="button" value="查询"/>
+        <input onclick="init('download')" class="btn btn-primary" type="button" value="导出"/>
         <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
     </form:form>
 </div>
@@ -50,11 +51,11 @@
 </table>
 <div class="pagination">${page}</div>
     <script type="text/javascript">
-        function initChart() {
+        function init(methodType) {
             var startDate = $("#startDate").val();
             var endDate = $("#endDate").val();
             var vendName = $("#vendName").val();
-            window.location.href = "${ctx}/biz/statistics/between/vendorProductPriceTables?startDate=" + startDate + "&endDate=" + endDate + "&vendName=" + vendName;
+            window.location.href = "${ctx}/biz/statistics/between/vendorProductPriceTables?startDate=" + startDate + "&endDate=" + endDate + "&vendName=" + vendName + "&methodType=" + methodType;
         }
         function page(n, s) {
             $("#pageNo").val(n);

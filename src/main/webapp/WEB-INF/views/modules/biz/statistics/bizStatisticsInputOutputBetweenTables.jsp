@@ -32,7 +32,8 @@
                 <option value="3">全部</option>
             </c:if>
         </select>
-    <input onclick="init()" class="btn btn-primary" type="button" value="查询"/>
+    <input onclick="init('query')" class="btn btn-primary" type="button" value="查询"/>
+    <input onclick="init('download')" class="btn btn-primary" type="button" value="导出"/>
     <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
     </form:form>
 </div>
@@ -75,11 +76,11 @@
 </table>
 <div class="pagination">${page}</div>
 <script type="text/javascript">
-    function init() {
+    function init(methodType) {
         var skuItemNo = $("#skuItemNo").val();
         var invName = $("#invName").val();
         var dataType = $("#dataType").val();
-        window.location.href = "${ctx}/biz/statistics/between/skuInputOutputRecord?skuItemNo=" + skuItemNo + "&invName=" + invName + "&dataType=" + dataType;
+        window.location.href = "${ctx}/biz/statistics/between/skuInputOutputRecord?skuItemNo=" + skuItemNo + "&invName=" + invName + "&dataType=" + dataType + "&methodType=" + methodType;
     }
 
     function page(n, s) {
