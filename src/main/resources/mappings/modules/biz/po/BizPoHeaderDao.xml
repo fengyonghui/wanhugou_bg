@@ -338,6 +338,9 @@
 		and bpd.status = 1
 		and so.status = 1
 		and bph.is_prew = 0
+		<if test="vendName != null and vendName != ''">
+			and so.name LIKE concat('%',#{vendName},'%')
+		</if>
 		group by bph.vend_id
 	</select>
 
