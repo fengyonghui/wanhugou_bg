@@ -92,8 +92,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
     private BizOrderStatusService bizOrderStatusService;
     @Autowired
     private SystemService systemService;
-    @Autowired
-    private BizSchedulingPlanService bizSchedulingPlanService;
 
 
     /**
@@ -226,7 +224,6 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
             poDetail.setOrdQty(skuInfo.getReqQty());
             poDetail.setUnitPrice(skuInfo.getBuyPrice());
             bizPoDetailService.save(poDetail);
-            //bizPoDetailService.insertFromBizPoDetail(poDetail);
             bizPoDetailService.calculateTotalOrderPrice(poDetail);
             bizPoOrderReq.setPoHeader(poDetail.getPoHeader());
             bizPoOrderReq.setPoLineNo(poDetail.getLineNo());

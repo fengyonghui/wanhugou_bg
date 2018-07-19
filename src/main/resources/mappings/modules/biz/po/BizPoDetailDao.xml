@@ -141,49 +141,6 @@
 		WHERE id = #{id}
 	</update>
 
-	<insert id="insertFromBizPoDetail">
-		INSERT INTO biz_scheduling_plan(
-		id,
-		object_name,
-		object_id,
-		<if test="ordQty!=null and ordQty!=''">
-			original_num,
-			scheduling_num,
-		</if>
-		<if test="sendQty!=null and sendQty!=''">
-			complete_num,
-		</if>
-		create_id,
-		create_time,
-		update_id,
-		update_time
-		) VALUES (
-		NULL ,
-		"biz_po_detail",
-		#{id},
-		<if test="ordQty!=null and ordQty!=''">
-			#{ordQty},
-		</if>
-		<choose>
-			<when test="sendQty=null and sendQty=''">
-				#{ordQty},
-			</when>
-			<otherwise>
-				<if test="ordQty!=null and ordQty!=''">
-					#{ordQty}-#{sendQty},
-				</if>
-			</otherwise>
-		</choose>
-		<if test="sendQty!=null and sendQty!=''">
-			#{sendQty},
-		</if>
-		#{createBy.id},
-		#{createDate},
-		#{updateBy.id},
-		#{updateDate}
-		)
-	</insert>
-
 	<select id="getsumSchedulingNum" resultType="BizPoDetail">
 		SELECT
 			a.object_id as "id",

@@ -15,12 +15,7 @@ import org.apache.ibatis.annotations.Param;
  */
 @MyBatisDao
 public interface BizPoDetailDao extends CrudDao<BizPoDetail> {
-    /**
-     * 将bizPoDetail中数据插入排产计划表
-     * @param bizPoDetail
-     */
-    void insertFromBizPoDetail(BizPoDetail bizPoDetail);
-
+    
     /**
      * 获取已排产总量
      * @param objectId
