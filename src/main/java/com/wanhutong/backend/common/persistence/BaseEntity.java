@@ -24,7 +24,7 @@ import com.wanhutong.backend.modules.sys.utils.UserUtils;
  * @author ThinkGem
  * @version 2014-05-16
  */
-@JsonIgnoreProperties({ "global", "Global", "currentUser" })
+@JsonIgnoreProperties({ "global", "Global", "currentUser", "page", "sqlMap"})
 @SupTreeList
 public abstract class BaseEntity<T> implements Serializable {
 

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.utils.CookieUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
  * @version 2013-7-2
  * @param <T>
  */
+@JsonIgnoreProperties({"html" })
 public class Page<T> {
 	
 	private int pageNo = 1; // 当前页码
