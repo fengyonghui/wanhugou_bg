@@ -41,7 +41,7 @@
 //						url: '/a/biz/po/bizPoHeader/listData4Mobile',
 //						data: {
 //							//parentId:957,
-//							parentId: _this.userInfo.poId,
+//							parentId: _this.userInfo.purchId,
 //							pageNo: 1
 //						},
 //						dataType: 'json',
@@ -89,10 +89,6 @@
 //									'<label>订单状态:</label>' +
 //									'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
 //									'</div>' +
-//									//							'<div class="mui-input-row">' +
-//									//								'<label>审核状态:</label>' +
-//									//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.process.createTime)+' ">' +
-//									//							'</div>' +
 //									'<div class="app_font_cl content_part mui-row app_text_center">' +
 //									'<div class="mui-col-xs-3">' +
 //									'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
@@ -134,9 +130,9 @@
 					var pHtmlList = '';
 					$.ajax({
 						type: 'GET',
-						url: '/a/biz/po/bizPoHeader/listData4Mobile?page2='+page+'&size='+size,
+						url: '/a/biz/po/bizPoHeader/listData4Mobile',
 						data: {
-							parentId: _this.userInfo.poId,
+							parentId: _this.userInfo.purchId,
 							pageNo: page
 						},
 						dataType: 'json',
@@ -186,10 +182,6 @@
 										'<label>订单状态:</label>' +
 										'<input type="text" class="mui-input-clear" disabled="disabled" value=" ' + item.bizStatus + ' ">' +
 										'</div>' +
-										//							'<div class="mui-input-row">' +
-										//								'<label>审核状态:</label>' +
-										//								'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.process.createTime)+' ">' +
-										//							'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
 										'<div class="mui-col-xs-3">' +
 										'<li class="mui-table-view-cell ' + classBtn + '"  listId="' + item.id + '" codeId="' + code + '">' + startBtn + '</li>' +
