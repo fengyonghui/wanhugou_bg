@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.web.sku;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
@@ -196,7 +197,7 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuListV2")
-    public Map<String,Object> findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds) {
+    public String findSkuListV2(BizSkuInfo bizSkuInfo, String skuIds) {
         if (bizSkuInfo.getName().isEmpty() && bizSkuInfo.getPartNo().isEmpty() &&
                 bizSkuInfo.getItemNo().isEmpty() && bizSkuInfo.getProductInfo().getBrandName().isEmpty()) {
             logger.info("添加上架商品时，未输入查询条件，导致不查询商品，点击查询没反应");
@@ -227,7 +228,7 @@ public class BizSkuInfoController extends BaseController {
         }
         map.put("skuMap", listMap);
         map.put("serviceFactor", factorMap);
-        return map;
+		return JsonUtil.generateData(map, null);
 
     }
 	@ResponseBody
@@ -262,7 +263,7 @@ public class BizSkuInfoController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("biz:sku:bizSkuInfo:view")
 	@RequestMapping(value = "findSkuNameListV2")
-	public List<BizSkuInfo> findSkuNameListV2(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String findSkuNameListV2(String ids,BizSkuInfo bizSkuInfo, HttpServletRequest request, HttpServletResponse response, Model model) {
 		List<BizSkuInfo> bizSkuInfoList = new ArrayList<>();
 		if (ids != null && !"".equals(ids)){
 			String[] id = ids.split(",");
@@ -286,7 +287,7 @@ public class BizSkuInfoController extends BaseController {
 				}
 			}
 		}
-		return bizSkuInfoList;
+		return JsonUtil.generateData(bizSkuInfoList, null);
 	}
 
 	@ResponseBody

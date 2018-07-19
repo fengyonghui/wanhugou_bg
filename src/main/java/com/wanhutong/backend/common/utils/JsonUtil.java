@@ -1,5 +1,6 @@
 package com.wanhutong.backend.common.utils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.common.io.Closer;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.lang3.StringUtils;

@@ -4,6 +4,7 @@
 package com.wanhutong.backend.modules.biz.web.inventory;
 
 import com.wanhutong.backend.common.config.Global;
+import com.wanhutong.backend.common.persistence.BaseEntity;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.service.BaseService;
 import com.wanhutong.backend.common.utils.DateUtils;
@@ -127,24 +128,20 @@ public class BizInventorySkuController extends BaseController {
             }
         }
         Page<BizInventorySku> page = null;
-        if (user.isAdmin()) {
-            page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
-        } else {
+
+        if (!user.isAdmin()) {
+            bizInventorySku.setDataStatus(BaseEntity.DEL_FLAG_NORMAL);
             if (flag) {
                 Office company = systemService.getUser(user.getId()).getCompany();
                 //根据采购中心取出仓库
                 BizInventoryInfo bizInventoryInfo = new BizInventoryInfo();
                 bizInventoryInfo.setCustomer(company);
                 bizInventorySku.setInvInfo(bizInventoryInfo);
-            } else {
-                if (oflag) {
-
-                } else {
-                    bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
-                }
+            } else if (!oflag) {
+                bizInventorySku.getSqlMap().put("inventorySku", BaseService.dataScopeFilter(user, "s", "su"));
             }
-            page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         }
+        page = bizInventorySkuService.findPage(new Page<BizInventorySku>(request, response), bizInventorySku);
         List<BizInventorySku> list = page.getList();
         for (BizInventorySku inventorySku : list) {
             if (inventorySku.getCust() != null && inventorySku.getCust().getId() != 0) {

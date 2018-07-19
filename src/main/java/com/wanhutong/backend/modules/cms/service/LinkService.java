@@ -6,6 +6,7 @@ package com.wanhutong.backend.modules.cms.service;
 import java.util.Date;
 import java.util.List;
 
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,11 +33,11 @@ public class LinkService extends CrudService<LinkDao, Link> {
 		// 更新过期的权重，间隔为“6”个小时
 		Date updateExpiredWeightDate =  (Date)CacheUtils.get("updateExpiredWeightDateByLink");
 		if (updateExpiredWeightDate == null || (updateExpiredWeightDate != null 
-				&& updateExpiredWeightDate.getTime() < new Date().getTime())){
+				&& updateExpiredWeightDate.getTime() < System.currentTimeMillis())){
 			dao.updateExpiredWeight(link);
 			CacheUtils.put("updateExpiredWeightDateByLink", DateUtils.addHours(new Date(), 6));
 		}
-		link.getSqlMap().put("dsf", dataScopeFilter(link.getCurrentUser(), "o", "u"));
+		link.getSqlMap().put("dsf", dataScopeFilter(UserUtils.getUser(), "o", "u"));
 		
 		return super.findPage(page, link);
 	}

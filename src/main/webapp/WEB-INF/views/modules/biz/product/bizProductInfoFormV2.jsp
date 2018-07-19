@@ -102,6 +102,46 @@
                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false});"/>
         </div>
     </div>
+
+    <div class="control-group">
+        <label class="control-label">产品banner视频:
+            <p style="opacity: 0.5;color: red;">*上传产品视频</p>
+            <p style="opacity: 0.5;color: red;">视频比例建议16:9横版</p>
+            <p style="opacity: 0.5;color: red;">点击视频删除</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="file" onchange="submitVideo('prodBannerVideo', false)" value="上传" id="prodBannerVideo"/>
+        </div>
+        <div id="prodBannerVideoDiv">
+            <table>
+                <div id="prodBannerVideoDivTr">
+                    <c:forEach items="${bannerVideoList}" var="v" varStatus="status">
+                            <video width="300px" customInput="prodBannerVideoInput" src="${v.imgServer}${v.imgPath}" controls="controls" onclick="$(this).remove();"></video>
+                    </c:forEach>
+                </div>
+            </table>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">产品detail视频:
+            <p style="opacity: 0.5;color: red;">*上传产品视频</p>
+            <p style="opacity: 0.5;color: red;">点击视频删除</p>
+            <p style="opacity: 0.5;color: red;">视频比例建议16:9横版</p>
+        </label>
+        <div class="controls">
+            <input class="btn" type="file" name="file" onchange="submitVideo('prodDetailVideo', false)" value="上传" id="prodDetailVideo"/>
+        </div>
+        <div id="prodDetailVideoDiv">
+            <table>
+                <div id="prodDetailVideoDivTr">
+                    <c:forEach items="${detailVideoList}" var="v" varStatus="status">
+                            <video width="300px" customInput="prodDetailVideoInput" src="${v.imgServer}${v.imgPath}" controls="controls" onclick="$(this).remove();"></video>
+                    </c:forEach>
+                </div>
+            </table>
+        </div>
+    </div>
+
     <div class="control-group">
         <label class="control-label">产品主图:
             <p style="opacity: 0.5;color: red;">*首图为列表页图</p>
@@ -387,6 +427,8 @@
     <form:input path="photos" id="photos" cssStyle="display: none"/>
     <form:input path="photoDetails" id="photoDetails" cssStyle="display: none"/>
     <form:input path="imgUrl" id="imgUrl" cssStyle="display: none"/>
+    <form:input path="detailVideo" id="detailVideo" cssStyle="display: none"/>
+    <form:input path="bannerVideo" id="bannerVideo" cssStyle="display: none"/>
     <div class="form-actions">
         <shiro:hasPermission name="biz:product:bizProductInfo:edit"><input id="btnSubmit" class="btn btn-primary"
                                                                            type="button"
@@ -585,6 +627,21 @@
                 }
                 $("#imgUrl").val(bannerImgStr);
 
+                var bannerVideo = $("#prodBannerVideoDiv").find("[customInput = 'prodBannerVideoInput']");
+                var bannerVideoStr = "";
+                for (var i = 0; i < bannerVideo.length; i ++) {
+                    bannerVideoStr += ($(bannerVideo[i]).attr("src"));
+                }
+                $("#bannerVideo").val(bannerVideoStr);
+
+                var detailVideo = $("#prodDetailVideoDiv").find("[customInput = 'prodDetailVideoInput']");
+                var detailVideoStr = "";
+                for (var i = 0; i < detailVideo.length; i ++) {
+                    detailVideoStr += ($(detailVideo[i]).attr("src"));
+                }
+                $("#detailVideo").val(detailVideoStr);
+
+
                 var detailImg = $("#prodDetailImgDiv").find("[customInput = 'prodDetailImgImg']");
                 var detailImgStr = "";
                 for (var i = 0; i < detailImg.length; i ++) {
@@ -755,6 +812,70 @@
                 $(this).parent().parent().find("input[customInput='priceInput']").val(price);
             }
         });
+    }
+
+    function submitVideo(id, multiple){
+        var f = $("#" + id).val();
+        if(f==null||f==""){
+            alert("错误提示:上传文件不能为空,请重新选择文件");
+            return false;
+        }else{
+            var extname = f.substring(f.lastIndexOf(".")+1,f.length);
+            extname = extname.toLowerCase();//处理了大小写
+            // if(extname!= "jpeg"&&extname!= "jpg"&&extname!= "gif"&&extname!= "png" &&
+            //     extname!= "mp4"
+            // ){
+            //     $("#picTip").html("<span style='color:Red'>错误提示:格式不正确,支持的图片格式为：JPEG、GIF、PNG！</span>");
+            //     return false;
+            // }
+        }
+        var file = document.getElementById(id).files;
+        var size = file[0].size;
+        // if(size>10097152){
+        //     alert("错误提示:所选择的文件太大，文件大小最多支持10M!");
+        //     return false;
+        // }
+        ajaxFileUploadVideo(id, multiple);
+    }
+
+    function ajaxFileUploadVideo(id, multiple) {
+        $.ajaxFileUpload({
+            url : '${ctx}/file/upload', //用于文件上传的服务器端请求地址
+            secureuri : false, //一般设置为false
+            fileElementId : id, //文件上传空间的id属性  <input type="file" id="file" name="file" />
+            type : 'POST',
+            dataType : 'text', //返回值类型 一般设置为json
+            success : function(data, status) {
+                var msg = data.substring(data.indexOf("{"), data.lastIndexOf("}")+1);
+                var msgJSON = $.parseJSON(msg);
+                console.info(msgJSON);
+                if(msgJSON.ret == "false" || !msgJSON.ret) {
+                    alert(msgJSON.errmsg);
+                    return;
+                }
+                var fileList = msgJSON.data.fileList;
+                var imgDiv = $("#" + id + "Div");
+                var imgDivHtml = "<td><video width='300px' customInput=\""+ id +"Input\" src=\"$Src\" controls=\"controls\" onclick=\"removeThis(this);\"></video></td>";
+                if (fileList && fileList.length > 0 && multiple) {
+                    for (var i = 0; i < fileList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", fileList[i]));
+                    }
+                }else if (fileList && fileList.length > 0 && !multiple) {
+                    imgDiv.empty();
+                    for (var i = 0; i < fileList.length; i ++) {
+                        imgDiv.append(imgDivHtml.replace("$Src", fileList[i]));
+                    }
+                }
+            },
+            error : function(data, status, e) {
+                //服务器响应失败处理函数
+                console.info(data);
+                console.info(status);
+                console.info(e);
+                alert("上传失败");
+            }
+        });
+        return false;
     }
 
     $(document).ready(function() {

@@ -5,6 +5,7 @@ package com.wanhutong.backend.common.service;
 
 import java.util.List;
 
+import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,7 +116,7 @@ public abstract class BaseService {
 	 */
 	public static void dataScopeFilter(BaseEntity<?> entity, String sqlMapKey, String officeWheres, String userWheres) {
 
-		User user = entity.getCurrentUser();
+		User user = UserUtils.getUser();
 		
 		// 如果是超级管理员，则不过滤数据
 		if (user.isAdmin()) {

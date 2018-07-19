@@ -10,6 +10,7 @@ import com.wanhutong.backend.common.service.CrudService;
 import com.wanhutong.backend.common.utils.DsConfig;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
+import com.wanhutong.backend.modules.biz.dao.order.BizDrawBackDao;
 import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
@@ -74,6 +75,8 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
     private UserDao userDao;
     @Autowired
     private BizOrderCommentService bizOrderCommentService;
+    @Autowired
+    private BizDrawBackDao bizDrawBackDao;
 
     @Resource
     private CommonImgService commonImgService;
@@ -654,7 +657,19 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
      */
     @Transactional(readOnly = false)
     public void updateDrawbackStatus(BizOrderHeader bizOrderHeader) {
-        bizOrderHeaderDao.updateDrawbackStatus(bizOrderHeader);
+        BizDrawBack bizDrawBack = bizOrderHeaderDao.findDrawBack(bizOrderHeader);
+        Integer drawbackStatus = bizOrderHeader.getDrawBack().getDrawbackStatus();
+        bizDrawBack.setDrawbackStatus(drawbackStatus);
+        bizDrawBack.preUpdate();
+        bizDrawBackDao.update(bizDrawBack);
     }
 
+    /**
+     * 通过orderNum获取订单Entity
+     *
+     * @param orderNum
+     */
+    public BizOrderHeader getByOrderNum(String orderNum) {
+        return bizOrderHeaderDao.getByOrderNum(orderNum);
+    }
 }

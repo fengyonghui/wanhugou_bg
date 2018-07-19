@@ -40,6 +40,7 @@ import com.wanhutong.backend.modules.biz.service.sku.BizSkuInfoV2Service;
 import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.PurchaseOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
+import com.wanhutong.backend.modules.enums.BizOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
 import com.wanhutong.backend.modules.enums.OrderHeaderBizStatusEnum;
 import com.wanhutong.backend.modules.enums.OrderTypeEnum;
@@ -698,27 +699,38 @@ public class BizPoHeaderController extends BaseController {
      */
     @RequiresPermissions("biz:po:bizPoHeader:view")
     @RequestMapping(value = "poHeaderExport")
-    public String poHeaderExport(BizPoHeader bizPoHeader, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public String poHeaderExport(BizPoHeader bizPoHeader,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String fileName = "采购单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
             List<BizPoHeader> list = bizPoHeaderService.findList(bizPoHeader);
             //1采购单整体数据
             List<List<String>> data = new ArrayList<List<String>>();
-            if (list != null && !list.isEmpty()) {
-                for (BizPoHeader poHeader : list) {
+            if(list != null && !list.isEmpty()){
+                for(BizPoHeader poHeader:list){
 //                    List<BizPoDetail> poDetailList=Lists.newArrayList();
-                    BizPoDetail bizPoDetail = new BizPoDetail();
+                    poHeader = this.get(poHeader.getId());
+                    BizPoDetail bizPoDetail=new BizPoDetail();
                     bizPoDetail.setPoHeader(poHeader);
                     List<BizPoDetail> poDetailList = bizPoDetailService.findList(bizPoDetail);
-                    if (poDetailList != null && !poDetailList.isEmpty()) {
-                        for (BizPoDetail poDetail : poDetailList) {
-                            BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(poDetail.getSkuInfo().getId()));
+                    if(poDetailList != null && !poDetailList.isEmpty()){
+                        for(BizPoDetail poDetail:poDetailList){
+                            BizSkuInfo skuInfo=bizSkuInfoService.findListProd(bizSkuInfoService.get(poDetail.getSkuInfo().getId()));
                             poDetail.setSkuInfo(skuInfo);
                             poDetail.setPoHeader(poHeader);
                         }
                     }
-                    for (BizPoDetail poDetail : poDetailList) {
+                    Set<String> orderNumSet = poHeader.getOrderSourceMap().keySet();
+                    String orderNum = "";
+                    for (String value : orderNumSet) {
+                        orderNum = value;
+                    }
+                    Integer orderType = null;
+                    BizOrderHeader orderHeader = bizOrderHeaderService.getByOrderNum(orderNum);
+                    if (orderHeader != null){
+                        orderType = orderHeader.getOrderType();
+                    }
+                    if (BizOrderTypeEnum.PHOTO_ORDER.getState().equals(orderType)){
                         List<String> headerListData = new ArrayList();
                         //采购单遍历
                         headerListData.add(poHeader.getOrderNum());
@@ -760,63 +772,119 @@ public class BizPoHeaderController extends BaseController {
                         //创建时间
                         headerListData.add(String.valueOf(sdf.format(poHeader.getCreateDate())));
                         //所属单号
-                        BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
-                        bizPoOrderReq.setPoHeader(poHeader);
-                        bizPoOrderReq.setPoLineNo(poDetail.getLineNo());
-                        List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
-                        BizOrderHeader bizOrderHeader = new BizOrderHeader();
-                        BizRequestHeader bizRequestHeader = new BizRequestHeader();
-                        StringBuffer nums = new StringBuffer();
-                        for (BizPoOrderReq poOrderReq : poOrderReqList) {
-                            if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())) {
-                                bizOrderHeader = bizOrderHeaderService.get(poOrderReq.getSoId());
-                                BizOrderDetail bizOrderDetail = new BizOrderDetail();
-                                bizOrderDetail.setOrderHeader(bizOrderHeader);
-                                bizOrderDetail.setLineNo(poOrderReq.getSoLineNo());
-                                List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
-                                if (orderDetailList != null && !orderDetailList.isEmpty()) {
-                                    BizOrderDetail orderDetail = orderDetailList.get(0);
-                                    if (orderDetail.getSkuInfo() != null) {
-                                        if (orderDetail.getSkuInfo().getId().equals(poDetail.getSkuInfo().getId())) {
-                                            nums.append(bizOrderHeader.getOrderNum()).append(";");
+                        headerListData.add(orderNum);
+                        //商品名称
+                        headerListData.add("");
+                        //商品货号
+                        headerListData.add("");
+                        //采购数量
+                        headerListData.add("");
+                        //已供货数量
+                        headerListData.add("");
+                        //工厂价
+                        headerListData.add("");
+                        data.add(headerListData);
+                    } else {
+                        for (BizPoDetail poDetail:poDetailList) {
+                            List<String> headerListData = new ArrayList();
+                            //采购单遍历
+                            headerListData.add(poHeader.getOrderNum());
+                            //供应商
+                            headerListData.add(poHeader.getVendOffice().getName());
+                            //采购总价
+                            headerListData.add(String.valueOf(poHeader.getTotalDetail()));
+                            //交易费用
+                            headerListData.add(String.valueOf(poHeader.getTotalExp()));
+                            //应付金额
+                            headerListData.add(String.valueOf(poHeader.getTotalDetail() + poHeader.getTotalExp()));
+                            //累计支付金额
+                            headerListData.add(String.valueOf(poHeader.getPayTotal()));
+                            //支付比例
+                            headerListData.add(String.valueOf(poHeader.getPayTotal().multiply(new BigDecimal(100)).divide(new BigDecimal(poHeader.getTotalDetail() + poHeader.getTotalExp()), 2, RoundingMode.HALF_UP)) + "%");
+                            //订单状态
+                            Dict dict = new Dict();
+                            dict.setType("biz_po_status");
+                            List<Dict> dictList = dictService.findList(dict);
+                            String str = "";
+                            for (Dict bizDict : dictList) {
+                                if (bizDict.getValue().equals(String.valueOf(poHeader.getBizStatus()))) {
+                                    //业务状态
+                                    str = bizDict.getLabel();
+//                                headerListData.add(String.valueOf(bizDict.getLabel()));
+                                    break;
+                                }
+                            }
+                            headerListData.add(str);
+//                    //采购单来源
+//                    headerListData.add(String.valueOf());
+                            //审核状态
+                            CommonProcessEntity commonProcessEntity = commonProcessService.get(poHeader.getProcessId());
+                            if (commonProcessEntity != null) {
+                                headerListData.add(commonProcessEntity.getPurchaseOrderProcess().getName()==null?"当前无审批流程":commonProcessEntity.getPurchaseOrderProcess().getName());
+                            }else {
+                                headerListData.add("当前无审批流程");
+                            }
+                            //创建时间
+                            headerListData.add(String.valueOf(sdf.format(poHeader.getCreateDate())));
+                            //所属单号
+                            BizPoOrderReq bizPoOrderReq = new BizPoOrderReq();
+                            bizPoOrderReq.setPoHeader(poHeader);
+                            bizPoOrderReq.setPoLineNo(poDetail.getLineNo());
+                            List<BizPoOrderReq> poOrderReqList = bizPoOrderReqService.findList(bizPoOrderReq);
+                            BizOrderHeader bizOrderHeader = new BizOrderHeader();
+                            BizRequestHeader bizRequestHeader = new BizRequestHeader();
+                            StringBuffer nums = new StringBuffer();
+                            for (BizPoOrderReq poOrderReq : poOrderReqList) {
+                                if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.SO.getOrderType())) {
+                                    bizOrderHeader = bizOrderHeaderService.get(poOrderReq.getSoId());
+                                    BizOrderDetail bizOrderDetail = new BizOrderDetail();
+                                    bizOrderDetail.setOrderHeader(bizOrderHeader);
+                                    bizOrderDetail.setLineNo(poOrderReq.getSoLineNo());
+                                    List<BizOrderDetail> orderDetailList = bizOrderDetailService.findList(bizOrderDetail);
+                                    if (orderDetailList != null && !orderDetailList.isEmpty()) {
+                                        BizOrderDetail orderDetail = orderDetailList.get(0);
+                                        if (orderDetail.getSkuInfo() != null) {
+                                            if (orderDetail.getSkuInfo().getId().equals(poDetail.getSkuInfo().getId())) {
+                                                nums.append(bizOrderHeader.getOrderNum()).append(";");
+                                            }
+                                        }
+                                    }
+                                }
+                                if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())) {
+                                    bizRequestHeader = bizRequestHeaderService.get(poOrderReq.getSoId());
+                                    BizRequestDetail requestDetail = new BizRequestDetail();
+                                    requestDetail.setRequestHeader(bizRequestHeader);
+                                    requestDetail.setLineNo(poOrderReq.getSoLineNo());
+                                    List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
+                                    if (requestDetailList != null && !requestDetailList.isEmpty()) {
+                                        BizRequestDetail bizRequestDetail = requestDetailList.get(0);
+                                        if (bizRequestDetail.getSkuInfo() != null && bizRequestDetail.getSkuInfo().getId().equals(poDetail.getSkuInfo().getId())) {
+                                            nums.append(bizRequestHeader.getReqNo()).append(";");
                                         }
                                     }
                                 }
                             }
-                            if (poOrderReq.getSoType() == Byte.parseByte(PoOrderReqTypeEnum.RE.getOrderType())) {
-                                bizRequestHeader = bizRequestHeaderService.get(poOrderReq.getSoId());
-                                BizRequestDetail requestDetail = new BizRequestDetail();
-                                requestDetail.setRequestHeader(bizRequestHeader);
-                                requestDetail.setLineNo(poOrderReq.getSoLineNo());
-                                List<BizRequestDetail> requestDetailList = bizRequestDetailService.findList(requestDetail);
-                                if (requestDetailList != null && !requestDetailList.isEmpty()) {
-                                    BizRequestDetail bizRequestDetail = requestDetailList.get(0);
-                                    if (bizRequestDetail.getSkuInfo() != null && bizRequestDetail.getSkuInfo().getId().equals(poDetail.getSkuInfo().getId())) {
-                                        nums.append(bizRequestHeader.getReqNo()).append(";");
-                                    }
-                                }
+                            if (!"".equals(nums.toString())) {
+                                headerListData.add(nums.toString());
+                            }else {
+                                headerListData.add("");
                             }
+                            //商品名称
+                            headerListData.add(String.valueOf(poDetail.getSkuInfo().getName()));
+                            //商品货号
+                            headerListData.add(String.valueOf(poDetail.getSkuInfo().getItemNo()));
+                            //采购数量
+                            headerListData.add(String.valueOf(poDetail.getOrdQty()));
+                            //已供货数量
+                            headerListData.add(String.valueOf(poDetail.getSendQty()));
+                            //工厂价
+                            headerListData.add(String.valueOf(poDetail.getSkuInfo().getBuyPrice()));
+                            data.add(headerListData);
                         }
-                        if (!"".equals(nums.toString())) {
-                            headerListData.add(nums.toString());
-                        } else {
-                            headerListData.add("");
-                        }
-                        //商品名称
-                        headerListData.add(String.valueOf(poDetail.getSkuInfo().getName()));
-                        //商品货号
-                        headerListData.add(String.valueOf(poDetail.getSkuInfo().getItemNo()));
-                        //采购数量
-                        headerListData.add(String.valueOf(poDetail.getOrdQty()));
-                        //已供货数量
-                        headerListData.add(String.valueOf(poDetail.getSendQty()));
-                        //工厂价
-                        headerListData.add(String.valueOf(poDetail.getSkuInfo().getBuyPrice()));
-                        data.add(headerListData);
                     }
                 }
             }
-            String[] headers = {"采购单号", "供应商", "采购总价", "交易费用", "应付金额", "累计支付金额", "支付比例", "订单状态", "审核状态", "创建时间", "所属单号", "商品名称", "商品货号", "采购数量", "已供货数量", "工厂价"};
+            String[] headers = {"采购单号", "供应商", "采购总价", "交易费用","应付金额", "累计支付金额", "支付比例","订单状态","审核状态","创建时间","所属单号","商品名称","商品货号","采购数量","已供货数量","工厂价"};
             ExportExcelUtils eeu = new ExportExcelUtils();
             SXSSFWorkbook workbook = new SXSSFWorkbook();
             eeu.exportExcel(workbook, 0, "采购单数据", headers, data, fileName);
@@ -826,8 +894,8 @@ public class BizPoHeaderController extends BaseController {
             workbook.write(response.getOutputStream());
             workbook.dispose();
             return null;
-        } catch (Exception e) {
-            logger.error("可能没有采购单详情", e);
+        }catch (Exception e){
+            logger.error("可能没有采购单详情",e);
             addMessage(redirectAttributes, "导出采购单数据失败！失败信息：" + e.getMessage());
         }
         return "redirect:" + adminPath + "/biz/po/bizPoHeader/list";
