@@ -119,6 +119,7 @@ public class BizRequestHeaderController extends BaseController {
 
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = {"list4Mobile"})
+	@ResponseBody
 	public String list4Mobile(BizRequestHeader bizRequestHeader,
 							  @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
 							  HttpServletRequest request, HttpServletResponse response) {
@@ -135,7 +136,7 @@ public class BizRequestHeaderController extends BaseController {
 		resultMap.put("varietyInfoList", varietyInfoList);
 		resultMap.put("auditStatus", ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().getAutProcessId());
 
-		return "modules/biz/request/bizRequestHeaderList";
+		return JsonUtil.generateData(resultMap, null);
 	}
 
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
