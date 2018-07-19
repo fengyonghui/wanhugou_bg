@@ -12,9 +12,9 @@
 </ul>
 <div>
     <form:form id="searchForm" modelAttribute="office" action="${ctx}/biz/statistics/between/vendorProductPriceTables" method="post" class="breadcrumb form-search">
-        <input name="startDate" id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
-        <input name="endDate" id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
-        <input name="vendName" id="vendName" value="${vendName}"/>
+        起始时间:<input name="startDate" id="startDate" value="${startDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
+        结束时间:<input name="endDate" id="endDate" value="${endDate}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
+        供应商名称:<input name="vendName" id="vendName" value="${vendName}"/>
         <input onclick="init('query')" class="btn btn-primary" type="button" value="查询"/>
         <input onclick="init('download')" class="btn btn-primary" type="button" value="导出"/>
         <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
