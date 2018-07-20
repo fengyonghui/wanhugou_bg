@@ -16,10 +16,38 @@
         <passCode>3</passCode>
         <rejectCode>-1</rejectCode>
     </process>
-
+    <process>
+        <name>待采销部经理审批</name>
+        <code>3</code>
+        <roleEnNameEnum>MARKETING_MANAGER</roleEnNameEnum>
+        <passCode>4</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>待供货部经理审批</name>
+        <code>4</code>
+        <roleEnNameEnum>PROVIDER_MANAGER</roleEnNameEnum>
+        <passCode>5</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>待财务部经理审批</name>
+        <code>5</code>
+        <roleEnNameEnum>FINANCE</roleEnNameEnum>
+        <passCode>6</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
+    <process>
+        <name>待运营总监或总经理审批</name>
+        <code>7</code>
+        <roleEnNameEnum>OP_DIRECTOR</roleEnNameEnum>
+        <roleEnNameEnum>GENERAL_MANAGER</roleEnNameEnum>
+        <passCode>8</passCode>
+        <rejectCode>-1</rejectCode>
+    </process>
     <process>
         <name>审核完成</name>
-        <code>3</code>
+        <code>8</code>
         <roleEnNameEnum></roleEnNameEnum>
         <passCode>0</passCode>
         <rejectCode>0</rejectCode>

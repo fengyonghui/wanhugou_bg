@@ -2550,4 +2550,22 @@ FROM
 		and bo.order_num=#{orderNum}
 	</select>
 
+	<select id="findOrderForVendReq" resultType="BizOrderHeader">
+		<!--SELECT-->
+		<!--a.order_num AS "orderNum",-->
+		<!--a.create_time AS "createDate",-->
+		<!--(SELECT sum(bod.unit_price)-->
+		<!--FROM biz_order_detail bod-->
+		<!--WHERE bod.sku_id =) AS "detailPrice",-->
+		<!--a.total_detail AS "totalDetail"-->
+		<!--FROM biz_order_header a-->
+		<!--LEFT JOIN biz_order_detail od ON od.order_id = a.id-->
+		<!--LEFT JOIN biz_op_shelf_sku ops ON ops.id = od.sku_shelf_id-->
+		<!--WHERE-->
+		<!--<foreach collection="skuIdList" index="index" item="skuId" open="(" separator="OR" close=")">-->
+			<!--ops.sku_id = #{skuId}-->
+		<!--</foreach>-->
+		<!--AND ops.center_id = #{centId}-->
+	</select>
+
 </mapper>

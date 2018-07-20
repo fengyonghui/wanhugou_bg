@@ -54,6 +54,10 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 * 查看商品的总库存数量
 	 * */
 	private Integer invenSkuOrd;
+	/**
+	 * 销售数量
+	 */
+	private Integer sellCount;
 
 	public BizRequestDetail() {
 		super();
@@ -223,5 +227,13 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 
 	public void setInvenSkuOrd(Integer invenSkuOrd) {
 		this.invenSkuOrd = invenSkuOrd;
+	}
+
+	public Integer getSellCount() {
+		return sellCount;
+	}
+
+	public void setSellCount(Integer sellCount) {
+		this.sellCount = sellCount;
 	}
 }
