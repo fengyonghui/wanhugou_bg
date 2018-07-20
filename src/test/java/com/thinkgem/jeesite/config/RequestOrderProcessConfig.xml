@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RequestOrderProcessConfig>
     <defaultProcessId>1</defaultProcessId>
-    <autProcessId>3</autProcessId>
+    <autProcessId>8</autProcessId>
     <process>
         <name>待采购中心经理审批</name>
         <code>1</code>
@@ -24,7 +24,7 @@
         <rejectCode>-1</rejectCode>
     </process>
     <process>
-        <name>待供货部经理审批</name>
+        <name>待供货部开启流程</name>
         <code>4</code>
         <roleEnNameEnum>PROVIDER_MANAGER</roleEnNameEnum>
         <passCode>5</passCode>

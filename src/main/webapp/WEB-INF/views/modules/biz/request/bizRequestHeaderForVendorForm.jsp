@@ -2,6 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqFromTypeEnum" %>
 
 
 <html>
@@ -643,7 +644,7 @@
 			</div>
 
 		</div>
-		<%--<form>--%>
+		<c:if test="${entity.str eq 'detail' && entity.fromType eq ReqFromTypeEnum.VENDOR_TYPE.type}">
 			<div>
 				<label class="control-label">销售单号</label>
 				<div class="controls">
@@ -665,7 +666,7 @@
 					</table>
 				</div>
 			</div>
-		<%--</form>--%>
+		</c:if>
 		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">
