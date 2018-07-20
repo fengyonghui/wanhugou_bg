@@ -343,5 +343,5 @@ public interface BizOrderHeaderDao extends CrudDao<BizOrderHeader> {
      * @param centId
      * @return
      */
-    List<BizOrderHeader> findOrderForVendReq(@Param("skuIdList") List<Integer> skuIdList, Integer centId);
+    List<BizOrderHeader> findOrderForVendReq(@Param("skuIdList") List<Integer> skuIdList, @Param("centId") Integer centId);
 }
