@@ -201,7 +201,7 @@
 				<td>
 					<c:choose>
 						<c:when test="${requestHeader.bizStatus<ReqHeaderStatusEnum.APPROVE.state}">
-							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}">
+							<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=detail">
 							</c:when>
 							<c:otherwise>
 								<a href="${ctx}/biz/request/bizRequestHeaderForVendor/form?id=${requestHeader.id}&str=detail">

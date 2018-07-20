@@ -21,6 +21,15 @@
 		$(document).ready(function() {
 			//$("#name").focus();
 			var str=$("#str").val();
+            if ($("#id").val() == null || $("#fromType").val() == 1) {
+                $("#fromType1").prop("checked","checked");
+            } else {
+                $("#fromType2").prop("checked","checked");
+            }
+            if ($("#vendId").val() != "") {
+                $("#vendor").removeAttr("style");
+                deleteStyle();
+            }
 			if(str=='detail'){
 			   $("#inputForm").find("input[type!='button']").attr("disabled","disabled") ;
 			   $("#fromOfficeButton").hide();
@@ -279,15 +288,7 @@
 	</script>
 	<script type="text/javascript">
 		$.ready(function () {
-            if ($("#id").val() == null || $("#fromType").val() == 1) {
-                $("#fromType1").prop("checked","checked");
-            } else {
-                $("#fromType2").prop("checked","checked");
-            }
-            if ($("#vendId").val() != "") {
-                $("#vendor").removeAttr("style");
-                deleteStyle();
-            }
+
         });
 		function deleteStyle() {
             $("#remark").removeAttr("style");
@@ -348,7 +349,7 @@
 		<form:hidden path="id"/>
 		<input id="str" type="hidden"  value="${entity.str}"/>
 		<input id="fromType" type="hidden" value="${entity.fromType}"/>
-		<input id="vendId" type="hidden" value="${entity.bizVendInfo.id}"/>
+		<input id="vendId" type="hidden" value="${entity.bizVendInfo.office.id}"/>
 		<input id="remarkInput" type="hidden" value=""/>
 		<c:forEach items="${fns:getUser().roleList}" var="role">
 			<c:if test="${role.enname==RoleEnNameEnum.STOCKREADYCOMMISSIONER.state}">
@@ -642,11 +643,11 @@
 			</div>
 
 		</div>
-		<form>
+		<%--<form>--%>
 			<div>
 				<label class="control-label">销售单号</label>
 				<div class="controls">
-					<table>
+					<table class="table table-bordered table-condensed">
 						<thead>
 							<th>订单号</th>
 							<th>创建日期</th>
@@ -664,7 +665,7 @@
 					</table>
 				</div>
 			</div>
-		</form>
+		<%--</form>--%>
 		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">
