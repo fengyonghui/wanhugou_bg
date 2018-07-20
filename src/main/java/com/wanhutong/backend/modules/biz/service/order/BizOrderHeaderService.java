@@ -663,4 +663,13 @@ public class BizOrderHeaderService extends CrudService<BizOrderHeaderDao, BizOrd
         bizDrawBack.preUpdate();
         bizDrawBackDao.update(bizDrawBack);
     }
+
+    /**
+     * 通过orderNum获取订单Entity
+     *
+     * @param orderNum
+     */
+    public BizOrderHeader getByOrderNum(String orderNum) {
+        return bizOrderHeaderDao.getByOrderNum(orderNum);
+    }
 }

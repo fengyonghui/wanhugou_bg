@@ -70,6 +70,8 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 	private String itemNoComplete;
 	private String imgPhotosSorts;		//主图顺序
     private String imgDetailSorts;      //列表图顺序
+    private String detailVideo;      // 列表视频
+    private String bannerVideo;      // banner视频
 	/**
 	 * 业务状态
 	 */
@@ -578,5 +580,21 @@ public class BizProductInfo extends DataEntity<BizProductInfo> {
 
 	public void setSkuItemNo(String skuItemNo) {
 		this.skuItemNo = skuItemNo;
+	}
+
+	public String getDetailVideo() {
+		return detailVideo;
+	}
+
+	public void setDetailVideo(String detailVideo) {
+		this.detailVideo = detailVideo;
+	}
+
+	public String getBannerVideo() {
+		return bannerVideo;
+	}
+
+	public void setBannerVideo(String bannerVideo) {
+		this.bannerVideo = bannerVideo;
 	}
 }

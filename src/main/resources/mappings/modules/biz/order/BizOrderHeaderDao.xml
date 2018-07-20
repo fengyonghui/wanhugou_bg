@@ -198,6 +198,14 @@
 		WHERE a.id = #{id}
 	</select>
 
+	<select id="getByOrderNum" resultType="BizOrderHeader">
+		SELECT
+		<include refid="bizOrderHeaderColumns"/>
+		FROM biz_order_header a
+		<include refid="bizOrderHeaderJoins"/>
+		WHERE a.order_num = #{orderNum}
+	</select>
+
 	<!--<select id="findList" resultType="BizOrderHeader">-->
 	<!--SELECT-->
 	<!--<include refid="bizOrderHeaderColumns"/>-->
