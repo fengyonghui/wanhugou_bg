@@ -214,6 +214,80 @@ public class BizRequestHeaderController extends BaseController {
 
 	@ResponseBody
 	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = "form4Mobile")
+	public String form4Mobile(BizRequestHeader bizRequestHeader) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
+		if (bizRequestHeader.getId() != null) {
+			BizRequestDetail bizRequestDetail = new BizRequestDetail();
+			bizRequestDetail.setRequestHeader(bizRequestHeader);
+			if (!bizRequestHeader.getBizStatus().equals(ReqHeaderStatusEnum.CLOSE.getState()) && bizRequestHeader.getBizStatus() >= ReqHeaderStatusEnum.PURCHASING.getState()) {
+				/* 查询已生成的采购单 标识*/
+				bizRequestDetail.setPoheaderSource("poHeader");
+			}
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
+			BizInventorySku bizInventorySku = new BizInventorySku();
+			for (BizRequestDetail requestDetail : requestDetailList) {
+				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
+				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
+				if (CollectionUtils.isNotEmpty(list)) {
+					//已有的库存数量
+					bizRequestHeader.setInvenSource("inventorySku");
+					requestDetail.setInvenSkuOrd(list.size());
+				}
+				if (requestDetail.getBizPoHeader() == null) {
+					bizRequestHeader.setPoSource("poHeaderSource");
+				}
+				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+				requestDetail.setSkuInfo(skuInfo);
+				reqDetailList.add(requestDetail);
+			}
+			if (requestDetailList.size() == 0) {
+				bizRequestHeader.setPoSource("poHeaderSource");
+			}
+		}
+
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
+			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			resultMap.put("requestOrderProcess", requestOrderProcess);
+		}
+
+		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
+			BizOrderStatus bizOrderStatus = new BizOrderStatus();
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizRequestHeader.getId());
+			bizOrderStatus.setOrderHeader(bizOrderHeader);
+			bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+			List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+			statusList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
+
+			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+
+			resultMap.put("statusList", statusList);
+			resultMap.put("statusMap", statusMap);
+		}
+
+		User userAdmin = UserUtils.getUser();
+		//渠道部角色
+		List<Role> roleList = userAdmin.getRoleList();
+		String roleName = null;
+		if (CollectionUtils.isNotEmpty(roleList)) {
+			for (Role role : roleList) {
+				if (role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState()) || userAdmin.isAdmin() ) {
+					roleName = "channeOk";
+				}
+			}
+		}
+
+		resultMap.put("roleChanne", roleName);
+		resultMap.put("entity", bizRequestHeader);
+		resultMap.put("reqDetailList", reqDetailList);
+		return JsonUtil.generateData(resultMap, null);
+	}
+
+	@ResponseBody
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
 	@RequestMapping(value = "findByRequest")
 	public List<BizRequestHeader> findByRequest(BizRequestHeader bizRequestHeader) {
 		bizRequestHeader.setBizStatusStart(ReqHeaderStatusEnum.PURCHASING.getState().byteValue());
