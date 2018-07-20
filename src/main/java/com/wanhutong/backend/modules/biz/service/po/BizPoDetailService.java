@@ -67,7 +67,6 @@ public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail>
 	public void delete(BizPoDetail bizPoDetail) {
 		super.delete(bizPoDetail);
 	}
-
 	@Transactional(readOnly = false)
 	public BizPoDetail getsumSchedulingNum(Integer objectId){
 		return bizPoDetailDao.getsumSchedulingNum(objectId);
