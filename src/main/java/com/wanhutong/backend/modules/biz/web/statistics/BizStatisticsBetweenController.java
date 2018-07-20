@@ -5,10 +5,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.wanhutong.backend.common.utils.DateUtils;
+import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.custom.BizCustomCenterConsultant;
-import com.wanhutong.backend.modules.biz.entity.dto.*;
+import com.wanhutong.backend.modules.biz.entity.dto.BizOrderStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizProductStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizSkuInputOutputDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizUserSaleStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.BizUserStatisticsDto;
+import com.wanhutong.backend.modules.biz.entity.dto.EchartsSeriesDto;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsBetweenService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsDayService;
 import com.wanhutong.backend.modules.biz.service.statistics.BizStatisticsService;
@@ -16,29 +21,46 @@ import com.wanhutong.backend.modules.enums.OfficeTypeEnum;
 import com.wanhutong.backend.modules.enums.OrderStatisticsDataTypeEnum;
 import com.wanhutong.backend.modules.enums.UserRoleOfficeEnum;
 import com.wanhutong.backend.modules.sys.dao.UserDao;
+import com.wanhutong.backend.modules.sys.entity.Office;
 import com.wanhutong.backend.modules.sys.entity.Role;
 import com.wanhutong.backend.modules.sys.entity.User;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import sun.misc.BASE64Decoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -49,6 +71,9 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "${adminPath}/biz/statistics/between")
 public class BizStatisticsBetweenController extends BaseController {
+
+    protected Logger LOGGER = LoggerFactory.getLogger(BizStatisticsBetweenController.class);
+
 
     @Resource
     private BizStatisticsBetweenService bizStatisticsBetweenService;
@@ -1414,7 +1439,11 @@ public class BizStatisticsBetweenController extends BaseController {
      */
     @RequiresPermissions("biz:statistics:vendorProductPrice:view")
     @RequestMapping(value = "vendorProductPriceTables")
-    public String vendorProductPrice (HttpServletRequest request, String startDate, String endDate){
+    public String vendorProductPrice (HttpServletResponse response, HttpServletRequest request,
+                                      String startDate, String endDate, String vendName, String methodType){
+        int pageSize = 20;
+        long startTime = System.currentTimeMillis();
+
         if (StringUtils.isBlank(startDate)) {
             Calendar cal = Calendar.getInstance();
             //获取本周一的日期
@@ -1428,24 +1457,77 @@ public class BizStatisticsBetweenController extends BaseController {
 
         request.setAttribute("startDate", startDate);
         request.setAttribute("endDate", endDate);
+        request.setAttribute("vendName", vendName);
 
-        List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate);
+        List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorProductPrice(startDate, endDate, vendName);
 
         result.sort((o1, o2) -> Integer.compare(o2.getOrderCount(), o1.getOrderCount()));
 
-        request.setAttribute("result", result);
+        Page<Office> page = new Page<>(request, response);
+        page.setPageSize(pageSize);
+        page.setCount(result.size());
+        page.initialize();
+        List<BizOrderStatisticsDto> pairs = result.subList((page.getPageNo() - 1) * pageSize, Math.min(page.getPageNo() * pageSize, result.size()));
+        request.setAttribute("result", pairs);
+        request.setAttribute("page", page);
+
+        if ("download".equalsIgnoreCase(methodType)) {
+            String fileName = "供应金额统计.xls";
+            HSSFWorkbook wb = new HSSFWorkbook();
+
+            HSSFSheet sheet = wb.createSheet();
+            sheet.autoSizeColumn(1, true);
+
+            int rowIndex = 0;
+            HSSFRow header = sheet.createRow(rowIndex);
+            rowIndex++;
+            HSSFCell hCell = header.createCell(0);
+            hCell.setCellValue("供应商ID");
+            HSSFCell hCell1 = header.createCell(1);
+            hCell1.setCellValue("供应商名称");
+            HSSFCell hCell2 = header.createCell(2);
+            hCell2.setCellValue("供应次数");
+            HSSFCell hCell3 = header.createCell(3);
+            hCell3.setCellValue("供应金额");
+
+
+            for (BizOrderStatisticsDto o : result) {
+                HSSFRow row = sheet.createRow(rowIndex);
+                rowIndex++;
+                HSSFCell cell0 = row.createCell(0);
+                cell0.setCellValue(o.getOfficeId());
+                HSSFCell cell1 = row.createCell(1);
+                cell1.setCellValue(o.getOfficeName());
+                HSSFCell cell2 = row.createCell(2);
+                cell2.setCellValue(o.getOrderCount());
+                HSSFCell cell3 = row.createCell(3);
+                cell3.setCellValue(o.getTotalMoney().toString());
+            }
+
+            try {
+                response.setContentType("application/msexcel;charset=utf-8");
+                response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+                wb.write(response.getOutputStream());
+            } catch (IOException e) {
+                LOGGER.error("export skuInputOutputRecord error", e);
+            }
+            return null;
+        }
+
         return "modules/biz/statistics/bizStatisticsVendorProductPriceBetweenTables";
     }
 
     /**
-     * 供应商供货额
+     * 供应商供货额 SKU
      */
     @RequiresPermissions("biz:statistics:vendorProductPrice:view")
     @RequestMapping(value = "vendorSkuPriceTables")
     public String vendorSkuPriceTables (HttpServletRequest request, String startDate, String endDate, Integer officeId){
+
         List<BizOrderStatisticsDto> result = bizStatisticsBetweenService.vendorSkuPrice(startDate, endDate, officeId);
 
         result.sort((o1, o2) -> Integer.compare(o2.getOrderCount(), o1.getOrderCount()));
+
 
         request.setAttribute("result", result);
         return "modules/biz/statistics/bizStatisticsVendorSkuPriceBetweenTables";
@@ -1768,19 +1850,97 @@ public class BizStatisticsBetweenController extends BaseController {
 
 
     /**
-     * 供应商供货额
+     * 出入库记录
      */
     @RequiresPermissions("biz:statistics:skuInputOutputRecord:view")
     @RequestMapping(value = "skuInputOutputRecord")
-    public String skuInputOutputRecord (HttpServletRequest request, String startDate, String endDate, String invName, String skuItemNo){
+    public String skuInputOutputRecord (HttpServletRequest request, HttpServletResponse response,
+                                        @RequestParam(value="dataType", required = false, defaultValue = "3") Integer dataType,
+                                        String startDate, String endDate, String invName, String skuItemNo, String methodType){
+
+        int pageSize = 20;
+        long startTime = System.currentTimeMillis();
 
         List<BizSkuInputOutputDto> result = bizStatisticsBetweenService.skuInputOutputRecord(startDate, endDate, invName, skuItemNo);
 
+        switch (dataType) {
+            case 1:
+                result.removeIf(o -> o.getDataType() != 1);
+                break;
+            case 0:
+                result.removeIf(o -> o.getDataType() != 0);
+                break;
+            default:
+                break;
+        }
+
         result.sort((o1, o2) -> o2.getCreateTime().compareTo(o1.getCreateTime()));
 
+        Page<Office> page = new Page<>(request, response);
+        page.setPageSize(pageSize);
+        page.setCount(result.size());
+        page.initialize();
+        List<BizSkuInputOutputDto> pairs = result.subList((page.getPageNo() - 1) * pageSize, Math.min(page.getPageNo() * pageSize, result.size()));
+
+        request.setAttribute("page", page);
         request.setAttribute("invName", invName);
         request.setAttribute("skuItemNo", skuItemNo);
-        request.setAttribute("result", result);
+        request.setAttribute("dataType", dataType);
+        request.setAttribute("result", pairs);
+
+        if ("download".equalsIgnoreCase(methodType)) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            String fileName = "出入库记录.xls";
+            HSSFWorkbook wb = new HSSFWorkbook();
+
+            HSSFSheet sheet = wb.createSheet();
+            sheet.autoSizeColumn(1, true);
+
+            int rowIndex = 0;
+            HSSFRow header = sheet.createRow(rowIndex);
+            rowIndex++;
+            HSSFCell hCell = header.createCell(0);
+            hCell.setCellValue("仓库名称");
+            HSSFCell hCell1 = header.createCell(1);
+            hCell1.setCellValue("数量");
+            HSSFCell hCell2 = header.createCell(2);
+            hCell2.setCellValue("类型");
+            HSSFCell hCell3 = header.createCell(3);
+            hCell3.setCellValue("商品名称");
+            HSSFCell hCell4 = header.createCell(4);
+            hCell4.setCellValue("商品编号");
+            HSSFCell hCell5 = header.createCell(5);
+            hCell5.setCellValue("时间");
+
+
+            for (BizSkuInputOutputDto o : result) {
+                HSSFRow row = sheet.createRow(rowIndex);
+                rowIndex++;
+                HSSFCell cell0 = row.createCell(0);
+                cell0.setCellValue(o.getInvName());
+                HSSFCell cell1 = row.createCell(1);
+                cell1.setCellValue(o.getCountNumber());
+                HSSFCell cell2 = row.createCell(2);
+                cell2.setCellValue(o.getDataType() == 1 ? "入库" : "出库");
+                HSSFCell cell3 = row.createCell(3);
+                cell3.setCellValue(o.getSkuName());
+                HSSFCell cell4 = row.createCell(4);
+                cell4.setCellValue(o.getItemNo());
+                HSSFCell cell5 = row.createCell(5);
+                cell5.setCellValue(simpleDateFormat.format(o.getCreateTime()));
+            }
+
+            try {
+                response.setContentType("application/msexcel;charset=utf-8");
+                response.setHeader("content-disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+                wb.write(response.getOutputStream());
+            } catch (IOException e) {
+                LOGGER.error("export skuInputOutputRecord error", e);
+            }
+            return null;
+        }
+
         return "modules/biz/statistics/bizStatisticsInputOutputBetweenTables";
     }
 }

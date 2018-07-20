@@ -960,8 +960,8 @@ public class BizPoHeaderService extends CrudService<BizPoHeaderDao, BizPoHeader>
      * @param endDate 结束时间
      * @return
      */
-    public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate) {
-        return dao.vendorProductPrice(startDate, endDate + " 23:59:59");
+    public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate, String vendName) {
+        return dao.vendorProductPrice(startDate, endDate + " 23:59:59", vendName);
     }
 
     /**

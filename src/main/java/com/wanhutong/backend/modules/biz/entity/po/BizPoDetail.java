@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -31,6 +32,17 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 	private Double unitPrice;		// 商品单价
 	private Integer ordQty;		// 采购数量
 	private Integer sendQty;		//采购单供货数量
+	private List<BizSchedulingPlan> schedulingPlanList;
+
+	/**
+	 * 总的已排产量
+	 */
+	private Integer sumSchedulingNum = 0;
+
+	/**
+	 * 总的已确认数量
+	 */
+	private Integer sumCompleteNum = 0;
 
 
 	
@@ -116,4 +128,27 @@ public class BizPoDetail extends DataEntity<BizPoDetail> {
 		this.sendQty = sendQty;
 	}
 
+	public List<BizSchedulingPlan> getSchedulingPlanList() {
+		return schedulingPlanList;
+	}
+
+	public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
+		this.schedulingPlanList = schedulingPlanList;
+	}
+
+	public Integer getSumSchedulingNum() {
+		return sumSchedulingNum;
+	}
+
+	public void setSumSchedulingNum(Integer sumSchedulingNum) {
+		this.sumSchedulingNum = sumSchedulingNum;
+	}
+
+	public Integer getSumCompleteNum() {
+		return sumCompleteNum;
+	}
+
+	public void setSumCompleteNum(Integer sumCompleteNum) {
+		this.sumCompleteNum = sumCompleteNum;
+	}
 }

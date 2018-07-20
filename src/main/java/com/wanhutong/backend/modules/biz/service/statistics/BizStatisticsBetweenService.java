@@ -210,8 +210,8 @@ public class BizStatisticsBetweenService {
      * @param endDate 结束时间
      * @return
      */
-    public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate) {
-        return bizPoHeaderService.vendorProductPrice(startDate, endDate);
+    public List<BizOrderStatisticsDto> vendorProductPrice(String startDate, String endDate, String vendName) {
+        return bizPoHeaderService.vendorProductPrice(startDate, endDate, vendName);
     }
 
     /**
@@ -260,7 +260,6 @@ public class BizStatisticsBetweenService {
      * @return
      */
     public List<BizSkuInputOutputDto> skuInputOutputRecord(String startDate, String endDate, String invName, String skuItemNo) {
-
         return bizCollectGoodsRecordService.skuInputOutputRecord(startDate, endDate, invName, skuItemNo);
     }
 }
