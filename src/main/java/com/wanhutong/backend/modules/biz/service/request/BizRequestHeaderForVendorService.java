@@ -11,7 +11,9 @@ import com.wanhutong.backend.common.utils.GenerateOrderUtils;
 import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.sms.AliyunSmsClient;
 import com.wanhutong.backend.common.utils.sms.SmsTemplateCode;
+import com.wanhutong.backend.modules.biz.dao.order.BizOrderHeaderDao;
 import com.wanhutong.backend.modules.biz.dao.request.BizRequestHeaderForVendorDao;
+import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
@@ -72,6 +74,8 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 	private BizRequestHeaderForVendorDao bizRequestHeaderForVendorDao;
 	@Resource
 	private SystemService systemService;
+	@Resource
+	private BizOrderHeaderDao bizOrderHeaderDao;
 
 	@Resource
 	private BizOrderStatusService bizOrderStatusService;
@@ -540,8 +544,24 @@ public class BizRequestHeaderForVendorService extends CrudService<BizRequestHead
 		}
 	}
 
+	/**
+	 * 备货单商品的销售单数量
+	 * @param centId
+	 * @param skuId
+	 * @return
+	 */
 	public Integer findSellCount(Integer centId, Integer skuId) {
 		return bizRequestHeaderForVendorDao.findSellCount(centId, skuId);
+	}
+
+	/**
+	 * 备货单商品的销售单
+	 * @param skuIdList
+	 * @param centId
+	 * @return
+	 */
+	public List<BizOrderHeader> findOrderForVendReq(List<Integer> skuIdList, Integer centId) {
+		return bizOrderHeaderDao.findOrderForVendReq(skuIdList, centId);
 	}
 
 }

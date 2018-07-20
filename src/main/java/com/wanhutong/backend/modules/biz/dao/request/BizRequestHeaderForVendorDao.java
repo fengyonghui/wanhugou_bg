@@ -27,6 +27,4 @@ public interface BizRequestHeaderForVendorDao extends CrudDao<BizRequestHeader> 
 
     Integer findSellCount( @Param("centId") Integer centId, @Param("skuId") Integer skuId);
 
-    List<BizOrderHeader> findOrderForVendReq(@Param("skuIdList") List<Integer> skuIdList, Integer centId);
-
 }

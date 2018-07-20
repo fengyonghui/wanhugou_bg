@@ -143,6 +143,10 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
      * 供应商查看订单 source = vendor
      */
     private String source;
+    /**
+     * 固定商品的详情总价
+     */
+    private String detailPrice;
 
     public String getLocationAddress() {
         return locationAddress;
@@ -729,5 +733,13 @@ public class BizOrderHeader extends DataEntity<BizOrderHeader> {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getDetailPrice() {
+        return detailPrice;
+    }
+
+    public void setDetailPrice(String detailPrice) {
+        this.detailPrice = detailPrice;
     }
 }
