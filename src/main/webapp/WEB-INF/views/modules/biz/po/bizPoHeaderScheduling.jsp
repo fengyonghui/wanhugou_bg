@@ -62,9 +62,10 @@
         function confirmSchedulingCheck(index, detailId) {
             var ordQty = $(eval("ordQty_" + index)).text();
             var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
+            var sumCompleteNum = $(eval("sumCompleteNum_" + index)).text();
             var completeNum = $(eval("completeNum_" + index)).val();
-
-            if (parseInt(completeNum) <=0 || parseInt(completeNum) >  parseInt(sumSchedulingNum)){
+            var standard = sumSchedulingNum - sumCompleteNum;
+            if (parseInt(completeNum) <=0 || parseInt(completeNum) >  parseInt(standard)){
                 alert("确认排产量数据不正确，请重新输入！")
                 return false;
             }
