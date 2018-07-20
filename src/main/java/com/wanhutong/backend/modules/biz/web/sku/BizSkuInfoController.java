@@ -3,7 +3,6 @@
  */
 package com.wanhutong.backend.modules.biz.web.sku;
 
-import com.alibaba.druid.support.json.JSONUtils;
 import com.google.common.collect.Lists;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
