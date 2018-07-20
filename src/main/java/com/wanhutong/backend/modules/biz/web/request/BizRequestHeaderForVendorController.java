@@ -34,7 +34,7 @@ import com.wanhutong.backend.modules.config.ConfigGeneral;
 import com.wanhutong.backend.modules.config.parse.RequestOrderProcessConfig;
 import com.wanhutong.backend.modules.enums.BizOrderStatusOrderTypeEnum;
 import com.wanhutong.backend.modules.enums.ImgEnum;
-import com.wanhutong.backend.modules.enums.ReqFormTypeEnum;
+import com.wanhutong.backend.modules.enums.ReqFromTypeEnum;
 import com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum;
 import com.wanhutong.backend.modules.enums.RoleEnNameEnum;
 import com.wanhutong.backend.modules.sys.entity.Dict;
@@ -127,13 +127,15 @@ public class BizRequestHeaderForVendorController extends BaseController {
 			bizRequestDetail.setRequestHeader(bizRequestHeader);
 			if (!ReqHeaderStatusEnum.CLOSE.getState().equals(bizRequestHeader.getBizStatus())
 					&& bizRequestHeader.getBizStatus() >= ReqHeaderStatusEnum.PURCHASING.getState()
-					&& ReqFormTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+					&& ReqFromTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
 				/* 查询已生成的采购单 标识*/
 				bizRequestDetail.setPoheaderSource("poHeader");
 			}
 			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
 			BizInventorySku bizInventorySku = new BizInventorySku();
+			List<Integer> skuIdList = new ArrayList<>();
 			for (BizRequestDetail requestDetail : requestDetailList) {
+				skuIdList.add(requestDetail.getSkuInfo().getId());
 				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
 				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
 				if (CollectionUtils.isNotEmpty(list)) {
@@ -149,6 +151,8 @@ public class BizRequestHeaderForVendorController extends BaseController {
 				requestDetail.setSellCount(findSellCount(requestDetail));
 				reqDetailList.add(requestDetail);
 			}
+			List<BizOrderHeader> orderHeaderList = bizRequestHeaderForVendorService.findOrderForVendReq(skuIdList, bizRequestHeader.getFromOffice().getId());
+			model.addAttribute("orderHeaderList",orderHeaderList);
 			if (requestDetailList.size() == 0) {
 				bizRequestHeader.setPoSource("poHeaderSource");
 			}

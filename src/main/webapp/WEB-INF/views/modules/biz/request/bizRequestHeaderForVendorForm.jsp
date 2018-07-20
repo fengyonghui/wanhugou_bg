@@ -391,8 +391,9 @@
 			<div class="controls">
 				<sys:treeselect id="office" name="bizVendInfo.office.id" value="${entity.bizVendInfo.office.id}" labelName="bizVendInfo.office.name"
 								labelValue="${entity.bizVendInfo.vendName}" notAllowSelectParent="true"
-								title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium"
+								title="供应商" url="/sys/office/queryTreeList?type=7" cssClass="input-medium required"
 								allowClear="${office.currentUser.admin}" dataMsgRequired="必填信息" onchange="deleteStyle()"/>
+				<span class="help-inline"><font color="red">*</font> </span>
 				<a href="#" id="remark" onclick="selectRemark()" style="display: none">《厂家退换货流程》</a>
 			</div>
 		</div>
@@ -641,7 +642,29 @@
 			</div>
 
 		</div>
-
+		<form>
+			<div>
+				<label class="control-label">销售单号</label>
+				<div class="controls">
+					<table>
+						<thead>
+							<th>订单号</th>
+							<th>创建日期</th>
+							<th>金额(订单总金额)</th>
+						</thead>
+						<tbody>
+						<c:forEach items="${orderHeaderList}" var="orderHeader">
+							<tr>
+								<td>${orderHeader.orderNum}</td>
+								<td><fmt:formatDate value="${orderHeader.createDate}" pattern="yyyy-MM-dd HH:mm:ss"></fmt:formatDate></td>
+								<td>${orderHeader.detailPrice}(${orderHeader.totalDetail})</td>
+							</tr>
+						</c:forEach>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</form>
 		<div class="control-group">
 			<label class="control-label">备注：</label>
 			<div class="controls">
