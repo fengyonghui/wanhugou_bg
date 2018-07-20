@@ -18,6 +18,7 @@ import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.request.BizPoOrderReq;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import com.wanhutong.backend.modules.biz.entity.request.BizRequestHeader;
@@ -30,6 +31,7 @@ import com.wanhutong.backend.modules.biz.service.order.BizOrderStatusService;
 import com.wanhutong.backend.modules.biz.service.paltform.BizPlatformInfoService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoDetailService;
 import com.wanhutong.backend.modules.biz.service.po.BizPoHeaderService;
+import com.wanhutong.backend.modules.biz.service.po.BizSchedulingPlanService;
 import com.wanhutong.backend.modules.biz.service.request.BizPoOrderReqService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestDetailService;
 import com.wanhutong.backend.modules.biz.service.request.BizRequestHeaderService;
@@ -73,6 +75,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -121,9 +124,11 @@ public class BizPoHeaderController extends BaseController {
     private BizOrderStatusService bizOrderStatusService;
     @Autowired
     private BizOrderAddressService bizOrderAddressService;
-
+    @Autowired
+    private BizSchedulingPlanService bizSchedulingPlanService;
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
+    public static final String SCHEDULING_PLAN_TABLE_NAME = "biz_scheduling_plan";
 
 
     @ModelAttribute
@@ -147,6 +152,18 @@ public class BizPoHeaderController extends BaseController {
                 BizSkuInfo bizSkuInfo = poDetail.getSkuInfo();
                 BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(bizSkuInfo.getId()));
                 poDetail.setSkuInfo(skuInfo);
+
+                BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
+                bizSchedulingPlan.setBizPoDetail(poDetail);
+                List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
+                schedulingPlanList.sort(Comparator.comparing(BizSchedulingPlan::getUpdateDate));
+                poDetail.setSchedulingPlanList(schedulingPlanList);
+                BizPoDetail poDetailTemp = bizPoDetailService.getsumSchedulingNum(poDetail.getId());
+                if (poDetailTemp != null){
+                    poDetail.setSumSchedulingNum(poDetailTemp.getSumSchedulingNum());
+                    poDetail.setSumCompleteNum(poDetailTemp.getSumCompleteNum());
+                }
+
                 poDetails.add(poDetail);
             }
             entity.setPoDetailList(poDetails);
@@ -725,5 +742,44 @@ public class BizPoHeaderController extends BaseController {
         bizPoHeaderService.updateBizStatus(id, BizPoHeader.BizStatus.CANCEL);
         bizOrderStatusService.insertAfterBizStatusChanged(BizOrderStatusOrderTypeEnum.PURCHASEORDER.getDesc(), BizOrderStatusOrderTypeEnum.PURCHASEORDER.getState(), id);
         return "取消采购订单成功";
+    }
+
+
+    @RequestMapping(value = "scheduling")
+    public String scheduling(BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
+        if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
+            Office office = officeService.get(bizPoHeader.getDeliveryOffice().getId());
+            if ("8".equals(office.getType())) {
+                bizPoHeader.setDeliveryStatus(0);
+            } else {
+                bizPoHeader.setDeliveryStatus(1);
+            }
+        }
+
+        model.addAttribute("bizPoHeader", bizPoHeader);
+        model.addAttribute("bizPoHeader2", bizPoHeader);
+        return "modules/biz/po/bizPoHeaderScheduling";
+    }
+
+
+    @RequestMapping(value = "saveSchedulingPlan")
+    @ResponseBody
+    public boolean saveSchedulingPlan(HttpServletRequest request, Integer detailId, Integer ordQty, Integer schedulingNum, Integer completeNum) {
+
+        BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
+        schedulingPlan.setObjectName(SCHEDULING_PLAN_TABLE_NAME);
+        schedulingPlan.setObjectId(String.valueOf(detailId));
+        schedulingPlan.setOriginalNum(ordQty);
+        schedulingPlan.setSchedulingNum(schedulingNum);
+        schedulingPlan.setCompleteNum(completeNum);
+        boolean boo = false;
+        try {
+            bizSchedulingPlanService.save(schedulingPlan);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
     }
 }
