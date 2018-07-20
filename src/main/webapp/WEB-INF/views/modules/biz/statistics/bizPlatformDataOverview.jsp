@@ -16,7 +16,7 @@
 <span>
     <label>
         <input type="text" id="startDate" value="${date}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
-        <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询" onclick="init();"/>
+        <input id="btnSubmit" class="btn btn-primary" type="button" value="查询" onclick="init();"/>
         <input id="exportTable"  onclick="exportTable()" class="btn btn-primary" type="submit" value="导出表格"/>
     </label>
 </span>

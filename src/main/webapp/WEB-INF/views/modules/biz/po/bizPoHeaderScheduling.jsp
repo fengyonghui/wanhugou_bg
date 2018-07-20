@@ -32,15 +32,15 @@
         //添加排产量check
         function addSchedulingCheck(index, detailId) {
             var ordQty = $(eval("ordQty_" + index)).text();
-            var sendQty = $(eval("sendQty_" + index)).text();
             var schedulingNum = $(eval("schedulingNum_" + index)).val();
             var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();
-            var standard = ordQty - sendQty - sumSchedulingNum;
-            if (parseInt(standard) <= 0 || parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard))){
+            var standard = ordQty - sumSchedulingNum;
+            if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard))){
                 alert("排产量数值设置不正确，请重新输入")
                 return false;
             }
             if(confirm("确定添加排产量为" + schedulingNum + "的排产吗？")){
+                $Mask.AddLogo("正在加载");
                 $.ajax({
                     url: '${ctx}/biz/po/bizPoHeader/saveSchedulingPlan',
                     contentType: 'application/json',
@@ -119,83 +119,6 @@
     </c:if>
 
     <c:if test="${bizOrderHeader.orderType != 6}" >
-    <div class="control-group">
-        <label class="control-label" style="font-size: 17px;color: red;">排产履历：</label>
-    </div>
-    <table id="contentTable" class="table table-striped table-bordered table-condensed">
-        <thead>
-        <tr>
-            <th>产品图片</th>
-            <th>品牌名称</th>
-            <th>商品名称</th>
-                <%--<th>商品编码</th>--%>
-            <th>商品货号</th>
-            <c:if test="${bizPoHeader.id!=null}">
-                <th>所属单号</th>
-            </c:if>
-                <%--<th>商品属性</th>--%>
-            <c:if test="${bizPoHeader.id==null}">
-                <th>申报数量</th>
-            </c:if>
-            <th>采购数量</th>
-            <c:if test="${bizPoHeader.id!=null}">
-                <th>已供货数量</th>
-            </c:if>
-            <c:if test="${bizPoHeader.id!=null}">
-                <th>排产数量</th>
-            </c:if>
-            <c:if test="${bizPoHeader.id!=null}">
-                <th>已完成量</th>
-            </c:if>
-            <th>工厂价</th>
-        </tr>
-        </thead>
-        <tbody id="prodInfo">
-        <c:if test="${bizPoHeader.poDetailList!=null}">
-            <c:forEach items="${bizPoHeader.poDetailList}" var="poDetail">
-                <c:forEach items="${poDetail.schedulingPlanList}" var="schedulingPlan">
-                    <tr>
-                        <td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>
-                        <td>${poDetail.skuInfo.productInfo.brandName}</td>
-                        <td>${poDetail.skuInfo.name}</td>
-                        <td>${poDetail.skuInfo.itemNo}</td>
-                        <c:if test="${bizPoHeader.id!=null}">
-                            <td>
-                                <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}" var="orderNumStr"
-                                           varStatus="orderStatus">
-                                <c:if test="${orderNumStr.soType==1}">
-                                <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
-                                    </c:if>
-                                    <c:if test="${orderNumStr.soType==2}">
-                                    <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
-                                        </c:if>
-                                            ${orderNumStr.orderNumStr}
-                                    </a>
-                                    </c:forEach>
-
-                            </td>
-                        </c:if>
-                        <td>${poDetail.ordQty}</td>
-                        <td>${poDetail.sendQty}</td>
-                        <td>
-                            <input type="text" style="margin-bottom: 10px" readonly="readonly" value="${schedulingPlan.schedulingNum}"
-                                   htmlEscape="false" maxlength="30" class="input-xlarge "/>
-                        </td>
-                        <td>
-                            <input type="text" style="margin-bottom: 10px" readonly="readonly" value="${schedulingPlan.completeNum}"
-                                   htmlEscape="false" maxlength="30" class="input-xlarge "/>
-                        </td>
-                        <td>${poDetail.unitPrice}</td>
-                    </tr>
-                </c:forEach>
-            </c:forEach>
-        </c:if>
-        </tbody>
-    </table>
-        <br><br>
-    <div class="control-group">
-        <label class="control-label" style="font-size: 17px;color: red;">本次排产：</label>
-    </div>
     <table id="contentTable2" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
@@ -212,14 +135,9 @@
                 <th>申报数量</th>
             </c:if>
             <th>采购数量</th>
-            <c:if test="${bizPoHeader.id!=null}">
-                <th>已供货数量</th>
-            </c:if>
             <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
-                <c:if test="${bizPoHeader.id!=null}">
-                    <th>待排产量</th>
-                </c:if>
-                <th>排产数量</th>
+                <th>已排产量</th>
+                <th>待产数量</th>
             </shiro:hasPermission>
             <shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
                 <c:if test="${bizPoHeader.id!=null}">
@@ -256,13 +174,12 @@
                         </td>
                     </c:if>
                     <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
-                    <td id="sendQty_${state.index+1}">${poDetail.sendQty}</td>
-                    <td id="sumSchedulingNum_${state.index+1}" style="display:none">${poDetail.sumSchedulingNum}</td>
+                    <%--<td id="sumSchedulingNum_${state.index+1}" style="display:none">${poDetail.sumSchedulingNum}</td>--%>
                     <td id="sumCompleteNum_${state.index+1}" style="display:none">${poDetail.sumCompleteNum}</td>
                     <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
-                        <td >${poDetail.ordQty - poDetail.sendQty - poDetail.sumSchedulingNum}</td>
+                        <td id="sumSchedulingNum_${state.index+1}" >${poDetail.sumSchedulingNum}</td>
                         <td>
-                            <input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.ordQty - poDetail.sendQty - poDetail.sumSchedulingNum}"
+                            <input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.ordQty - poDetail.sumSchedulingNum}"
                                    htmlEscape="false" maxlength="30" class="input-xlarge "/>
                         </td>
                     </shiro:hasPermission>

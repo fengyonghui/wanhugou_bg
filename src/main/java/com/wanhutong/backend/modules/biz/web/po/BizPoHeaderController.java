@@ -128,7 +128,7 @@ public class BizPoHeaderController extends BaseController {
     private BizSchedulingPlanService bizSchedulingPlanService;
 
     public static final String VEND_IMG_TABLE_NAME = "biz_vend_info";
-    public static final String SCHEDULING_PLAN_TABLE_NAME = "biz_scheduling_plan";
+    public static final String PO_DETAIL_TABLE_NAME = "biz_po_detail";
 
 
     @ModelAttribute
@@ -746,7 +746,7 @@ public class BizPoHeaderController extends BaseController {
 
 
     @RequestMapping(value = "scheduling")
-    public String scheduling(BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
+    public String scheduling(HttpServletRequest request, BizPoHeader bizPoHeader, Model model, String prewStatus, String type) {
         if (bizPoHeader.getDeliveryOffice() != null && bizPoHeader.getDeliveryOffice().getId() != null && bizPoHeader.getDeliveryOffice().getId() != 0) {
             Office office = officeService.get(bizPoHeader.getDeliveryOffice().getId());
             if ("8".equals(office.getType())) {
@@ -758,7 +758,15 @@ public class BizPoHeaderController extends BaseController {
 
         model.addAttribute("bizPoHeader", bizPoHeader);
         model.addAttribute("bizPoHeader2", bizPoHeader);
-        return "modules/biz/po/bizPoHeaderScheduling";
+
+        String forward = request.getParameter("forward");
+        String forwardPage = "";
+        if ("forward".equals(forward)) {
+            forwardPage = "modules/biz/po/bizPoHeaderSchedulingRecord";
+        } else {
+            forwardPage = "modules/biz/po/bizPoHeaderScheduling";
+        }
+        return forwardPage;
     }
 
 
@@ -767,7 +775,7 @@ public class BizPoHeaderController extends BaseController {
     public boolean saveSchedulingPlan(HttpServletRequest request, Integer detailId, Integer ordQty, Integer schedulingNum, Integer completeNum) {
 
         BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
-        schedulingPlan.setObjectName(SCHEDULING_PLAN_TABLE_NAME);
+        schedulingPlan.setObjectName(PO_DETAIL_TABLE_NAME);
         schedulingPlan.setObjectId(String.valueOf(detailId));
         schedulingPlan.setOriginalNum(ordQty);
         schedulingPlan.setSchedulingNum(schedulingNum);

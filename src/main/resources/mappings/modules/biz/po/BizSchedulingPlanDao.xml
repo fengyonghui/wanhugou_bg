@@ -44,6 +44,7 @@
 		<where>
 			a.status = #{DEL_FLAG_NORMAL}
 			<if test="bizPoDetail!=null and bizPoDetail.id!=null and bizPoDetail.id!=''">
+				AND a.object_name = "biz_po_detail"
 				AND a.object_id = #{bizPoDetail.id}
 			</if>
 		</where>
