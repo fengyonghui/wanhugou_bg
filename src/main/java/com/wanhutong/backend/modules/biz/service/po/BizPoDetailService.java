@@ -67,6 +67,12 @@ public class BizPoDetailService extends CrudService<BizPoDetailDao, BizPoDetail>
 	public void delete(BizPoDetail bizPoDetail) {
 		super.delete(bizPoDetail);
 	}
+
+	/**
+	 * 获取已排产总量和已确认量
+	 * @param objectId
+	 * @return
+	 */
 	@Transactional(readOnly = false)
 	public BizPoDetail getsumSchedulingNum(Integer objectId){
 		return bizPoDetailDao.getsumSchedulingNum(objectId);

@@ -17,7 +17,7 @@ import org.apache.ibatis.annotations.Param;
 public interface BizPoDetailDao extends CrudDao<BizPoDetail> {
     
     /**
-     * 获取已排产总量
+     * 获取已排产总量和已确认量
      * @param objectId
      * @return
      */
