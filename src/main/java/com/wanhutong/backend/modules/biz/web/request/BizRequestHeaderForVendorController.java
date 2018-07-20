@@ -487,4 +487,80 @@ public class BizRequestHeaderForVendorController extends BaseController {
 		Integer skuId = requestDetail.getSkuInfo().getId();
 		return bizRequestHeaderForVendorService.findSellCount(centId,skuId);
 	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:view")
+	@RequestMapping(value = "scheduling")
+	public String scheduling(BizRequestHeader bizRequestHeader, Model model) {
+		List<BizRequestDetail> reqDetailList = Lists.newArrayList();
+		if (bizRequestHeader.getId() != null) {
+			BizRequestDetail bizRequestDetail = new BizRequestDetail();
+			bizRequestDetail.setRequestHeader(bizRequestHeader);
+			if (!ReqHeaderStatusEnum.CLOSE.getState().equals(bizRequestHeader.getBizStatus())
+					&& bizRequestHeader.getBizStatus() >= ReqHeaderStatusEnum.PURCHASING.getState()
+					&& ReqFormTypeEnum.CENTER_TYPE.getType().equals(bizRequestHeader.getFromType())) {
+				/* 查询已生成的采购单 标识*/
+				bizRequestDetail.setPoheaderSource("poHeader");
+			}
+			List<BizRequestDetail> requestDetailList = bizRequestDetailService.findPoRequet(bizRequestDetail);
+			BizInventorySku bizInventorySku = new BizInventorySku();
+			for (BizRequestDetail requestDetail : requestDetailList) {
+				bizInventorySku.setSkuInfo(requestDetail.getSkuInfo());
+				List<BizInventorySku> list = bizInventorySkuService.findList(bizInventorySku);
+				if (CollectionUtils.isNotEmpty(list)) {
+					//已有的库存数量
+					bizRequestHeader.setInvenSource("inventorySku");
+					requestDetail.setInvenSkuOrd(list.size());
+				}
+				if (requestDetail.getBizPoHeader() == null) {
+					bizRequestHeader.setPoSource("poHeaderSource");
+				}
+				BizSkuInfo skuInfo = bizSkuInfoService.findListProd(bizSkuInfoService.get(requestDetail.getSkuInfo().getId()));
+				requestDetail.setSkuInfo(skuInfo);
+				requestDetail.setSellCount(findSellCount(requestDetail));
+				reqDetailList.add(requestDetail);
+			}
+			if (requestDetailList.size() == 0) {
+				bizRequestHeader.setPoSource("poHeaderSource");
+			}
+		}
+
+		if ("audit".equalsIgnoreCase(bizRequestHeader.getStr())) {
+			RequestOrderProcessConfig.RequestOrderProcess requestOrderProcess =
+					ConfigGeneral.REQUEST_ORDER_PROCESS_CONFIG.get().processMap.get(Integer.valueOf(bizRequestHeader.getCommonProcess().getType()));
+			model.addAttribute("requestOrderProcess", requestOrderProcess);
+		}
+
+		if (bizRequestHeader.getId() != null && bizRequestHeader.getId() != 0) {
+			BizOrderStatus bizOrderStatus = new BizOrderStatus();
+			BizOrderHeader bizOrderHeader = new BizOrderHeader();
+			bizOrderHeader.setId(bizRequestHeader.getId());
+			bizOrderStatus.setOrderHeader(bizOrderHeader);
+			bizOrderStatus.setOrderType(BizOrderStatus.OrderType.REQUEST.getType());
+			List<BizOrderStatus> statusList = bizOrderStatusService.findList(bizOrderStatus);
+			statusList.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
+
+			Map<Integer, ReqHeaderStatusEnum> statusMap = ReqHeaderStatusEnum.getStatusMap();
+
+			model.addAttribute("statusList", statusList);
+			model.addAttribute("statusMap", statusMap);
+		}
+
+		User userAdmin = UserUtils.getUser();
+		//渠道部角色
+		List<Role> roleList = userAdmin.getRoleList();
+		String roleName = null;
+		if (CollectionUtils.isNotEmpty(roleList)) {
+			for (Role role : roleList) {
+				if (role.getEnname().equals(RoleEnNameEnum.CHANNEL_MANAGER.getState()) || userAdmin.isAdmin() ) {
+					roleName = "channeOk";
+				}
+			}
+		}
+		model.addAttribute("roleChanne", roleName);
+
+		model.addAttribute("entity", bizRequestHeader);
+		model.addAttribute("reqDetailList", reqDetailList);
+		model.addAttribute("bizSkuInfo", new BizSkuInfo());
+		return "modules/biz/request/bizRequestHeaderForVendorForm";
+	}
 }
