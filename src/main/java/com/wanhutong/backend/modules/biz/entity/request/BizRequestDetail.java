@@ -5,11 +5,14 @@ package com.wanhutong.backend.modules.biz.entity.request;
 
 import com.wanhutong.backend.modules.biz.entity.po.BizPoDetail;
 import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
+import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import com.wanhutong.backend.modules.biz.entity.sku.BizSkuInfo;
 import org.hibernate.validator.constraints.Length;
 import com.wanhutong.backend.modules.sys.entity.User;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.wanhutong.backend.common.persistence.DataEntity;
@@ -58,6 +61,11 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	 * 销售数量
 	 */
 	private Integer sellCount;
+
+    /**
+     * 排产计划
+     */
+    private List<BizSchedulingPlan> schedulingPlanList;
 
 	public BizRequestDetail() {
 		super();
@@ -236,4 +244,12 @@ public class BizRequestDetail extends DataEntity<BizRequestDetail> {
 	public void setSellCount(Integer sellCount) {
 		this.sellCount = sellCount;
 	}
+
+    public List<BizSchedulingPlan> getSchedulingPlanList() {
+        return schedulingPlanList;
+    }
+
+    public void setSchedulingPlanList(List<BizSchedulingPlan> schedulingPlanList) {
+        this.schedulingPlanList = schedulingPlanList;
+    }
 }

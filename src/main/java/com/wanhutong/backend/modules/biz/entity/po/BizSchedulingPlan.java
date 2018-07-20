@@ -3,6 +3,7 @@
  */
 package com.wanhutong.backend.modules.biz.entity.po;
 
+import com.wanhutong.backend.modules.biz.entity.request.BizRequestDetail;
 import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
@@ -25,6 +26,11 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 	 * 采购订单表Entity
 	 */
 	private BizPoDetail bizPoDetail;
+
+	/**
+	 * 备货清单详细信息Entity
+	 */
+	private BizRequestDetail bizRequestDetail;
 	
 	public BizSchedulingPlan() {
 		super();
@@ -82,5 +88,13 @@ public class BizSchedulingPlan extends DataEntity<BizSchedulingPlan> {
 
 	public void setBizPoDetail(BizPoDetail bizPoDetail) {
 		this.bizPoDetail = bizPoDetail;
+	}
+
+	public BizRequestDetail getBizRequestDetail() {
+		return bizRequestDetail;
+	}
+
+	public void setBizRequestDetail(BizRequestDetail bizRequestDetail) {
+		this.bizRequestDetail = bizRequestDetail;
 	}
 }

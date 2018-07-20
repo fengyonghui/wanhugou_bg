@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.wanhutong.backend.modules.enums.ReqHeaderStatusEnum" %>
 <%@ page import="com.wanhutong.backend.modules.enums.RoleEnNameEnum" %>
+<%@ page import="com.wanhutong.backend.modules.enums.ReqFromTypeEnum" %>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
@@ -280,6 +281,10 @@
 					<c:if test="${requestHeader.bizStatus!=ReqHeaderStatusEnum.CLOSE.state && requestHeader.totalDetail != requestHeader.recvTotal}">
 						<a data-toggle="modal" onclick="pay(${requestHeader.id})" data-id="${requestHeader.id}" data-target="#myModal">付款</a>
 					</c:if>
+
+                    <c:if test="${requestHeader.fromType == ReqFromTypeEnum.VENDOR_TYPE.type}">
+                        <a href="${ctx}/biz/request/bizRequestHeaderForVendor/scheduling?id=${requestHeader.id}&str=detail">排产</a>
+                    </c:if>
 
 				</shiro:hasPermission>
 
