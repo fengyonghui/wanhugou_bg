@@ -91,7 +91,7 @@
                 	mui.toast('子菜单不存在')
                 }else if(purchId==132) {
                 	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchase.html",
+						url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
 						extras: {
 								purchId:purchId,
 						}

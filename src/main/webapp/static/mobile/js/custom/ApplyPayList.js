@@ -299,7 +299,7 @@
 					if(res.ret==true){
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchase.html",
+						url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
 						extras: {
 							key:res.key,
 							}
@@ -329,7 +329,7 @@
 					if(res.ret==true){
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchase.html",
+						url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
 						extras: {
 							key:res.key,
 							}

@@ -149,7 +149,7 @@
 						mui.toast('子菜单不存在')
 					} else if(poId == poId) {
 						GHUTILS.OPENPAGE({
-							url: "../../mobile/html/applyPay.html",
+							url: "../../mobile/html/purchaseMagmetHtml/applyPay.html",
 							extras: {
 								poId: poId,
 							}
@@ -165,7 +165,7 @@
 						mui.toast('子菜单不存在')
 					} else if(listId == listId) {
 						GHUTILS.OPENPAGE({
-							url: "../../mobile/html/ApplyPayList.html",
+							url: "../../mobile/html/purchaseMagmetHtml/ApplyPayList.html",
 							extras: {
 								poId: poId,
 								listId: listId,
@@ -181,7 +181,7 @@
 						mui.toast('子菜单不存在')
 					} else if(listId == listId) {
 						GHUTILS.OPENPAGE({
-							url: "../../mobile/html/details.html",
+							url: "../../mobile/html/purchaseMagmetHtml/details.html",
 							extras: {
 								listId: listId,
 							}
@@ -197,7 +197,7 @@
 					mui.toast('子菜单不存在')
 				} else if(listId == listId) {
 					GHUTILS.OPENPAGE({
-						url: "../../mobile/html/check.html",
+						url: "../../mobile/html/purchaseMagmetHtml/check.html",
 						extras: {
 							listId: listId,
 							codeId: codeId,
@@ -213,7 +213,7 @@
 					mui.toast('子菜单不存在')
 				} else if(listId == listId) {
 					GHUTILS.OPENPAGE({
-						url: "../../mobile/html/startCheck.html",
+						url: "../../mobile/html/purchaseMagmetHtml/startCheck.html",
 						extras: {
 							listId: listId,
 						}

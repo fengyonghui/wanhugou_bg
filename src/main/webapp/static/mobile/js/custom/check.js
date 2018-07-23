@@ -200,7 +200,7 @@
 						alert('操作成功!')
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchase.html",
+						url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
 						extras: {
 							key:res.key,
 							codeId:codeId,
