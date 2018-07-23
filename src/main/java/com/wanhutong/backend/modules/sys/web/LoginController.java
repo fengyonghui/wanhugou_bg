@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.web.util.WebUtils;
@@ -30,6 +32,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.sys.security.FormAuthenticationFilter;
 import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm.Principal;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 登录Controller
@@ -169,6 +172,17 @@ public class LoginController extends BaseController{
 			return "redirect:" + adminPath + "/login";
 		}
 		return "modules/sys/sysIndex";
+	}
+
+	/**
+	 * 登录成功，进入管理首页
+	 */
+	@RequiresPermissions("user")
+	@RequestMapping(value = "${adminPath}/getUser")
+	@ResponseBody
+	public String getUser() {
+		User user = UserUtils.getUser();
+		return JsonUtil.generateData(user, null);
 	}
 	
 	/**
