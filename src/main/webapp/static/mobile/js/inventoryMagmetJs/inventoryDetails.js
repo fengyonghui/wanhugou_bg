@@ -21,7 +21,7 @@
 			$.ajax({
                 type: "GET",
                 url: "/a/biz/request/bizRequestHeader/form4Mobile",
-                data: {id:110},
+                data: {id:173},
                 dataType: "json",
                 success: function(res){
 					console.log(res)
@@ -55,7 +55,7 @@
 /*期望收货时间*/ 	   $('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
 //				   $('#inplanPayDetails').val(res.data.bizPoHeader.total)
 //                   $('#nowDateDetails').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
-					_this.processHtml(res.data)
+//					_this.processHtml(res.data)
 					_this.commodityHtml(res.data)
                 }
             });
@@ -91,10 +91,10 @@
 		commodityHtml: function(data) {
 			var _this = this;
 			console.log(data)
-			var commodityHtmlList = '';
-			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
+			var htmlCommodity = '';
+			$.each(data.reqDetailList, function(i, item) {
 				console.log(item)
-				pHtmlList +='<li class="mui-table-view-cell mui-media">'+
+				htmlCommodity +='<li class="mui-table-view-cell mui-media">'+
 //		产品图片
 					'<div class="photoParent mui-pull-left position_Re">'+
 						'<img class="position_Ab" src="../images/shuijiao.jpg">'+
@@ -149,7 +149,7 @@
 				'</li>'
 				
 			});
-			$("#commodityMenu").html(commodityHtml)
+			$("#commodityMenu").html(htmlCommodity)
 		},
 		formatDateTime: function(unix) {
         	var _this = this;

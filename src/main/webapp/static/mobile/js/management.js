@@ -25,10 +25,10 @@
                 data: {parentId:_this.userInfo.idData},
                 dataType: "json",
                 success: function(res){
-                    console.log(res)
+//                  console.log(res)
                     var htmlList = '';
                     $.each(res.data, function(i, item) {
-                       		console.log(item)
+//                     		console.log(item)
                        		 htmlList += '<li class="mui-table-view-cell mui-collapse menuBtn" indexNum = "'+ i+'" dataId="'+item.id+'">'+
 									'<a class="mui-navigate-right">'+ item.name + '</a>'+
 									'<div  class = "mui-collapse-content childData'+ i+'">'
@@ -53,10 +53,10 @@
                         data: {parentId:dataId},
                         dataType: "json",
                         success: function(res){
-                            console.log(res)
+//                          console.log(res)
                             var pHtmlList = '';
                             $.each(res.data, function(i, item) {
-                                console.log(item)
+//                              console.log(item)
                                 pHtmlList+='<p class="childMenu" purchId="'+item.id+'">'+ item.name+'</p>'
 
                             });
@@ -88,7 +88,7 @@
                 }
 			})
         /*备货单管理*/
-            $('#menuMaget').on('click','.childMenu',function(){
+            /*$('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
 				var purchId = $(this).attr('purchId');
                 if(url) {
@@ -101,8 +101,8 @@
 						}
 					})
                 }
-			})
-		},
+			})*/
+		}
 		
 	}
 	$(function() {
