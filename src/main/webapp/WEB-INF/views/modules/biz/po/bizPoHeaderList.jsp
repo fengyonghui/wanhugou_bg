@@ -201,7 +201,9 @@
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:scheduling">
 								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}">排产</a>
-                                <a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}&forward=record">排产履历</a>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
+								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}&forward=confirmScheduling">确认排产</a>
 							</shiro:hasPermission>
 						</c:if>
 					</td>

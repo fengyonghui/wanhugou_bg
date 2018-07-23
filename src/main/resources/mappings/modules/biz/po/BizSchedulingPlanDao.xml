@@ -121,7 +121,7 @@
 			complete_num = #{completeNum},
 			create_time = #{createDate},
 			u_version = #{uVersion},
-			update_id = #{updateBy},
+			update_id = #{updateBy.id},
 			update_time = #{updateDate}
 		WHERE id = #{id}
 	</update>

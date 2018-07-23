@@ -3,16 +3,21 @@
  */
 package com.wanhutong.backend.modules.biz.web.po;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
 import com.wanhutong.backend.common.config.Global;
 import com.wanhutong.backend.common.persistence.Page;
 import com.wanhutong.backend.common.utils.DateUtils;
 import com.wanhutong.backend.common.utils.Encodes;
 import com.wanhutong.backend.common.utils.GenerateOrderUtils;
+import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.common.utils.StringUtils;
 import com.wanhutong.backend.common.utils.excel.ExportExcelUtils;
 import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.biz.entity.common.CommonImg;
+import com.wanhutong.backend.modules.biz.entity.dto.BizPoHeaderSchedulingDto;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderAddress;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderDetail;
 import com.wanhutong.backend.modules.biz.entity.order.BizOrderHeader;
@@ -54,15 +59,20 @@ import com.wanhutong.backend.modules.sys.entity.User;
 import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.service.OfficeService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.util.JSONUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -70,6 +80,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -757,18 +769,18 @@ public class BizPoHeaderController extends BaseController {
         }
 
         model.addAttribute("bizPoHeader", bizPoHeader);
-        model.addAttribute("bizPoHeader2", bizPoHeader);
 
+        //return "modules/biz/po/bizPoHeaderScheduling";
         String forward = request.getParameter("forward");
         String forwardPage = "";
-        if ("forward".equals(forward)) {
-            forwardPage = "modules/biz/po/bizPoHeaderSchedulingRecord";
+        if ("confirmScheduling".equals(forward)) {
+            forwardPage = "modules/biz/po/bizPoHeaderConfirmScheduling";
         } else {
             forwardPage = "modules/biz/po/bizPoHeaderScheduling";
         }
         return forwardPage;
-    }
 
+    }
 
     @RequestMapping(value = "saveSchedulingPlan")
     @ResponseBody
@@ -779,6 +791,64 @@ public class BizPoHeaderController extends BaseController {
         schedulingPlan.setObjectId(String.valueOf(detailId));
         schedulingPlan.setOriginalNum(ordQty);
         schedulingPlan.setSchedulingNum(schedulingNum);
+        schedulingPlan.setCompleteNum(completeNum);
+        boolean boo = false;
+        try {
+            bizSchedulingPlanService.save(schedulingPlan);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
+    }
+
+    @RequestMapping(value = "batchSaveSchedulingPlan")
+    @ResponseBody
+    public boolean batchSaveSchedulingPlan(HttpServletRequest request, @RequestBody String params) throws IOException {
+        List<BizPoHeaderSchedulingDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizPoHeaderSchedulingDto>>(){});
+        boolean boo = false;
+        for (int i=0; i<dtoList.size(); i++) {
+            BizPoHeaderSchedulingDto dto = dtoList.get(i);
+            BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
+            schedulingPlan.setObjectName(PO_DETAIL_TABLE_NAME);
+            schedulingPlan.setObjectId(String.valueOf(dto.getObjectId()));
+            schedulingPlan.setOriginalNum(dto.getOriginalNum());
+            schedulingPlan.setSchedulingNum(dto.getSchedulingNum());
+            schedulingPlan.setCompleteNum(dto.getCompleteNum());
+            try {
+                bizSchedulingPlanService.save(schedulingPlan);
+            } catch (Exception e) {
+                boo = false;
+                logger.error(e.getMessage());
+            }
+            if ((i+1)==dtoList.size()){
+                boo = true;
+            }
+        }
+        return boo;
+    }
+
+    @RequestMapping(value = "updateSchedulingPlan")
+    @ResponseBody
+    public boolean updateSchedulingPlan(HttpServletRequest request, Integer schedulingPlanId, Integer completeNum) {
+        BizSchedulingPlan schedulingPlan  = bizSchedulingPlanService.get(schedulingPlanId);
+        schedulingPlan.setCompleteNum(completeNum);
+        boolean boo = false;
+        try {
+            bizSchedulingPlanService.save(schedulingPlan);
+            boo = true;
+        } catch (Exception e) {
+            boo = false;
+            logger.error(e.getMessage());
+        }
+        return boo;
+    }
+
+    @RequestMapping(value = "batchUpdateSchedulingPlan")
+    @ResponseBody
+    public boolean batchUpdateSchedulingPlan(HttpServletRequest request, Integer schedulingPlanId, Integer completeNum) {
+        BizSchedulingPlan schedulingPlan  = bizSchedulingPlanService.get(schedulingPlanId);
         schedulingPlan.setCompleteNum(completeNum);
         boolean boo = false;
         try {
