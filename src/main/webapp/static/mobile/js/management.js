@@ -84,7 +84,7 @@
                 }
 			})
         /*备货单管理*/
-            /*$('#menuMaget').on('click','.childMenu',function(){
+            $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');
 				var purchId = $(this).attr('purchId');
                 if(url) {
@@ -97,7 +97,7 @@
 						}
 					})
                 }
-			})*/
+			})
 		}
 		
 	}
