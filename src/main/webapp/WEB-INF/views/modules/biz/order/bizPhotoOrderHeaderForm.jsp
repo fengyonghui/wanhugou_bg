@@ -507,7 +507,7 @@
         <div class="control-group">
             <label class="control-label">应付金额：</label>
             <div class="controls">
-                <input type="text" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.freight}" pattern="0.00"/>"
+                <input type="text" value="<fmt:formatNumber type="number" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight}" pattern="0.00"/>"
                        disabled="true" class="input-xlarge">
             </div>
         </div>
@@ -517,6 +517,12 @@
                 <font color="#088A29">
                     <fmt:formatNumber type="percent" value="${bizOrderHeader.receiveTotal/(bizOrderHeader.totalDetail+bizOrderHeader.freight)}" maxFractionDigits="2" />
                 </font> (<fmt:formatNumber type="number" value="${bizOrderHeader.receiveTotal}" pattern="0.00"/>)
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">服务费：</label>
+            <div class="controls">
+                <input type="text" value="${bizOrderHeader.totalExp}" disabled="true" class="input-xlarge">
             </div>
         </div>
         <div class="control-group">

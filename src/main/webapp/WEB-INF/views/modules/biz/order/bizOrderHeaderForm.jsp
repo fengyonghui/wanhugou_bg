@@ -691,6 +691,12 @@
             </div>
         </div>
         <div class="control-group">
+            <label class="control-label">服务费：</label>
+            <div class="controls">
+                <input type="text" value="${bizOrderHeader.totalDetail+bizOrderHeader.totalExp+bizOrderHeader.freight-bizOrderHeader.totalBuyPrice}" disabled="true" class="input-xlarge">
+            </div>
+        </div>
+        <div class="control-group">
             <label class="control-label">发票状态：</label>
             <div class="controls">
                 <c:if test="${entity.orderNoEditable eq 'editable' || entity.orderDetails eq 'details' || bizOrderHeader.flag eq 'check_pending'}">
