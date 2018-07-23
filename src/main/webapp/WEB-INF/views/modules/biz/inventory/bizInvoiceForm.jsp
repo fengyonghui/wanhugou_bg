@@ -17,6 +17,12 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
+				   // var fTd= $("#prodInfo").find("td").length;
+				   // alert(fTd)
+				   if($("#prodInfo").find("td").length==0){
+				       alert("请先选择待发货订单,然后点击确定。");
+					   return;
+				   }
                     var tt="";
                     var flag = false;
                     var total = 0;
@@ -52,7 +58,7 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    if(window.confirm('你确定要发货吗？')){
+                    if(window.confirm('你确定要发货吗？') && flag && total > 0){
                         if (tt != '') {
                             $("#prodInfo").append("<input name='orderHeaders' type='hidden' value='"+tt+"'>");
                         }
@@ -67,6 +73,9 @@
 										return true;
 										loading('正在提交，请稍等...');
 									}else {
+									    $("input[name='orderHeaders']").each(function () {
+											$(this).remove();
+                                        });
 										alert("库存不足！");
 										return false;
 									}
@@ -78,6 +87,7 @@
                             loading('正在提交，请稍等...');
                         }
                     }else{
+                        alert("请勾选发货内容");
                         return false;
                     }
 				},
