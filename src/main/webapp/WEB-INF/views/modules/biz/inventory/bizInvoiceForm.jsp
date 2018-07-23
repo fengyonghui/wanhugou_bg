@@ -67,9 +67,6 @@
 										return true;
 										loading('正在提交，请稍等...');
 									}else {
-									    $("input[name='orderHeaders']").each(function () {
-											$(this).remove();
-                                        });
 										alert("库存不足！");
 										return false;
 									}
