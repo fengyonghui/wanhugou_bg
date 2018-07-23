@@ -167,5 +167,19 @@
 <script src="../js/component/zepto.min.js"></script>
 <script src="../js/component/GHutils.js"></script>
 <script src="../js/custom/usermgmt-login.js"></script>
+<script type="text/javascript">
+    function delCookie(name)
+    {
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval=getCookie(name);
+        if(cval!=null)
+            document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+    }
+
+    delCookie("jeesite.session.id");
+    delCookie("JSESSIONID");
+    delCookie("SESSIONID");
+</script>
 </body>
 </html>

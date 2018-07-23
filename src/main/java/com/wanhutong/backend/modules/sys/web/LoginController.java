@@ -78,8 +78,10 @@ public class LoginController extends BaseController{
 //		view += "/"+getClass().getName().replaceAll("\\.", "/").replace(getClass().getSimpleName(), "")+"view/sysLogin";
 //		view += ".jsp";
 		if ("mobile".equalsIgnoreCase(version) || WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_MOBILE_PARAM)) {
+			request.getSession().invalidate();
 			return "redirect:/static/mobile/html/login.html";
 		}
+		request.getSession().invalidate();
 		return "modules/sys/sysLogin";
 	}
 
