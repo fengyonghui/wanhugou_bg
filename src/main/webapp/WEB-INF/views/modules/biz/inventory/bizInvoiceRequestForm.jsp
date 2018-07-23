@@ -17,10 +17,6 @@
 			//$("#name").focus();
 			$("#inputForm").validate({
 				submitHandler: function(form){
-                    if($("#prodInfo").find("td").length==0){
-                        alert("请先选择待发货备货单,然后点击确定。");
-                        return;
-                    }
                     var tt="";
                     var total = 0;
                     $('input:checkbox:checked').each(function(i) {
@@ -39,7 +35,7 @@
 
                     });
                     tt=tt.substring(0,tt.length-1);
-                    if(window.confirm('你确定要发货吗？') && total > 0){
+                    if(window.confirm('你确定要发货吗？')){
                         // alert("确定");
                         if (tt != '') {
                             $("#prodInfo").append("<input name='requestHeaders' type='hidden' value='"+tt+"'>");
@@ -47,7 +43,6 @@
                         form.submit();
                         loading('正在提交，请稍等...');
                     }else{
-                        alert("请勾选发货内容");
                         return false;
                     }
 				},
