@@ -179,12 +179,9 @@
 
 </div>
 
-<%--<script src="/static/mobile/js/component/mui.min.js"></script>--%>
-<%--<script src="/static/mobile/js/component/zepto.min.js"></script>--%>
-<%--<script src="/static/mobile/js/component/GHutils.js"></script>--%>
 <script type="text/javascript">var ctx = '${ctx}';</script>
 <script type="text/javascript" src="${ctxStatic}/jingle/js/lib/zepto.js"></script>
-<script type="text/javascript" src="${ctxStatic}/jingle/js/li b/iscroll.js"></script>
+<script type="text/javascript" src="${ctxStatic}/jingle/js/lib/iscroll.js"></script>
 <script type="text/javascript" src="${ctxStatic}/jingle/js/lib/Jingle.debug.js"></script>
 <script type="text/javascript" src="${ctxStatic}/jingle/js/lib/zepto.touch2mouse.js"></script>
 <script type="text/javascript" src="${ctxStatic}/jingle/js/app/app.js"></script>
