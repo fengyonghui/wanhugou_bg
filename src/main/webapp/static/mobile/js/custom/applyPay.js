@@ -117,7 +117,7 @@
 					data: {
 						id:_this.userInfo.poId,
 						planPay:$('#planPay').val(),
-						deadline:($('#nowDate').val()
+						deadline:$('#nowDate').val()
 					},
 					dataType: "json",
 					success: function(res) {
