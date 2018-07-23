@@ -22,7 +22,8 @@
 				var btnArray = ['取消', '确定'];
 				mui.confirm('确定要注销当前账号？', '确定注销', btnArray, function(choice) {
 					if(choice.index == 1) {
-						_this.logoutData()
+						// _this.logoutData()
+                        window.location.href = "/a/logout";
 					} else {
 						
 					}

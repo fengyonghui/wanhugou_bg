@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,7 +46,7 @@ public class LoginController extends BaseController{
 	 * 管理登录
 	 */
 	@RequestMapping(value = "${adminPath}/login", method = RequestMethod.GET)
-	public String login(HttpServletRequest request, HttpServletResponse response, Model model, String version) {
+	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Principal principal = UserUtils.getPrincipal();
 
 		model.addAttribute("productName", getProductName());
@@ -77,10 +76,6 @@ public class LoginController extends BaseController{
 //		view += "jar:file:/D:/GitHub/jeesite/src/main/webapp/WEB-INF/lib/jeesite.jar!";
 //		view += "/"+getClass().getName().replaceAll("\\.", "/").replace(getClass().getSimpleName(), "")+"view/sysLogin";
 //		view += ".jsp";
-
-		if ("mobile".equalsIgnoreCase(version) || WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_MOBILE_PARAM)) {
-			return "mobile/modules/sys/sysLogin";
-		}
 		return "modules/sys/sysLogin";
 	}
 
@@ -90,21 +85,19 @@ public class LoginController extends BaseController{
 	@RequestMapping(value = "${adminPath}/login", method = RequestMethod.POST)
 	public String loginFail(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Principal principal = UserUtils.getPrincipal();
-		Session session = UserUtils.getSession();
-		model.addAttribute("productName", getProductName());
-		model.addAttribute("sessionid", session.getId());
 
+		model.addAttribute("productName", getProductName());
+
+		// 如果已经登录，则跳转到管理首页
+		if(principal != null){
+			return "redirect:" + adminPath;
+		}
 
 		String username = WebUtils.getCleanParam(request, FormAuthenticationFilter.DEFAULT_USERNAME_PARAM);
 		boolean rememberMe = WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_REMEMBER_ME_PARAM);
 		boolean mobile = WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_MOBILE_PARAM);
 		String exception = (String)request.getAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
 		String message = (String)request.getAttribute(FormAuthenticationFilter.DEFAULT_MESSAGE_PARAM);
-
-		// 如果已经登录，则跳转到管理首页
-		if(principal != null){
-			return mobile ? renderString(response, model) : "redirect:" + adminPath;
-		}
 
 		if (StringUtils.isBlank(message) || StringUtils.equals(message, "null")){
 			message = "用户或密码错误, 请重试.";
@@ -130,8 +123,8 @@ public class LoginController extends BaseController{
 		request.getSession().setAttribute(ValidateCodeServlet.VALIDATE_CODE, IdGen.uuid());
 
 		// 如果是手机登录，则返回JSON字符串
-		if (mobile) {
-			return renderString(response, model);
+		if (mobile){
+	        return renderString(response, model);
 		}
 
 		return "modules/sys/sysLogin";

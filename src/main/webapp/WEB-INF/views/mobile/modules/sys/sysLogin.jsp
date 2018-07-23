@@ -166,25 +166,25 @@
 						</div>
 					</div>
 				</div>
+				<input type="hidden" name="mobileLogin" value="true">
+			</form>
 				<div class="app_ml25 app_mr25">
-					<input type="hidden" name="mobileLogin" value="true">
-					<button id="btn" onclick="submitForm();" class="mui-btn mui-btn-primary mui-btn-block">
+					<button onclick="submitForm();" class="mui-btn mui-btn-primary mui-btn-block">
 						登录
 					</button>
 				</div>
-			</form>
 			</article>
 		</section>
 	</div>
 
 </div>
 
-<script src="/static/mobile/js/component/mui.min.js"></script>
+<%--<script src="/static/mobile/js/component/mui.min.js"></script>--%>
 <%--<script src="/static/mobile/js/component/zepto.min.js"></script>--%>
 <%--<script src="/static/mobile/js/component/GHutils.js"></script>--%>
 <script type="text/javascript">var ctx = '${ctx}';</script>
 <script type="text/javascript" src="${ctxStatic}/jingle/js/lib/zepto.js"></script>
-<script type="text/javascript" src="${ctxStatic}/jingle/js/lib/iscroll.js"></script>
+<script type="text/javascript" src="${ctxStatic}/jingle/js/li b/iscroll.js"></script>
 <script type="text/javascript" src="${ctxStatic}/jingle/js/lib/Jingle.debug.js"></script>
 <script type="text/javascript" src="${ctxStatic}/jingle/js/lib/zepto.touch2mouse.js"></script>
 <script type="text/javascript" src="${ctxStatic}/jingle/js/app/app.js"></script>
@@ -224,16 +224,16 @@
     }
 
     function submitActive(check) {
-        alert(check);
         if (!check) {
             return false;
 		}
         var loginForm = $("#loginForm");
-        $.post("${ctx}/login?version=mobile", loginForm.serializeArray(), function(data){
+        $.post("${ctx}/login?version=mobile&login=1", loginForm.serializeArray(), function(data){
             if (data && data.sessionid){
                 sessionid = data.sessionid;
                 alert('登录成功！');
-                J.Router.goTo('#index_section?index');
+                <%--J.Router.goTo('${ctx}/login?login=1');--%>
+				window.location.href = "${ctx}?index=1";
             }else{
                 alert(data.message);
                 if (data.shiroLoginFailure == 'org.apache.shiro.authc.AuthenticationException'){
@@ -241,7 +241,6 @@
                 }
                 $('#validateCodeDiv a').click();
             }
-            //console.log(data);
         });
     }
 </script>
