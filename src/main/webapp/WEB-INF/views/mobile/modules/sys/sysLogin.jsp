@@ -192,14 +192,9 @@
 
 <script type="application/javascript">
     var sessionid = '${not empty fns:getPrincipal() ? fns:getPrincipal().sessionid : ""}';
-    alert(sessionid);
     if (!$String.isNullOrBlank(sessionid)) {
         var targetHash = location.hash;
-        if (targetHash == '#login_section') {
-            //J.showToast('你已经登录！', 'success');
-            // J.Router.goTo('#index_section?index');
-            window.location.href = "${ctx}?index=1";
-        }
+        window.location.href = "${ctx}?index=1";
     } else {
         $('#login_article').addClass('active');
     }
