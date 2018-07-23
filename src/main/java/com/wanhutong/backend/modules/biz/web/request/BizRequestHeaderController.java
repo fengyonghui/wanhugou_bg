@@ -42,6 +42,7 @@ import com.wanhutong.backend.modules.sys.service.DictService;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -352,6 +353,17 @@ public class BizRequestHeaderController extends BaseController {
 		bizRequestHeaderService.save(bizRequestHeader);
 		addMessage(redirectAttributes, "保存备货清单成功");
 		return "redirect:"+Global.getAdminPath()+"/biz/request/bizRequestHeader/?repage";
+	}
+
+	@RequiresPermissions("biz:request:bizRequestHeader:edit")
+	@RequestMapping(value = "save4Mobile")
+	@ResponseBody
+	public String save4Mobile(BizRequestHeader bizRequestHeader, Model model) {
+		if (!beanValidator(model, bizRequestHeader)){
+			return JsonUtil.generateErrorData(HttpStatus.SC_BAD_REQUEST, "数据验证失败!", null);
+		}
+		bizRequestHeaderService.save(bizRequestHeader);
+		return JsonUtil.generateData(Pair.of(true, "操作成功!"), null);
 	}
 	@ResponseBody
 	@RequiresPermissions("biz:request:bizRequestHeader:edit")
