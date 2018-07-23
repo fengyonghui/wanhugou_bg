@@ -6,8 +6,12 @@ package com.wanhutong.backend.modules.sys.web;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.ImmutableMap;
+import com.wanhutong.backend.common.utils.JsonUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,6 +60,35 @@ public class MenuController extends BaseController {
 		Menu.sortList(list, sourcelist, Menu.getRootId(), true);
         model.addAttribute("list", list);
 		return "modules/sys/menuList";
+	}
+
+	/**
+	 * 移动端菜单列表接口
+	 * @param parentId
+	 * @return
+	 */
+	@RequestMapping(value = {"listData"})
+	@ResponseBody
+	public String listData(HttpServletRequest request, @RequestParam(value = "parentId", required = false, defaultValue = "1")Integer parentId) {
+		List<Menu> list = Lists.newArrayList();
+		List<Menu> sourcelist = systemService.findAllMenu();
+
+		Menu.sortList(list, sourcelist, parentId, false);
+		list.removeIf(o -> !"1".equals(o.getIsShow()));
+		List<Map<String, Object>> result = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			list.forEach(o -> {
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("name", o.getName() == null ? StringUtils.EMPTY : o.getName());
+				map.put("id", o.getId() == null ? StringUtils.EMPTY : o.getId());
+				map.put("isShow", o.getIsShow() == null ? StringUtils.EMPTY : o.getIsShow());
+				map.put("url", o.getHref() == null ? StringUtils.EMPTY : o.getHref());
+				map.put("mobileUrl", o.getHref() == null ? StringUtils.EMPTY : o.getHref());
+				map.put("target", o.getTarget() == null ? StringUtils.EMPTY : o.getTarget());
+				result.add(map);
+			});
+		}
+		return JsonUtil.generateData(result, request.getParameter("callback"));
 	}
 
 	@RequiresPermissions("sys:menu:view")

@@ -8,6 +8,7 @@
 		a.parent_ids,
 		a.name,
 		a.href,
+		a.mobile_href AS "mobileHref",
 		a.target,
 		a.icon,
 		a.sort,

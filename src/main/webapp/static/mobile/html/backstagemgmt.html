@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>运营管理后台</title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+    <style type="text/css">/** app.css ==> app-001 **/</style>
+    <style type="text/css">
+        .app_lh25 {
+            line-height: 25px;
+        }
+
+        .app-width-15 {
+            width: 10%;
+        }
+
+        .app_mybanner img {
+            width: 100%;
+        }
+
+        .app_pt0 {
+            padding-top: 0 !important;
+        }
+
+        .app_block_border {
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .app_act_logined {
+            position: relative;
+        }
+
+        .app_see_amt {
+            position: absolute;
+            right: 10%;
+            top: 8px;
+            z-index: 4;
+        }
+
+        .app_mybtn_bg1 {
+            background: #0d84f2;
+        }
+
+        .app_mybtn_bg2 {
+            background: #f4551f;
+        }
+
+        .app_btn_from {
+            padding: 10px 0;
+        }
+
+        .app_showmore {
+            position: absolute;
+            top: 50%;
+            right: -20px;
+            top: 20px;
+        }
+
+        .app_my_titlebox {
+            position: relative;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+
+        .app_my_title {
+            position: absolute;
+            text-align: center;
+            right: 40px;
+            left: 40px;
+            line-height: 44px;
+            font-size: 18px;
+            display: inline-block;
+            overflow: hidden;
+            width: auto;
+            margin: 0;
+            text-overflow: ellipsis;
+            z-index: 10;
+        }
+
+        .app_mycolor {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .mui-table-view.mui-grid-view .mui-table-view-cell {
+            margin-right: 0;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        .mui-scroll-wrapper {
+            bottom: 50px;
+            overflow: auto;
+        }
+
+        .app_see_amt {
+            width: 60px;
+            height: 30px;
+        }
+
+        @media only screen and (max-width: 330px) {
+            .app_f2_5x {
+                font-size: 2rem;
+            }
+
+            .app_f2x {
+                font-size: 1.5rem;
+            }
+
+            .app_f1_5x {
+                font-size: 1rem;
+            }
+        }
+
+        .appmy_left_span {
+            width: 20px;
+            line-height: 44px;
+            display: inline-block;
+            float: left;
+        }
+
+        .app_border_rb {
+            border-right: 1px solid #e5e5e5;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .app_border_r {
+            border-right: 1px solid #e5e5e5;
+        }
+
+        .app_border_b {
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .app_bnp {
+            padding: 0 !important;
+        }
+
+        .mui-content > .mui-table-view:first-child {
+            margin-top: 0;
+        }
+
+        .app_pl0 {
+            padding-left: 0 !important;
+        }
+
+        .appmy_right .appmy_right_span {
+            width: 20px;
+            line-height: 44px;
+            display: inline-block;
+            float: right;
+        }
+
+        .appmy_rightcount {
+            position: absolute;
+            top: 2px;
+            right: -6px;
+            background: #fff;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 17px;
+            font-size: 12px;
+        }
+        #appQuit {
+            background-color: #dd5563;
+            border: none;
+            border-radius: 8px;
+        }
+        #quitBtn {position: fixed;bottom: 5%;width: 300px;left: 50%;margin-left: -150px;}
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <h1 id="userName" class="mui-title"></h1>
+	</header>
+	<div class="mui-content">
+	    <ul class="mui-table-view  mui-grid-view app_notborder app_bnp app_f16" id="htmlMenu">
+	
+	    </ul>
+	</div>
+	<div id="quitBtn">
+        <a href="/a/logout">
+			<button id="appQuit" type="button" class="mui-btn mui-btn-primary mui-btn-block">
+           	 退出登录
+        	</button>
+		</a>
+    </div>
+	<div class="clear"></div>
+
+	<script src="../js/component/mui.min.js"></script>
+	<script src="../js/component/zepto.min.js"></script>
+	<script src="../js/component/GHutils.js"></script>
+	<script src="../js/backstagemgmt.js"></script>
+</body>
+</html>
