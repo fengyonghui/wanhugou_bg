@@ -77,7 +77,7 @@
             	var url = $(this).attr('url');
 				var purchId = $(this).attr('purchId');
 				GHUTILS.OPENPAGE({
-						url: "../../mobile/html/user.html",
+						url: "../html/user.html",
 						extras: {
 							purchId:purchId,
 						}
@@ -91,7 +91,7 @@
                 	mui.toast('子菜单不存在')
                 }else if(purchId==132) {
                 	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/purchaseMagmetHtml/purchase.html",
+						url: "../html/purchaseMagmetHtml/purchase.html",
 						extras: {
 								purchId:purchId,
 						}
@@ -106,7 +106,7 @@
                 	mui.toast('子菜单不存在')
                 }else if(purchId==229) {
                 	GHUTILS.OPENPAGE({
-						url: "../../mobile/html/inventoryMagmetHtml/inventoryList.html",
+						url: "../html/inventoryMagmetHtml/inventoryList.html",
 						extras: {
 								purchId:purchId,
 						}

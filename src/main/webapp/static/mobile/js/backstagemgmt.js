@@ -62,7 +62,7 @@
 							mui.toast('子菜单不存在')
 						}else  if(idData==110){
 							GHUTILS.OPENPAGE({
-							url: "../../mobile/html/purchaseMagmetHtml/management.html",
+							url: "../html/management.html",
                                 extras: {
                                     idData:idData ,
 

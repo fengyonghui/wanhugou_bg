@@ -29,28 +29,7 @@
 					}
 				})
 			});
-		},
-        logoutData: function() {
-			var _this = this;
-            
-            $.ajax({
-                type: "GET",
-                url: "",
-                data: {parentId:dataId},
-                dataType: "json",
-                success: function(res){
-                    console.log(res)
-                    var url = $(this).attr('url');
-					var purchId = $(this).attr('purchId');
-					GHUTILS.OPENPAGE({
-						url: "../html/login.html",
-						extras: {
-							purchId:purchId,
-						}
-					})
-                }
-            });
-        }
+		}
 	}
 	$(function() {
 
