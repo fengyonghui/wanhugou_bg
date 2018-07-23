@@ -27,14 +27,14 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					$('#confirmPayId').val(res.data.bizPoHeader.id)
 					var pHtmlList = '';
 					if(res.data.page.list.length>0) {
 						$.each(res.data.page.list, function(i, item) {
-							console.log(item)
+//							console.log(item)
 							$('#applyPayId').val(item.id)
-							console.log(item.total)
+//							console.log(item.total)
 							if(item.total) {
 								$('#applyPayMoney').val(item.total)
 							}
@@ -231,7 +231,7 @@
 						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
 							if(a.index == 1) {
 								var rejectTxt = a.value;
-								console.log(rejectTxt)
+//								console.log(rejectTxt)
 								if(a.value=='') {
 									mui.toast('驳货理由不能为空！')
 								}else {
@@ -261,7 +261,7 @@
 							var btnArray = ['否', '是'];
 							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
 							if(choice.index == 1) {
-								console.log(inText)
+//								console.log(inText)
 								_this.payAjaxData(inText,1)
 							} else {
 								//		            info.innerText = '你点了取消按钮';
@@ -295,7 +295,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret==true){
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({
@@ -324,7 +324,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret==true){
 						//$('#mask').hide()
 						GHUTILS.OPENPAGE({

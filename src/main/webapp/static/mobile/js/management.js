@@ -72,17 +72,6 @@
 
         hrefHtml: function() {
 			var _this = this;
-		/*用户信息*/
-			$('.mui-bar').on('click','.mui-icon-bars',function(){
-            	var url = $(this).attr('url');
-				var purchId = $(this).attr('purchId');
-				GHUTILS.OPENPAGE({
-						url: "../html/user.html",
-						extras: {
-							purchId:purchId,
-						}
-					})
-			})
 		/*采购单管理*/
             $('#menuMaget').on('click','.childMenu',function(){
             	var url = $(this).attr('url');

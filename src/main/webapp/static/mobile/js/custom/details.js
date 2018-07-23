@@ -24,7 +24,7 @@
                 data: {id:_this.userInfo.listId},
                 dataType: "json",
                 success: function(res){
-					console.log(res)
+//					console.log(res)
 					var cardNumber = res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber;
 					if(cardNumber) {
 						$('#PoVenBizCard').val(cardNumber)
@@ -59,12 +59,12 @@
 		},
 		processHtml:function(data){
 			var _this = this;
-			console.log(data)
+//			console.log(data)
 			var process = data.bizPoHeader.process;
 			var pHtmlList = '';
 			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
-				console.log(item)
+//				console.log(item)
 				var step = i + 1;
 				if(len-1==i){
 					pHtmlList +='<li id="procList" class="step_item">'+

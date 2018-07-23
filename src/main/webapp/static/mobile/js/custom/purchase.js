@@ -44,10 +44,10 @@
 						success: function(res) {
 							var arrLen = res.data.resultList.length;
 							var dataRow = res.data.roleSet;
-							console.log(res)
+//							console.log(res)
 							if(arrLen > 0) {
 								$.each(res.data.resultList, function(i, item) {
-									console.log(item)
+//									console.log(item)
 									var startBtn = '';
 									var classBtn = '';
 									var payBtn = '';

@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<备货单添加>详情</title>
+		<title>详情</title>
 		<link href="../../css/mui.min.css" rel="stylesheet" />
 		<link href="../../css/app.css" rel="stylesheet" />
 		<style type="text/css">
@@ -48,11 +48,15 @@
 		<div class="mui-content mui-input-group">
 			<div class="mui-input-row">
 				<label>采购中心：</label>
-				<input type="text" class="mui-input-clear" id="inOrordNum" disabled>
+				<input type="text" class="mui-input-clear" id="inAddOrordNum">
 			</div>
 			<div class="mui-input-row">
 				<label>期望收货时间：</label>
-				<input type="text" class="mui-input-clear" id="inPoLastDa" disabled>
+				<input type="data" class="mui-input-clear" id="inAddPoLastDa">
+			</div>
+			<div class="mui-input-row">
+				<label>选择商品：</label>
+				<input type="text" class="mui-input-clear" id="inAddPoLastDa" placeholder="请点击选择商品">
 			</div>
 			<div class="mui-input-row">
 				<div class="labelLf">备货商品：</div>
@@ -104,10 +108,6 @@
 								<label>商品总库存数量：</label>
 								<input type="text" class="mui-input-clear" id="" disabled>
 							</div>
-							<!--<div class="mui-input-row">
-								<label>已收货数量：</label>
-								<input type="text" class="mui-input-clear" id="" disabled>
-							</div>-->
 						</div>
 					</li>
 				</ul>

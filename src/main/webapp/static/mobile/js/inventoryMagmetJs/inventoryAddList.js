@@ -25,87 +25,9 @@
                 dataType: "json",
                 success: function(res){
 					console.log(res)
-				/*业务状态*/
-					var bizstatus = res.data.entity.bizStatus;
-					var bizstatusTxt = '';
-					if(bizstatus==0) {
-						bizstatusTxt = "未审核"
-					}else if(bizstatus==5) {
-						bizstatusTxt = "审核通过"
-					}else if(bizstatus==10) {
-						bizstatusTxt = "采购中"
-					}else if(bizstatus==15) {
-						bizstatusTxt = "采购完成"
-					}else if(bizstatus==20) {
-						bizstatusTxt = "备货中"
-					}else if(bizstatus==25) {
-						bizstatusTxt = "供货完成"
-					}else if(bizstatus==30) {
-						bizstatusTxt = "收货完成"
-					}else if(bizstatus==35) {
-						bizstatusTxt = "关闭"
-					}
-                   $('#inPoordNum').val(res.data.entity.reqNo)
-                   $('#inOrordNum').val(res.data.entity.fromOffice.name)
-                   $('#inPoRemark').val(res.data.entity.remark)
-                   $('#inPototal').val(res.data.entity.totalMoney)
-//                 $('#inPoRemark').val(res.data.bizPoHeader.remark)
-                   $('#inPoDizstatus').val(bizstatusTxt)
-//                 $('#inPoVenName').val(res.data.bizPoHeader.vendOffice.name)
-/*期望收货时间*/ 	   $('#inPoLastDa').val(_this.formatDateTime(res.data.entity.recvEta))
-//				   $('#inplanPayDetails').val(res.data.bizPoHeader.total)
-//                   $('#nowDateDetails').val(_this.formatDateTime(res.data.bizPoHeader.lastPayDate))
-					_this.processHtml(res.data)
 					_this.commodityHtml(res.data)
                 }
             });
-		},
-		processHtml:function(data){
-			var _this = this;
-			console.log(data)
-			var process = data.bizPoHeader.process;
-			var pHtmlList = '';
-//			var len = data.bizPoHeader.commonProcessList.length
-			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
-				console.log(item)
-				var step = i + 1;
-//				if(len-1==i){
-//					pHtmlList +='<li id="procList" class="step_item">'+
-//					'<div class="step_num">'+ step +' </div>'+
-//					'<div class="step_num_txt">'+
-//						'<div class="mui-input-row sucessColor">'+
-//							'<label>当前状态:</label>'+
-//					        '<textarea name="" rows="" cols="" disabled>'+ process.purchaseOrderProcess.name +'</textarea>'+
-//					    '</div>'+
-//						'<br />'+
-//						'<div class="mui-input-row">'+
-//					        '<label></label>'+
-//					        '<input type="text" value="" class="mui-input-clear" disabled>'+
-//					    	'<label></label>'+
-//					        '<input type="text" value="" class="mui-input-clear" disabled>'+
-//					    '</div>'+
-//					'</div>'+
-//				'</li>'
-//				}else{
-				pHtmlList +='<li id="procList" class="step_item">'+
-					'<div class="step_num">'+ step +' </div>'+
-					'<div class="step_num_txt">'+
-						'<div class="mui-input-row">'+
-							'<label>处理人:</label>'+
-					        '<textarea name="" rows="" cols="" disabled>'+ item.description +'</textarea>'+
-					    '</div>'+
-						'<br />'+
-						'<div class="mui-input-row">'+
-					        '<label>状态:</label>'+
-					        '<input type="text" value="'+ item.user.name +'" class="mui-input-clear" disabled>'+
-					    	'<label>时间:</label>'+
-					        '<input type="text" value=" '+ _this.formatDateTime(item.updateTime) +' " class="mui-input-clear" disabled>'+
-					    '</div>'+
-					'</div>'+
-				'</li>'
-//				}
-			});
-			$("#inCheckAddMenu").html(pHtmlList)
 		},
 		commodityHtml: function(data) {
 			var _this = this;

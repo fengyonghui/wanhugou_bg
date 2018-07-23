@@ -30,7 +30,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					var cardNumber = res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber;
 					if(cardNumber) {
 						$('#PoVenBizCard').val(cardNumber)
@@ -83,7 +83,7 @@
 						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
 							if(a.index == 1) {
 								var rejectTxt = a.value;
-								console.log(rejectTxt)
+//								console.log(rejectTxt)
 								if(a.value == '') {
 									mui.toast('驳回理由不能为空！')
 									return;
@@ -122,7 +122,7 @@
 							var btnArray = ['否', '是'];
 							mui.confirm('确认开启审核吗？', '系统提示！', btnArray, function(choice) {
 								if(choice.index == 1) {
-									console.log(inText)
+//									console.log(inText)
 									_this.ajaxData(inText)
 								} else {}
 							})
@@ -148,7 +148,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret == true) {
 						alert('操作成功!')
 						//$('#mask').hide()
@@ -178,7 +178,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret == true) {
 						alert('操作成功!')
 						//$('#mask').hide()

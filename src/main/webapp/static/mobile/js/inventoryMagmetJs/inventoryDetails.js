@@ -69,24 +69,6 @@
 			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
 				console.log(item)
 				var step = i + 1;
-//				if(len-1==i){
-//					pHtmlList +='<li id="procList" class="step_item">'+
-//					'<div class="step_num">'+ step +' </div>'+
-//					'<div class="step_num_txt">'+
-//						'<div class="mui-input-row sucessColor">'+
-//							'<label>当前状态:</label>'+
-//					        '<textarea name="" rows="" cols="" disabled>'+ process.purchaseOrderProcess.name +'</textarea>'+
-//					    '</div>'+
-//						'<br />'+
-//						'<div class="mui-input-row">'+
-//					        '<label></label>'+
-//					        '<input type="text" value="" class="mui-input-clear" disabled>'+
-//					    	'<label></label>'+
-//					        '<input type="text" value="" class="mui-input-clear" disabled>'+
-//					    '</div>'+
-//					'</div>'+
-//				'</li>'
-//				}else{
 				pHtmlList +='<li id="procList" class="step_item">'+
 					'<div class="step_num">'+ step +' </div>'+
 					'<div class="step_num_txt">'+
@@ -103,7 +85,6 @@
 					    '</div>'+
 					'</div>'+
 				'</li>'
-//				}
 			});
 			$("#inCheckAddMenu").html(pHtmlList)
 		},

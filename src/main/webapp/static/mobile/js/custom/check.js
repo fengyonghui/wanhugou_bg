@@ -29,7 +29,7 @@
 				data: {id:_this.userInfo.listId},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					var cardNumber = res.data.bizPoHeader.vendOffice.bizVendInfo.cardNumber;
 					if(cardNumber) {
 						$('#venBizCard').val(cardNumber)
@@ -76,13 +76,13 @@
 		},
 		processHtml:function(data){
 			var _this = this;
-			console.log(data.bizPoHeader.commonProcessList)
+//			console.log(data.bizPoHeader.commonProcessList)
 			var process = data.bizPoHeader.process;
 			var pHtmlList = '';
 			var len = data.bizPoHeader.commonProcessList.length
 			$.each(data.bizPoHeader.commonProcessList, function(i, item) {
-				console.log(item)
-				console.log(i)
+//				console.log(item)
+//				console.log(i)
 				var step = i + 1;
 				if(len-1==i){
 					pHtmlList +='<li id="procList" class="step_item">'+
@@ -134,7 +134,7 @@
 						mui.prompt('请输入驳回理由：', '驳回理由', '', btnArray, function(a) {
 							if(a.index == 1) {
 								var rejectTxt = a.value;
-								console.log(rejectTxt)
+//								console.log(rejectTxt)
 								if(a.value=='') {
 									mui.toast('驳货理由不能为空！')
 								}else {
@@ -163,7 +163,7 @@
 							var btnArray = ['否', '是'];
 							mui.confirm('确认通过审核吗？', '系统提示！', btnArray, function(choice) {
 							if(choice.index == 1) {
-								console.log(inText)
+//								console.log(inText)
 								_this.ajaxData(inText,1)
 							} else {
 								//		            info.innerText = '你点了取消按钮';
@@ -195,7 +195,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret==true){
 						alert('操作成功!')
 						//$('#mask').hide()
@@ -227,7 +227,7 @@
 				},
 				dataType: "json",
 				success: function(res) {
-					console.log(res)
+//					console.log(res)
 					if(res.ret==true){
 						alert('操作成功!')
 						//$('#mask').hide()
