@@ -199,7 +199,7 @@
 							<shiro:hasPermission name="biz:po:bizPoHeader:view">
 								<a href="${ctx}/biz/po/bizPoHeader/form?id=${bizPoHeader.id}&str=detail">详情</a>
 							</shiro:hasPermission>
-							<shiro:hasPermission name="biz:po:bizPoHeader:scheduling">
+							<shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
 								<a href="${ctx}/biz/po/bizPoHeader/scheduling?id=${bizPoHeader.id}">排产</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">

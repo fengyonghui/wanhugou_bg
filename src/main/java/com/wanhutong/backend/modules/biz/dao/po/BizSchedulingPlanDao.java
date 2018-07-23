@@ -5,8 +5,11 @@ package com.wanhutong.backend.modules.biz.dao.po;
 
 import com.wanhutong.backend.common.persistence.CrudDao;
 import com.wanhutong.backend.common.persistence.annotation.MyBatisDao;
+import com.wanhutong.backend.modules.biz.entity.po.BizPoHeader;
 import com.wanhutong.backend.modules.biz.entity.po.BizSchedulingPlan;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 排产计划DAO接口
@@ -23,5 +26,5 @@ public interface BizSchedulingPlanDao extends CrudDao<BizSchedulingPlan> {
      */
     BizSchedulingPlan getByObjectId(String objectId);
 
-    void getConfirmScheduling(@Param("poId") Integer  poId);
+    List<Integer> getSchedulingPlanIdListByPoId(BizPoHeader bizPoHeader);
 }

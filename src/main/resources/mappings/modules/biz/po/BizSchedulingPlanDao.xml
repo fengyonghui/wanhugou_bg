@@ -131,5 +131,16 @@
 			status = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
+
+	<select id="getSchedulingPlanIdListByPoId" resultType="Integer" parameterType="com.wanhutong.backend.modules.biz.entity.po.BizPoHeader">
+		SELECT
+			a.id
+		FROM biz_scheduling_plan a
+		left join biz_po_detail bpd on a.object_id = bpd.id
+		left join biz_po_header bph on bph.id = bpd.order_id
+		left join biz_sku_info bsi on bsi.id = bpd.sku_no
+		left join biz_product_info bpi on bpi.id = bsi.prod_id
+		WHERE bph.id = #{id}
+	</select>
 	
 </mapper>

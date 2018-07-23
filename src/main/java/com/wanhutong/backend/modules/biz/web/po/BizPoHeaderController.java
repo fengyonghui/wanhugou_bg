@@ -171,7 +171,7 @@ public class BizPoHeaderController extends BaseController {
                 BizSchedulingPlan bizSchedulingPlan = new BizSchedulingPlan();
                 bizSchedulingPlan.setBizPoDetail(poDetail);
                 List<BizSchedulingPlan> schedulingPlanList = bizSchedulingPlanService.findList(bizSchedulingPlan);
-                schedulingPlanList.sort(Comparator.comparing(BizSchedulingPlan::getUpdateDate));
+                //schedulingPlanList.sort(Comparator.comparing(BizSchedulingPlan::getUpdateDate));
                 poDetail.setSchedulingPlanList(schedulingPlanList);
                 BizPoDetail poDetailTemp = bizPoDetailService.getsumSchedulingNum(poDetail.getId());
                 if (poDetailTemp != null){
@@ -955,6 +955,9 @@ public class BizPoHeaderController extends BaseController {
         String forward = request.getParameter("forward");
         String forwardPage = "";
         if ("confirmScheduling".equals(forward)) {
+            List<Integer> list = bizSchedulingPlanService.getSchedulingPlanIdListByPoId(bizPoHeader);
+            JSONArray json = JSONArray.fromObject(list);
+            model.addAttribute("schedulingPlanList", json);
             forwardPage = "modules/biz/po/bizPoHeaderConfirmScheduling";
         } else {
             forwardPage = "modules/biz/po/bizPoHeaderScheduling";
@@ -991,6 +994,9 @@ public class BizPoHeaderController extends BaseController {
         boolean boo = false;
         for (int i=0; i<dtoList.size(); i++) {
             BizPoHeaderSchedulingDto dto = dtoList.get(i);
+            if (dto.getSchedulingNum() == 0) {
+                continue;
+            }
             BizSchedulingPlan schedulingPlan = new BizSchedulingPlan();
             schedulingPlan.setObjectName(PO_DETAIL_TABLE_NAME);
             schedulingPlan.setObjectId(String.valueOf(dto.getObjectId()));
@@ -1028,16 +1034,26 @@ public class BizPoHeaderController extends BaseController {
 
     @RequestMapping(value = "batchUpdateSchedulingPlan")
     @ResponseBody
-    public boolean batchUpdateSchedulingPlan(HttpServletRequest request, Integer schedulingPlanId, Integer completeNum) {
-        BizSchedulingPlan schedulingPlan  = bizSchedulingPlanService.get(schedulingPlanId);
-        schedulingPlan.setCompleteNum(completeNum);
+    public boolean batchUpdateSchedulingPlan(HttpServletRequest request, @RequestBody String params) {
+        String string = params;
+        List<BizPoHeaderSchedulingDto> dtoList = JsonUtil.parseArray(params, new TypeReference<List<BizPoHeaderSchedulingDto>>(){});
         boolean boo = false;
-        try {
-            bizSchedulingPlanService.save(schedulingPlan);
-            boo = true;
-        } catch (Exception e) {
-            boo = false;
-            logger.error(e.getMessage());
+        for (int i=0; i<dtoList.size(); i++){
+            BizPoHeaderSchedulingDto dto = dtoList.get(i);
+            BizSchedulingPlan schedulingPlan  = bizSchedulingPlanService.get(dto.getId());
+            schedulingPlan.setCompleteNum(dto.getCompleteNum());
+
+            try {
+                bizSchedulingPlanService.save(schedulingPlan);
+            } catch (Exception e) {
+                boo = false;
+                logger.error(e.getMessage());
+            }
+
+            if ((i+1)==dtoList.size()){
+                boo = true;
+            }
+
         }
         return boo;
     }

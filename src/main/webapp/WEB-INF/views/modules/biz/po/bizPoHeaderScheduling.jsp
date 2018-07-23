@@ -29,9 +29,10 @@
             });
         });
 
+        //批量排产
         function batchSave() {
             var poDetailList = '${bizPoHeader.poDetailList.size()}';
-            var params = new Array(poDetailList)
+            var params = new Array()
 
             for (var i=0; i<poDetailList;i++) {
                 var entity = {};
@@ -40,34 +41,34 @@
                 var schedulingNum = $(eval("schedulingNum_" + (i+1))).val();
                 var sumSchedulingNum = $(eval("sumSchedulingNum_" + (i+1))).text();
                 var standard = ordQty - sumSchedulingNum;
-                if (parseInt(schedulingNum) <= 0 || (parseInt(schedulingNum) > parseInt(standard))){
+                if (parseInt(schedulingNum) < 0 || (parseInt(schedulingNum) > parseInt(standard))){
                     alert("排产量数值设置不正确，请重新输入")
                     return false;
                 }
-                //alert("detailId="+ detailId + "/r/n" + "ordQty=" + ordQty + "sumSchedulingNum="+ sumSchedulingNum + "/r/n" + "schedulingNum="+ schedulingNum + "/r/n");
                 entity.objectId = detailId;
                 entity.originalNum = ordQty;
                 entity.schedulingNum = schedulingNum;
                 entity.completeNum = 0;
                 params[i] = entity;
             }
-
-            console.log(params);
-            $.ajax({
-                url: '${ctx}/biz/po/bizPoHeader/batchSaveSchedulingPlan',
-                contentType: 'application/json',
-                data:JSON.stringify(params),
-                datatype:"json",
-                type: 'post',
-                success: function (result) {
-                    if(result == true) {
-                        window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+${bizPoHeader.id};
+            if(confirm("确定执行批量排产吗？")){
+                $Mask.AddLogo("正在加载");
+                $.ajax({
+                    url: '${ctx}/biz/po/bizPoHeader/batchSaveSchedulingPlan',
+                    contentType: 'application/json',
+                    data:JSON.stringify(params),
+                    datatype:"json",
+                    type: 'post',
+                    success: function (result) {
+                        if(result == true) {
+                            window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+${bizPoHeader.id};
+                        }
+                    },
+                    error: function (error) {
+                        console.info(error);
                     }
-                },
-                error: function (error) {
-                    console.info(error);
-                }
-            });
+                });
+            }
         }
 
         //添加排产量check
@@ -98,34 +99,6 @@
                 });
             }
         }
-
-        //确认排产量check
-        <%--function confirmSchedulingCheck(index, detailId) {--%>
-            <%--var sumSchedulingNum = $(eval("sumSchedulingNum_" + index)).text();--%>
-            <%--var sumCompleteNum = $(eval("sumCompleteNum_" + index)).text();--%>
-            <%--var completeNum = $(eval("completeNum_" + index)).val();--%>
-            <%--var standard = sumSchedulingNum - sumCompleteNum;--%>
-            <%--if (parseInt(completeNum) <=0 || parseInt(completeNum) >  parseInt(standard)){--%>
-                <%--alert("确认排产量数据不正确，请重新输入！")--%>
-                <%--return false;--%>
-            <%--}--%>
-            <%--if(confirm("确认排产量为" + completeNum + "吗？")){--%>
-                <%--$.ajax({--%>
-                    <%--url: '${ctx}/biz/po/bizPoHeader/updateSchedulingPlan',--%>
-                    <%--contentType: 'application/json',--%>
-                    <%--data: {"detailId": detailId, "completeNum": completeNum},--%>
-                    <%--type: 'get',--%>
-                    <%--success: function (result) {--%>
-                        <%--if(result == true) {--%>
-                            <%--window.location.href = "${ctx}/biz/po/bizPoHeader/scheduling?id="+${bizPoHeader.id};--%>
-                        <%--}--%>
-                    <%--},--%>
-                    <%--error: function (error) {--%>
-                        <%--console.info(error);--%>
-                    <%--}--%>
-                <%--});--%>
-            <%--}--%>
-        <%--}--%>
     </script>
 </head>
 <body>
@@ -138,7 +111,6 @@
     </li>
 </ul>
 <br/>
-<%--${ctx}/biz/po/bizPoHeader--%>
 <form:form id="inputForm" modelAttribute="bizPoHeader" action=""
            method="post" class="form-horizontal">
     <form:hidden path="id" id="id"/>
@@ -159,7 +131,6 @@
     </c:if>
 
     <c:if test="${bizOrderHeader.orderType != 6}" >
-    <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
     <table id="contentTable2" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>
@@ -173,13 +144,6 @@
             <th>采购数量</th>
             <th>已排产量</th>
             <th>待排产数量</th>
-
-            <%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">
-                <c:if test="${bizPoHeader.id!=null}">
-                    <th>待排确认量</th>
-                </c:if>
-                <th>确认数量</th>
-            </shiro:hasPermission>--%>
             <th>工厂价</th>
             <th>操作</th>
         </tr>
@@ -198,148 +162,40 @@
                         <td>
                             <c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}" var="orderNumStr"
                                        varStatus="orderStatus">
-                            <c:if test="${orderNumStr.soType==1}">
-                            <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
+                                <c:if test="${orderNumStr.soType==1}">
+                                    <a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">
                                 </c:if>
                                 <c:if test="${orderNumStr.soType==2}">
-                                <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
-                                    </c:if>
-                                        ${orderNumStr.orderNumStr}
-                                </a>
-                                </c:forEach>
+                                    <a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">
+                                </c:if>
+                                    ${orderNumStr.orderNumStr}
+                                    </a>
+                            </c:forEach>
                         </td>
                     </c:if>
                     <td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>
-                    <%--<td id="sumSchedulingNum_${state.index+1}" style="display:none">${poDetail.sumSchedulingNum}</td>--%>
-                    <%--<td id="sumCompleteNum_${state.index+1}" style="display:none">${poDetail.sumCompleteNum}</td>--%>
 
                     <td id="sumSchedulingNum_${state.index+1}" >${poDetail.sumSchedulingNum}</td>
                     <td>
                         <input type="text" id="schedulingNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.ordQty - poDetail.sumSchedulingNum}"
                                htmlEscape="false" maxlength="30" class="input-xlarge "/>
                     </td>
-                    <%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-                        <%--<td >${poDetail.sumSchedulingNum - poDetail.sumCompleteNum}</td>--%>
-                        <%--<td>--%>
-                            <%--<input type="text" id="completeNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.sumSchedulingNum - poDetail.sumCompleteNum}"--%>
-                                   <%--htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-                        <%--</td>--%>
-                    <%--</shiro:hasPermission>--%>
                     <td>${poDetail.unitPrice}</td>
                     <td>
-                        <shiro:hasPermission name="biz:po:bizPoHeader:addScheduling">
-                            <c:choose>
-                                <c:when test="${poDetail.ordQty != poDetail.sumSchedulingNum}">
-                                    <input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${poDetail.id}')" value="保存"/>&nbsp;
-                                </c:when>
-                                <c:otherwise>
-                                    <input id="addScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="排产完成"/>&nbsp;
-                                </c:otherwise>
-                            </c:choose>
-
-                        </shiro:hasPermission>
-                        <%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-                            <%--<c:choose>--%>
-                                <%--<c:when test="${poDetail.sumSchedulingNum == 0}">--%>
-                                    <%--<input id="confirmScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="未排产"/>&nbsp;--%>
-                                <%--</c:when>--%>
-                                <%--<c:otherwise>--%>
-                                    <%--<c:if test="${poDetail.sumSchedulingNum != poDetail.sumCompleteNum}">--%>
-                                        <%--<input id="confirmScheduling" class="btn btn-primary" type="button" onclick="confirmSchedulingCheck('${state.index+1}','${poDetail.id}')" value="确认保存"/>&nbsp;--%>
-                                    <%--</c:if>--%>
-                                    <%--<c:if test="${poDetail.sumSchedulingNum == poDetail.sumCompleteNum}">--%>
-                                        <%--<input id="confirmScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="已全部确认"/>&nbsp;--%>
-                                    <%--</c:if>--%>
-                                <%--</c:otherwise>--%>
-                            <%--</c:choose>--%>
-                        <%--</shiro:hasPermission>--%>
+                        <c:choose>
+                            <c:when test="${poDetail.ordQty != poDetail.sumSchedulingNum}">
+                                <input id="addScheduling" class="btn btn-primary" type="button" onclick="addSchedulingCheck('${state.index+1}','${poDetail.id}')" value="保存"/>&nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                <input id="addScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="排产完成"/>&nbsp;
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                 </tr>
             </c:forEach>
         </c:if>
         </tbody>
     </table>
-    </shiro:hasPermission>
-
-
-    <%--<shiro:hasPermission name="biz:po:bizPoHeader:confirmScheduling">--%>
-    <%--<table id="contentTable" class="table table-striped table-bordered table-condensed">--%>
-        <%--<thead>--%>
-        <%--<tr>--%>
-            <%--<th>产品图片</th>--%>
-            <%--<th>品牌名称</th>--%>
-            <%--<th>商品名称</th>--%>
-                <%--&lt;%&ndash;<th>商品编码</th>&ndash;%&gt;--%>
-            <%--<th>商品货号</th>--%>
-            <%--<c:if test="${bizPoHeader.id!=null}">--%>
-                <%--<th>所属单号</th>--%>
-            <%--</c:if>--%>
-                <%--&lt;%&ndash;<th>商品属性</th>&ndash;%&gt;--%>
-            <%--<c:if test="${bizPoHeader.id==null}">--%>
-                <%--<th>申报数量</th>--%>
-            <%--</c:if>--%>
-            <%--<th>采购数量</th>--%>
-            <%--<th>已确认数量</th>--%>
-            <%--<th>待排确认量</th>--%>
-            <%--<th>工厂价</th>--%>
-        <%--</tr>--%>
-        <%--</thead>--%>
-        <%--<tbody id="prodInfo">--%>
-        <%--<c:if test="${bizPoHeader.poDetailList!=null}">--%>
-            <%--<c:forEach items="${bizPoHeader.poDetailList}" var="poDetail">--%>
-                <%--<c:forEach items="${poDetail.schedulingPlanList}" var="schedulingPlan">--%>
-                    <%--<tr>--%>
-                        <%--<td><img style="max-width: 120px" src="${poDetail.skuInfo.productInfo.imgUrl}"/></td>--%>
-                        <%--<td>${poDetail.skuInfo.productInfo.brandName}</td>--%>
-                        <%--<td>${poDetail.skuInfo.name}</td>--%>
-                        <%--<td>${poDetail.skuInfo.itemNo}</td>--%>
-                        <%--<c:if test="${bizPoHeader.id!=null}">--%>
-                            <%--<td>--%>
-                                <%--<c:forEach items="${bizPoHeader.orderNumMap[poDetail.skuInfo.id]}" var="orderNumStr"--%>
-                                           <%--varStatus="orderStatus">--%>
-                                <%--<c:if test="${orderNumStr.soType==1}">--%>
-                                <%--<a href="${ctx}/biz/order/bizOrderHeader/form?id=${orderNumStr.orderHeader.id}&orderDetails=details">--%>
-                                    <%--</c:if>--%>
-                                    <%--<c:if test="${orderNumStr.soType==2}">--%>
-                                    <%--<a href="${ctx}/biz/request/bizRequestHeader/form?id=${orderNumStr.requestHeader.id}&str=detail">--%>
-                                        <%--</c:if>--%>
-                                            <%--${orderNumStr.orderNumStr}--%>
-                                    <%--</a>--%>
-                                    <%--</c:forEach>--%>
-
-                            <%--</td>--%>
-                        <%--</c:if>--%>
-
-
-                        <%--<td id="ordQty_${state.index+1}">${poDetail.ordQty}</td>--%>
-                        <%--<td id="sumSchedulingNum_${state.index+1}" style="display:none">${poDetail.sumSchedulingNum}</td>--%>
-                        <%--<td id="sumCompleteNum_${state.index+1}" style="display:none">${poDetail.sumCompleteNum}</td>--%>
-                        <%--<td>--%>
-                        <%--<input type="text" id="completeNum_${state.index+1}" style="margin-bottom: 10px" value="${poDetail.sumSchedulingNum - poDetail.sumCompleteNum}"--%>
-                        <%--htmlEscape="false" maxlength="30" class="input-xlarge "/>--%>
-                        <%--</td>--%>
-                        <%--<td>${poDetail.unitPrice}</td>--%>
-                        <%--<td>--%>
-                        <%--<c:choose>--%>
-                        <%--<c:when test="${poDetail.sumSchedulingNum == 0}">--%>
-                        <%--<input id="confirmScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="未排产"/>&nbsp;--%>
-                        <%--</c:when>--%>
-                        <%--<c:otherwise>--%>
-                        <%--<c:if test="${poDetail.sumSchedulingNum != poDetail.sumCompleteNum}">--%>
-                        <%--<input id="confirmScheduling" class="btn btn-primary" type="button" onclick="confirmSchedulingCheck('${state.index+1}','${poDetail.id}')" value="确认保存"/>&nbsp;--%>
-                        <%--</c:if>--%>
-                        <%--<c:if test="${poDetail.sumSchedulingNum == poDetail.sumCompleteNum}">--%>
-                        <%--<input id="confirmScheduling_alert" class="btn btn-primary" type="button" disabled="true" value="已全部确认"/>&nbsp;--%>
-                        <%--</c:if>--%>
-                        <%--</c:otherwise>--%>
-                        <%--</c:choose>--%>
-                    <%--</tr>--%>
-                <%--</c:forEach>--%>
-            <%--</c:forEach>--%>
-        <%--</c:if>--%>
-        <%--</tbody>--%>
-    <%--</table>--%>
-    <%--</shiro:hasPermission>--%>
     </c:if>
 
     <div class="form-actions">
