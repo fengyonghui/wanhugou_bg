@@ -167,18 +167,29 @@
             line-height: 17px;
             font-size: 12px;
         }
+        #appQuit {
+            background-color: #dd5563;
+            border: none;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
 	<header class="mui-bar mui-bar-nav">
-		<a class="mui-icon mui-icon-bars mui-pull-right app_cf"></a>  
-	    <h1 id="userName" class="mui-title">userName</h1>
+	    <h1 id="userName" class="mui-title"></h1>
 	</header>
 	<div class="mui-content">
 	    <ul class="mui-table-view  mui-grid-view app_notborder app_bnp app_f16" id="htmlMenu">
 	
 	    </ul>
 	</div>
+	<div class="app_ml25 app_mr25 app_mt60">
+        <a href="/a/logout">
+			<button id="appQuit" type="button" class="mui-btn mui-btn-primary mui-btn-block">
+           	 退出登录
+        	</button>
+		</a>
+    </div>
 	<div class="clear"></div>
 
 	<script src="../js/component/mui.min.js"></script>

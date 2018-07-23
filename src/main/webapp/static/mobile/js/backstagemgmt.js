@@ -21,12 +21,25 @@
 			},
 			pageInit: function() {
 				var _this = this;
-//					_this.ajaxData()
+				_this.userajaxData()
 
 			},
+			userajaxData: function() {
+				var _this = this;
+				$.ajax({
+                    type: "GET",
+                    url: "/a/getUser",
+                    dataType: "json",
+                    success: function(res){
+						console.log(res)
+						$('#userName').html('您好 ! '+ res.data.name)
+                    }
+                });
+                _this.userComfirDialig()
+			},
+			
 			getData: function() {
 				var _this = this;
-				//var dataList = _this.moniData()
 
                 $.ajax({
                     type: "GET",
@@ -51,7 +64,6 @@
                 });
 			_this.herfHTtml()
 			},
-
 			herfHTtml:function(){
 				$('#htmlMenu').on('click','.app_prot0',function(){
 					var url = $(this).attr('url');
@@ -78,6 +90,19 @@
 						}
 					})
 				})
+			},
+			userComfirDialig: function() {
+//			var rejectBtn = document.getElementById("rejectBtn");
+				document.getElementById("appQuit").addEventListener('tap', function() {
+					var btnArray = ['取消', '确定'];
+					mui.confirm('确定要注销当前账号？', '确定注销', btnArray, function(choice) {
+						if(choice.index == 1) {
+	                        window.location.href = "/a/logout";
+						} else {
+							
+						}
+					})
+				});
 			}
 		}
 	$(function() {
