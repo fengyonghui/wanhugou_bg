@@ -21,7 +21,7 @@
 
 </div>
 <div>
-    <input id="showChart" onclick="$Url.go2Url('${adminPath}/biz/statistics/userSale')" class="btn btn-primary" type="button" value="查看图表"/>
+    <input id="showChart" onclick="$Url.go2Url('${adminPath}/biz/statistics/between/userSale')" class="btn btn-primary" type="button" value="查看图表"/>
     <table id="contentTable" class="table table-striped table-bordered table-condensed">
         <thead>
         <tr>

@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wanhutong.backend.common.utils.JsonUtil;
+import com.wanhutong.backend.modules.sys.entity.User;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.web.util.WebUtils;
@@ -30,6 +32,7 @@ import com.wanhutong.backend.common.web.BaseController;
 import com.wanhutong.backend.modules.sys.security.FormAuthenticationFilter;
 import com.wanhutong.backend.modules.sys.security.SystemAuthorizingRealm.Principal;
 import com.wanhutong.backend.modules.sys.utils.UserUtils;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 登录Controller
@@ -98,7 +101,7 @@ public class LoginController extends BaseController{
 		boolean mobile = WebUtils.isTrue(request, FormAuthenticationFilter.DEFAULT_MOBILE_PARAM);
 		String exception = (String)request.getAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
 		String message = (String)request.getAttribute(FormAuthenticationFilter.DEFAULT_MESSAGE_PARAM);
-		
+
 		if (StringUtils.isBlank(message) || StringUtils.equals(message, "null")){
 			message = "用户或密码错误, 请重试.";
 		}
@@ -121,12 +124,12 @@ public class LoginController extends BaseController{
 		
 		// 验证失败清空验证码
 		request.getSession().setAttribute(ValidateCodeServlet.VALIDATE_CODE, IdGen.uuid());
-		
+
 		// 如果是手机登录，则返回JSON字符串
 		if (mobile){
 	        return renderString(response, model);
 		}
-		
+
 		return "modules/sys/sysLogin";
 	}
 
@@ -164,29 +167,22 @@ public class LoginController extends BaseController{
 				return renderString(response, principal);
 			}
 			if (request.getParameter("index") != null){
-				return "modules/sys/sysIndex";
+				return "redirect:/static/mobile/html/backstagemgmt.html";
 			}
 			return "redirect:" + adminPath + "/login";
 		}
-		
-//		// 登录成功后，获取上次登录的当前站点ID
-//		UserUtils.putCache("siteId", StringUtils.toLong(CookieUtils.getCookie(request, "siteId")));
-
-//		System.out.println("==========================a");
-//		try {
-//			byte[] bytes = com.wanhutong.backend.common.utils.FileUtils.readFileToByteArray(
-//					com.wanhutong.backend.common.utils.FileUtils.getFile("c:\\sxt.dmp"));
-//			UserUtils.getSession().setAttribute("kkk", bytes);
-//			UserUtils.getSession().setAttribute("kkk2", bytes);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-////		for (int i=0; i<1000000; i++){
-////			//UserUtils.getSession().setAttribute("a", "a");
-////			request.getSession().setAttribute("aaa", "aa");
-////		}
-//		System.out.println("==========================b");
 		return "modules/sys/sysIndex";
+	}
+
+	/**
+	 * 登录成功，进入管理首页
+	 */
+	@RequiresPermissions("user")
+	@RequestMapping(value = "${adminPath}/getUser")
+	@ResponseBody
+	public String getUser() {
+		User user = UserUtils.getUser();
+		return JsonUtil.generateData(user, null);
 	}
 	
 	/**
@@ -229,4 +225,6 @@ public class LoginController extends BaseController{
 		}
 		return loginFailNum >= 3;
 	}
+
+
 }

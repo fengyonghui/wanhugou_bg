@@ -30,7 +30,8 @@ public class Menu extends DataEntity<Menu> {
 	private Integer sort; 	// 排序
 	private String isShow; 	// 是否在菜单中显示（1：显示；0：不显示）
 	private String permission; // 权限标识
-	
+	private String mobileHref; // 移动端链接
+
 	private Integer userId;
 	
 	public Menu(){
@@ -167,5 +168,13 @@ public class Menu extends DataEntity<Menu> {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public String getMobileHref() {
+		return mobileHref;
+	}
+
+	public void setMobileHref(String mobileHref) {
+		this.mobileHref = mobileHref;
 	}
 }

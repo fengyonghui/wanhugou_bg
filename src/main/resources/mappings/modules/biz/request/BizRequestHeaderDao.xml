@@ -345,4 +345,9 @@
 
 	</select>
 
+	<update id="updateREStatus">
+		UPDATE biz_request_header SET
+		biz_status  = #{status}
+		WHERE id = #{id}
+	</update>
 </mapper>
