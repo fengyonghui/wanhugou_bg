@@ -90,7 +90,12 @@
 									}else {
 										varietyInfoName = ''
 									}
-									
+									var checkStatus = '';
+									if(item.commonProcess) {
+										checkStatus = item.commonProcess.requestOrderProcess.name
+									}else {
+										checkStatus = ''
+									}
 									inPHtmlList +='<div class="ctn_show_row app_li_text_center app_bline app_li_text_linhg mui-input-group">'+
 										'<div class="mui-input-row">' +
 											'<label>备货单号:</label>' +
@@ -102,7 +107,7 @@
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>审核状态:</label>' +
-											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+item.commonProcess.requestOrderProcess.name+' ">' +
+											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+checkStatus+' ">' +
 										'</div>' +
 										'<div class="mui-input-row">' +
 											'<label>品类名称:</label>' +
@@ -121,8 +126,8 @@
 											'<input type="text" class="mui-input-clear" disabled="disabled" value=" '+_this.formatDateTime(item.updateDate)+' ">' +
 										'</div>' +
 										'<div class="app_font_cl content_part mui-row app_text_center">' +
-											'<div class="mui-col-xs-2">' +
-												'<li class="mui-table-view-cell"></li>' +
+											'<div class="mui-col-xs-2 inAddBtn">' +
+												'<li class="mui-table-view-cell">添加</li>' +
 											'</div>'+
 											'<div class="mui-col-xs-2 inDetailBtn">' +
 												'<li class="mui-table-view-cell"  inListId="'+ item.id +'">详情</li>' +
@@ -174,7 +179,7 @@
 		inHrefHtml: function() {
 			var _this = this;
 		/*备货单添加*/
-			$('.content').on('tap', '.inListAddBtn', function() {
+			$('.content').on('tap', '.inAddBtn', function() {
 				var url = $(this).attr('url');
 				if(url) {
 					mui.toast('子菜单不存在')

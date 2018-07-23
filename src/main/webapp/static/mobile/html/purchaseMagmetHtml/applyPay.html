@@ -3,26 +3,27 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>审核中</title>
-		<link href="../css/mui.min.css" rel="stylesheet" />
-		<link href="../css/app.css" rel="stylesheet" />
+		<title>申请支付</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/app.css" rel="stylesheet" />
     	<style type="text/css">
  			.mui-content div.content_part li {padding: 0;list-style: none;}
 			.mui-content div.ctn_li_h li {height: 30px;}
 			.mui-input-row label {padding: 14px 14px;}
-			#Date {text-indent: 30px;}
-			.app_p20 button {margin-left: 17%;background-color: #007aff;color: #fff;}
+			#nowDate {text-indent: 10px;}
+			#applyPayBtnSubmit {left: 50%;margin-left: -41px;}
 			.sucessColor {color: #40ABE9;}
+			.mui-input-row font {color: red;position: absolute;right: 60px;top: 30%;}
 		</style>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
 		    <a class="mui-action-back mui-icon mui-icon-back mui-pull-left app_cf"></a>
-			<p class="app_cf app_nav_text_center">审核中</p>
+			<p class="app_cf app_nav_text_center">申请支付</p>
 		</header>
 		<div class="mui-content app_content_bgc_phs">
-			<form class="mui-input-group">
-		    	<div class="mui-input-row"> 
+			<form class="mui-input-group" id="appForm">
+			    <div class="mui-input-row"> 
 			        <label>采购单编号：</label>
 			        <input type="text" class="mui-input-clear" id="PoordNum" disabled>
 			    </div>
@@ -42,19 +43,6 @@
 			        <label>最后付款时间：</label>
 			        <input type="text" class="mui-input-clear" id="PoLastDa" disabled>
 			    </div>
-			    <!--<div class="mui-input-row">
-					<label>交货地点：</label>
-			    	<div class="labelri">
-				    	采购中心
-				        <input id="adressBtn" type="radio" name="site" />
-			        	供应商
-				        <input type="radio" checked name="site" />
-			    	</div>
-			    </div>
-			    <div class="mui-input-row" id="showDress">
-			        <label>采购中心：</label>
-			        <input type="text" class="mui-input-clear">
-			    </div>-->
 			    <div class="mui-input-row">
 			    	<label>备注：</label>
 			        <textarea id="PoRemark" name="" rows="" cols=""></textarea>
@@ -69,15 +57,15 @@
 			    </div>
 			    <div class="mui-input-row">
 			        <label>供应商卡号：</label>
-			        <input type="text" class="mui-input-clear" id="venBizCard" disabled>
+			        <input type="text" class="mui-input-clear" id="PoVenBizCard" disabled>
 			    </div>
 			    <div class="mui-input-row">
 			        <label>供应商收款人：</label>
-			        <input type="text" class="mui-input-clear" id="venBizPayee" disabled>
+			        <input type="text" class="mui-input-clear" id="PoVenBizPayee" disabled>
 			    </div>
 			    <div class="mui-input-row">
 			        <label>供应商开户行：</label>
-			        <input type="text" class="mui-input-clear" id="venBizBankname" disabled>
+			        <input type="text" class="mui-input-clear" id="PoVenBizBankname" disabled>
 			    </div>
 			    <div class="mui-input-row">
 			        <label>供应商合同：</label>
@@ -87,7 +75,7 @@
 			        <label>供应商身份证：</label>
 			        <input type="text" class="mui-input-clear" id="" disabled>
 			    </div>
-<!--附加信息块 有的话显示-->		
+<!--附加信息块 有的话显示-->
 				<!--<div class="mui-input-row">
 					<div class="mui-input-row">
 						<label>产品图片：</label>
@@ -98,61 +86,63 @@
 	   			    <div class="mui-input-row priceList">
 					    <div class="mui-input-row">
 					        <label>品牌名称：</label>
-					        <input type="text" class="mui-input-clear" disabled>
+					        <input type="text" class="mui-input-clear">
 					    </div>
 					    <div class="mui-input-row">
 					        <label>商品名称：</label>
-					        <input type="text" class="mui-input-clear" disabled>
+					        <input type="text" class="mui-input-clear">
 					    </div>
 					    <div class="mui-input-row">
 					        <label>商品货号：</label>
-					        <input type="text" class="mui-input-clear" disabled>
+					        <input type="text" class="mui-input-clear">
 					    </div>
 					    <div class="mui-input-row">
 					        <label>所属单号：</label>
-					        <input type="text" class="mui-input-clear" disabled>
+					        <input type="text" class="mui-input-clear">
 					    </div>
 					    <div class="mui-input-row">
 					        <label>采购数量：</label>
-					        <input type="text" class="mui-input-clear" disabled>
+					        <input type="text" class="mui-input-clear">
 					    </div>
 					    <div class="mui-input-row">
 					        <label>已供货数量：</label>
-					        <input type="text" class="mui-input-clear" disabled>
+					        <input type="text" class="mui-input-clear">
 					    </div>
 					    <div class="mui-input-row">
 					        <label>工厂价：</label>
-					        <input type="text" class="mui-input-clear" disabled>
+					        <input type="text" class="mui-input-clear">
 					    </div>
 				    </div>
 			    </div>-->
 			    <div class="mui-input-row">
-			        <label>审核状态：</label>
-			        <input type="text" class="mui-input-clear">
+			        <label>申请金额：</label>
+			        <input id="planPay" type="text" class="mui-input-clear">
+			        <font>*</font>
 			    </div>
-
-				<div class="mui-input-row">
+			    <div class="mui-input-row">
+			        <label>本次申请付款时间：</label>
+			        <input id="nowDate" type="date" name="" />
+			        <font>*</font>
+			    </div>
+<!--审批流程块 有的话显示-->
+			    <div class="mui-input-row">
 					<div class="labelLf">审批流程：</div>
-<!--审核流程--是否显示-->	
-					<ul id="addCheckMen">
-						
+			        <ul id="addCheckMen" class="">
 				    </ul>
-				</div>    
-				<div class="app_p20">
-				    <button id="checkBtn" type="submit" class="mui-btn mui-btn-blue">审核通过</button>
-					<button id="rejectBtn" type="submit" class="mui-btn mui-btn-blue">审核驳回</button>
-				</div>
+				</div>  
 			</form>
+				<div class="app_p20">
+				    <!--点击之后如果没选时间弹出警告框,出现正在提交数据，请稍后-->
+				    <button id='applyPayBtnSubmit' class="mui-btn mui-btn-blue">申请付款</button>
+				</div>
 		</div>	
 	<div class="clear"></div>
-	<input type="hidden" name="codeId" id="codeId" value="" />
-	
-	
-	
-	<script src="../js/component/mui.min.js"></script>
-	<script src="../js/component/zepto.min.js"></script>
-	<script src="../js/component/GHutils.js"></script>
-	<script src="../js/custom/check.js"></script>
+
+	<script src="../../js/component/mui.min.js"></script>
+	<script src="../../js/component/zepto.min.js"></script>
+	<script src="../../js/component/GHutils.js"></script>
+	<script src="../../js/custom/applyPay.js"></script>
     </body>
 </html>
+
 
